@@ -10,25 +10,29 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DivineBlessing extends AbstractAbility implements Duration {
 
-    private int tickDuration = 80;
-    private int healingReceivedIncrease = 50; // %
-    private int beaconLightHealingIncrease = 50; // %
-    private int beaconImpairRangeIncrease = 2;
-    private int beaconTickDurationIncrease = 160;
+    private int hexTickDurationIncrease = 40;
+    private int hexHealingBonus = 50;
+    private int lethalDamageHealing = 15;
+    private int postHealthTickDelay = 40;
+    private int postHealthHealAmount = 800;
+    private int tickDuration = 240;
+
 
     public DivineBlessing() {
         super("Divine Blessing", 0, 0, 38, 50, 0, 0);
@@ -36,16 +40,18 @@ public class DivineBlessing extends AbstractAbility implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Grant a divine blessing to all allies for ")
+        description = Component.text("Imbue yourself with Holy Energy, increasing Merciful Hex duration by ")
+                               .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds and causing Ray of Light to not consume Merciful Hex stacks. Allies with max stacks of Merciful Hex receive "))
+                               .append(Component.text(hexHealingBonus + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" more healing from all sources and heal for "))
+                               .append(Component.text(lethalDamageHealing + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" of their maximum health when taking lethal damage for the first time. After "))
+                               .append(Component.text(format(postHealthTickDelay / 20f), NamedTextColor.GOLD))
+                               .append(Component.text("seconds all allies restore "))
+                               .append(Component.text(postHealthHealAmount, NamedTextColor.GREEN))
+                               .append(Component.text(" health. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, increasing the healing received by "))
-                               .append(Component.text(healingReceivedIncrease + "%", NamedTextColor.GREEN))
-                               .append(Component.text(". Beacon of Light restores "))
-                               .append(Component.text(beaconLightHealingIncrease + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" more health and Beacon of Impair’s range is increased by "))
-                               .append(Component.text(beaconImpairRangeIncrease, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks for "))
-                               .append(Component.text(format(beaconTickDurationIncrease / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
     }
 
@@ -60,13 +66,6 @@ public class DivineBlessing extends AbstractAbility implements Duration {
         Utils.playGlobalSound(player.getLocation(), "arcanist.divineblessing.activation", 2, 1.25f);
         Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1.5f);
 
-        wp.getCooldownManager().removeCooldown(DivineBlessing.class, false);
-        List<BeaconOfImpair> effectedBeacons = new CooldownFilter<>(wp, RegularCooldown.class)
-                .filterCooldownFrom(wp)
-                .filterCooldownClassAndMapToObjectsOfClass(BeaconOfImpair.class)
-                .collect(Collectors.toList());
-        effectedBeacons.forEach(beaconAbility -> beaconAbility.setCritMultiplierReducedTo(beaconAbility.getCritMultiplierReducedTo() - 20));
-
         DivineBlessing tempDivineBlessing = new DivineBlessing();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -77,50 +76,100 @@ public class DivineBlessing extends AbstractAbility implements Duration {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                cooldownManager -> {
-                    effectedBeacons.forEach(beaconAbility -> beaconAbility.setRadius(beaconAbility.getRadius() - beaconImpairRangeIncrease));
-                },
-                tickDuration
-        ) {
-            @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * (1 + healingReceivedIncrease / 100f);
-            }
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
+                        PlayerFilter.playingGame(wp.getGame())
+                                    .teammatesOfExcludingSelf(wp)
+                                    .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class)
+                                            .filterCooldownFrom(wp)
+                                            .filterCooldownClass(MercifulHex.class)
+                                            .stream()
+                                            .count() >= MercifulHex.getFromHex(wp).getMaxStacks())
+                                    .forEach(teammate -> {
+                                        teammate.getCooldownManager().removeCooldownByObject(tempDivineBlessing);
+                                        teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                name,
+                                                null,
+                                                DivineBlessing.class,
+                                                tempDivineBlessing,
+                                                wp,
+                                                CooldownTypes.ABILITY,
+                                                cooldownManager -> {
+                                                },
+                                                21
+                                        ) {
+                                            @Override
+                                            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                                return currentHealValue * (1 + hexHealingBonus / 100f);
+                                            }
 
+                                            @Override
+                                            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                                                if (teammate.getHealth() - currentDamageValue < 0) {
+                                                    float healAmount = teammate.getMaxHealth() * (lethalDamageHealing / 100f);
+                                                    teammate.addHealingInstance(
+                                                            wp,
+                                                            name,
+                                                            healAmount,
+                                                            healAmount,
+                                                            0,
+                                                            100,
+                                                            false,
+                                                            false
+                                                    );
+                                                }
+                                                return currentDamageValue;
+                                            }
+                                        });
+                                    });
+                    }
+                })
+        ) {
             @Override
             protected Listener getListener() {
                 return new Listener() {
-                    @EventHandler
+                    @EventHandler(priority = EventPriority.LOWEST)
                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
-                        AbstractCooldown<?> cd = event.getAbstractCooldown();
-                        if (event.getWarlordsEntity().equals(wp) && cd.getCooldownObject() instanceof BeaconOfImpair beacon) {
-                            beacon.setCritMultiplierReducedTo(beacon.getCritMultiplierReducedTo() - 20);
-                            effectedBeacons.add(beacon);
+                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+                        if (cooldown.getFrom().equals(wp) &&
+                                cooldown instanceof RegularCooldown<?> regularCooldown &&
+                                cooldown.getCooldownObject() instanceof MercifulHex
+                        ) {
+                            regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
                         }
                     }
                 };
             }
         });
+        PlayerFilter.playingGame(wp.getGame())
+                    .enemiesOf(wp)
+                    .forEach(enemy -> {
+                        new CooldownFilter<>(enemy, RegularCooldown.class)
+                                .filterCooldownClass(MercifulHex.class)
+                                .filterCooldownFrom(wp)
+                                .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease));
+                    });
+        new GameRunnable(wp.getGame()) {
 
-        for (WarlordsEntity teammate : PlayerFilter.playingGame(wp.getGame()).teammatesOfExcludingSelf(wp)) {
-            teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "BLESS",
-                    DivineBlessing.class,
-                    tempDivineBlessing,
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    tickDuration
-            ) {
-                @Override
-                public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                    return currentHealValue * (1 + healingReceivedIncrease / 100f);
-                }
-            });
-        }
-
+            @Override
+            public void run() {
+                PlayerFilter.playingGame(wp.getGame())
+                            .teammatesOf(wp)
+                            .forEach(teammate -> {
+                                teammate.addHealingInstance(
+                                        wp,
+                                        name,
+                                        postHealthHealAmount,
+                                        postHealthHealAmount,
+                                        0,
+                                        100,
+                                        false,
+                                        false
+                                );
+                            });
+            }
+        }.runTaskLater(postHealthTickDelay);
         return true;
     }
 

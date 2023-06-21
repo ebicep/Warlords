@@ -1,16 +1,16 @@
-package com.ebicep.warlords.classes.druid.specs;
+package com.ebicep.warlords.classes.arcanist.specs;
 
 import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.classes.druid.AbstractDruid;
+import com.ebicep.warlords.classes.arcanist.AbstractDruid;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 
 import java.util.List;
 
-public class Priest extends AbstractDruid {
+public class Cleric extends AbstractDruid {
 
-    public Priest() {
+    public Cleric() {
         super(
                 "Priest",
                 5750,
@@ -20,8 +20,8 @@ public class Priest extends AbstractDruid {
                 0,
                 new MercifulHex(),
                 new BeaconOfLight(),
-                new EnergySeerPriest(),
-                new BeaconOfImpair(),
+                new EnergySeerCleric(),
+                new BeaconOfShadow(),
                 new DivineBlessing()
         );
     }

@@ -1,4 +1,4 @@
-package com.ebicep.warlords.classes.druid;
+package com.ebicep.warlords.classes.arcanist;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;

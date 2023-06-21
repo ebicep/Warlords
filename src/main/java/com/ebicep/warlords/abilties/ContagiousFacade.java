@@ -26,7 +26,7 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
     private int damageAbsorption = 30;
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
-    private int speedIncrease = 40;
+    private int speedIncrease = 30;
     private int speedIncreaseDuration = 100;
 
     public ContagiousFacade() {
@@ -84,7 +84,6 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
                     }
                     wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
 
-                    // copied from arcane shield, easiest but not technically an "arcane shield"
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
                     wp.getCooldownManager().addRegularCooldown(
                             name,

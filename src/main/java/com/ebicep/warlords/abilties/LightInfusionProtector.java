@@ -105,22 +105,5 @@ public class LightInfusionProtector extends AbstractLightInfusion {
         return true;
     }
 
-    public int getSpeedBuff() {
-        return speedBuff;
-    }
-
-    public void setSpeedBuff(int speedBuff) {
-        this.speedBuff = speedBuff;
-    }
-
-    public int getEnergyGiven() {
-        return energyGiven;
-    }
-
-    public void setEnergyGiven(int energyGiven) {
-        this.energyGiven = energyGiven;
-    }
-
-
 }
 

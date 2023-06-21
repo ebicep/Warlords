@@ -24,15 +24,25 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements Duration {
 
+    @Nonnull
+    public static PoisonousHex getFromHex(WarlordsEntity from) {
+        return Arrays.stream(from.getSpec().getAbilities()).filter(PoisonousHex.class::isInstance)
+                     .map(PoisonousHex.class::cast)
+                     .findFirst()
+                     .orElse(new PoisonousHex());
+    }
+
     private int maxFullDistance = 30;
     private int hexStacksPerHit = 1;
     private float dotMinDamage = 34;
     private float dotMaxDamage = 46;
+    private int maxStacks = 3;
     private double hitBox = 3.5;
     private int tickDuration = 80;
 
@@ -56,7 +66,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                                .append(Component.text(" seconds. for "))
                                .append(Component.text("2", NamedTextColor.RED))
                                .append(Component.text(" times. Stacks up to "))
-                               .append(Component.text("3", NamedTextColor.RED))
+                               .append(Component.text(maxStacks, NamedTextColor.RED))
                                .append(Component.text(" times."))
                                .append(Component.text("\n\nHas an optimal range of "))
                                .append(Component.text(maxDistance, NamedTextColor.YELLOW))
@@ -309,5 +319,9 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
 
     public void setDotMaxDamage(float dotMaxDamage) {
         this.dotMaxDamage = dotMaxDamage;
+    }
+
+    public int getMaxStacks() {
+        return maxStacks;
     }
 }

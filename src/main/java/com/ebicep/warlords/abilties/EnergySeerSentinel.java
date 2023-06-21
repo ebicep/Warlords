@@ -10,9 +10,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nonnull;
 
-public class EnergySeerGuardian extends AbstractEnergySeer<EnergySeerGuardian> {
+public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
 
-    private int damageResistance = 10;
+    private int damageResistance = 15;
 
     @Override
     public Component getBonus() {
@@ -22,17 +22,17 @@ public class EnergySeerGuardian extends AbstractEnergySeer<EnergySeerGuardian> {
     }
 
     @Override
-    public Class<EnergySeerGuardian> getEnergySeerClass() {
-        return EnergySeerGuardian.class;
+    public Class<EnergySeerSentinel> getEnergySeerClass() {
+        return EnergySeerSentinel.class;
     }
 
     @Override
-    public EnergySeerGuardian getObject() {
-        return new EnergySeerGuardian();
+    public EnergySeerSentinel getObject() {
+        return new EnergySeerSentinel();
     }
 
     @Override
-    public RegularCooldown<EnergySeerGuardian> getBonusCooldown(@Nonnull WarlordsEntity wp) {
+    public RegularCooldown<EnergySeerSentinel> getBonusCooldown(@Nonnull WarlordsEntity wp) {
         return new RegularCooldown<>(
                 name,
                 "SEER",

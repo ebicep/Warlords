@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilties.internal;
 
-import com.ebicep.warlords.abilties.BeaconOfImpair;
+import com.ebicep.warlords.abilties.BeaconOfShadow;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
@@ -61,11 +61,11 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
-        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, 3);
+        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, 1);
         Location groundLocation = LocationUtils.getGroundLocation(player);
 
         Utils.playGlobalSound(groundLocation, "arcanist.beacon.impact", 2, 1.1f);
-        String soundString = getBeaconClass() == BeaconOfImpair.class ? "arcanist.beaconimpair.activation" : "arcanist.beaconlight.activation";
+        String soundString = getBeaconClass() == BeaconOfShadow.class ? "arcanist.beaconimpair.activation" : "arcanist.beaconlight.activation";
         Utils.playGlobalSound(groundLocation, soundString, 0.1f, 0.4f);
 
         CircleEffect teamCircleEffect = new CircleEffect(

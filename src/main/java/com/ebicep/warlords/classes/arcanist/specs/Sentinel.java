@@ -1,28 +1,28 @@
-package com.ebicep.warlords.classes.druid.specs;
+package com.ebicep.warlords.classes.arcanist.specs;
 
 import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.classes.druid.AbstractDruid;
+import com.ebicep.warlords.classes.arcanist.AbstractDruid;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 
 import java.util.List;
 
-public class Conjurer extends AbstractDruid {
+public class Sentinel extends AbstractDruid {
 
-    public Conjurer() {
+    public Sentinel() {
         super(
-                "Conjurer",
-                5200,
+                "Guardian",
+                6000,
                 305,
                 20,
                 14,
-                0,
-                new PoisonousHex(),
-                new SoulfireBeam(),
-                new EnergySeerConjurer(),
-                new ContagiousFacade(),
-                new AstralPlague()
+                15,
+                new FortifyingHex(),
+                new NotAShield(),
+                new EnergySeerSentinel(),
+                new MysticalBarrier(),
+                new Sanctuary()
         );
     }
 

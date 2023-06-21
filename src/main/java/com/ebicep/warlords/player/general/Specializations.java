@@ -1,9 +1,9 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.druid.specs.Conjurer;
-import com.ebicep.warlords.classes.druid.specs.Guardian;
-import com.ebicep.warlords.classes.druid.specs.Priest;
+import com.ebicep.warlords.classes.arcanist.specs.Cleric;
+import com.ebicep.warlords.classes.arcanist.specs.Conjurer;
+import com.ebicep.warlords.classes.arcanist.specs.Sentinel;
 import com.ebicep.warlords.classes.mage.specs.Aquamancer;
 import com.ebicep.warlords.classes.mage.specs.Cryomancer;
 import com.ebicep.warlords.classes.mage.specs.Pyromancer;
@@ -153,14 +153,14 @@ public enum Specializations {
     ),
     GUARDIAN("Guardian",
             List.of("guar"),
-            Guardian::new,
+            Sentinel::new,
             Component.text("SOMEHTING", NamedTextColor.GRAY),
             SpecType.TANK,
             FORTIFYING_HEX, NOT_A_SHIELD, ENERGY_SEER_GUARDIAN, SPIRITUAL_SHIELD, SANCTUARY
     ),
     PRIEST("Priest",
             List.of("pri"),
-            Priest::new,
+            Cleric::new,
             Component.text("SOMEHTING", NamedTextColor.GRAY),
             SpecType.HEALER,
             MERCIFUL_HEX, BEACON_OF_LIGHT, ENERGY_SEER_PRIEST, BEACON_OF_IMPAIR, DIVINE_BLESSING

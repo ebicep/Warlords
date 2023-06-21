@@ -13,9 +13,6 @@ import java.util.Collections;
 
 public class LightInfusionCrusader extends AbstractLightInfusion {
 
-    private int speedBuff = 40;
-    private int energyGiven = 120;
-
     public LightInfusionCrusader(float cooldown) {
         super(cooldown);
     }
@@ -111,22 +108,6 @@ public class LightInfusionCrusader extends AbstractLightInfusion {
         }
 
         return true;
-    }
-
-    public int getSpeedBuff() {
-        return speedBuff;
-    }
-
-    public void setSpeedBuff(int speedBuff) {
-        this.speedBuff = speedBuff;
-    }
-
-    public int getEnergyGiven() {
-        return energyGiven;
-    }
-
-    public void setEnergyGiven(int energyGiven) {
-        this.energyGiven = energyGiven;
     }
 
 

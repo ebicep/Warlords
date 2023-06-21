@@ -21,16 +21,16 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
+public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
 
     private int critMultiplierReducedTo = 100;
 
-    public BeaconOfImpair() {
+    public BeaconOfShadow() {
         this(null, null);
     }
 
-    public BeaconOfImpair(Location location, CircleEffect effect) {
-        super("Beacon of Impair", 0, 0, 20, 40, 0, 0, location, 8, 20, effect);
+    public BeaconOfShadow(Location location, CircleEffect effect) {
+        super("Beacon of Shadow", 0, 0, 15, 40, 0, 0, location, 8, 20, effect);
     }
 
     @Override
@@ -53,19 +53,19 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
     }
 
     @Override
-    public Class<BeaconOfImpair> getBeaconClass() {
-        return BeaconOfImpair.class;
+    public Class<BeaconOfShadow> getBeaconClass() {
+        return BeaconOfShadow.class;
     }
 
     @Override
-    public BeaconOfImpair getObject(Location groundLocation, CircleEffect effect) {
-        return new BeaconOfImpair(groundLocation, effect);
+    public BeaconOfShadow getObject(Location groundLocation, CircleEffect effect) {
+        return new BeaconOfShadow(groundLocation, effect);
     }
 
     @Override
-    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfImpair> cooldown, Integer ticksLeft, Integer ticksElapsed) {
+    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfShadow> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         if (ticksElapsed % 5 == 0) {
-            BeaconOfImpair beacon = cooldown.getCooldownObject();
+            BeaconOfShadow beacon = cooldown.getCooldownObject();
             int rad = beacon.getRadius();
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
@@ -75,7 +75,7 @@ public class BeaconOfImpair extends AbstractBeaconAbility<BeaconOfImpair> {
                 enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
                         null,
-                        BeaconOfImpair.class,
+                        BeaconOfShadow.class,
                         this,
                         wp,
                         CooldownTypes.ABILITY,

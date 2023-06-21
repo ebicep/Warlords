@@ -1,7 +1,10 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -20,33 +23,59 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class MercifulHex extends AbstractPiercingProjectile {
+public class MercifulHex extends AbstractPiercingProjectile implements Duration {
 
+    @Nonnull
+    public static MercifulHex getFromHex(WarlordsEntity from) {
+        return Arrays.stream(from.getSpec().getAbilities()).filter(MercifulHex.class::isInstance)
+                     .map(MercifulHex.class::cast)
+                     .findFirst()
+                     .orElse(new MercifulHex());
+    }
+
+    private int hexStacksPerHit = 1;
     private int minDamage = 248;
     private int maxDamage = 334;
     private int subsequentReduction = 30;
     private int minSelfHeal = 263;
     private int maxSelfHeal = 354;
+    private int dotMinHeal = 34;
+    private int dotMaxHeal = 46;
+    private int maxStacks = 3;
+    private int tickDuration = 40;
     private double hitBox = 3.5;
 
     public MercifulHex() {
-        super("Merciful Hex", 350, 473, 0, 80, 20, 180, 2.5, 20, true);
+        super("Merciful Hex", 351, 474, 0, 80, 20, 180, 2.5, 20, true);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a merciful gust of wind forward, passing through all allies and enemies. The first ally and enemy to receive the wind will heal for ")
+        description = Component.text("Send a wave of magical wind forward, passing through all allies and enemies. The first ally touched by the magical wind heals ")
                                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" health and take "))
+                               .append(Component.text(" health and receives "))
+                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
+                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy touched by the wind takes "))
                                .append(formatRangeDamage(minDamage, maxDamage))
-                               .append(Component.text(" damage, respectively. All other allies and enemies the wind passes through will only receive "))
+                               .append(Component.text(" damage. All other allies and enemies the wind passes through will receive "))
                                .append(Component.text(subsequentReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of the effect. Also heal yourself for "))
+                               .append(Component.text(" of the effect. Also heal yourself for by "))
                                .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
-                               .append(Component.text(" health."))
-                               .append(Component.text(".\n\nHas a maximum range of "))
+                               .append(Component.text(" If Merciful Hex hits a target, you receive "))
+                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
+                               .append(Component.text(" stack of Merciful Hex. Each stack of Merciful Hex heals "))
+                               .append(formatRangeHealing(dotMinHeal, dotMaxHeal))
+                               .append(Component.text(" health every "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text("seconds for "))
+                               .append(Component.text("2", NamedTextColor.GREEN))
+                               .append(Component.text(" times. Stacks up to"))
+                               .append(Component.text(maxStacks, NamedTextColor.BLUE))
+                               .append(Component.text(" times.\n\nHas a maximum range of "))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
@@ -93,6 +122,9 @@ public class MercifulHex extends AbstractPiercingProjectile {
                 numberOfDismounts++;
             }
             List<WarlordsEntity> hits = projectile.getHit();
+            if (hits.size() == 1) {
+                giveMercifulHex(wp, wp);
+            }
             boolean isTeammate = warlordsEntity.isTeammate(wp);
             if (isTeammate) {
                 int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
@@ -107,7 +139,7 @@ public class MercifulHex extends AbstractPiercingProjectile {
                         false,
                         false
                 );
-
+                giveMercifulHex(wp, warlordsEntity);
             } else {
                 int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
                 float reduction = enemiesHit == 1 ? 1 : subsequentReduction / 100f;
@@ -123,6 +155,37 @@ public class MercifulHex extends AbstractPiercingProjectile {
             }
         }
     }
+
+    private void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
+        to.getCooldownManager().limitCooldowns(RegularCooldown.class, MercifulHex.class, 3);
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Merciful Hex",
+                "MHEX",
+                MercifulHex.class,
+                new MercifulHex(),
+                from,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+
+                },
+                tickDuration + (from.getCooldownManager().hasCooldown(Sanctuary.class) ? 80 : 40), // base add 20 to delay damage by a second
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
+                        to.addHealingInstance(
+                                from,
+                                name,
+                                dotMinHeal,
+                                dotMaxHeal,
+                                0,
+                                100,
+                                false,
+                                false
+                        );
+                    }
+                })
+        ));
+    }
+
 
     @Override
     protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
@@ -209,5 +272,19 @@ public class MercifulHex extends AbstractPiercingProjectile {
     @Override
     protected float getSoundPitch() {
         return 1.6f;
+    }
+
+    public int getMaxStacks() {
+        return maxStacks;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 }

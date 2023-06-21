@@ -10,7 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nonnull;
 
-public class EnergySeerPriest extends AbstractEnergySeer<EnergySeerPriest> {
+public class EnergySeerCleric extends AbstractEnergySeer<EnergySeerCleric> {
 
     private int critChanceIncrease = 20;
 
@@ -21,17 +21,17 @@ public class EnergySeerPriest extends AbstractEnergySeer<EnergySeerPriest> {
     }
 
     @Override
-    public Class<EnergySeerPriest> getEnergySeerClass() {
-        return EnergySeerPriest.class;
+    public Class<EnergySeerCleric> getEnergySeerClass() {
+        return EnergySeerCleric.class;
     }
 
     @Override
-    public EnergySeerPriest getObject() {
-        return new EnergySeerPriest();
+    public EnergySeerCleric getObject() {
+        return new EnergySeerCleric();
     }
 
     @Override
-    public RegularCooldown<EnergySeerPriest> getBonusCooldown(@Nonnull WarlordsEntity wp) {
+    public RegularCooldown<EnergySeerCleric> getBonusCooldown(@Nonnull WarlordsEntity wp) {
         return new RegularCooldown<>(
                 name,
                 "SEER",

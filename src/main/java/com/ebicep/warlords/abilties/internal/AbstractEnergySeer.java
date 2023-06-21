@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class AbstractEnergySeer<T> extends AbstractAbility implements Duration {
 
     protected int healingMultiplier = 4;
-    protected int tickDuration = 120;
+    protected int tickDuration = 100;
     protected int energyRestore = 80;
     protected int bonusDuration = 100;
 
@@ -54,6 +54,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements D
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.energyseer.activation", 2, 0.9f);
+        wp.addSpeedModifier(wp, name, 30, tickDuration);
         AtomicInteger timesHealed = new AtomicInteger();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
