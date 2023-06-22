@@ -72,6 +72,12 @@ public class RayOfLight extends AbstractBeam {
     }
 
     @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        shooter.addHealingInstance(shooter, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+        return super.onActivate(shooter, player);
+    }
+
+    @Override
     public ItemStack getBeamItem() {
         return new ItemStack(Material.BLUE_ORCHID);
     }

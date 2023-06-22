@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 public class OrbPassenger extends ExperienceOrb {
 
@@ -22,6 +24,10 @@ public class OrbPassenger extends ExperienceOrb {
     protected int ticksLived = 0;
 
     public OrbPassenger(Location location, WarlordsEntity owner, int tickMultiplier) {
+        this(location, owner, tickMultiplier, null);
+    }
+
+    public OrbPassenger(Location location, WarlordsEntity owner, int tickMultiplier, @Nullable Consumer<ArmorStand> standConsumer) {
         super(((CraftWorld) location.getWorld()).getHandle(),
                 location.getX(),
                 location.getY() + 2,
@@ -33,6 +39,9 @@ public class OrbPassenger extends ExperienceOrb {
         ArmorStand orbStand = Utils.spawnArmorStand(location.clone().add(0, 1.5, 0), armorStand -> {
             armorStand.setGravity(true);
             armorStand.addPassenger(spawn(location).getBukkitEntity());
+            if (standConsumer != null) {
+                standConsumer.accept(armorStand);
+            }
         });
         for (WarlordsEntity warlordsEntity : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
             if (warlordsEntity.getEntity() instanceof Player player) {

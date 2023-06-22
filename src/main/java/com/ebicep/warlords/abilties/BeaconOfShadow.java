@@ -52,7 +52,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
 
     @Override
     public String getAbbreviation() {
-        return "IMPAIR BEACON";
+        return "BEACON";
     }
 
     @Override

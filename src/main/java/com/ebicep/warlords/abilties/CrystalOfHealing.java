@@ -10,10 +10,9 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -52,7 +51,7 @@ public class CrystalOfHealing extends AbstractAbility {
 
         Location groundLocation = LocationUtils.getGroundLocation(player);
 
-        Crystal crystal = new Crystal(((CraftWorld) groundLocation.getWorld()).getHandle(), groundLocation, wp);
+        Crystal crystal = new Crystal(groundLocation, wp);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "CRYSTAL",
@@ -68,6 +67,10 @@ public class CrystalOfHealing extends AbstractAbility {
                 false,
                 (duration + lifeSpan) * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 20 == 0) {
+                        crystal.getArmorStand().customName(Component.text(ticksLeft / 20, NamedTextColor.GREEN));
+                        //crystal.getTextDisplay().text(Component.text(ticksLeft / 20, NamedTextColor.GOLD));
+                    }
                     if (ticksElapsed < 40) {
                         return; // prevent instant pickup
                     }
@@ -88,9 +91,25 @@ public class CrystalOfHealing extends AbstractAbility {
 
     static class Crystal extends OrbPassenger {
 
-        public Crystal(ServerLevel world, Location location, WarlordsEntity owner) {
-            super(location, owner, 1);
+        private TextDisplay textDisplay;
+
+        public Crystal(Location location, WarlordsEntity owner) {
+            super(location, owner, 1, stand -> {
+                stand.setCustomNameVisible(true);
+            });
+//            textDisplay = location.getWorld().spawn(location.clone().add(0, 2.25, 0), TextDisplay.class, display -> {
+//                //display.text();
+//            });
         }
 
+        @Override
+        public void remove() {
+            super.remove();
+//            textDisplay.remove();
+        }
+
+        public TextDisplay getTextDisplay() {
+            return textDisplay;
+        }
     }
 }

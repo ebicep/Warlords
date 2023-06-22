@@ -15,12 +15,10 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -267,7 +265,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
         Location location = victim.getLocation();
         Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
 
-        OrbOfLife orb = new OrbOfLife(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown.getFrom(), orbTickMultiplier, orbsOfLife);
+        OrbOfLife orb = new OrbOfLife(spawnLocation, cooldown.getFrom(), orbTickMultiplier, orbsOfLife);
         orbsOfLife.getSpawnedOrbs().add(orb);
 
         orbsOfLife.addOrbProduced(1);
@@ -332,7 +330,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
         private final OrbsOfLife cooldown;
         private WarlordsEntity playerToMoveTowards = null;
 
-        public OrbOfLife(ServerLevel world, Location location, WarlordsEntity owner, int tickMultiplier, OrbsOfLife cooldown) {
+        public OrbOfLife(Location location, WarlordsEntity owner, int tickMultiplier, OrbsOfLife cooldown) {
             super(location, owner, tickMultiplier);
             this.cooldown = cooldown;
         }
