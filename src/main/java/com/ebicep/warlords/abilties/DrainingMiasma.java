@@ -53,8 +53,7 @@ public class DrainingMiasma extends AbstractAbility implements Duration {
                                .append(Component.text("25%", NamedTextColor.YELLOW))
                                .append(Component.text(" for "))
                                .append(Component.text("3", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds on cast."))
-                               .append(Component.text("Has a radius of "))
+                               .append(Component.text(" seconds on cast. Has a radius of "))
                                .append(Component.text(enemyHitRadius, NamedTextColor.GOLD))
                                .append(Component.text(" blocks."));
                                .append(Component.text("\n\nEach enemy hit will be afflicted with "))
