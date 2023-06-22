@@ -67,7 +67,8 @@ public class DivineBlessing extends AbstractAbility implements Duration {
         Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1.5f);
 
         DivineBlessing tempDivineBlessing = new DivineBlessing();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+        int maxStacks = MercifulHex.getFromHex(wp).getMaxStacks();
+        wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessing>(
                 name,
                 "BLESS",
                 DivineBlessing.class,
@@ -80,12 +81,12 @@ public class DivineBlessing extends AbstractAbility implements Duration {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
                         PlayerFilter.playingGame(wp.getGame())
-                                    .teammatesOf(wp)
+                                    .teammatesOfExcludingSelf(wp)
                                     .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class)
                                             .filterCooldownFrom(wp)
                                             .filterCooldownClass(MercifulHex.class)
                                             .stream()
-                                            .count() >= MercifulHex.getFromHex(wp).getMaxStacks())
+                                            .count() >= maxStacks)
                                     .forEach(teammate -> {
                                         teammate.getCooldownManager().removeCooldownByObject(tempDivineBlessing);
                                         teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -126,6 +127,44 @@ public class DivineBlessing extends AbstractAbility implements Duration {
                     }
                 })
         ) {
+
+            public boolean hasMaxStacks() {
+                return new CooldownFilter<>(wp, RegularCooldown.class)
+                        .filterCooldownFrom(wp)
+                        .filterCooldownClass(MercifulHex.class)
+                        .stream()
+                        .count() >= maxStacks;
+            }
+
+            @Override
+            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                if (hasMaxStacks()) {
+                    return currentHealValue * (1 + hexHealingBonus / 100f);
+                } else {
+                    return currentHealValue;
+                }
+            }
+
+            @Override
+            public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (hasMaxStacks()) {
+                    if (wp.getHealth() - currentDamageValue < 0) {
+                        float healAmount = wp.getMaxHealth() * (lethalDamageHealing / 100f);
+                        wp.addHealingInstance(
+                                wp,
+                                name,
+                                healAmount,
+                                healAmount,
+                                0,
+                                100,
+                                false,
+                                false
+                        );
+                    }
+                }
+                return currentDamageValue;
+            }
+
             @Override
             protected Listener getListener() {
                 return new Listener() {
