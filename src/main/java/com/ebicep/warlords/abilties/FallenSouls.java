@@ -43,7 +43,10 @@ public class FallenSouls extends AbstractPiercingProjectile {
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by "))
                                .append(Component.text("2", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+                               .append(Component.text(" seconds."))
+                               .append(Component.text("\n\nHas a maximum range of "))
+                               .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));;
     }
 
     @Override
