@@ -71,7 +71,7 @@ public class Sanctuary extends AbstractAbility implements Duration {
                     @EventHandler
                     public void onDamageHeal(WarlordsDamageHealingEvent event) {
                         WarlordsEntity teammate = event.getWarlordsEntity();
-                        if (teammate.isEnemy(wp)) {
+                        if (teammate.isEnemy(wp) || teammate.equals(wp)) {
                             return;
                         }
                         int hexStacks = (int) new CooldownFilter<>(teammate, RegularCooldown.class)
