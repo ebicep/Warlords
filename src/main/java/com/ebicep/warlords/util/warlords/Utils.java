@@ -85,6 +85,10 @@ public class Utils {
 
     private static final Set<Material> TRANSPARENT = Sets.newHashSet(Material.AIR, Material.CAVE_AIR, Material.VOID_AIR);
 
+    public static Location getTargetLocation(Player player, int maxDistance) {
+        return getTargetBlock(player, maxDistance).getLocation();
+    }
+
     /**
      * see org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity#getLineOfSight(Set, int, int)}
      * this accounts for banners
@@ -116,10 +120,6 @@ public class Utils {
         return blocks.get(0);
     }
 
-    public static Location getTargetLocation(Player player, int maxDistance) {
-        return getTargetBlock(player, maxDistance).getLocation();
-    }
-
     public static boolean isProjectile(String ability) {
         return ability.equals("Fireball") ||
                 ability.equals("Frostbolt") ||
@@ -127,7 +127,10 @@ public class Utils {
                 ability.equals("Lightning Bolt") ||
                 ability.equals("Flame Burst") ||
                 ability.equals("Fallen Souls") ||
-                ability.equals("Soothing Elixir");
+                ability.equals("Soothing Elixir") ||
+                ability.equals("Poisonous Hex") ||
+                ability.equals("Fortifying Hex") ||
+                ability.equals("Merciful Hex");
     }
 
     public static boolean isPrimaryProjectile(String ability) {
@@ -135,7 +138,10 @@ public class Utils {
                 ability.equals("Frostbolt") ||
                 ability.equals("Water Bolt") ||
                 ability.equals("Lightning Bolt") ||
-                ability.equals("Fallen Souls");
+                ability.equals("Fallen Souls") ||
+                ability.equals("Poisonous Hex") ||
+                ability.equals("Fortifying Hex") ||
+                ability.equals("Merciful Hex");
     }
 
     public static ItemStack getWoolFromIndex(int index) {
