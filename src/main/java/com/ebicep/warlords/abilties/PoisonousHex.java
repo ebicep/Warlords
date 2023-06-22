@@ -162,7 +162,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                             EnumSet.of(InstanceFlags.NO_DISMOUNT)
                     );
                 },
-                tickDuration * 2, // base add 20 to delay damage by a second
+                tickDuration * 2,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
                         to.addDamageInstance(

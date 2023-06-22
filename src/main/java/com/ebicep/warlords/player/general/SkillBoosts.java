@@ -1227,7 +1227,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof MercifulHex mercifulHex) {
                     mercifulHex.setDotMinHeal(mercifulHex.getDotMinHeal() * 1.35f);
                     mercifulHex.setDotMaxHeal(mercifulHex.getDotMaxHeal() * 1.35f);
-                    mercifulHex.setTickDuration(mercifulHex.getTickDuration() + 40);
+                    mercifulHex.setTickDuration(mercifulHex.getTickDuration() + 20);
                 }
             }
     ),
