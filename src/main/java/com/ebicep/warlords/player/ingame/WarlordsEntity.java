@@ -590,8 +590,9 @@ public abstract class WarlordsEntity {
             intervenedBy.getEntity().playEffect(EntityEffect.HURT);
             EffectUtils.playParticleLinkAnimation(getLocation(), intervenedBy.getLocation(), 255, 0, 0, 2);
             // Remove horses.
-            removeHorse();
-            intervenedBy.removeHorse();
+            if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
+                removeHorse();
+            }
 
             appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Intervene From Attacker");
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
@@ -751,7 +752,9 @@ public abstract class WarlordsEntity {
                 if (!isMeleeHit) {
                     playHitSound(attacker);
                 }
-                removeHorse();
+                if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
+                    removeHorse();
+                }
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
@@ -792,7 +795,9 @@ public abstract class WarlordsEntity {
                 //if (isEnemy(attacker)) {
                 hitBy.put(attacker, 10);
                 cancelHealingPowerUp();
-                removeHorse();
+                if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
+                    removeHorse();
+                }
 
                 float finalDamageValue = damageValue;
                 doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
@@ -1873,14 +1878,6 @@ public abstract class WarlordsEntity {
         this.health = this.maxBaseHealth;
     }
 
-    public int getRegenTickTimer() {
-        return regenTickTimer;
-    }
-
-    public void setRegenTickTimer(int regenTickTimer) {
-        this.regenTickTimer = regenTickTimer;
-    }
-
     public void resetRegenTimer() {
         regenTickTimer = (int) (200 * regenTickTimerModifier);
     }
@@ -2037,22 +2034,6 @@ public abstract class WarlordsEntity {
         this.horseCooldown = horseCooldown;
     }
 
-    public int getFlagDropCooldown() {
-        return flagDropCooldown;
-    }
-
-    public void setFlagDropCooldown(int flagDropCooldown) {
-        this.flagDropCooldown = flagDropCooldown;
-    }
-
-    public int getFlagPickCooldown() {
-        return flagPickCooldown;
-    }
-
-    public void setFlagPickCooldown(int flagPickCooldown) {
-        this.flagPickCooldown = flagPickCooldown;
-    }
-
     public int getHitCooldown() {
         return hitCooldown;
     }
@@ -2067,14 +2048,6 @@ public abstract class WarlordsEntity {
 
     public void addAssist() {
         this.minuteStats.addAssist();
-    }
-
-    public LinkedHashMap<WarlordsEntity, Integer> getHitBy() {
-        return hitBy;
-    }
-
-    public LinkedHashMap<WarlordsEntity, Integer> getHealedBy() {
-        return healedBy;
     }
 
     public void addDeath() {
@@ -2861,6 +2834,43 @@ public abstract class WarlordsEntity {
         getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
     }
 
+    public int getFlagDropCooldown() {
+        return flagDropCooldown;
+    }
+
+    public void setFlagDropCooldown(int flagDropCooldown) {
+        this.flagDropCooldown = flagDropCooldown;
+    }
+
+    public int getFlagPickCooldown() {
+        return flagPickCooldown;
+    }
+
+    public int getRegenTickTimer() {
+        return regenTickTimer;
+    }
+
+    public void setRegenTickTimer(int regenTickTimer) {
+        this.regenTickTimer = regenTickTimer;
+    }
+
+    @Nonnull
+    public PlayerStatisticsMinute getMinuteStats() {
+        return this.minuteStats;
+    }
+
+    public LinkedHashMap<WarlordsEntity, Integer> getHitBy() {
+        return hitBy;
+    }
+
+    public LinkedHashMap<WarlordsEntity, Integer> getHealedBy() {
+        return healedBy;
+    }
+
+    public void setFlagPickCooldown(int flagPickCooldown) {
+        this.flagPickCooldown = flagPickCooldown;
+    }
+
     public void onRemove() {
         if (!(getEntity() instanceof Player)) {
             getEntity().remove();
@@ -2874,11 +2884,6 @@ public abstract class WarlordsEntity {
         });
         getSecondStats().getEntries().clear();
         getCooldownManager().clearAllCooldowns();
-    }
-
-    @Nonnull
-    public PlayerStatisticsMinute getMinuteStats() {
-        return this.minuteStats;
     }
 
     public PlayerStatisticsSecond getSecondStats() {

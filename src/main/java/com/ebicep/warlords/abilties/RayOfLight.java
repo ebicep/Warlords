@@ -21,13 +21,13 @@ public class RayOfLight extends AbstractBeam {
     private int healingIncrease = 100;
 
     public RayOfLight() {
-        super("Ray of Light", 536, 724, 10, 10, 20, 175, 30, 30, true);
+        super("Ray of Light", 511, 689, 10, 10, 20, 175, 30, 30, true);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Unleash a concentrated beam of holy light, healing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                                .append(Component.text(
                                        " health to all allies hit. If the target is affected by the max stacks of Merciful Hex, remove all stacks and increase the healing of Ray of Light by "))
                                .append(Component.text(healingIncrease + "%", NamedTextColor.GREEN))

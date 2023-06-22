@@ -43,8 +43,8 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
     private int subsequentReduction = 30;
     private int minSelfHeal = 263;
     private int maxSelfHeal = 354;
-    private int dotMinHeal = 34;
-    private int dotMaxHeal = 46;
+    private float dotMinHeal = 34;
+    private float dotMaxHeal = 46;
     private int maxStacks = 3;
     private int tickDuration = 40;
     private double hitBox = 3.5;
@@ -70,10 +70,10 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
                                .append(Component.text(" stack of Merciful Hex. Each stack of Merciful Hex heals "))
                                .append(formatRangeHealing(dotMinHeal, dotMaxHeal))
                                .append(Component.text(" health every "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text("seconds for "))
-                               .append(Component.text("2", NamedTextColor.GREEN))
-                               .append(Component.text(" times. Stacks up to"))
+                               .append(Component.text(format(tickDuration / 10f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Stacks up to"))
                                .append(Component.text(maxStacks, NamedTextColor.BLUE))
                                .append(Component.text(" times.\n\nHas a maximum range of "))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
@@ -300,5 +300,21 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public float getDotMinHeal() {
+        return dotMinHeal;
+    }
+
+    public void setDotMinHeal(float dotMinHeal) {
+        this.dotMinHeal = dotMinHeal;
+    }
+
+    public float getDotMaxHeal() {
+        return dotMaxHeal;
+    }
+
+    public void setDotMaxHeal(float dotMaxHeal) {
+        this.dotMaxHeal = dotMaxHeal;
     }
 }

@@ -39,7 +39,9 @@ public class ProtectorsStrike extends AbstractStrike {
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" damage and healing two nearby allies for "))
+                               .append(Component.text(" damage and healing "))
+                               .append(Component.text(maxAllies, NamedTextColor.GREEN))
+                               .append(Component.text(" nearby allies for "))
                                .append(Component.text(minConvert + "-" + maxConvert + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the damage done. Also heals yourself by "))
                                .append(Component.text("50-75%", NamedTextColor.GREEN))

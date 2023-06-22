@@ -47,7 +47,7 @@ public class HeartToHeart extends AbstractAbility {
                                .append(Component.text(" for "))
                                .append(Component.text(vindDuration, NamedTextColor.GOLD))
                                .append(Component.text(" seconds, granting immunity to de-buffs. You are healed for "))
-                               .append(Component.text(healthRestore, NamedTextColor.GREEN))
+                               .append(Component.text(format(healthRestore), NamedTextColor.GREEN))
                                .append(Component.text(" health after reaching your ally."))
                                .append(Component.text("\nHeart to Heart's range is greatly reduced when holding a flag.", NamedTextColor.GRAY));
 

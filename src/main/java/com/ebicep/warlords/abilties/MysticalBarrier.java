@@ -134,4 +134,12 @@ public class MysticalBarrier extends AbstractAbility implements Duration {
     public void setRuneTimerIncrease(float runeTimerIncrease) {
         this.runeTimerIncrease = runeTimerIncrease;
     }
+
+    public int getShieldMaxHealth() {
+        return shieldMaxHealth;
+    }
+
+    public void setShieldMaxHealth(int shieldMaxHealth) {
+        this.shieldMaxHealth = shieldMaxHealth;
+    }
 }

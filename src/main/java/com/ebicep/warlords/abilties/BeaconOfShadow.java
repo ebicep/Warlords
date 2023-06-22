@@ -41,7 +41,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
                         .append(Component.text(" block radius have their critical multiplier reduced to "))
                         .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
                         .append(Component.text(" and receive the Darkness effect for "))
-                        .append(Component.text(darknessTickDuration, NamedTextColor.GOLD))
+                        .append(Component.text(format(darknessTickDuration / 20f), NamedTextColor.GOLD))
                         .append(Component.text(" seconds. Only one beacon can be present on the field at once."));
     }
 

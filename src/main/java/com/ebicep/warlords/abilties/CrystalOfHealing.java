@@ -22,7 +22,7 @@ public class CrystalOfHealing extends AbstractAbility {
 
     private static final float RADIUS = 1.5f;
     private int duration = 20; // seconds
-    private int maxHeal = 1000;
+    private float maxHeal = 1200f;
     private int lifeSpan = 40; // seconds
 
     public CrystalOfHealing() {
@@ -34,7 +34,7 @@ public class CrystalOfHealing extends AbstractAbility {
         description = Component.text("Create a crystal of healing that absorbs surrounding light over ")
                                .append(Component.text(format(duration), NamedTextColor.GOLD))
                                .append(Component.text(" seconds, gradually increasing the amount of health it will restore to one ally when they absorb it, to a maximum of "))
-                               .append(Component.text(maxHeal, NamedTextColor.GREEN))
+                               .append(Component.text(format(maxHeal), NamedTextColor.GREEN))
                                .append(Component.text(" health. The crystal of healing has a lifespan of "))
                                .append(Component.text(format(lifeSpan), NamedTextColor.GOLD))
                                .append(Component.text(" seconds after its completion."));
@@ -87,6 +87,14 @@ public class CrystalOfHealing extends AbstractAbility {
         ));
 
         return true;
+    }
+
+    public float getMaxHeal() {
+        return maxHeal;
+    }
+
+    public void setMaxHeal(float maxHeal) {
+        this.maxHeal = maxHeal;
     }
 
     static class Crystal extends OrbPassenger {
