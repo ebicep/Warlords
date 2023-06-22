@@ -79,7 +79,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
                         name,
                         null,
                         BeaconOfShadow.class,
-                        this,
+                        beacon,
                         wp,
                         CooldownTypes.ABILITY,
                         cooldownManager -> {

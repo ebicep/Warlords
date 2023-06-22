@@ -2,13 +2,13 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.abilties.internal.OrbPassenger;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -16,7 +16,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.ExperienceOrb;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -25,7 +24,6 @@ import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -38,7 +36,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
 
     public int orbsProduced = 0;
 
-    private final List<Orb> spawnedOrbs = new ArrayList<>();
+    private final List<OrbOfLife> spawnedOrbs = new ArrayList<>();
     private final int floatingOrbRadius = 20;
     private int tickDuration = 280;
     private int orbTickMultiplier = 1;
@@ -99,17 +97,17 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-                    List<Orb> orbs = new ArrayList<>(tempOrbsOfLight.getSpawnedOrbs());
-                    orbs.forEach(Orb::remove);
+                    List<OrbPassenger> orbs = new ArrayList<>(tempOrbsOfLight.getSpawnedOrbs());
+                    orbs.forEach(OrbPassenger::remove);
                 },
                 false,
                 tickDuration,
                 orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty(),
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
-                    Iterator<Orb> itr = new ArrayList<>(orbsOfLife.getSpawnedOrbs()).iterator();
+                    Iterator<OrbOfLife> itr = new ArrayList<>(orbsOfLife.getSpawnedOrbs()).iterator();
                     while (itr.hasNext()) {
-                        OrbsOfLife.Orb orb = itr.next();
+                        OrbOfLife orb = itr.next();
                         Location orbPosition = orb.getArmorStand().getLocation();
                         WarlordsEntity teammateToHeal = orb.getPlayerToMoveTowards() != null ?
                                                         orb.getPlayerToMoveTowards() :
@@ -122,7 +120,6 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
                             orb.remove();
                             itr.remove();
 
-                            WarlordsEntity owner = orb.getOwner();
                             float orbHeal = tempOrbsOfLight.getMinDamageHeal();
                             // Increasing heal for low long orb lived for (up to +25%)
                             // 6.5 seconds = 130 ticks
@@ -132,7 +129,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
                                 orbHeal *= 1 + orb.getTicksLived() / 325f;
                             }
 
-                            teammateToHeal.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
+                            teammateToHeal.addHealingInstance(wp, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
                             Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
 
                             for (WarlordsEntity nearPlayer : PlayerFilter
@@ -141,7 +138,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
                                     .leastAliveFirst()
                                     .limit(2)
                             ) {
-                                nearPlayer.addHealingInstance(owner, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
+                                nearPlayer.addHealingInstance(wp, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
                                 Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
                             }
                         } else {
@@ -192,14 +189,14 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
                     //setting target player to move towards (includes self)
                     if (wp.isInPve()) {
                         tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                                .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
                                 .aliveTeammatesOf(wp)
                                 .leastAliveFirst()
                                 .findFirstOrNull()
                         ));
                     } else {
                         tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                                .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
                                 .aliveTeammatesOf(wp)
                                 .closestFirst(orb.getArmorStand().getLocation())
                                 .findFirstOrNull()
@@ -253,7 +250,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
         return true;
     }
 
-    public List<Orb> getSpawnedOrbs() {
+    public List<OrbOfLife> getSpawnedOrbs() {
         return spawnedOrbs;
     }
 
@@ -270,7 +267,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
         Location location = victim.getLocation();
         Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
 
-        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown, cooldown.getFrom(), orbTickMultiplier);
+        OrbOfLife orb = new OrbOfLife(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown.getFrom(), orbTickMultiplier, orbsOfLife);
         orbsOfLife.getSpawnedOrbs().add(orb);
 
         orbsOfLife.addOrbProduced(1);
@@ -307,7 +304,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
     }
 
     public boolean nearLocation(Location location) {
-        for (Orb orb : spawnedOrbs) {
+        for (OrbPassenger orb : spawnedOrbs) {
             double distance = orb.getArmorStand().getLocation().distanceSquared(location);
             if (distance < 1) {
                 return true;
@@ -330,81 +327,20 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
         this.tickDuration = tickDuration;
     }
 
-    public static class Orb extends ExperienceOrb {
+    static class OrbOfLife extends OrbPassenger {
 
-        private final ArmorStand armorStand;
-        private final PersistentCooldown<OrbsOfLife> cooldown;
-        private final int tickMultiplier;
-        private int ticksLived = 0;
+        private final OrbsOfLife cooldown;
         private WarlordsEntity playerToMoveTowards = null;
 
-        public Orb(ServerLevel world, Location location, PersistentCooldown<OrbsOfLife> cooldown, WarlordsEntity owner, int tickMultiplier) {
-            super(world, location.getX(), location.getY() + 2, location.getZ(), 2500, org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM, null);
+        public OrbOfLife(ServerLevel world, Location location, WarlordsEntity owner, int tickMultiplier, OrbsOfLife cooldown) {
+            super(location, owner, tickMultiplier);
             this.cooldown = cooldown;
-            ArmorStand orbStand = Utils.spawnArmorStand(location.clone().add(0, 1.5, 0), armorStand -> {
-                armorStand.setGravity(true);
-                armorStand.addPassenger(spawn(location).getBukkitEntity());
-            });
-            for (WarlordsEntity warlordsEntity : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
-                if (warlordsEntity.getEntity() instanceof Player player) {
-                    PacketUtils.removeEntityForPlayer(player, getId());
-                }
-            }
-            this.armorStand = orbStand;
-            this.tickMultiplier = tickMultiplier;
-            new GameRunnable(owner.getGame()) {
-
-                @Override
-                public void run() {
-                    if (!armorStand.isValid()) {
-                        this.cancel();
-                    } else {
-                        ticksLived += tickMultiplier;
-                    }
-                }
-            }.runTaskTimer(30, 0);
-        }
-
-        public Orb spawn(Location loc) {
-            ServerLevel w = ((CraftWorld) loc.getWorld()).getHandle();
-            //moveTo(loc.getX(), loc.getY(), loc.getZ());
-            w.addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
-            return this;
         }
 
         @Override
-        public void tick() {
-        }
-
-        // Makes it so they cannot be picked up
-        @Override
-        public void playerTouch(@Nonnull net.minecraft.world.entity.player.Player player) {
-        }
-
         public void remove() {
-            armorStand.remove();
-            getBukkitEntity().remove();
-            cooldown.getCooldownObject().getSpawnedOrbs().remove(this);
-        }
-
-        public ArmorStand getArmorStand() {
-            return armorStand;
-        }
-
-        public PersistentCooldown<OrbsOfLife> getCooldown() {
-            return cooldown;
-        }
-
-        public WarlordsEntity getOwner() {
-            return cooldown.getFrom();
-        }
-
-        public int getTicksLived() {
-            return ticksLived;
-        }
-
-        public int getTicksToLive() {
-            return 160 * tickMultiplier;
+            super.remove();
+            cooldown.getSpawnedOrbs().remove(this);
         }
 
         public WarlordsEntity getPlayerToMoveTowards() {
@@ -414,5 +350,7 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
         public void setPlayerToMoveTowards(WarlordsEntity playerToMoveTowards) {
             this.playerToMoveTowards = playerToMoveTowards;
         }
+
     }
+
 }
