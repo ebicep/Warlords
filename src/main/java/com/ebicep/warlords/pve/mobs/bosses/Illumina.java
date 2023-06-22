@@ -114,7 +114,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                     .entitiesAround(warlordsNPC, 7, 7, 7)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
+                we.addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
                 we.addDamageInstance(
                         warlordsNPC,
                         "Bramble",
@@ -133,7 +133,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                     .entitiesAround(warlordsNPC, 6, 6, 6)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
+                we.addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
                 Utils.addKnockback(name, loc, we, -2, 0.3);
             }
         }

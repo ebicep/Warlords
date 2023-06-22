@@ -49,7 +49,7 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
             ) {
                 EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), Particle.DRIP_LAVA);
                 we.subtractEnergy(5, true);
-                we.getSpeed().addSpeedModifier(warlordsNPC, "Blob Slowness", -20, 20);
+                we.addSpeedModifier(warlordsNPC, "Blob Slowness", -20, 20);
             }
         }
     }

@@ -2177,6 +2177,10 @@ public abstract class WarlordsEntity {
     }
 
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
+        if (modifier < 0 && this.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+            return () -> {
+            };
+        }
         AtomicReference<String> nameRef = new AtomicReference<>(name);
         AtomicInteger modifierRef = new AtomicInteger(modifier);
         AtomicInteger durationRef = new AtomicInteger(duration);

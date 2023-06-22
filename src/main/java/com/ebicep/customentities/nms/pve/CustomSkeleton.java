@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkeleton> {
 
-    private final PathfinderGoalFireAtPlayer pathfinderGoalFireAtPlayer = new PathfinderGoalFireAtPlayer(this, 30);
+    private final PathfinderGoalPredictTargetFutureLocationGoal pathfinderGoalPredictTargetFutureLocationGoal = new PathfinderGoalPredictTargetFutureLocationGoal(this);
     private boolean stunned;
 
     public CustomSkeleton(org.bukkit.World world) {
@@ -30,7 +30,7 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
         super(EntityType.SKELETON, serverLevel);
         resetAI();
         giveBaseAI(1.2, 1.0, 100);
-        this.goalSelector.addGoal(2, pathfinderGoalFireAtPlayer);
+        this.goalSelector.addGoal(2, pathfinderGoalPredictTargetFutureLocationGoal);
     }
 
     @Override
@@ -48,22 +48,17 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
         return !stunned;
     }
 
-    public PathfinderGoalFireAtPlayer getPathfinderGoalFireAtPlayer() {
-        return pathfinderGoalFireAtPlayer;
+    public PathfinderGoalPredictTargetFutureLocationGoal getPathfinderGoalFireAtPlayer() {
+        return pathfinderGoalPredictTargetFutureLocationGoal;
     }
 
-    static class PathfinderGoalFireAtPlayer extends Goal {
+    static class PathfinderGoalPredictTargetFutureLocationGoal extends Goal {
 
         private final Mob self;
+        private final AtomicInteger delay = new AtomicInteger((int) (Math.random() * 10)); //countdown for delay, starts at a random number so shots are not all fired at the same time
 
-        private final AtomicInteger fireTickDelay = new AtomicInteger(); //delay between shots
-
-        private final AtomicInteger ticks = new AtomicInteger(); //counter for ticks
-        private final AtomicInteger delay = new AtomicInteger((int) (Math.random() * 4)); //countdown for delay, starts at a random number between 0 and 4 so shots are not all fired at the same time
-
-        public PathfinderGoalFireAtPlayer(Mob self, int fireTickDelay) {
+        public PathfinderGoalPredictTargetFutureLocationGoal(Mob self) {
             this.self = self;
-            this.fireTickDelay.set(fireTickDelay);
         }
 
         @Override
@@ -72,13 +67,7 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
                 delay.getAndDecrement();
                 return false;
             }
-            ticks.getAndIncrement();
-            if (ticks.get() % fireTickDelay.get() == 0) {
-                delay.set(fireTickDelay.get());
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         @Override
@@ -88,13 +77,11 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
             }
             LivingEntity target = self.getTarget();
 
-            //Location targetLocation = target.getBukkitEntity().getLocation();
             WarlordsEntity warlordsEntitySelf = Warlords.getPlayer(self.getBukkitEntity());
             WarlordsEntity warlordsEntityTarget = Warlords.getPlayer(target.getBukkitEntity());
             if (warlordsEntitySelf != null && warlordsEntityTarget != null) {
                 Location lookAtLocation = lookAtLocation(warlordsEntitySelf.getLocation(), predictFutureLocation(warlordsEntitySelf, warlordsEntityTarget));
-                self.getBukkitEntity().teleport(lookAtLocation);
-                warlordsEntitySelf.getSpec().getWeapon().onActivate(warlordsEntitySelf, null);
+                self.getBukkitEntity().setRotation(lookAtLocation.getYaw(), lookAtLocation.getPitch());
             }
         }
 
@@ -183,13 +170,6 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
             return location;
         }
 
-        public int getFireTickDelay() {
-            return fireTickDelay.get();
-        }
-
-        public void setFireTickDelay(int fireTickDelay) {
-            this.fireTickDelay.set(fireTickDelay);
-        }
     }
 
 }

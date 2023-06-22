@@ -88,6 +88,17 @@ public enum SkullID {
     ENCHANTMENT_BOOK("N2RjOTg1YTdhNjhjNTc0ZjY4M2MwYjg1OTUyMWZlYjNmYzNkMmZmYTA1ZmEwOWRiMGJhZTQ0YjhhYzI5YjM4NSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/decoration/41807-google-home-mini-white
     GOOGLE_HOME_MINI("MTU5OWQ2YmJmNGZhMTg3MDk2ZjZlMDliNzZlZjZiMDc1M2NlYTMyOTBlOWQzZTZjY2E3MDdkNGYwODdlYjc1In19fQ"),
+    //https://minecraft-heads.com/custom-heads/miscellaneous/50056-fancy-cube
+    FANCY_CUBE("Nzk5OTA1MDc3NWRkNWE1MjQ3MzUyODRjYmJhYzQ1YWEzOTJjMGFjOGZhOTgwYmQyNGMzMzE1NTJiNjU0YjgyNCJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/miscellaneous/54932-fancy-cube
+    FANCY_CUBE_2("NzAwZTJmMjVlMDcyOGU4OTgxZjZiZDNlNDE2NTUzODBlMDBlN2U1NGI3NTU5ZDVmNDczNWU3MzkxY2RmMDJkMiJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/monsters/59288-sculk-monster
+    SCULK_MONSTER("YmE4ODk0MWJlYjE3MmFhODI1ZjQxMzZmNTg4Yzk5MDczZmRlZjg0M2QzN2QzN2Q2OWMyZDY2NWQ4OWM2NzJiMCJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/monsters/52340-wither-soul
+    WITHER_SOUL("NjIxNzg2OWVjMjA1ZDE3MjdmYzRjNjA1NWJkODY4Yjc4ODZmMmM4YWQ5OGZhNzA0Y2I3NmUxMWJkZDgwMjg3OSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/monsters/58154-seek-doors
+    SEEK_DOORS("ZWZmZWU5MDZlYjBlNWJhODAzZWJhOTk2ZDQxZTM5ZjM5ZjM3YzFjMDNmZTA0ODUzNjMwOTRlMDA4MDQyMjU5In19fQ=="),
+
 
     ;
 
