@@ -52,7 +52,7 @@ public class SoulSwitch extends AbstractAbility {
         } else {
             description = Component.text("Switch locations with an enemy, blinding them for ")
                                    .append(Component.text("1.5 ", NamedTextColor.GOLD))
-                                   .append(Component.text("seconds. Has an optimal range of "))
+                                   .append(Component.text("seconds. Has a range of "))
                                    .append(Component.text(radius, NamedTextColor.YELLOW))
                                    .append(Component.text("blocks. Soul Switch has low vertical range."));
         }

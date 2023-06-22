@@ -45,7 +45,9 @@ public class SpiritLink extends AbstractChain {
                                .append(Component.text("15%", NamedTextColor.RED))
                                .append(Component.text(" reduced damage for "))
                                .append(Component.text(damageReductionDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+                               .append(Component.text(" seconds.\n\nHas an initial cast range of "))
+                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
     }
 
     @Override

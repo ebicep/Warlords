@@ -62,7 +62,9 @@ public class Consecrate extends AbstractAbility implements Duration {
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" damage per second and take "))
                                .append(Component.text(strikeDamageBoost + "%", NamedTextColor.RED))
-                               .append(Component.text(" increased damage from your paladin strikes. Lasts "))
+                               .append(Component.text(" increased damage from your paladin strikes. Has a radius of "))
+                               .append(Component.text(format(radius)), NamedTextColor.YELLOW)
+                               .append(Component.text(" blocks. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
 
