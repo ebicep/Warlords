@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.TimerDebugAble;
@@ -333,7 +334,7 @@ public class DebugMenuGameOptions {
                             .get(),
                     (m, e) -> {
                         for (Option option : game.getOptions()) {
-                            if (option instanceof WinAfterTimeoutOption) {
+                            if (option instanceof WinAfterTimeoutOption || option instanceof RecordTimeElapsedOption) {
                                 SignGUI.open(player, new String[]{"", "^^^^^^^", "Enter new Time Left", "XX:XX"}, (p, lines) -> {
                                     String time = lines[0];
                                     try {
@@ -345,7 +346,11 @@ public class DebugMenuGameOptions {
                                         if (minutes < 0 || seconds < 0) {
                                             throw new Exception();
                                         }
-                                        ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
+                                        if (option instanceof WinAfterTimeoutOption) {
+                                            ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
+                                        } else {
+                                            ((RecordTimeElapsedOption) option).setTicksElapsed((minutes * 60 + seconds) * 20);
+                                        }
                                         sendDebugMessage(player, ChatColor.GREEN + "Set timer of game " + game.getGameId() + " to " + time, true);
                                     } catch (Exception exception) {
                                         p.sendMessage(ChatColor.RED + "Invalid time");

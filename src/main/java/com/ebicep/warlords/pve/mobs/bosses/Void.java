@@ -66,9 +66,10 @@ public class Void extends AbstractSkeleton implements BossMob {
         super.onSpawn(option);
 
         if (option.getDifficulty() == DifficultyIndex.EXTREME) {
-            warlordsNPC.setHealth(warlordsNPC.getHealth() - 500_000);
-            warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() - 500_000);
-            warlordsNPC.setMaxHealth(warlordsNPC.getMaxHealth() - 500_000);
+            float newHealth = 120000;
+            warlordsNPC.setMaxBaseHealth(newHealth);
+            warlordsNPC.setHealth(newHealth);
+            warlordsNPC.setMaxHealth(newHealth);
         }
 
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {

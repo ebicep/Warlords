@@ -73,4 +73,8 @@ public class RecordTimeElapsedOption implements Option {
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
+
+    public void setTicksElapsed(int ticksElapsed) {
+        this.ticksElapsed = ticksElapsed;
+    }
 }
