@@ -64,6 +64,13 @@ public class Void extends AbstractSkeleton implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+
+        if (option.getDifficulty() == DifficultyIndex.EXTREME) {
+            warlordsNPC.setHealth(warlordsNPC.getHealth() - 500_000);
+            warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() - 500_000);
+            warlordsNPC.setMaxHealth(warlordsNPC.getMaxHealth() - 500_000);
+        }
+
         for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
             if (we.getEntity() instanceof Player) {
                 PacketUtils.sendTitle(
