@@ -83,6 +83,9 @@ dependencies {
     }
     compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
     compileOnly("net.luckperms:api:5.4")
+    compileOnlyApi("LibsDisguises:LibsDisguises:10.0.35") {
+        exclude("org.spigotmc", "spigot")
+    }
 }
 
 publishing {

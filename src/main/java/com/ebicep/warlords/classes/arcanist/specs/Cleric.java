@@ -20,7 +20,7 @@ public class Cleric extends AbstractArcanist {
                 0,
                 new MercifulHex(),
                 new RayOfLight(),
-                new EnergySeerCleric(),
+                new CrystalOfHealing(),
                 new BeaconOfShadow(),
                 new DivineBlessing()
         );

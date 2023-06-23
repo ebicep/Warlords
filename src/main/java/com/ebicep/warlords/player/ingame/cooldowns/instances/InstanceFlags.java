@@ -5,5 +5,6 @@ public enum InstanceFlags {
     STRIKE_IN_CONS,
     AVENGER_WRATH_STRIKE,
     IGNORE_SELF_RES,
+    NO_DISMOUNT
 
 }

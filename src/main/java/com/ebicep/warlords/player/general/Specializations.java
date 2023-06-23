@@ -156,14 +156,14 @@ public enum Specializations {
             Sentinel::new,
             Component.text("SOMEHTING", NamedTextColor.GRAY),
             SpecType.TANK,
-            FORTIFYING_HEX, NOT_A_SHIELD, ENERGY_SEER_GUARDIAN, SPIRITUAL_SHIELD, SANCTUARY
+            FORTIFYING_HEX, GUARDIAN_BEAM, ENERGY_SEER_SENTINEL, MYSTICAL_BARRIER, SANCTUARY
     ),
     CLERIC("Cleric",
             List.of("cle"),
             Cleric::new,
             Component.text("SOMEHTING", NamedTextColor.GRAY),
             SpecType.HEALER,
-            MERCIFUL_HEX, BEACON_OF_LIGHT, ENERGY_SEER_PRIEST, BEACON_OF_IMPAIR, DIVINE_BLESSING
+            MERCIFUL_HEX, RAY_OF_LIGHT, CRYSTAL_OF_HEALING, BEACON_OF_SHADOW, DIVINE_BLESSING
     ),
 
     ;

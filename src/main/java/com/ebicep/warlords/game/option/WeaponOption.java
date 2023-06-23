@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -26,7 +27,7 @@ public class WeaponOption implements Option {
 
     public static void showPvEWeapon(WarlordsPlayer wp, Player player) {
         AbstractWeapon weapon = wp.getWeapon();
-        if (weapon == null) {
+        if (weapon == null || weapon.getSelectedWeaponSkin() == null) {
             return;
         }
         player.getInventory().setItem(0, new ItemBuilder(weapon.generateItemStack(false))
@@ -56,10 +57,14 @@ public class WeaponOption implements Option {
 
     public static void showMaxWeapon(WarlordsPlayer wp, Player player) {
         AbstractPlayerClass spec = wp.getSpec();
+        Weapons weaponSkin = wp.getCosmeticSettings().getWeaponSkin();
+        if (weaponSkin == null) {
+            return;
+        }
         player.getInventory().setItem(
                 0,
-                new ItemBuilder(wp.getCosmeticSettings().getWeaponSkin().getItem())
-                        .name(Component.text("Warlord's " + wp.getCosmeticSettings().getWeaponSkin().getName() + " of the " + spec.getName(),
+                new ItemBuilder(weaponSkin.getItem())
+                        .name(Component.text("Warlord's " + weaponSkin.getName() + " of the " + spec.getName(),
                                 NamedTextColor.GOLD
                         ))
                         .lore(
@@ -108,7 +113,11 @@ public class WeaponOption implements Option {
     public static void showWeaponStats(WarlordsPlayer wp, Player player) {
         AbstractPlayerClass spec = wp.getSpec();
         AbstractAbility weapon = spec.getWeapon();
-        ItemBuilder itemBuilder = new ItemBuilder(wp.getCosmeticSettings().getWeaponSkin().getItem())
+        Weapons weaponSkin = wp.getCosmeticSettings().getWeaponSkin();
+        if (weaponSkin == null) {
+            return;
+        }
+        ItemBuilder itemBuilder = new ItemBuilder(weaponSkin.getItem())
                 .name(Component.text(weapon.getName(), NamedTextColor.GREEN)
                                .append(Component.text(" - ", NamedTextColor.GRAY))
                                .append(Component.text(" Right-Click!", NamedTextColor.YELLOW)))

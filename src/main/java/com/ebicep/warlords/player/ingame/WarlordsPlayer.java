@@ -48,7 +48,7 @@ import java.util.*;
 
 import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
-public final class WarlordsPlayer extends WarlordsEntity implements Listener {
+public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public static final Set<UUID> STUNNED_PLAYERS = new HashSet<>();
 
@@ -72,8 +72,8 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         });
     }
 
-    private final AbilityTree abilityTree = new AbilityTree(this);
-    private CosmeticSettings cosmeticSettings;
+    protected final AbilityTree abilityTree = new AbilityTree(this);
+    protected CosmeticSettings cosmeticSettings;
 
     //    @Override
 //    public void setWasSneaking(boolean wasSneaking) {
@@ -82,8 +82,8 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
 //            ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Player sneak " + name + " - " + specClass);
 //        }
 //    }
-    private SkillBoosts skillBoost;
-    private AbstractWeapon weapon;
+    protected SkillBoosts skillBoost;
+    protected AbstractWeapon weapon;
 
     public WarlordsPlayer() {
         super();
@@ -231,23 +231,6 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     @Override
-    public void updateHealth() {
-        if (getEntity() instanceof Zombie) {
-            if (isDead()) {
-                getEntity().customName(Component.text(""));
-            } else {
-                getEntity().customName(Component.textOfChildren(
-                        Component.text("[", NamedTextColor.DARK_GRAY)
-                                 .append(Component.text(getSpec().getClassNameShort(), NamedTextColor.GOLD))
-                                 .append(Component.text("] ")),
-                        getColoredName(),
-                        Component.text(" " + Math.round(getHealth()) + "❤", NamedTextColor.RED)
-                ));
-            }
-        }
-    }
-
-    @Override
     public void updateInventory(boolean closeInventory) {
         if (entity instanceof Player player) {
 
@@ -338,6 +321,38 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public boolean isOnline() {
         return this.entity instanceof Player;
+    }
+
+    @Override
+    public void runEveryTick() {
+        super.runEveryTick();
+        int regenTickTimer = getRegenTickTimer();
+        setRegenTickTimer(regenTickTimer - 1);
+        if (regenTickTimer == 0) {
+            getHitBy().clear();
+        }
+        //negative regen tick timer means the player is regenning, cant check per second because not fine enough
+        if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
+            int healthToAdd = (int) (getMaxHealth() / 55.3);
+            setHealth(Math.max(getHealth(), Math.min(getHealth() + healthToAdd, getMaxHealth())));
+        }
+    }
+
+    @Override
+    public void updateHealth() {
+        if (getEntity() instanceof Zombie) {
+            if (isDead()) {
+                getEntity().customName(Component.text(""));
+            } else {
+                getEntity().customName(Component.textOfChildren(
+                        Component.text("[", NamedTextColor.DARK_GRAY)
+                                 .append(Component.text(getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                 .append(Component.text("] ")),
+                        getColoredName(),
+                        Component.text(" " + Math.round(getHealth()) + "❤", NamedTextColor.RED)
+                ));
+            }
+        }
     }
 
     @Override

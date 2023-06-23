@@ -23,7 +23,7 @@ import java.util.List;
 public class GuardianBeam extends AbstractBeam implements Duration {
 
     private float runeTimerIncrease = 1.5f;
-    private int allyShieldPercent = 20;
+    private int shieldPercent = 20;
     private int tickDuration = 120;
 
     public GuardianBeam() {
@@ -37,7 +37,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                                .append(Component.text(" damage damage and have their rune timers increased by "))
                                .append(Component.text(format(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. If an ally has max stacks of Fortifying Hex, remove all stacks and grant them a shield with "))
-                               .append(Component.text(allyShieldPercent + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(shieldPercent + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" of the ally’s maximum health and lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. If Guardian Beam hits a target and you have max stacks of Fortifying Hex, also receive the shield." +
@@ -83,7 +83,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                     name,
                     "SHIELD",
                     Shield.class,
-                    new Shield(name, wp.getMaxHealth() * (allyShieldPercent / 100f)),
+                    new Shield(name, wp.getMaxHealth() * (shieldPercent / 100f)),
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -126,5 +126,13 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public int getShieldPercent() {
+        return shieldPercent;
+    }
+
+    public void setShieldPercent(int shieldPercent) {
+        this.shieldPercent = shieldPercent;
     }
 }

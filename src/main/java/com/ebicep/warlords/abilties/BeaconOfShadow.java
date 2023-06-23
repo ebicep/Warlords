@@ -41,7 +41,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
                         .append(Component.text(" block radius have their critical multiplier reduced to "))
                         .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
                         .append(Component.text(" and receive the Darkness effect for "))
-                        .append(Component.text(darknessTickDuration, NamedTextColor.GOLD))
+                        .append(Component.text(format(darknessTickDuration / 20f), NamedTextColor.GOLD))
                         .append(Component.text(" seconds. Only one beacon can be present on the field at once."));
     }
 
@@ -52,7 +52,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
 
     @Override
     public String getAbbreviation() {
-        return "IMPAIR BEACON";
+        return "BEACON";
     }
 
     @Override
@@ -79,7 +79,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
                         name,
                         null,
                         BeaconOfShadow.class,
-                        this,
+                        beacon,
                         wp,
                         CooldownTypes.ABILITY,
                         cooldownManager -> {

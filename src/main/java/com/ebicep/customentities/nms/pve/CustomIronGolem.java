@@ -1,5 +1,6 @@
 package com.ebicep.customentities.nms.pve;
 
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -45,5 +46,10 @@ public class CustomIronGolem extends IronGolem implements CustomEntity<CustomIro
     @Override
     public boolean canCollideWithBukkit(@Nonnull Entity entity) {
         return !stunned;
+    }
+
+    @Override
+    public DisguiseType getDisguiseType() {
+        return DisguiseType.IRON_GOLEM;
     }
 }

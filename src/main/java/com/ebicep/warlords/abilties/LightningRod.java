@@ -105,7 +105,7 @@ public class LightningRod extends AbstractAbility {
     }
 
     private void damageIncreaseOnUse(WarlordsEntity we) {
-        we.getSpeed().addSpeedModifier(we, "Rod Speed", 40, 12 * 20, "BASE");
+        we.addSpeedModifier(we, "Rod Speed", 40, 12 * 20, "BASE");
         we.getCooldownManager().removeCooldown(LightningRod.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,

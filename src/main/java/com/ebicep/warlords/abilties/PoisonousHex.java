@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements Duration {
@@ -64,12 +66,12 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                                .append(Component.text(" damage every "))
                                .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text(" seconds for "))
-                               .append(Component.text("2", NamedTextColor.RED))
-                               .append(Component.text(" times. Stacks up to "))
+                               .append(Component.text(format(tickDuration / 10f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. Stacks up to "))
                                .append(Component.text(maxStacks, NamedTextColor.RED))
                                .append(Component.text(" times."))
                                .append(Component.text("\n\nHas an optimal range of "))
-                               .append(Component.text(maxDistance, NamedTextColor.YELLOW))
+                               .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
                                .append(Component.text("blocks."));
     }
 
@@ -122,7 +124,8 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                     (float) (maxDamageHeal * toReduceBy),
                     critChance,
                     critMultiplier,
-                    trueDamage
+                    trueDamage,
+                    EnumSet.of(InstanceFlags.NO_DISMOUNT)
             );
             givePoisonousHex(wp, enemy);
             if (projectile.getHit().size() >= 2) {
@@ -155,10 +158,11 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                             dotMaxDamage,
                             0,
                             100,
-                            trueDamage
+                            trueDamage,
+                            EnumSet.of(InstanceFlags.NO_DISMOUNT)
                     );
                 },
-                tickDuration * 2, // base add 20 to delay damage by a second
+                tickDuration * 2,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
                         to.addDamageInstance(
@@ -168,7 +172,8 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                                 dotMaxDamage,
                                 0,
                                 100,
-                                trueDamage
+                                trueDamage,
+                                EnumSet.of(InstanceFlags.NO_DISMOUNT)
                         );
                     }
                 })
@@ -247,7 +252,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
         super.onSpawn(projectile);
         ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
             armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.CRIMSON_FENCE));
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.GREEN_STAINED_GLASS));
             armorStand.setHeadPose(new EulerAngle(-Math.atan2(
                     projectile.getSpeed().getY(),
                     Math.sqrt(

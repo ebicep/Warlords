@@ -72,4 +72,11 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon {
         return healthBonus;
     }
 
+    public void setCritChance(float critChance) {
+        this.critChance = critChance;
+    }
+
+    public void setCritMultiplier(float critMultiplier) {
+        this.critMultiplier = critMultiplier;
+    }
 }
