@@ -214,7 +214,7 @@ public class ExperienceManager {
             Bukkit.getPluginManager().callEvent(new WarlordsGiveExperienceEvent(warlordsPlayer, expGain));
         } else {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME);
-            float multiplier = 1;
+            float multiplier = 1.5f;
             //pubs
 //            if (!isCompGame) {
 //                multiplier *= .1;
