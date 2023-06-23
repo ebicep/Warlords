@@ -308,7 +308,7 @@ public class Utils {
 
         @Override
         public @NotNull ItemStack getItemInMainHand() {
-            return null;
+            return hand;
         }
 
         @Override

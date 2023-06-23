@@ -101,12 +101,12 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
     private final Location deathLocation;
-    private final CooldownManager cooldownManager = new CooldownManager(this);
+    protected CooldownManager cooldownManager = new CooldownManager(this);
     private Vector currentVector;
     private Team team;
-    private float health;
-    private float maxHealth;
-    private float maxBaseHealth;
+    protected float health;
+    protected float maxHealth;
+    protected float maxBaseHealth;
     private int regenTickTimer;
     private float regenTickTimerModifier = 1;
     private int respawnTickTimer = -1;

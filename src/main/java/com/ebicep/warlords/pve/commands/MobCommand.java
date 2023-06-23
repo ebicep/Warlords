@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.mobs.Mobs;
@@ -20,6 +21,7 @@ import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -178,6 +180,30 @@ public class MobCommand extends BaseCommand {
                                  .append(Component.text(ai, NamedTextColor.YELLOW))
                                  .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs"))
                 );
+                return;
+            }
+        }
+    }
+
+    @Subcommand("fakeplay")
+    public void fakePlayer(@Conditions("requireGame:gamemode=PVE") Player player) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        for (Option option : game.getOptions()) {
+            if (option instanceof PveOption pveOption) {
+                pveOption.getMobs()
+                         .stream()
+                         .map(AbstractMob::getWarlordsNPC)
+                         .findFirst()
+                         .ifPresent(warlordsNPC -> {
+                             ChatChannels.sendDebugMessage(player, Component.text(warlordsNPC + " - " + warlordsNPC.getLocation(), NamedTextColor.GREEN));
+                             AbstractMob<?> mob = warlordsNPC.getMob();
+                             mob.getLivingEntity().remove();
+                             WarlordsPlayerDisguised playerDisguised = new WarlordsPlayerDisguised(player, warlordsNPC);
+                             Warlords.getPlayers().put(player.getUniqueId(), playerDisguised);
+                             game.getPlayers().put(player.getUniqueId(), warlordsNPC.getTeam());
+                             player.setGameMode(GameMode.ADVENTURE);
+                             player.teleport(warlordsNPC.getLocation());
+                         });
                 return;
             }
         }

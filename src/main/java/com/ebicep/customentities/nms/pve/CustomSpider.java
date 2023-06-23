@@ -1,5 +1,6 @@
 package com.ebicep.customentities.nms.pve;
 
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -47,34 +48,9 @@ public class CustomSpider extends Spider implements CustomEntity<CustomSpider> {
         this.stunned = stunned;
     }
 
-//    static class PathfinderGoalSpiderMeleeAttack extends PathfinderGoalMeleeAttack {
-//        public PathfinderGoalSpiderMeleeAttack(EntitySpider entityspider, Class<? extends Entity> oclass) {
-//            super(entityspider, oclass, 1.0, true);
-//        }
-//
-//        public boolean b() {
-//            float f = this.b.c(1.0F);
-//            if (f >= 0.5F && this.b.bc().nextInt(100) == 0) { //something with light level, cant attack in daylight
-//                this.b.setGoalTarget(null);
-//                return false;
-//            } else {
-//                return super.b();
-//            }
-//        }
-//
-//        protected double a(LivingEntity entityliving) {
-//            return (double) (4.0F + entityliving.width);
-//        }
-//    }
-//
-//    static class PathfinderGoalSpiderNearestAttackableTarget<T extends LivingEntity> extends PathfinderGoalNearestAttackableTarget<T> {
-//        public PathfinderGoalSpiderNearestAttackableTarget(EntitySpider entityspider, Class<T> oclass) {
-//            super(entityspider, oclass, true);
-//        }
-//
-//        public boolean a() {
-//            float f = this.e.c(1.0F); //something with light level, cant attack in daylight
-//            return !(f >= 0.5F) && super.a();
-//        }
-//    }
+    @Override
+    public DisguiseType getDisguiseType() {
+        return DisguiseType.SPIDER;
+    }
+
 }

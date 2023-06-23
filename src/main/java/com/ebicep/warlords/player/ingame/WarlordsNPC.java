@@ -60,8 +60,11 @@ public final class WarlordsNPC extends WarlordsEntity {
     private float maxMeleeDamage;
     private AbstractMob<?> mob;
     private int stunTicks;
-
     private Component mobNamePrefix = Component.empty();
+
+    public Component getMobNamePrefix() {
+        return mobNamePrefix;
+    }
 
     public WarlordsNPC(
             UUID uuid,

@@ -1,5 +1,6 @@
 package com.ebicep.customentities.nms.pve;
 
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -44,5 +45,10 @@ public class CustomWolf extends Wolf implements CustomEntity<CustomWolf> {
     @Override
     public void setStunned(boolean stunned) {
         this.stunned = stunned;
+    }
+
+    @Override
+    public DisguiseType getDisguiseType() {
+        return DisguiseType.WOLF;
     }
 }

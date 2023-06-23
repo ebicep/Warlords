@@ -21,10 +21,7 @@ import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
-import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.*;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.PlayerNameInstance;
 import com.ebicep.warlords.sr.SRCalculator;
@@ -249,6 +246,10 @@ public class PlayingState implements State, TimerDebugAble {
         this.getGame().forEachOfflineWarlordsPlayer((player, team) -> {
             WarlordsEntity otherPlayer = Warlords.getPlayer(player);
             if (otherPlayer == null) {
+                return;
+            }
+            if (otherPlayer instanceof WarlordsPlayerDisguised) {
+
                 return;
             }
             String name = otherPlayer.getName();
