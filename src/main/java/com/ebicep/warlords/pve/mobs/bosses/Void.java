@@ -111,13 +111,14 @@ public class Void extends AbstractSkeleton implements BossMob {
         }
 
         long spawnAmount = 2 * playerCount;
-        if (option.getDifficulty() == DifficultyIndex.EXTREME) {
+        DifficultyIndex difficulty = option.getDifficulty();
+        if (difficulty == DifficultyIndex.EXTREME) {
             spawnAmount--;
         }
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !timedDamageTrigger) {
             timedDamageTrigger = true;
             preventArmageddon = true;
-            timedDamage(option, playerCount, 15000, 11);
+            timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 13000 : 15000, 11);
             for (int i = 0; i < spawnAmount; i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }
@@ -132,7 +133,7 @@ public class Void extends AbstractSkeleton implements BossMob {
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !timedDamageTriggerTwo) {
             timedDamageTriggerTwo = true;
             preventArmageddon = true;
-            timedDamage(option, playerCount, 25000, 16);
+            timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 21000 : 25000, 16);
             for (int i = 0; i < spawnAmount; i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }
