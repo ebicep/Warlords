@@ -1,19 +1,18 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.FortifyingHex;
+import com.ebicep.warlords.abilties.GuardianBeam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
+public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-    float energyCost = ability.getEnergyCost();
-    float hitbox = ability.getPlayerHitbox();
-    double projectileSpeed = ability.getProjectileSpeed();
+    float cooldown = ability.getCooldown();
+    double maxDistance = ability.getMaxDistance();
 
-    public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
+    public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -45,52 +44,45 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+20% Damage\n+50% Projectile speed",
+                "+20% Damage",
                 20000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.2f);
                     ability.setMaxDamageHeal(maxDamage * 1.2f);
-                    ability.setProjectileSpeed(projectileSpeed * 1.5f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-2.5 Energy cost\n+0.25 Block hit radius",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 2.5f);
-                    ability.setPlayerHitbox(hitbox + 0.25f);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
-
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-5 Energy cost\n+0.5 Block hit radius",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 5);
-                    ability.setPlayerHitbox(hitbox + 0.5f);
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
-
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-7.5 Energy cost\n+0.75 Block hit radius",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 7.5f);
-                    ability.setPlayerHitbox(hitbox + 0.75f);
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
-
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-10 Energy cost\n+1 Block hit radius",
+                "-20% Cooldown reduction\n+15 Block range",
                 20000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 10);
-                    ability.setPlayerHitbox(hitbox + 1f);
+                    ability.setCooldown(cooldown * 0.8f);
+                    ability.setMaxDistance(maxDistance + 15);
                 }
         ));
 

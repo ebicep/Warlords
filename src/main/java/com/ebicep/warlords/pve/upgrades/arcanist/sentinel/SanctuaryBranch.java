@@ -1,82 +1,81 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.EnergySeerSentinel;
+import com.ebicep.warlords.abilties.Sanctuary;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class EnergySeerBranchGuardian extends AbstractUpgradeBranch<EnergySeerSentinel> {
+public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
 
-    float healingMultiplier = ability.getHealingMultiplier();
-    int bonusDuration = ability.getBonusDuration();
+    float cooldown = ability.getCooldown();
+    int hexTickDurationIncrease = ability.getHexTickDurationIncrease();
 
-    public EnergySeerBranchGuardian(AbilityTree abilityTree, EnergySeerSentinel ability) {
+    public SanctuaryBranch(AbilityTree abilityTree, Sanctuary ability) {
         super(abilityTree, ability);
 
-
         treeA.add(new Upgrade(
-                "Alleviating - Tier I",
-                "+25% Healing",
+                "Zeal - Tier I",
+                "5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setHealingMultiplier(healingMultiplier + 0.25f);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviating - Tier II",
-                "+50% Healing",
+                "Zeal - Tier II",
+                "10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setHealingMultiplier(healingMultiplier + 0.5f);
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviating - Tier III",
-                "+75% Healing",
+                "Zeal - Tier III",
+                "15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setHealingMultiplier(healingMultiplier + 0.75f);
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviating - Tier IV",
-                "+100% Healing",
+                "Zeal - Tier IV",
+                "20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setHealingMultiplier(healingMultiplier + 1f);
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Chronos - Tier I",
-                "+0.5s Duration",
+                "+0.5s Hex duration",
                 5000,
                 () -> {
-                    ability.setBonusDuration(bonusDuration + 10);
+                    ability.setHexTickDurationIncrease(hexTickDurationIncrease + 10);
                 }
         ));
         treeB.add(new Upgrade(
                 "Chronos - Tier II",
-                "+1s Duration",
+                "+1s Hex duration",
                 10000,
                 () -> {
-                    ability.setBonusDuration(bonusDuration + 20);
+                    ability.setHexTickDurationIncrease(hexTickDurationIncrease + 20);
                 }
         ));
         treeB.add(new Upgrade(
                 "Chronos - Tier III",
-                "+1.5s Duration",
+                "+1.5s Hex duration",
                 15000,
                 () -> {
-                    ability.setBonusDuration(bonusDuration + 30);
+                    ability.setHexTickDurationIncrease(hexTickDurationIncrease + 30);
                 }
         ));
         treeB.add(new Upgrade(
                 "Chronos - Tier IV",
-                "+2s Duration",
+                "+2s Hex duration",
                 20000,
                 () -> {
-                    ability.setBonusDuration(bonusDuration + 40);
+                    ability.setHexTickDurationIncrease(hexTickDurationIncrease + 40);
                 }
         ));
 

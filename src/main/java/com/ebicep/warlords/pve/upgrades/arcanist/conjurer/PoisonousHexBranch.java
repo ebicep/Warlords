@@ -12,7 +12,6 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
     float energyCost = ability.getEnergyCost();
     double projectileSpeed = ability.getProjectileSpeed();
 
-
     public PoisonousHexBranch(AbilityTree abilityTree, PoisonousHex ability) {
         super(abilityTree, ability);
 
