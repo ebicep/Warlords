@@ -55,7 +55,7 @@ public class RayOfLight extends AbstractBeam {
         int playersHit = 0;
         for (WarlordsEntity teammate : PlayerFilter
                 .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
-                .aliveEnemiesOf(wp)
+                .aliveTeammatesOf(wp)
                 .excluding(projectile.getHit())
         ) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(teammate));
