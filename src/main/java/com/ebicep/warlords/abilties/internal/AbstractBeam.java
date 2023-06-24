@@ -51,20 +51,4 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile {
     }
 
     public abstract ItemStack getBeamItem();
-
-    @Nullable
-    @Override
-    protected String getActivationSound() {
-        return null;
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 0;
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 0;
-    }
 }

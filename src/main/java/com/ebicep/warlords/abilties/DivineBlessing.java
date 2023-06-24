@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -63,8 +65,27 @@ public class DivineBlessing extends AbstractAbility implements Duration {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "arcanist.divineblessing.activation", 2, 1.25f);
-        Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1.5f);
+        Utils.playGlobalSound(wp.getLocation(), "arcanist.divineblessing.activation", 2, 1.2f);
+        Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.6f);
+        EffectUtils.strikeLightning(wp.getLocation(), true);
+        new GameRunnable(wp.getGame()) {
+            double interval = 3;
+            @Override
+            public void run() {
+                interval -= 0.5;
+                EffectUtils.playCylinderAnimation(
+                        wp.getLocation(),
+                        1.5 + interval,
+                        70,
+                        255,
+                        70
+                );
+
+                if (interval <= 0) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 1);
 
         DivineBlessing tempDivineBlessing = new DivineBlessing();
         int maxStacks = MercifulHex.getFromHex(wp).getMaxStacks();
@@ -79,6 +100,20 @@ public class DivineBlessing extends AbstractAbility implements Duration {
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 10 == 0) {
+                        wp.getWorld().spawnParticle(
+                                Particle.CRIMSON_SPORE,
+                                wp.getLocation(),
+                                10,
+                                0.1,
+                                0.1,
+                                0.1,
+                                0.5,
+                                null,
+                                true
+                        );
+                    }
+
                     if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
                         PlayerFilter.playingGame(wp.getGame())
                                     .teammatesOfExcludingSelf(wp)
@@ -196,6 +231,8 @@ public class DivineBlessing extends AbstractAbility implements Duration {
                 PlayerFilter.playingGame(wp.getGame())
                             .teammatesOf(wp)
                             .forEach(teammate -> {
+                                teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.55f);
+                                teammate.playSound(teammate.getLocation(), "arcanist.divineblessing.impact", 0.2f, 1.75f);
                                 teammate.addHealingInstance(
                                         wp,
                                         name,

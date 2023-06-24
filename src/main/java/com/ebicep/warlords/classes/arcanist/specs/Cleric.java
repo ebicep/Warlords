@@ -12,7 +12,7 @@ public class Cleric extends AbstractArcanist {
 
     public Cleric() {
         super(
-                "Priest",
+                "Cleric",
                 5750,
                 355,
                 20,

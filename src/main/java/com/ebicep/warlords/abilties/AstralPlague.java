@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -49,6 +50,9 @@ public class AstralPlague extends AbstractAbility implements Duration {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
+
+        Utils.playGlobalSound(wp.getLocation(), "arcanist.astralplague.activation", 2, 1.2f);
+
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "ASTRAL",
