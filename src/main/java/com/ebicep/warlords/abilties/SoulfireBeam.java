@@ -5,7 +5,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -54,50 +53,27 @@ public class SoulfireBeam extends AbstractBeam {
     }
 
     @Override
-    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        WarlordsEntity wp = projectile.getShooter();
-        Location currentLocation = projectile.getCurrentLocation();
-
-        int playersHit = 0;
-        for (WarlordsEntity teammate : PlayerFilter
-                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
-                .aliveEnemiesOf(wp)
-                .excluding(projectile.getHit())
-        ) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(teammate));
-            playersHit++;
-            hitPlayer(teammate, wp);
-        }
-
-        return playersHit;
-    }
-
-    @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            hitPlayer(hit, wp);
-        }
-    }
-
-    private void hitPlayer(@Nonnull WarlordsEntity hit, WarlordsEntity wp) {
-        float minDamage = minDamageHeal;
-        float maxDamage = maxDamageHeal;
-        int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
-                .filterCooldownFrom(wp)
-                .filterCooldownClass(PoisonousHex.class)
-                .stream()
-                .count();
-        boolean hasAstral = wp.getCooldownManager().hasCooldown(AstralPlague.class);
-        if (hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks()) {
-            if (!hasAstral) {
-                hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
+            float minDamage = minDamageHeal;
+            float maxDamage = maxDamageHeal;
+            int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
+                    .filterCooldownFrom(wp)
+                    .filterCooldownClass(PoisonousHex.class)
+                    .stream()
+                    .count();
+            boolean hasAstral = wp.getCooldownManager().hasCooldown(AstralPlague.class);
+            if (hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks()) {
+                if (!hasAstral) {
+                    hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
+                }
+                minDamage *= 2;
+                maxDamage *= 2;
             }
-            minDamage *= 2;
-            maxDamage *= 2;
+            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier, hasAstral && hexStacks >= 3);
         }
-        hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier, hasAstral && hexStacks >= 3);
     }
 
     @Override

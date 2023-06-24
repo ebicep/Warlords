@@ -10,7 +10,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
     float cooldown = ability.getCooldown();
-    float hitbox = ability.getHitbox();
+    float hitbox = ability.getPlayerHitbox();
 
 
     public SoulfireBeamBranch(AbilityTree abilityTree, SoulfireBeam ability) {
@@ -83,7 +83,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.3f);
                     ability.setMaxDamageHeal(maxDamage * 1.3f);
-                    ability.setHitbox(hitbox + 2);
+                    ability.setPlayerHitbox(hitbox + 2);
                 }
         ));
 
