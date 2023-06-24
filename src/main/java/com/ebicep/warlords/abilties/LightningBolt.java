@@ -27,7 +27,7 @@ public class LightningBolt extends AbstractPiercingProjectile {
     private double hitbox = 3;
 
     public LightningBolt() {
-        super("Lightning Bolt", 228, 385, 0, 60, 20, 200, 2.5, 60, false);
+        super("Lightning Bolt", 261, 352, 0, 60, 20, 200, 2.5, 60, false);
     }
 
     @Override

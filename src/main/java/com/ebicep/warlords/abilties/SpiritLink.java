@@ -26,7 +26,7 @@ public class SpiritLink extends AbstractChain {
     private double damageReductionDuration = 4.5;
 
     public SpiritLink() {
-        super("Spirit Link", 236.25f, 446.25f, 8.61f, 40, 20, 175, 20, 10, 2);
+        super("Spirit Link", 290, 392, 8.61f, 40, 20, 175, 20, 10, 2);
     }
 
     @Override

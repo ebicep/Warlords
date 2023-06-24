@@ -30,11 +30,11 @@ public class ChainLightning extends AbstractChain implements Comparable<ChainLig
     private float maxDamageReduction = 30;
 
     public ChainLightning() {
-        super("Chain Lightning", 294, 575, 9.4f, 40, 20, 175, 20, 10, 3);
+        super("Chain Lightning", 370, 499, 9.4f, 40, 20, 175, 20, 10, 3);
     }
 
     public ChainLightning(int damageReduction) {
-        super("Chain Lightning", 294, 575, 9.4f, 40, 20, 175, 20, 10, 3);
+        super("Chain Lightning", 370, 499, 9.4f, 40, 20, 175, 20, 10, 3);
         this.damageReduction = damageReduction;
     }
 
