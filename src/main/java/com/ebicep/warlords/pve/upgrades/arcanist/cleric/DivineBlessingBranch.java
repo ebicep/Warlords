@@ -1,13 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.guardian;
+package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
 
-import com.ebicep.warlords.abilties.SoulfireBeam;
+import com.ebicep.warlords.abilties.DivineBlessing;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
+public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> {
 
-    public SoulfireBeamBranch(AbilityTree abilityTree, SoulfireBeam ability) {
+    public DivineBlessingBranch(AbilityTree abilityTree, DivineBlessing ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

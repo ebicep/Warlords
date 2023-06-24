@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -57,9 +58,34 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     }
 
     @Override
+    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
+        WarlordsEntity wp = projectile.getShooter();
+        Location currentLocation = projectile.getCurrentLocation();
+
+        int playersHit = 0;
+        for (WarlordsEntity we : PlayerFilter
+                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
+                .excluding(projectile.getHit())
+        ) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(we));
+            playersHit++;
+            hitPlayer(projectile, we, wp);
+        }
+
+        return playersHit;
+    }
+
+    @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
+        if (projectile.getHit().contains(hit)) {
+            return;
+        }
+        hitPlayer(projectile, hit, wp);
+        projectile.getHit().add(hit);
+    }
 
+    private void hitPlayer(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, WarlordsEntity wp) {
         boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
         if (hit.isEnemy(wp)) {
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
@@ -69,7 +95,6 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         if (projectile.getHit().isEmpty()) {
             giveShield(wp, hasSanctuary);
         }
-        projectile.getHit().add(hit);
     }
 
     private void giveShield(WarlordsEntity wp, boolean hasSanctuary) {

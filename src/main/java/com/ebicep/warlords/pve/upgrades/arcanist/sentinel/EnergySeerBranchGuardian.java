@@ -1,13 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.priest;
+package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.DivineBlessing;
+import com.ebicep.warlords.abilties.EnergySeerSentinel;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> {
+public class EnergySeerBranchGuardian extends AbstractUpgradeBranch<EnergySeerSentinel> {
 
-    public DivineBlessingBranch(AbilityTree abilityTree, DivineBlessing ability) {
+    public EnergySeerBranchGuardian(AbilityTree abilityTree, EnergySeerSentinel ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

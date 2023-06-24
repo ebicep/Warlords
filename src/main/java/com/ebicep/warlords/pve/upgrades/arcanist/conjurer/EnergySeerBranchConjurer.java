@@ -7,72 +7,75 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerConjurer> {
 
+    float cooldown = ability.getCooldown();
+    int duration = ability.getTickDuration();
+
     public EnergySeerBranchConjurer(AbilityTree abilityTree, EnergySeerConjurer ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+15% Healing",
+                "Chronos - Tier I",
+                "+0.5s Duration",
                 5000,
                 () -> {
-
+                    ability.setTickDuration(duration + 10);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+30% Healing",
+                "Chronos - Tier II",
+                "+1s Duration",
                 10000,
                 () -> {
-
+                    ability.setTickDuration(duration + 20);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+45% Healing",
+                "Chronos - Tier III",
+                "+1.5s Duration",
                 15000,
                 () -> {
-
+                    ability.setTickDuration(duration + 30);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+60% Healing",
+                "Chronos - Tier IV",
+                "+2s Duration",
                 20000,
                 () -> {
-
+                    ability.setTickDuration(duration + 40);
                 }
         ));
 
         treeB.add(new Upgrade(
-                "Scope - Tier I",
-                "+1 Block rain radius",
+                "Zeal - Tier I",
+                "5% Cooldown reduction",
                 5000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier II",
-                "+2 Blocks rain radius",
+                "Zeal - Tier II",
+                "10% Cooldown reduction",
                 10000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier III",
-                "+3 Blocks rain radius",
+                "Zeal - Tier III",
+                "15% Cooldown reduction",
                 15000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier IV",
-                "+4 Blocks rain radius\n+4s Duration",
+                "Zeal - Tier IV",
+                "20% Cooldown reduction",
                 20000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 

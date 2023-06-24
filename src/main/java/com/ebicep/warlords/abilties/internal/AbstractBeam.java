@@ -12,6 +12,8 @@ import javax.annotation.Nonnull;
 
 public abstract class AbstractBeam extends AbstractPiercingProjectile {
 
+    protected float hitbox = 2.5f;
+
     public AbstractBeam(
             String name,
             float minDamageHeal,
@@ -26,11 +28,6 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile {
     ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, projectileSpeed, maxDistance, hitTeammates);
         this.maxTicks = 0;
-    }
-
-    @Override
-    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        return 0;
     }
 
     @Override
@@ -66,5 +63,13 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile {
     @Override
     protected float getSoundPitch() {
         return 0;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
     }
 }

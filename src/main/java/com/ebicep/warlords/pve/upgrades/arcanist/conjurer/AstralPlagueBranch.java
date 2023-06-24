@@ -7,72 +7,75 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
 
+    float cooldown = ability.getCooldown();
+    int tickDuration = ability.getTickDuration();
+
     public AstralPlagueBranch(AbilityTree abilityTree, AstralPlague ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+15% Healing",
+                "Zeal - Tier I",
+                "5% Cooldown reduction",
                 5000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+30% Healing",
+                "Zeal - Tier II",
+                "10% Cooldown reduction",
                 10000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+45% Healing",
+                "Zeal - Tier III",
+                "15% Cooldown reduction",
                 15000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+60% Healing",
+                "Zeal - Tier IV",
+                "20% Cooldown reduction",
                 20000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 
         treeB.add(new Upgrade(
-                "Scope - Tier I",
-                "+1 Block rain radius",
+                "Chronos - Tier I",
+                "+1s Duration",
                 5000,
                 () -> {
-
+                    ability.setTickDuration(tickDuration + 20);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier II",
-                "+2 Blocks rain radius",
+                "Chronos - Tier II",
+                "+2s Duration",
                 10000,
                 () -> {
-
+                    ability.setTickDuration(tickDuration + 40);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier III",
-                "+3 Blocks rain radius",
+                "Chronos - Tier III",
+                "+3s Duration",
                 15000,
                 () -> {
-
+                    ability.setTickDuration(tickDuration + 60);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier IV",
-                "+4 Blocks rain radius\n+4s Duration",
+                "Chronos - Tier IV",
+                "+4s Duration",
                 20000,
                 () -> {
-
+                    ability.setTickDuration(tickDuration + 80);
                 }
         ));
 

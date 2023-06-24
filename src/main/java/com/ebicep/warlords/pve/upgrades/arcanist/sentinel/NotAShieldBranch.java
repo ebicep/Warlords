@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.guardian;
+package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
 import com.ebicep.warlords.abilties.NotAShield;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;

@@ -1,13 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.priest;
+package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.BeaconOfShadow;
+import com.ebicep.warlords.abilties.MysticalBarrier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class BeaconOfImpairBranch extends AbstractUpgradeBranch<BeaconOfShadow> {
+public class SpiritualShieldBranch extends AbstractUpgradeBranch<MysticalBarrier> {
 
-    public BeaconOfImpairBranch(AbilityTree abilityTree, BeaconOfShadow ability) {
+    public SpiritualShieldBranch(AbilityTree abilityTree, MysticalBarrier ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

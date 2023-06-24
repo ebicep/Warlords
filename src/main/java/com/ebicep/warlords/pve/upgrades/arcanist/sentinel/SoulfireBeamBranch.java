@@ -1,13 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.guardian;
+package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.FortifyingHex;
+import com.ebicep.warlords.abilties.SoulfireBeam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
+public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
 
-    public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
+    public SoulfireBeamBranch(AbilityTree abilityTree, SoulfireBeam ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
