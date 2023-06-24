@@ -12,7 +12,10 @@ public enum TreasureHuntIndex {
             List.of(
                     Component.empty(),
                     Component.text("Max players: ", NamedTextColor.GRAY)
-                            .append(Component.text("2", NamedTextColor.GOLD)),
+                            .append(Component.text("2", NamedTextColor.YELLOW)),
+                    Component.empty(),
+                    Component.text("Entry Requirements:", NamedTextColor.GRAY),
+                    Component.text("- None ", NamedTextColor.GRAY),
                     Component.empty(),
                     Component.text("Traverse the hidden rooms as a duo", NamedTextColor.GRAY),
                     Component.text("to find the secrets from the last floor.", NamedTextColor.GRAY)
@@ -24,7 +27,13 @@ public enum TreasureHuntIndex {
             List.of(
                     Component.empty(),
                     Component.text("Max players: ", NamedTextColor.GRAY)
-                            .append(Component.text("2-4", NamedTextColor.GOLD)),
+                            .append(Component.text("2-4", NamedTextColor.YELLOW)),
+                    Component.empty(),
+                    Component.text("Entry Requirements:", NamedTextColor.GRAY),
+                    Component.text("- All players must have an ", NamedTextColor.GRAY)
+                            .append(Component.text("Epic ", NamedTextColor.DARK_PURPLE)),
+                    Component.text("Weapon", NamedTextColor.DARK_PURPLE)
+                            .append(Component.text(" or higher equipped.", NamedTextColor.GRAY)),
                     Component.empty(),
                     Component.text("Traverse the hidden rooms as a duo", NamedTextColor.GRAY),
                     Component.text("to find the secrets from the last floor.", NamedTextColor.GRAY)
@@ -36,7 +45,13 @@ public enum TreasureHuntIndex {
             List.of(
                     Component.empty(),
                     Component.text("Max players: ", NamedTextColor.GRAY)
-                            .append(Component.text("4-8", NamedTextColor.GOLD)),
+                            .append(Component.text("4-8", NamedTextColor.YELLOW)),
+                    Component.empty(),
+                    Component.text("Entry Requirements:", NamedTextColor.GRAY),
+                    Component.text("- All players must have a ", NamedTextColor.GRAY)
+                            .append(Component.text("Legendary ", NamedTextColor.GOLD)),
+                    Component.text("Weapon", NamedTextColor.GOLD)
+                            .append(Component.text(" or higher equipped.", NamedTextColor.GRAY)),
                     Component.empty(),
                     Component.text("Traverse the hidden rooms as a duo", NamedTextColor.GRAY),
                     Component.text("to find the secrets from the last floor.", NamedTextColor.GRAY)

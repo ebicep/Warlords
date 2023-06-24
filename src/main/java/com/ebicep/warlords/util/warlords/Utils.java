@@ -44,7 +44,10 @@ public class Utils {
             "Earthwarden",
             "Assassin",
             "Vindicator",
-            "Apothecary"
+            "Apothecary",
+            "Conjurer",
+            "Sentinel",
+            "Cleric"
     };
     // Sorted wool id color
     // https://prnt.sc/UN80GeSpeyly
