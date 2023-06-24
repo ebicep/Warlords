@@ -1,13 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.priest;
+package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
 
-import com.ebicep.warlords.abilties.DivineBlessing;
+import com.ebicep.warlords.abilties.BeaconOfLight;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> {
+public class BeaconOfLightBranch extends AbstractUpgradeBranch<BeaconOfLight> {
 
-    public DivineBlessingBranch(AbilityTree abilityTree, DivineBlessing ability) {
+    public BeaconOfLightBranch(AbilityTree abilityTree, BeaconOfLight ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

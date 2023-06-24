@@ -62,7 +62,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     public AbstractUpgradeBranch(AbilityTree abilityTree, T ability) {
         this.abilityTree = abilityTree;
         this.ability = ability;
-        ability.setInPve(true);
         this.itemStack = abilityTree.getWarlordsPlayer().getItemStackForAbility(ability);
         this.itemName = ability.getName();
     }

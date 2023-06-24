@@ -1,13 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.priest;
+package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
 
-import com.ebicep.warlords.abilties.EnergySeerCleric;
+import com.ebicep.warlords.abilties.BeaconOfShadow;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class EnergySeerBranchPriest extends AbstractUpgradeBranch<EnergySeerCleric> {
+public class BeaconOfImpairBranch extends AbstractUpgradeBranch<BeaconOfShadow> {
 
-    public EnergySeerBranchPriest(AbilityTree abilityTree, EnergySeerCleric ability) {
+    public BeaconOfImpairBranch(AbilityTree abilityTree, BeaconOfShadow ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve;
 
+import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
@@ -247,6 +248,9 @@ public interface PveOption extends Option {
     @Override
     default void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer warlordsPlayer) {
+            for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
+                ability.setInPve(true);
+            }
             if (player.getEntity() instanceof Player) {
                 getGame().setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
                 player.setTeam(Team.BLUE);

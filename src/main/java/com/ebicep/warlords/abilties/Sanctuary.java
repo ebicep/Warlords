@@ -139,4 +139,12 @@ public class Sanctuary extends AbstractAbility implements Duration {
     public void setDamageReflected(int damageReflected) {
         this.damageReflected = damageReflected;
     }
+
+    public int getHexTickDurationIncrease() {
+        return hexTickDurationIncrease;
+    }
+
+    public void setHexTickDurationIncrease(int hexTickDurationIncrease) {
+        this.hexTickDurationIncrease = hexTickDurationIncrease;
+    }
 }

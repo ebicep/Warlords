@@ -1,13 +1,13 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.guardian;
+package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
 
-import com.ebicep.warlords.abilties.FortifyingHex;
+import com.ebicep.warlords.abilties.MercifulHex;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
+public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
 
-    public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
+    public MercifulHexBranch(AbilityTree abilityTree, MercifulHex ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

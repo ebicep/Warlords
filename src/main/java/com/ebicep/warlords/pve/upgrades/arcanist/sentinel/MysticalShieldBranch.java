@@ -1,81 +1,81 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
+package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.AstralPlague;
+import com.ebicep.warlords.abilties.MysticalBarrier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
+public class MysticalShieldBranch extends AbstractUpgradeBranch<MysticalBarrier> {
 
-    float cooldown = ability.getCooldown();
-    int tickDuration = ability.getTickDuration();
+    int shieldIncrease = ability.getShieldIncrease();
+    int tickDuration = ability.getReactivateTickDuration();
 
-    public AstralPlagueBranch(AbilityTree abilityTree, AstralPlague ability) {
+    public MysticalShieldBranch(AbilityTree abilityTree, MysticalBarrier ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Zeal - Tier I",
-                "5% Cooldown reduction",
+                "Impair - Tier I",
+                "+5 Shield Strength Interval",
                 5000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.95f);
+                    ability.setShieldIncrease(shieldIncrease + 5);
                 }
         ));
         treeA.add(new Upgrade(
-                "Zeal - Tier II",
-                "10% Cooldown reduction",
+                "Impair - Tier II",
+                "+10 Shield Strength Interval",
                 10000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.9f);
+                    ability.setShieldIncrease(shieldIncrease + 10);
                 }
         ));
         treeA.add(new Upgrade(
-                "Zeal - Tier III",
-                "15% Cooldown reduction",
+                "Impair - Tier III",
+                "+15 Shield Strength Interval",
                 15000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.85f);
+                    ability.setShieldIncrease(shieldIncrease + 15);
                 }
         ));
         treeA.add(new Upgrade(
-                "Zeal - Tier IV",
-                "20% Cooldown reduction",
+                "Impair - Tier IV",
+                "+20 Shield Strength Interval",
                 20000,
                 () -> {
-                    ability.setCooldown(cooldown * 0.8f);
+                    ability.setShieldIncrease(shieldIncrease + 20);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Chronos - Tier I",
-                "+1s Duration",
+                "+0.5s Duration",
                 5000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 20);
+                    ability.setReactivateTickDuration(tickDuration + 10);
                 }
         ));
         treeB.add(new Upgrade(
                 "Chronos - Tier II",
-                "+2s Duration",
+                "+1s Duration",
                 10000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 40);
+                    ability.setReactivateTickDuration(tickDuration + 20);
                 }
         ));
         treeB.add(new Upgrade(
                 "Chronos - Tier III",
-                "+3s Duration",
+                "+1.5s Duration",
                 15000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 60);
+                    ability.setReactivateTickDuration(tickDuration + 30);
                 }
         ));
         treeB.add(new Upgrade(
                 "Chronos - Tier IV",
-                "+4s Duration",
+                "+2s Duration",
                 20000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 80);
+                    ability.setReactivateTickDuration(tickDuration + 40);
                 }
         ));
 

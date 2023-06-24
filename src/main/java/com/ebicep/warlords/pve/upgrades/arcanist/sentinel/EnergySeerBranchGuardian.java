@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.guardian;
+package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
 import com.ebicep.warlords.abilties.EnergySeerSentinel;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -7,72 +7,76 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class EnergySeerBranchGuardian extends AbstractUpgradeBranch<EnergySeerSentinel> {
 
+    float healingMultiplier = ability.getHealingMultiplier();
+    int bonusDuration = ability.getBonusDuration();
+
     public EnergySeerBranchGuardian(AbilityTree abilityTree, EnergySeerSentinel ability) {
         super(abilityTree, ability);
 
+
         treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+15% Healing",
+                "Alleviating - Tier I",
+                "+25% Healing",
                 5000,
                 () -> {
-
+                    ability.setHealingMultiplier(healingMultiplier + 0.25f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+30% Healing",
+                "Alleviating - Tier II",
+                "+50% Healing",
                 10000,
                 () -> {
-
+                    ability.setHealingMultiplier(healingMultiplier + 0.5f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+45% Healing",
+                "Alleviating - Tier III",
+                "+75% Healing",
                 15000,
                 () -> {
-
+                    ability.setHealingMultiplier(healingMultiplier + 0.75f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+60% Healing",
+                "Alleviating - Tier IV",
+                "+100% Healing",
                 20000,
                 () -> {
-
+                    ability.setHealingMultiplier(healingMultiplier + 1f);
                 }
         ));
 
         treeB.add(new Upgrade(
-                "Scope - Tier I",
-                "+1 Block rain radius",
+                "Chronos - Tier I",
+                "+0.5s Duration",
                 5000,
                 () -> {
-
+                    ability.setBonusDuration(bonusDuration + 10);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier II",
-                "+2 Blocks rain radius",
+                "Chronos - Tier II",
+                "+1s Duration",
                 10000,
                 () -> {
-
+                    ability.setBonusDuration(bonusDuration + 20);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier III",
-                "+3 Blocks rain radius",
+                "Chronos - Tier III",
+                "+1.5s Duration",
                 15000,
                 () -> {
-
+                    ability.setBonusDuration(bonusDuration + 30);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier IV",
-                "+4 Blocks rain radius\n+4s Duration",
+                "Chronos - Tier IV",
+                "+2s Duration",
                 20000,
                 () -> {
-
+                    ability.setBonusDuration(bonusDuration + 40);
                 }
         ));
 

@@ -1,18 +1,19 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
+package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.PoisonousHex;
+import com.ebicep.warlords.abilties.FortifyingHex;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
+public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
     float energyCost = ability.getEnergyCost();
+    float hitbox = ability.getPlayerHitbox();
     double projectileSpeed = ability.getProjectileSpeed();
 
-    public PoisonousHexBranch(AbilityTree abilityTree, PoisonousHex ability) {
+    public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -49,40 +50,47 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.2f);
                     ability.setMaxDamageHeal(maxDamage * 1.2f);
-                    ability.setProjectileSpeed(projectileSpeed * 1.5);
+                    ability.setProjectileSpeed(projectileSpeed * 1.5f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-5 Energy cost",
+                "-2.5 Energy cost\n+0.25 Block hit radius",
                 5000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 5f);
+                    ability.setEnergyCost(energyCost - 2.5f);
+                    ability.setPlayerHitbox(hitbox + 0.25f);
                 }
         ));
+
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "-10 Energy cost",
+                "-5 Energy cost\n+0.5 Block hit radius",
                 10000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 10f);
+                    ability.setEnergyCost(energyCost - 5);
+                    ability.setPlayerHitbox(hitbox + 0.5f);
                 }
         ));
+
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-15 Energy cost",
+                "-7.5 Energy cost\n+0.75 Block hit radius",
                 15000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 15f);
+                    ability.setEnergyCost(energyCost - 7.5f);
+                    ability.setPlayerHitbox(hitbox + 0.75f);
                 }
         ));
+
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-20 Energy cost",
+                "-10 Energy cost\n+1 Block hit radius",
                 20000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 20f);
+                    ability.setEnergyCost(energyCost - 10);
+                    ability.setPlayerHitbox(hitbox + 1f);
                 }
         ));
 

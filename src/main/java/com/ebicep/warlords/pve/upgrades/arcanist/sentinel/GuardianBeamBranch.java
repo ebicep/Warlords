@@ -1,81 +1,88 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
+package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.EnergySeerConjurer;
+import com.ebicep.warlords.abilties.GuardianBeam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerConjurer> {
+public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
     float cooldown = ability.getCooldown();
-    int duration = ability.getTickDuration();
+    double maxDistance = ability.getMaxDistance();
 
-    public EnergySeerBranchConjurer(AbilityTree abilityTree, EnergySeerConjurer ability) {
+    public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Chronos - Tier I",
-                "+0.5s Duration",
+                "Impair - Tier I",
+                "+5% Damage",
                 5000,
                 () -> {
-                    ability.setTickDuration(duration + 10);
+                    ability.setMinDamageHeal(minDamage * 1.05f);
+                    ability.setMaxDamageHeal(maxDamage * 1.05f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Chronos - Tier II",
-                "+1s Duration",
+                "Impair - Tier II",
+                "+10% Damage",
                 10000,
                 () -> {
-                    ability.setTickDuration(duration + 20);
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Chronos - Tier III",
-                "+1.5s Duration",
+                "Impair - Tier III",
+                "+15% Damage",
                 15000,
                 () -> {
-                    ability.setTickDuration(duration + 30);
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Chronos - Tier IV",
-                "+2s Duration",
+                "Impair - Tier IV",
+                "+20% Damage",
                 20000,
                 () -> {
-                    ability.setTickDuration(duration + 40);
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                 }
         ));
 
         treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "5% Cooldown reduction",
+                "Spark - Tier I",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
                     ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "10% Cooldown reduction",
+                "Spark - Tier II",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
                     ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "15% Cooldown reduction",
+                "Spark - Tier III",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
                     ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "20% Cooldown reduction",
+                "Spark - Tier IV",
+                "-20% Cooldown reduction\n+15 Block range",
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.8f);
+                    ability.setMaxDistance(maxDistance + 15);
                 }
         ));
 

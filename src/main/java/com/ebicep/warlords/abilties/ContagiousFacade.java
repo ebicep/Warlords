@@ -23,7 +23,7 @@ import java.util.List;
 
 public class ContagiousFacade extends AbstractAbility implements Duration {
 
-    private int damageAbsorption = 30;
+    private float damageAbsorption = 30;
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
     private int speedIncrease = 30;
@@ -36,7 +36,7 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Cover yourself in a protective layer that absorbs ")
-                               .append(Component.text(damageAbsorption + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(format(damageAbsorption) + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" of all incoming damage for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. "))
@@ -125,11 +125,19 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
         this.tickDuration = tickDuration;
     }
 
-    public int getDamageAbsorption() {
+    public float getDamageAbsorption() {
         return damageAbsorption;
     }
 
-    public void setDamageAbsorption(int damageAbsorption) {
+    public void setDamageAbsorption(float damageAbsorption) {
         this.damageAbsorption = damageAbsorption;
+    }
+
+    public int getShieldTickDuration() {
+        return shieldTickDuration;
+    }
+
+    public void setShieldTickDuration(int shieldTickDuration) {
+        this.shieldTickDuration = shieldTickDuration;
     }
 }

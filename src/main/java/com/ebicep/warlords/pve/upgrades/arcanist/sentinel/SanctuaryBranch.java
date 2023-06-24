@@ -1,23 +1,21 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
+package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.ContagiousFacade;
+import com.ebicep.warlords.abilties.Sanctuary;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFacade> {
+public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
 
     float cooldown = ability.getCooldown();
-    int shieldTickDuration = ability.getShieldTickDuration();
-    float damageAbsorption = ability.getDamageAbsorption();
+    int hexTickDurationIncrease = ability.getHexTickDurationIncrease();
 
-
-    public ContagiousFacadeBranch(AbilityTree abilityTree, ContagiousFacade ability) {
+    public SanctuaryBranch(AbilityTree abilityTree, Sanctuary ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
                 "Zeal - Tier I",
-                "-5% Cooldown reduction",
+                "5% Cooldown reduction",
                 5000,
                 () -> {
                     ability.setCooldown(cooldown * 0.95f);
@@ -25,7 +23,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier II",
-                "-10% Cooldown reduction",
+                "10% Cooldown reduction",
                 10000,
                 () -> {
                     ability.setCooldown(cooldown * 0.9f);
@@ -33,7 +31,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier III",
-                "-15% Cooldown reduction",
+                "15% Cooldown reduction",
                 15000,
                 () -> {
                     ability.setCooldown(cooldown * 0.85f);
@@ -41,44 +39,43 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier IV",
-                "-20% Cooldown reduction\n+2.5s Shield duration",
+                "20% Cooldown reduction",
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.8f);
-                    ability.setShieldTickDuration(shieldTickDuration + 50);
                 }
         ));
 
         treeB.add(new Upgrade(
-                "Impair - Tier I",
-                "+2.5% Absorb damage",
+                "Chronos - Tier I",
+                "+0.5s Hex duration",
                 5000,
                 () -> {
-                    ability.setDamageAbsorption(damageAbsorption + 2.5f);
+                    ability.setHexTickDurationIncrease(hexTickDurationIncrease + 10);
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier II",
-                "+5% Absorb damage",
+                "Chronos - Tier II",
+                "+1s Hex duration",
                 10000,
                 () -> {
-                    ability.setDamageAbsorption(damageAbsorption + 5);
+                    ability.setHexTickDurationIncrease(hexTickDurationIncrease + 20);
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier III",
-                "+7.5% Absorb damage",
+                "Chronos - Tier III",
+                "+1.5s Hex duration",
                 15000,
                 () -> {
-                    ability.setDamageAbsorption(damageAbsorption + 7.5f);
+                    ability.setHexTickDurationIncrease(hexTickDurationIncrease + 30);
                 }
         ));
         treeB.add(new Upgrade(
-                "Impair - Tier IV",
-                "+10% Absorb damage",
+                "Chronos - Tier IV",
+                "+2s Hex duration",
                 20000,
                 () -> {
-                    ability.setDamageAbsorption(damageAbsorption + 10);
+                    ability.setHexTickDurationIncrease(hexTickDurationIncrease + 40);
                 }
         ));
 
