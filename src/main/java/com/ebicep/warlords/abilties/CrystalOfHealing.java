@@ -103,7 +103,7 @@ public class CrystalOfHealing extends AbstractAbility {
                                 .closestFirst(groundLocation)
                                 .first(teammate -> {
                                     teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.45f);
-                                    FireWorkEffectPlayer.playFirework(teammate.getLocation(), FireworkEffect.builder()
+                                    FireWorkEffectPlayer.playFirework(groundLocation, FireworkEffect.builder()
                                             .withColor(Color.WHITE)
                                             .with(FireworkEffect.Type.STAR)
                                             .build());
