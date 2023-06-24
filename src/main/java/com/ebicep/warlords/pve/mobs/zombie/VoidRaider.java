@@ -1,6 +1,5 @@
-package com.ebicep.warlords.pve.mobs.skeleton;
+package com.ebicep.warlords.pve.mobs.zombie;
 
-import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -14,26 +13,29 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.util.Vector;
 
-public class RangeOnlySkeleton extends AbstractSkeleton implements EliteMob {
+public class VoidRaider extends AbstractZombie implements EliteMob {
 
-    public RangeOnlySkeleton(Location spawnLocation) {
+    private int knockbackResistance = 20;
+
+    public VoidRaider(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Celestial Bow Wielder",
+                "Void Raider",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BOW_HEAD),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
-                        Weapons.FROSTBITE.getItem()
+                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_2),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 56, 71, 74),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 56, 71, 74),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 56, 71, 74),
+                        Weapons.NETHERSTEEL_KATANA.getItem()
                 ),
-                8000,
-                0.25f,
-                10,
-                600,
-                900
+                9500,
+                0.42f,
+                0,
+                650,
+                850
         );
     }
 
@@ -41,41 +43,40 @@ public class RangeOnlySkeleton extends AbstractSkeleton implements EliteMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Damage Check",
+                "Vindicate Debuff Immunity",
                 null,
-                DamageCheck.class,
-                DamageCheck.DAMAGE_CHECK,
+                null,
+                null,
                 warlordsNPC,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
-                true
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!Utils.isProjectile(event.getAbility())) {
-                    return currentDamageValue * 0.1f;
+                false,
+                (cooldown, ticksElapsed) -> {
+                    warlordsNPC.getSpeed().removeSlownessModifiers();
+                    warlordsNPC.getCooldownManager().removeDebuffCooldowns();
                 }
+        ) {
+            final float calculatedKBRes = 1 - knockbackResistance / 100f;
 
-                return currentDamageValue;
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                currentVector.multiply(calculatedKBRes);
             }
         });
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 30 == 0) {
-            warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
-        }
+
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
     }
+
 }

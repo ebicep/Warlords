@@ -162,7 +162,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                             EnumSet.of(InstanceFlags.NO_DISMOUNT)
                     );
                 },
-                tickDuration * 2, // base add 20 to delay damage by a second
+                tickDuration * 2,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
                         to.addDamageInstance(
@@ -252,7 +252,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
         super.onSpawn(projectile);
         ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
             armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.CRIMSON_FENCE));
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.GREEN_STAINED_GLASS));
             armorStand.setHeadPose(new EulerAngle(-Math.atan2(
                     projectile.getSpeed().getY(),
                     Math.sqrt(

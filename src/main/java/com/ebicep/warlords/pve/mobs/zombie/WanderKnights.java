@@ -11,34 +11,32 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 
-public class SlimeZombie extends AbstractZombie implements EliteMob {
+public class WanderKnights extends AbstractZombie implements EliteMob {
 
-    public SlimeZombie(Location spawnLocation) {
+    public WanderKnights(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Illusion Slime Guard",
+                "Wander Knights",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SLIME_BLOCK),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 106, 255, 106),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 106, 255, 106),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 106, 255, 106),
-                        Weapons.NEW_LEAF_SPEAR.getItem()
+                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 105, 147, 158),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 105, 147, 158),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 105, 147, 158),
+                        Weapons.LUNAR_RELIC.getItem()
                 ),
-                6000,
-                0.39f,
+                5000,
+                0.335f,
                 10,
-                500,
-                700
+                200,
+                300
         );
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-
     }
 
     @Override
@@ -48,12 +46,10 @@ public class SlimeZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.playSound(receiver.getLocation(), Sound.ENTITY_SLIME_JUMP, 500, 0.2f);
-        receiver.addSpeedModifier(warlordsNPC, "Slime Slowness", -30, 2 * 20);
     }
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
     }
+
 }

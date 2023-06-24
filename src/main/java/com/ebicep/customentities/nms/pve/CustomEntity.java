@@ -4,6 +4,7 @@ import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalTargetAgr
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.util.warlords.Utils;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -143,5 +144,9 @@ public interface CustomEntity<T extends Mob> {
 
     default void setStunned(boolean stunned) {
 
+    }
+
+    default DisguiseType getDisguiseType() {
+        return null;
     }
 }

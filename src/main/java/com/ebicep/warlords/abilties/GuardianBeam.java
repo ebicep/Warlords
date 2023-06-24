@@ -66,7 +66,10 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         } else {
             giveShield(hit, hasSanctuary);
         }
-        giveShield(wp, hasSanctuary);
+        if (projectile.getHit().isEmpty()) {
+            giveShield(wp, hasSanctuary);
+        }
+        projectile.getHit().add(hit);
     }
 
     private void giveShield(WarlordsEntity wp, boolean hasSanctuary) {

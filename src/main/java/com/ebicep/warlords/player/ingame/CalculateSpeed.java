@@ -183,6 +183,10 @@ public class CalculateSpeed {
         this.baseSpeedToWalkingSpeed = baseSpeedToWalkingSpeed / 113 * 100 / BASE_SPEED;
     }
 
+    public List<Modifier> getModifiers() {
+        return modifiers;
+    }
+
     public static class Modifier {
         public final WarlordsEntity from;
         public final String name;

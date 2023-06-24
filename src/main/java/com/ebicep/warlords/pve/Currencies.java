@@ -90,6 +90,11 @@ public enum Currencies implements Spendable {
             NamedTextColor.YELLOW,
             new ItemStack(Material.SUNFLOWER)
     ),
+    EVENT_POINTS_ILLUIMINA(
+            "Mithra Event Point",
+            NamedTextColor.YELLOW,
+            new ItemStack(Material.SUNFLOWER)
+    ),
     TITLE_TOKEN_JUGGERNAUT(
             "Juggernaut Title Token",
             NamedTextColor.YELLOW,
@@ -102,6 +107,11 @@ public enum Currencies implements Spendable {
     ),
     TITLE_TOKEN_SPIDERS_BURROW(
             "Spiders Burrow Title Token",
+            NamedTextColor.YELLOW,
+            new ItemStack(Material.SNOWBALL)
+    ),
+    TITLE_TOKEN_BANE_OF_IMPURITIES(
+            "Bane of Impurities Title Token",
             NamedTextColor.YELLOW,
             new ItemStack(Material.SNOWBALL)
     ),

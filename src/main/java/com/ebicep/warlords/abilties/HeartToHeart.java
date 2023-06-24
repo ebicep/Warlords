@@ -40,7 +40,7 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Throw a chain towards an ally, grappling the Vindicator towards them. You and the targeted ally gain "))
+        description = Component.text("Throw a chain towards an ally, grappling the Vindicator towards them. You and the targeted ally gain ")
                                .append(Component.text("VIND", NamedTextColor.GOLD))
                                .append(Component.text(" for "))
                                .append(Component.text(vindDuration, NamedTextColor.GOLD))

@@ -1,5 +1,6 @@
 package com.ebicep.customentities.nms.pve;
 
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -37,5 +38,10 @@ public class CustomZombie extends Zombie implements CustomEntity<CustomZombie> {
     @Override
     public void setStunned(boolean stunned) {
         this.stunned = stunned;
+    }
+
+    @Override
+    public DisguiseType getDisguiseType() {
+        return DisguiseType.ZOMBIE;
     }
 }

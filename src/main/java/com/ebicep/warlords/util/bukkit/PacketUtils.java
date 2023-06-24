@@ -1,6 +1,5 @@
 package com.ebicep.warlords.util.bukkit;
 
-import co.aikar.commands.CommandIssuer;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -10,7 +9,6 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.util.chat.ChatChannels;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
@@ -18,7 +16,6 @@ import net.minecraft.world.entity.Entity;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class PacketUtils {
@@ -64,33 +61,18 @@ public class PacketUtils {
     }
 
     public static void removeEntityForPlayer(Player player, int entityId) {
-        try {
-            PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundRemoveEntitiesPacket(entityId)));
-        } catch (InvocationTargetException e) {
-            ChatChannels.sendDebugMessage((CommandIssuer) null, "Error sending entity destroy packet");
-            throw new RuntimeException(e);
-        }
+        PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundRemoveEntitiesPacket(entityId)));
     }
 
     public static void spawnEntityForPlayer(Player player, Entity entity) {
-        try {
-            PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundAddEntityPacket(entity)));
-        } catch (InvocationTargetException e) {
-            ChatChannels.sendDebugMessage((CommandIssuer) null, "Error sending entity destroy packet");
-            throw new RuntimeException(e);
-        }
+        PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundAddEntityPacket(entity)));
     }
 
     public static void playRightClickAnimationForPlayer(Entity swinger, Player... players) {
         for (Player player : players) {
-            try {
-                PROTOCOL_MANAGER.sendServerPacket(player,
-                        PacketContainer.fromPacket(new ClientboundAnimatePacket(swinger, ClientboundAnimatePacket.SWING_MAIN_HAND))
-                );
-            } catch (InvocationTargetException e) {
-                ChatChannels.sendDebugMessage((CommandIssuer) null, "Error sending right click packet");
-                throw new RuntimeException(e);
-            }
+            PROTOCOL_MANAGER.sendServerPacket(player,
+                    PacketContainer.fromPacket(new ClientboundAnimatePacket(swinger, ClientboundAnimatePacket.SWING_MAIN_HAND))
+            );
         }
     }
 

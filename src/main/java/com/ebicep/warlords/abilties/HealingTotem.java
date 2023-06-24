@@ -212,7 +212,7 @@ public class HealingTotem extends AbstractTotem implements Duration {
                             PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                         .aliveEnemiesOf(wp)
                                         .forEach(enemy -> {
-                                            enemy.getSpeed().addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
+                                            enemy.addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
                                             enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
                                             EffectUtils.playParticleLinkAnimation(enemy.getLocation(), totemStand.getLocation(), 255, 255, 255, 1);
                                             enemy.getCooldownManager().addCooldown(new RegularCooldown<>(

@@ -717,6 +717,210 @@ public enum GameEvents {
             menu.openForPlayer(player);
         }
     },
+    ILLUMINA("The Bane Of Impurities",
+            Currencies.EVENT_POINTS_ILLUIMINA,
+            null,
+            null,
+            null,
+            (game, warlordsGameTriggerWinEvent, aBoolean) -> {
+                return null;
+            },
+            new ArrayList<>() {{
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES, 3, 250_000));
+                add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 15_000));
+                add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 85_000));
+                add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 200_000));
+                add(new SpendableBuyShop(200, Currencies.FAIRY_ESSENCE, 5, 35_000));
+                add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
+                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 8_000));
+                add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+                add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
+            }}
+    ) {
+        @Override
+        public void initialize() {
+            super.initialize();
+//            Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
+//                @EventHandler
+//                public void onPreWeaponSalvage(PreWeaponSalvageEvent event) {
+//                    event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
+//                }
+//            }, Warlords.getInstance());
+        }
+
+        @Override
+        public LinkedHashMap<Spendable, Long> getRewards(int position) {
+            if (position == 1) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 550_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 300L);
+                    put(Currencies.LEGEND_FRAGMENTS, 3_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 3L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES, 3L);
+                }};
+            }
+            if (position == 2) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 400_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 200L);
+                    put(Currencies.LEGEND_FRAGMENTS, 2_500L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.EPIC_STAR_PIECE, 2L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3L);
+                }};
+            }
+            if (position == 3) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 300_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                    put(Currencies.LEGEND_FRAGMENTS, 2_000L);
+                    put(Currencies.FAIRY_ESSENCE, 350L);
+                    put(Currencies.EPIC_STAR_PIECE, 1L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3L);
+                }};
+            }
+            if (4 <= position && position <= 10) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 100_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                    put(Currencies.LEGEND_FRAGMENTS, 2_000L);
+                    put(Currencies.FAIRY_ESSENCE, 350L);
+                    put(Currencies.RARE_STAR_PIECE, 5L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
+                }};
+            }
+            if (11 <= position && position <= 20) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 50_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                    put(Currencies.LEGEND_FRAGMENTS, 500L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 2L);
+                }};
+            }
+            if (21 <= position && position <= 50) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 45_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 25L);
+                    put(Currencies.RARE_STAR_PIECE, 1L);
+                }};
+            }
+            return new LinkedHashMap<>() {{
+                put(Currencies.COIN, 30_000L);
+                put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                put(Currencies.COMMON_STAR_PIECE, 1L);
+            }};
+        }
+
+        @Override
+        public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
+//            long eventStart = currentGameEvent.getStartDateSecond();
+//            EventLeaderboard spidersDwellingBoard = new EventLeaderboard(
+//                    eventStart,
+//                    "Highest Game Event Points",
+//                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 751.5),
+//                    (databasePlayer, time) -> databasePlayer
+//                            .getPveStats()
+//                            .getEventStats()
+//                            .getMithraEventStats()
+//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
+//                            .getSpidersDwellingStats()
+//                            .getHighestEventPointsGame(),
+//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+//                            .getPveStats()
+//                            .getEventStats()
+//                            .getMithraEventStats()
+//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
+//                            .getSpidersDwellingStats()
+//                            .getHighestEventPointsGame())
+//            );
+//            EventLeaderboard totalBoard = new EventLeaderboard(
+//                    eventStart,
+//                    "Event Points",
+//                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 737.5),
+//                    (databasePlayer, time) -> databasePlayer
+//                            .getPveStats()
+//                            .getEventStats()
+//                            .getMithraEventStats()
+//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
+//                            .getEventPointsCumulative(),
+//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+//                            .getPveStats()
+//                            .getEventStats()
+//                            .getMithraEventStats()
+//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
+//                            .getEventPointsCumulative())
+//            );
+//            leaderboards.put(spidersDwellingBoard, "Spiders Dwelling");
+//            leaderboards.put(totalBoard, "Total Event Points");
+        }
+
+        @Override
+        public void editNPC(NPC npc) {
+            Equipment equipment = npc.getOrAddTrait(Equipment.class);
+            equipment.set(Equipment.EquipmentSlot.HELMET, SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM));
+            equipment.set(Equipment.EquipmentSlot.CHESTPLATE, Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200));
+            equipment.set(Equipment.EquipmentSlot.LEGGINGS, Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200));
+            equipment.set(Equipment.EquipmentSlot.BOOTS, Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200));
+            equipment.set(Equipment.EquipmentSlot.HAND, Weapons.NEW_LEAF_SCYTHE.getItem());
+        }
+
+        @Override
+        public void setMenu(Menu menu) {
+            menu.setItem(2, 1,
+                    new ItemBuilder(Material.BLAZE_POWDER)
+                            .name(Component.text("Start a private Illumina event game", NamedTextColor.GREEN))
+                            .get(),
+                    (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), true)
+            );
+            menu.setItem(6, 1,
+                    new ItemBuilder(Material.COMPARATOR)
+                            .name(Component.text("Join a public Illumina event game", NamedTextColor.GREEN))
+                            .get(),
+                    (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), false)
+            );
+        }
+
+        private void openMithraModeMenu(Player player, boolean privateGame) {
+            Menu menu = new Menu("The Bane Of Impurities Modes", 9 * 4);
+
+            menu.setItem(2, 1,
+                    new ItemBuilder(Material.BONE)
+                            .name(Component.text("????", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("???!", NamedTextColor.YELLOW),
+                                    Component.empty(),
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("900 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("1-4 Players", NamedTextColor.GREEN))
+                            )
+                            .get(),
+                    (m, e) -> {
+//                        if (privateGame) {
+//                            GameStartCommand.startGamePvEEvent(player,
+//                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4)
+//                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+//
+//                            );
+//                        } else {
+//                            GameStartCommand.startGamePvEEvent(player,
+//                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4)
+//                            );
+//                        }
+                    }
+            );
+
+            menu.setItem(4, 3, MENU_BACK, (m, e) -> openMenu(player));
+            menu.openForPlayer(player);
+        }
+    },
 
     ;
 

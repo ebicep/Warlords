@@ -66,7 +66,7 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    wp.getSpeed().addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
+                    wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
                 },
                 tickDuration
         ) {
