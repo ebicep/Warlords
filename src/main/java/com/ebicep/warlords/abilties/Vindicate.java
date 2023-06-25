@@ -80,7 +80,7 @@ public class Vindicate extends AbstractAbility implements Duration {
                 new CircumferenceEffect(Particle.SPELL, Particle.REDSTONE).particlesPerCircumference(2)
         ).playEffects();
 
-        EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);
+        EffectUtils.playHelixAnimation(wp.getLocation(), radius, 230, 130, 5);
 
         Vindicate tempVindicate = new Vindicate();
         for (WarlordsEntity vindicateTarget : PlayerFilter
