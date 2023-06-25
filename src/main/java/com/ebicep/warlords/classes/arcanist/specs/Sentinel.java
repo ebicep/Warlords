@@ -12,7 +12,7 @@ public class Sentinel extends AbstractArcanist {
 
     public Sentinel() {
         super(
-                "Guardian",
+                "Sentinel",
                 6000,
                 305,
                 20,

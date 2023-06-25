@@ -96,7 +96,7 @@ public enum Specializations {
     PROTECTOR("Protector",
             List.of("prot"),
             Protector::new,
-            Component.text("A healing-oriented Paladin specialization that converts damage into healing for his allies and has access to greater healing abilities.",
+            Component.text("A healing-oriented Paladin specialization that converts damage into healing for their allies and has access to greater healing abilities.",
                     NamedTextColor.GRAY
             ),
             SpecType.HEALER,
@@ -147,7 +147,7 @@ public enum Specializations {
     CONJURER("Conjurer",
             List.of("con"),
             Conjurer::new,
-            Component.text("SOMEHTING", NamedTextColor.GRAY),
+            Component.text("A damage-oriented Arcanist specialization that uses venomous attacks and pure magical spells to get the upper hand.", NamedTextColor.GRAY),
             SpecType.DAMAGE,
             POISONOUS_HEX, SOULFIRE_BEAM, ENERGY_SEER_CONJURER, CONTAGIOUS_FACADE, ASTRAL_PLAGUE
     ),

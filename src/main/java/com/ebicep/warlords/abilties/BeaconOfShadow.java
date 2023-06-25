@@ -42,7 +42,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
                         .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
                         .append(Component.text(" and receive the Darkness effect for "))
                         .append(Component.text(format(darknessTickDuration / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(" seconds. Only one beacon can be present on the field at once."));
+                        .append(Component.text(" seconds.\n\nOnly one beacon can be present on the field at once."));
     }
 
     @Override

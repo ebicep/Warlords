@@ -8,11 +8,15 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
 
     float selfDamageReduction = ability.getSelfDamageReduction();
-    float allyDamageReduction = ability.getTeammateDamageReduction();
+    float allyDamageReduction;
     int duration = ability.getTickDuration();
 
     public LastStandBranch(AbilityTree abilityTree, LastStand ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.setTeammateDamageReductionPercent(40);
+        }
+        allyDamageReduction = ability.getTeammateDamageReduction();
 
         treeA.add(new Upgrade(
                 "Fortify - Tier I",
