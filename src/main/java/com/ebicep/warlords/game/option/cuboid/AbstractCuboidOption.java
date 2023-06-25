@@ -11,8 +11,8 @@ public abstract class AbstractCuboidOption implements Option {
     public static final int MAX_WORLD_SIZE_MINI = 400;
     public static final int MAX_WORLD_SIZE_MEGA = 500;
 
-    protected final Location min;
-    protected final Location max;
+    private final Location min;
+    private final Location max;
 
     public AbstractCuboidOption(World world) {
         this(
@@ -81,6 +81,12 @@ public abstract class AbstractCuboidOption implements Option {
         this.max.setPitch(b.getPitch());
         return this;
     }
-    
 
+    public Location getMin() {
+        return min;
+    }
+
+    public Location getMax() {
+        return max;
+    }
 }

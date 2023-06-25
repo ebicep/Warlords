@@ -66,6 +66,10 @@ repositories {
     maven {
         url = uri("https://jitpack.io")
     }
+
+    maven {
+        url = uri("https://maven.enginehub.org/repo")
+    }
 }
 
 dependencies {
@@ -77,6 +81,7 @@ dependencies {
     implementation("com.github.Rapha149.SignGUI:signgui:7d7633b4d6")
     compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnly("com.infernalsuite.aswm:api:1.19.4-R0.1-SNAPSHOT")
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.14")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.1-SNAPSHOT")
     compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
         exclude(group = "*", module = "*")

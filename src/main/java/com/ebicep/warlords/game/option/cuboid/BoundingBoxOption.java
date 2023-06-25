@@ -32,16 +32,16 @@ public class BoundingBoxOption extends AbstractCuboidOption implements Option {
                 game.forEachOnlinePlayerWithoutSpectators((p, t) -> {
                     Location loc = p.getLocation(REUSEABLE_LOCATION_OBJECT);
                     if (
-                            loc.getWorld() != min.getWorld() ||
-                                    loc.getX() < min.getX() || loc.getX() > max.getX() ||
-                                    loc.getY() < min.getY() || loc.getY() > max.getY() ||
-                                    loc.getZ() < min.getZ() || loc.getZ() > max.getZ()
+                            loc.getWorld() != getMin().getWorld() ||
+                                    loc.getX() < getMin().getX() || loc.getX() > getMax().getX() ||
+                                    loc.getY() < getMin().getY() || loc.getY() > getMax().getY() ||
+                                    loc.getZ() < getMin().getZ() || loc.getZ() > getMax().getZ()
                     ) {
                         p.sendMessage("Do not leave the playing area!");
-                        REUSEABLE_LOCATION_OBJECT.setWorld(min.getWorld());
-                        REUSEABLE_LOCATION_OBJECT.setX((min.getX() + max.getX()) / 2);
-                        REUSEABLE_LOCATION_OBJECT.setY((min.getY() + max.getY()) / 2);
-                        REUSEABLE_LOCATION_OBJECT.setZ((min.getZ() + max.getZ()) / 2);
+                        REUSEABLE_LOCATION_OBJECT.setWorld(getMin().getWorld());
+                        REUSEABLE_LOCATION_OBJECT.setX((getMin().getX() + getMax().getX()) / 2);
+                        REUSEABLE_LOCATION_OBJECT.setY((getMin().getY() + getMax().getY()) / 2);
+                        REUSEABLE_LOCATION_OBJECT.setZ((getMin().getZ() + getMax().getZ()) / 2);
                         p.teleport(REUSEABLE_LOCATION_OBJECT);
                     }
                 });
@@ -50,12 +50,12 @@ public class BoundingBoxOption extends AbstractCuboidOption implements Option {
     }
 
     public Location getCenter() {
-        return new Location(min.getWorld(),
-                (min.getX() + max.getX()) / 2,
-                (min.getY() + max.getY()) / 2,
-                (min.getZ() + max.getZ()) / 2
+        return new Location(getMin().getWorld(),
+                (getMin().getX() + getMax().getX()) / 2,
+                (getMin().getY() + getMax().getY()) / 2,
+                (getMin().getZ() + getMax().getZ()) / 2
         );
     }
 
-    
+
 }

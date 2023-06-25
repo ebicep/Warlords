@@ -1,13 +1,14 @@
 package com.ebicep.warlords.game.option.pve.treasurehunt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
 
-    private int width;
-    private int length;
-    private RoomType roomType;
-    private List<RoomConnection> roomConnections;
+    private final int width;
+    private final int length;
+    private final RoomType roomType;
+    private final List<RoomConnection> roomConnections;
 
     public Room(int width, int length, RoomType roomType, List<RoomConnection> roomConnections) {
         this.width = width;
@@ -16,35 +17,30 @@ public class Room {
         this.roomConnections = roomConnections;
     }
 
-    public int getWidth() {
-        return width;
+    public static Room makeSimpleRoom(int x, int z, RoomType type, boolean north, boolean east, boolean south, boolean west) {
+        var connections = new ArrayList<RoomConnection>();
+
+        if (north) connections.add(new RoomConnection((x - 1) / 2, 0, x % 2 == 1 ? RoomFace.NORTH_ODD_PARITY : RoomFace.NORTH_EVEN_PARITY));
+        if (east) connections.add(new RoomConnection(x - 1, z / 2, z % 2 == 1 ? RoomFace.EAST_ODD_PARITY : RoomFace.EAST_EVEN_PARITY));
+        if (south) connections.add(new RoomConnection(x / 2, z - 1, x % 2 == 1 ? RoomFace.SOUTH_ODD_PARITY : RoomFace.SOUTH_EVEN_PARITY));
+        if (west) connections.add(new RoomConnection(0, (z - 1) / 2, z % 2 == 1 ? RoomFace.WEST_ODD_PARITY : RoomFace.WEST_EVEN_PARITY));
+
+        return new Room(x, z, type, connections);
     }
 
-    public void setWidth(int width) {
-        this.width = width;
+    public int getWidth() {
+        return width;
     }
 
     public int getLength() {
         return length;
     }
 
-    public void setLength(int length) {
-        this.length = length;
-    }
-
     public List<RoomConnection> getRoomConnections() {
         return roomConnections;
     }
 
-    public void setRoomConnections(List<RoomConnection> roomConnections) {
-        this.roomConnections = roomConnections;
-    }
-
     public RoomType getRoomType() {
         return roomType;
-    }
-
-    public void setRoomType(RoomType roomType) {
-        this.roomType = roomType;
     }
 }

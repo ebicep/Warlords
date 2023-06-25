@@ -74,7 +74,7 @@
     <remote-repository>
       <option name="id" value="MavenLocal" />
       <option name="name" value="MavenLocal" />
-      <option name="url" value="file:/$USER_HOME$/.m2/repository/" />
+      <option name="url" value="file:/$MAVEN_REPOSITORY$/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="dmulloy2-repo" />
@@ -105,6 +105,11 @@
       <option name="id" value="maven5" />
       <option name="name" value="maven5" />
       <option name="url" value="https://hub.spigotmc.org/nexus/content/groups/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven11" />
+      <option name="name" value="maven11" />
+      <option name="url" value="https://maven.enginehub.org/repo" />
     </remote-repository>
   </component>
 </project>

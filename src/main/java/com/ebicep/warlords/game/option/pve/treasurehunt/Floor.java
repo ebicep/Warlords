@@ -304,4 +304,12 @@ public class Floor {
                 Collector.Characteristics.UNORDERED
         );
     }
+
+    public boolean isValidPattern() {
+        return isValidPattern;
+    }
+
+    public List<PlacedRoom> getPlacedRooms() {
+        return placedRooms;
+    }
 }

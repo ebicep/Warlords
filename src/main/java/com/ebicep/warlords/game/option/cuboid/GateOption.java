@@ -114,29 +114,29 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.OAK_FENCE_GATE, 0, this.getClass(),
                 Component.text("Gates"),
                 new Location(
-                        min.getWorld(),
-                        (min.getX() + max.getX()) / 2,
-                        (min.getY() + max.getY()) / 2,
-                        (min.getZ() + max.getZ()) / 2
+                        getMin().getWorld(),
+                        (getMin().getX() + getMax().getX()) / 2,
+                        (getMin().getY() + getMax().getY()) / 2,
+                        (getMin().getZ() + getMax().getZ()) / 2
                 ),
                 () -> Arrays.asList(
-                        Component.text("MIN: " + min.getX() + ", " + min.getY() + ", " + min.getZ()),
-                        Component.text("MAX: " + max.getX() + ", " + max.getY() + ", " + max.getZ())
+                        Component.text("MIN: " + getMin().getX() + ", " + getMin().getY() + ", " + getMin().getZ()),
+                        Component.text("MAX: " + getMax().getX() + ", " + getMax().getY() + ", " + getMax().getZ())
                 )
         ));
     }
 
     protected int changeGate(Material search, Material replace) {
         int changed = 0;
-        for (int x = min.getBlockX(); x <= max.getBlockX(); x++) {
-            for (int z = min.getBlockZ(); z <= max.getBlockZ(); z++) {
-                for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
+        for (int x = getMin().getBlockX(); x <= getMax().getBlockX(); x++) {
+            for (int z = getMin().getBlockZ(); z <= getMax().getBlockZ(); z++) {
+                for (int y = getMin().getBlockY(); y <= getMax().getBlockY(); y++) {
                     if (
-                            x == min.getBlockX() || x == max.getBlockX() ||
-                                    y == min.getBlockY() || y == max.getBlockY() ||
-                                    z == min.getBlockZ() || z == max.getBlockZ()
+                            x == getMin().getBlockX() || x == getMax().getBlockX() ||
+                                    y == getMin().getBlockY() || y == getMax().getBlockY() ||
+                                    z == getMin().getBlockZ() || z == getMax().getBlockZ()
                     ) {
-                        Block block = min.getWorld().getBlockAt(x, y, z);
+                        Block block = getMin().getWorld().getBlockAt(x, y, z);
                         if (block.getType() == search) {
                             block.setType(replace);
                             if (replace == closed && block.getBlockData() instanceof MultipleFacing multipleFacing) {

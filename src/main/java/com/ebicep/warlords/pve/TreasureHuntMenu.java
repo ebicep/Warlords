@@ -32,7 +32,7 @@ public class TreasureHuntMenu {
                     (m, e) -> {
                         GameMap map;
                         map = switch (finalI) {
-                            case 0 -> GameMap.ILLUSION_APERTURE;
+                            case 0 -> GameMap.TREASURE_HUNT;
                             default -> null;
                         };
                         GameMap finalMap = map;
