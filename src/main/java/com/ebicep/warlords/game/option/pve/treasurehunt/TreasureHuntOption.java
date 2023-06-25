@@ -24,6 +24,11 @@ public class TreasureHuntOption implements PveOption {
     private Random random;
     private Floor floor;
     private final Map<Room, DungeonRoomMarker> rooms = new HashMap<>();
+    private final int amountOfRooms;
+
+    public TreasureHuntOption(int amountOfRooms) {
+        this.amountOfRooms = amountOfRooms;
+    }
 
     @Override
     public void register(@Nonnull Game game) {
@@ -48,7 +53,8 @@ public class TreasureHuntOption implements PveOption {
                         boundingBoxOption.getMax().getBlockX() - boundingBoxOption.getMin().getBlockX(),
                         boundingBoxOption.getMax().getBlockZ() - boundingBoxOption.getMin().getBlockZ(),
                         dungeonRoomMarkerList.stream().map(DungeonRoomMarker::getRoom).toList(),
-                        random
+                        random,
+                        amountOfRooms
                 );
 
                 if (floor.isValidPattern()) {

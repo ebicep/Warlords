@@ -25,7 +25,7 @@ public class Floor {
         this.isValidPattern = isValidPattern;
     }
 
-    public static Floor generate(int maxWidth, int maxLength, List<Room> rooms, Random random) {
+    public static Floor generate(int maxWidth, int maxLength, List<Room> rooms, Random random, int amountOfRooms) {
         var placedRooms = new ArrayList<PlacedRoom>();
         var grouped = rooms.stream().collect(Collectors.groupingBy(Room::getRoomType));
 
@@ -37,7 +37,6 @@ public class Floor {
 
         placedRooms.add(lastPlacedRoom);
 
-        int pathLength = 7;
         var newRooms = generateHallwayWithRoom(
                 maxWidth,
                 maxLength,
@@ -46,7 +45,7 @@ public class Floor {
                 random,
                 placedRooms::stream,
                 placedRooms.stream(),
-                pathLength
+                amountOfRooms
         );
 
         if (newRooms == null) {
@@ -73,7 +72,7 @@ public class Floor {
                     random,
                     placedRooms::stream,
                     placedRooms.stream(),
-                    pathLength
+                    amountOfRooms
             );
 
             if (newGeneratedHallway == null) {
@@ -215,7 +214,7 @@ public class Floor {
         var random = new Random();
         Floor floor;
         do {
-            floor = generate(160, 160, rooms, random);
+            floor = generate(160, 160, rooms, random, 5);
             System.out.println("Generation: " + floor.isValidPattern);
         } while (!floor.isValidPattern);
 

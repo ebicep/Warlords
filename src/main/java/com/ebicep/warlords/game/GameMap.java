@@ -3917,7 +3917,7 @@ public enum GameMap {
 
             options.add(new GraveOption());
             options.add(new BasicScoreboardOption());
-            options.add(new TreasureHuntOption());
+            options.add(new TreasureHuntOption(10));
 
             return options;
         }
