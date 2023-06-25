@@ -11,7 +11,6 @@ import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 
 public interface DungeonRoomMarker extends GameMarker {
@@ -20,7 +19,7 @@ public interface DungeonRoomMarker extends GameMarker {
 
     void renderInWorld(int x, int y, int z);
 
-    public static DungeonRoomMarker create(
+    static DungeonRoomMarker create(
             World world,
             int minX,
             int minY,
@@ -43,7 +42,6 @@ public interface DungeonRoomMarker extends GameMarker {
 
             @Override
             public void renderInWorld(int x, int y, int z) {
-                world.getBlockAt(x, y , z).setType(Material.GLOWSTONE);
                 CuboidRegion region = new CuboidRegion(
                         BukkitAdapter.asBlockVector(new Location(world, minX, minY, minZ)),
                         BukkitAdapter.asBlockVector(new Location(world, maxX, maxY, maxZ))
@@ -63,7 +61,6 @@ public interface DungeonRoomMarker extends GameMarker {
                 } catch (WorldEditException e) {
                     throw new RuntimeException(e);
                 }
-                world.getBlockAt(x + 1, y , z).setType(Material.RED_SANDSTONE);
             }
         };
     }

@@ -37,7 +37,7 @@ public class Floor {
 
         placedRooms.add(lastPlacedRoom);
 
-        int pathLength = 30;
+        int pathLength = 7;
         var newRooms = generateHallwayWithRoom(
                 maxWidth,
                 maxLength,
@@ -58,14 +58,13 @@ public class Floor {
         int attempts = 0;
         int generatedTreasureRooms = 0;
 
-        while (generatedTreasureRooms < 3) {
+        while (generatedTreasureRooms < 1) {
             attempts++;
 
             if (attempts > 10) {
                 return new Floor(placedRooms, maxWidth, maxLength, false);
             }
 
-            pathLength = 10;
             var newGeneratedHallway = generateHallwayWithRoom(
                     maxWidth,
                     maxLength,

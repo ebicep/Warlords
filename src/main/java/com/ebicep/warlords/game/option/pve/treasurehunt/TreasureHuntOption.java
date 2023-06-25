@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
+import com.ebicep.warlords.game.option.marker.CanStartGameMarker;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -11,10 +12,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,16 +23,23 @@ public class TreasureHuntOption implements PveOption {
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private Random random;
     private Floor floor;
+    private final Map<Room, DungeonRoomMarker> rooms = new HashMap<>();
 
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
+        this.game.registerGameMarker(CanStartGameMarker.class, () -> this.floor.isValidPattern());
         this.random = new Random();
+
         BoundingBoxOption boundingBoxOption = (BoundingBoxOption) game.getOptions().stream()
                 .filter(option -> option instanceof BoundingBoxOption)
                 .findFirst()
                 .get();
         List<DungeonRoomMarker> dungeonRoomMarkerList = game.getMarkers(DungeonRoomMarker.class);
+
+        for (var marker : dungeonRoomMarkerList) {
+            rooms.put(marker.getRoom(), marker);
+        }
 
         new GameRunnable(game) {
             @Override
@@ -60,13 +65,11 @@ public class TreasureHuntOption implements PveOption {
                 .findFirst()
                 .get();
 
-        List<DungeonRoomMarker> dungeonRoomMarkerList = game.getMarkers(DungeonRoomMarker.class);
-
-        for (int i = 0; i < dungeonRoomMarkerList.size(); i++) {
-            dungeonRoomMarkerList.get(i).renderInWorld(
-                    boundingBoxOption.getMin().getBlockX(),
+        for (var placedRooms : floor.getPlacedRooms()) {
+            rooms.get(placedRooms.getRoom()).renderInWorld(
+                    boundingBoxOption.getMin().getBlockX() + placedRooms.getX(),
                     boundingBoxOption.getMin().getBlockY(),
-                    boundingBoxOption.getMin().getBlockZ()
+                    boundingBoxOption.getMin().getBlockZ() + placedRooms.getZ()
             );
         }
     }
