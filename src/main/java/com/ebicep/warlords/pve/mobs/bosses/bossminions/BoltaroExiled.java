@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -38,6 +39,13 @@ public class BoltaroExiled extends AbstractZombie implements EliteMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+
+        if (option.getDifficulty() == DifficultyIndex.EXTREME) {
+            float newHealth = 2000;
+            warlordsNPC.setMaxBaseHealth(newHealth);
+            warlordsNPC.setHealth(newHealth);
+            warlordsNPC.setMaxHealth(newHealth);
+        }
     }
 
     @Override

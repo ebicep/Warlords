@@ -56,7 +56,7 @@ public class CustomSkeleton extends EntitySkeleton implements CustomEntity<Custo
         private final AtomicInteger fireTickDelay = new AtomicInteger(); //delay between shots
 
         private final AtomicInteger ticks = new AtomicInteger(); //counter for ticks
-        private final AtomicInteger delay = new AtomicInteger((int) (Math.random() * 4)); //countdown for delay, starts at a random number between 0 and 4 so shots are not all fired at the same time
+        private final AtomicInteger delay = new AtomicInteger((int) (Math.random() * 10)); //countdown for delay, starts at a random number between 0 and 4 so shots are not all fired at the same time
 
         public PathfinderGoalFireAtPlayer(EntityInsentient self, int fireTickDelay) {
             this.self = self;

@@ -59,13 +59,12 @@ public class Illumina extends AbstractZombie implements BossMob {
                 3000
         );
     }
-
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
         if (option.getDifficulty() == DifficultyIndex.EXTREME) {
-            float newHealth = 90000;
+            float newHealth = 70000;
             warlordsNPC.setMaxBaseHealth(newHealth);
             warlordsNPC.setHealth(newHealth);
             warlordsNPC.setMaxHealth(newHealth);
