@@ -55,15 +55,13 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of magical wind forward, passing through all allies and enemies. The first ally touched by the magical wind heals ")
+        description = Component.text("Send a wave of piercing magical wind forward. The first ally hit by the magical wind heals ")
                                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" health and receives "))
+                               .append(Component.text(" health (subsequent hit allies are healed for 30%) and receives "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy touched by the wind takes "))
+                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit by the wind takes "))
                                .append(formatRangeDamage(minDamage, maxDamage))
-                               .append(Component.text(" damage. All other allies and enemies the wind passes through will receive "))
-                               .append(Component.text(subsequentReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of the effect. Also heal yourself for by "))
+                               .append(Component.text(" damage. Also heal yourself for by "))
                                .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
                                .append(Component.text(" If Merciful Hex hits a target, you receive "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
@@ -110,7 +108,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
 
-        Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 1.2f);
+        Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
 
         for (WarlordsEntity warlordsEntity : PlayerFilter
                 .entitiesAround(currentLocation, hitBox, hitBox - 0.25, hitBox)
@@ -275,7 +273,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
     @Nullable
     @Override
     protected String getActivationSound() {
-        return "arcanist.mercifulhex.activation";
+        return "arcanist.mercifulhexalt.activation";
     }
 
     @Override
@@ -285,7 +283,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
 
     @Override
     protected float getSoundPitch() {
-        return 1.6f;
+        return 1.3f;
     }
 
     public int getMaxStacks() {

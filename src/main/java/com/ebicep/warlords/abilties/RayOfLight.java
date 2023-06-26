@@ -4,11 +4,14 @@ import com.ebicep.warlords.abilties.internal.AbstractBeam;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +46,20 @@ public class RayOfLight extends AbstractBeam {
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
-
+        Matrix4d center = new Matrix4d(currentLocation);
+        double angle = Math.toRadians(4 * 90) + 30 * 0.45;
+        double width = 0.5D;
+        currentLocation.getWorld().spawnParticle(
+                Particle.VILLAGER_ANGRY,
+                center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                2,
+                0,
+                0,
+                0,
+                0,
+                null,
+                true
+        );
     }
 
     @Override
@@ -75,6 +91,7 @@ public class RayOfLight extends AbstractBeam {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
         shooter.addHealingInstance(shooter, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+        Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
         return super.onActivate(shooter, player);
     }
 
@@ -86,17 +103,17 @@ public class RayOfLight extends AbstractBeam {
     @Nullable
     @Override
     protected String getActivationSound() {
-        return null;
+        return "arcanist.energyseer.activation";
     }
 
     @Override
     protected float getSoundVolume() {
-        return 0;
+        return 2;
     }
 
     @Override
     protected float getSoundPitch() {
-        return 0;
+        return 1.1f;
     }
 
 }

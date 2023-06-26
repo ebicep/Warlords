@@ -38,7 +38,7 @@ public class LastStand extends AbstractAbility implements Duration {
     private int selfTickDuration = 240;
     private int allyTickDuration = 120;
     private int selfDamageReductionPercent = 50;
-    private int teammateDamageReductionPercent = 40;
+    private int teammateDamageReductionPercent = 30;
 
     public LastStand() {
         super("Last Stand", 0, 0, 56.38f, 40);

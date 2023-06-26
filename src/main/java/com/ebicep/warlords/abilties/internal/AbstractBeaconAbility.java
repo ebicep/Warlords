@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilties.internal;
 
 import com.ebicep.warlords.abilties.BeaconOfShadow;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -64,9 +66,8 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, 1);
         Location groundLocation = LocationUtils.getGroundLocation(player);
 
-        Utils.playGlobalSound(groundLocation, "arcanist.beacon.impact", 2, 1.1f);
-        String soundString = getBeaconClass() == BeaconOfShadow.class ? "arcanist.beaconimpair.activation" : "arcanist.beaconlight.activation";
-        Utils.playGlobalSound(groundLocation, soundString, 0.1f, 0.4f);
+        Utils.playGlobalSound(groundLocation, "arcanist.beacon.impact", 0.3f, 1);
+        Utils.playGlobalSound(groundLocation, "arcanist.beaconshadow.activation", 2, 1);
 
         CircleEffect teamCircleEffect = new CircleEffect(
                 wp.getGame(),
@@ -76,7 +77,34 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
                 getLineEffect(groundLocation)
         );
-        ArmorStand beacon = Utils.spawnArmorStand(groundLocation.clone().add(0, -1.425, 0), armorStand -> armorStand.getEquipment().setHelmet(new ItemStack(Material.BEACON)));
+
+        ArmorStand beacon = Utils.spawnArmorStand(
+                groundLocation.clone().add(0, -1.425, 0),
+                armorStand -> armorStand.getEquipment().setHelmet(new ItemStack(Material.BEACON))
+        );
+
+        new GameRunnable(wp.getGame()) {
+            int interval = 4;
+            @Override
+            public void run() {
+                interval--;
+                EffectUtils.playSphereAnimation(
+                        beacon.getLocation(),
+                        2.5 + interval,
+                        250,
+                        70,
+                        70
+                );
+
+                if (interval <= 0) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 2);
+
+        String soundString = getBeaconClass() == BeaconOfShadow.class ? "arcanist.beaconimpair.activation" : "arcanist.beaconlight.activation";
+        Utils.playGlobalSound(beacon.getLocation(), soundString, 0.07f, 0.4f);
+
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 getAbbreviation(),
