@@ -48,7 +48,7 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
             return false;
         }
         double followRange = this.getFollowDistance();
-        List<LivingEntity> list = this.mob.level.getEntitiesOfClass(LivingEntity.class, this.getTargetSearchArea(followRange)); // getEntitiesWithinAABB
+        List<LivingEntity> list = this.mob.level().getEntitiesOfClass(LivingEntity.class, this.getTargetSearchArea(followRange)); // getEntitiesWithinAABB
         list.removeIf(entity -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
             return warlordsEntity == null || warlordsEntity.isTeammate(thisWarlordsEntity) || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.CREATIVE);
