@@ -60,7 +60,6 @@ public class SoulfireBeam extends AbstractBeam {
             float minDamage = minDamageHeal;
             float maxDamage = maxDamageHeal;
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
-                    .filterCooldownFrom(wp)
                     .filterCooldownClass(PoisonousHex.class)
                     .stream()
                     .count();

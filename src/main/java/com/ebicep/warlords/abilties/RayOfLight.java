@@ -70,7 +70,6 @@ public class RayOfLight extends AbstractBeam {
             float minHeal = minDamageHeal;
             float maxHeal = maxDamageHeal;
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
-                    .filterCooldownFrom(wp)
                     .filterCooldownClass(MercifulHex.class)
                     .stream()
                     .count();
@@ -97,7 +96,7 @@ public class RayOfLight extends AbstractBeam {
 
     @Override
     public ItemStack getBeamItem() {
-        return new ItemStack(Material.BLUE_ORCHID);
+        return new ItemStack(Material.CRIMSON_DOOR);
     }
 
     @Nullable

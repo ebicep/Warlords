@@ -71,6 +71,9 @@ public class Sanctuary extends AbstractAbility implements Duration {
                     @EventHandler
                     public void onDamageHeal(WarlordsDamageHealingEvent event) {
                         WarlordsEntity teammate = event.getWarlordsEntity();
+                        if (event.isHealingInstance()) {
+                            return;
+                        }
                         if (teammate.isEnemy(wp) || teammate.equals(wp)) {
                             return;
                         }
