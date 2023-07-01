@@ -187,7 +187,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
                 })
         ) {
             @Override
-            public PlayerNameData addSuffixFromEnemy() {
+            public PlayerNameData addSuffixFromOther() {
                 return new PlayerNameData(Component.text("MHEX", NamedTextColor.GREEN), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CLERIC);
             }
         });

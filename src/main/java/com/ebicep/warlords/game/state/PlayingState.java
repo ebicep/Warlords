@@ -400,7 +400,7 @@ public class PlayingState implements State, TimerDebugAble {
                 }
             });
             otherPlayerCooldowns.forEach(cd -> {
-                PlayerNameInstance.PlayerNameData prefixFromEnemy = cd.addPrefixFromEnemy();
+                PlayerNameInstance.PlayerNameData prefixFromEnemy = cd.addPrefixFromOther();
                 if (prefixFromEnemy != null && prefixFromEnemy.displayPredicate().test(warlordsPlayer)) {
                     prefix.append(Component.space().append(prefixFromEnemy.text()));
                 }
@@ -428,7 +428,7 @@ public class PlayingState implements State, TimerDebugAble {
                 }
             });
             otherPlayerCooldowns.forEach(cd -> {
-                PlayerNameInstance.PlayerNameData suffixFromEnemy = cd.addSuffixFromEnemy();
+                PlayerNameInstance.PlayerNameData suffixFromEnemy = cd.addSuffixFromOther();
                 if (suffixFromEnemy != null && suffixFromEnemy.displayPredicate().test(warlordsPlayer)) {
                     suffix.append(Component.space().append(suffixFromEnemy.text()));
                 }

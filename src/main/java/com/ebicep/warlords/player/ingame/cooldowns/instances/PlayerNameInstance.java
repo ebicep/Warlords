@@ -19,11 +19,11 @@ public interface PlayerNameInstance {
         return null;
     }
 
-    default PlayerNameData addPrefixFromEnemy() {
+    default PlayerNameData addPrefixFromOther() {
         return null;
     }
 
-    default PlayerNameData addSuffixFromEnemy() {
+    default PlayerNameData addSuffixFromOther() {
         return null;
     }
 

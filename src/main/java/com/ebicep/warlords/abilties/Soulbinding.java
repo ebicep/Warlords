@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Soulbinding extends AbstractAbility implements Duration {
 
@@ -172,10 +171,7 @@ public class Soulbinding extends AbstractAbility implements Duration {
             public PlayerNameData addSuffixFromSelf() {
                 return new PlayerNameData(
                         Component.text("BOUND", NamedTextColor.LIGHT_PURPLE),
-                        tempSoulBinding.getSoulBindedPlayers()
-                                       .stream()
-                                       .map(SoulBoundPlayer::getBoundPlayer)
-                                       .collect(Collectors.toList())
+                        we -> tempSoulBinding.getSoulBindedPlayers().stream().anyMatch(soulBoundPlayer -> soulBoundPlayer.getBoundPlayer() == we)
                 );
             }
         });

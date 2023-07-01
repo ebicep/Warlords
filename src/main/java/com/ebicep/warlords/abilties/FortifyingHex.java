@@ -224,7 +224,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
             }
 
             @Override
-            public PlayerNameData addSuffixFromEnemy() {
+            public PlayerNameData addSuffixFromOther() {
                 return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL);
             }
         });

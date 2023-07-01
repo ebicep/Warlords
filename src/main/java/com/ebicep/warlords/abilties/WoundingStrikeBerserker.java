@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilties;
 import com.ebicep.warlords.abilties.internal.AbstractStrike;
 import com.ebicep.warlords.abilties.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -102,6 +103,13 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                 @Override
                 public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                     return currentHealValue * .6f;
+                }
+
+                @Override
+                public PlayerNameData addSuffixFromOther() {
+                    return new PlayerNameData(Component.text("WND", NamedTextColor.RED),
+                            we -> we == wp || (we.isTeammate(nearPlayer) && we.getSpecClass().specType == SpecType.HEALER)
+                    );
                 }
             });
         }

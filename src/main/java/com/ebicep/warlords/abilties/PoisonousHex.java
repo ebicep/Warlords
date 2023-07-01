@@ -181,7 +181,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                 })
         ) {
             @Override
-            public PlayerNameData addSuffixFromEnemy() {
+            public PlayerNameData addSuffixFromOther() {
                 return new PlayerNameData(Component.text("PHEX", NamedTextColor.RED), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CONJURER);
             }
         });
