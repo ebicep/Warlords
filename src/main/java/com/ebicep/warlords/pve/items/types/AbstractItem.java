@@ -82,6 +82,8 @@ public abstract class AbstractItem {
         }
     }
 
+    public abstract AbstractItem clone();
+
     private static double getRandomValueNormalDistribution() {
         double mean = 0.5;
         double stdDev = 0.15;
