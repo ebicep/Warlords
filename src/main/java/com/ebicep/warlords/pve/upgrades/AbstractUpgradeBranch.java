@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;

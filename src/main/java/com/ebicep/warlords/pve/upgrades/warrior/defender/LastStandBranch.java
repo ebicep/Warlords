@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.defender;
 
-import com.ebicep.warlords.abilties.LastStand;
+import com.ebicep.warlords.abilities.LastStand;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
-import com.ebicep.warlords.abilties.GroundSlam;
+import com.ebicep.warlords.abilities.GroundSlam;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -107,8 +107,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
                         400 * playerCount,
                         500 * playerCount,
                         0,
-                        100,
-                        false
+                        100
                 );
             }
         }
@@ -335,8 +334,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
                             damage,
                             damage,
                             0,
-                            100,
-                            false
+                            100
                     );
 
                     warlordsNPC.addHealingInstance(

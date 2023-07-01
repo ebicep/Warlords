@@ -62,8 +62,7 @@ public class Blaze extends AbstractBlaze implements EliteMob {
                         518,
                         805,
                         -1,
-                        100,
-                        false
+                        100
                 );
             }
         }

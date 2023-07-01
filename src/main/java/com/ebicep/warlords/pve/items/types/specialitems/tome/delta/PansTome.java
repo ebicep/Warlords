@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
-import com.ebicep.warlords.abilties.ChainHeal;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractChain;
+import com.ebicep.warlords.abilities.ChainHeal;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
-import com.ebicep.warlords.abilties.CripplingStrike;
+import com.ebicep.warlords.abilities.CripplingStrike;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;

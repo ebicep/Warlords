@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -146,8 +146,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                         900,
                         1200,
                         0,
-                        100,
-                        false
+                        100
                 );
             }
         }
@@ -263,8 +262,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                             damage,
                             damage,
                             0,
-                            100,
-                            false
+                            100
                     );
 
                     warlordsNPC.addHealingInstance(
@@ -309,8 +307,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                                 (550 * playerCount),
                                 (700 * playerCount),
                                 0,
-                                100,
-                                false
+                                100
                         );
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
                     }
@@ -383,8 +380,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                                 700,
                                 700,
                                 -1,
-                                100,
-                                true
+                                100
                         );
                     }
                 }
@@ -413,8 +409,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                                 we.getMaxHealth() * 0.9f,
                                 we.getMaxHealth() * 0.9f,
                                 -1,
-                                100,
-                                true
+                                100
                         );
 
                         warlordsNPC.addHealingInstance(

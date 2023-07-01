@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.magmacube;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.LastStand;
+import com.ebicep.warlords.abilities.LastStand;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -90,7 +90,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
                     .entitiesAround(we, 5, 5, 5)
                     .aliveEnemiesOf(we)
             ) {
-                enemy.addDamageInstance(we, "Blight", 900, 1200, 0, 100, false);
+                enemy.addDamageInstance(we, "Blight", 900, 1200, 0, 100);
             }
         }
 

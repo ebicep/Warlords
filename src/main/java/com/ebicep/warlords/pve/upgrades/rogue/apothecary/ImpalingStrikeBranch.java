@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
-import com.ebicep.warlords.abilties.ImpalingStrike;
+import com.ebicep.warlords.abilities.ImpalingStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

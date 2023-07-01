@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 
-import com.ebicep.warlords.abilties.Inferno;
+import com.ebicep.warlords.abilities.Inferno;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

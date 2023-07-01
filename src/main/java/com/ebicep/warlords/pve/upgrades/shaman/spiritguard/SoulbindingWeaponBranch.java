@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
 
-import com.ebicep.warlords.abilties.Soulbinding;
+import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
-import com.ebicep.warlords.abilties.FlameBurst;
+import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -63,7 +63,7 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
                     .entitiesAround(warlordsNPC, voidRadius, voidRadius, voidRadius)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                wp.addDamageInstance(warlordsNPC, "Void Shred", 450, 900, 0, 100, true);
+                wp.addDamageInstance(warlordsNPC, "Void Shred", 450, 900, 0, 100);
                 wp.addSpeedModifier(warlordsNPC, "Void Slowness", -30, 10, "BASE");
             }
         }

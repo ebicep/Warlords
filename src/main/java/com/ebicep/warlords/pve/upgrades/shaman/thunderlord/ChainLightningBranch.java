@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
-import com.ebicep.warlords.abilties.ChainLightning;
+import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

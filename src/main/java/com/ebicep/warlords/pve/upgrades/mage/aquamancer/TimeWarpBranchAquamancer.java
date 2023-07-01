@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.aquamancer;
 
-import com.ebicep.warlords.abilties.TimeWarpAquamancer;
+import com.ebicep.warlords.abilities.TimeWarpAquamancer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

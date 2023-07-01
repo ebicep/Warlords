@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
-import com.ebicep.warlords.abilties.HolyRadianceProtector;
+import com.ebicep.warlords.abilities.HolyRadianceProtector;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

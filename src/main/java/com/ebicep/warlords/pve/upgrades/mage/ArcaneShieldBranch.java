@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage;
 
-import com.ebicep.warlords.abilties.ArcaneShield;
+import com.ebicep.warlords.abilities.ArcaneShield;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

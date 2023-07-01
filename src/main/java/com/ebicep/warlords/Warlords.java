@@ -6,7 +6,7 @@ import co.aikar.taskchain.TaskChainFactory;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
-import com.ebicep.warlords.abilties.internal.Shield;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.commands.CommandManager;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;

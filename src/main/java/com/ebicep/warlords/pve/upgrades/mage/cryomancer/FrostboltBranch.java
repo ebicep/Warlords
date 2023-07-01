@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 
-import com.ebicep.warlords.abilties.FrostBolt;
+import com.ebicep.warlords.abilities.FrostBolt;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

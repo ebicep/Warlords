@@ -1,10 +1,10 @@
 package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.Soulbinding;
-import com.ebicep.warlords.abilties.UndyingArmy;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.Shield;
+import com.ebicep.warlords.abilities.Soulbinding;
+import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;

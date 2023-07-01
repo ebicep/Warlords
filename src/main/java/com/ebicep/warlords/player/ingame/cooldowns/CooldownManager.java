@@ -1,9 +1,9 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
-import com.ebicep.warlords.abilties.Soulbinding;
-import com.ebicep.warlords.abilties.UndyingArmy;
-import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
-import com.ebicep.warlords.abilties.WoundingStrikeDefender;
+import com.ebicep.warlords.abilities.Soulbinding;
+import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.WoundingStrikeDefender;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;

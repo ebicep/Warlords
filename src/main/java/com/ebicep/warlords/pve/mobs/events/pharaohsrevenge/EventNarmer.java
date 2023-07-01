@@ -199,8 +199,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                                     965 * 8,
                                     1138 * 8,
                                     0,
-                                    100,
-                                    false
+                                    100
                             );
                             enemy.sendMessage(Component.text("HINT: Killing Acolytes too quickly might result in an unfavourable outcome.", NamedTextColor.RED));
                         }
@@ -221,8 +220,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                                     965,
                                     1138,
                                     0,
-                                    100,
-                                    false
+                                    100
                             );
                         }
                     }
@@ -287,8 +285,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
                         750,
                         900,
                         0,
-                        100,
-                        false
+                        100
                 );
             }
         }

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
 
-import com.ebicep.warlords.abilties.SoulfireBeam;
+import com.ebicep.warlords.abilities.SoulfireBeam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

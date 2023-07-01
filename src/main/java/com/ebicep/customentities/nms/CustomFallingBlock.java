@@ -1,6 +1,6 @@
 package com.ebicep.customentities.nms;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.entity.FallingBlock;
 

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.revenant;
 
-import com.ebicep.warlords.abilties.RecklessCharge;
+import com.ebicep.warlords.abilities.RecklessCharge;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.mage.specs;
 
-import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.classes.mage.AbstractMage;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;

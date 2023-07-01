@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
-import com.ebicep.warlords.abilties.OrderOfEviscerate;
+import com.ebicep.warlords.abilities.OrderOfEviscerate;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

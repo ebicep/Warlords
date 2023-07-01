@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
-import com.ebicep.warlords.abilties.Fireball;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;

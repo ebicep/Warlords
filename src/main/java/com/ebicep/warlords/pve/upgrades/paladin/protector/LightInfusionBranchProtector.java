@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
-import com.ebicep.warlords.abilties.LightInfusionProtector;
+import com.ebicep.warlords.abilities.LightInfusionProtector;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

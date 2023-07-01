@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
-import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;

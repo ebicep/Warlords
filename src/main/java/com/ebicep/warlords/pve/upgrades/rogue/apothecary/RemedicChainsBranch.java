@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
-import com.ebicep.warlords.abilties.RemedicChains;
+import com.ebicep.warlords.abilities.RemedicChains;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

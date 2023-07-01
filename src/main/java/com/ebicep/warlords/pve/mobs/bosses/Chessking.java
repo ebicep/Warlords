@@ -43,7 +43,7 @@ public class Chessking extends AbstractSlime implements BossMob {
                     .entitiesAround(warlordsNPC, 8, 8, 8)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                we.addDamageInstance(warlordsNPC, "Belch", 2800, 3600, -1, 100, false);
+                we.addDamageInstance(warlordsNPC, "Belch", 2800, 3600, -1, 100);
             }
         }
 

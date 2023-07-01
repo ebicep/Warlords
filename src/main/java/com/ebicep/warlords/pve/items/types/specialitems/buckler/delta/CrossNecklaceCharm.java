@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
-import com.ebicep.warlords.abilties.Consecrate;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.Consecrate;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;

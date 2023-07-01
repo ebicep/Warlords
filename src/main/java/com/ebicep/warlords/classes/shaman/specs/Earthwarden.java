@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.shaman.specs;
 
-import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;

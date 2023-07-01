@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.abilties.PrismGuard;
-import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilities.PrismGuard;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -121,8 +121,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                         1200,
                         1800,
                         -1,
-                        100,
-                        true
+                        100
                 );
             }
         }
@@ -267,8 +266,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                                 600,
                                 600,
                                 -1,
-                                100,
-                                true
+                                100
                         );
                     }
                 }
@@ -297,8 +295,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                                 we.getMaxHealth() * 0.9f,
                                 we.getMaxHealth() * 0.9f,
                                 -1,
-                                100,
-                                true
+                                100
                         );
 
                         warlordsNPC.addHealingInstance(

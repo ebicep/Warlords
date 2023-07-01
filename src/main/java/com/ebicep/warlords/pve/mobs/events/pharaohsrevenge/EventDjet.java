@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
-import com.ebicep.warlords.abilties.CripplingStrike;
-import com.ebicep.warlords.abilties.SoulShackle;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.CripplingStrike;
+import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;

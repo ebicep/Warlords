@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.pigzombie;
 
-import com.ebicep.warlords.abilties.PrismGuard;
+import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
