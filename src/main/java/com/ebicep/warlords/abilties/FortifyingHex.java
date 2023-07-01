@@ -38,7 +38,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
     private int maxStacks = 3;
 
     public FortifyingHex() {
-        super("Fortifying Hex", 293, 395, 0, 80, 20, 175, 2.5, 300, true);
+        super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 300, true);
         this.playerHitbox += .25;
     }
 

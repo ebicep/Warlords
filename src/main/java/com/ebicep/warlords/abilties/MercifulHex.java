@@ -37,18 +37,18 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
     }
 
     private int hexStacksPerHit = 1;
-    private int minDamage = 248;
-    private int maxDamage = 334;
-    private int subsequentReduction = 30;
-    private int minSelfHeal = 263;
-    private int maxSelfHeal = 354;
-    private float dotMinHeal = 34;
-    private float dotMaxHeal = 46;
+    private int minDamage = 217;
+    private int maxDamage = 292;
+    private int subsequentReduction = 40;
+    private int minSelfHeal = 230;
+    private int maxSelfHeal = 310;
+    private float dotMinHeal = 30;
+    private float dotMaxHeal = 40;
     private int maxStacks = 3;
     private int tickDuration = 40;
 
     public MercifulHex() {
-        super("Merciful Hex", 351, 474, 0, 80, 20, 180, 2.5, 20, true);
+        super("Merciful Hex", 307, 415, 0, 70, 20, 180, 2.5, 20, true);
         this.playerHitbox += .5; //TODO maybe inflate y separately
     }
 
