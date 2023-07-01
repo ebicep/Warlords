@@ -55,6 +55,7 @@ public class CrystalOfHealing extends AbstractAbility {
         wp.subtractEnergy(energyCost, false);
 
         Location groundLocation = LocationUtils.getGroundLocation(player);
+        double baseY = groundLocation.getY();
 
         Utils.playGlobalSound(wp.getLocation(), "arcanist.crystalofhealing.activation", 2, 0.85f);
 
@@ -74,6 +75,7 @@ public class CrystalOfHealing extends AbstractAbility {
 
         ArmorStand crystal = Utils.spawnArmorStand(groundLocation, armorStand -> {
             armorStand.setGravity(true);
+            armorStand.customName(Component.text(60, NamedTextColor.GREEN));
             armorStand.setCustomNameVisible(true);
             armorStand.getEquipment().setHelmet(new ItemStack(Material.BROWN_STAINED_GLASS_PANE));
         });
@@ -82,7 +84,6 @@ public class CrystalOfHealing extends AbstractAbility {
                 PacketUtils.removeEntityForPlayer(p, crystal.getEntityId());
             }
         }
-
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "CRYSTAL",
@@ -99,6 +100,12 @@ public class CrystalOfHealing extends AbstractAbility {
                 (duration + lifeSpan) * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     teamCircleEffect.playEffects();
+                    if (ticksElapsed % 2 == 0) {
+                        Location crystalLocation = crystal.getLocation();
+                        crystalLocation.setY(Math.sin(ticksElapsed * Math.PI / 40) / 4 + baseY);
+                        crystalLocation.setYaw(crystalLocation.getYaw() + 10);
+                        crystal.teleport(crystalLocation);
+                    }
                     if (ticksElapsed % 20 == 0) {
                         crystal.customName(Component.text(ticksLeft / 20, NamedTextColor.GREEN));
                         //crystal.getTextDisplay().text(Component.text(ticksLeft / 20, NamedTextColor.GOLD));
