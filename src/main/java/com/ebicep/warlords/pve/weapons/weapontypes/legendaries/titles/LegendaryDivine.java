@@ -136,7 +136,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                         player.getCooldownManager().removeCooldown(cooldown.get());
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
                             if (ability.getEnergyCost() > 0) {
-                                abilityEnergyCostReduction.put(ability, ability.getEnergyCost() * 0.4f);
+                                abilityEnergyCostReduction.put(ability, 0.4f);
                             }
                         }
                         abilityEnergyCost(-1);
@@ -164,7 +164,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 return energyGainPerTick + 2.5f;
                             }
                         });
-                        passiveCooldown = 40 * GameRunnable.SECOND;
+                        passiveCooldown = 40;//* GameRunnable.SECOND;
                     }
                 } else {
                     shiftTickTime = 0;
@@ -172,7 +172,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
             }
 
             public void abilityEnergyCost(int multiplier) {
-                abilityEnergyCostReduction.forEach((abstractAbility, aFloat) -> abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() + aFloat * multiplier));
+                abilityEnergyCostReduction.forEach((abstractAbility, aFloat) -> abstractAbility.setEnergyCostMultiplicative(abstractAbility.getEnergyCostMultiplicative() + aFloat * multiplier));
                 player.updateItems();
             }
         }.runTaskTimer(0, 0);

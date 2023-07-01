@@ -8,6 +8,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -33,7 +34,7 @@ public abstract class AbstractAbility {
     protected float maxDamageHeal;
     protected float currentCooldown;
     protected float cooldown;
-    protected float energyCost;
+    protected FloatModifiable energyCost;
     protected float critChance;
     protected float critMultiplier;
     protected TextComponent description = Component.empty();
@@ -51,7 +52,7 @@ public abstract class AbstractAbility {
         this.minDamageHeal = minDamageHeal;
         this.maxDamageHeal = maxDamageHeal;
         this.cooldown = cooldown;
-        this.energyCost = energyCost;
+        this.energyCost = new FloatModifiable(energyCost);
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         boosted = false;
@@ -212,11 +213,27 @@ public abstract class AbstractAbility {
     }
 
     public float getEnergyCost() {
-        return energyCost;
+        return (energyCost.getCurrentValue() + energyCost.getAdditiveModifier()) * energyCost.getMultiplicativeModifier(); // TODO check for possible floating point accuracy errors
     }
 
     public void setEnergyCost(float energyCost) {
-        this.energyCost = energyCost;
+        this.energyCost.setCurrentValue(energyCost);
+    }
+
+    public float getEnergyCostAdditive() {
+        return energyCost.getAdditiveModifier();
+    }
+
+    public void setEnergyCostAdditive(float energyCost) {
+        this.energyCost.setAdditiveModifier(energyCost);
+    }
+
+    public float getEnergyCostMultiplicative() {
+        return energyCost.getMultiplicativeModifier();
+    }
+
+    public void setEnergyCostMultiplicative(float energyCost) {
+        this.energyCost.setMultiplicativeModifier(energyCost);
     }
 
     public float getCritChance() {

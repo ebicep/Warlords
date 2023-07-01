@@ -80,7 +80,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
                         minDamageHeal,
                         maxDamageHeal,
                         cooldown,
-                        energyCost,
+                        energyCost.getCurrentValue(),
                         critChance,
                         critMultiplier
                 );

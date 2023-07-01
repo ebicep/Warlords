@@ -100,7 +100,7 @@ public class Consecrate extends AbstractAbility implements Duration {
                 name,
                 null,
                 Consecrate.class,
-                new Consecrate(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location),
+                new Consecrate(minDamageHeal, maxDamageHeal, energyCost.getCurrentValue(), critChance, critMultiplier, strikeDamageBoost, radius, location),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

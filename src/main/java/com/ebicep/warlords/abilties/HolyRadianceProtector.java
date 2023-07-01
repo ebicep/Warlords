@@ -112,7 +112,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                 minDamageHeal,
                 maxDamageHeal,
                 cooldown,
-                energyCost,
+                energyCost.getCurrentValue(),
                 critChance,
                 critMultiplier
         );

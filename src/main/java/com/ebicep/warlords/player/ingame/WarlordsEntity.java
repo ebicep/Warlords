@@ -33,6 +33,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -2008,6 +2009,10 @@ public abstract class WarlordsEntity {
             Bukkit.getPluginManager().callEvent(new WarlordsEnergyUsedEvent(this, amountSubtracted));
         }
         return amountSubtracted;
+    }
+
+    public float subtractEnergy(FloatModifiable amount, boolean fromAttacker) {
+        return subtractEnergy(amount.getCurrentValue(), fromAttacker);
     }
 
     public void playSound(Location location, Sound sound, float volume, float pitch) {

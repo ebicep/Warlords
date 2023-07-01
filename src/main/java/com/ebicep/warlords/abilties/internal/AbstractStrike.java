@@ -58,7 +58,7 @@ public abstract class AbstractStrike extends AbstractAbility {
                                     .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                                     .findAny();
                             if (optionalHammerOfLight.isPresent()) {
-                                wp.subtractEnergy(energyCost - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
+                                wp.subtractEnergy(energyCost.getCurrentValue() - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
                             } else {
                                 wp.subtractEnergy(energyCost, false);
                             }

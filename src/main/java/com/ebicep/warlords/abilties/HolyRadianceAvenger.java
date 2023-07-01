@@ -89,7 +89,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                         minDamageHeal,
                         maxDamageHeal,
                         cooldown,
-                        energyCost,
+                        energyCost.getCurrentValue(),
                         critChance,
                         critMultiplier
                 );
@@ -153,7 +153,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                 minDamageHeal,
                 maxDamageHeal,
                 cooldown,
-                energyCost,
+                energyCost.getCurrentValue(),
                 critChance,
                 critMultiplier
         );
