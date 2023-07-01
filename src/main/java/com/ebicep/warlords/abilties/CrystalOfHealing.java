@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.OrbPassenger;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -9,17 +8,16 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TextDisplay;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -60,20 +58,30 @@ public class CrystalOfHealing extends AbstractAbility {
 
         Utils.playGlobalSound(wp.getLocation(), "arcanist.crystalofhealing.activation", 2, 0.85f);
 
-        Crystal crystal = new Crystal(groundLocation, wp);
         CircleEffect teamCircleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
-                crystal.getArmorStand().getLocation(),
+                groundLocation,
                 RADIUS,
                 new CircumferenceEffect(Particle.WAX_OFF, Particle.REDSTONE)
         );
 
-        FireWorkEffectPlayer.playFirework(crystal.getArmorStand().getLocation(), FireworkEffect.builder()
-                .withColor(Color.LIME)
-                .with(FireworkEffect.Type.BALL)
-                .trail(true)
-                .build());
+        FireWorkEffectPlayer.playFirework(groundLocation, FireworkEffect.builder()
+                                                                        .withColor(Color.LIME)
+                                                                        .with(FireworkEffect.Type.BALL)
+                                                                        .trail(true)
+                                                                        .build());
+
+        ArmorStand crystal = Utils.spawnArmorStand(groundLocation, armorStand -> {
+            armorStand.setGravity(true);
+            armorStand.setCustomNameVisible(true);
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.BROWN_STAINED_GLASS_PANE));
+        });
+        for (WarlordsEntity warlordsEntity : PlayerFilter.playingGame(wp.getGame()).enemiesOf(wp)) {
+            if (warlordsEntity.getEntity() instanceof Player p) {
+                PacketUtils.removeEntityForPlayer(p, crystal.getEntityId());
+            }
+        }
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -92,7 +100,7 @@ public class CrystalOfHealing extends AbstractAbility {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     teamCircleEffect.playEffects();
                     if (ticksElapsed % 20 == 0) {
-                        crystal.getArmorStand().customName(Component.text(ticksLeft / 20, NamedTextColor.GREEN));
+                        crystal.customName(Component.text(ticksLeft / 20, NamedTextColor.GREEN));
                         //crystal.getTextDisplay().text(Component.text(ticksLeft / 20, NamedTextColor.GOLD));
                     }
                     if (ticksElapsed < 40) {
@@ -109,7 +117,7 @@ public class CrystalOfHealing extends AbstractAbility {
                                             .build());
                                     cooldown.setTicksLeft(0);
                                     int secondsElapsed = ticksElapsed / 20;
-                                    float healAmount = secondsElapsed > duration ? maxHeal : (float) (maxHeal * ticksElapsed) / (duration * 20);
+                                    float healAmount = secondsElapsed > duration ? maxHeal : (maxHeal * ticksElapsed) / (duration * 20);
                                     teammate.addHealingInstance(wp, name, healAmount, healAmount, critChance, critMultiplier, false, false);
                                 });
                 })
@@ -126,27 +134,4 @@ public class CrystalOfHealing extends AbstractAbility {
         this.maxHeal = maxHeal;
     }
 
-    static class Crystal extends OrbPassenger {
-
-        private TextDisplay textDisplay;
-
-        public Crystal(Location location, WarlordsEntity owner) {
-            super(location, owner, 1, stand -> {
-                stand.setCustomNameVisible(true);
-            });
-//            textDisplay = location.getWorld().spawn(location.clone().add(0, 2.25, 0), TextDisplay.class, display -> {
-//                //display.text();
-//            });
-        }
-
-        @Override
-        public void remove() {
-            super.remove();
-//            textDisplay.remove();
-        }
-
-        public TextDisplay getTextDisplay() {
-            return textDisplay;
-        }
-    }
 }

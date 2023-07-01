@@ -74,7 +74,6 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     private void giveShield(WarlordsEntity wp, boolean hasSanctuary) {
         int selfHexStacks = (int) new CooldownFilter<>(wp, RegularCooldown.class)
-                .filterCooldownFrom(wp)
                 .filterCooldownClass(FortifyingHex.class)
                 .stream()
                 .count();
@@ -102,7 +101,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     @Override
     public ItemStack getBeamItem() {
-        return new ItemStack(Material.CRIMSON_FENCE_GATE);
+        return new ItemStack(Material.WARPED_SLAB);
     }
 
     @Nullable

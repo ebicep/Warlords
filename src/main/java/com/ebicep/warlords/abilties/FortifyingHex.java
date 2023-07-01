@@ -39,6 +39,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
 
     public FortifyingHex() {
         super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 300, true);
+        this.playerHitbox += .25;
     }
 
     @Override
@@ -137,7 +138,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
         super.onSpawn(projectile);
         ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
             armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.WARPED_DOOR));
             armorStand.setHeadPose(new EulerAngle(-Math.atan2(
                     projectile.getSpeed().getY(),
                     Math.sqrt(

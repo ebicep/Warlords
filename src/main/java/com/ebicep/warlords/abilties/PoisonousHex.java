@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -45,7 +44,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
     private float dotMinDamage = 30;
     private float dotMaxDamage = 40;
     private int maxStacks = 3;
-    private double hitBox = 3.5;
     private int tickDuration = 40;
 
     public PoisonousHex() {
@@ -53,6 +51,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
         this.shotsFiredAtATime = 2;
         this.maxAngleOfShots = 30;
         this.forwardTeleportAmount = 1.6f;
+        this.playerHitbox += .25;
     }
 
     @Override
@@ -87,8 +86,23 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
+        return 0;
+    }
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
+        return true;
+    }
+
+    @Override
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         if (projectile.getHit().size() >= 2) {
-            return 0;
+            return;
         }
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
@@ -102,39 +116,26 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
         if (toReduceBy < .2) {
             toReduceBy = .2;
         }
-        int playersHit = 0;
-        for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
-                .aliveEnemiesOf(wp)
-                .excluding(projectile.getHit())
-        ) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
-            playersHit++;
-            if (enemy.onHorse()) {
-                numberOfDismounts++;
-            }
-            boolean trueDamage = wp.getCooldownManager().hasCooldown(AstralPlague.class) && new CooldownFilter<>(enemy, RegularCooldown.class)
-                    .filterCooldownClass(PoisonousHex.class)
-                    .stream()
-                    .count() == 3;
-            enemy.addDamageInstance(
-                    wp,
-                    name,
-                    (float) (minDamageHeal * toReduceBy),
-                    (float) (maxDamageHeal * toReduceBy),
-                    critChance,
-                    critMultiplier,
-                    trueDamage,
-                    EnumSet.of(InstanceFlags.NO_DISMOUNT)
-            );
-            givePoisonousHex(wp, enemy);
-            if (projectile.getHit().size() >= 2) {
-                getProjectiles(projectile).forEach(InternalProjectile::cancel);
-                break;
-            }
+        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+        if (hit.onHorse()) {
+            numberOfDismounts++;
         }
-
-        return playersHit;
+        hit.addDamageInstance(
+                wp,
+                name,
+                (float) (minDamageHeal * toReduceBy),
+                (float) (maxDamageHeal * toReduceBy),
+                critChance,
+                critMultiplier,
+                wp.getCooldownManager().hasCooldown(AstralPlague.class) && new CooldownFilter<>(hit, RegularCooldown.class)
+                        .filterCooldownClass(AstralPlague.class)
+                        .stream()
+                        .count() == 3
+        );
+        givePoisonousHex(wp, hit);
+        if (projectile.getHit().size() >= 2) {
+            getProjectiles(projectile).forEach(InternalProjectile::cancel);
+        }
     }
 
     private void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
@@ -183,63 +184,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
                 return new PlayerNameData(Component.text("PHEX", NamedTextColor.RED), from);
             }
         });
-    }
-
-    @Override
-    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
-        return false;
-    }
-
-    @Override
-    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
-        return true;
-    }
-
-    @Override
-    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
-        if (projectile.getHit().size() >= 2) {
-            return;
-        }
-        WarlordsEntity wp = projectile.getShooter();
-        Location currentLocation = projectile.getCurrentLocation();
-        Location startingLocation = projectile.getStartingLocation();
-
-        Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
-
-        double distanceSquared = startingLocation.distanceSquared(currentLocation);
-        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
-        if (toReduceBy < .2) {
-            toReduceBy = .2;
-        }
-        for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(currentLocation, hitBox, hitBox, hitBox)
-                .aliveEnemiesOf(wp)
-                .excluding(projectile.getHit())
-        ) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
-            if (enemy.onHorse()) {
-                numberOfDismounts++;
-            }
-
-            enemy.addDamageInstance(
-                    wp,
-                    name,
-                    (float) (minDamageHeal * toReduceBy),
-                    (float) (maxDamageHeal * toReduceBy),
-                    critChance,
-                    critMultiplier,
-                    wp.getCooldownManager().hasCooldown(AstralPlague.class) && new CooldownFilter<>(enemy, RegularCooldown.class)
-                            .filterCooldownClass(AstralPlague.class)
-                            .stream()
-                            .count() == 3
-            );
-            givePoisonousHex(wp, enemy);
-            if (projectile.getHit().size() >= 2) {
-                getProjectiles(projectile).forEach(InternalProjectile::cancel);
-                break;
-            }
-        }
     }
 
     @Override

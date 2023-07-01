@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -47,10 +46,10 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
     private float dotMaxHeal = 40;
     private int maxStacks = 3;
     private int tickDuration = 40;
-    private double hitBox = 3.5;
 
     public MercifulHex() {
         super("Merciful Hex", 307, 415, 0, 70, 20, 180, 2.5, 20, true);
+        this.playerHitbox += .5; //TODO maybe inflate y separately
     }
 
     @Override
@@ -110,48 +109,43 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
 
         Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
 
-        for (WarlordsEntity warlordsEntity : PlayerFilter
-                .entitiesAround(currentLocation, hitBox, hitBox - 0.25, hitBox)
-                .excluding(wp)
-                .excluding(projectile.getHit())
-        ) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(warlordsEntity));
-            if (warlordsEntity.onHorse()) {
-                numberOfDismounts++;
-            }
-            List<WarlordsEntity> hits = projectile.getHit();
-            if (hits.size() == 1) {
-                giveMercifulHex(wp, wp);
-            }
-            boolean isTeammate = warlordsEntity.isTeammate(wp);
-            if (isTeammate) {
-                int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
-                float reduction = teammatesHit == 1 ? 1 : subsequentReduction / 100f;
-                warlordsEntity.addHealingInstance(
-                        wp,
-                        name,
-                        minDamageHeal * reduction,
-                        maxDamageHeal * reduction,
-                        critChance,
-                        critMultiplier,
-                        false,
-                        false
-                );
-                giveMercifulHex(wp, warlordsEntity);
-            } else {
-                int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
-                float reduction = enemiesHit == 1 ? 1 : subsequentReduction / 100f;
-                warlordsEntity.addDamageInstance(
-                        wp,
-                        name,
-                        minDamage * reduction,
-                        maxDamage * reduction,
-                        critChance,
-                        critMultiplier,
-                        false
-                );
-            }
+        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+        if (hit.onHorse()) {
+            numberOfDismounts++;
         }
+        List<WarlordsEntity> hits = projectile.getHit();
+        if (hits.size() == 1) {
+            giveMercifulHex(wp, wp);
+        }
+        boolean isTeammate = hit.isTeammate(wp);
+        if (isTeammate) {
+            int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
+            float reduction = teammatesHit == 1 ? 1 : subsequentReduction / 100f;
+            hit.addHealingInstance(
+                    wp,
+                    name,
+                    minDamageHeal * reduction,
+                    maxDamageHeal * reduction,
+                    critChance,
+                    critMultiplier,
+                    false,
+                    false
+            );
+            giveMercifulHex(wp, hit);
+        } else {
+            int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
+            float reduction = enemiesHit == 1 ? 1 : subsequentReduction / 100f;
+            hit.addDamageInstance(
+                    wp,
+                    name,
+                    minDamage * reduction,
+                    maxDamage * reduction,
+                    critChance,
+                    critMultiplier,
+                    false
+            );
+        }
+
     }
 
     private void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
