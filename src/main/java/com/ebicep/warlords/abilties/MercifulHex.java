@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -187,7 +188,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
         ) {
             @Override
             public PlayerNameData addSuffixFromEnemy() {
-                return new PlayerNameData(Component.text("MHEX", NamedTextColor.GREEN), from);
+                return new PlayerNameData(Component.text("MHEX", NamedTextColor.GREEN), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CLERIC);
             }
         });
     }

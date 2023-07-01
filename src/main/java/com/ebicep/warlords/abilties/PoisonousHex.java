@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -181,7 +182,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
         ) {
             @Override
             public PlayerNameData addSuffixFromEnemy() {
-                return new PlayerNameData(Component.text("PHEX", NamedTextColor.RED), from);
+                return new PlayerNameData(Component.text("PHEX", NamedTextColor.RED), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CONJURER);
             }
         });
     }

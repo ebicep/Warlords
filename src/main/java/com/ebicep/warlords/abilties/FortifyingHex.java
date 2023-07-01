@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilties.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilties.internal.Duration;
 import com.ebicep.warlords.abilties.internal.Shield;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -224,7 +225,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
 
             @Override
             public PlayerNameData addSuffixFromEnemy() {
-                return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW), from);
+                return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL);
             }
         });
     }
