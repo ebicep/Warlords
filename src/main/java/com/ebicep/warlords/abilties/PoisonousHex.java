@@ -42,13 +42,13 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
 
     private int maxFullDistance = 30;
     private int hexStacksPerHit = 1;
-    private float dotMinDamage = 34;
-    private float dotMaxDamage = 46;
+    private float dotMinDamage = 30;
+    private float dotMaxDamage = 40;
     private int maxStacks = 3;
     private int tickDuration = 40;
 
     public PoisonousHex() {
-        super("Poisonous Hex", 351, 474, 0, 80, 20, 175, 2, 300, false);
+        super("Poisonous Hex", 307, 415, 0, 70, 20, 175, 2, 300, false);
         this.shotsFiredAtATime = 2;
         this.maxAngleOfShots = 30;
         this.forwardTeleportAmount = 1.6f;
