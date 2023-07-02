@@ -212,8 +212,8 @@ public class ArmorManager {
         SIMPLE_DRUID_HELMET(
                 "Simple Druid Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.OAK_LOG),
-                new ItemStack(Material.OAK_WOOD)
+                new ItemStack(Material.STRIPPED_MANGROVE_LOG),
+                new ItemStack(Material.GILDED_BLACKSTONE)
         ),
         GREATER_DRUID_HELMET(
                 "Greater Druid Helmet",
