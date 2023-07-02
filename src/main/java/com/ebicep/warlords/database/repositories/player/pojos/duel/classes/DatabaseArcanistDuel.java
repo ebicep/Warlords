@@ -5,19 +5,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabaseBaseDuel;
 
-public class DatabaseDruidDuel extends DatabaseBaseDuel implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistDuel extends DatabaseBaseDuel implements DatabaseWarlordsSpecs {
 
     private DatabaseBaseDuel conjurer = new DatabaseBaseDuel();
-    private DatabaseBaseDuel guardian = new DatabaseBaseDuel();
-    private DatabaseBaseDuel priest = new DatabaseBaseDuel();
+    private DatabaseBaseDuel sentinel = new DatabaseBaseDuel();
+    private DatabaseBaseDuel cleric = new DatabaseBaseDuel();
 
-    public DatabaseDruidDuel() {
+    public DatabaseArcanistDuel() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBaseDuel[]{conjurer, guardian, priest};
+        return new DatabaseBaseDuel[]{conjurer, sentinel, cleric};
     }
 
 
@@ -25,12 +25,12 @@ public class DatabaseDruidDuel extends DatabaseBaseDuel implements DatabaseWarlo
         return conjurer;
     }
 
-    public DatabaseBaseDuel getGuardian() {
-        return guardian;
+    public DatabaseBaseDuel getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBaseDuel getPriest() {
-        return priest;
+    public DatabaseBaseDuel getCleric() {
+        return cleric;
     }
 
 }

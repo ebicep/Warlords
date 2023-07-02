@@ -5,31 +5,31 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabaseBasePvE;
 
-public class DatabaseDruidPvE extends DatabaseBasePvE implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvE extends DatabaseBasePvE implements DatabaseWarlordsSpecs {
 
     protected DatabaseBasePvE conjurer = new DatabaseBasePvE();
-    protected DatabaseBasePvE guardian = new DatabaseBasePvE();
-    protected DatabaseBasePvE priest = new DatabaseBasePvE();
+    protected DatabaseBasePvE sentinel = new DatabaseBasePvE();
+    protected DatabaseBasePvE cleric = new DatabaseBasePvE();
 
-    public DatabaseDruidPvE() {
+    public DatabaseArcanistPvE() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvE[]{conjurer, guardian, priest};
+        return new DatabaseBasePvE[]{conjurer, sentinel, cleric};
     }
 
     public DatabaseBasePvE getConjurer() {
         return conjurer;
     }
 
-    public DatabaseBasePvE getGuardian() {
-        return guardian;
+    public DatabaseBasePvE getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBasePvE getPriest() {
-        return priest;
+    public DatabaseBasePvE getCleric() {
+        return cleric;
     }
 
 }

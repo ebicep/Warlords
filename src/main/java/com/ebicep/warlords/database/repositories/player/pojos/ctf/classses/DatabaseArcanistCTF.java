@@ -5,19 +5,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCTF;
 
-public class DatabaseDruidCTF extends DatabaseBaseCTF implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistCTF extends DatabaseBaseCTF implements DatabaseWarlordsSpecs {
 
     private DatabaseBaseCTF conjurer = new DatabaseBaseCTF();
-    private DatabaseBaseCTF guardian = new DatabaseBaseCTF();
-    private DatabaseBaseCTF priest = new DatabaseBaseCTF();
+    private DatabaseBaseCTF sentinel = new DatabaseBaseCTF();
+    private DatabaseBaseCTF cleric = new DatabaseBaseCTF();
 
-    public DatabaseDruidCTF() {
+    public DatabaseArcanistCTF() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBaseCTF[]{conjurer, guardian, priest};
+        return new DatabaseBaseCTF[]{conjurer, sentinel, cleric};
     }
 
 
@@ -25,12 +25,12 @@ public class DatabaseDruidCTF extends DatabaseBaseCTF implements DatabaseWarlord
         return conjurer;
     }
 
-    public DatabaseBaseCTF getGuardian() {
-        return guardian;
+    public DatabaseBaseCTF getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBaseCTF getPriest() {
-        return priest;
+    public DatabaseBaseCTF getCleric() {
+        return cleric;
     }
 
 }

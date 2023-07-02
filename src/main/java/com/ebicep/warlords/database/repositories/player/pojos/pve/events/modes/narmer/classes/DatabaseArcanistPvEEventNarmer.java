@@ -4,19 +4,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabaseBasePvEEventNarmer;
 
-public class DatabaseDruidPvEEventNarmer extends DatabaseBasePvEEventNarmer implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventNarmer extends DatabaseBasePvEEventNarmer implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventNarmer conjurer = new DatabaseBasePvEEventNarmer();
-    private DatabaseBasePvEEventNarmer guardian = new DatabaseBasePvEEventNarmer();
-    private DatabaseBasePvEEventNarmer priest = new DatabaseBasePvEEventNarmer();
+    private DatabaseBasePvEEventNarmer sentinel = new DatabaseBasePvEEventNarmer();
+    private DatabaseBasePvEEventNarmer cleric = new DatabaseBasePvEEventNarmer();
 
-    public DatabaseDruidPvEEventNarmer() {
+    public DatabaseArcanistPvEEventNarmer() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventNarmer[]{conjurer, guardian, priest};
+        return new DatabaseBasePvEEventNarmer[]{conjurer, sentinel, cleric};
     }
 
 
@@ -24,11 +24,11 @@ public class DatabaseDruidPvEEventNarmer extends DatabaseBasePvEEventNarmer impl
         return conjurer;
     }
 
-    public DatabaseBasePvEEventNarmer getGuardian() {
-        return guardian;
+    public DatabaseBasePvEEventNarmer getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBasePvEEventNarmer getPriest() {
-        return priest;
+    public DatabaseBasePvEEventNarmer getCleric() {
+        return cleric;
     }
 }

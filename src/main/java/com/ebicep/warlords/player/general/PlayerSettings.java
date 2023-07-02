@@ -41,13 +41,13 @@ public class PlayerSettings {
     private ArmorManager.Helmets paladinHelmet = SIMPLE_PALADIN_HELMET;
     private ArmorManager.Helmets shamanHelmet = SIMPLE_SHAMAN_HELMET;
     private ArmorManager.Helmets rogueHelmet = SIMPLE_ROGUE_HELMET;
-    private ArmorManager.Helmets druidHelmet = SIMPLE_ROGUE_HELMET;
+    private ArmorManager.Helmets arcanistHelmet = SIMPLE_ARCANIST_HELMET;
     private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
-    private ArmorManager.ArmorSets druidArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
+    private ArmorManager.ArmorSets arcanistArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
 
     private Settings.ChatSettings.ChatDamage chatDamageMode = Settings.ChatSettings.ChatDamage.ALL;
     private Settings.ChatSettings.ChatHealing chatHealingMode = Settings.ChatSettings.ChatHealing.ALL;
@@ -178,7 +178,7 @@ public class PlayerSettings {
         armorSets.add(paladinHelmet);
         armorSets.add(shamanHelmet);
         armorSets.add(rogueHelmet);
-        armorSets.add(druidHelmet);
+        armorSets.add(arcanistHelmet);
         return armorSets;
     }
 
@@ -198,7 +198,7 @@ public class PlayerSettings {
         armorSets.add(paladinArmor);
         armorSets.add(shamanArmor);
         armorSets.add(rogueArmor);
-        armorSets.add(druidArmor);
+        armorSets.add(arcanistArmor);
         return armorSets;
     }
 
@@ -213,7 +213,7 @@ public class PlayerSettings {
             case PALADIN -> this.paladinHelmet = helmet;
             case SHAMAN -> this.shamanHelmet = helmet;
             case ROGUE -> this.rogueHelmet = helmet;
-            case ARCANIST -> this.druidHelmet = helmet;
+            case ARCANIST -> this.arcanistHelmet = helmet;
         }
         DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setHelmet(helmet));
     }
@@ -225,7 +225,7 @@ public class PlayerSettings {
             case PALADIN -> this.paladinArmor = armor;
             case SHAMAN -> this.shamanArmor = armor;
             case ROGUE -> this.rogueArmor = armor;
-            case ARCANIST -> this.druidArmor = armor;
+            case ARCANIST -> this.arcanistArmor = armor;
         }
         DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setArmor(armor));
     }

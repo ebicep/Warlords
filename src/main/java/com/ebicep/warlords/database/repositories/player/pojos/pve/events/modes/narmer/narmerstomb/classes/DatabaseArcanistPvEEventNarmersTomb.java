@@ -6,19 +6,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.narmerstomb.DatabaseBasePvEEventNarmersTomb;
 
-public class DatabaseDruidPvEEventNarmersTomb extends DatabaseBasePvEEventNarmersTomb implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventNarmersTomb extends DatabaseBasePvEEventNarmersTomb implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventNarmersTomb conjurer = new DatabaseBasePvEEventNarmersTomb();
-    private DatabaseBasePvEEventNarmersTomb guardian = new DatabaseBasePvEEventNarmersTomb();
-    private DatabaseBasePvEEventNarmersTomb priest = new DatabaseBasePvEEventNarmersTomb();
+    private DatabaseBasePvEEventNarmersTomb sentinel = new DatabaseBasePvEEventNarmersTomb();
+    private DatabaseBasePvEEventNarmersTomb cleric = new DatabaseBasePvEEventNarmersTomb();
 
-    public DatabaseDruidPvEEventNarmersTomb() {
+    public DatabaseArcanistPvEEventNarmersTomb() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventNarmersTomb[]{conjurer, guardian, priest};
+        return new DatabaseBasePvEEventNarmersTomb[]{conjurer, sentinel, cleric};
     }
 
 
@@ -26,12 +26,12 @@ public class DatabaseDruidPvEEventNarmersTomb extends DatabaseBasePvEEventNarmer
         return conjurer;
     }
 
-    public DatabaseBasePvEEventNarmersTomb getGuardian() {
-        return guardian;
+    public DatabaseBasePvEEventNarmersTomb getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBasePvEEventNarmersTomb getPriest() {
-        return priest;
+    public DatabaseBasePvEEventNarmersTomb getCleric() {
+        return cleric;
     }
 
 }

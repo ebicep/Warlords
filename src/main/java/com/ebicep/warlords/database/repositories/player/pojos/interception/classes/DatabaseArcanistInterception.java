@@ -5,19 +5,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabaseBaseInterception;
 
-public class DatabaseDruidInterception extends DatabaseBaseInterception implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistInterception extends DatabaseBaseInterception implements DatabaseWarlordsSpecs {
 
     private DatabaseBaseInterception conjurer = new DatabaseBaseInterception();
-    private DatabaseBaseInterception guardian = new DatabaseBaseInterception();
-    private DatabaseBaseInterception priest = new DatabaseBaseInterception();
+    private DatabaseBaseInterception sentinel = new DatabaseBaseInterception();
+    private DatabaseBaseInterception cleric = new DatabaseBaseInterception();
 
-    public DatabaseDruidInterception() {
+    public DatabaseArcanistInterception() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBaseInterception[]{conjurer, guardian, priest};
+        return new DatabaseBaseInterception[]{conjurer, sentinel, cleric};
     }
 
 
@@ -25,12 +25,12 @@ public class DatabaseDruidInterception extends DatabaseBaseInterception implemen
         return conjurer;
     }
 
-    public DatabaseBaseInterception getGuardian() {
-        return guardian;
+    public DatabaseBaseInterception getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBaseInterception getPriest() {
-        return priest;
+    public DatabaseBaseInterception getCleric() {
+        return cleric;
     }
 
 }

@@ -6,19 +6,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.DatabaseBasePvEEventBoltaroBonanza;
 
-public class DatabaseDruidPvEEventBoltaroBonanza extends DatabaseBasePvEEventBoltaroBonanza implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventBoltaroBonanza extends DatabaseBasePvEEventBoltaroBonanza implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventBoltaroBonanza conjurer = new DatabaseBasePvEEventBoltaroBonanza();
-    private DatabaseBasePvEEventBoltaroBonanza guardian = new DatabaseBasePvEEventBoltaroBonanza();
-    private DatabaseBasePvEEventBoltaroBonanza priest = new DatabaseBasePvEEventBoltaroBonanza();
+    private DatabaseBasePvEEventBoltaroBonanza sentinel = new DatabaseBasePvEEventBoltaroBonanza();
+    private DatabaseBasePvEEventBoltaroBonanza cleric = new DatabaseBasePvEEventBoltaroBonanza();
 
-    public DatabaseDruidPvEEventBoltaroBonanza() {
+    public DatabaseArcanistPvEEventBoltaroBonanza() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventBoltaroBonanza[]{conjurer, guardian, priest};
+        return new DatabaseBasePvEEventBoltaroBonanza[]{conjurer, sentinel, cleric};
     }
 
 
@@ -26,12 +26,12 @@ public class DatabaseDruidPvEEventBoltaroBonanza extends DatabaseBasePvEEventBol
         return conjurer;
     }
 
-    public DatabaseBasePvEEventBoltaroBonanza getGuardian() {
-        return guardian;
+    public DatabaseBasePvEEventBoltaroBonanza getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBasePvEEventBoltaroBonanza getPriest() {
-        return priest;
+    public DatabaseBasePvEEventBoltaroBonanza getCleric() {
+        return cleric;
     }
 
 }

@@ -6,19 +6,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabaseBaseTDM;
 
-public class DatabaseDruidTDM extends DatabaseBaseTDM implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistTDM extends DatabaseBaseTDM implements DatabaseWarlordsSpecs {
 
     private DatabaseBaseTDM conjurer = new DatabaseBaseTDM();
-    private DatabaseBaseTDM guardian = new DatabaseBaseTDM();
-    private DatabaseBaseTDM priest = new DatabaseBaseTDM();
+    private DatabaseBaseTDM sentinel = new DatabaseBaseTDM();
+    private DatabaseBaseTDM cleric = new DatabaseBaseTDM();
 
-    public DatabaseDruidTDM() {
+    public DatabaseArcanistTDM() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBaseTDM[]{conjurer, guardian, priest};
+        return new DatabaseBaseTDM[]{conjurer, sentinel, cleric};
     }
 
 
@@ -26,12 +26,12 @@ public class DatabaseDruidTDM extends DatabaseBaseTDM implements DatabaseWarlord
         return conjurer;
     }
 
-    public DatabaseBaseTDM getGuardian() {
-        return guardian;
+    public DatabaseBaseTDM getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBaseTDM getPriest() {
-        return priest;
+    public DatabaseBaseTDM getCleric() {
+        return cleric;
     }
 
 }

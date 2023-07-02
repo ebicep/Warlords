@@ -5,19 +5,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabaseBasePvEOnslaught;
 
-public class DatabaseDruidPvEOnslaught extends DatabaseBasePvEOnslaught implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEOnslaught extends DatabaseBasePvEOnslaught implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEOnslaught conjurer = new DatabaseBasePvEOnslaught();
-    private DatabaseBasePvEOnslaught guardian = new DatabaseBasePvEOnslaught();
-    private DatabaseBasePvEOnslaught priest = new DatabaseBasePvEOnslaught();
+    private DatabaseBasePvEOnslaught sentinel = new DatabaseBasePvEOnslaught();
+    private DatabaseBasePvEOnslaught cleric = new DatabaseBasePvEOnslaught();
 
-    public DatabaseDruidPvEOnslaught() {
+    public DatabaseArcanistPvEOnslaught() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEOnslaught[]{conjurer, guardian, priest};
+        return new DatabaseBasePvEOnslaught[]{conjurer, sentinel, cleric};
     }
 
 
@@ -25,11 +25,11 @@ public class DatabaseDruidPvEOnslaught extends DatabaseBasePvEOnslaught implemen
         return conjurer;
     }
 
-    public DatabaseBasePvEOnslaught getGuardian() {
-        return guardian;
+    public DatabaseBasePvEOnslaught getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBasePvEOnslaught getPriest() {
-        return priest;
+    public DatabaseBasePvEOnslaught getCleric() {
+        return cleric;
     }
 }

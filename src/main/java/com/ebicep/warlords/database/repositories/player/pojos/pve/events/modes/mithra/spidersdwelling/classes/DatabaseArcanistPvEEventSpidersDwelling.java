@@ -5,19 +5,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.spidersdwelling.DatabaseBasePvEEventSpidersDwelling;
 
-public class DatabaseDruidPvEEventSpidersDwelling extends DatabaseBasePvEEventSpidersDwelling implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventSpidersDwelling extends DatabaseBasePvEEventSpidersDwelling implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventSpidersDwelling conjurer = new DatabaseBasePvEEventSpidersDwelling();
-    private DatabaseBasePvEEventSpidersDwelling guardian = new DatabaseBasePvEEventSpidersDwelling();
-    private DatabaseBasePvEEventSpidersDwelling priest = new DatabaseBasePvEEventSpidersDwelling();
+    private DatabaseBasePvEEventSpidersDwelling sentinel = new DatabaseBasePvEEventSpidersDwelling();
+    private DatabaseBasePvEEventSpidersDwelling cleric = new DatabaseBasePvEEventSpidersDwelling();
 
-    public DatabaseDruidPvEEventSpidersDwelling() {
+    public DatabaseArcanistPvEEventSpidersDwelling() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventSpidersDwelling[]{conjurer, guardian, priest};
+        return new DatabaseBasePvEEventSpidersDwelling[]{conjurer, sentinel, cleric};
     }
 
 
@@ -25,12 +25,12 @@ public class DatabaseDruidPvEEventSpidersDwelling extends DatabaseBasePvEEventSp
         return conjurer;
     }
 
-    public DatabaseBasePvEEventSpidersDwelling getGuardian() {
-        return guardian;
+    public DatabaseBasePvEEventSpidersDwelling getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBasePvEEventSpidersDwelling getPriest() {
-        return priest;
+    public DatabaseBasePvEEventSpidersDwelling getCleric() {
+        return cleric;
     }
 
 }

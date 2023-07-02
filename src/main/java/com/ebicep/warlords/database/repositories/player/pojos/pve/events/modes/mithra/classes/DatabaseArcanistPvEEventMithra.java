@@ -5,19 +5,19 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabaseBasePvEEventMithra;
 
-public class DatabaseDruidPvEEventMithra extends DatabaseBasePvEEventMithra implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventMithra extends DatabaseBasePvEEventMithra implements DatabaseWarlordsSpecs {
 
     private DatabaseBasePvEEventMithra conjurer = new DatabaseBasePvEEventMithra();
-    private DatabaseBasePvEEventMithra guardian = new DatabaseBasePvEEventMithra();
-    private DatabaseBasePvEEventMithra priest = new DatabaseBasePvEEventMithra();
+    private DatabaseBasePvEEventMithra sentinel = new DatabaseBasePvEEventMithra();
+    private DatabaseBasePvEEventMithra cleric = new DatabaseBasePvEEventMithra();
 
-    public DatabaseDruidPvEEventMithra() {
+    public DatabaseArcanistPvEEventMithra() {
         super();
     }
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventMithra[]{conjurer, guardian, priest};
+        return new DatabaseBasePvEEventMithra[]{conjurer, sentinel, cleric};
     }
 
 
@@ -25,12 +25,12 @@ public class DatabaseDruidPvEEventMithra extends DatabaseBasePvEEventMithra impl
         return conjurer;
     }
 
-    public DatabaseBasePvEEventMithra getGuardian() {
-        return guardian;
+    public DatabaseBasePvEEventMithra getSentinel() {
+        return sentinel;
     }
 
-    public DatabaseBasePvEEventMithra getPriest() {
-        return priest;
+    public DatabaseBasePvEEventMithra getCleric() {
+        return cleric;
     }
 
 }
