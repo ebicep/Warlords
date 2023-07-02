@@ -7,8 +7,8 @@ public enum InstanceFlags {
     IGNORE_SELF_RES,
     NO_DISMOUNT,
 
-    // Damage types - all effected by flag multiplier //TODO filter out reduction/increase
+    // Damage types - all effected by flag multiplier
     TRUE_DAMAGE, // does exact value damage regardless of shield/vene/reductions/dmg increase
-    PIERCE_DAMAGE // only ignores shield/vene, not reductions/dmg increase
+    PIERCE_DAMAGE // ignores shield/vene, and victim dmg reductions
 
 }

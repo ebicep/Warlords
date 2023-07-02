@@ -336,7 +336,8 @@ public abstract class WarlordsEntity {
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
         EnumSet<InstanceFlags> flags = event.getFlags();
-
+        boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
+        boolean pierceDamage = flags.contains(InstanceFlags.PIERCE_DAMAGE);
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
@@ -346,7 +347,6 @@ public abstract class WarlordsEntity {
 
         debugMessage.append(Component.newline()).append(Component.text("Post Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
-
 
         float initialHealth = health;
 
@@ -476,11 +476,16 @@ public abstract class WarlordsEntity {
             appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
         }
         // Reduction before Intervene.
-        if (!flags.contains(InstanceFlags.TRUE_DAMAGE)) {
+
+        if (!trueDamage) {
             debugMessage.append(Component.newline()).append(Component.text("Before Intervene", NamedTextColor.AQUA));
             appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
             for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                damageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
+                float newDamageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
+                if (newDamageValue < damageValue && pierceDamage) { // pierce ignores victim dmg reduction
+                    continue;
+                }
+                damageValue = newDamageValue;
                 if (previousDamageValue != damageValue) {
                     appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
                 }
@@ -504,7 +509,7 @@ public abstract class WarlordsEntity {
                 .filterCooldownClass(Intervene.class)
                 .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), this))
                 .findFirst();
-        if (!flags.contains(InstanceFlags.TRUE_DAMAGE) && !flags.contains(InstanceFlags.PIERCE_DAMAGE) &&
+        if (!trueDamage && !pierceDamage &&
                 optionalInterveneCooldown.isPresent() && optionalInterveneCooldown.get().getTicksLeft() > 0 &&
                 isEnemy(attacker)
         ) {
@@ -583,13 +588,17 @@ public abstract class WarlordsEntity {
             }
         } else {
             // Damage reduction after Intervene
-            if (!flags.contains(InstanceFlags.TRUE_DAMAGE)) {
+            if (!trueDamage) {
                 // Damage Reduction
                 // Example: .8 = 20% reduction.
                 debugMessage.append(Component.newline()).append(Component.text("After Intervene:", NamedTextColor.AQUA));
                 appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    damageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
+                    float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
+                    if (newDamageValue < damageValue && pierceDamage) { // pierce ignores victim dmg reduction
+                        continue;
+                    }
+                    damageValue = newDamageValue;
                     if (previousDamageValue != damageValue) {
                         appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
                     }
@@ -613,8 +622,8 @@ public abstract class WarlordsEntity {
                     .filterCooldownClass(Shield.class)
                     .filter(RegularCooldown::hasTicksLeft)
                     .findFirst();
-            if (!flags.contains(InstanceFlags.TRUE_DAMAGE) &&
-                    !flags.contains(InstanceFlags.PIERCE_DAMAGE) &&
+            if (!trueDamage &&
+                    !pierceDamage &&
                     shieldCooldown.isPresent() &&
                     isEnemy(attacker)
             ) {
