@@ -125,7 +125,9 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
                     critMultiplier
             );
         }
-        giveFortifyingHex(wp, wp);
+        if (hits.size() == 1) {
+            giveFortifyingHex(wp, wp);
+        }
     }
 
     @Override
