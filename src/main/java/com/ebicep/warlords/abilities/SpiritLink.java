@@ -1,12 +1,16 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SpiritLinkBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -19,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class SpiritLink extends AbstractChain {
+public class SpiritLink extends AbstractChain implements RedAbilityIcon {
 
     public int numberOfDismounts = 0;
     private double speedDuration = 1.5;
@@ -187,6 +191,11 @@ public class SpiritLink extends AbstractChain {
                         warlordsPlayer.addEnergy(warlordsPlayer, "Soulbinding Weapon", 1);
                     }
                 });
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SpiritLinkBranch(abilityTree, this);
     }
 
     public double getSpeedDuration() {

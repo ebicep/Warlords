@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -10,6 +11,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.vindicator.VindicateBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -25,7 +29,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-public class Vindicate extends AbstractAbility implements Duration {
+public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     private static int knockbackResistance = 50;
     public int debuffsRemovedOnCast = 0;
@@ -166,6 +170,11 @@ public class Vindicate extends AbstractAbility implements Duration {
                 currentVector.multiply(knockbackResistance / 100f);
             }
         });
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new VindicateBranch(abilityTree, this);
     }
 
     public float getCalculatedVindicateDamageReduction() {

@@ -3,10 +3,14 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.MysticalShieldBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
@@ -18,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MysticalBarrier extends AbstractAbility implements Duration {
+public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon, Duration {
 
     private float runeTimerIncrease = 0.5f;
     private int tickDuration = 100;
@@ -115,6 +119,11 @@ public class MysticalBarrier extends AbstractAbility implements Duration {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                 })
         ));
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new MysticalShieldBranch(abilityTree, this);
     }
 
     @Override

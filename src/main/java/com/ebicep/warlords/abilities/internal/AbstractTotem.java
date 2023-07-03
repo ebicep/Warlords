@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.DeathsDebt;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -17,7 +18,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractTotem extends AbstractAbility {
+public abstract class AbstractTotem extends AbstractAbility implements OrangeAbilityIcon {
 
     public static Optional<AbstractTotem> getAnyTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);

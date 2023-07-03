@@ -2,11 +2,15 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.ChainLightningBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -21,7 +25,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class ChainLightning extends AbstractChain implements Comparable<ChainLightning> {
+public class ChainLightning extends AbstractChain implements RedAbilityIcon, Comparable<ChainLightning> {
 
     public int numberOfDismounts = 0;
 
@@ -107,6 +111,11 @@ public class ChainLightning extends AbstractChain implements Comparable<ChainLig
                 return newDamageValue;
             }
         });
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ChainLightningBranch(abilityTree, this);
     }
 
     @Override

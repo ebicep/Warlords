@@ -2,10 +2,14 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.revenant.UndyingArmyBranch;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
@@ -24,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class UndyingArmy extends AbstractAbility implements Duration {
+public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, Duration {
     public static final ItemStack BONE = new ItemBuilder(Material.BONE)
             .name(Component.text("Instant Kill", NamedTextColor.RED))
             .lore(
@@ -220,6 +224,11 @@ public class UndyingArmy extends AbstractAbility implements Duration {
         }
 
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new UndyingArmyBranch(abilityTree, this);
     }
 
     public HashMap<WarlordsEntity, Boolean> getPlayersPopped() {

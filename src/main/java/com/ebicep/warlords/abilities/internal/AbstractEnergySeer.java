@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUsedEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class AbstractEnergySeer<T> extends AbstractAbility implements Duration {
+public abstract class AbstractEnergySeer<T> extends AbstractAbility implements PurpleAbilityIcon, Duration {
 
     protected int speedBuff = 30;
     protected float healingMultiplier = 4;

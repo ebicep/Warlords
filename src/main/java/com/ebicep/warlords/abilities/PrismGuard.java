@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -11,6 +12,9 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.vindicator.PrismGuardBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -28,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
-public class PrismGuard extends AbstractAbility implements Duration {
+public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Duration {
 
     public int timesProjectilesReduced = 0;
     public int timesOtherReduced = 0;
@@ -268,6 +272,11 @@ public class PrismGuard extends AbstractAbility implements Duration {
         });
 
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new PrismGuardBranch(abilityTree, this);
     }
 
     public float getDamageReduced() {

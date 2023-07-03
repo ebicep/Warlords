@@ -2,10 +2,14 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -17,7 +21,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class BloodLust extends AbstractAbility implements Duration {
+public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Duration {
 
     public float amountHealed = 0;
 
@@ -136,6 +140,11 @@ public class BloodLust extends AbstractAbility implements Duration {
         });
 
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new BloodlustBranch(abilityTree, this);
     }
 
     public int getDamageConvertPercent() {

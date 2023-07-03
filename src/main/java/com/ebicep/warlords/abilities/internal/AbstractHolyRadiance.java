@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.HammerOfLight;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -20,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractHolyRadiance extends AbstractAbility {
+public abstract class AbstractHolyRadiance extends AbstractAbility implements BlueAbilityIcon {
 
     public int playersHealed = 0;
     public int playersMarked = 0;

@@ -3,9 +3,13 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.customentities.nms.CustomFallingBlock;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
+import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.GroundSlamBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -25,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class GroundSlam extends AbstractAbility {
+public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
 
     public int playersHit = 0;
     public int carrierHit = 0;
@@ -231,6 +235,11 @@ public class GroundSlam extends AbstractAbility {
         fallingBlock.setDropItem(false);
         WarlordsEvents.addEntityUUID(fallingBlock);
         return fallingBlock;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new GroundSlamBranch(abilityTree, this);
     }
 
     public int getSlamSize() {

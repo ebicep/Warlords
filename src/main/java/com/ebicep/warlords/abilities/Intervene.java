@@ -2,11 +2,15 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.defender.InterveneBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -23,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class Intervene extends AbstractAbility implements Duration {
+public class Intervene extends AbstractAbility implements BlueAbilityIcon, Duration {
 
     public int playersIntervened = 0;
     public int carriersIntervened = 0;
@@ -188,6 +192,11 @@ public class Intervene extends AbstractAbility implements Duration {
         }
 
         return false;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new InterveneBranch(abilityTree, this);
     }
 
     public float getDamagePrevented() {

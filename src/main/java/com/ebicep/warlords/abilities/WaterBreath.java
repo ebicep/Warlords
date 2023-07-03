@@ -2,9 +2,13 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Overheal;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBreathBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
@@ -23,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WaterBreath extends AbstractAbility {
+public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
 
     public int playersHealed = 0;
     public int debuffsRemoved = 0;
@@ -221,6 +225,11 @@ public class WaterBreath extends AbstractAbility {
             hit.getSpec().decreaseAllCooldownTimersBy(1.5f);
             hit.updateItems();
         }
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new WaterBreathBranch(abilityTree, this);
     }
 
     public double getVelocity() {

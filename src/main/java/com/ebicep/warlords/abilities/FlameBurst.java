@@ -1,7 +1,11 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FlameburstBranch;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -18,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlameBurst extends AbstractProjectile {
+public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
 
     private float hitbox = 5;
     private double acceleration = 1.0275;
@@ -117,6 +121,11 @@ public class FlameBurst extends AbstractProjectile {
         }
 
         return playersHit;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FlameburstBranch(abilityTree, this);
     }
 
     @Override

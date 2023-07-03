@@ -4,6 +4,9 @@ import com.ebicep.warlords.abilities.internal.AbstractBeam;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.SoulfireBeamBranch;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -73,6 +76,11 @@ public class SoulfireBeam extends AbstractBeam {
             }
             hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier);
         }
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoulfireBeamBranch(abilityTree, this);
     }
 
     @Override

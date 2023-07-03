@@ -5,6 +5,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.paladin.protector.LightInfusionBranchProtector;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -106,6 +109,11 @@ public class LightInfusionProtector extends AbstractLightInfusion {
         }
 
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new LightInfusionBranchProtector(abilityTree, this);
     }
 
 }

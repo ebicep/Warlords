@@ -3,10 +3,14 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.util.concurrent.AtomicDouble;
@@ -21,7 +25,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class ContagiousFacade extends AbstractAbility implements Duration {
+public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon, Duration {
 
     private float damageAbsorption = 30;
     private int tickDuration = 100;
@@ -113,6 +117,11 @@ public class ContagiousFacade extends AbstractAbility implements Duration {
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(protectiveLayerCooldown)
         );
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ContagiousFacadeBranch(abilityTree, this);
     }
 
     @Override
