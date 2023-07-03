@@ -73,7 +73,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         addBranchToMenu(menu, treeA, 2, 4);
         addBranchToMenu(menu, treeB, 6, 4);
         menu.setItem(
-                2,
+                4,
                 0,
                 masterBranchItem(masterUpgrade),
                 (m, e) -> {
@@ -84,18 +84,18 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     }
                 }
         );
-        menu.setItem(
-                6,
-                0,
-                masterBranchItem(masterUpgrade2),
-                (m, e) -> {
-                    if (e.isLeftClick()) {
-                        purchaseMasterUpgrade(player, masterUpgrade2, false);
-                    } else if (!masterUpgrade2.isUnlocked()) {
-                        onAutoUpgrade(AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2, 0);
-                    }
-                }
-        );
+//        menu.setItem(
+//                6,
+//                0,
+//                masterBranchItem(masterUpgrade2),
+//                (m, e) -> {
+//                    if (e.isLeftClick()) {
+//                        purchaseMasterUpgrade(player, masterUpgrade2, false);
+//                    } else if (!masterUpgrade2.isUnlocked()) {
+//                        onAutoUpgrade(AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2, 0);
+//                    }
+//                }
+//        );
 
         menu.setItem(4, 3,
                 new ItemBuilder(Material.DIAMOND)
