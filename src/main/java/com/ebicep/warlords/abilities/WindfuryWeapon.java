@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Windfury extends AbstractAbility implements PurpleAbilityIcon, Duration {
+public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration {
 
     public int timesProcd = 0;
 
@@ -35,7 +35,7 @@ public class Windfury extends AbstractAbility implements PurpleAbilityIcon, Dura
     private int maxHits = 2;
     private float weaponDamage = 135;
 
-    public Windfury() {
+    public WindfuryWeapon() {
         super("Windfury Weapon", 0, 0, 15.66f, 30, 25, 200);
     }
 
@@ -66,14 +66,14 @@ public class Windfury extends AbstractAbility implements PurpleAbilityIcon, Dura
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
 
-        Windfury tempWindfury = new Windfury();
+        WindfuryWeapon tempWindfuryWeapon = new WindfuryWeapon();
         final boolean[] firstProc = {true};
-        wp.getCooldownManager().removeCooldown(Windfury.class, false);
+        wp.getCooldownManager().removeCooldown(WindfuryWeapon.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "FURY",
-                Windfury.class,
-                tempWindfury,
+                WindfuryWeapon.class,
+                tempWindfuryWeapon,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.abilities.Earthliving;
-import com.ebicep.warlords.abilities.Windfury;
+import com.ebicep.warlords.abilities.EarthlivingWeapon;
+import com.ebicep.warlords.abilities.WindfuryWeapon;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -55,10 +55,10 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
         float procChanceIncrease = PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel();
 
         for (AbstractAbility ability : player.getSpec().getAbilities()) {
-            if (ability instanceof Windfury windfury) {
-                windfury.setProcChance(windfury.getProcChance() + procChanceIncrease);
-            } else if (ability instanceof Earthliving earthliving) {
-                earthliving.setProcChance(earthliving.getProcChance() + procChanceIncrease);
+            if (ability instanceof WindfuryWeapon windfuryWeapon) {
+                windfuryWeapon.setProcChance(windfuryWeapon.getProcChance() + procChanceIncrease);
+            } else if (ability instanceof EarthlivingWeapon earthlivingWeapon) {
+                earthlivingWeapon.setProcChance(earthlivingWeapon.getProcChance() + procChanceIncrease);
             }
         }
 

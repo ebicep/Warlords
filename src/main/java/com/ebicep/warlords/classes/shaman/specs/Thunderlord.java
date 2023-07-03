@@ -13,7 +13,7 @@ public class Thunderlord extends AbstractShaman {
                 0,
                 new LightningBolt(),
                 new ChainLightning(),
-                new Windfury(),
+                new WindfuryWeapon(),
                 new LightningRod(),
                 new CapacitorTotem()
         );

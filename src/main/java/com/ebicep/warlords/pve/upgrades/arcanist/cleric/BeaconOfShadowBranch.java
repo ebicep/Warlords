@@ -1,78 +1,81 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
 
-import com.ebicep.warlords.abilities.EnergySeerCleric;
+import com.ebicep.warlords.abilities.BeaconOfShadow;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class EnergySeerBranchPriest extends AbstractUpgradeBranch<EnergySeerCleric> {
+public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> {
 
-    public EnergySeerBranchPriest(AbilityTree abilityTree, EnergySeerCleric ability) {
+    float cooldown = ability.getCooldown();
+    float radius = ability.getRadius();
+
+    public BeaconOfShadowBranch(AbilityTree abilityTree, BeaconOfShadow ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+15% Healing",
+                "Zeal - Tier I",
+                "5% Cooldown reduction",
                 5000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+30% Healing",
+                "Zeal - Tier II",
+                "10% Cooldown reduction",
                 10000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+45% Healing",
+                "Zeal - Tier III",
+                "15% Cooldown reduction",
                 15000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+60% Healing",
+                "Zeal - Tier IV",
+                "20% Cooldown reduction",
                 20000,
                 () -> {
-
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Scope - Tier I",
-                "+1 Block rain radius",
+                "+0.5 Block radius",
                 5000,
                 () -> {
-
+                    ability.setRadius(radius + 0.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Scope - Tier II",
-                "+2 Blocks rain radius",
+                "+1 Block radius",
                 10000,
                 () -> {
-
+                    ability.setRadius(radius + 1);
                 }
         ));
         treeB.add(new Upgrade(
                 "Scope - Tier III",
-                "+3 Blocks rain radius",
+                "+1.5 Block radius",
                 15000,
                 () -> {
-
+                    ability.setRadius(radius + 1.5f);
                 }
         ));
         treeB.add(new Upgrade(
                 "Scope - Tier IV",
-                "+4 Blocks rain radius\n+4s Duration",
+                "+2 Block radius",
                 20000,
                 () -> {
-
+                    ability.setRadius(radius + 2);
                 }
         ));
 

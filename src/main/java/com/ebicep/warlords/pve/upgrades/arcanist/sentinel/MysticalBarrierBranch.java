@@ -5,44 +5,44 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class MysticalShieldBranch extends AbstractUpgradeBranch<MysticalBarrier> {
+public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier> {
 
-    int shieldIncrease = ability.getShieldIncrease();
+    float cooldown = ability.getCooldown();
     int tickDuration = ability.getReactivateTickDuration();
 
-    public MysticalShieldBranch(AbilityTree abilityTree, MysticalBarrier ability) {
+    public MysticalBarrierBranch(AbilityTree abilityTree, MysticalBarrier ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+5 Shield Strength Interval",
+                "Zeal - Tier I",
+                "5% Cooldown reduction",
                 5000,
                 () -> {
-                    ability.setShieldIncrease(shieldIncrease + 5);
+                    ability.setCooldown(cooldown * 0.95f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+10 Shield Strength Interval",
+                "Zeal - Tier II",
+                "10% Cooldown reduction",
                 10000,
                 () -> {
-                    ability.setShieldIncrease(shieldIncrease + 10);
+                    ability.setCooldown(cooldown * 0.9f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+15 Shield Strength Interval",
+                "Zeal - Tier III",
+                "15% Cooldown reduction",
                 15000,
                 () -> {
-                    ability.setShieldIncrease(shieldIncrease + 15);
+                    ability.setCooldown(cooldown * 0.85f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+20 Shield Strength Interval",
+                "Zeal - Tier IV",
+                "20% Cooldown reduction",
                 20000,
                 () -> {
-                    ability.setShieldIncrease(shieldIncrease + 20);
+                    ability.setCooldown(cooldown * 0.8f);
                 }
         ));
 

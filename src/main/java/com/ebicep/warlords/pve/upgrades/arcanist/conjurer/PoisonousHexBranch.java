@@ -44,12 +44,11 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+20% Damage\n+50% Projectile speed",
+                "+20% Damage",
                 20000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.2f);
                     ability.setMaxDamageHeal(maxDamage * 1.2f);
-                    ability.setProjectileSpeed(projectileSpeed * 1.5);
                 }
         ));
 
@@ -79,10 +78,10 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-20 Energy cost",
+                "-20 Energy cost\n+50% Projectile speed",
                 20000,
                 () -> {
-                    ability.setEnergyCost(energyCost - 20f);
+                    ability.setProjectileSpeed(projectileSpeed * 1.5);
                 }
         ));
 

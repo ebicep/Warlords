@@ -689,11 +689,11 @@ public enum SkillBoosts {
                      .append(Component.text("chance by ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            Windfury.class,
+            WindfuryWeapon.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Windfury windfury) {
-                    windfury.setProcChance(45);
-                    windfury.setWeaponDamage(windfury.getWeaponDamage() + 30);
+                if (abstractAbility instanceof WindfuryWeapon windfuryWeapon) {
+                    windfuryWeapon.setProcChance(45);
+                    windfuryWeapon.setWeaponDamage(windfuryWeapon.getWeaponDamage() + 30);
                 }
             }
     ),
@@ -826,10 +826,10 @@ public enum SkillBoosts {
             Component.text("Increase the proc chance by of Earthliving Weapon by ", NamedTextColor.GREEN)
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            Earthliving.class,
+            EarthlivingWeapon.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Earthliving earthliving) {
-                    earthliving.setProcChance(60);
+                if (abstractAbility instanceof EarthlivingWeapon earthlivingWeapon) {
+                    earthlivingWeapon.setProcChance(60);
                 }
             }
     ),

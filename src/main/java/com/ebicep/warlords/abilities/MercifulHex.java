@@ -42,11 +42,11 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     }
 
     private int hexStacksPerHit = 1;
-    private int minDamage = 217;
-    private int maxDamage = 292;
+    private float minDamage = 217;
+    private float maxDamage = 292;
     private int subsequentReduction = 40;
-    private int minSelfHeal = 230;
-    private int maxSelfHeal = 310;
+    private float minSelfHeal = 230;
+    private float maxSelfHeal = 310;
     private float dotMinHeal = 30;
     private float dotMaxHeal = 40;
     private int maxStacks = 3;
@@ -317,5 +317,37 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     public void setDotMaxHeal(float dotMaxHeal) {
         this.dotMaxHeal = dotMaxHeal;
+    }
+
+    public float getMinSelfHeal() {
+        return minSelfHeal;
+    }
+
+    public void setMinSelfHeal(float minSelfHeal) {
+        this.minSelfHeal = minSelfHeal;
+    }
+
+    public float getMaxSelfHeal() {
+        return maxSelfHeal;
+    }
+
+    public void setMaxSelfHeal(float maxSelfHeal) {
+        this.maxSelfHeal = maxSelfHeal;
+    }
+
+    public float getMinDamage() {
+        return minDamage;
+    }
+
+    public void setMinDamage(float minDamage) {
+        this.minDamage = minDamage;
+    }
+
+    public float getMaxDamage() {
+        return maxDamage;
+    }
+
+    public void setMaxDamage(float maxDamage) {
+        this.maxDamage = maxDamage;
     }
 }

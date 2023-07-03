@@ -13,7 +13,7 @@ public class Earthwarden extends AbstractShaman {
                 10,
                 new EarthenSpike(),
                 new Boulder(),
-                new Earthliving(),
+                new EarthlivingWeapon(),
                 new ChainHeal(),
                 new HealingTotem()
         );

@@ -5,12 +5,12 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class EnergySeerBranchGuardian extends AbstractUpgradeBranch<EnergySeerSentinel> {
+public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSentinel> {
 
     float healingMultiplier = ability.getHealingMultiplier();
     int bonusDuration = ability.getBonusDuration();
 
-    public EnergySeerBranchGuardian(AbilityTree abilityTree, EnergySeerSentinel ability) {
+    public EnergySeerBranchSentinel(AbilityTree abilityTree, EnergySeerSentinel ability) {
         super(abilityTree, ability);
 
 

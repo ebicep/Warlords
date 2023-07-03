@@ -10,7 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.arcanist.cleric.BeaconOfImpairBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.cleric.BeaconOfShadowBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
@@ -73,7 +73,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
     public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfShadow> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         if (ticksElapsed % 5 == 0) {
             BeaconOfShadow beacon = cooldown.getCooldownObject();
-            int rad = beacon.getRadius();
+            float rad = beacon.getRadius();
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
                     .aliveEnemiesOf(wp)
@@ -105,7 +105,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new BeaconOfImpairBranch(abilityTree, this);
+        return new BeaconOfShadowBranch(abilityTree, this);
     }
 
     @Override

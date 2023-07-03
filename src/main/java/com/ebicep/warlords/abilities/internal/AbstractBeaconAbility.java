@@ -27,7 +27,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     protected Location groundLocation; // not static
     protected CircleEffect effect; // not static
-    protected int radius; // not static
+    protected float radius; // not static
     protected int tickDuration;
 
     public AbstractBeaconAbility(
@@ -154,11 +154,11 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         return groundLocation;
     }
 
-    public int getRadius() {
+    public float getRadius() {
         return radius;
     }
 
-    public void setRadius(int radius) {
+    public void setRadius(float radius) {
         this.radius = radius;
         if (effect != null) {
             effect.setRadius(radius);

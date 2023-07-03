@@ -1,16 +1,17 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
 
-import com.ebicep.warlords.abilities.DivineBlessing;
+import com.ebicep.warlords.abilities.RayOfLight;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> {
+public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
 
     float cooldown = ability.getCooldown();
-    int tickDuration = ability.getTickDuration();
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
 
-    public DivineBlessingBranch(AbilityTree abilityTree, DivineBlessing ability) {
+    public RayOfLightBranch(AbilityTree abilityTree, RayOfLight ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -47,35 +48,40 @@ public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> 
         ));
 
         treeB.add(new Upgrade(
-                "Chronos - Tier I",
-                "+0.5s Duration",
+                "Alleviate - Tier I",
+                "+10% Healing",
                 5000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 10);
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Chronos - Tier II",
-                "+1s Duration",
+                "Alleviate - Tier II",
+                "+20% Healing",
                 10000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 20);
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Chronos - Tier III",
-                "+1.5s Duration",
+                "Alleviate - Tier III",
+                "+30% Healing",
                 15000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 30);
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Chronos - Tier IV",
-                "+2s Duration",
+                "Alleviate - Tier IV",
+                "+40% Healing\n-30 Energy cost",
                 20000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 40);
+                    ability.setMinDamageHeal(minDamage * 1.4f);
+                    ability.setMaxDamageHeal(maxDamage * 1.4f);
+                    ability.setEnergyCost(ability.getEnergyCost() - 30);
                 }
         ));
 

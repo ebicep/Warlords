@@ -5,13 +5,13 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class LightInfusionAvengerBranch extends AbstractUpgradeBranch<LightInfusionAvenger> {
+public class LightInfusionBranchAvenger extends AbstractUpgradeBranch<LightInfusionAvenger> {
 
     int speedBuff = ability.getSpeedBuff();
     float cooldown = ability.getCooldown();
     int energyGiven = ability.getEnergyGiven();
 
-    public LightInfusionAvengerBranch(AbilityTree abilityTree, LightInfusionAvenger ability) {
+    public LightInfusionBranchAvenger(AbilityTree abilityTree, LightInfusionAvenger ability) {
 
         super(abilityTree, ability);
         treeA.add(new Upgrade(

@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Earthliving extends AbstractAbility implements PurpleAbilityIcon, Duration {
+public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration {
 
     public int timesProcd = 0;
     public int playersHealed = 0;
@@ -41,7 +41,7 @@ public class Earthliving extends AbstractAbility implements PurpleAbilityIcon, D
     private int weaponDamage = 240;
     private int maxHits = 1;
 
-    public Earthliving() {
+    public EarthlivingWeapon() {
         super("Earthliving Weapon", 0, 0, 15.66f, 30, 25, 200);
     }
 
@@ -75,13 +75,13 @@ public class Earthliving extends AbstractAbility implements PurpleAbilityIcon, D
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
 
-        Earthliving tempEarthliving = new Earthliving();
+        EarthlivingWeapon tempEarthlivingWeapon = new EarthlivingWeapon();
         final boolean[] firstProc = {true};
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "EARTH",
-                Earthliving.class,
-                tempEarthliving,
+                EarthlivingWeapon.class,
+                tempEarthlivingWeapon,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -178,8 +178,8 @@ public class Earthliving extends AbstractAbility implements PurpleAbilityIcon, D
         target.getCooldownManager().addRegularCooldown(
                 "Earthliving PvE",
                 "",
-                Earthliving.class,
-                new Earthliving(),
+                EarthlivingWeapon.class,
+                new EarthlivingWeapon(),
                 giver,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {

@@ -150,4 +150,11 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
         this.maxHeal = maxHeal;
     }
 
+    public int getLifeSpan() {
+        return lifeSpan;
+    }
+
+    public void setLifeSpan(int lifeSpan) {
+        this.lifeSpan = lifeSpan;
+    }
 }

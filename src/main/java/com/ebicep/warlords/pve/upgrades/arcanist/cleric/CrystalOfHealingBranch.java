@@ -1,78 +1,83 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
 
-import com.ebicep.warlords.abilities.BeaconOfLight;
+import com.ebicep.warlords.abilities.CrystalOfHealing;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class BeaconOfLightBranch extends AbstractUpgradeBranch<BeaconOfLight> {
+public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHealing> {
 
-    public BeaconOfLightBranch(AbilityTree abilityTree, BeaconOfLight ability) {
+    float maxHeal = ability.getMaxHeal();
+    int lifeSpan = ability.getLifeSpan();
+
+    public CrystalOfHealingBranch(AbilityTree abilityTree, CrystalOfHealing ability) {
         super(abilityTree, ability);
+
 
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+15% Healing",
+                "+100 Max health",
                 5000,
                 () -> {
-
+                    ability.setMaxHeal(maxHeal + 100);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+30% Healing",
+                "+200 Max health",
                 10000,
                 () -> {
-
+                    ability.setMaxHeal(maxHeal + 200);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+45% Healing",
+                "+300 Max health",
                 15000,
                 () -> {
-
+                    ability.setMaxHeal(maxHeal + 300);
                 }
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+60% Healing",
+                "+400 Max health",
                 20000,
                 () -> {
-
+                    ability.setMaxHeal(maxHeal + 400);
                 }
         ));
 
-        treeB.add(new Upgrade(
-                "Scope - Tier I",
-                "+1 Block rain radius",
-                5000,
-                () -> {
 
-                }
-        ));
         treeB.add(new Upgrade(
-                "Scope - Tier II",
-                "+2 Blocks rain radius",
+                "Chronos - Tier I",
+                "+5s Lifespan",
                 10000,
                 () -> {
-
+                    ability.setLifeSpan(lifeSpan + 5);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier III",
-                "+3 Blocks rain radius",
+                "Chronos - Tier II",
+                "+10s Lifespan",
                 15000,
                 () -> {
-
+                    ability.setLifeSpan(lifeSpan + 10);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier IV",
-                "+4 Blocks rain radius\n+4s Duration",
+                "Chronos - Tier III",
+                "+15s Lifespan",
                 20000,
                 () -> {
-
+                    ability.setLifeSpan(lifeSpan + 15);
+                }
+        ));
+        treeB.add(new Upgrade(
+                "Chronos - Tier IV",
+                "+20s Lifespan",
+                25000,
+                () -> {
+                    ability.setLifeSpan(lifeSpan + 20);
                 }
         ));
 

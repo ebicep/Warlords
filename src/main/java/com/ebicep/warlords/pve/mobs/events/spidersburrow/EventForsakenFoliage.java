@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
-import com.ebicep.warlords.abilities.Earthliving;
+import com.ebicep.warlords.abilities.EarthlivingWeapon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -48,10 +48,10 @@ public class EventForsakenFoliage extends AbstractZombie implements BossMob, Spi
             warlordsNPC.heal();
         }
         // Attacks are converted into Earth Living with double the proc chance as standard.
-        Earthliving earthliving = new Earthliving();
-        earthliving.setProcChance(earthliving.getProcChance() * 2);
-        earthliving.setTickDuration(18000);
-        earthliving.onActivate(warlordsNPC, null);
+        EarthlivingWeapon earthlivingWeapon = new EarthlivingWeapon();
+        earthlivingWeapon.setProcChance(earthlivingWeapon.getProcChance() * 2);
+        earthlivingWeapon.setTickDuration(18000);
+        earthlivingWeapon.onActivate(warlordsNPC, null);
     }
 
     @Override
