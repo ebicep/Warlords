@@ -145,4 +145,12 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     public void setShieldPercent(int shieldPercent) {
         this.shieldPercent = shieldPercent;
     }
+
+    public float getRuneTimerIncrease() {
+        return runeTimerIncrease;
+    }
+
+    public void setRuneTimerIncrease(float runeTimerIncrease) {
+        this.runeTimerIncrease = runeTimerIncrease;
+    }
 }

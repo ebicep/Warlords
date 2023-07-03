@@ -80,13 +80,14 @@ public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Sanctuary - Master Upgrade",
                 """
+                        All allies with max stacks of Fortifying Hex gain an additional 15% damage reduction. Reflection damage ignores enemy defenses and resistances.
                         """,
                 50000,
                 () -> {
-
+                    ability.setAdditionalDamageReduction(ability.getAdditionalDamageReduction() + 15);
                 }
         );
     }

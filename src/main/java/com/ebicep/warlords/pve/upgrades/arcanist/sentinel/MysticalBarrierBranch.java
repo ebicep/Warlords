@@ -80,13 +80,16 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Mystical Barrier - Master Upgrade",
                 """
+                        -20% Cooldown reduction. Increase max shield health by 2000 and increase amount of shield granted for each damage instance by 120.
                         """,
                 50000,
                 () -> {
-
+                    ability.setCooldown(ability.getCooldown() * 0.8f);
+                    ability.setShieldMaxHealth(ability.getShieldMaxHealth() + 2000);
+                    ability.setShieldIncrease(ability.getShieldIncrease() + 120);
                 }
         );
     }

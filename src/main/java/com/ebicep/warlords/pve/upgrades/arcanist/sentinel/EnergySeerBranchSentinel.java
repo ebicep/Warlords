@@ -81,13 +81,15 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Energy Seer - Master Upgrade",
                 """
+                        Increase damage reduction by 15% and triple the energy restored.
                         """,
                 50000,
                 () -> {
-
+                    ability.setDamageResistance(ability.getDamageResistance() + 15);
+                    ability.setEnergyRestore(ability.getEnergyRestore() * 3);
                 }
         );
     }

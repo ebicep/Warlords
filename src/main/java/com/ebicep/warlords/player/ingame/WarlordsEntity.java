@@ -537,7 +537,8 @@ public abstract class WarlordsEntity {
                         remainingVeneDamage,
                         remainingVeneDamage,
                         isCrit ? 100 : 0,
-                        100
+                        100,
+                        EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                 );
                 //extra overVeneDamage to target
                 float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
@@ -653,7 +654,7 @@ public abstract class WarlordsEntity {
                             false,
                             true,
                             true,
-                            EnumSet.noneOf(InstanceFlags.class)
+                            EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                     ));
 
                     addAbsorbed(-(shield.getShieldHealth()));

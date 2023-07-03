@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.SanctuaryBranch;
@@ -23,6 +24,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
+import java.util.EnumSet;
 import java.util.List;
 
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
@@ -97,7 +99,8 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 event.getMin() * damageToReflect,
                                 event.getMax() * damageToReflect,
                                 0,
-                                100
+                                100,
+                                pveMasterUpgrade ? EnumSet.of(InstanceFlags.TRUE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class)
                         );
                         float damageToReduce = 1 - damageToReflect;
                         event.setMin(event.getMin() * damageToReduce);
@@ -158,4 +161,13 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     public void setHexTickDurationIncrease(int hexTickDurationIncrease) {
         this.hexTickDurationIncrease = hexTickDurationIncrease;
     }
+
+    public int getAdditionalDamageReduction() {
+        return additionalDamageReduction;
+    }
+
+    public void setAdditionalDamageReduction(int additionalDamageReduction) {
+        this.additionalDamageReduction = additionalDamageReduction;
+    }
+
 }

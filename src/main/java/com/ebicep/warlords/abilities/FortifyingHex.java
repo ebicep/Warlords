@@ -266,6 +266,22 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         this.tickDuration = tickDuration;
     }
 
+    public int getMaxEnemiesHit() {
+        return maxEnemiesHit;
+    }
+
+    public void setMaxEnemiesHit(int maxEnemiesHit) {
+        this.maxEnemiesHit = maxEnemiesHit;
+    }
+
+    public int getMaxAlliesHit() {
+        return maxAlliesHit;
+    }
+
+    public void setMaxAlliesHit(int maxAlliesHit) {
+        this.maxAlliesHit = maxAlliesHit;
+    }
+
     static class FortifyingHexShield extends Shield {
 
         private int maxStacks;

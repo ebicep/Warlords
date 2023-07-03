@@ -87,13 +87,15 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Guardian Beam - Master Upgrade",
                 """
+                        Enemy rune timers are increased by an additional 1.5s. Shield health is increased by 15%.
                         """,
                 50000,
                 () -> {
-
+                    ability.setRuneTimerIncrease(ability.getRuneTimerIncrease() + 1.5f);
+                    ability.setShieldPercent(ability.getShieldPercent() + 15);
                 }
         );
     }
