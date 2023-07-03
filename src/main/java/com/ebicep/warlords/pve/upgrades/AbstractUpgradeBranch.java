@@ -380,7 +380,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             lore.add(component.color(upgrade.isUnlocked() ? NamedTextColor.RED : NamedTextColor.DARK_GRAY));
         }
         lore.add(Component.empty());
-        lore.add(Component.empty());
         lore.add(Component.text("Cost: ", NamedTextColor.GRAY)
                           .append(Component.text("❂ " + upgrade.getCurrencyCost(), NamedTextColor.GOLD))
         );
