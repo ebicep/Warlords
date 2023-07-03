@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
@@ -89,11 +90,12 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
 
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
+                    float shieldHealth = (float) totalAbsorbed.get();
                     wp.getCooldownManager().addRegularCooldown(
                             name,
                             "SHIELD",
                             Shield.class,
-                            new Shield(name, (int) totalAbsorbed.get()),
+                            new Shield(name, shieldHealth),
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager -> {
@@ -112,6 +114,14 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                 }
                             })
                     );
+                    if (pveMasterUpgrade) {
+                        PlayerFilter.entitiesAround(wp, 4, 4, 4)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(enemy -> {
+                                        enemy.addDamageInstance(wp, name, shieldHealth, shieldHealth, 0, 100);
+                                        enemy.addSpeedModifier(wp, name, -50, 60, "BASE");
+                                    });
+                    }
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(protectiveLayerCooldown)

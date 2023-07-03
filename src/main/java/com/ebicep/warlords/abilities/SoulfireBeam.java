@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.SoulfireBeamBranch;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -51,6 +52,11 @@ public class SoulfireBeam extends AbstractBeam {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoulfireBeamBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
 
     }
@@ -74,18 +80,20 @@ public class SoulfireBeam extends AbstractBeam {
                 minDamage *= 2;
                 maxDamage *= 2;
             }
-            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier);
+            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier)
+               .ifPresent(finalEvent -> {
+                   if (pveMasterUpgrade && finalEvent.isDead()) {
+                       wp.addEnergy(wp, name, 8);
+                       new GameRunnable(wp.getGame()) {
+                           @Override
+                           public void run() {
+                               subtractCurrentCooldown(0.5f);
+                               wp.updateItem(SoulfireBeam.this);
+                           }
+                       }.runTaskLater(1);
+                   }
+               });
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SoulfireBeamBranch(abilityTree, this);
-    }
-
-    @Override
-    public ItemStack getBeamItem() {
-        return new ItemStack(Material.CRIMSON_FENCE_GATE);
     }
 
     @Nullable
@@ -102,5 +110,10 @@ public class SoulfireBeam extends AbstractBeam {
     @Override
     protected float getSoundPitch() {
         return 0;
+    }
+
+    @Override
+    public ItemStack getBeamItem() {
+        return new ItemStack(Material.CRIMSON_FENCE_GATE);
     }
 }

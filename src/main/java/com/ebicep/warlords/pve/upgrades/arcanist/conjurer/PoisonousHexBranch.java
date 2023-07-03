@@ -86,13 +86,16 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Poisonous Hex - Master Upgrade",
                 """
+                        Whenever you apply 1 stack of Poisonous Hex, apply 1 additional stack to up to 2 nearby enemies.
+                        Poisonous Hex now deals damage every 1s.
                         """,
                 50000,
                 () -> {
-
+                    ability.setPveMasterUpgrade(true);
+                    ability.setDotTickFrequency(20);
                 }
         );
     }

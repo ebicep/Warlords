@@ -73,6 +73,15 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                 },
                 tickDuration
         ) {
+
+            @Override
+            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                if (pveMasterUpgrade) {
+                    return currentCritMultiplier + 40;
+                }
+                return currentCritMultiplier;
+            }
+
             @Override
             protected Listener getListener() {
                 return new Listener() {
@@ -109,6 +118,9 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         event.getFlags().add(InstanceFlags.PIERCE_DAMAGE);
+                        if (pveMasterUpgrade) {
+                            event.setCritChance(100);
+                        }
                     }
 
                 };

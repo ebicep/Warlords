@@ -48,34 +48,34 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
 
         treeB.add(new Upgrade(
                 "Chronos - Tier I",
-                "+1s Duration",
+                "+1.5s Duration",
                 5000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 20);
+                    ability.setTickDuration(tickDuration + 30);
                 }
         ));
         treeB.add(new Upgrade(
                 "Chronos - Tier II",
-                "+2s Duration",
-                10000,
-                () -> {
-                    ability.setTickDuration(tickDuration + 40);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Chronos - Tier III",
                 "+3s Duration",
-                15000,
+                10000,
                 () -> {
                     ability.setTickDuration(tickDuration + 60);
                 }
         ));
         treeB.add(new Upgrade(
+                "Chronos - Tier III",
+                "+4.5s Duration",
+                15000,
+                () -> {
+                    ability.setTickDuration(tickDuration + 90);
+                }
+        ));
+        treeB.add(new Upgrade(
                 "Chronos - Tier IV",
-                "+4s Duration",
+                "+6s Duration",
                 20000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 80);
+                    ability.setTickDuration(tickDuration + 120);
                 }
         ));
 
@@ -83,10 +83,11 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
                 "Electrifying Storm",
                 "Healing Rain - Master Upgrade",
                 """
+                        For the duration of Astral Plague, increase crit multiplier by 40%, and Soulfire Beam is guaranteed to crit on enemies with max Hex stacks.
                         """,
                 50000,
                 () -> {
-
+                    ability.setPveMasterUpgrade(true);
                 }
         );
     }

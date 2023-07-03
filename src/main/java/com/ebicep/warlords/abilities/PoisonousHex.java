@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.PoisonousHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -49,6 +50,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     private float dotMaxDamage = 40;
     private int maxStacks = 3;
     private int tickDuration = 40;
+    private int dotTickFrequency = 40;
 
     public PoisonousHex() {
         super("Poisonous Hex", 307, 415, 0, 70, 20, 175, 2, 300, false);
@@ -81,6 +83,11 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
         return null;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new PoisonousHexBranch(abilityTree, this);
     }
 
     @Override
@@ -133,6 +140,12 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 critMultiplier
         );
         givePoisonousHex(wp, hit);
+        if (pveMasterUpgrade) {
+            PlayerFilter.entitiesAround(hit, 2, 2, 2)
+                        .aliveEnemiesOf(wp)
+                        .limit(2)
+                        .forEach(enemy -> givePoisonousHex(wp, enemy));
+        }
         if (projectile.getHit().size() >= 2) {
             getProjectiles(projectile).forEach(InternalProjectile::cancel);
         }
@@ -160,7 +173,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 },
                 tickDuration * 2,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
+                    if (ticksElapsed % dotTickFrequency == 0 && ticksElapsed != 0) {
                         to.addDamageInstance(
                                 from,
                                 name,
@@ -235,11 +248,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         });
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new PoisonousHexBranch(abilityTree, this);
-    }
-
     @Nullable
     @Override
     protected String getActivationSound() {
@@ -284,5 +292,13 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     public int getMaxStacks() {
         return maxStacks;
+    }
+
+    public int getDotTickFrequency() {
+        return dotTickFrequency;
+    }
+
+    public void setDotTickFrequency(int dotTickFrequency) {
+        this.dotTickFrequency = dotTickFrequency;
     }
 }

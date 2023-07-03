@@ -80,13 +80,16 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Energy Seer - Master Upgrade",
                 """
+                        When your Energy Seer ends, add an additional 15% damage bonus and triple energy restored.
                         """,
                 50000,
                 () -> {
-
+                    ability.setPveMasterUpgrade(true);
+                    ability.setDamageIncrease(ability.getDamageIncrease() + 15);
+                    ability.setEnergyRestore(ability.getEnergyRestore() * 3);
                 }
         );
     }
