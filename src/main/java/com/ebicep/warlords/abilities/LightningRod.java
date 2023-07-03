@@ -2,11 +2,15 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningRodBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -22,7 +26,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LightningRod extends AbstractAbility {
+public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
 
     private final int knockbackRadius = 5;
     private int energyRestore = 160;
@@ -123,6 +127,11 @@ public class LightningRod extends AbstractAbility {
                 return currentDamageValue * 1.4f;
             }
         });
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new LightningRodBranch(abilityTree, this);
     }
 
     public int getHealthRestore() {

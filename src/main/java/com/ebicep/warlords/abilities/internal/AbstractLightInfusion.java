@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -8,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractLightInfusion extends AbstractAbility implements Duration {
+public abstract class AbstractLightInfusion extends AbstractAbility implements PurpleAbilityIcon, Duration {
 
     protected int tickDuration = 60;
     protected int speedBuff = 40;

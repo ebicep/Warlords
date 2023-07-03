@@ -6,6 +6,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.paladin.avenger.HolyRadianceBranchAvenger;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -185,6 +188,11 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                 return currentDamageValue;
             }
         });
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HolyRadianceBranchAvenger(abilityTree, this);
     }
 
     public int getMarkRadius() {

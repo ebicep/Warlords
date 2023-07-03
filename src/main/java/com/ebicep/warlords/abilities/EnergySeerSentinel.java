@@ -5,6 +5,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.EnergySeerBranchGuardian;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -50,6 +53,11 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
                 return currentDamageValue * (1 - damageResistance / 100f);
             }
         };
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new EnergySeerBranchGuardian(abilityTree, this);
     }
 
     public int getDamageResistance() {

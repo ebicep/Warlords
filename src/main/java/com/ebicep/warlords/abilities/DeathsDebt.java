@@ -13,6 +13,9 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.DeathsDebtBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -332,6 +335,11 @@ public class DeathsDebt extends AbstractTotem implements Duration {
         for (Repentance repentance : wp.getAbilitiesMatching(Repentance.class)) {
             repentance.addToPool(debtTrueDamage);
         }
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new DeathsDebtBranch(abilityTree, this);
     }
 
     public boolean isInDebt() {

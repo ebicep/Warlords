@@ -1,10 +1,14 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.ChainHealBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -20,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class ChainHeal extends AbstractChain {
+public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
 
     public ChainHeal() {
         super("Chain Heal", 533, 719, 7.99f, 40, 20, 175, 15, 10, 1);
@@ -112,6 +116,11 @@ public class ChainHeal extends AbstractChain {
             }
             wp.updateItem(boulder);
         }
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ChainHealBranch(abilityTree, this);
     }
 
     @Override

@@ -3,12 +3,16 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.assassin.OrderOfEviscerateBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -31,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class OrderOfEviscerate extends AbstractAbility implements Duration {
+public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     public int numberOfFullResets = 0;
     public int numberOfHalfResets = 0;
@@ -337,6 +341,11 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
         );
         wp.getCooldownManager().addCooldown(orderOfEviscerateCooldown);
         return orderOfEviscerateCooldown;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new OrderOfEviscerateBranch(abilityTree, this);
     }
 
     public void addToDamageThreshold(float damageThreshold) {

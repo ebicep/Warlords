@@ -3,12 +3,16 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengersWrathBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -21,7 +25,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class AvengersWrath extends AbstractAbility implements Duration {
+public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     public int extraPlayersStruck = 0;
     public int playersStruckDuringWrath = 0;
@@ -147,6 +151,11 @@ public class AvengersWrath extends AbstractAbility implements Duration {
         });
 
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new AvengersWrathBranch(abilityTree, this);
     }
 
     public void addPlayersStruckDuringWrath() {

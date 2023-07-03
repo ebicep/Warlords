@@ -9,6 +9,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.defender.WoundingStrikeBranchDef;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -153,6 +156,11 @@ public class WoundingStrikeDefender extends AbstractStrike {
             teammate.getCooldownManager().removeCooldownByName(name + " Resistance");
             teammate.getCooldownManager().addCooldown(linkedCooldown);
         }
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new WoundingStrikeBranchDef(abilityTree, this);
     }
 
     public int getWounding() {

@@ -1,12 +1,16 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeaconAbility;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.cleric.BeaconOfImpairBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
@@ -21,7 +25,7 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
+public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implements BlueAbilityIcon {
 
     private int critMultiplierReducedTo = 100;
     private int darknessTickDuration = 160;
@@ -97,6 +101,11 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> {
                 }
             }
         }
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new BeaconOfImpairBranch(abilityTree, this);
     }
 
     @Override

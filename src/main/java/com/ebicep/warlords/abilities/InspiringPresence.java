@@ -2,10 +2,14 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.paladin.crusader.InspiringPresenceBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -22,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class InspiringPresence extends AbstractAbility implements Duration {
+public class InspiringPresence extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     public int playersHit = 0;
 
@@ -160,6 +164,11 @@ public class InspiringPresence extends AbstractAbility implements Duration {
             ability.subtractCurrentCooldown(10);
         }
         we.updateItems();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new InspiringPresenceBranch(abilityTree, this);
     }
 
     public List<WarlordsEntity> getPlayersAffected() {

@@ -6,6 +6,9 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthenSpikeBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -277,6 +280,11 @@ public class EarthenSpike extends AbstractAbility {
         newBlock.setDropItem(false);
         WarlordsEvents.addEntityUUID(newBlock);
         return newBlock;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new EarthenSpikeBranch(abilityTree, this);
     }
 
     public float getSpeed() {

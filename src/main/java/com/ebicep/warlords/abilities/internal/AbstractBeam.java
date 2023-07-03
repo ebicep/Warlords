@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractBeam extends AbstractPiercingProjectile {
+public abstract class AbstractBeam extends AbstractPiercingProjectile implements RedAbilityIcon {
 
     public AbstractBeam(
             String name,

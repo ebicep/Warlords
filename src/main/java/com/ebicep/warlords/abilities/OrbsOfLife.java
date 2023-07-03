@@ -3,11 +3,15 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.OrbPassenger;
+import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.warrior.revenant.OrbsOfLifeBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -27,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class OrbsOfLife extends AbstractAbility implements Duration {
+public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration {
 
     public static final double SPAWN_RADIUS = 1.15;
     public static float ORB_HEALING = 225;
@@ -291,6 +295,11 @@ public class OrbsOfLife extends AbstractAbility implements Duration {
             spawnLocation = location.clone().add(x, 0, z);
         } while (counter < 50 && (orbsInsideBlock(spawnLocation) || nearLocation(spawnLocation)));
         return spawnLocation;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new OrbsOfLifeBranch(abilityTree, this);
     }
 
     public int getOrbsProduced() {

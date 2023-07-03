@@ -2,11 +2,15 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.rogue.apothecary.SoothingElixirBranch;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -26,7 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SoothingElixir extends AbstractAbility {
+public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
 
     private static final double SPEED = 0.220;
     private static final double GRAVITY = -0.008;
@@ -249,6 +253,11 @@ public class SoothingElixir extends AbstractAbility {
         Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoothingElixirBranch(abilityTree, this);
     }
 
     public float getPuddleRadius() {

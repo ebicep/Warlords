@@ -2,9 +2,13 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.BoulderBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -24,7 +28,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Boulder extends AbstractAbility {
+public class Boulder extends AbstractAbility implements RedAbilityIcon {
 
     public int playersHit = 0;
     public int carrierHit = 0;
@@ -189,6 +193,11 @@ public class Boulder extends AbstractAbility {
         }.runTaskTimer(0, 1);
 
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new BoulderBranch(abilityTree, this);
     }
 
     private void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount) {
