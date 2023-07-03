@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -65,9 +66,9 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
                     return;
                 }
                 event.setCancelled(true);
-                AbstractAbility[] abilities = playerSpec.getAbilitiesExcludingWeapon();
+                List<AbstractAbility> abilities = playerSpec.getAbilitiesExcludingWeapon();
                 //picking random ability
-                AbstractAbility ability = abilities[ThreadLocalRandom.current().nextInt(abilities.length)];
+                AbstractAbility ability = abilities.get(ThreadLocalRandom.current().nextInt(abilities.size()));
                 Player player = event.getPlayer();
                 //temp scuffed account for energy cost
                 float energyCost = ability.getEnergyCost();

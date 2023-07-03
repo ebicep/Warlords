@@ -154,8 +154,6 @@ public class SpiritLink extends AbstractChain {
                 return newDamageValue;
             }
         });
-
-        warlordsPlayer.setRedCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
     }
 
     @Override

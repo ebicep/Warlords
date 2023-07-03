@@ -231,8 +231,7 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
 
         if (ticksElapsed % 300 == 0) {
-            //Bukkit.broadcastMessage("projectile");
-            warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
+            // warlordsNPC.getRedAbility().onActivate(warlordsNPC, null); TODO
         }
     }
 

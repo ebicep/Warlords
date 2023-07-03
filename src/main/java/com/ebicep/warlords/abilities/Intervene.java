@@ -182,8 +182,6 @@ public class Intervene extends AbstractAbility implements Duration {
             wp.getCooldownManager().addCooldown(interveneCooldown);
             veneTarget.getCooldownManager().addCooldown(interveneCooldown);
 
-            wp.updateBlueItem();
-
             Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, veneTarget));
 
             return true;

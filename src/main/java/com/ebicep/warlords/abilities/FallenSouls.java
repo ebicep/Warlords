@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -88,7 +89,10 @@ public class FallenSouls extends AbstractPiercingProjectile {
             }
             enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
-            wp.subtractRedCooldown(2);
+            for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
+                spiritLink.subtractCurrentCooldown(2);
+                wp.updateItem(spiritLink);
+            }
         }
 
         return playersHit;
@@ -117,7 +121,10 @@ public class FallenSouls extends AbstractPiercingProjectile {
 
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
-            wp.subtractRedCooldown(2);
+            for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
+                spiritLink.subtractCurrentCooldown(2);
+                wp.updateItem(spiritLink);
+            }
 
             reduceCooldowns(wp, hit);
         }
@@ -200,10 +207,10 @@ public class FallenSouls extends AbstractPiercingProjectile {
                 .forEachOrdered(soulbinding -> {
                     wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
 
-                    wp.subtractRedCooldown(1.5F);
-                    wp.subtractPurpleCooldown(1.5F);
-                    wp.subtractBlueCooldown(1.5F);
-                    wp.subtractOrangeCooldown(1.5F);
+                    for (AbstractAbility ability : wp.getAbilities()) {
+                        ability.subtractCurrentCooldown(1.5F);
+                    }
+                    wp.updateItems();
 
                     boolean masterUpgrade = soulbinding.isPveMasterUpgrade();
 
@@ -220,10 +227,10 @@ public class FallenSouls extends AbstractPiercingProjectile {
                         if (masterUpgrade) {
                             pveCheck += 0.15f;
                         }
-                        teammate.subtractRedCooldown(pveCheck);
-                        teammate.subtractPurpleCooldown(pveCheck);
-                        teammate.subtractBlueCooldown(pveCheck);
-                        teammate.subtractOrangeCooldown(pveCheck);
+                        for (AbstractAbility ability : teammate.getAbilities()) {
+                            ability.subtractCurrentCooldown(pveCheck);
+                        }
+                        teammate.updateItems();
                     }
 
                     if (masterUpgrade) {

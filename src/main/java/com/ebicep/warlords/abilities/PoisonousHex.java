@@ -24,7 +24,6 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -33,10 +32,11 @@ public class PoisonousHex extends AbstractPiercingProjectile implements Duration
 
     @Nonnull
     public static PoisonousHex getFromHex(WarlordsEntity from) {
-        return Arrays.stream(from.getSpec().getAbilities()).filter(PoisonousHex.class::isInstance)
-                     .map(PoisonousHex.class::cast)
-                     .findFirst()
-                     .orElse(new PoisonousHex());
+        return from.getSpec().getAbilities().stream()
+                   .filter(PoisonousHex.class::isInstance)
+                   .map(PoisonousHex.class::cast)
+                   .findFirst()
+                   .orElse(new PoisonousHex());
     }
 
     private int maxFullDistance = 30;

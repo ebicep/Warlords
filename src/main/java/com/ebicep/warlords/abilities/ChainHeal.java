@@ -103,15 +103,15 @@ public class ChainHeal extends AbstractChain {
     protected void onHit(WarlordsEntity wp, Player player, int hitCounter) {
         Utils.playGlobalSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
 
-        float redCurrentCooldown = wp.getRedAbility().getCurrentCooldown();
-        if ((hitCounter + 1) * 2.5f > redCurrentCooldown) {
-            wp.setRedCurrentCooldown(0);
-        } else {
-            wp.setRedCurrentCooldown(redCurrentCooldown - (hitCounter + 1) * 2.5f);
+        for (Boulder boulder : wp.getAbilitiesMatching(Boulder.class)) {
+            float redCurrentCooldown = boulder.getCurrentCooldown();
+            if ((hitCounter + 1) * 2.5f > redCurrentCooldown) {
+                boulder.setCurrentCooldown(0);
+            } else {
+                boulder.setCurrentCooldown(redCurrentCooldown - (hitCounter + 1) * 2.5f);
+            }
+            wp.updateItem(boulder);
         }
-
-        wp.updateRedItem(player);
-        wp.updateBlueItem(player);
     }
 
     @Override

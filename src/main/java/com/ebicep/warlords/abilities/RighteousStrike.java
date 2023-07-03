@@ -72,7 +72,10 @@ public class RighteousStrike extends AbstractStrike {
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, (int) (abilityReductionInTicks * 1.6f));
-            wp.subtractBlueCooldown(0.8f);
+            for (PrismGuard prismGuard : wp.getAbilitiesMatching(PrismGuard.class)) {
+                prismGuard.subtractCurrentCooldown(0.8f);
+                wp.updateItem(prismGuard);
+            }
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, abilityReductionInTicks);
         }

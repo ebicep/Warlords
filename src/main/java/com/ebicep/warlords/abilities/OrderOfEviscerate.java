@@ -201,16 +201,28 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                                         .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds", NamedTextColor.YELLOW))
                                         .append(Component.text("!", NamedTextColor.GRAY))
                                 );
-                                wp.subtractPurpleCooldown(2);
-                                wp.subtractOrangeCooldown(reduction);
+                                for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
+                                    shadowStep.subtractCurrentCooldown(2);
+                                    wp.updateItem(shadowStep);
+                                }
+                                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
+                                    orderOfEviscerate.subtractCurrentCooldown(reduction);
+                                    wp.updateItem(orderOfEviscerate);
+                                }
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                         .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
                                         .append(Component.text(" your cooldowns have been reset", NamedTextColor.YELLOW))
                                         .append(Component.text("!", NamedTextColor.GRAY))
                                 );
-                                wp.setPurpleCurrentCooldown(0);
-                                wp.setOrangeCurrentCooldown(0);
+                                for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
+                                    shadowStep.setCurrentCooldown(0);
+                                    wp.updateItem(shadowStep);
+                                }
+                                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
+                                    orderOfEviscerate.setCurrentCooldown(0);
+                                    wp.updateItem(orderOfEviscerate);
+                                }
                                 wp.addEnergy(wp, name, energyCost.getCurrentValue());
                             }
                         }
@@ -228,17 +240,24 @@ public class OrderOfEviscerate extends AbstractAbility implements Duration {
                                         .append(Component.text(" your ultimate cooldown has been reduced by " + reduction + " seconds", NamedTextColor.YELLOW))
                                         .append(Component.text("!", NamedTextColor.GRAY))
                                 );
-
-                                //wp.getPurpleAbility().subtractCooldown(reduction);
-                                wp.subtractOrangeCooldown(reduction);
+                                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
+                                    orderOfEviscerate.subtractCurrentCooldown(reduction);
+                                    wp.updateItem(orderOfEviscerate);
+                                }
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                         .append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
                                         .append(Component.text(" your cooldowns have been reduced by half", NamedTextColor.YELLOW))
                                         .append(Component.text("!", NamedTextColor.GRAY))
                                 );
-                                wp.setPurpleCurrentCooldown(wp.getPurpleAbility().getCurrentCooldown() / 2);
-                                wp.setOrangeCurrentCooldown(wp.getOrangeAbility().getCurrentCooldown() / 2);
+                                for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
+                                    shadowStep.setCurrentCooldown(shadowStep.getCooldown() / 2);
+                                    wp.updateItem(shadowStep);
+                                }
+                                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
+                                    orderOfEviscerate.setCurrentCooldown(orderOfEviscerate.getCooldown() / 2);
+                                    wp.updateItem(orderOfEviscerate);
+                                }
                                 wp.addEnergy(wp, name, energyCost.getCurrentValue() / 2f);
                             }
                         }

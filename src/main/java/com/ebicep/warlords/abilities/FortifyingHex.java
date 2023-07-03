@@ -25,7 +25,6 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.List;
 
 public class FortifyingHex extends AbstractPiercingProjectile implements Duration {
@@ -233,10 +232,11 @@ public class FortifyingHex extends AbstractPiercingProjectile implements Duratio
 
     @Nonnull
     public static FortifyingHex getFromHex(WarlordsEntity from) {
-        return Arrays.stream(from.getSpec().getAbilities()).filter(FortifyingHex.class::isInstance)
-                     .map(FortifyingHex.class::cast)
-                     .findFirst()
-                     .orElse(new FortifyingHex());
+        return from.getSpec().getAbilities().stream()
+                   .filter(FortifyingHex.class::isInstance)
+                   .map(FortifyingHex.class::cast)
+                   .findFirst()
+                   .orElse(new FortifyingHex());
     }
 
     public int getDamageReduction() {

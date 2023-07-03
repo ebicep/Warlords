@@ -2,12 +2,6 @@ package com.ebicep.warlords.classes.shaman.specs;
 
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.*;
-
-import java.util.List;
 
 public class Thunderlord extends AbstractShaman {
 
@@ -25,14 +19,4 @@ public class Thunderlord extends AbstractShaman {
         );
     }
 
-    @Override
-    public void setUpgradeBranches(WarlordsPlayer wp) {
-        AbilityTree abilityTree = wp.getAbilityTree();
-        List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
-        branch.add(new LightningBoltBranch(abilityTree, (LightningBolt) weapon));
-        branch.add(new ChainLightningBranch(abilityTree, (ChainLightning) red));
-        branch.add(new WindfuryBranch(abilityTree, (Windfury) purple));
-        branch.add(new LightningRodBranch(abilityTree, (LightningRod) blue));
-        branch.add(new CapacitorTotemBranch(abilityTree, (CapacitorTotem) orange));
-    }
 }

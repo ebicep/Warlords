@@ -58,7 +58,10 @@ public class LightInfusionProtector extends AbstractLightInfusion {
         );
 
         if (pveMasterUpgrade) {
-            wp.setBlueCurrentCooldown(0);
+            for (HolyRadianceProtector holyRadiance : wp.getAbilitiesMatching(HolyRadianceProtector.class)) {
+                holyRadiance.setCurrentCooldown(0);
+                wp.updateItem(holyRadiance);
+            }
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "INF GRACE",

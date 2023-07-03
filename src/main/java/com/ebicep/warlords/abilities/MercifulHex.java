@@ -23,7 +23,6 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,10 +30,11 @@ public class MercifulHex extends AbstractPiercingProjectile implements Duration 
 
     @Nonnull
     public static MercifulHex getFromHex(WarlordsEntity from) {
-        return Arrays.stream(from.getSpec().getAbilities()).filter(MercifulHex.class::isInstance)
-                     .map(MercifulHex.class::cast)
-                     .findFirst()
-                     .orElse(new MercifulHex());
+        return from.getSpec().getAbilities().stream()
+                   .filter(MercifulHex.class::isInstance)
+                   .map(MercifulHex.class::cast)
+                   .findFirst()
+                   .orElse(new MercifulHex());
     }
 
     private int hexStacksPerHit = 1;

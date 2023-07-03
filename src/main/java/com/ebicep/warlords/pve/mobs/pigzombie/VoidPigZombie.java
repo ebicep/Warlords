@@ -69,7 +69,9 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
         }
 
         if (ticksElapsed % 400 == 0) {
-            warlordsNPC.getBlueAbility().onActivate(warlordsNPC, null);
+            for (PrismGuard prismGuard : warlordsNPC.getAbilitiesMatching(PrismGuard.class)) {
+                prismGuard.onActivate(warlordsNPC, null); //TODO
+            }
         }
     }
 

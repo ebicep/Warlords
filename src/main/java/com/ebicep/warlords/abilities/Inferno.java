@@ -112,8 +112,8 @@ public class Inferno extends AbstractAbility implements Duration {
                         subtractCurrentCooldown(0.5f);
                         setTicksLeft(getTicksLeft() + 5);
                         finalMaxHits--;
+                        wp.updateItem(Inferno.this);
                     }
-                    wp.updateOrangeItem();
                 }
             }
         });

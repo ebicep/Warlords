@@ -68,8 +68,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-
-import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
+import java.util.stream.Collectors;
 
 public abstract class WarlordsEntity {
 
@@ -1647,32 +1646,37 @@ public abstract class WarlordsEntity {
         return specClass;
     }
 
-    public void setRedCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getRedAbility().setCurrentCooldown(currentCooldown);
-            updateRedItem();
-        }
-    }
-
     public boolean isDisableCooldowns() {
         return disableCooldowns;
     }
 
-    public AbstractAbility getRedAbility() {
-        return spec.getRed();
-    }
-
-    public void updateRedItem() {
-        if (entity instanceof Player) {
-            updateRedItem((Player) entity);
+    public void updateItem(Player player, AbstractAbility ability) {
+        Integer inventoryIndex = spec.getInventoryAbilityIndex(ability);
+        if (inventoryIndex == null) {
+            return;
+        }
+        if (ability.getCurrentCooldown() > 0) {
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
+                    .flags(ItemFlag.HIDE_ENCHANTS);
+            if (!ability.getSecondaryAbilities().isEmpty()) {
+                cooldown.enchant(Enchantment.OXYGEN, 1);
+            }
+            player.getInventory().setItem(inventoryIndex, cooldown.get());
+        } else {
+            player.getInventory().setItem(
+                    inventoryIndex,
+                    ability.getItem()
+            );
         }
     }
 
-    public void updateRedItem(Player player) {
-        updateItem(player, 1, spec.getRed(), RED_ABILITY);
+    public void updateItem(AbstractAbility ability) {
+        if (entity instanceof Player player) {
+            updateItem(player, ability);
+        }
     }
 
-    public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
+    public void updateItem(Player player, int slot, AbstractAbility ability, @Nullable ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
             ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
                     .flags(ItemFlag.HIDE_ENCHANTS);
@@ -1692,95 +1696,15 @@ public abstract class WarlordsEntity {
         this.disableCooldowns = disableCooldowns;
     }
 
-    public void subtractRedCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getRedAbility().subtractCurrentCooldown(cooldown);
-            updateRedItem();
-        }
+    public <T> List<T> getAbilitiesMatching(Class<T> clazz) {
+        return spec.getAbilities().stream()
+                   .filter(clazz::isInstance)
+                   .map(clazz::cast)
+                   .collect(Collectors.toList());
     }
 
-    public void setPurpleCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getPurpleAbility().setCurrentCooldown(currentCooldown);
-            updatePurpleItem();
-        }
-    }
-
-    public AbstractAbility getPurpleAbility() {
-        return spec.getPurple();
-    }
-
-    public void updatePurpleItem() {
-        if (entity instanceof Player) {
-            updatePurpleItem((Player) entity);
-        }
-    }
-
-    public void updatePurpleItem(Player player) {
-        updateItem(player, 2, spec.getPurple(), PURPLE_ABILITY);
-    }
-
-    public void subtractPurpleCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getPurpleAbility().subtractCurrentCooldown(cooldown);
-            updatePurpleItem();
-        }
-    }
-
-    public void setBlueCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getBlueAbility().setCurrentCooldown(currentCooldown);
-            updateBlueItem();
-        }
-    }
-
-    public AbstractAbility getBlueAbility() {
-        return spec.getBlue();
-    }
-
-    public void updateBlueItem() {
-        if (entity instanceof Player) {
-            updateBlueItem((Player) entity);
-        }
-    }
-
-    public void updateBlueItem(Player player) {
-        updateItem(player, 3, spec.getBlue(), BLUE_ABILITY);
-    }
-
-    public void subtractBlueCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getBlueAbility().subtractCurrentCooldown(cooldown);
-            updateBlueItem();
-        }
-    }
-
-    public void setOrangeCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getOrangeAbility().setCurrentCooldown(currentCooldown);
-            updateOrangeItem();
-        }
-    }
-
-    public AbstractAbility getOrangeAbility() {
-        return spec.getOrange();
-    }
-
-    public void updateOrangeItem() {
-        if (entity instanceof Player) {
-            updateOrangeItem((Player) entity);
-        }
-    }
-
-    public void updateOrangeItem(Player player) {
-        updateItem(player, 4, spec.getOrange(), ORANGE_ABILITY);
-    }
-
-    public void subtractOrangeCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getOrangeAbility().subtractCurrentCooldown(cooldown);
-            updateOrangeItem();
-        }
+    public <T> List<AbstractAbility> getAbilities() {
+        return spec.getAbilities();
     }
 
     public boolean isActive() {
@@ -1792,7 +1716,7 @@ public abstract class WarlordsEntity {
     }
 
     public void resetAbilities(boolean closeInventory) {
-        for (AbstractAbility ability : spec.getAbilities()) {
+        for (AbstractAbility ability : getAbilities()) {
             ability.setCurrentCooldown(0);
         }
         updateInventory(closeInventory);
@@ -2750,10 +2674,7 @@ public abstract class WarlordsEntity {
 
     public void updateItems() {
         if (entity instanceof Player player) {
-            updateRedItem(player);
-            updatePurpleItem(player);
-            updateBlueItem(player);
-            updateOrangeItem(player);
+            spec.getAbilities().forEach(ability -> updateItem(player, ability));
         }
     }
 

@@ -2,16 +2,6 @@ package com.ebicep.warlords.classes.warrior.specs;
 
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.GroundSlamBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.SeismicWaveBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.berserker.BerserkBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.berserker.WoundingStrikeBranchBers;
-
-import java.util.List;
 
 public class Berserker extends AbstractWarrior {
 
@@ -29,14 +19,4 @@ public class Berserker extends AbstractWarrior {
         );
     }
 
-    @Override
-    public void setUpgradeBranches(WarlordsPlayer wp) {
-        AbilityTree abilityTree = wp.getAbilityTree();
-        List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
-        branch.add(new WoundingStrikeBranchBers(abilityTree, (WoundingStrikeBerserker) weapon));
-        branch.add(new SeismicWaveBranch(abilityTree, (SeismicWave) red));
-        branch.add(new GroundSlamBranch(abilityTree, (GroundSlam) purple));
-        branch.add(new BloodlustBranch(abilityTree, (BloodLust) blue));
-        branch.add(new BerserkBranch(abilityTree, (Berserk) orange));
-    }
 }

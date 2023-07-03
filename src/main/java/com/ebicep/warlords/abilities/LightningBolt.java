@@ -90,7 +90,10 @@ public class LightningBolt extends AbstractPiercingProjectile {
 
             //reducing chain cooldown
             if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
-                wp.subtractRedCooldown(2);
+                for (ChainLightning chainLightning : wp.getAbilitiesMatching(ChainLightning.class)) {
+                    chainLightning.setCurrentCooldown(2);
+                    wp.updateItem(chainLightning);
+                }
             }
         }
 
@@ -122,7 +125,10 @@ public class LightningBolt extends AbstractPiercingProjectile {
 
             //reducing chain cooldown
             if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
-                wp.subtractRedCooldown(2);
+                for (ChainLightning chainLightning : wp.getAbilitiesMatching(ChainLightning.class)) {
+                    chainLightning.setCurrentCooldown(2);
+                    wp.updateItem(chainLightning);
+                }
             }
         }
     }

@@ -2,16 +2,6 @@ package com.ebicep.warlords.classes.paladin.specs;
 
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.classes.paladin.AbstractPaladin;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.paladin.ConsecrateBranch;
-import com.ebicep.warlords.pve.upgrades.paladin.crusader.CrusadersStrikeBranch;
-import com.ebicep.warlords.pve.upgrades.paladin.crusader.HolyRadianceBranchCrusader;
-import com.ebicep.warlords.pve.upgrades.paladin.crusader.InspiringPresenceBranch;
-import com.ebicep.warlords.pve.upgrades.paladin.crusader.LightInfusionBranchCrusader;
-
-import java.util.List;
 
 public class Crusader extends AbstractPaladin {
 
@@ -29,14 +19,4 @@ public class Crusader extends AbstractPaladin {
         );
     }
 
-    @Override
-    public void setUpgradeBranches(WarlordsPlayer wp) {
-        AbilityTree abilityTree = wp.getAbilityTree();
-        List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
-        branch.add(new CrusadersStrikeBranch(abilityTree, (CrusadersStrike) weapon));
-        branch.add(new ConsecrateBranch(abilityTree, (Consecrate) red));
-        branch.add(new LightInfusionBranchCrusader(abilityTree, (LightInfusionCrusader) purple));
-        branch.add(new HolyRadianceBranchCrusader(abilityTree, (HolyRadianceCrusader) blue));
-        branch.add(new InspiringPresenceBranch(abilityTree, (InspiringPresence) orange));
-    }
 }

@@ -1,9 +1,11 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class AbstractAbility {
+public abstract class AbstractAbility implements AbilityIcon {
 
     protected static final int DESCRIPTION_WIDTH = 165;
 
@@ -66,6 +68,11 @@ public abstract class AbstractAbility {
      * @return whether the ability has to go on cooldown after activation.
      */
     public abstract boolean onActivate(@Nonnull WarlordsEntity wp, Player player);
+
+    //TODO
+    public AbstractUpgradeBranch<?> getUpgradeBranch() {
+        return null;
+    }
 
     public void boostSkill(SkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
         if (!boosted) {
@@ -174,8 +181,12 @@ public abstract class AbstractAbility {
         secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility));
     }
 
-    public ItemStack getItem(ItemStack baseItem) {
-        ItemBuilder itemBuilder = new ItemBuilder(baseItem)
+    public ItemStack getItem() {
+        return getItem(getAbilityIcon());
+    }
+
+    public ItemStack getItem(ItemStack item) {
+        ItemBuilder itemBuilder = new ItemBuilder(item)
                 .name(Component.text(getName(), NamedTextColor.GOLD))
                 .unbreakable()
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
@@ -220,22 +231,6 @@ public abstract class AbstractAbility {
         this.energyCost.setCurrentValue(energyCost);
     }
 
-    public float getEnergyCostAdditive() {
-        return energyCost.getAdditiveModifier();
-    }
-
-    public void setEnergyCostAdditive(float energyCost) {
-        this.energyCost.setAdditiveModifier(energyCost);
-    }
-
-    public float getEnergyCostMultiplicative() {
-        return energyCost.getMultiplicativeModifier();
-    }
-
-    public void setEnergyCostMultiplicative(float energyCost) {
-        this.energyCost.setMultiplicativeModifier(energyCost);
-    }
-
     public float getCritChance() {
         return critChance;
     }
@@ -254,6 +249,22 @@ public abstract class AbstractAbility {
 
     public List<Component> getDescription() {
         return WordWrap.wrap(Component.empty().color(NamedTextColor.GRAY).append(description), DESCRIPTION_WIDTH);
+    }
+
+    public float getEnergyCostAdditive() {
+        return energyCost.getAdditiveModifier();
+    }
+
+    public void setEnergyCostAdditive(float energyCost) {
+        this.energyCost.setAdditiveModifier(energyCost);
+    }
+
+    public float getEnergyCostMultiplicative() {
+        return energyCost.getMultiplicativeModifier();
+    }
+
+    public void setEnergyCostMultiplicative(float energyCost) {
+        this.energyCost.setMultiplicativeModifier(energyCost);
     }
 
     public Component formatRangeDamage(float min, float max) {

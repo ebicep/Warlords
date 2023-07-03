@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
 import com.ebicep.warlords.abilities.CripplingStrike;
 import com.ebicep.warlords.abilities.SoulShackle;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
@@ -51,15 +50,15 @@ public class EventDjet extends AbstractZombie implements BossMob {
             warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
             warlordsNPC.heal();
         }
-        AbstractAbility redAbility = warlordsNPC.getRedAbility();
-        redAbility.setMinDamageHeal(1200);
-        redAbility.setMinDamageHeal(1380);
+//        AbstractAbility redAbility = warlordsNPC.getRedAbility(); TODO
+//        redAbility.setMinDamageHeal(1200);
+//        redAbility.setMinDamageHeal(1380);
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 60 == 0 && aboveHealthThreshold()) {
-            warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
+            //warlordsNPC.getRedAbility().onActivate(warlordsNPC, null); TODO
         }
         if (ticksElapsed % 100 == 0) {
             for (WarlordsPlayer warlordsPlayer : PlayerFilterGeneric
