@@ -311,7 +311,6 @@ public abstract class WarlordsEntity {
                 max,
                 critChance,
                 critMultiplier,
-                false,
                 true,
                 flags,
                 uuid
@@ -651,8 +650,6 @@ public abstract class WarlordsEntity {
                             newDamage,
                             isCrit ? 100 : 0,
                             1,
-                            false,
-                            true,
                             true,
                             EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                     ));
@@ -925,14 +922,12 @@ public abstract class WarlordsEntity {
     /**
      * Adds a healing instance to an ability or a player.
      *
-     * @param attacker              Assigns the damage value to the original caster.
-     * @param ability               Name of the ability.
-     * @param min                   The minimum healing amount.
-     * @param max                   The maximum healing amount.
-     * @param critChance            The critical chance of the damage instance.
-     * @param critMultiplier        The critical multiplier of the damage instance.
-     * @param ignoreReduction       Whether the instance has to ignore damage reductions.
-     * @param isLastStandFromShield Whether the instance if from last stand and absorbed healing
+     * @param attacker       Assigns the damage value to the original caster.
+     * @param ability        Name of the ability.
+     * @param min            The minimum healing amount.
+     * @param max            The maximum healing amount.
+     * @param critChance     The critical chance of the damage instance.
+     * @param critMultiplier The critical multiplier of the damage instance.
      */
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
             WarlordsEntity attacker,
@@ -940,24 +935,9 @@ public abstract class WarlordsEntity {
             float min,
             float max,
             float critChance,
-            float critMultiplier,
-            boolean ignoreReduction,
-            boolean isLastStandFromShield
+            float critMultiplier
     ) {
-        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
-                        this,
-                        attacker,
-                        ability,
-                        min,
-                        max,
-                        critChance,
-                        critMultiplier,
-                        ignoreReduction,
-                        isLastStandFromShield,
-                        false,
-                        EnumSet.noneOf(InstanceFlags.class)
-                )
-        );
+        return this.addHealingInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class));
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
@@ -967,23 +947,20 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
-            boolean isLastStandFromShield,
             EnumSet<InstanceFlags> flags
     ) {
         return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
-                        this,
-                        attacker,
-                        ability,
-                        min, max,
-                        critChance,
-                        critMultiplier,
-                        ignoreReduction,
-                        isLastStandFromShield,
-                        false,
-                        flags
-                )
-        );
+                this,
+                attacker,
+                ability,
+                min,
+                max,
+                critChance,
+                critMultiplier,
+                false,
+                flags,
+                null
+        ));
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
@@ -993,7 +970,7 @@ public abstract class WarlordsEntity {
         float max = event.getMax();
         float critChance = event.getCritChance();
         float critMultiplier = event.getCritMultiplier();
-        boolean isLastStandFromShield = event.isIsLastStandFromShield();
+        boolean isLastStandFromShield = event.getFlags().contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
         boolean isMeleeHit = ability.isEmpty();
 
         WarlordsDamageHealingFinalEvent finalEvent;
@@ -1651,6 +1628,16 @@ public abstract class WarlordsEntity {
         return disableCooldowns;
     }
 
+    public void setDisableCooldowns(boolean disableCooldowns) {
+        this.disableCooldowns = disableCooldowns;
+    }
+
+    public void updateItem(AbstractAbility ability) {
+        if (entity instanceof Player player) {
+            updateItem(player, ability);
+        }
+    }
+
     public void updateItem(Player player, AbstractAbility ability) {
         Integer inventoryIndex = spec.getInventoryAbilityIndex(ability);
         if (inventoryIndex == null || inventoryIndex == 0) { // exclude weapon
@@ -1668,12 +1655,6 @@ public abstract class WarlordsEntity {
                     inventoryIndex,
                     ability.getItem()
             );
-        }
-    }
-
-    public void updateItem(AbstractAbility ability) {
-        if (entity instanceof Player player) {
-            updateItem(player, ability);
         }
     }
 
@@ -1701,19 +1682,11 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void setDisableCooldowns(boolean disableCooldowns) {
-        this.disableCooldowns = disableCooldowns;
-    }
-
     public <T> List<T> getAbilitiesMatching(Class<T> clazz) {
         return spec.getAbilities().stream()
                    .filter(clazz::isInstance)
                    .map(clazz::cast)
                    .collect(Collectors.toList());
-    }
-
-    public <T> List<AbstractAbility> getAbilities() {
-        return spec.getAbilities();
     }
 
     public boolean isActive() {
@@ -1729,6 +1702,10 @@ public abstract class WarlordsEntity {
             ability.setCurrentCooldown(0);
         }
         updateInventory(closeInventory);
+    }
+
+    public <T> List<AbstractAbility> getAbilities() {
+        return spec.getAbilities();
     }
 
     public void updateInventory(boolean closeInventory) {

@@ -131,7 +131,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                 orbHeal *= 1 + orb.getTicksLived() / 325f;
                             }
 
-                            teammateToHeal.addHealingInstance(wp, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
+                            teammateToHeal.addHealingInstance(wp, "Orbs of Life", orbHeal, orbHeal, 0, 100);
                             Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
 
                             for (WarlordsEntity nearPlayer : PlayerFilter
@@ -140,7 +140,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                     .leastAliveFirst()
                                     .limit(2)
                             ) {
-                                nearPlayer.addHealingInstance(wp, "Orbs of Life", orbHeal, orbHeal, 0, 100, false, false);
+                                nearPlayer.addHealingInstance(wp, "Orbs of Life", orbHeal, orbHeal, 0, 100);
                                 Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
                             }
                         } else {

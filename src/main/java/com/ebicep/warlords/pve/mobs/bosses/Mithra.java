@@ -219,9 +219,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                             damage * 0.5f,
                             damage * 0.5f,
                             0,
-                            100,
-                            false,
-                            false
+                            100
                     );
                 }
 

@@ -165,9 +165,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                             minDamageHeal * 1.5f,
                                             maxDamageHeal * 1.5f,
                                             critChance,
-                                            critMultiplier,
-                                            false,
-                                            false
+                                            critMultiplier
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                         tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                     });
@@ -186,9 +184,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                             minDamageHeal,
                                             maxDamageHeal,
                                             critChance,
-                                            critMultiplier,
-                                            false,
-                                            false
+                                            critMultiplier
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                         tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                     });
@@ -344,9 +340,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                             minDamageHeal * 5,
                             maxDamageHeal * 5,
                             -1,
-                            100,
-                            false,
-                            false
+                            100
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                         tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                     });

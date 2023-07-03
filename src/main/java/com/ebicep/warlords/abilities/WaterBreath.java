@@ -145,7 +145,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
         int previousDebuffsRemoved = debuffsRemoved;
         debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
-        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
         Location playerEyeLoc = new LocationBuilder(player.getLocation())
                 .pitch(0)
@@ -161,7 +161,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
                     playersHealed++;
                     debuffsRemoved += breathTarget.getCooldownManager().removeDebuffCooldowns();
                     breathTarget.getSpeed().removeSlownessModifiers();
-                    breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+                    breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                     breathTarget.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
                     breathTarget.getCooldownManager().addRegularCooldown(
                             "Overheal",
@@ -214,9 +214,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
                                 healing,
                                 healing,
                                 0,
-                                100,
-                                false,
-                                false
+                                100
                         );
                     }
                 })

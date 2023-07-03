@@ -113,7 +113,7 @@ public class RayOfLight extends AbstractBeam {
             }
             wp.getCooldownManager().removeDebuffCooldowns();
             wp.getSpeed().removeSlownessModifiers();
-            hit.addHealingInstance(wp, name, minHeal, maxHeal, critChance, critMultiplier, false, false);
+            hit.addHealingInstance(wp, name, minHeal, maxHeal, critChance, critMultiplier);
         }
     }
 
@@ -135,7 +135,7 @@ public class RayOfLight extends AbstractBeam {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
-        shooter.addHealingInstance(shooter, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+        shooter.addHealingInstance(shooter, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
         return super.onActivate(shooter, player);
     }

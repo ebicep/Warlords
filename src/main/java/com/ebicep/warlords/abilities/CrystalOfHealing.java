@@ -123,9 +123,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                         50,
                                         50,
                                         0,
-                                        100,
-                                        false,
-                                        false
+                                        100
                                 );
                             }
                         }
@@ -145,7 +143,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                     cooldown.setTicksLeft(0);
                                     int secondsElapsed = ticksElapsed / 20;
                                     float healAmount = secondsElapsed > duration ? maxHeal : (maxHeal * ticksElapsed) / (duration * 20);
-                                    teammate.addHealingInstance(wp, name, healAmount, healAmount, critChance, critMultiplier, false, false);
+                                    teammate.addHealingInstance(wp, name, healAmount, healAmount, critChance, critMultiplier);
                                 });
                 })
         ));

@@ -108,8 +108,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                         (float) (minDamageHeal * directHitMultiplier * toReduceBy),
                         (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
                         critChance,
-                        critMultiplier,
-                        false, false
+                        critMultiplier
                 );
                 if (hit != shooter) {
                     hit.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
@@ -159,8 +158,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                         (float) (minDamageHeal * toReduceBy),
                         (float) (maxDamageHeal * toReduceBy),
                         critChance,
-                        critMultiplier,
-                        false, false
+                        critMultiplier
                 );
                 if (nearEntity != shooter) {
                     nearEntity.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);

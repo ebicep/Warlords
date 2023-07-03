@@ -183,9 +183,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                                 minDamageHeal,
                                 maxDamageHeal,
                                 critChance,
-                                critMultiplier,
-                                false,
-                                false
+                                critMultiplier
                         );
                     }
 
@@ -202,9 +200,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                                                 puddleMinHealing,
                                                 puddleMaxHealing,
                                                 critChance,
-                                                critMultiplier,
-                                                false,
-                                                false
+                                                critMultiplier
                                         ));
 
                             timeLeft--;

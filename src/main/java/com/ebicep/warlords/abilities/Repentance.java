@@ -85,9 +85,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                         Math.min(500, healthToAdd),
                         Math.min(500, healthToAdd),
                         0,
-                        100,
-                        false,
-                        false
+                        100
                 );
                 attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f));
                 pool *= .5;

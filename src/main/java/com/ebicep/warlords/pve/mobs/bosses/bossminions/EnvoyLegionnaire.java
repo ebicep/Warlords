@@ -58,9 +58,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                         500,
                         500,
                         -1,
-                        100,
-                        false,
-                        false
+                        100
                 );
 
                 Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);

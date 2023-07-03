@@ -139,9 +139,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                 healingValue,
                                 healingValue,
                                 0,
-                                100,
-                                false,
-                                false
+                                100
                         );
 
                         if (hits.get() > 10) {

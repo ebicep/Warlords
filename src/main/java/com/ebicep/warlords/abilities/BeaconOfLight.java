@@ -83,9 +83,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
                         minDamageHeal * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
                         maxDamageHeal * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
                         critChance,
-                        critMultiplier,
-                        false,
-                        false
+                        critMultiplier
                 );
             }
         }

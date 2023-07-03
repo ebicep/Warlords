@@ -94,9 +94,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                                 healAmount,
                                 healAmount,
                                 0,
-                                100,
-                                false,
-                                false
+                                100
                         );
                         timesHealed.getAndIncrement();
                     }

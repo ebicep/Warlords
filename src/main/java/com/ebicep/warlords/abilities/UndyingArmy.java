@@ -184,7 +184,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         if (ticksElapsed % 20 == 0) {
                             if (!cooldown.getCooldownObject().isArmyDead(teammate)) {
                                 float healAmount = flatHealing + (teammate.getMaxHealth() - teammate.getHealth()) * (missingHealing / 100f);
-                                teammate.addHealingInstance(wp, name, healAmount, healAmount, 0, 100, false, false);
+                                teammate.addHealingInstance(wp, name, healAmount, healAmount, 0, 100);
                                 teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
                                 // Particles
                                 Location playerLoc = teammate.getLocation();

@@ -71,9 +71,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
                 (wp.getMaxHealth() * (healthRestore / 100f)),
                 (wp.getMaxHealth() * (healthRestore / 100f)),
                 critChance,
-                critMultiplier,
-                false,
-                false
+                critMultiplier
         );
 
         for (WarlordsEntity knockbackTarget : PlayerFilter

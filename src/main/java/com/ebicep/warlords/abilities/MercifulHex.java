@@ -139,9 +139,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                     minDamageHeal * reduction,
                     maxDamageHeal * reduction,
                     critChance,
-                    critMultiplier,
-                    false,
-                    false
+                    critMultiplier
             );
             if (teammatesHit == 1 || pveMasterUpgrade) {
                 giveMercifulHex(wp, hit);
@@ -177,9 +175,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                             dotMinHeal,
                             dotMaxHeal,
                             0,
-                            100,
-                            false,
-                            false
+                            100
                     );
                 },
                 tickDuration * 2, // base add 20 to delay damage by a second
@@ -191,9 +187,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                                 dotMinHeal,
                                 dotMaxHeal,
                                 0,
-                                100,
-                                false,
-                                false
+                                100
                         );
                     }
                 })
@@ -219,9 +213,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 minSelfHeal,
                 maxSelfHeal,
                 critChance,
-                critMultiplier,
-                false,
-                false
+                critMultiplier
         );
         return activate;
     }

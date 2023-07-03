@@ -304,9 +304,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                                 we.getMaxHealth() * 2,
                                 we.getMaxHealth() * 2,
                                 -1,
-                                100,
-                                false,
-                                false
+                                100
                         );
                     }
 

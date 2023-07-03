@@ -121,9 +121,7 @@ public class HealingTotem extends AbstractTotem implements Duration {
                                             minDamageHeal * healMultiplier,
                                             maxDamageHeal * healMultiplier,
                                             critChance,
-                                            critMultiplier,
-                                            false,
-                                            false
+                                            critMultiplier
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                         tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                     });
@@ -204,8 +202,7 @@ public class HealingTotem extends AbstractTotem implements Duration {
                                                 minDamageHeal * healMultiplier,
                                                 maxDamageHeal * healMultiplier,
                                                 critChance,
-                                                critMultiplier,
-                                                false, false
+                                                critMultiplier
                                         ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                             tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                         });

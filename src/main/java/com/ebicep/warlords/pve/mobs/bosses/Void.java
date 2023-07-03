@@ -271,9 +271,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                             damage * 0.5f,
                             damage * 0.5f,
                             0,
-                            100,
-                            false,
-                            false
+                            100
                     );
                 }
 
@@ -418,9 +416,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                                 we.getMaxHealth() * 2,
                                 we.getMaxHealth() * 2,
                                 -1,
-                                100,
-                                false,
-                                false
+                                100
                         );
                     }
 

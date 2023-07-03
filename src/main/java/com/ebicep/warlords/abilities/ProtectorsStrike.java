@@ -115,9 +115,7 @@ public class ProtectorsStrike extends AbstractStrike {
                     currentDamageValue * ownHealing,
                     currentDamageValue * ownHealing,
                     isCrit ? 100 : 0,
-                    100,
-                    false,
-                    false
+                    100
             ).ifPresent(event -> {
                 new CooldownFilter<>(wp, RegularCooldown.class)
                         .filterCooldownFrom(wp)
@@ -140,9 +138,7 @@ public class ProtectorsStrike extends AbstractStrike {
                             healing,
                             healing,
                             isCrit ? 100 : 0,
-                            100,
-                            false,
-                            false
+                            100
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownFrom(wp)
@@ -165,9 +161,7 @@ public class ProtectorsStrike extends AbstractStrike {
                                 currentDamageValue * allyHealing * 1.2f,
                                 currentDamageValue * allyHealing * 1.2f,
                                 isCrit ? 100 : 0,
-                                100,
-                                false,
-                                false
+                                100
                         ).ifPresent(event -> {
                             new CooldownFilter<>(wp, RegularCooldown.class)
                                     .filterCooldownFrom(wp)
@@ -181,9 +175,7 @@ public class ProtectorsStrike extends AbstractStrike {
                                 currentDamageValue * allyHealing,
                                 currentDamageValue * allyHealing,
                                 isCrit ? 100 : 0,
-                                100,
-                                false,
-                                false
+                                100
                         ).ifPresent(event -> {
                             new CooldownFilter<>(wp, RegularCooldown.class)
                                     .filterCooldownFrom(wp)

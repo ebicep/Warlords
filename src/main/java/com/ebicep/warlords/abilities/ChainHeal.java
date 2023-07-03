@@ -70,9 +70,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                         minDamageHeal,
                         maxDamageHeal,
                         critChance,
-                        critMultiplier,
-                        false,
-                        false
+                        critMultiplier
                 );
 
                 chainTarget.addHealingInstance(
@@ -81,9 +79,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                         minDamageHeal,
                         maxDamageHeal,
                         critChance,
-                        critMultiplier,
-                        false,
-                        false
+                        critMultiplier
                 );
 
                 if (pveMasterUpgrade) {
@@ -145,9 +141,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                     minDamageHeal,
                     maxDamageHeal,
                     critChance,
-                    critMultiplier,
-                    false,
-                    false
+                    critMultiplier
             );
 
             if (pveMasterUpgrade) {

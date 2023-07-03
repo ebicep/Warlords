@@ -137,9 +137,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                             minDamageHeal,
                             maxDamageHeal,
                             critChance,
-                            critMultiplier,
-                            false,
-                            false
+                            critMultiplier
                     );
                     for (WarlordsEntity linkedEntity : linkedCooldown.getLinkedEntities()) {
                         linkedEntity.addHealingInstance(
@@ -148,9 +146,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                                 minDamageHeal,
                                 maxDamageHeal,
                                 critChance,
-                                critMultiplier,
-                                false,
-                                false
+                                critMultiplier
                         );
                     }
                 },
@@ -195,9 +191,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                                     minDamageHeal * totalHealingMultiplier,
                                     maxDamageHeal * totalHealingMultiplier,
                                     0,
-                                    100,
-                                    false,
-                                    false
+                                    100
                             );
                         }
                         EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1);

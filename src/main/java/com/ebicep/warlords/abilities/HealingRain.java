@@ -128,9 +128,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                     minDamageHeal,
                                     maxDamageHeal,
                                     critChance,
-                                    critMultiplier,
-                                    false,
-                                    false
+                                    critMultiplier
                             );
 
                             if (teammateInRain != wp) {

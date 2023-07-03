@@ -54,9 +54,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                             wp.getMaxHealth() * (warpHealPercentage / 100f),
                             wp.getMaxHealth() * (warpHealPercentage / 100f),
                             0,
-                            100,
-                            false,
-                            false
+                            100
                     );
 
                     wp.getEntity().teleport(warpLocation);

@@ -324,9 +324,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                     damage * (damagePercent / 100f),
                     damage * (damagePercent / 100f),
                     critChance,
-                    critMultiplier,
-                    false,
-                    false
+                    critMultiplier
             );
         }
 

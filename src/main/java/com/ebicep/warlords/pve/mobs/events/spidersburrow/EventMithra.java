@@ -205,9 +205,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
                                 healthGain,
                                 healthGain,
                                 0,
-                                0,
-                                false,
-                                false
+                                0
                         );
                     }
                 }
@@ -343,9 +341,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
                             damage * 0.5f,
                             damage * 0.5f,
                             0,
-                            100,
-                            false,
-                            false
+                            100
                     );
                 }
 

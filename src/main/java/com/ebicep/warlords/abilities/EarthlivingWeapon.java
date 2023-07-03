@@ -137,9 +137,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                                         minDamage * (weaponDamage / 100f),
                                         maxDamage * (weaponDamage / 100f),
                                         critChance,
-                                        critMultiplier,
-                                        false,
-                                        false
+                                        critMultiplier
                                 );
 
                                 for (WarlordsEntity nearPlayer : PlayerFilter
@@ -154,9 +152,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                                             minDamage * (weaponDamage / 100f),
                                             maxDamage * (weaponDamage / 100f),
                                             critChance,
-                                            critMultiplier,
-                                            false,
-                                            false
+                                            critMultiplier
                                     );
                                 }
 
@@ -200,9 +196,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                                 missingHealth,
                                 missingHealth,
                                 0,
-                                100,
-                                false,
-                                false
+                                100
                         );
                         ally.addEnergy(giver, "Loamliving Weapon", missingHealth / 20);
                     }

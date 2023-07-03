@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.LastStandBranch;
@@ -29,6 +30,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 
@@ -162,8 +164,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                             currentDamageValue,
                             isCrit ? 100 : 0,
                             100,
-                            false,
-                            true
+                            EnumSet.of(InstanceFlags.LAST_STAND_FROM_SHIELD)
                     );
                 }
 
@@ -177,9 +178,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                             currentDamageValue,
                             currentDamageValue,
                             isCrit ? 100 : 0,
-                            100,
-                            false,
-                            false
+                            100
                     );
                 }
             });

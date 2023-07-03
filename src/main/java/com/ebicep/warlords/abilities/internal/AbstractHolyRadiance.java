@@ -44,7 +44,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         wp.subtractEnergy(energyCost, false);
 
         if (chain(wp, player)) {
@@ -156,9 +156,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                             minHeal,
                             maxHeal,
                             critChance,
-                            critMultiplier,
-                            false,
-                            false
+                            critMultiplier
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                         new CooldownFilter<>(owner, RegularCooldown.class)
                                 .filterCooldownFrom(owner)

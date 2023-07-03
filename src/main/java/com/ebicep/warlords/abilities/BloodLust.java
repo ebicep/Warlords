@@ -132,9 +132,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                         healAmount,
                         healAmount,
                         0,
-                        100,
-                        false,
-                        false
+                        100
                 );
             }
         });

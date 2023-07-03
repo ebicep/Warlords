@@ -95,13 +95,13 @@ public class JudgementStrike extends AbstractStrike {
                             EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
                     ).ifPresent(finalEvent2 -> {
                         if (strikeHeal != 0 && finalEvent2.isDead()) {
-                            wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100, false, false);
+                            wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
                         }
                     });
                 }
             }
             if (strikeHeal != 0 && finalEvent.isDead()) {
-                wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100, false, false);
+                wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
             }
         });
 

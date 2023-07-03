@@ -164,9 +164,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                             healAmount,
                                                             healAmount,
                                                             0,
-                                                            100,
-                                                            false,
-                                                            false
+                                                            100
                                                     );
                                                 }
                                                 return currentDamageValue;
@@ -205,9 +203,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 healAmount,
                                 healAmount,
                                 0,
-                                100,
-                                false,
-                                false
+                                100
                         );
                     }
                 }
@@ -260,9 +256,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 postHealthHealAmount,
                                 postHealthHealAmount,
                                 0,
-                                100,
-                                false,
-                                false
+                                100
                         );
                     });
     }

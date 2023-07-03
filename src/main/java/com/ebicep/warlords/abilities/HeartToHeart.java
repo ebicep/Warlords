@@ -206,9 +206,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon {
                             healthRestore,
                             healthRestore,
                             0,
-                            100,
-                            false,
-                            false
+                            100
                     );
                 }
             }

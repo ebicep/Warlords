@@ -113,9 +113,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                         currentDamageValue * .65f,
                         currentDamageValue * .65f,
                         0,
-                        100,
-                        false,
-                        false
+                        100
                 );
             }
         });

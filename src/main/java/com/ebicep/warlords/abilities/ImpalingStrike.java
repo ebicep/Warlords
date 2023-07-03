@@ -59,9 +59,7 @@ public class ImpalingStrike extends AbstractStrike {
                         currentDamageValue * healingMultiplier,
                         currentDamageValue * healingMultiplier,
                         -1,
-                        100,
-                        false,
-                        false
+                        100
                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
                     finalEvent.accept(warlordsDamageHealingFinalEvent);
                     if (event.getWarlordsEntity().hasFlag()) {

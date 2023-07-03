@@ -461,7 +461,7 @@ public class PowerupOption implements Option {
         SELF_HEAL(NamedTextColor.DARK_GREEN, 0, Material.GREEN_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, 0, 100, true, false);
+                we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, 0, 100);
             }
 
             @Override

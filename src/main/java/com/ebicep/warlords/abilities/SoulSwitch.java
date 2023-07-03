@@ -199,9 +199,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
                                 healing,
                                 healing,
                                 -1,
-                                100,
-                                false,
-                                false
+                                100
                         );
                     }
                     new GameRunnable(wp.getGame()) {

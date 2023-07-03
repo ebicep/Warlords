@@ -177,7 +177,7 @@ public class DebugMenuPlayerOptions {
                                     new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100, false, false);
+                                            target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100);
                                             sendDebugMessage(player, Component.text("Healed ", NamedTextColor.GREEN)
                                                                               .append(coloredName)
                                                                               .append(Component.text(" for " + amountNumber))

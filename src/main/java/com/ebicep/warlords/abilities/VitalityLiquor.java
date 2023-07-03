@@ -80,9 +80,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                 minDamageHeal,
                 maxDamageHeal,
                 critChance,
-                critMultiplier,
-                false,
-                false
+                critMultiplier
         );
 
         for (WarlordsEntity acuTarget : PlayerFilter
@@ -95,9 +93,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                     minDamageHeal,
                     maxDamageHeal,
                     critChance,
-                    critMultiplier,
-                    false,
-                    false
+                    critMultiplier
             );
         }
 
@@ -135,9 +131,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                                             minWaveHealing,
                                             maxWaveHealing,
                                             critChance,
-                                            critMultiplier,
-                                            false,
-                                            false
+                                            critMultiplier
                                     );
                                     allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class, false);
                                     allyTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
