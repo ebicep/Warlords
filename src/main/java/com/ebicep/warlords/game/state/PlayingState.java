@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.state;
 
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.WarlordsPlusCommand;
@@ -214,14 +215,11 @@ public class PlayingState implements State, TimerDebugAble {
                     byteArrayDataOutput.writeInt((int) wp.getEnergy());
                     byteArrayDataOutput.writeInt((int) wp.getMaxEnergy());
                     AbstractPlayerClass spec = wp.getSpec();
-                    byteArrayDataOutput.writeInt(spec.getRed().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getRed()
-                                                                                                                    .getCurrentCooldown() + .5));
-                    byteArrayDataOutput.writeInt(spec.getPurple().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getPurple()
-                                                                                                                       .getCurrentCooldown() + .5));
-                    byteArrayDataOutput.writeInt(spec.getBlue().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getBlue()
-                                                                                                                     .getCurrentCooldown() + .5));
-                    byteArrayDataOutput.writeInt(spec.getOrange().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getOrange()
-                                                                                                                       .getCurrentCooldown() + .5));
+                    List<AbstractAbility> abilities = spec.getAbilities();
+                    for (int i = 1; i < abilities.size() && i < 5; i++) {
+                        AbstractAbility ability = abilities.get(i);
+                        byteArrayDataOutput.writeInt(ability.getCurrentCooldown() == 0 ? 0 : (int) Math.round(ability.getCurrentCooldown() + .5));
+                    }
                     if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                         game.onlinePlayers().forEach(playerTeamEntry -> {
                             playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());

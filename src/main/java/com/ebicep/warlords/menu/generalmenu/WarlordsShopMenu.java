@@ -33,7 +33,6 @@ import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.*;
 import static com.ebicep.warlords.player.general.Settings.ParticleQuality;
 import static com.ebicep.warlords.player.general.Specializations.APOTHECARY;
-import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public class WarlordsShopMenu {
 
@@ -127,10 +126,12 @@ public class WarlordsShopMenu {
                         ArmorManager.resetArmor(player);
 
                         AbstractPlayerClass apc = spec.create.get();
-                        player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                                                                                                               .getOrDefault(spec, Weapons.FELFLAME_BLADE)
-                                                                                                               .getItem()))
+                        ItemStack weaponSkin = playerSettings.getWeaponSkins()
+                                                             .getOrDefault(spec, Weapons.STEEL_SWORD)
+                                                             .getItem();
+                        player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                 .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                                .noLore()
                                 .get());
 
                         openClassMenu(player, selectedGroup);
@@ -186,45 +187,36 @@ public class WarlordsShopMenu {
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         AbstractPlayerClass apc = selectedSpec.create.get();
         AbstractPlayerClass apc2 = selectedSpec.create.get();
-        if (apc2.getWeapon().getClass() == selectedBoost.ability) {
-            apc2.getWeapon().boostSkill(selectedBoost, apc2);
-            apc.getWeapon().updateDescription(player);
-            apc2.getWeapon().updateDescription(player);
+        List<AbstractAbility> abilities = apc.getAbilities();
+        List<AbstractAbility> abilities2 = apc2.getAbilities();
+        for (int i = 0; i < abilities.size(); i++) {
+            AbstractAbility ability = abilities.get(i);
+            AbstractAbility ability2 = abilities2.get(i);
+            if (ability.getClass() != selectedBoost.ability) {
+                continue;
+            }
+            ItemStack icon;
+            if (ability == apc.getWeapon()) {
+                icon = apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem());
+            } else {
+                icon = ability.getAbilityIcon();
+            }
+            ability2.boostSkill(selectedBoost, apc2);
+            ability.updateDescription(player);
+            ability2.updateDescription(player);
             menu.setItem(3,
                     1,
-                    apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()),
+                    ability.getItem(icon),
                     ACTION_DO_NOTHING
             );
             menu.setItem(5,
                     1,
-                    apc2.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()),
+                    ability2.getItem(icon),
                     ACTION_DO_NOTHING
             );
-        } else if (apc2.getRed().getClass() == selectedBoost.ability) {
-            apc2.getRed().boostSkill(selectedBoost, apc2);
-            apc.getRed().updateDescription(player);
-            apc2.getRed().updateDescription(player);
-            menu.setItem(3, 1, apc.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
-            menu.setItem(5, 1, apc2.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
-        } else if (apc2.getPurple().getClass() == selectedBoost.ability) {
-            apc2.getPurple().boostSkill(selectedBoost, apc2);
-            apc.getPurple().updateDescription(player);
-            apc2.getPurple().updateDescription(player);
-            menu.setItem(3, 1, apc.getPurple().getItem(PURPLE_ABILITY), ACTION_DO_NOTHING);
-            menu.setItem(5, 1, apc2.getPurple().getItem(PURPLE_ABILITY), ACTION_DO_NOTHING);
-        } else if (apc2.getBlue().getClass() == selectedBoost.ability) {
-            apc2.getBlue().boostSkill(selectedBoost, apc2);
-            apc.getBlue().updateDescription(player);
-            apc2.getBlue().updateDescription(player);
-            menu.setItem(3, 1, apc.getBlue().getItem(BLUE_ABILITY), ACTION_DO_NOTHING);
-            menu.setItem(5, 1, apc2.getBlue().getItem(BLUE_ABILITY), ACTION_DO_NOTHING);
-        } else if (apc2.getOrange().getClass() == selectedBoost.ability) {
-            apc2.getOrange().boostSkill(selectedBoost, apc2);
-            apc.getOrange().updateDescription(player);
-            apc2.getOrange().updateDescription(player);
-            menu.setItem(3, 1, apc.getOrange().getItem(ORANGE_ABILITY), ACTION_DO_NOTHING);
-            menu.setItem(5, 1, apc2.getOrange().getItem(ORANGE_ABILITY), ACTION_DO_NOTHING);
+            break;
         }
+
         menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
@@ -591,34 +583,19 @@ public class WarlordsShopMenu {
                               ))
         );
 
-        SkillBoosts selectedBoost = playerSettings.getSkillBoostForClass();
-        if (selectedBoost != null) {
-            for (AbstractAbility ability : apc.getAbilities()) {
-                if (ability.getClass() == selectedBoost.ability) {
-                    ability.boostSkill(selectedBoost, apc);
-                    break;
-                }
-            }
-        }
+        // not including skill boost - these display base stats
+        List<AbstractAbility> abilities = apc.getAbilities();
 
-        apc.getWeapon().updateDescription(player);
-        apc.getRed().updateDescription(player);
-        apc.getPurple().updateDescription(player);
-        apc.getBlue().updateDescription(player);
-        apc.getOrange().updateDescription(player);
+        abilities.forEach(ability -> ability.updateDescription(player));
 
         menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
-        menu.setItem(2,
-                apc.getWeapon()
-                   .getItem(playerSettings.getWeaponSkins()
-                                          .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE)
-                                          .getItem()),
-                ACTION_DO_NOTHING
-        );
-        menu.setItem(3, apc.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
-        menu.setItem(4, apc.getPurple().getItem(PURPLE_ABILITY), ACTION_DO_NOTHING);
-        menu.setItem(5, apc.getBlue().getItem(BLUE_ABILITY), ACTION_DO_NOTHING);
-        menu.setItem(6, apc.getOrange().getItem(ORANGE_ABILITY), ACTION_DO_NOTHING);
+        ItemStack weaponSkin = playerSettings.getWeaponSkins()
+                                             .getOrDefault(selectedSpec, Weapons.STEEL_SWORD)
+                                             .getItem();
+        for (int i = 0; i < abilities.size() && i < 5; i++) {
+            AbstractAbility ability = abilities.get(i);
+            menu.setItem(i + 2, ability.getItem(i == 0 ? weaponSkin : ability.getAbilityIcon()), ACTION_DO_NOTHING);
+        }
         menu.setItem(8, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
 
         menu.openForPlayer(player);

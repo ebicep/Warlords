@@ -20,14 +20,6 @@ import java.util.Optional;
 
 public abstract class AbstractTotem extends AbstractAbility implements OrangeAbilityIcon {
 
-    public static Optional<AbstractTotem> getAnyTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby) {
-        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
-        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(AbstractTotem.class)
-                .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
-                .findFirst();
-    }
-
     public ArmorStand getTotem() {
         return totem;
     }

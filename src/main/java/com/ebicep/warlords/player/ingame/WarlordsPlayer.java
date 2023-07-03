@@ -46,8 +46,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
-
 public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public static final Set<UUID> STUNNED_PLAYERS = new HashSet<>();
@@ -402,16 +400,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             } else {
                 return weapon.getSelectedWeaponSkin().getItem();
             }
-        } else if (ability == spec.getRed()) {
-            return RED_ABILITY;
-        } else if (ability == spec.getPurple()) {
-            return PURPLE_ABILITY;
-        } else if (ability == spec.getBlue()) {
-            return BLUE_ABILITY;
-        } else if (ability == spec.getOrange()) {
-            return ORANGE_ABILITY;
+        } else {
+            return ability.getAbilityIcon();
         }
-        return null;
     }
 
     public AbilityTree getAbilityTree() {

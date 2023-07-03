@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.abilities.Consecrate;
 import com.ebicep.warlords.abilities.HammerOfLight;
 import com.ebicep.warlords.abilities.ProtectorsStrike;
+import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -22,7 +23,7 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class AbstractStrike extends AbstractAbility {
+public abstract class AbstractStrike extends AbstractAbility implements WeaponAbilityIcon {
 
     public static Optional<Consecrate> getStandingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
         return new CooldownFilter<>(owner, RegularCooldown.class)

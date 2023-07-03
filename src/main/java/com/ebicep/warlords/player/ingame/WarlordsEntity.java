@@ -1652,7 +1652,7 @@ public abstract class WarlordsEntity {
 
     public void updateItem(Player player, AbstractAbility ability) {
         Integer inventoryIndex = spec.getInventoryAbilityIndex(ability);
-        if (inventoryIndex == null) {
+        if (inventoryIndex == null || inventoryIndex == 0) { // exclude weapon
             return;
         }
         if (ability.getCurrentCooldown() > 0) {
@@ -1676,7 +1676,15 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void updateItem(Player player, int slot, AbstractAbility ability, @Nullable ItemStack item) {
+    /**
+     * Used for custom abilities not in the spec, like legendary weapons
+     *
+     * @param player
+     * @param slot
+     * @param ability
+     * @param item
+     */
+    public void updateCustomItem(Player player, int slot, AbstractAbility ability, @Nullable ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
             ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
                     .flags(ItemFlag.HIDE_ENCHANTS);

@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -31,7 +32,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-public class PoisonousHex extends AbstractPiercingProjectile implements Duration {
+public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
 
     @Nonnull
     public static PoisonousHex getFromHex(WarlordsEntity from) {

@@ -142,10 +142,12 @@ public class PlayerHotBarItemListener implements Listener {
                 }
             }
         }
+        ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
         setItem(player,
                 1,
-                new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
+                new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                         .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                        .noLore()
                         .get()
         );
 

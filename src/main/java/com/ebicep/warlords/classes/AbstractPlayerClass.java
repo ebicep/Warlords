@@ -295,40 +295,24 @@ public abstract class AbstractPlayerClass {
         return abilities.get(0);
     }
 
-    public void setWeapon(AbstractAbility weapon) {
-        this.abilities.set(0, weapon);
-    }
-
+    @Deprecated
     public AbstractAbility getRed() {
         return abilities.get(1);
     }
 
+    @Deprecated
     public void setRed(AbstractAbility red) {
         this.abilities.set(1, red);
     }
 
-    public AbstractAbility getPurple() {
-        return abilities.get(2);
-    }
-
-    public void setPurple(AbstractAbility purple) {
-        this.abilities.set(2, purple);
-    }
-
+    @Deprecated
     public AbstractAbility getBlue() {
         return abilities.get(3);
     }
 
+    @Deprecated
     public void setBlue(AbstractAbility blue) {
         this.abilities.set(3, blue);
-    }
-
-    public AbstractAbility getOrange() {
-        return abilities.get(4);
-    }
-
-    public void setOrange(AbstractAbility orange) {
-        this.abilities.set(4, orange);
     }
 
     public String getName() {

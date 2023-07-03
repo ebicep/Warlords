@@ -538,7 +538,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public void updateAbilityItem(WarlordsPlayer warlordsPlayer, Player player) {
         if (getAbility() != null) {
-            warlordsPlayer.updateItem(player, 8, getAbility(), ABILITY_ITEM);
+            warlordsPlayer.updateCustomItem(player, 8, getAbility(), ABILITY_ITEM);
         }
     }
 
