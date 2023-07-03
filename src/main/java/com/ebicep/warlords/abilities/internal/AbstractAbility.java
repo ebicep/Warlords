@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -70,7 +71,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     public abstract boolean onActivate(@Nonnull WarlordsEntity wp, Player player);
 
     //TODO
-    public AbstractUpgradeBranch<?> getUpgradeBranch() {
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return null;
     }
 

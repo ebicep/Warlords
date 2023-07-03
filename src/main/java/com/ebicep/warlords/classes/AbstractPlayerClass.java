@@ -74,7 +74,7 @@ public abstract class AbstractPlayerClass {
         AbilityTree abilityTree = wp.getAbilityTree();
         List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
         abilities.stream()
-                 .map(AbstractAbility::getUpgradeBranch)
+                 .map((AbstractAbility ability) -> ability.getUpgradeBranch(abilityTree))
                  .filter(Objects::nonNull)
                  .forEach(branch::add);
     }
