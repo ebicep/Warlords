@@ -17,38 +17,38 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+5% Damage",
+                "+7.5% Damage",
                 5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.05f);
-                    ability.setMaxDamageHeal(maxDamage * 1.05f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+10% Damage",
-                10000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.1f);
                     ability.setMaxDamageHeal(maxDamage * 1.1f);
                 }
         ));
         treeA.add(new Upgrade(
-                "Impair - Tier III",
+                "Impair - Tier II",
                 "+15% Damage",
-                15000,
+                10000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.15f);
                     ability.setMaxDamageHeal(maxDamage * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+22.5% Damage",
+                15000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.225f);
+                    ability.setMaxDamageHeal(maxDamage * 1.225f);
+                }
+        ));
+        treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+20% Damage",
+                "+30% Damage",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.2f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
         ));
 

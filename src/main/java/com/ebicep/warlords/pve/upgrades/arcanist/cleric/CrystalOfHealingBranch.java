@@ -82,9 +82,10 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Crystal of Healing - Master Upgrade",
                 """
+                        Crystal of Healing provide 50 healing per second for allies within 6 blocks.
                         """,
                 50000,
                 () -> {

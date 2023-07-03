@@ -28,7 +28,9 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -74,6 +76,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         EffectUtils.strikeLightning(wp.getLocation(), true);
         new GameRunnable(wp.getGame()) {
             double interval = 3;
+
             @Override
             public void run() {
                 interval -= 0.5;
@@ -93,6 +96,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
         DivineBlessing tempDivineBlessing = new DivineBlessing();
         int maxStacks = MercifulHex.getFromHex(wp).getMaxStacks();
+        Set<WarlordsEntity> healedLethal = new HashSet<>();
         wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessing>(
                 name,
                 "BLESS",
@@ -101,6 +105,11 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
+                    if (pveMasterUpgrade) {
+                        healAllies(wp);
+                    }
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -146,7 +155,8 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
                                             @Override
                                             public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                                if (teammate.getHealth() - currentDamageValue < 0) {
+                                                if (teammate.getHealth() - currentDamageValue < 0 && !healedLethal.contains(teammate)) {
+                                                    healedLethal.add(teammate);
                                                     float healAmount = teammate.getMaxHealth() * (lethalDamageHealing / 100f);
                                                     teammate.addHealingInstance(
                                                             wp,
@@ -167,14 +177,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 })
         ) {
 
-            public boolean hasMaxStacks() {
-                return new CooldownFilter<>(wp, RegularCooldown.class)
-                        .filterCooldownFrom(wp)
-                        .filterCooldownClass(MercifulHex.class)
-                        .stream()
-                        .count() >= maxStacks;
-            }
-
             @Override
             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 if (hasMaxStacks()) {
@@ -182,6 +184,14 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 } else {
                     return currentHealValue;
                 }
+            }
+
+            public boolean hasMaxStacks() {
+                return new CooldownFilter<>(wp, RegularCooldown.class)
+                        .filterCooldownFrom(wp)
+                        .filterCooldownClass(MercifulHex.class)
+                        .stream()
+                        .count() >= maxStacks;
             }
 
             @Override
@@ -232,25 +242,29 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
             @Override
             public void run() {
-                PlayerFilter.playingGame(wp.getGame())
-                            .teammatesOf(wp)
-                            .forEach(teammate -> {
-                                teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.55f);
-                                teammate.playSound(teammate.getLocation(), "arcanist.divineblessing.impact", 0.2f, 1.75f);
-                                teammate.addHealingInstance(
-                                        wp,
-                                        name,
-                                        postHealthHealAmount,
-                                        postHealthHealAmount,
-                                        0,
-                                        100,
-                                        false,
-                                        false
-                                );
-                            });
+                healAllies(wp);
             }
         }.runTaskLater(postHealthTickDelay);
         return true;
+    }
+
+    private void healAllies(@Nonnull WarlordsEntity wp) {
+        PlayerFilter.playingGame(wp.getGame())
+                    .teammatesOf(wp)
+                    .forEach(teammate -> {
+                        teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.55f);
+                        teammate.playSound(teammate.getLocation(), "arcanist.divineblessing.impact", 0.2f, 1.75f);
+                        teammate.addHealingInstance(
+                                wp,
+                                name,
+                                postHealthHealAmount,
+                                postHealthHealAmount,
+                                0,
+                                100,
+                                false,
+                                false
+                        );
+                    });
     }
 
     @Override
@@ -266,5 +280,13 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public int getLethalDamageHealing() {
+        return lethalDamageHealing;
+    }
+
+    public void setLethalDamageHealing(int lethalDamageHealing) {
+        this.lethalDamageHealing = lethalDamageHealing;
     }
 }

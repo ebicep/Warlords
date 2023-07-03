@@ -1,8 +1,10 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -48,6 +50,11 @@ public class RayOfLight extends AbstractBeam {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new RayOfLightBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
         Matrix4d center = new Matrix4d(currentLocation);
         double angle = Math.toRadians(4 * 90) + 30 * 0.45;
@@ -83,28 +90,31 @@ public class RayOfLight extends AbstractBeam {
                 }
                 minHeal *= 1 + (healingIncrease / 100f);
                 maxHeal *= 1 + (healingIncrease / 100f);
+                if (pveMasterUpgrade) {
+                    hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            name,
+                            "RAY",
+                            RayOfLight.class,
+                            new RayOfLight(),
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            cooldownManager -> {
+                            },
+                            100
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * 1.05f;
+                        }
+                    });
+                }
             }
             wp.getCooldownManager().removeDebuffCooldowns();
             wp.getSpeed().removeSlownessModifiers();
             hit.addHealingInstance(wp, name, minHeal, maxHeal, critChance, critMultiplier, false, false);
         }
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
-        shooter.addHealingInstance(shooter, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-        Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
-        return super.onActivate(shooter, player);
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new RayOfLightBranch(abilityTree, this);
-    }
-
-    @Override
-    public ItemStack getBeamItem() {
-        return new ItemStack(Material.CRIMSON_DOOR);
     }
 
     @Nullable
@@ -123,4 +133,23 @@ public class RayOfLight extends AbstractBeam {
         return 1.1f;
     }
 
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        shooter.addHealingInstance(shooter, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+        Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
+        return super.onActivate(shooter, player);
+    }
+
+    @Override
+    public ItemStack getBeamItem() {
+        return new ItemStack(Material.CRIMSON_DOOR);
+    }
+
+    public int getHealingIncrease() {
+        return healingIncrease;
+    }
+
+    public void setHealingIncrease(int healingIncrease) {
+        this.healingIncrease = healingIncrease;
+    }
 }

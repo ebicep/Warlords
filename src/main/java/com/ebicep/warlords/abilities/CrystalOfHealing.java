@@ -112,7 +112,23 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                     }
                     if (ticksElapsed % 20 == 0) {
                         crystal.customName(Component.text(ticksLeft / 20, NamedTextColor.GREEN));
-                        //crystal.getTextDisplay().text(Component.text(ticksLeft / 20, NamedTextColor.GOLD));
+                        if (pveMasterUpgrade) {
+                            for (WarlordsEntity allyTarget : PlayerFilter
+                                    .entitiesAround(crystal.getLocation(), 6, 6, 6)
+                                    .aliveTeammatesOf(wp)
+                            ) {
+                                allyTarget.addHealingInstance(
+                                        wp,
+                                        name,
+                                        50,
+                                        50,
+                                        0,
+                                        100,
+                                        false,
+                                        false
+                                );
+                            }
+                        }
                     }
                     if (ticksElapsed < 40) {
                         return; // prevent instant pickup
@@ -123,9 +139,9 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                 .first(teammate -> {
                                     teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.45f);
                                     FireWorkEffectPlayer.playFirework(groundLocation, FireworkEffect.builder()
-                                            .withColor(Color.WHITE)
-                                            .with(FireworkEffect.Type.STAR)
-                                            .build());
+                                                                                                    .withColor(Color.WHITE)
+                                                                                                    .with(FireworkEffect.Type.STAR)
+                                                                                                    .build());
                                     cooldown.setTicksLeft(0);
                                     int secondsElapsed = ticksElapsed / 20;
                                     float healAmount = secondsElapsed > duration ? maxHeal : (maxHeal * ticksElapsed) / (duration * 20);

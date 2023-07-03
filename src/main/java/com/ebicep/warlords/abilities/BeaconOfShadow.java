@@ -95,17 +95,16 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
                         return critMultiplierReducedTo;
                     }
                 });
+                if (pveMasterUpgrade) {
+                    enemy.getSpeed().removeModifier(name);
+                    enemy.addSpeedModifier(wp, name, -15, 6, "BASE");
+                }
                 PotionEffect potionEffect = enemy.getEntity().getPotionEffect(PotionEffectType.DARKNESS);
                 if (potionEffect == null) {
                     enemy.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, darknessTickDuration, 0, true, false));
                 }
             }
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new BeaconOfShadowBranch(abilityTree, this);
     }
 
     @Override
@@ -116,6 +115,11 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
         return null;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new BeaconOfShadowBranch(abilityTree, this);
     }
 
     public int getCritMultiplierReducedTo() {

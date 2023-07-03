@@ -80,13 +80,14 @@ public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> 
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Divine Blessing - Master Upgrade",
                 """
+                        Lethal damage healing increased to 30%. All allies restore another 800 health after Divine Blessing ends.
                         """,
                 50000,
                 () -> {
-
+                    ability.setLethalDamageHealing(ability.getLethalDamageHealing() + 30);
                 }
         );
     }

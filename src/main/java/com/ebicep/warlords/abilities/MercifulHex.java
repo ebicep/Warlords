@@ -59,13 +59,15 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of piercing magical wind forward. The first ally hit by the magical wind heals ")
+        description = Component.text("Send a wave of magical wind forward, passing through all allies and enemies. The first ally touched by the magical wind heals ")
                                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" health (subsequent hit allies are healed for 30%) and receives "))
+                               .append(Component.text(" health and receives "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit by the wind takes "))
+                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy touched by the wind takes "))
                                .append(formatRangeDamage(minDamage, maxDamage))
-                               .append(Component.text(" damage. Also heal yourself for by "))
+                               .append(Component.text(" damage. All other allies and enemies the wind passes through will receive "))
+                               .append(Component.text(subsequentReduction + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" of the effect. Also heal yourself by "))
                                .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
                                .append(Component.text(" If Merciful Hex hits a target, you receive "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
@@ -85,6 +87,11 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
         return null;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new MercifulHexBranch(abilityTree, this);
     }
 
     @Override
@@ -136,7 +143,9 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                     false,
                     false
             );
-            giveMercifulHex(wp, hit);
+            if (teammatesHit == 1 || pveMasterUpgrade) {
+                giveMercifulHex(wp, hit);
+            }
         } else {
             int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
             float reduction = enemiesHit == 1 ? 1 : subsequentReduction / 100f;
@@ -195,7 +204,6 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             }
         });
     }
-
 
     @Override
     protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
@@ -266,11 +274,6 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 );
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new MercifulHexBranch(abilityTree, this);
     }
 
     @Nullable
@@ -349,5 +352,13 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     public void setMaxDamage(float maxDamage) {
         this.maxDamage = maxDamage;
+    }
+
+    public int getSubsequentReduction() {
+        return subsequentReduction;
+    }
+
+    public void setSubsequentReduction(int subsequentReduction) {
+        this.subsequentReduction = subsequentReduction;
     }
 }

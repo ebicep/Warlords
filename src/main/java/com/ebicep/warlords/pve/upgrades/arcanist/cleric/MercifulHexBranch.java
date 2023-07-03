@@ -11,6 +11,8 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
     float maxDamageHeal = ability.getMaxDamageHeal();
     float minSelfHeal = ability.getMinSelfHeal();
     float maxSelfHeal = ability.getMaxSelfHeal();
+    float dotMinHeal = ability.getDotMinHeal();
+    float dotMaxHeal = ability.getDotMaxHeal();
     float energyCost = ability.getEnergyCost();
     float minDamage = ability.getMinDamage();
     float maxDamage = ability.getMaxDamage();
@@ -27,6 +29,8 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                     ability.setMaxDamageHeal(maxDamageHeal * 1.15f);
                     ability.setMinSelfHeal(minSelfHeal * 1.15f);
                     ability.setMaxSelfHeal(maxSelfHeal * 1.15f);
+                    ability.setDotMinHeal(dotMinHeal * 1.15f);
+                    ability.setDotMaxHeal(dotMaxHeal * 1.15f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -38,6 +42,8 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                     ability.setMaxDamageHeal(maxDamageHeal * 1.3f);
                     ability.setMinSelfHeal(minSelfHeal * 1.3f);
                     ability.setMaxSelfHeal(maxSelfHeal * 1.3f);
+                    ability.setDotMinHeal(dotMinHeal * 1.3f);
+                    ability.setDotMaxHeal(dotMaxHeal * 1.3f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -49,6 +55,8 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                     ability.setMaxDamageHeal(maxDamageHeal * 1.45f);
                     ability.setMinSelfHeal(minSelfHeal * 1.45f);
                     ability.setMaxSelfHeal(maxSelfHeal * 1.45f);
+                    ability.setDotMinHeal(dotMinHeal * 1.45f);
+                    ability.setDotMaxHeal(dotMaxHeal * 1.45f);
                 }
         ));
         treeA.add(new Upgrade(
@@ -60,6 +68,8 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                     ability.setMaxDamageHeal(maxDamageHeal * 1.6f);
                     ability.setMinSelfHeal(minSelfHeal * 1.6f);
                     ability.setMaxSelfHeal(maxSelfHeal * 1.6f);
+                    ability.setDotMinHeal(dotMinHeal * 1.6f);
+                    ability.setDotMaxHeal(dotMaxHeal * 1.6f);
                 }
         ));
 
@@ -104,13 +114,14 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Merciful Hex - Master Upgrade",
                 """
+                        All allies hit receive 1 stack of Merciful Hex. Increase additional targets hit healing/damage by 20%.
                         """,
                 50000,
                 () -> {
-
+                    ability.setSubsequentReduction(ability.getSubsequentReduction() + 20);
                 }
         );
     }
