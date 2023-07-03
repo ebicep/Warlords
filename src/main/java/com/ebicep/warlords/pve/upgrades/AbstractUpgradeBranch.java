@@ -134,6 +134,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         if (upgradesRequiredForMaster <= 0) {
             upgrade.getOnUpgrade().run();
             upgrade.setUnlocked(true);
+            ability.setPveMasterUpgrade(true);
 
             player.getAbilityTree().setMaxMasterUpgrades(abilityTree.getMaxMasterUpgrades() - 1);
             player.subtractCurrency(upgrade.getCurrencyCost());

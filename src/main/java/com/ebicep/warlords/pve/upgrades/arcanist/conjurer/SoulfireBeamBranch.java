@@ -95,7 +95,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                         """,
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setPlayerHitbox(ability.getPlayerHitbox() + 1.5f);
                 }
         );

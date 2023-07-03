@@ -94,7 +94,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 50000,
                 () -> {
                     ability.setDamageIncrease(ability.getDamageIncrease() + 10);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

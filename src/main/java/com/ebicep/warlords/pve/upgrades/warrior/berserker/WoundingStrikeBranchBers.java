@@ -104,7 +104,7 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
                         BLEED: Enemies afflicted take 100% more damage from Wounding Strike while Blood Lust is active. Bleeding enemies have healing reduced by 80% and lose 0.5% of their max health per second.""",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
 

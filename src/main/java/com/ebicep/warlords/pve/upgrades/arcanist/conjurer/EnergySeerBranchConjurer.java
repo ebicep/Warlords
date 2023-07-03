@@ -87,7 +87,7 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
                         """,
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setDamageIncrease(ability.getDamageIncrease() + 15);
                     ability.setEnergyRestore(ability.getEnergyRestore() * 3);
                 }

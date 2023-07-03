@@ -98,7 +98,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                     ability.setAdditionalBounces(ability.getAdditionalBounces() + 1);
                     ability.setDamageReductionDuration(ability.getDamageReductionDuration() * 2);
                     ability.setSpeedDuration(ability.getSpeedDuration() * 2);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

@@ -95,7 +95,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 "Each Capacitor Totem proc increases the hit radius by 0.5 Blocks and all enemies hit have their damage resistance permanently reduced by 20%",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

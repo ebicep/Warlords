@@ -89,7 +89,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 "Spawn 1 additional orb on active, double healing increase over time orbs last twice as long.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setOrbTickMultiplier(2);
                 }
         );

@@ -93,7 +93,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 50000,
                 () -> {
                     ability.setCooldown(ability.getCooldown() * 0.8f);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

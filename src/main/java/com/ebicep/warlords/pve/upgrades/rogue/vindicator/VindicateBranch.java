@@ -90,7 +90,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 "Enemies who try to attack you while Vindicate is active are pushed back and reflect 75% of the damage you take back.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

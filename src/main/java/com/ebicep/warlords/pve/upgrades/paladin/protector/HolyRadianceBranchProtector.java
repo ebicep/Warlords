@@ -92,7 +92,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
                 "Protector's Mark is now AoE and has no target limit.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

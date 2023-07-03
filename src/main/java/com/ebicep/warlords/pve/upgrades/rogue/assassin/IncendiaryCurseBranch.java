@@ -95,7 +95,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 "All enemies hit become disoriented. Increase the damage they take by 50% for 5 seconds.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

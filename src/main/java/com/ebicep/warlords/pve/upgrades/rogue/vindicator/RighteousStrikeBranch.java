@@ -98,7 +98,7 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
                         " when struck, additional targets will be silenced for 4 seconds instead.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

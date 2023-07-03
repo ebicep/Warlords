@@ -86,7 +86,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() + 100);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

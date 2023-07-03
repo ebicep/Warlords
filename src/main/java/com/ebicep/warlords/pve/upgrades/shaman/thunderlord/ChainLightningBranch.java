@@ -100,7 +100,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                 "Increase max damage reduction cap by 10%. Additionally, Chain Lightning now deals 10% more damage per bounce instead of less.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 10);
                 }
         );

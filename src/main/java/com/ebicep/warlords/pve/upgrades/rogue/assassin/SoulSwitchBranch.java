@@ -88,7 +88,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                         " reducing their damage dealt by 50%. Additionally, heal for 10% of your missing health when swapping.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

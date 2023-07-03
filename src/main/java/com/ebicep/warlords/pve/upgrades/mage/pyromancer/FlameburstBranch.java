@@ -94,7 +94,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                     ability.setMinDamageHeal(minDamage * 2);
                     ability.setMaxDamageHeal(maxDamage * 2);
                     ability.setHitbox(ability.getHitbox() + 5);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

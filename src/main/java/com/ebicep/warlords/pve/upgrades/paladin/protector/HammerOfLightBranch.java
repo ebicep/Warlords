@@ -102,7 +102,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                         "the same amount.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

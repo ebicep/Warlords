@@ -111,7 +111,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         Deal 40% more damage against BASIC enemies and deal 0.5% max health damage against ELITE enemies.""",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setEnergyCost(ability.getEnergyCost() - 5);
                 }
         );

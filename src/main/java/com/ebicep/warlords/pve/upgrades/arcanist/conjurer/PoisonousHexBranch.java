@@ -94,7 +94,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                         """,
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setDotTickFrequency(20);
                 }
         );

@@ -102,7 +102,7 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
                 50000,
                 () -> {
                     ability.setEnergyRadius(ability.getEnergyRadius() * 2);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

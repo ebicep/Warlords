@@ -93,7 +93,7 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 50000,
                 () -> {
                     ability.setSpikeHitbox(ability.getSpikeHitbox() + 1.5);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

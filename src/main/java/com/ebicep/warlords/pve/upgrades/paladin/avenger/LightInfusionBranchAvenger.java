@@ -87,7 +87,7 @@ public class LightInfusionBranchAvenger extends AbstractUpgradeBranch<LightInfus
                 "Each Avenger's Strike cast while Light Infusion is active will refund 30 energy when Light Infusion ends.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

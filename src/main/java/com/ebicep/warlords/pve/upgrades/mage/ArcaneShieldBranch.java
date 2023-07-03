@@ -88,7 +88,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                 "When arcane shield ends or breaks, unleash a shockwave that stuns enemies for 6 seconds.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

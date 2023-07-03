@@ -92,7 +92,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWe
                         "nearby allies for 10% of their missing health and restore energy equal to the same amount.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

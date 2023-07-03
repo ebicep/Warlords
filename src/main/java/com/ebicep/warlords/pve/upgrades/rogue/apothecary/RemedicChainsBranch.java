@@ -89,7 +89,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
                 "Increase bonus damage dealt by an additional 8% and temporarily increase all linked allies' max health by 25%.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setAllyDamageIncrease(20);
                 }
         );

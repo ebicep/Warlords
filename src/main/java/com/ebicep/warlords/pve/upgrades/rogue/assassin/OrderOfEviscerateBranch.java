@@ -88,7 +88,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "Kills while Order of Eviscerate is active reduce the cooldown by an additional 4 seconds. Additionally, attacks from behind deal 70% more damage.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

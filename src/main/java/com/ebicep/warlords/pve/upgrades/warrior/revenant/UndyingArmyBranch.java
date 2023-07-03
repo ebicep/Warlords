@@ -90,7 +90,7 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
                 () -> {
                     ability.setRadius(ability.getRadius() * 2);
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

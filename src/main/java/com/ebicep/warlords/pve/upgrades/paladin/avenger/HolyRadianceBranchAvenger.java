@@ -91,7 +91,7 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
                 "Avenger's Mark is now AoE. Additionally, marked targets take 40% more damage from Avenger's Strike and receive strike priority.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

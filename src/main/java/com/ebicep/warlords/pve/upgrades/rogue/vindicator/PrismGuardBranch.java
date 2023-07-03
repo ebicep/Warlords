@@ -96,7 +96,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 50000,
                 () -> {
                     abilityTree.getWarlordsPlayer().setDamageResistance(abilityTree.getWarlordsPlayer().getSpec().getDamageResistance() + 25);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }
