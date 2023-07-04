@@ -6,6 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import org.bukkit.Location;
+import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -40,7 +41,13 @@ public class PathfinderGoalPredictTargetFutureLocationGoal extends Goal {
         WarlordsEntity warlordsEntityTarget = Warlords.getPlayer(target.getBukkitEntity());
         if (warlordsEntitySelf != null && warlordsEntityTarget != null) {
             Location lookAtLocation = lookAtLocation(warlordsEntitySelf.getLocation(), predictFutureLocation(warlordsEntitySelf, warlordsEntityTarget));
-            self.getBukkitEntity().setRotation(lookAtLocation.getYaw(), lookAtLocation.getPitch());
+            float yaw = lookAtLocation.getYaw();
+            float pitch = lookAtLocation.getPitch();
+            if (!NumberConversions.isFinite(yaw) || !NumberConversions.isFinite(pitch)) {
+                return;
+            }
+            self.getBukkitEntity().setRotation(yaw, pitch);
+
         }
     }
 
