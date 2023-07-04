@@ -116,6 +116,9 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        if (projectile.getHit().contains(hit)) {
+            return;
+        }
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
 

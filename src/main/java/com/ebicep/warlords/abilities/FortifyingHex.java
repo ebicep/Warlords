@@ -75,6 +75,11 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FortifyingHexBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
 
     }
@@ -96,6 +101,9 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        if (projectile.getHit().contains(hit)) {
+            return;
+        }
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
         Location startingLocation = projectile.getStartingLocation();
@@ -186,11 +194,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                 );
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FortifyingHexBranch(abilityTree, this);
     }
 
     @Nullable

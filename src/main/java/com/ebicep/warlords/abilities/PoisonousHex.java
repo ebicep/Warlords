@@ -112,6 +112,9 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        if (projectile.getHit().contains(hit)) {
+            return;
+        }
         if (projectile.getHit().size() >= 2) {
             return;
         }
