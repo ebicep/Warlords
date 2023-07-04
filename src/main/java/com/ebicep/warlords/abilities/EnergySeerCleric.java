@@ -16,7 +16,7 @@ public class EnergySeerCleric extends AbstractEnergySeer<EnergySeerCleric> {
 
     @Override
     public Component getBonus() {
-        return Component.text("increase your critical chance by ")
+        return Component.text("increase your Crit Chance by ")
                         .append(Component.text(critChanceIncrease + "%", NamedTextColor.RED));
     }
 

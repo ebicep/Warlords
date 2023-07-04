@@ -36,7 +36,7 @@ public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
     public void updateDescription(Player player) {
         description = Component.text("Launch a flame burst that will explode for ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" damage. The critical chance increases by "))
+                               .append(Component.text(" damage. The Crit Chance increases by "))
                                .append(Component.text("1%", NamedTextColor.RED))
                                .append(Component.text(" for each travelled block. Up to "))
                                .append(Component.text("100%", NamedTextColor.RED))
