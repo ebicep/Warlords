@@ -2,6 +2,7 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -44,6 +45,9 @@ public class PathfinderGoalPredictTargetFutureLocationGoal extends Goal {
             float yaw = lookAtLocation.getYaw();
             float pitch = lookAtLocation.getPitch();
             if (!NumberConversions.isFinite(yaw) || !NumberConversions.isFinite(pitch)) {
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Yaw/Pitch not finite - " + yaw + "/" + pitch);
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(warlordsEntitySelf.getLocation().toString());
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(warlordsEntityTarget.getLocation().toString());
                 return;
             }
             self.getBukkitEntity().setRotation(yaw, pitch);
