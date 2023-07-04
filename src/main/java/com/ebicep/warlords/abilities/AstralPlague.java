@@ -28,6 +28,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 
 public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -118,7 +119,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         event.getFlags().add(InstanceFlags.PIERCE_DAMAGE);
-                        if (pveMasterUpgrade) {
+                        if (pveMasterUpgrade && Objects.equals(event.getAbility(), "Soulfire Beam")) {
                             event.setCritChance(100);
                         }
                     }
