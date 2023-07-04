@@ -142,7 +142,7 @@ public class RayOfLight extends AbstractBeam {
 
     @Override
     public ItemStack getBeamItem() {
-        return new ItemStack(Material.CRIMSON_DOOR);
+        return new ItemStack(Material.MANGROVE_FENCE);
     }
 
     public int getHealingIncrease() {
