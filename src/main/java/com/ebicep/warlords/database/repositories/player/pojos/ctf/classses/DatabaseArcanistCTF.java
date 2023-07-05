@@ -9,7 +9,7 @@ public class DatabaseArcanistCTF extends DatabaseBaseCTF implements DatabaseWarl
 
     private DatabaseBaseCTF conjurer = new DatabaseBaseCTF();
     private DatabaseBaseCTF sentinel = new DatabaseBaseCTF();
-    private DatabaseBaseCTF cleric = new DatabaseBaseCTF();
+    private DatabaseBaseCTF luminary = new DatabaseBaseCTF();
 
     public DatabaseArcanistCTF() {
         super();
@@ -17,7 +17,7 @@ public class DatabaseArcanistCTF extends DatabaseBaseCTF implements DatabaseWarl
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBaseCTF[]{conjurer, sentinel, cleric};
+        return new DatabaseBaseCTF[]{conjurer, sentinel, luminary};
     }
 
 
@@ -29,8 +29,8 @@ public class DatabaseArcanistCTF extends DatabaseBaseCTF implements DatabaseWarl
         return sentinel;
     }
 
-    public DatabaseBaseCTF getCleric() {
-        return cleric;
+    public DatabaseBaseCTF getLuminary() {
+        return luminary;
     }
 
 }

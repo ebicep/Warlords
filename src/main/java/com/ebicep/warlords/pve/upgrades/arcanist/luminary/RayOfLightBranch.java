@@ -1,16 +1,17 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
+package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
-import com.ebicep.warlords.abilities.BeaconOfShadow;
+import com.ebicep.warlords.abilities.RayOfLight;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> {
+public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
 
     float cooldown = ability.getCooldown();
-    float radius = ability.getRadius();
+    float minDamage = ability.getMinDamageHeal();
+    float maxDamage = ability.getMaxDamageHeal();
 
-    public BeaconOfShadowBranch(AbilityTree abilityTree, BeaconOfShadow ability) {
+    public RayOfLightBranch(AbilityTree abilityTree, RayOfLight ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -47,47 +48,52 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> 
         ));
 
         treeB.add(new Upgrade(
-                "Scope - Tier I",
-                "+0.5 Block radius",
+                "Alleviate - Tier I",
+                "+10% Healing",
                 5000,
                 () -> {
-                    ability.setRadius(radius + 0.5f);
+                    ability.setMinDamageHeal(minDamage * 1.1f);
+                    ability.setMaxDamageHeal(maxDamage * 1.1f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier II",
-                "+1 Block radius",
+                "Alleviate - Tier II",
+                "+20% Healing",
                 10000,
                 () -> {
-                    ability.setRadius(radius + 1);
+                    ability.setMinDamageHeal(minDamage * 1.2f);
+                    ability.setMaxDamageHeal(maxDamage * 1.2f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier III",
-                "+1.5 Block radius",
+                "Alleviate - Tier III",
+                "+30% Healing",
                 15000,
                 () -> {
-                    ability.setRadius(radius + 1.5f);
+                    ability.setMinDamageHeal(minDamage * 1.3f);
+                    ability.setMaxDamageHeal(maxDamage * 1.3f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Scope - Tier IV",
-                "+2 Block radius",
+                "Alleviate - Tier IV",
+                "+40% Healing\n-30 Energy cost",
                 20000,
                 () -> {
-                    ability.setRadius(radius + 2);
+                    ability.setMinDamageHeal(minDamage * 1.4f);
+                    ability.setMaxDamageHeal(maxDamage * 1.4f);
+                    ability.setEnergyCost(ability.getEnergyCost() - 30);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "NAME",
-                "Beacon of Shadow - Master Upgrade",
+                "Ray of Light - Master Upgrade",
                 """
-                        Increase Crit Multiplier reduction by 30%. Enemies within the radius have their movement speed reduced by 15%.
+                        Ray of Light will grant allies with max stacks of Merciful Hex a 10% damage bonus for 5s. Additionally, increase bonus healing for max stack allies by 25%.
                         """,
                 50000,
                 () -> {
-                    ability.setCritMultiplierReducedTo(ability.getCritMultiplierReducedTo() - 30);
+                    ability.setHealingIncrease(ability.getHealingIncrease() + 25);
                 }
         );
     }

@@ -64,7 +64,7 @@ public class DatabasePlayerPvEEventPlayerCountStats extends PvEEventDatabaseStat
             case APOTHECARY -> rogue.getApothecary();
             case CONJURER -> arcanist.getConjurer();
             case SENTINEL -> arcanist.getSentinel();
-            case LUMINARY -> arcanist.getCleric();
+            case LUMINARY -> arcanist.getLuminary();
         };
     }
 

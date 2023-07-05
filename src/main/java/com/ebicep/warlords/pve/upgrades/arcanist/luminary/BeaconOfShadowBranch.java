@@ -1,16 +1,16 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
+package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
-import com.ebicep.warlords.abilities.DivineBlessing;
+import com.ebicep.warlords.abilities.BeaconOfShadow;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> {
+public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> {
 
     float cooldown = ability.getCooldown();
-    int tickDuration = ability.getTickDuration();
+    float radius = ability.getRadius();
 
-    public DivineBlessingBranch(AbilityTree abilityTree, DivineBlessing ability) {
+    public BeaconOfShadowBranch(AbilityTree abilityTree, BeaconOfShadow ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -47,47 +47,47 @@ public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> 
         ));
 
         treeB.add(new Upgrade(
-                "Chronos - Tier I",
-                "+0.5s Duration",
+                "Scope - Tier I",
+                "+0.5 Block radius",
                 5000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 10);
+                    ability.setRadius(radius + 0.5f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Chronos - Tier II",
-                "+1s Duration",
+                "Scope - Tier II",
+                "+1 Block radius",
                 10000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 20);
+                    ability.setRadius(radius + 1);
                 }
         ));
         treeB.add(new Upgrade(
-                "Chronos - Tier III",
-                "+1.5s Duration",
+                "Scope - Tier III",
+                "+1.5 Block radius",
                 15000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 30);
+                    ability.setRadius(radius + 1.5f);
                 }
         ));
         treeB.add(new Upgrade(
-                "Chronos - Tier IV",
-                "+2s Duration",
+                "Scope - Tier IV",
+                "+2 Block radius",
                 20000,
                 () -> {
-                    ability.setTickDuration(tickDuration + 40);
+                    ability.setRadius(radius + 2);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "NAME",
-                "Divine Blessing - Master Upgrade",
+                "Beacon of Shadow - Master Upgrade",
                 """
-                        Lethal damage healing increased to 30%. All allies restore another 800 health after Divine Blessing ends.
+                        Increase Crit Multiplier reduction by 30%. Enemies within the radius have their movement speed reduced by 15%.
                         """,
                 50000,
                 () -> {
-                    ability.setLethalDamageHealing(ability.getLethalDamageHealing() + 30);
+                    ability.setCritMultiplierReducedTo(ability.getCritMultiplierReducedTo() - 30);
                 }
         );
     }
