@@ -422,7 +422,7 @@ public class EffectUtils {
                 double r = 2;
                 t = t + Math.PI / 16;
                 double x = r * cos(t);
-                double y = 0.5 * t;
+                double y = 0.25 * t;
                 double z = r * sin(t);
                 loc.add(x, y ,z);
                 loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
@@ -432,7 +432,7 @@ public class EffectUtils {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(0, 4);
+        }.runTaskTimer(0, 2);
     }
 
     public static void playRadialWaveAnimation(WarlordsEntity we) {

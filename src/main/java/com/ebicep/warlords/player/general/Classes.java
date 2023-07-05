@@ -48,7 +48,7 @@ public enum Classes {
             "Arcanist",
             List.of("arc"),
             new ItemStack(Material.BEDROCK),
-            "The Arcanist is a formidable class with unparalleled mastery over the arcane arts by tapping into a wellspring of raw magical energy.",
+            "The Arcanist is a formidable class with unparalleled mastery over the Hex arts by tapping into a wellspring of raw magical energy.",
             CONJURER, SENTINEL, LUMINARY
     );
 
