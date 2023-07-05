@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilties;
 
 import com.ebicep.warlords.abilties.internal.AbstractAbility;
 import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -11,8 +12,11 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -52,6 +56,12 @@ public class Sanctuary extends AbstractAbility implements Duration {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
+
+        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 2, 0.9f);
+        Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 0.4f);
+        EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.END_ROD, 4, 0.8, 2);
+        EffectUtils.playCylinderAnimation(wp.getLocation(), 1.05, Particle.ASH, 2);
+
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "SANCTUARY",
@@ -84,6 +94,7 @@ public class Sanctuary extends AbstractAbility implements Duration {
                         }
                         FortifyingHex fromHex = FortifyingHex.getFromHex(wp);
                         float damageToReflect = (additionalDamageReduction + fromHex.getDamageReduction() * 3) / 100f;
+                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1.5f, 1.9f);
                         event.getAttacker().addDamageInstance(
                                 teammate,
                                 name,

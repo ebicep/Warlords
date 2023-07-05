@@ -3,6 +3,7 @@ package com.ebicep.warlords.effects;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
@@ -413,27 +414,104 @@ public class EffectUtils {
 
     public static void playCircularEffectAround(WarlordsEntity we, Particle effect, int particleCount) {
         Location loc = we.getLocation().clone();
-        new GameRunnable(we.getGame()) {
-            @Override
-            public void run() {
-                double t = 0;
-                double r = 2;
-                t = t + Math.PI / 16;
-                double x = r * cos(t);
-                double y = 0.5 * t;
-                double z = r * sin(t);
-                loc.add(x, y ,z);
-                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
-                loc.subtract(x, y, z);
-
-                if (t > Math.PI * 8) {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 0);
+        for (int i = 0; i < 10; i++) {
+            double t = i;
+            double r = 2;
+            t = t + Math.PI / 16;
+            double x = r * cos(t);
+            double y = 0.5 * t;
+            double z = r * sin(t);
+            loc.add(x, y ,z);
+            loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+            loc.subtract(x, y, z);
+        }
     }
 
     public static void playRadialWaveAnimation(WarlordsEntity we) {
 
+    }
+
+    public static void playCircularShieldAnimation(Location location, Particle particle, int amountOfCircles, double circleRadius, double distance) {
+        Location loc = location.clone();
+        loc.setPitch(0);
+        loc.setYaw(0);
+        loc.add(0, 1, 0);
+        Matrix4d matrix = new Matrix4d();
+        for (int i = 0; i < amountOfCircles; i++) {
+            loc.setYaw(loc.getYaw() + 360F / amountOfCircles);
+            matrix.updateFromLocation(loc);
+            for (int c = 0; c < 20; c++) {
+                double angle = c / 20D * Math.PI * 2;
+                loc.getWorld().spawnParticle(
+                        particle,
+                        matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        null,
+                        true
+                );
+            }
+        }
+    }
+
+    /**
+     * @param location
+     * @param particle particle effect of outer circle
+     * @param innerParticle particle effect of inner circle
+     * @param amountOfCircles amount of circles to spawn
+     * @param circleRadius how big the circle has to be
+     * @param innerCricleRadius how big the inner circle has to be
+     * @param distance how far away from the location the circles have to be
+     */
+    public static void playCircularShieldAnimationWithInnerCircle(
+            Location location,
+            Particle particle,
+            Particle innerParticle,
+            int amountOfCircles,
+            double circleRadius,
+            double innerCricleRadius,
+            double distance
+    ) {
+        Location loc = location.clone();
+        loc.setPitch(0);
+        loc.setYaw(0);
+        Matrix4d matrix = new Matrix4d();
+        for (int i = 0; i < amountOfCircles; i++) {
+            loc.setYaw(loc.getYaw() + 360F / 3F);
+            matrix.updateFromLocation(loc);
+            for (int c = 0; c < 20; c++) {
+                double angle = c / 20D * Math.PI * 2;
+                loc.getWorld().spawnParticle(
+                        particle,
+                        matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        null,
+                        true
+                );
+            }
+
+            for (int c = 0; c < 10; c++) {
+                double angle = c / 10D * Math.PI * 2;
+
+                loc.getWorld().spawnParticle(
+                        innerParticle,
+                        matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * innerCricleRadius, Math.cos(angle) * innerCricleRadius),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        null,
+                        true
+                );
+            }
+        }
     }
 }
