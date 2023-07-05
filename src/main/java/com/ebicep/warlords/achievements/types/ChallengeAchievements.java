@@ -164,7 +164,7 @@ public enum ChallengeAchievements implements Achievement {
                 return false;
             }
     ),
-    CLERICAL_PRODIGY("Luminaryal Prodigy",
+    CLERICAL_PRODIGY("Clerical Prodigy",
             "Heal your carrier for over 80k damage within a game.",
             GameMode.CAPTURE_THE_FLAG,
             Specializations.AQUAMANCER,
