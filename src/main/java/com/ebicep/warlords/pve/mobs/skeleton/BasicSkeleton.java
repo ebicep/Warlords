@@ -42,7 +42,7 @@ public class BasicSkeleton extends AbstractSkeleton implements BasicMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 30 == 0) {
+        if (ticksElapsed % 160 == 0) {
             warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
         }
     }

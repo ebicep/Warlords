@@ -51,11 +51,11 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 30 == 0) {
-            //warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null); TODO
+        if (ticksElapsed % 160 == 0) {
+            warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null); //TODO
         }
-        if (ticksElapsed % 60 == 0) {
-            //warlordsNPC.getRedAbility().onActivate(warlordsNPC, null); TODO
+        if (ticksElapsed % 400 == 0) {
+            warlordsNPC.getAbilities().get(1).onActivate(warlordsNPC, null); //TODO
         }
         if (ticksElapsed % 100 == 0) {
             EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, Particle.SMOKE_NORMAL, 1, 30);

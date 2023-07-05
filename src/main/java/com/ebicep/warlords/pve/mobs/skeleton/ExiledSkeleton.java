@@ -74,7 +74,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         warlordsNPC.getSpeed().removeSlownessModifiers();
-        if (ticksElapsed % 30 == 0) {
+        if (ticksElapsed % 160 == 0) {
             warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
         }
         if (ticksElapsed % 80 == 0) {

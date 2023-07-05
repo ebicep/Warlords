@@ -41,10 +41,10 @@ public class ForgottenPyromancer extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 100 == 0) {
+        if (ticksElapsed % 160 == 0) {
             warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
         }
-        if (ticksElapsed % 300 == 0) {
+        if (ticksElapsed % 400 == 0) {
             warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
             warlordsNPC.getSpec().getRed().onActivate(warlordsNPC, null);
         }
