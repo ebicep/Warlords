@@ -59,8 +59,7 @@ public class EventPoisonousSpider extends AbstractZombie implements BossMob, Spi
                                        375,
                                        500,
                                        0,
-                                       0,
-                                       true
+                                       0
                                ));
         }
     }

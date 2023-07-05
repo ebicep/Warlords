@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,26 +36,6 @@ public class HorseOption implements Option, Listener {
                     Component.text("Call your steed to assists you in battle", NamedTextColor.GRAY)
             )
             .get();
-
-    public static CustomHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
-        if (!(warlordsEntity instanceof WarlordsPlayer)) {
-            return null;
-        }
-        for (Option option : warlordsEntity.getGame().getOptions()) {
-            if (option instanceof HorseOption) {
-                HashMap<UUID, CustomHorse> horses = ((HorseOption) option).getPlayerHorses();
-                CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new CustomHorse(warlordsEntity));
-                customHorse.spawn();
-                return customHorse;
-            }
-        }
-        return null;
-    }
-
-    public HashMap<UUID, CustomHorse> getPlayerHorses() {
-        return playerHorses;
-    }
-
     private final HashMap<UUID, CustomHorse> playerHorses = new HashMap<>();
 
     @Override
@@ -134,11 +113,30 @@ public class HorseOption implements Option, Listener {
         }
     }
 
+    public static CustomHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
+        if (!(warlordsEntity instanceof WarlordsPlayer)) {
+            return null;
+        }
+        for (Option option : warlordsEntity.getGame().getOptions()) {
+            if (option instanceof HorseOption) {
+                HashMap<UUID, CustomHorse> horses = ((HorseOption) option).getPlayerHorses();
+                CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new CustomHorse(warlordsEntity));
+                customHorse.spawn();
+                return customHorse;
+            }
+        }
+        return null;
+    }
+
+    public HashMap<UUID, CustomHorse> getPlayerHorses() {
+        return playerHorses;
+    }
+
     public static class CustomHorse {
 
         private final WarlordsEntity warlordsEntityOwner;
         private final int cooldown = 15;
-        private final float speed = .318f;
+        private final float speed = .3f;
 
         public CustomHorse(WarlordsEntity warlordsEntityOwner) {
             this.warlordsEntityOwner = warlordsEntityOwner;
@@ -148,21 +146,22 @@ public class HorseOption implements Option, Listener {
             if (!(warlordsEntityOwner.getEntity() instanceof Player player)) {
                 return;
             }
-            Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
-            horse.setTamed(true);
-            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-            horse.setOwner(player);
-            horse.setJumpStrength(0);
-            horse.setColor(Horse.Color.BROWN);
-            horse.setStyle(Horse.Style.NONE);
-            horse.setAdult();
-            AttributeInstance attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-            if (attribute == null) {
-                horse.registerAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-                attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-            }
-            attribute.setBaseValue(speed);
-            horse.addPassenger(player);
+            Horse h = player.getWorld().spawn(player.getLocation(), Horse.class, false, horse -> {
+                horse.setTamed(true);
+                horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                horse.setOwner(player);
+                horse.setJumpStrength(0);
+                horse.setColor(Horse.Color.BROWN);
+                horse.setStyle(Horse.Style.NONE);
+                horse.setAdult();
+                AttributeInstance attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+                if (attribute == null) {
+                    horse.registerAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+                    attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+                }
+                attribute.setBaseValue(speed);
+            });
+            h.addPassenger(player); // not sure if including this in function above will cause issues
         }
 
         public WarlordsEntity getWarlordsOwner() {

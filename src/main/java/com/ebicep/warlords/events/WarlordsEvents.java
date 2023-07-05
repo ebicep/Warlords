@@ -1,12 +1,12 @@
 package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.IceBarrier;
-import com.ebicep.warlords.abilties.OrderOfEviscerate;
-import com.ebicep.warlords.abilties.SoulShackle;
-import com.ebicep.warlords.abilties.UndyingArmy;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractTimeWarp;
+import com.ebicep.warlords.abilities.IceBarrier;
+import com.ebicep.warlords.abilities.OrderOfEviscerate;
+import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -44,7 +44,7 @@ import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_19_R3.inventory.*;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -365,8 +365,7 @@ public class WarlordsEvents implements Listener {
                             warlordsNPC.getMinMeleeDamage(),
                             warlordsNPC.getMaxMeleeDamage(),
                             0,
-                            100,
-                            false
+                            100
                     );
                 }
                 wpAttacker.setHitCooldown(20);
@@ -380,8 +379,7 @@ public class WarlordsEvents implements Listener {
                         weapon.getMeleeDamageMin(),
                         weapon.getMeleeDamageMax(),
                         weapon.getCritChance(),
-                        weapon.getCritMultiplier(),
-                        false
+                        weapon.getCritMultiplier()
                 );
             } else {
                 wpVictim.addDamageInstance(
@@ -390,8 +388,7 @@ public class WarlordsEvents implements Listener {
                         132,
                         179,
                         25,
-                        200,
-                        false
+                        200
                 );
             }
         }
@@ -435,8 +432,7 @@ public class WarlordsEvents implements Listener {
                                 100000,
                                 100000,
                                 0,
-                                100,
-                                false
+                                100
                         );
                     }
                     case COMPASS -> {
@@ -613,7 +609,7 @@ public class WarlordsEvents implements Listener {
                     if (wp.isDead()) {
                         wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
                     } else {
-                        wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100, false);
+                        wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100);
                     }
                 }
             } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
@@ -632,7 +628,7 @@ public class WarlordsEvents implements Listener {
                     if (wp != null) {
                         int damage = (int) e.getDamage();
                         if (damage > 5) {
-                            wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100, false);
+                            wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100);
                             wp.resetRegenTimer();
                         }
                     }
@@ -642,7 +638,7 @@ public class WarlordsEvents implements Listener {
                 if (e.getEntity() instanceof Player) {
                     WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
                     if (wp != null && !wp.getGame().isFrozen()) {
-                        wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100, false);
+                        wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100);
                         wp.resetRegenTimer();
                     }
                 }

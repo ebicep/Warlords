@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
-import com.ebicep.warlords.abilties.CapacitorTotem;
+import com.ebicep.warlords.abilities.CapacitorTotem;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -95,7 +95,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 "Each Capacitor Totem proc increases the hit radius by 0.5 Blocks and all enemies hit have their damage resistance permanently reduced by 20%",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
 
-import com.ebicep.warlords.abilties.SoulfireBeam;
+import com.ebicep.warlords.abilities.SoulfireBeam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -10,7 +10,6 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
     float cooldown = ability.getCooldown();
-    float hitbox = ability.getPlayerHitbox();
 
 
     public SoulfireBeamBranch(AbilityTree abilityTree, SoulfireBeam ability) {
@@ -83,18 +82,21 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.3f);
                     ability.setMaxDamageHeal(maxDamage * 1.3f);
-                    ability.setPlayerHitbox(hitbox + 2);
+                    ability.setPlayerHitbox(ability.getPlayerHitbox() + 2);
                 }
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Soulfire Beam - Master Upgrade",
                 """
+                        Increase hit block radius by 3 blocks.
+                        Every enemy killed by Soulfire Beam refunds 8 energy and reduces Soulfire's cooldown by 0.5s.
                         """,
                 50000,
                 () -> {
 
+                    ability.setPlayerHitbox(ability.getPlayerHitbox() + 1.5f);
                 }
         );
     }

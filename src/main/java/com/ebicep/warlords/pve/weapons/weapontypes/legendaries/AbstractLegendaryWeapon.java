@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.*;
@@ -538,7 +538,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public void updateAbilityItem(WarlordsPlayer warlordsPlayer, Player player) {
         if (getAbility() != null) {
-            warlordsPlayer.updateItem(player, 8, getAbility(), ABILITY_ITEM);
+            warlordsPlayer.updateCustomItem(player, 8, getAbility(), ABILITY_ITEM);
         }
     }
 

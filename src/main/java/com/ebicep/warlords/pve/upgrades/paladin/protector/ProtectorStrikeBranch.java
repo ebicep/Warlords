@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
-import com.ebicep.warlords.abilties.ProtectorsStrike;
+import com.ebicep.warlords.abilities.ProtectorsStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -98,7 +98,7 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
                 "Increase the healing of Protector's Strike on the lowest health allies and you by 50%. Additionally, double the healing range and increase your strike radius by 1 block.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setHitbox(ability.getHitbox() + 1);
                     ability.setStrikeRadius(ability.getStrikeRadius() * 2);
                 }

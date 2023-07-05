@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
-import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -75,8 +75,7 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
                             1000,
                             1000,
                             -1,
-                            100,
-                            true
+                            100
                     );
                 }
             }

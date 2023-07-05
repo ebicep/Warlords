@@ -25,7 +25,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 
-import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -127,8 +126,9 @@ public class IllusionVendorTrait extends WarlordsTrait {
                           AbstractItem item = entry.getValue();
                           Component itemName = item.getItemName();
                           IllusionVendorWeeklyShop.PurchasableItem purchasableItem = itemCosts.get(mapName);
-                          if (purchasableItem == null) {
-                              ChatUtils.MessageType.ILLUSION_VENDOR.sendErrorMessage("Invalid item in weekly shop: " + mapName);
+                          AbstractItem clone = item.clone();
+                          if (purchasableItem == null || clone == null) {
+                              ChatUtils.MessageType.ILLUSION_VENDOR.sendErrorMessage("Invalid item in weekly shop, report this!");
                               return;
                           }
                           long cost = purchasableItem.getCost();
@@ -158,8 +158,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                           return;
                                       }
                                       pveStats.subtractCurrency(Currencies.ILLUSION_SHARD, cost);
-                                      item.setObtainedDate(Instant.now());
-                                      pveStats.getItemsManager().addItem(item);
+                                      pveStats.getItemsManager().addItem(clone);
 
                                       pveStats.getIllusionVendorRewardsPurchased().merge(mapName, 1L, Long::sum);
                                       weeklyRewardsPurchased.merge(mapName, 1L, Long::sum);

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.aquamancer;
 
-import com.ebicep.warlords.abilties.WaterBreath;
+import com.ebicep.warlords.abilities.WaterBreath;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -103,7 +103,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
                     ability.setHitbox(ability.getHitbox() * 2);
                     ability.setMaxAnimationEffects(8);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
-import com.ebicep.warlords.abilties.FlameBurst;
+import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -52,10 +52,10 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 30 == 0) {
-            warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
+            //warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null); TODO
         }
         if (ticksElapsed % 60 == 0) {
-            warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
+            //warlordsNPC.getRedAbility().onActivate(warlordsNPC, null); TODO
         }
         if (ticksElapsed % 100 == 0) {
             EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), voidRadius, Particle.SMOKE_NORMAL, 1, 30);
@@ -63,7 +63,7 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
                     .entitiesAround(warlordsNPC, voidRadius, voidRadius, voidRadius)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                wp.addDamageInstance(warlordsNPC, "Void Shred", 450, 900, 0, 100, true);
+                wp.addDamageInstance(warlordsNPC, "Void Shred", 450, 900, 0, 100);
                 wp.addSpeedModifier(warlordsNPC, "Void Slowness", -30, 10, "BASE");
             }
         }

@@ -1,12 +1,12 @@
 package com.ebicep.warlords.menu.debugmenu;
 
 
-import com.ebicep.warlords.abilties.CripplingStrike;
-import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
-import com.ebicep.warlords.abilties.WoundingStrikeDefender;
-import com.ebicep.warlords.abilties.internal.DamagePowerup;
-import com.ebicep.warlords.abilties.internal.EnergyPowerup;
-import com.ebicep.warlords.abilties.internal.SpeedPowerup;
+import com.ebicep.warlords.abilities.CripplingStrike;
+import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.WoundingStrikeDefender;
+import com.ebicep.warlords.abilities.internal.DamagePowerup;
+import com.ebicep.warlords.abilities.internal.EnergyPowerup;
+import com.ebicep.warlords.abilities.internal.SpeedPowerup;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;

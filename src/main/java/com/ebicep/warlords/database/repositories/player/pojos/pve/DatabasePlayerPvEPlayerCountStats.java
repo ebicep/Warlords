@@ -18,7 +18,7 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformatio
     private DatabasePaladinPvE paladin = new DatabasePaladinPvE();
     private DatabaseShamanPvE shaman = new DatabaseShamanPvE();
     private DatabaseRoguePvE rogue = new DatabaseRoguePvE();
-    private DatabaseDruidPvE druid = new DatabaseDruidPvE();
+    private DatabaseArcanistPvE arcanist = new DatabaseArcanistPvE();
 
     public DatabasePlayerPvEPlayerCountStats() {
     }
@@ -62,9 +62,9 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformatio
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> druid.getConjurer();
-            case SENTINEL -> druid.getGuardian();
-            case CLERIC -> druid.getPriest();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case CLERIC -> arcanist.getCleric();
         };
     }
 
@@ -76,7 +76,7 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformatio
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
-            case ARCANIST -> druid;
+            case ARCANIST -> arcanist;
         };
     }
 

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.achievements.types;
 
-import com.ebicep.warlords.abilties.*;
+import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.GameMode;

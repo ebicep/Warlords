@@ -43,7 +43,7 @@ public class Chessking extends AbstractSlime implements BossMob {
                     .entitiesAround(warlordsNPC, 8, 8, 8)
                     .aliveEnemiesOf(warlordsNPC)
             ) {
-                we.addDamageInstance(warlordsNPC, "Belch", 2800, 3600, -1, 100, false);
+                we.addDamageInstance(warlordsNPC, "Belch", 2800, 3600, -1, 100);
             }
         }
 
@@ -69,7 +69,7 @@ public class Chessking extends AbstractSlime implements BossMob {
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (Utils.isProjectile(event.getAbility())) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ARROW_HIT, 2, 0.1f);
-            warlordsNPC.addHealingInstance(warlordsNPC, "Blob Heal", 500, 500, -1, 100, false, false);
+            warlordsNPC.addHealingInstance(warlordsNPC, "Blob Heal", 500, 500, -1, 100);
         } else {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 0.2f);
         }

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
-import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -104,7 +104,7 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
                         BLEED: Enemies afflicted take 100% more damage from Wounding Strike while Blood Lust is active. Bleeding enemies have healing reduced by 80% and lose 0.5% of their max health per second.""",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
 

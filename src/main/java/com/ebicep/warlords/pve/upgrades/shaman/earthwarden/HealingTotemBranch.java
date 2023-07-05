@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
-import com.ebicep.warlords.abilties.HealingTotem;
+import com.ebicep.warlords.abilities.HealingTotem;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -93,7 +93,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                 () -> {
                     ability.setHealingIncrement(20);
                     ability.setTickDuration(ability.getTickDuration() * 2);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

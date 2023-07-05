@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 
-import com.ebicep.warlords.abilties.FreezingBreath;
+import com.ebicep.warlords.abilities.FreezingBreath;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -96,7 +96,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 () -> {
                     ability.setHitbox(ability.getHitbox() * 1.6f);
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

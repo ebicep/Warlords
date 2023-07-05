@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
 
-import com.ebicep.warlords.abilties.ContagiousFacade;
+import com.ebicep.warlords.abilities.ContagiousFacade;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -83,9 +83,10 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Contagious Facade - Master Upgrade",
                 """
+                        Your shield also deals the value of damage absorbed to all nearby enemies and slows them by 25% for 3s.
                         """,
                 50000,
                 () -> {

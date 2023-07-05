@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 
-import com.ebicep.warlords.abilties.IceBarrier;
+import com.ebicep.warlords.abilities.IceBarrier;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -87,7 +87,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
                         " Additionally, reduce their damage reduction by 1% for every 0.25 seconds in your glacial shield.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

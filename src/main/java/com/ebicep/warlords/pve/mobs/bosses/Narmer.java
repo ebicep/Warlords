@@ -136,8 +136,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                                     965 * multiplier,
                                     1138 * multiplier,
                                     0,
-                                    100,
-                                    false
+                                    100
                             );
                             enemy.sendMessage(Component.text("HINT: Killing Acolytes too quickly might result in an unfavourable outcome.", NamedTextColor.RED));
                         }
@@ -158,8 +157,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                                     965,
                                     1138,
                                     0,
-                                    100,
-                                    false
+                                    100
                             );
                         }
                     }
@@ -227,15 +225,13 @@ public class Narmer extends AbstractZombie implements BossMob {
                         750,
                         900,
                         0,
-                        100,
-                        false
+                        100
                 );
             }
         }
 
         if (ticksElapsed % 300 == 0) {
-            //Bukkit.broadcastMessage("projectile");
-            warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
+            // warlordsNPC.getRedAbility().onActivate(warlordsNPC, null); TODO
         }
     }
 

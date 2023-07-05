@@ -1,10 +1,10 @@
 package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.Soulbinding;
-import com.ebicep.warlords.abilties.UndyingArmy;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.Shield;
+import com.ebicep.warlords.abilities.Soulbinding;
+import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -26,7 +26,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -45,8 +45,6 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-
-import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
@@ -402,16 +400,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             } else {
                 return weapon.getSelectedWeaponSkin().getItem();
             }
-        } else if (ability == spec.getRed()) {
-            return RED_ABILITY;
-        } else if (ability == spec.getPurple()) {
-            return PURPLE_ABILITY;
-        } else if (ability == spec.getBlue()) {
-            return BLUE_ABILITY;
-        } else if (ability == spec.getOrange()) {
-            return ORANGE_ABILITY;
+        } else {
+            return ability.getAbilityIcon();
         }
-        return null;
     }
 
     public AbilityTree getAbilityTree() {

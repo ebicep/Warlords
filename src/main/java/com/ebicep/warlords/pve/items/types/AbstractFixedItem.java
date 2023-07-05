@@ -22,6 +22,11 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     }
 
     @Override
+    public AbstractItem clone() {
+        return null; // TODO if needed
+    }
+
+    @Override
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
         addStatPoolAndBlessing(itemBuilder, null);

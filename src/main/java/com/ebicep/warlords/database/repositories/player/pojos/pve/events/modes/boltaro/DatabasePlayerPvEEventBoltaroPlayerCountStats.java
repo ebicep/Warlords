@@ -19,7 +19,7 @@ public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBolta
     private DatabasePaladinPvEEventBoltaro paladin = new DatabasePaladinPvEEventBoltaro();
     private DatabaseShamanPvEEventBoltaro shaman = new DatabaseShamanPvEEventBoltaro();
     private DatabaseRoguePvEEventBoltaro rogue = new DatabaseRoguePvEEventBoltaro();
-    private DatabaseDruidPvEEventBoltaro druid = new DatabaseDruidPvEEventBoltaro();
+    private DatabaseArcanistPvEEventBoltaro arcanist = new DatabaseArcanistPvEEventBoltaro();
 
     public DatabasePlayerPvEEventBoltaroPlayerCountStats() {
     }
@@ -65,9 +65,9 @@ public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBolta
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> druid.getConjurer();
-            case SENTINEL -> druid.getGuardian();
-            case CLERIC -> druid.getPriest();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case CLERIC -> arcanist.getCleric();
         };
     }
 
@@ -79,7 +79,7 @@ public class DatabasePlayerPvEEventBoltaroPlayerCountStats extends PvEEventBolta
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
-            case ARCANIST -> druid;
+            case ARCANIST -> arcanist;
         };
     }
 

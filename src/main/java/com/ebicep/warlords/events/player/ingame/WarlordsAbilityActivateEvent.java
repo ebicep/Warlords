@@ -1,6 +1,6 @@
 package com.ebicep.warlords.events.player.ingame;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

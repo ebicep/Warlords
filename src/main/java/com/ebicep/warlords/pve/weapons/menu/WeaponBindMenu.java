@@ -27,8 +27,9 @@ public class WeaponBindMenu {
         put(Classes.MAGE, new Pair<>(1, 1));
         put(Classes.WARRIOR, new Pair<>(4, 1));
         put(Classes.PALADIN, new Pair<>(7, 1));
-        put(Classes.SHAMAN, new Pair<>(2, 3));
-        put(Classes.ROGUE, new Pair<>(6, 3));
+        put(Classes.SHAMAN, new Pair<>(1, 3));
+        put(Classes.ROGUE, new Pair<>(4, 3));
+        put(Classes.ARCANIST, new Pair<>(7, 3));
     }};
 
     public static void openWeaponBindMenu(Player player, DatabasePlayer databasePlayer, AbstractWeapon selectedWeapon) {

@@ -18,7 +18,7 @@ public class DatabasePlayerInterception extends InterceptionDatabaseStatInformat
     private DatabasePaladinInterception paladin = new DatabasePaladinInterception();
     private DatabaseShamanInterception shaman = new DatabaseShamanInterception();
     private DatabaseRogueInterception rogue = new DatabaseRogueInterception();
-    private DatabaseDruidInterception druid = new DatabaseDruidInterception();
+    private DatabaseArcanistInterception arcanist = new DatabaseArcanistInterception();
 
     @Override
     public void updateCustomStats(
@@ -57,9 +57,9 @@ public class DatabasePlayerInterception extends InterceptionDatabaseStatInformat
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> druid.getConjurer();
-            case SENTINEL -> druid.getGuardian();
-            case CLERIC -> druid.getPriest();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case CLERIC -> arcanist.getCleric();
         };
     }
 
@@ -71,7 +71,7 @@ public class DatabasePlayerInterception extends InterceptionDatabaseStatInformat
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
-            case ARCANIST -> druid;
+            case ARCANIST -> arcanist;
         };
     }
 

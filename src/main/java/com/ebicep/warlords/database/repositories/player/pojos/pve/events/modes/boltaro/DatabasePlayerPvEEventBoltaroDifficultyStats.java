@@ -28,7 +28,7 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltar
     private DatabasePaladinPvEEventBoltaro paladin = new DatabasePaladinPvEEventBoltaro();
     private DatabaseShamanPvEEventBoltaro shaman = new DatabaseShamanPvEEventBoltaro();
     private DatabaseRoguePvEEventBoltaro rogue = new DatabaseRoguePvEEventBoltaro();
-    private DatabaseDruidPvEEventBoltaro druid = new DatabaseDruidPvEEventBoltaro();
+    private DatabaseArcanistPvEEventBoltaro arcanist = new DatabaseArcanistPvEEventBoltaro();
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEEventBoltaroPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
         put(1, new DatabasePlayerPvEEventBoltaroPlayerCountStats());
@@ -105,9 +105,9 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltar
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> druid.getConjurer();
-            case SENTINEL -> druid.getGuardian();
-            case CLERIC -> druid.getPriest();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case CLERIC -> arcanist.getCleric();
         };
     }
 
@@ -119,7 +119,7 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats extends PvEEventBoltar
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
-            case ARCANIST -> druid;
+            case ARCANIST -> arcanist;
         };
     }
 

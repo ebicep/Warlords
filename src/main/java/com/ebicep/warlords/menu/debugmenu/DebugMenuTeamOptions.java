@@ -151,7 +151,7 @@ public class DebugMenuTeamOptions {
                         .lore(Component.text("Kills all the players on the team", NamedTextColor.GRAY))
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .get(), (m, e) -> {
-                    warlordsEntities.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, 0, 100, false));
+                    warlordsEntities.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, 0, 100));
                     sendDebugMessage(player, Component.text("Killed all " + team.name + " players", NamedTextColor.GREEN));
                 }
         );

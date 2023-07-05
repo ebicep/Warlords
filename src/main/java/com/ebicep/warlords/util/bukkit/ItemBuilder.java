@@ -69,6 +69,11 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder noLore() {
+        meta().lore(null);
+        return this;
+    }
+
     public ItemBuilder lore(Component... lore) {
         lore(Arrays.asList(lore));
         return this;

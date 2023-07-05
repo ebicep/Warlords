@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.abilties.SoulShackle;
+import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -127,9 +127,8 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                                         minDamage * multiplier,
                                         maxDamage * multiplier,
                                         0,
-                                        100,
-                                    false
-                            );
+                                        100
+                                );
                         });
             }
         }

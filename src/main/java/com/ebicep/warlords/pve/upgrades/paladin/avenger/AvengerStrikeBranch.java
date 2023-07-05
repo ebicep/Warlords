@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
-import com.ebicep.warlords.abilties.AvengersStrike;
+import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -111,7 +111,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         Deal 40% more damage against BASIC enemies and deal 0.5% max health damage against ELITE enemies.""",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setEnergyCost(ability.getEnergyCost() - 5);
                 }
         );

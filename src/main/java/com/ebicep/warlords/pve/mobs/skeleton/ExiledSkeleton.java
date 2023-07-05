@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
-import com.ebicep.warlords.abilties.Fireball;
-import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
-import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -103,8 +103,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                                         healthDamage,
                                         healthDamage,
                                         0,
-                                        100,
-                                        false
+                                        100
                                 );
                             }
                         })

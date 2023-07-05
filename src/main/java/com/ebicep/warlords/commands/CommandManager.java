@@ -333,9 +333,6 @@ public class CommandManager {
                                                                                      .toList()
         );
         commandCompletions.registerAsyncCompletion("chatchannels", command -> Arrays.asList("a", "all", "p", "party", "g", "guild"));
-        commandCompletions.registerAsyncCompletion("partyleaders",
-                command -> PartyManager.PARTIES.stream().map(Party::getLeaderName).toList()
-        );
         commandCompletions.registerAsyncCompletion("partymembers", command -> {
             CommandSender sender = command.getSender();
             if (sender instanceof Player) {

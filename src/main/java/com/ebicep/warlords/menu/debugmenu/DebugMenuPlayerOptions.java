@@ -109,7 +109,7 @@ public class DebugMenuPlayerOptions {
                         .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                         .get(),
                 (m, e) -> {
-                    target.addDamageInstance(target, "God", 100000, 100000, 0, 100, false);
+                    target.addDamageInstance(target, "God", 100000, 100000, 0, 100);
                     sendDebugMessage(player, Component.text("Killed " + targetName, NamedTextColor.GREEN));
                 }
         );
@@ -177,7 +177,7 @@ public class DebugMenuPlayerOptions {
                                     new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100, false, false);
+                                            target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100);
                                             sendDebugMessage(player, Component.text("Healed ", NamedTextColor.GREEN)
                                                                               .append(coloredName)
                                                                               .append(Component.text(" for " + amountNumber))
@@ -209,7 +209,7 @@ public class DebugMenuPlayerOptions {
                                     new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            target.addDamageInstance(target, "God", amountNumber, amountNumber, 0, 100, false);
+                                            target.addDamageInstance(target, "God", amountNumber, amountNumber, 0, 100);
                                             sendDebugMessage(player, Component.text("Damaged ", NamedTextColor.GREEN)
                                                                               .append(coloredName)
                                                                               .append(Component.text(" for " + amountNumber))

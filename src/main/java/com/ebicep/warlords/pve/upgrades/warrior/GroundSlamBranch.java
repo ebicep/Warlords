@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior;
 
-import com.ebicep.warlords.abilties.GroundSlam;
+import com.ebicep.warlords.abilities.GroundSlam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -89,7 +89,7 @@ public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
                 "Casting Ground Slam will leap you in the air for a short duration. Upon landing, activate a second Ground Slam for 150% of the original damage.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

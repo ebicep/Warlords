@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
-import com.ebicep.warlords.abilties.Berserk;
+import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -94,7 +94,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
                 50000,
                 () -> {
                     ability.setDamageIncrease(ability.getDamageIncrease() + 10);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

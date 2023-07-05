@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.pigzombie;
 
-import com.ebicep.warlords.abilties.PrismGuard;
+import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -61,15 +61,15 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
                         200,
                         200,
                         -1,
-                        100,
-                        false,
-                        false
+                        100
                 );
             }
         }
 
         if (ticksElapsed % 400 == 0) {
-            warlordsNPC.getBlueAbility().onActivate(warlordsNPC, null);
+            for (PrismGuard prismGuard : warlordsNPC.getAbilitiesMatching(PrismGuard.class)) {
+                prismGuard.onActivate(warlordsNPC, null); //TODO
+            }
         }
     }
 

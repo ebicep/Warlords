@@ -18,7 +18,7 @@ public class DatabasePlayerCTF extends CTFDatabaseStatInformation implements Dat
     private DatabasePaladinCTF paladin = new DatabasePaladinCTF();
     private DatabaseShamanCTF shaman = new DatabaseShamanCTF();
     private DatabaseRogueCTF rogue = new DatabaseRogueCTF();
-    private DatabaseDruidCTF druid = new DatabaseDruidCTF();
+    private DatabaseArcanistCTF arcanist = new DatabaseArcanistCTF();
 
     @Override
     public void updateCustomStats(
@@ -57,9 +57,9 @@ public class DatabasePlayerCTF extends CTFDatabaseStatInformation implements Dat
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> druid.getConjurer();
-            case SENTINEL -> druid.getGuardian();
-            case CLERIC -> druid.getPriest();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case CLERIC -> arcanist.getCleric();
         };
     }
 
@@ -71,7 +71,7 @@ public class DatabasePlayerCTF extends CTFDatabaseStatInformation implements Dat
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
-            case ARCANIST -> druid;
+            case ARCANIST -> arcanist;
         };
     }
 

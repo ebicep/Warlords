@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
-import com.ebicep.warlords.abilties.LightInfusionProtector;
+import com.ebicep.warlords.abilities.LightInfusionProtector;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -85,7 +85,7 @@ public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInf
                 "Gain 90% damage reduction and 50% knockback resistance and immunity to de-buffs for 4 seconds and reset Holy Radiance's cooldown on cast.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

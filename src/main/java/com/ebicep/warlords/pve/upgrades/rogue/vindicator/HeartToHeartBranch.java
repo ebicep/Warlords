@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.vindicator;
 
-import com.ebicep.warlords.abilties.HeartToHeart;
+import com.ebicep.warlords.abilities.HeartToHeart;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -90,7 +90,7 @@ public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
                 "Heart To Heart now deals 1635 - 2096 damage to all enemies you pass through. Enemies hit are stunned for 1 second.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

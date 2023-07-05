@@ -2,10 +2,12 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import org.bukkit.Location;
+import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -40,7 +42,16 @@ public class PathfinderGoalPredictTargetFutureLocationGoal extends Goal {
         WarlordsEntity warlordsEntityTarget = Warlords.getPlayer(target.getBukkitEntity());
         if (warlordsEntitySelf != null && warlordsEntityTarget != null) {
             Location lookAtLocation = lookAtLocation(warlordsEntitySelf.getLocation(), predictFutureLocation(warlordsEntitySelf, warlordsEntityTarget));
-            self.getBukkitEntity().setRotation(lookAtLocation.getYaw(), lookAtLocation.getPitch());
+            float yaw = lookAtLocation.getYaw();
+            float pitch = lookAtLocation.getPitch();
+            if (!NumberConversions.isFinite(yaw) || !NumberConversions.isFinite(pitch)) {
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Yaw/Pitch not finite - " + yaw + "/" + pitch);
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(warlordsEntitySelf.getLocation().toString());
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(warlordsEntityTarget.getLocation().toString());
+                return;
+            }
+            self.getBukkitEntity().setRotation(yaw, pitch);
+
         }
     }
 

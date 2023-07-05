@@ -66,9 +66,7 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
                     300,
                     300,
                     0,
-                    100,
-                    false,
-                    false
+                    100
             );
         }
     }

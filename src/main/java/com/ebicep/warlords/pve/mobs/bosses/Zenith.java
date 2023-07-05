@@ -98,7 +98,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     .aliveEnemiesOf(warlordsNPC)
             ) {
                 Utils.addKnockback(name, warlordsNPC.getLocation(), we, -1.5, 0.3);
-                we.addDamageInstance(warlordsNPC, "Cleanse", (300 * playerCount) * multiplier, (400 * playerCount) * multiplier, 0, 100, false);
+                we.addDamageInstance(warlordsNPC, "Cleanse", (300 * playerCount) * multiplier, (400 * playerCount) * multiplier, 0, 100);
                 EffectUtils.strikeLightning(we.getLocation(), false);
             }
         }
@@ -133,7 +133,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                                           .build()
                     );
                     Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
-                    receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100, false);
+                    receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100);
 
                     if (counter == 3 || receiver.isDead()) {
                         this.cancel();
@@ -181,8 +181,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                                 (550 * playerCount) * damageMultiplier,
                                 (700 * playerCount) * damageMultiplier,
                                 0,
-                                100,
-                                false
+                                100
                         );
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
                     }
