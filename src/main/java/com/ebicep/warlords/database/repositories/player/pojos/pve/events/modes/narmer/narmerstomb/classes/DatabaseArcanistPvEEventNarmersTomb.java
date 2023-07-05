@@ -10,7 +10,7 @@ public class DatabaseArcanistPvEEventNarmersTomb extends DatabaseBasePvEEventNar
 
     private DatabaseBasePvEEventNarmersTomb conjurer = new DatabaseBasePvEEventNarmersTomb();
     private DatabaseBasePvEEventNarmersTomb sentinel = new DatabaseBasePvEEventNarmersTomb();
-    private DatabaseBasePvEEventNarmersTomb cleric = new DatabaseBasePvEEventNarmersTomb();
+    private DatabaseBasePvEEventNarmersTomb luminary = new DatabaseBasePvEEventNarmersTomb();
 
     public DatabaseArcanistPvEEventNarmersTomb() {
         super();
@@ -18,7 +18,7 @@ public class DatabaseArcanistPvEEventNarmersTomb extends DatabaseBasePvEEventNar
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventNarmersTomb[]{conjurer, sentinel, cleric};
+        return new DatabaseBasePvEEventNarmersTomb[]{conjurer, sentinel, luminary};
     }
 
 
@@ -30,8 +30,8 @@ public class DatabaseArcanistPvEEventNarmersTomb extends DatabaseBasePvEEventNar
         return sentinel;
     }
 
-    public DatabaseBasePvEEventNarmersTomb getCleric() {
-        return cleric;
+    public DatabaseBasePvEEventNarmersTomb getLuminary() {
+        return luminary;
     }
 
 }

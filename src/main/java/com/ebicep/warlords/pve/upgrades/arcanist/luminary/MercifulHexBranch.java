@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
+package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
 import com.ebicep.warlords.abilities.MercifulHex;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;

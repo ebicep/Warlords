@@ -9,7 +9,7 @@ public class DatabaseArcanistPvEEvent extends DatabaseBasePvEEvent implements Da
 
     private DatabaseBasePvEEvent conjurer = new DatabaseBasePvEEvent();
     private DatabaseBasePvEEvent sentinel = new DatabaseBasePvEEvent();
-    private DatabaseBasePvEEvent cleric = new DatabaseBasePvEEvent();
+    private DatabaseBasePvEEvent luminary = new DatabaseBasePvEEvent();
 
     public DatabaseArcanistPvEEvent() {
         super();
@@ -17,7 +17,7 @@ public class DatabaseArcanistPvEEvent extends DatabaseBasePvEEvent implements Da
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEvent[]{conjurer, sentinel, cleric};
+        return new DatabaseBasePvEEvent[]{conjurer, sentinel, luminary};
     }
 
 
@@ -29,7 +29,7 @@ public class DatabaseArcanistPvEEvent extends DatabaseBasePvEEvent implements Da
         return sentinel;
     }
 
-    public DatabaseBasePvEEvent getCleric() {
-        return cleric;
+    public DatabaseBasePvEEvent getLuminary() {
+        return luminary;
     }
 }

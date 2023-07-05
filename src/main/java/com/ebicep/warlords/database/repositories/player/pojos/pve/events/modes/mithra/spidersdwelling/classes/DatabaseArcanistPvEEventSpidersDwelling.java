@@ -9,7 +9,7 @@ public class DatabaseArcanistPvEEventSpidersDwelling extends DatabaseBasePvEEven
 
     private DatabaseBasePvEEventSpidersDwelling conjurer = new DatabaseBasePvEEventSpidersDwelling();
     private DatabaseBasePvEEventSpidersDwelling sentinel = new DatabaseBasePvEEventSpidersDwelling();
-    private DatabaseBasePvEEventSpidersDwelling cleric = new DatabaseBasePvEEventSpidersDwelling();
+    private DatabaseBasePvEEventSpidersDwelling luminary = new DatabaseBasePvEEventSpidersDwelling();
 
     public DatabaseArcanistPvEEventSpidersDwelling() {
         super();
@@ -17,7 +17,7 @@ public class DatabaseArcanistPvEEventSpidersDwelling extends DatabaseBasePvEEven
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventSpidersDwelling[]{conjurer, sentinel, cleric};
+        return new DatabaseBasePvEEventSpidersDwelling[]{conjurer, sentinel, luminary};
     }
 
 
@@ -29,8 +29,8 @@ public class DatabaseArcanistPvEEventSpidersDwelling extends DatabaseBasePvEEven
         return sentinel;
     }
 
-    public DatabaseBasePvEEventSpidersDwelling getCleric() {
-        return cleric;
+    public DatabaseBasePvEEventSpidersDwelling getLuminary() {
+        return luminary;
     }
 
 }

@@ -9,7 +9,7 @@ public class DatabaseArcanistPvEOnslaught extends DatabaseBasePvEOnslaught imple
 
     private DatabaseBasePvEOnslaught conjurer = new DatabaseBasePvEOnslaught();
     private DatabaseBasePvEOnslaught sentinel = new DatabaseBasePvEOnslaught();
-    private DatabaseBasePvEOnslaught cleric = new DatabaseBasePvEOnslaught();
+    private DatabaseBasePvEOnslaught luminary = new DatabaseBasePvEOnslaught();
 
     public DatabaseArcanistPvEOnslaught() {
         super();
@@ -17,7 +17,7 @@ public class DatabaseArcanistPvEOnslaught extends DatabaseBasePvEOnslaught imple
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEOnslaught[]{conjurer, sentinel, cleric};
+        return new DatabaseBasePvEOnslaught[]{conjurer, sentinel, luminary};
     }
 
 
@@ -29,7 +29,7 @@ public class DatabaseArcanistPvEOnslaught extends DatabaseBasePvEOnslaught imple
         return sentinel;
     }
 
-    public DatabaseBasePvEOnslaught getCleric() {
-        return cleric;
+    public DatabaseBasePvEOnslaught getLuminary() {
+        return luminary;
     }
 }

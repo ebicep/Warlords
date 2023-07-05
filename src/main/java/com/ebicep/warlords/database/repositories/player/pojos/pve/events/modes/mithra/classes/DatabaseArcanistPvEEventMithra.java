@@ -9,7 +9,7 @@ public class DatabaseArcanistPvEEventMithra extends DatabaseBasePvEEventMithra i
 
     private DatabaseBasePvEEventMithra conjurer = new DatabaseBasePvEEventMithra();
     private DatabaseBasePvEEventMithra sentinel = new DatabaseBasePvEEventMithra();
-    private DatabaseBasePvEEventMithra cleric = new DatabaseBasePvEEventMithra();
+    private DatabaseBasePvEEventMithra luminary = new DatabaseBasePvEEventMithra();
 
     public DatabaseArcanistPvEEventMithra() {
         super();
@@ -17,7 +17,7 @@ public class DatabaseArcanistPvEEventMithra extends DatabaseBasePvEEventMithra i
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventMithra[]{conjurer, sentinel, cleric};
+        return new DatabaseBasePvEEventMithra[]{conjurer, sentinel, luminary};
     }
 
 
@@ -29,8 +29,8 @@ public class DatabaseArcanistPvEEventMithra extends DatabaseBasePvEEventMithra i
         return sentinel;
     }
 
-    public DatabaseBasePvEEventMithra getCleric() {
-        return cleric;
+    public DatabaseBasePvEEventMithra getLuminary() {
+        return luminary;
     }
 
 }

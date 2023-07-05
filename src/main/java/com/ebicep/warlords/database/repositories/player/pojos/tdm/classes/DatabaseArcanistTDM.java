@@ -10,7 +10,7 @@ public class DatabaseArcanistTDM extends DatabaseBaseTDM implements DatabaseWarl
 
     private DatabaseBaseTDM conjurer = new DatabaseBaseTDM();
     private DatabaseBaseTDM sentinel = new DatabaseBaseTDM();
-    private DatabaseBaseTDM cleric = new DatabaseBaseTDM();
+    private DatabaseBaseTDM luminary = new DatabaseBaseTDM();
 
     public DatabaseArcanistTDM() {
         super();
@@ -18,7 +18,7 @@ public class DatabaseArcanistTDM extends DatabaseBaseTDM implements DatabaseWarl
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBaseTDM[]{conjurer, sentinel, cleric};
+        return new DatabaseBaseTDM[]{conjurer, sentinel, luminary};
     }
 
 
@@ -30,8 +30,8 @@ public class DatabaseArcanistTDM extends DatabaseBaseTDM implements DatabaseWarl
         return sentinel;
     }
 
-    public DatabaseBaseTDM getCleric() {
-        return cleric;
+    public DatabaseBaseTDM getLuminary() {
+        return luminary;
     }
 
 }

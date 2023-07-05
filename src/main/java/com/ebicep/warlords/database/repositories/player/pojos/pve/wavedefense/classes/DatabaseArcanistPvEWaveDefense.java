@@ -9,7 +9,7 @@ public class DatabaseArcanistPvEWaveDefense extends DatabaseBasePvEWaveDefense i
 
     protected DatabaseBasePvEWaveDefense conjurer = new DatabaseBasePvEWaveDefense();
     protected DatabaseBasePvEWaveDefense sentinel = new DatabaseBasePvEWaveDefense();
-    protected DatabaseBasePvEWaveDefense cleric = new DatabaseBasePvEWaveDefense();
+    protected DatabaseBasePvEWaveDefense luminary = new DatabaseBasePvEWaveDefense();
 
     public DatabaseArcanistPvEWaveDefense() {
         super();
@@ -17,7 +17,7 @@ public class DatabaseArcanistPvEWaveDefense extends DatabaseBasePvEWaveDefense i
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEWaveDefense[]{conjurer, sentinel, cleric};
+        return new DatabaseBasePvEWaveDefense[]{conjurer, sentinel, luminary};
     }
 
     public DatabaseBasePvEWaveDefense getConjurer() {
@@ -28,8 +28,8 @@ public class DatabaseArcanistPvEWaveDefense extends DatabaseBasePvEWaveDefense i
         return sentinel;
     }
 
-    public DatabaseBasePvEWaveDefense getCleric() {
-        return cleric;
+    public DatabaseBasePvEWaveDefense getLuminary() {
+        return luminary;
     }
 
 }

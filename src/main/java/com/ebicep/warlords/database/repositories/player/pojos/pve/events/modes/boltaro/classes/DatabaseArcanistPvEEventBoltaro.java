@@ -10,7 +10,7 @@ public class DatabaseArcanistPvEEventBoltaro extends DatabaseBasePvEEventBoltaro
 
     private DatabaseBasePvEEventBoltaro conjurer = new DatabaseBasePvEEventBoltaro();
     private DatabaseBasePvEEventBoltaro sentinel = new DatabaseBasePvEEventBoltaro();
-    private DatabaseBasePvEEventBoltaro cleric = new DatabaseBasePvEEventBoltaro();
+    private DatabaseBasePvEEventBoltaro luminary = new DatabaseBasePvEEventBoltaro();
 
     public DatabaseArcanistPvEEventBoltaro() {
         super();
@@ -18,7 +18,7 @@ public class DatabaseArcanistPvEEventBoltaro extends DatabaseBasePvEEventBoltaro
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventBoltaro[]{conjurer, sentinel, cleric};
+        return new DatabaseBasePvEEventBoltaro[]{conjurer, sentinel, luminary};
     }
 
 
@@ -30,8 +30,8 @@ public class DatabaseArcanistPvEEventBoltaro extends DatabaseBasePvEEventBoltaro
         return sentinel;
     }
 
-    public DatabaseBasePvEEventBoltaro getCleric() {
-        return cleric;
+    public DatabaseBasePvEEventBoltaro getLuminary() {
+        return luminary;
     }
 
 }

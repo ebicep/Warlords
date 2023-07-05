@@ -1,17 +1,16 @@
-package com.ebicep.warlords.pve.upgrades.arcanist.cleric;
+package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
-import com.ebicep.warlords.abilities.RayOfLight;
+import com.ebicep.warlords.abilities.DivineBlessing;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
+public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> {
 
     float cooldown = ability.getCooldown();
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    int tickDuration = ability.getTickDuration();
 
-    public RayOfLightBranch(AbilityTree abilityTree, RayOfLight ability) {
+    public DivineBlessingBranch(AbilityTree abilityTree, DivineBlessing ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -48,52 +47,47 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
         ));
 
         treeB.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+10% Healing",
+                "Chronos - Tier I",
+                "+0.5s Duration",
                 5000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
+                    ability.setTickDuration(tickDuration + 10);
                 }
         ));
         treeB.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+20% Healing",
+                "Chronos - Tier II",
+                "+1s Duration",
                 10000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.2f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
+                    ability.setTickDuration(tickDuration + 20);
                 }
         ));
         treeB.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+30% Healing",
+                "Chronos - Tier III",
+                "+1.5s Duration",
                 15000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
+                    ability.setTickDuration(tickDuration + 30);
                 }
         ));
         treeB.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+40% Healing\n-30 Energy cost",
+                "Chronos - Tier IV",
+                "+2s Duration",
                 20000,
                 () -> {
-                    ability.setMinDamageHeal(minDamage * 1.4f);
-                    ability.setMaxDamageHeal(maxDamage * 1.4f);
-                    ability.setEnergyCost(ability.getEnergyCost() - 30);
+                    ability.setTickDuration(tickDuration + 40);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "NAME",
-                "Ray of Light - Master Upgrade",
+                "Divine Blessing - Master Upgrade",
                 """
-                        Ray of Light will grant allies with max stacks of Merciful Hex a 10% damage bonus for 5s. Additionally, increase bonus healing for max stack allies by 25%.
+                        Lethal damage healing increased to 30%. All allies restore another 800 health after Divine Blessing ends.
                         """,
                 50000,
                 () -> {
-                    ability.setHealingIncrease(ability.getHealingIncrease() + 25);
+                    ability.setLethalDamageHealing(ability.getLethalDamageHealing() + 30);
                 }
         );
     }

@@ -87,7 +87,7 @@ public class DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats extends PvEEven
             case APOTHECARY -> rogue.getApothecary();
             case CONJURER -> arcanist.getConjurer();
             case SENTINEL -> arcanist.getSentinel();
-            case LUMINARY -> arcanist.getCleric();
+            case LUMINARY -> arcanist.getLuminary();
         };
     }
 

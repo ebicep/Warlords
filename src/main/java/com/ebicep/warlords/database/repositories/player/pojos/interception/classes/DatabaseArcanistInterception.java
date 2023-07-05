@@ -9,7 +9,7 @@ public class DatabaseArcanistInterception extends DatabaseBaseInterception imple
 
     private DatabaseBaseInterception conjurer = new DatabaseBaseInterception();
     private DatabaseBaseInterception sentinel = new DatabaseBaseInterception();
-    private DatabaseBaseInterception cleric = new DatabaseBaseInterception();
+    private DatabaseBaseInterception luminary = new DatabaseBaseInterception();
 
     public DatabaseArcanistInterception() {
         super();
@@ -17,7 +17,7 @@ public class DatabaseArcanistInterception extends DatabaseBaseInterception imple
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBaseInterception[]{conjurer, sentinel, cleric};
+        return new DatabaseBaseInterception[]{conjurer, sentinel, luminary};
     }
 
 
@@ -29,8 +29,8 @@ public class DatabaseArcanistInterception extends DatabaseBaseInterception imple
         return sentinel;
     }
 
-    public DatabaseBaseInterception getCleric() {
-        return cleric;
+    public DatabaseBaseInterception getLuminary() {
+        return luminary;
     }
 
 }

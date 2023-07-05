@@ -8,7 +8,7 @@ public class DatabaseArcanistPvEEventNarmer extends DatabaseBasePvEEventNarmer i
 
     private DatabaseBasePvEEventNarmer conjurer = new DatabaseBasePvEEventNarmer();
     private DatabaseBasePvEEventNarmer sentinel = new DatabaseBasePvEEventNarmer();
-    private DatabaseBasePvEEventNarmer cleric = new DatabaseBasePvEEventNarmer();
+    private DatabaseBasePvEEventNarmer luminary = new DatabaseBasePvEEventNarmer();
 
     public DatabaseArcanistPvEEventNarmer() {
         super();
@@ -16,7 +16,7 @@ public class DatabaseArcanistPvEEventNarmer extends DatabaseBasePvEEventNarmer i
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvEEventNarmer[]{conjurer, sentinel, cleric};
+        return new DatabaseBasePvEEventNarmer[]{conjurer, sentinel, luminary};
     }
 
 
@@ -28,7 +28,7 @@ public class DatabaseArcanistPvEEventNarmer extends DatabaseBasePvEEventNarmer i
         return sentinel;
     }
 
-    public DatabaseBasePvEEventNarmer getCleric() {
-        return cleric;
+    public DatabaseBasePvEEventNarmer getLuminary() {
+        return luminary;
     }
 }
