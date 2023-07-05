@@ -35,7 +35,7 @@ public abstract class DatabasePlayerGeneral extends AbstractDatabaseStatInformat
             case APOTHECARY -> rogue.getApothecary();
             case CONJURER -> arcanist.getConjurer();
             case SENTINEL -> arcanist.getSentinel();
-            case CLERIC -> arcanist.getCleric();
+            case LUMINARY -> arcanist.getCleric();
         };
     }
 

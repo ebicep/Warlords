@@ -85,7 +85,7 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
             case APOTHECARY -> rogue.getApothecary();
             case CONJURER -> arcanist.getConjurer();
             case SENTINEL -> arcanist.getSentinel();
-            case CLERIC -> arcanist.getCleric();
+            case LUMINARY -> arcanist.getCleric();
         };
     }
 

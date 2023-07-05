@@ -539,7 +539,7 @@ public class WarlordsNewHotbarMenu {
 
             ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack)
                     .name(Component.text(selectedSpec.name, NamedTextColor.GREEN))
-                    .lore(WordWrap.wrap(selectedSpec.description, 200));
+                    .lore(WordWrap.wrap(selectedSpec.getDescription(), 200));
             icon.addLore(
                     Component.empty(),
                     Component.text("Specialization Stats:", NamedTextColor.GOLD),

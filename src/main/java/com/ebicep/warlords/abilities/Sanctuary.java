@@ -1,11 +1,9 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.Duration;
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;

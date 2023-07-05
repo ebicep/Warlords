@@ -59,7 +59,7 @@ public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements Dat
             case APOTHECARY -> rogue.getApothecary();
             case CONJURER -> arcanist.getConjurer();
             case SENTINEL -> arcanist.getSentinel();
-            case CLERIC -> arcanist.getCleric();
+            case LUMINARY -> arcanist.getCleric();
         };
     }
 

@@ -134,7 +134,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, Component.textOfChildren(
                     Component.text("Welcome to Warlords 2.0 ", NamedTextColor.GOLD, TextDecoration.BOLD),
                     Component.text("(", NamedTextColor.GRAY),
-                    Component.text(Warlords.VERSION, NamedTextColor.RED),
+                    Component.text(Warlords.VERSION, Warlords.VERSION_COLOR),
                     Component.text(")", NamedTextColor.GRAY)
             ));
 

@@ -101,7 +101,7 @@ public class WarlordsShopMenu {
                                    .append(Component.text("] ", NamedTextColor.DARK_GRAY))
                                    .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec)))
                     .flags(ItemFlag.HIDE_ENCHANTS);
-            itemBuilder.addLore(spec.description);
+            itemBuilder.addLore(WordWrap.wrapWithNewline(spec.getDescription(), 150));
             itemBuilder.addLore(Component.empty());
             long experience = ExperienceManager.getExperienceForSpec(player.getUniqueId(), spec);
             int level = (int) ExperienceManager.calculateLevelFromExp(experience);

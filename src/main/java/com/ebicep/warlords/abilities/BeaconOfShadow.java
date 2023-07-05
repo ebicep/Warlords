@@ -41,7 +41,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
     @Override
     public Component getBonusDescription() {
         return Component.text("All enemies within a ")
-                        .append(Component.text(radius, NamedTextColor.YELLOW))
+                        .append(Component.text(format(radius), NamedTextColor.YELLOW))
                         .append(Component.text(" block radius have their Crit Multiplier reduced to "))
                         .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
                         .append(Component.text(" and receive the Darkness effect for "))

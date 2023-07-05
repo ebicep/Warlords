@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.ebicep"
-version = "Echoes of Demise"
+version = "Arcane Awakening"
 description = "Warlords"
 
 java {

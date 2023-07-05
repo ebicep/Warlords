@@ -59,7 +59,7 @@ public class DatabasePlayerInterception extends InterceptionDatabaseStatInformat
             case APOTHECARY -> rogue.getApothecary();
             case CONJURER -> arcanist.getConjurer();
             case SENTINEL -> arcanist.getSentinel();
-            case CLERIC -> arcanist.getCleric();
+            case LUMINARY -> arcanist.getCleric();
         };
     }
 
