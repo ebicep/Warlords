@@ -59,29 +59,27 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of magical wind forward, passing through all allies and enemies. The first ally touched by the magical wind heals ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" health and receives "))
-                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy touched by the wind takes "))
-                               .append(formatRangeDamage(minDamage, maxDamage))
-                               .append(Component.text(" damage. All other allies and enemies the wind passes through will receive "))
-                               .append(Component.text(subsequentReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of the effect. Also heal yourself by "))
-                               .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
-                               .append(Component.text(" If Merciful Hex hits a target, you receive "))
-                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack of Merciful Hex. Each stack of Merciful Hex heals "))
-                               .append(formatRangeHealing(dotMinHeal, dotMaxHeal))
-                               .append(Component.text(" health every "))
-                               .append(Component.text("2", NamedTextColor.GOLD))
-                               .append(Component.text("seconds for "))
-                               .append(Component.text(format(tickDuration / 10f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Stacks up to"))
-                               .append(Component.text(maxStacks, NamedTextColor.BLUE))
-                               .append(Component.text(" times.\n\nHas a maximum range of "))
-                               .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = Component.text("Send a wave of piercing magical wind forward. The first ally hit by the magical wind heals ")
+                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                .append(Component.text(" health (subsequent hit allies are healed for 40%) and receives "))
+                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
+                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit by the wind takes "))
+                .append(formatRangeDamage(minDamage, maxDamage))
+                .append(Component.text(" damage. Also heal yourself for by "))
+                .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
+                .append(Component.text(" If Merciful Hex hits a target, you receive "))
+                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
+                .append(Component.text(" stack of Merciful Hex. Each stack of Merciful Hex heals "))
+                .append(formatRangeHealing(dotMinHeal, dotMaxHeal))
+                .append(Component.text(" health every "))
+                .append(Component.text("2", NamedTextColor.GOLD))
+                .append(Component.text("seconds for "))
+                .append(Component.text(format(tickDuration / 10f), NamedTextColor.GOLD))
+                .append(Component.text(" seconds. Stacks up to"))
+                .append(Component.text(maxStacks, NamedTextColor.BLUE))
+                .append(Component.text(" times.\n\nHas a maximum range of "))
+                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
+                .append(Component.text(" blocks."));
     }
 
     @Override
@@ -257,7 +255,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             public void onDestroy(InternalProjectile projectile) {
                 fallenSoul.remove();
                 projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.SPELL_WITCH,
+                        Particle.EXPLOSION_LARGE,
                         projectile.getCurrentLocation(),
                         1,
                         0,

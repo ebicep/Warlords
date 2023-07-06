@@ -26,7 +26,7 @@ public enum Classes {
     PALADIN(
             "Paladin",
             List.of("pal"),
-            new ItemStack(Material.DANDELION),
+            new ItemStack(Material.YELLOW_DYE),
             "The Paladin's strongest ally is the light. They use it to empower their weapon in order to vanquish foes and protect teammates.",
             AVENGER, CRUSADER, PROTECTOR
     ),

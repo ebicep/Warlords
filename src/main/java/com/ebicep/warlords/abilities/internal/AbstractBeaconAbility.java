@@ -91,9 +91,9 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 EffectUtils.playSphereAnimation(
                         beacon.getLocation(),
                         2.5 + interval,
-                        250,
-                        70,
-                        70
+                        60,
+                        0,
+                        40
                 );
 
                 if (interval <= 0) {

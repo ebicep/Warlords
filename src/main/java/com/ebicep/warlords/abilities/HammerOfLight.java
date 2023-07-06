@@ -104,6 +104,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Block targetBlock = Utils.getTargetBlock(player, 25);
         if (targetBlock.getType() == Material.AIR) {
+            wp.sendMessage(Component.text("The location is too far away!", NamedTextColor.RED));
             return false;
         }
         wp.subtractEnergy(energyCost, false);

@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -11,7 +12,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.CrystalOfHealingBranch;
-import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -56,9 +57,14 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+        Block targetBlock = Utils.getTargetBlock(player, 12);
+        if (targetBlock.getType() == Material.AIR) {
+            wp.sendMessage(Component.text("The location is too far away!", NamedTextColor.RED));
+            return false;
+        }
         wp.subtractEnergy(energyCost, false);
-
-        Location groundLocation = LocationUtils.getGroundLocation(player);
+        Location groundLocation = targetBlock.getLocation().clone();
+        groundLocation.add(0, 1, 0);
         double baseY = groundLocation.getY();
 
         Utils.playGlobalSound(wp.getLocation(), "arcanist.crystalofhealing.activation", 2, 0.85f);
@@ -127,6 +133,18 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                 );
                             }
                         }
+
+                        EffectUtils.playCircularEffectAround(
+                                wp.getGame(),
+                                crystal.getLocation(),
+                                Particle.VILLAGER_HAPPY,
+                                1,
+                                1,
+                                0.1,
+                                8,
+                                1,
+                                3
+                        );
                     }
                     if (ticksElapsed < 40) {
                         return; // prevent instant pickup
