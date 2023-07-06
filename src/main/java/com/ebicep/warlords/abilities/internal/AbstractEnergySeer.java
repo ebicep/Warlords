@@ -27,7 +27,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     protected int bonusDuration = 100;
 
     public AbstractEnergySeer() {
-        super("Energy Seer", 0, 0, 30, 0, 0, 0);
+        super("Energy Seer", 0, 0, 28, 0, 0, 0);
     }
 
     @Override
@@ -38,7 +38,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                                .append(Component.text(format(healingMultiplier * 100) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the energy expended for the next "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. If you healed for 5 instances, restore energy "))
+                               .append(Component.text(" seconds. If you healed for 4 instances, restore energy "))
                                .append(Component.text(energyRestore, NamedTextColor.YELLOW))
                                .append(Component.text(" and "))
                                .append(getBonus())
@@ -68,7 +68,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (timesHealed.get() >= 5 && wp.isAlive()) {
+                    if (timesHealed.get() >= 4 && wp.isAlive()) {
                         wp.addEnergy(wp, name, energyRestore);
                         wp.getCooldownManager().addCooldown(getBonusCooldown(wp));
                     }
