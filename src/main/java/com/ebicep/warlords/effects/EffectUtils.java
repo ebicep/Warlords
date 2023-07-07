@@ -554,4 +554,25 @@ public class EffectUtils {
             }
         }
     }
+
+    /**
+     * @param particle which particle to display
+     * @param loc location of the particle
+     * @param count particle count
+     * @param offsetX particle X axis offset
+     * @param offsetY particle Y axis offset
+     * @param offsetZ particle Z axis offset
+     * @param speed speed of the particle animation
+     */
+    public static void displayParticle(
+            Particle particle,
+            Location loc,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed
+    ) {
+        loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
+    }
 }
