@@ -468,6 +468,43 @@ public class EffectUtils {
         }.runTaskTimer(0, delayBetweenParticles);
     }
 
+    public static void playCircularEffectAround(
+            Game game,
+            Location location,
+            Particle effect,
+            int particleCount,
+            double radius,
+            double yAxisElevation,
+            double yLimit,
+            int interval,
+            int delayBetweenParticles,
+            int amountOfSwirls,
+            int counter
+    ) {
+        Location loc = location.clone();
+        new GameRunnable(game) {
+            double t = counter;
+            @Override
+            public void run() {
+                t++;
+                t = t + Math.PI / interval;
+                double x = radius * cos(t);
+                double y = yAxisElevation * t;
+                double z = radius * sin(t);
+                if (y > yLimit) {
+                    y = yLimit;
+                }
+                loc.add(x, y ,z);
+                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                loc.subtract(x, y, z);
+
+                if (t > Math.PI * amountOfSwirls) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, delayBetweenParticles);
+    }
+
     public static void playRadialWaveAnimation(WarlordsEntity we) {
 
     }

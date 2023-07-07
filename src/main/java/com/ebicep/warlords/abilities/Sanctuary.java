@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.SanctuaryBranch;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -66,7 +67,13 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 0.5f, 0.9f);
         Utils.playGlobalSound(player.getLocation(), "arcanist.sanctuary.activation", 2, 0.55f);
         EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.END_ROD, 5, 0.8, 2);
-        EffectUtils.playCylinderAnimation(wp.getLocation(), 1.05, Particle.ASH, 2);
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.DRIP_LAVA, 3, 0.6, 1.2);
+            }
+        }.runTaskLater(8);
+        EffectUtils.playCylinderAnimation(wp.getLocation(), 1.05, Particle.SOUL_FIRE_FLAME, 1);
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,

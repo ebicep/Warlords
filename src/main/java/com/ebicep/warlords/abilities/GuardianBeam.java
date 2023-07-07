@@ -106,7 +106,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
-        Utils.playGlobalSound(shooter.getLocation(), Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD, 2, 2);
+        Utils.playGlobalSound(shooter.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_3, 2, 2);
         return super.onActivate(shooter, player);
     }
 

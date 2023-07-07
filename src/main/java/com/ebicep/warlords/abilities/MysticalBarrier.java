@@ -66,19 +66,8 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         AtomicInteger damageInstances = new AtomicInteger();
-        Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_WARPED_FOREST_MOOD, 2, 2);
+        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.5f);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1.1f);
-        EffectUtils.playCircularEffectAround(
-                wp.getGame(),
-                wp.getLocation(),
-                Particle.TOTEM,
-                2,
-                1,
-                0.15,
-                8,
-                1,
-                3
-        );
         RegularCooldown<MysticalBarrier> mysticalBarrierCooldown = new RegularCooldown<>(
                 name,
                 "MYSTIC",
@@ -96,7 +85,22 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                     giveShield(ally, shieldHealth);
                                 });
                 },
-                tickDuration
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    EffectUtils.playCircularEffectAround(
+                            wp.getGame(),
+                            wp.getLocation(),
+                            Particle.TOTEM,
+                            3,
+                            1,
+                            0.15,
+                            2.2,
+                            8,
+                            1,
+                            4,
+                            ticksElapsed
+                    );
+                })
         ) {
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {

@@ -65,7 +65,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                 .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit by the wind takes "))
                 .append(formatRangeDamage(minDamage, maxDamage))
-                .append(Component.text(" damage. Also heal yourself for by "))
+                .append(Component.text(" damage. Also heal yourself for "))
                 .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
                 .append(Component.text(". If Merciful Hex hits a target, you receive "))
                 .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
