@@ -32,6 +32,7 @@ public class EffectUtils {
      * @param green        is the RGB assigned color for the particles.
      * @param blue         is the RGB assigned color for the particles.
      */
+    @Deprecated
     public static void playSphereAnimation(Player player, double sphereRadius, int red, int green, int blue) {
         playSphereAnimation(player.getLocation(), sphereRadius, red, green, blue);
     }
@@ -482,16 +483,14 @@ public class EffectUtils {
             matrix.updateFromLocation(loc);
             for (int c = 0; c < 20; c++) {
                 double angle = c / 20D * Math.PI * 2;
-                loc.getWorld().spawnParticle(
+                displayParticle(
                         particle,
                         matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
                         1,
                         0,
                         0,
                         0,
-                        0,
-                        null,
-                        true
+                        0
                 );
             }
         }

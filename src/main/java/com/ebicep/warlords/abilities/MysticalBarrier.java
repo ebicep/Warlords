@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -13,8 +14,11 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.MysticalBarrierBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -62,6 +66,19 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         AtomicInteger damageInstances = new AtomicInteger();
+        Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_WARPED_FOREST_MOOD, 2, 2);
+        Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1.1f);
+        EffectUtils.playCircularEffectAround(
+                wp.getGame(),
+                wp.getLocation(),
+                Particle.TOTEM,
+                2,
+                1,
+                0.15,
+                8,
+                1,
+                3
+        );
         RegularCooldown<MysticalBarrier> mysticalBarrierCooldown = new RegularCooldown<>(
                 name,
                 "MYSTIC",

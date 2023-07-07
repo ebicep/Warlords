@@ -47,7 +47,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         description = Component.text("Summon your full protective power, increasing Fortifying Hex duration by ")
                                .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds and causing Guardian Beam to not consume Fortifying Hex stacks. " +
-                                       "All allies with max stacks of Fortifying Hex gain an additional "))
+                                       "\n\nAll allies with max stacks of Fortifying Hex gain an additional "))
                                .append(Component.text(additionalDamageReduction + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage reduction and reflect all reduced damage from Fortifying Hexes back to the dealer. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
@@ -63,9 +63,9 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
 
-        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 2, 0.9f);
-        Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 0.4f);
-        EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.END_ROD, 4, 0.8, 2);
+        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ELDER_GUARDIAN_CURSE, 0.5f, 0.9f);
+        Utils.playGlobalSound(player.getLocation(), "arcanist.sanctuary.activation", 2, 0.55f);
+        EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.END_ROD, 5, 0.8, 2);
         EffectUtils.playCylinderAnimation(wp.getLocation(), 1.05, Particle.ASH, 2);
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(

@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -165,32 +166,28 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
             @Override
             public void run(InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.SPELL_WITCH,
+                EffectUtils.displayParticle(
+                        Particle.END_ROD,
                         projectile.getCurrentLocation().clone().add(0, 0, 0),
                         1,
                         0,
                         0,
                         0,
-                        0,
-                        null,
-                        true
+                        0
                 );
             }
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
                 fallenSoul.remove();
-                projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.SPELL_WITCH,
+                EffectUtils.displayParticle(
+                        Particle.EXPLOSION_LARGE,
                         projectile.getCurrentLocation(),
                         1,
                         0,
                         0,
                         0,
-                        0.7f,
-                        null,
-                        true
+                        0.7f
                 );
             }
         });
@@ -199,17 +196,17 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     @Nullable
     @Override
     protected String getActivationSound() {
-        return null;
+        return "arcanist.fortifyinghex.activation";
     }
 
     @Override
     protected float getSoundVolume() {
-        return 0;
+        return 2;
     }
 
     @Override
     protected float getSoundPitch() {
-        return 0;
+        return 0.75f;
     }
 
     public static void giveFortifyingHex(WarlordsEntity from, WarlordsEntity to) {

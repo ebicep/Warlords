@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.abilities.BeaconOfShadow;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -16,6 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -102,8 +102,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
             }
         }.runTaskTimer(0, 2);
 
-        String soundString = getBeaconClass() == BeaconOfShadow.class ? "arcanist.beaconimpair.activation" : "arcanist.beaconlight.activation";
-        Utils.playGlobalSound(beacon.getLocation(), soundString, 0.07f, 0.4f);
+        Utils.playGlobalSound(beacon.getLocation(), Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD, 0.3f, 0.5f);
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,

@@ -67,7 +67,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 .append(formatRangeDamage(minDamage, maxDamage))
                 .append(Component.text(" damage. Also heal yourself for by "))
                 .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
-                .append(Component.text(" If Merciful Hex hits a target, you receive "))
+                .append(Component.text(". If Merciful Hex hits a target, you receive "))
                 .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                 .append(Component.text(" stack of Merciful Hex. Each stack of Merciful Hex heals "))
                 .append(formatRangeHealing(dotMinHeal, dotMaxHeal))
@@ -118,7 +118,6 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             return;
         }
         WarlordsEntity wp = projectile.getShooter();
-        Location currentLocation = projectile.getCurrentLocation();
 
         Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
 
