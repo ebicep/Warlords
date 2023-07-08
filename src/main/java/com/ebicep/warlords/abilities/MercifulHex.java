@@ -118,9 +118,6 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             return;
         }
         WarlordsEntity wp = projectile.getShooter();
-
-        Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
-
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         if (hit.onHorse()) {
             numberOfDismounts++;
@@ -253,6 +250,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             @Override
             public void onDestroy(InternalProjectile projectile) {
                 fallenSoul.remove();
+                Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
                 projectile.getCurrentLocation().getWorld().spawnParticle(
                         Particle.EXPLOSION_LARGE,
                         projectile.getCurrentLocation(),
