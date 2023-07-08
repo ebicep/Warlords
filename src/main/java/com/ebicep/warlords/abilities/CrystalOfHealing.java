@@ -59,7 +59,6 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         Block targetBlock = Utils.getTargetBlock(player, 12);
         if (targetBlock.getType() == Material.AIR) {
-            wp.sendMessage(Component.text("The location is too far away!", NamedTextColor.RED));
             return false;
         }
         wp.subtractEnergy(energyCost, false);

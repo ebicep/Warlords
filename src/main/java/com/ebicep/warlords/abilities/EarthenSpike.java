@@ -77,7 +77,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        Location location = player.getLocation();
+        Location location = wp.getLocation();
         for (WarlordsEntity spikeTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveEnemiesOf(wp)
