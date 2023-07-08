@@ -69,9 +69,9 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
-        Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
-        new FallingBlockWaveEffect(player.getLocation(), vitalityRange, 1, Material.BIRCH_SAPLING).play();
+        Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
+        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
+        new FallingBlockWaveEffect(wp.getLocation(), vitalityRange, 1, Material.BIRCH_SAPLING).play();
 
         VitalityLiquor tempVitalityLiquor = new VitalityLiquor();
         wp.addHealingInstance(

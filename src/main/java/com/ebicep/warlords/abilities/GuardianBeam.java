@@ -106,6 +106,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
         Utils.playGlobalSound(shooter.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_3, 2, 2);
         return super.onActivate(shooter, player);
     }
@@ -123,7 +124,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     @Nullable
     @Override
     protected String getActivationSound() {
-        return "arcanist.guardianbeam.activation";
+        return "arcanist.guardianbeamalt.activation";
     }
 
     @Override
@@ -133,7 +134,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     @Override
     protected float getSoundPitch() {
-        return 1.1f;
+        return 1.6f;
     }
 
     @Override
