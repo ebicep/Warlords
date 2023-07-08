@@ -3,11 +3,11 @@ package com.ebicep.warlords.classes.arcanist.specs;
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.classes.arcanist.AbstractArcanist;
 
-public class Cleric extends AbstractArcanist {
+public class Luminary extends AbstractArcanist {
 
-    public Cleric() {
+    public Luminary() {
         super(
-                "Cleric",
+                "Luminary",
                 5750,
                 355,
                 20,

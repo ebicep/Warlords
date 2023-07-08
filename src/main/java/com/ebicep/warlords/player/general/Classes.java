@@ -26,7 +26,7 @@ public enum Classes {
     PALADIN(
             "Paladin",
             List.of("pal"),
-            new ItemStack(Material.DANDELION),
+            new ItemStack(Material.YELLOW_DYE),
             "The Paladin's strongest ally is the light. They use it to empower their weapon in order to vanquish foes and protect teammates.",
             AVENGER, CRUSADER, PROTECTOR
     ),
@@ -48,8 +48,8 @@ public enum Classes {
             "Arcanist",
             List.of("arc"),
             new ItemStack(Material.BEDROCK),
-            "The Arcanist is a formidable class with unparalleled mastery over the arcane arts by tapping into a wellspring of raw magical energy.",
-            CONJURER, SENTINEL, CLERIC
+            "The Arcanist is a formidable class with unparalleled mastery over the Hex arts by tapping into a wellspring of raw magical energy.",
+            CONJURER, SENTINEL, LUMINARY
     );
 
     public static final Classes[] VALUES = values();

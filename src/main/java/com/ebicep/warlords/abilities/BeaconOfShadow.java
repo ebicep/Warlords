@@ -10,7 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.arcanist.cleric.BeaconOfShadowBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.luminary.BeaconOfShadowBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
@@ -41,8 +41,8 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
     @Override
     public Component getBonusDescription() {
         return Component.text("All enemies within a ")
-                        .append(Component.text(radius, NamedTextColor.YELLOW))
-                        .append(Component.text(" block radius have their critical multiplier reduced to "))
+                        .append(Component.text(format(radius), NamedTextColor.YELLOW))
+                        .append(Component.text(" block radius have their Crit Multiplier reduced to "))
                         .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
                         .append(Component.text(" and receive the Darkness effect for "))
                         .append(Component.text(format(darknessTickDuration / 20f), NamedTextColor.GOLD))
@@ -51,7 +51,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
 
     @Override
     public LineEffect getLineEffect(Location target) {
-        return new LineEffect(target, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 75, 0), 1));
+        return new LineEffect(target, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(100, 0, 80), 1));
     }
 
     @Override

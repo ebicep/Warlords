@@ -10,28 +10,28 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nonnull;
 
-public class EnergySeerCleric extends AbstractEnergySeer<EnergySeerCleric> {
+public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> {
 
     private int critChanceIncrease = 20;
 
     @Override
     public Component getBonus() {
-        return Component.text("increase your critical chance by ")
+        return Component.text("increase your Crit Chance by ")
                         .append(Component.text(critChanceIncrease + "%", NamedTextColor.RED));
     }
 
     @Override
-    public Class<EnergySeerCleric> getEnergySeerClass() {
-        return EnergySeerCleric.class;
+    public Class<EnergySeerLuminary> getEnergySeerClass() {
+        return EnergySeerLuminary.class;
     }
 
     @Override
-    public EnergySeerCleric getObject() {
-        return new EnergySeerCleric();
+    public EnergySeerLuminary getObject() {
+        return new EnergySeerLuminary();
     }
 
     @Override
-    public RegularCooldown<EnergySeerCleric> getBonusCooldown(@Nonnull WarlordsEntity wp) {
+    public RegularCooldown<EnergySeerLuminary> getBonusCooldown(@Nonnull WarlordsEntity wp) {
         return new RegularCooldown<>(
                 name,
                 "SEER",

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUsedEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +29,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     protected int bonusDuration = 100;
 
     public AbstractEnergySeer() {
-        super("Energy Seer", 0, 0, 30, 0, 0, 0);
+        super("Energy Seer", 0, 0, 28, 0, 0, 0);
     }
 
     @Override
@@ -38,7 +40,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                                .append(Component.text(format(healingMultiplier * 100) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the energy expended for the next "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. If you healed for 5 instances, restore energy "))
+                               .append(Component.text(" seconds. If you healed for 4 instances, restore energy "))
                                .append(Component.text(energyRestore, NamedTextColor.YELLOW))
                                .append(Component.text(" and "))
                                .append(getBonus())
@@ -58,6 +60,9 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.energyseer.activation", 2, 0.9f);
+        for (int i = 0; i < 15; i++) {
+            EffectUtils.displayParticle(Particle.SOUL_FIRE_FLAME, wp.getLocation(), 3, 0.3, 0.1,0.3, 0.1);
+        }
         wp.addSpeedModifier(wp, name, 30, tickDuration);
         AtomicInteger timesHealed = new AtomicInteger();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -68,7 +73,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (timesHealed.get() >= 5 && wp.isAlive()) {
+                    if (timesHealed.get() >= 4 && wp.isAlive()) {
                         wp.addEnergy(wp, name, energyRestore);
                         wp.getCooldownManager().addCooldown(getBonusCooldown(wp));
                     }

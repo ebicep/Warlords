@@ -9,7 +9,7 @@ public class DatabaseArcanistPvE extends DatabaseBasePvE implements DatabaseWarl
 
     protected DatabaseBasePvE conjurer = new DatabaseBasePvE();
     protected DatabaseBasePvE sentinel = new DatabaseBasePvE();
-    protected DatabaseBasePvE cleric = new DatabaseBasePvE();
+    protected DatabaseBasePvE luminary = new DatabaseBasePvE();
 
     public DatabaseArcanistPvE() {
         super();
@@ -17,7 +17,7 @@ public class DatabaseArcanistPvE extends DatabaseBasePvE implements DatabaseWarl
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBasePvE[]{conjurer, sentinel, cleric};
+        return new DatabaseBasePvE[]{conjurer, sentinel, luminary};
     }
 
     public DatabaseBasePvE getConjurer() {
@@ -28,8 +28,8 @@ public class DatabaseArcanistPvE extends DatabaseBasePvE implements DatabaseWarl
         return sentinel;
     }
 
-    public DatabaseBasePvE getCleric() {
-        return cleric;
+    public DatabaseBasePvE getLuminary() {
+        return luminary;
     }
 
 }

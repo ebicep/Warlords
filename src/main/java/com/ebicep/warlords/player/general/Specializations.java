@@ -1,8 +1,8 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.arcanist.specs.Cleric;
 import com.ebicep.warlords.classes.arcanist.specs.Conjurer;
+import com.ebicep.warlords.classes.arcanist.specs.Luminary;
 import com.ebicep.warlords.classes.arcanist.specs.Sentinel;
 import com.ebicep.warlords.classes.mage.specs.Aquamancer;
 import com.ebicep.warlords.classes.mage.specs.Cryomancer;
@@ -154,14 +154,14 @@ public enum Specializations {
     SENTINEL("Sentinel",
             List.of("sen"),
             Sentinel::new,
-            Component.text("SOMEHTING", NamedTextColor.GRAY),
+            Component.text("A defense-oriented Arcanist specialization that monitors enemies' skills while shielding their allies.", NamedTextColor.GRAY),
             SpecType.TANK,
             FORTIFYING_HEX, GUARDIAN_BEAM, ENERGY_SEER_SENTINEL, MYSTICAL_BARRIER, SANCTUARY
     ),
-    CLERIC("Cleric",
-            List.of("cle"),
-            Cleric::new,
-            Component.text("SOMEHTING", NamedTextColor.GRAY),
+    LUMINARY("Luminary",
+            List.of("lum"),
+            Luminary::new,
+            Component.text("A healing-oriented Arcanist specialization who can bend the space between light and darkness to aid their allies and weaken foes.", NamedTextColor.GRAY),
             SpecType.HEALER,
             MERCIFUL_HEX, RAY_OF_LIGHT, CRYSTAL_OF_HEALING, BEACON_OF_SHADOW, DIVINE_BLESSING
     ),
@@ -211,7 +211,7 @@ public enum Specializations {
             case AVENGER, CRUSADER, PROTECTOR -> Classes.PALADIN;
             case THUNDERLORD, SPIRITGUARD, EARTHWARDEN -> Classes.SHAMAN;
             case ASSASSIN, VINDICATOR, APOTHECARY -> Classes.ROGUE;
-            case CONJURER, SENTINEL, CLERIC -> Classes.ARCANIST;
+            case CONJURER, SENTINEL, LUMINARY -> Classes.ARCANIST;
         };
     }
 
@@ -228,7 +228,7 @@ public enum Specializations {
     public final String name;
     public final List<String> aliases;
     public final Supplier<AbstractPlayerClass> create;
-    public final TextComponent description;
+    private final TextComponent description;
     public final SpecType specType;
     public final List<SkillBoosts> skillBoosts;
     private boolean banned = false;
@@ -259,5 +259,9 @@ public enum Specializations {
 
     public Specializations next() {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
+    }
+
+    public TextComponent getDescription() {
+        return description;
     }
 }

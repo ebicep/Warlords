@@ -9,7 +9,7 @@ public class DatabaseArcanistDuel extends DatabaseBaseDuel implements DatabaseWa
 
     private DatabaseBaseDuel conjurer = new DatabaseBaseDuel();
     private DatabaseBaseDuel sentinel = new DatabaseBaseDuel();
-    private DatabaseBaseDuel cleric = new DatabaseBaseDuel();
+    private DatabaseBaseDuel luminary = new DatabaseBaseDuel();
 
     public DatabaseArcanistDuel() {
         super();
@@ -17,7 +17,7 @@ public class DatabaseArcanistDuel extends DatabaseBaseDuel implements DatabaseWa
 
     @Override
     public AbstractDatabaseStatInformation[] getSpecs() {
-        return new DatabaseBaseDuel[]{conjurer, sentinel, cleric};
+        return new DatabaseBaseDuel[]{conjurer, sentinel, luminary};
     }
 
 
@@ -29,8 +29,8 @@ public class DatabaseArcanistDuel extends DatabaseBaseDuel implements DatabaseWa
         return sentinel;
     }
 
-    public DatabaseBaseDuel getCleric() {
-        return cleric;
+    public DatabaseBaseDuel getLuminary() {
+        return luminary;
     }
 
 }

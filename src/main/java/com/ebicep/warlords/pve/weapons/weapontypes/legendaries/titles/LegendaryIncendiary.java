@@ -81,7 +81,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon {
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Increased ranged abilities crit chance by ", NamedTextColor.GRAY)
+        return Component.text("Increased ranged abilities Crit Chance by ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text(" and EPH increased by "))
                         .append(formatTitleUpgrade(EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))

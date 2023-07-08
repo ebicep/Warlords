@@ -10,7 +10,7 @@ public class DatabaseArcanist extends DatabaseBaseGeneral implements DatabaseWar
 
     private DatabaseSpecialization conjurer = new DatabaseSpecialization(SkillBoosts.POISONOUS_HEX);
     private DatabaseSpecialization sentinel = new DatabaseSpecialization(SkillBoosts.FORTIFYING_HEX);
-    private DatabaseSpecialization cleric = new DatabaseSpecialization(SkillBoosts.MERCIFUL_HEX);
+    private DatabaseSpecialization luminary = new DatabaseSpecialization(SkillBoosts.MERCIFUL_HEX);
 
     public DatabaseArcanist() {
         super(ArmorManager.Helmets.SIMPLE_ARCANIST_HELMET);
@@ -18,7 +18,7 @@ public class DatabaseArcanist extends DatabaseBaseGeneral implements DatabaseWar
 
     @Override
     public DatabaseSpecialization[] getSpecs() {
-        return new DatabaseSpecialization[]{conjurer, sentinel, cleric};
+        return new DatabaseSpecialization[]{conjurer, sentinel, luminary};
     }
 
     public DatabaseSpecialization getConjurer() {
@@ -29,8 +29,8 @@ public class DatabaseArcanist extends DatabaseBaseGeneral implements DatabaseWar
         return sentinel;
     }
 
-    public DatabaseSpecialization getCleric() {
-        return cleric;
+    public DatabaseSpecialization getLuminary() {
+        return luminary;
     }
 
 

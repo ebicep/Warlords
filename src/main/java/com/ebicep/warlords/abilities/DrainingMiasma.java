@@ -94,9 +94,9 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 1);
             EffectUtils.playSphereAnimation(wp.getLocation(), enemyHitRadius, Particle.SLIME, 1);
             FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                                                                              .withColor(Color.WHITE)
-                                                                              .with(FireworkEffect.Type.BALL_LARGE)
-                                                                              .build());
+                                                                          .withColor(Color.WHITE)
+                                                                          .with(FireworkEffect.Type.BALL_LARGE)
+                                                                          .build());
         }
 
         int hitCounter = 0;

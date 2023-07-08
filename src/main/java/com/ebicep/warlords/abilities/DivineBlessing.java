@@ -13,7 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.arcanist.cleric.DivineBlessingBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.luminary.DivineBlessingBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -50,7 +50,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     public void updateDescription(Player player) {
         description = Component.text("Imbue yourself with Holy Energy, increasing Merciful Hex duration by ")
                                .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds and causing Ray of Light to not consume Merciful Hex stacks. Allies with max stacks of Merciful Hex receive "))
+                               .append(Component.text(" seconds and causing Ray of Light to not consume Merciful Hex stacks.\n\nAllies with max stacks of Merciful Hex receive "))
                                .append(Component.text(hexHealingBonus + "%", NamedTextColor.GREEN))
                                .append(Component.text(" more healing from all sources and heal for "))
                                .append(Component.text(lethalDamageHealing + "%", NamedTextColor.GREEN))

@@ -8,7 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.arcanist.cleric.RayOfLightBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.luminary.RayOfLightBranch;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;

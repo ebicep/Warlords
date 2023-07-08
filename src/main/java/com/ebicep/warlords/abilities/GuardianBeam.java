@@ -11,10 +11,12 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.GuardianBeamBranch;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +45,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                                .append(Component.text(shieldPercent + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" of the ally’s maximum health and lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. If Guardian Beam hits a target and you have max stacks of Fortifying Hex, also receive the shield." +
+                               .append(Component.text(" seconds. If Guardian Beam hits a target and you have max stacks of Fortifying Hex, you also receive the shield." +
                                        "\n\nHas a maximum range of "))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
@@ -103,6 +105,12 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     }
 
     @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        Utils.playGlobalSound(shooter.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_3, 2, 2);
+        return super.onActivate(shooter, player);
+    }
+
+    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new GuardianBeamBranch(abilityTree, this);
     }
@@ -115,17 +123,17 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     @Nullable
     @Override
     protected String getActivationSound() {
-        return null;
+        return "arcanist.guardianbeam.activation";
     }
 
     @Override
     protected float getSoundVolume() {
-        return 0;
+        return 2;
     }
 
     @Override
     protected float getSoundPitch() {
-        return 0;
+        return 1.1f;
     }
 
     @Override

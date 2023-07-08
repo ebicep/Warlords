@@ -83,7 +83,7 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
                 "NAME",
                 "Astral Plague - Master Upgrade",
                 """
-                        For the duration of Astral Plague, increase crit multiplier by 40%, and Soulfire Beam is guaranteed to crit on enemies with max Hex stacks.
+                        For the duration of Astral Plague, increase Crit Multiplier by 40%, and Soulfire Beam is guaranteed to crit on enemies with max Hex stacks.
                         """,
                 50000,
                 () -> {
