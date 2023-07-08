@@ -90,7 +90,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                     @EventHandler(priority = EventPriority.LOWEST)
                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
                         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (cooldown.getFrom().equals(wp) &&
+                        if (Objects.equals(cooldown.getFrom(), wp) &&
                                 cooldown instanceof RegularCooldown<?> regularCooldown &&
                                 cooldown.getCooldownObject() instanceof PoisonousHex
                         ) {
