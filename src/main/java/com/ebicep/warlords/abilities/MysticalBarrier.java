@@ -66,8 +66,8 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         AtomicInteger damageInstances = new AtomicInteger();
-        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.5f);
-        Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1.1f);
+        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
+        Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
         RegularCooldown<MysticalBarrier> mysticalBarrierCooldown = new RegularCooldown<>(
                 name,
                 "MYSTIC",

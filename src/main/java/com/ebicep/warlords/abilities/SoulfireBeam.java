@@ -96,20 +96,26 @@ public class SoulfireBeam extends AbstractBeam {
         }
     }
 
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
+        return super.onActivate(shooter, player);
+    }
+
     @Nullable
     @Override
     protected String getActivationSound() {
-        return null;
+        return "arcanist.soulfirebeam.activation";
     }
 
     @Override
     protected float getSoundVolume() {
-        return 0;
+        return 2;
     }
 
     @Override
     protected float getSoundPitch() {
-        return 0;
+        return 0.5f;
     }
 
     @Override
