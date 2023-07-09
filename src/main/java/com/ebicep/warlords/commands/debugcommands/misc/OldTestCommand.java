@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -9,10 +10,13 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -145,6 +149,27 @@ public class OldTestCommand implements CommandExecutor {
 //
 //            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
             // System.out.println(LegacyComponentSerializer.legacyAmpersand().serialize(component));
+
+            BlockDisplay display = player.getWorld().spawn(player.getLocation(), BlockDisplay.class, blockDisplay -> {
+                blockDisplay.setBlock(Material.ORANGE_TULIP.createBlockData());
+            });
+
+            new BukkitRunnable() {
+
+                int counter = 0;
+
+                @Override
+                public void run() {
+                    counter++;
+                    display.teleport(display.getLocation().add(0, -.05, 0));
+
+                    if (counter == 100) {
+                        display.remove();
+                        cancel();
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, 0);
+
 
         }
 
