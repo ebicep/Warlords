@@ -38,6 +38,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
@@ -146,14 +147,18 @@ public class WarlordsEvents implements Listener {
             );
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player, Component.text("More Information: ", NamedTextColor.GOLD));
-            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://docs.flairy.me/index.html", NamedTextColor.RED));
-            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://ojagerl.nl/", NamedTextColor.RED));
+            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://docs.flairy.me/index.html", NamedTextColor.RED)
+                                                           .clickEvent(ClickEvent.openUrl("https://docs.flairy.me/index.html")));
+            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://ojagerl.nl/", NamedTextColor.RED)
+                                                           .clickEvent(ClickEvent.openUrl("https://ojagerl.nl/")));
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player,
-                    Component.text("Discord: ", NamedTextColor.GOLD).append(Component.text("discord.gg/GWPAx9sEG7", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD))
+                    Component.text("Discord: ", NamedTextColor.GOLD).append(Component.text("discord.gg/GWPAx9sEG7", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD)
+                                                                                     .clickEvent(ClickEvent.openUrl("https://discord.gg/GWPAx9sEG7")))
             );
             ChatUtils.sendCenteredMessage(player,
-                    Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/3J1lGGn", NamedTextColor.GREEN, TextDecoration.BOLD))
+                    Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/3J1lGGn", NamedTextColor.GREEN, TextDecoration.BOLD)
+                                                                                           .clickEvent(ClickEvent.openUrl("https://bit.ly/3J1lGGn")))
             );
             ChatUtils.sendCenteredMessage(player, Component.text("-----------------------------------------------------", NamedTextColor.GRAY));
         }
