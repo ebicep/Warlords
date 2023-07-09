@@ -30,7 +30,7 @@ public class BotCommand extends BaseCommand {
                           .getPartyPlayers()
                           .forEach(partyPlayer -> players.append(Bukkit.getOfflinePlayer(partyPlayer.getUUID()).getName()).append(","));
         players.setLength(players.length() - 1);
-        botTeams.get().sendMessage("/" + command + " " + players).queue();
+        botTeams.get().sendMessage("```/" + command + " string:" + players + "```").queue();
         player.sendMessage(Component.text("Posted command in bot-teams!", NamedTextColor.GREEN));
 
     }
