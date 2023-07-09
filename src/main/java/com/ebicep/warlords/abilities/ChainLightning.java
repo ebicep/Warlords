@@ -138,7 +138,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Com
                 Optional<CapacitorTotem> optionalTotem = getLookingAtTotem(wp);
                 if (optionalTotem.isPresent()) {
                     ArmorStand totem = optionalTotem.get().getTotem();
-                    chain(checkFrom.getLocation(), totem.getLocation());
+                    chain(checkFrom.getLocation(), totem.getLocation().add(0, .75, 0));
                     partOfChainLightningPulseDamage(wp, optionalTotem.get());
                     playersHit.add(null);
                     return partOfChainLightning(wp, playersHit, totem, true);

@@ -215,7 +215,7 @@ public class LocationUtils {
         //get location of block below player that isnt air using loop
         Location location = player.getLocation();
         location.setY(location.getY() - 1);
-        while (location.getBlock().getType() == Material.AIR && location.getY() > 0) {
+        while (!location.getBlock().isSolid() && location.getY() > 0) {
             location.setY(location.getY() - 1);
         }
         if (location.getY() <= 0) {

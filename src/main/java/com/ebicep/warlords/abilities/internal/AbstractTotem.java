@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -67,9 +68,9 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
 
-        Location standLocation = player.getLocation();
+        Location standLocation = LocationUtils.getGroundLocation(player);
         standLocation.setYaw(0);
-        standLocation.setY(getLocationUnderPlayer(player));
+        standLocation.setY(standLocation.getY() - 1.25);
 
         playSound(player, standLocation);
 
@@ -80,19 +81,6 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
         onActivation(wp, player, totemStand);
 
         return true;
-    }
-
-    private double getLocationUnderPlayer(Player player) {
-        Location location = player.getLocation().clone();
-        location.setY(location.getBlockY() + 2);
-        for (int i = 0; i < 20; i++) {
-            if (!player.getWorld().getBlockAt(location).getType().isSolid()) {
-                location.add(0, -1, 0);
-            } else {
-                break;
-            }
-        }
-        return location.getY();
     }
 
     protected abstract void playSound(Player player, Location location);
