@@ -63,7 +63,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
         }
         wp.subtractEnergy(energyCost, false);
         Location groundLocation = targetBlock.getLocation().clone();
-        groundLocation.add(0, 1, 0);
+        groundLocation.add(.5, 1, .5);
         double baseY = groundLocation.getY();
 
         Utils.playGlobalSound(wp.getLocation(), "arcanist.crystalofhealing.activation", 2, 0.85f);
