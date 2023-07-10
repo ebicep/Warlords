@@ -30,6 +30,7 @@ public class RayOfLight extends AbstractBeam {
 
     public RayOfLight() {
         super("Ray of Light", 511, 689, 10, 10, 20, 175, 30, 30, true);
+        this.playerHitbox += 0.25f;
     }
 
     @Override

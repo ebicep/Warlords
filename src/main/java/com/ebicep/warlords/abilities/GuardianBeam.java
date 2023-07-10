@@ -33,6 +33,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     public GuardianBeam() {
         super("Guardian Beam", 329, 445, 10, 10, 20, 175, 30, 30, true);
+        this.playerHitbox += 0.25f;
     }
 
     @Override
