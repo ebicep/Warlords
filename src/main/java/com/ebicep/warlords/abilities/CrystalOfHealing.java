@@ -67,6 +67,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
         double baseY = groundLocation.getY();
 
         Utils.playGlobalSound(wp.getLocation(), "arcanist.crystalofhealing.activation", 2, 0.85f);
+        EffectUtils.playParticleLinkAnimation(wp.getLocation(), groundLocation, 0, 200, 0, 1);
 
         CircleEffect teamCircleEffect = new CircleEffect(
                 wp.getGame(),
