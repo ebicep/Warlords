@@ -110,11 +110,9 @@ public class RayOfLight extends AbstractBeam {
                         }
                     });
                 }
+                hit.getCooldownManager().removeDebuffCooldowns();
+                hit.getSpeed().removeSlownessModifiers();
             }
-            wp.getCooldownManager().removeDebuffCooldowns();
-            wp.getSpeed().removeSlownessModifiers();
-            hit.getCooldownManager().removeDebuffCooldowns();
-            hit.getSpeed().removeSlownessModifiers();
             hit.addHealingInstance(wp, name, minHeal, maxHeal, critChance, critMultiplier);
         }
     }
@@ -137,6 +135,14 @@ public class RayOfLight extends AbstractBeam {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        int hexStacks = (int) new CooldownFilter<>(shooter, RegularCooldown.class)
+                .filterCooldownClass(MercifulHex.class)
+                .stream()
+                .count();
+        if (hexStacks >= 3) {
+            shooter.getCooldownManager().removeDebuffCooldowns();
+            shooter.getSpeed().removeSlownessModifiers();
+        }
         shooter.addHealingInstance(shooter, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
         return super.onActivate(shooter, player);
