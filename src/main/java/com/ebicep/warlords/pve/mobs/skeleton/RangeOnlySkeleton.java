@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
+import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -33,7 +34,8 @@ public class RangeOnlySkeleton extends AbstractSkeleton implements EliteMob {
                 0.25f,
                 10,
                 600,
-                900
+                900,
+                new Fireball(5.5f)
         );
     }
 

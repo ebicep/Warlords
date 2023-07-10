@@ -6,7 +6,8 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import java.util.Arrays;
 
 /**
- * EPS = sum of all abilities energy/cd
+ * <p>Max Energy = Sum of all ability energy costs</p>
+ * <p>EPS = sum of all abilities energy/cd</p>
  */
 public class MobPlayerClass extends AbstractPlayerClass {
 
@@ -16,7 +17,14 @@ public class MobPlayerClass extends AbstractPlayerClass {
             int damageResistance,
             AbstractAbility... abilities
     ) {
-        this(name, maxHealth, 100, damageResistance, abilities);
+        this(name,
+                maxHealth,
+                (int) Math.round(Arrays.stream(abilities)
+                                       .mapToDouble(AbstractAbility::getEnergyCost)
+                                       .sum()),
+                damageResistance,
+                abilities
+        );
     }
 
     public MobPlayerClass(
@@ -30,9 +38,9 @@ public class MobPlayerClass extends AbstractPlayerClass {
                 maxHealth,
                 maxEnergy,
                 (int) Math.round(Arrays.stream(abilities)
-                                       .mapToDouble(ability -> ability.getEnergyCost() / ability.getCooldown())
+                                       .mapToDouble(ability -> ability.getEnergyCost() / Math.max(1, ability.getCooldown()))
                                        .sum()),
-                10,
+                0,
                 damageResistance,
                 abilities
         );

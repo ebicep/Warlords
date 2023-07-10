@@ -50,6 +50,10 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         super("Prism Guard", 0, 0, 26, 40, 0, 100);
     }
 
+    public PrismGuard(float cooldown) {
+        super("Prism Guard", 0, 0, cooldown, 40, 0, 100);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Create a bubble shield around you that lasts ")

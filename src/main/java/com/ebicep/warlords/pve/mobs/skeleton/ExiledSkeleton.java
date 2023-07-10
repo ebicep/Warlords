@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.skeleton;
 
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -22,9 +24,12 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 
 public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     public ExiledSkeleton(Location spawnLocation) {
@@ -43,7 +48,8 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                 0.3f,
                 10,
                 800,
-                1000
+                1000,
+                new Fireball(5.5f), new BlightedScorch()
         );
     }
 
@@ -74,42 +80,6 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         warlordsNPC.getSpeed().removeSlownessModifiers();
-        if (ticksElapsed % 160 == 0) {
-            warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
-        }
-        if (ticksElapsed % 80 == 0) {
-            EffectUtils.playSphereAnimation(warlordsNPC.getLocation(), 6, Particle.FLAME, 1);
-            for (WarlordsEntity wp : PlayerFilter
-                    .entitiesAround(warlordsNPC, 6, 6, 6)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                wp.getCooldownManager().removeCooldown(Fireball.class, false);
-                wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        name,
-                        "BLI",
-                        Fireball.class,
-                        new Fireball(),
-                        warlordsNPC,
-                        CooldownTypes.DEBUFF,
-                        cooldownManager -> {
-                        },
-                        4 * 20,
-                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
-                            if (ticksLeft % 20 == 0) {
-                                float healthDamage = wp.getMaxHealth() * 0.05f;
-                                wp.addDamageInstance(
-                                        warlordsNPC,
-                                        "Blighted Scorch",
-                                        healthDamage,
-                                        healthDamage,
-                                        0,
-                                        100
-                                );
-                            }
-                        })
-                ));
-            }
-        }
     }
 
     @Override
@@ -155,5 +125,58 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                                                                        .withTrail()
                                                                        .build());
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
+    }
+
+    private static class BlightedScorch extends AbstractAbility {
+
+        public BlightedScorch() {
+            super("Blighted Scorch", 4, 100);
+        }
+
+        @Override
+        public void updateDescription(Player player) {
+
+        }
+
+        @Override
+        public List<Pair<String, String>> getAbilityInfo() {
+            return null;
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.FLAME, 1);
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(wp, 6, 6, 6)
+                    .aliveEnemiesOf(wp)
+            ) {
+                enemy.getCooldownManager().removeCooldown(Fireball.class, false);
+                enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        name,
+                        "BLI",
+                        BlightedScorch.class,
+                        new BlightedScorch(),
+                        wp,
+                        CooldownTypes.DEBUFF,
+                        cooldownManager -> {
+                        },
+                        4 * 20,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
+                            if (ticksLeft % 20 == 0) {
+                                float healthDamage = enemy.getMaxHealth() * 0.05f;
+                                enemy.addDamageInstance(
+                                        wp,
+                                        name,
+                                        healthDamage,
+                                        healthDamage,
+                                        critChance,
+                                        critMultiplier
+                                );
+                            }
+                        })
+                ));
+            }
+            return true;
+        }
     }
 }

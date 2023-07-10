@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
+import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -30,7 +31,8 @@ public class BasicSkeleton extends AbstractSkeleton implements BasicMob {
                 0.05f,
                 0,
                 0,
-                0
+                0,
+                new Fireball(5.5f)
         );
     }
 
@@ -42,9 +44,7 @@ public class BasicSkeleton extends AbstractSkeleton implements BasicMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 160 == 0) {
-            warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
-        }
+
     }
 
     @Override

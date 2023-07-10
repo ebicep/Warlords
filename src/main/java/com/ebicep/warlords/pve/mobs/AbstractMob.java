@@ -144,7 +144,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             int damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
-            AbstractPlayerClass playerClass
+            AbstractAbility... abilities
     ) {
         this.entity = entity;
         this.spawnLocation = spawnLocation;
@@ -156,7 +156,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.damageResistance = damageResistance;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
-        this.playerClass = playerClass;
+        this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
 
         entity.spawn(spawnLocation);
 

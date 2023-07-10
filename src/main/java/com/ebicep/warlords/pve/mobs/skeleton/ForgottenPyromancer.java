@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
+import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -29,7 +31,8 @@ public class ForgottenPyromancer extends AbstractSkeleton implements EliteMob {
                 0.05f,
                 20,
                 0,
-                0
+                0,
+                new Fireball(5.5f), new FlameBurst(20)
         );
     }
 
@@ -41,13 +44,7 @@ public class ForgottenPyromancer extends AbstractSkeleton implements EliteMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 160 == 0) {
-            warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
-        }
-        if (ticksElapsed % 400 == 0) {
-            warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
-            warlordsNPC.getSpec().getRed().onActivate(warlordsNPC, null);
-        }
+
     }
 
     @Override

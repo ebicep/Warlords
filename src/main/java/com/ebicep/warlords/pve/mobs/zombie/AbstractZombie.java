@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.customentities.nms.pve.CustomZombie;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import org.bukkit.Location;
@@ -33,8 +33,20 @@ public abstract class AbstractZombie extends AbstractMob<CustomZombie> {
             int damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
-            AbstractPlayerClass playerClass
+            AbstractAbility... abilities
     ) {
-        super(new CustomZombie(spawnLocation.getWorld()), spawnLocation, name, mobTier, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, playerClass);
+        super(
+                new CustomZombie(spawnLocation.getWorld()),
+                spawnLocation,
+                name,
+                mobTier,
+                ee,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                abilities
+        );
     }
 }

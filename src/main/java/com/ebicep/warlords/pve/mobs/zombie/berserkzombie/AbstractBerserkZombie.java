@@ -5,7 +5,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.MobPlayerClass;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BasicMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -31,21 +30,6 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
             float walkSpeed,
             int damageResistance,
             float minMeleeDamage,
-            float maxMeleeDamage
-    ) {
-        super(spawnLocation, name, mobTier, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
-        woundingStrike = new BerserkerZombieWoundingStrike(497, 632);
-    }
-
-    public AbstractBerserkZombie(
-            Location spawnLocation,
-            String name,
-            MobTier mobTier,
-            EntityEquipment ee,
-            int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
             float maxMeleeDamage,
             BerserkerZombieWoundingStrike woundingStrike
     ) {
@@ -59,7 +43,7 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new MobPlayerClass(name, maxHealth, damageResistance, woundingStrike)
+                woundingStrike
         );
         this.woundingStrike = woundingStrike;
     }
