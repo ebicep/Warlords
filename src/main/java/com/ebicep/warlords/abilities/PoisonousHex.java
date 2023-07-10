@@ -53,7 +53,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     private int dotTickFrequency = 40;
 
     public PoisonousHex() {
-        super("Poisonous Hex", 307, 415, 0, 70, 20, 175, 2, 300, false);
+        super("Poisonous Hex", 307, 415, 0, 70, 20, 175, 2.5, 300, false);
         this.shotsFiredAtATime = 2;
         this.maxAngleOfShots = 30;
         this.forwardTeleportAmount = 1.6f;
