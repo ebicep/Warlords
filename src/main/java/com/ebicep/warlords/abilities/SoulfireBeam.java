@@ -27,7 +27,6 @@ public class SoulfireBeam extends AbstractBeam {
 
     public SoulfireBeam() {
         super("Soulfire Beam", 376, 508, 10, 10, 20, 175, 30, 30, false);
-        this.playerHitbox += 0.25f;
         this.maxTicks = 0;
     }
 
