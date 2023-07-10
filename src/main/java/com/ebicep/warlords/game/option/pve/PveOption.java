@@ -50,6 +50,7 @@ public interface PveOption extends Option {
     default void mobTick() {
         for (AbstractMob<?> mob : new ArrayList<>(getMobs())) {
             mob.whileAlive(getMobsMap().get(mob) - getTicksElapsed(), this);
+            mob.activateAbilities();
             if (mob.isShowBossBar()) {
                 mob.bossBar(getGame(), true);
             }

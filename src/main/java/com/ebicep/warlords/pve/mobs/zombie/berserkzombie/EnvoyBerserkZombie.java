@@ -34,10 +34,10 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 0.43f,
                 20,
                 450,
-                600
+                600,
+                new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.setMinDamageHeal(woundingStrike.getMinDamageHeal() * 1.5f);
-        woundingStrike.setMaxDamageHeal(woundingStrike.getMaxDamageHeal() * 1.5f);
+        woundingStrike.multiplyMinMax(1.5f);
     }
 
     @Override

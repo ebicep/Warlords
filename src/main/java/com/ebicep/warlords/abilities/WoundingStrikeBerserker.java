@@ -31,6 +31,10 @@ public class WoundingStrikeBerserker extends AbstractStrike {
         super("Wounding Strike", 497, 632, 0, 100, 20, 175);
     }
 
+    public WoundingStrikeBerserker(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing ")

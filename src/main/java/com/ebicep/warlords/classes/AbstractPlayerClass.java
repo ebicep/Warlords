@@ -1,9 +1,7 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.abilities.EarthenSpike;
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -26,6 +24,13 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractPlayerClass {
+
+    public static void sendRightClickPacket(Player player) {
+        if (player == null) {
+            return;
+        }
+        PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
+    }
 
     protected int maxHealth;
     protected int maxEnergy;
@@ -145,21 +150,7 @@ public abstract class AbstractPlayerClass {
                     player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
                     player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 } else {
-                    if (player.getLevel() >= ability.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                        WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, player, ability);
-                        Bukkit.getPluginManager().callEvent(event);
-                        if (event.isCancelled()) {
-                            return;
-                        }
-                        ability.onActivate(wp, player);
-                        if (!(ability instanceof AbstractStrike) && !(ability instanceof EarthenSpike)) {
-                            ability.addTimesUsed();
-                            sendRightClickPacket(player);
-                        }
-                        resetAbilityCD(wp);
-                    } else {
-                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-                    }
+                    onRightClickAbility(ability, wp, player);
                 }
             } else {
                 onRightClickAbility(ability, wp, player);
@@ -173,13 +164,6 @@ public abstract class AbstractPlayerClass {
         if (hotkeyMode) {
             player.getInventory().setHeldItemSlot(0);
         }
-    }
-
-    public static void sendRightClickPacket(Player player) {
-        if (player == null) {
-            return;
-        }
-        PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
     }
 
     private void resetAbilityCD(WarlordsEntity we) {
@@ -216,6 +200,8 @@ public abstract class AbstractPlayerClass {
                 sendRightClickPacket(player);
             }
             resetAbilityCD(wp);
+        } else {
+            player.playSound(player.getLocation(), "notreadyalert", 1, 1);
         }
 
     }

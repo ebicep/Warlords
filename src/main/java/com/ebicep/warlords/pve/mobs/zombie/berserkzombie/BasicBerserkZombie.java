@@ -25,7 +25,8 @@ public class BasicBerserkZombie extends AbstractBerserkZombie {
                 0.38f,
                 0,
                 200,
-                300
+                300,
+                new BerserkerZombieWoundingStrike(497, 632)
         );
     }
 

@@ -372,8 +372,8 @@ public class WaveDefenseOption implements PveOption {
 
             public WarlordsEntity spawn(Location loc) {
                 AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
-                mobs.put(abstractMob, ticksElapsed.get());
                 WarlordsNPC npc = abstractMob.toNPC(game, team, UUID.randomUUID(), WaveDefenseOption.this::modifyStats);
+                mobs.put(abstractMob, ticksElapsed.get());
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
                 return npc;
             }

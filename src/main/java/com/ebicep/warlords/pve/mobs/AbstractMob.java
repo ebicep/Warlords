@@ -3,7 +3,9 @@ package com.ebicep.warlords.pve.mobs;
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.events.player.ingame.pve.drops.*;
@@ -68,6 +70,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected WarlordsNPC warlordsNPC;
     protected PveOption pveOption;
 
+    protected AbstractPlayerClass playerClass;
+
     public AbstractMob(
             T entity,
             Location spawnLocation,
@@ -129,22 +133,80 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return NamedTextColor.WHITE;
     }
 
+    public AbstractMob(
+            T entity,
+            Location spawnLocation,
+            String name,
+            MobTier mobTier,
+            EntityEquipment ee,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            AbstractPlayerClass playerClass
+    ) {
+        this.entity = entity;
+        this.spawnLocation = spawnLocation;
+        this.name = name;
+        this.mobTier = mobTier;
+        this.ee = ee;
+        this.maxHealth = maxHealth;
+        this.walkSpeed = walkSpeed;
+        this.damageResistance = damageResistance;
+        this.minMeleeDamage = minMeleeDamage;
+        this.maxMeleeDamage = maxMeleeDamage;
+        this.playerClass = playerClass;
+
+        entity.spawn(spawnLocation);
+
+        this.mob = entity.get();
+        this.mob.persist = true;
+
+        this.livingEntity = (LivingEntity) mob.getBukkitEntity();
+
+        updateEquipment();
+
+        if (getDescription() != null) {
+            bossBar.name(Component.text(name, getColor()));
+        }
+    }
+
     public WarlordsNPC toNPC(Game game, Team team, UUID uuid, Consumer<WarlordsNPC> modifyStats) {
-        this.warlordsNPC = new WarlordsNPC(
-                uuid,
-                name,
-                Weapons.ABBADON,
-                livingEntity,
-                game,
-                team,
-                Specializations.PYROMANCER,
-                maxHealth,
-                walkSpeed,
-                damageResistance,
-                minMeleeDamage,
-                maxMeleeDamage,
-                this
-        );
+        if (playerClass != null) {
+            this.warlordsNPC = new WarlordsNPC(
+                    uuid,
+                    name,
+                    Weapons.ABBADON,
+                    livingEntity,
+                    game,
+                    team,
+                    Specializations.PYROMANCER,
+                    maxHealth,
+                    walkSpeed,
+                    damageResistance,
+                    minMeleeDamage,
+                    maxMeleeDamage,
+                    this,
+                    playerClass
+            );
+        } else {
+            this.warlordsNPC = new WarlordsNPC(
+                    uuid,
+                    name,
+                    Weapons.ABBADON,
+                    livingEntity,
+                    game,
+                    team,
+                    Specializations.PYROMANCER,
+                    maxHealth,
+                    walkSpeed,
+                    damageResistance,
+                    minMeleeDamage,
+                    maxMeleeDamage,
+                    this
+            );
+        }
         AbstractAbility weapon = warlordsNPC.getSpec().getWeapon();
         if (weapon instanceof Fireball) {
             ((Fireball) weapon).setMaxDistance(150);
@@ -182,6 +244,32 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public abstract void whileAlive(int ticksElapsed, PveOption option);
+
+    public void activateAbilities() {
+        if (!(warlordsNPC.getSpec() instanceof MobPlayerClass)) {
+            return;
+        }
+        warlordsNPC.getAbilities().forEach(ability -> {
+            if (ability.getCurrentCooldown() != 0) {
+                return;
+            }
+            if (warlordsNPC.getEnergy() < ability.getEnergyCost() * warlordsNPC.getEnergyModifier()) {
+                return;
+            }
+            WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(warlordsNPC, null, ability);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+            boolean shouldApplyCooldown = ability.onActivate(warlordsNPC, null);
+            if (shouldApplyCooldown) {
+                ability.addTimesUsed();
+                if (!warlordsNPC.isDisableCooldowns()) {
+                    ability.setCurrentCooldown((float) (ability.getCooldown() * warlordsNPC.getCooldownModifier()));
+                }
+            }
+        });
+    }
 
     public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event);
 

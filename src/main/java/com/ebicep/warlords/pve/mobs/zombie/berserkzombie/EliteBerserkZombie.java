@@ -31,10 +31,10 @@ public class EliteBerserkZombie extends AbstractBerserkZombie {
                 0.494f, //30% more than basic zombie
                 10,
                 300,
-                500
+                500,
+                new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.setMinDamageHeal(woundingStrike.getMinDamageHeal() * 1.25f);
-        woundingStrike.setMaxDamageHeal(woundingStrike.getMaxDamageHeal() * 1.25f);
+        woundingStrike.multiplyMinMax(1.25f);
     }
 
     @Override
