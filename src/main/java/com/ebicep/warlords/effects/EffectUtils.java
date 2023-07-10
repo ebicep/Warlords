@@ -611,4 +611,17 @@ public class EffectUtils {
     ) {
         loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
     }
+
+    public static <T> void displayParticle(
+            Particle particle,
+            Location loc,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed,
+            T data
+    ) {
+        loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+    }
 }

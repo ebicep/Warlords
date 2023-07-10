@@ -57,7 +57,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-        Block targetBlock = Utils.getTargetBlock(player, 12);
+        Block targetBlock = Utils.getTargetBlock(player, 15);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }

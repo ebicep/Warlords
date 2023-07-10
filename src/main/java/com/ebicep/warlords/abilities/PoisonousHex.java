@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -12,14 +13,13 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.PoisonousHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -122,7 +122,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         Location currentLocation = projectile.getCurrentLocation();
         Location startingLocation = projectile.getStartingLocation();
 
-        Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
+        Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 2, 0.9f);
 
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
@@ -220,32 +220,36 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
             @Override
             public void run(InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.SPELL_WITCH,
-                        projectile.getCurrentLocation().clone().add(0, 0, 0),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        null,
-                        true
-                );
+                Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
+
+                for (float i = 0; i < 2; i++) {
+                    double angle = Math.toRadians(i * 90) + projectile.getTicksLived() * 0.45;
+                    double width = 0.2D;
+                    EffectUtils.displayParticle(
+                            Particle.REDSTONE,
+                            center.translateVector(projectile.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                            2,
+                            0,
+                            0,
+                            0,
+                            0,
+                            new Particle.DustOptions(Color.fromRGB(90, 90, 190), 1)
+                    );
+                }
             }
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
                 fallenSoul.remove();
-                projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.SPELL_WITCH,
+                Utils.playGlobalSound(projectile.getCurrentLocation(), Sound.ENTITY_EVOKER_FANGS_ATTACK, 2, 2);
+                EffectUtils.displayParticle(
+                        Particle.EXPLOSION_LARGE,
                         projectile.getCurrentLocation(),
                         1,
                         0,
                         0,
                         0,
-                        0.7f,
-                        null,
-                        true
+                        0.7f
                 );
             }
         });
@@ -254,7 +258,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     @Nullable
     @Override
     protected String getActivationSound() {
-        return "shaman.lightningbolt.impact";
+        return "arcanist.poisonoushex.activation";
     }
 
     @Override
@@ -264,7 +268,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     @Override
     protected float getSoundPitch() {
-        return 1.5f;
+        return 0.7f;
     }
 
     @Override

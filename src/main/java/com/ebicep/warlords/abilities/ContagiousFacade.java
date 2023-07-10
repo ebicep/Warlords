@@ -4,6 +4,9 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -19,7 +22,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -62,6 +65,16 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
+        Utils.playGlobalSound(wp.getLocation(), "arcanist.contagiousfacade.activation", 2, 1.5f);
+        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, 2, 0.7f);
+        EffectUtils.playHelixAnimation(wp.getLocation(), 3, Particle.CHERRY_LEAVES, 3, 20);
+        new CircleEffect(
+                wp.getGame(),
+                wp.getTeam(),
+                wp.getLocation().add(0, 1, 0),
+                3,
+                new CircumferenceEffect(Particle.END_ROD, Particle.REDSTONE).particlesPerCircumference(1)
+        ).playEffects();
         AtomicDouble totalAbsorbed = new AtomicDouble(0);
         RegularCooldown<ContagiousFacade> protectiveLayerCooldown = new RegularCooldown<>(
                 name,
@@ -89,7 +102,8 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     }
                     wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
 
-                    Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
+                    Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
+                    Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
                     wp.getCooldownManager().addRegularCooldown(
                             name,
@@ -107,10 +121,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                 if (ticksElapsed % 3 == 0) {
                                     Location location = wp.getLocation();
                                     location.add(0, 1.5, 0);
-                                    World world = location.getWorld();
-                                    world.spawnParticle(Particle.CLOUD, location, 2, 0.15F, 0.3F, 0.15F, 0.01, null, true);
-                                    world.spawnParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001, null, true);
-                                    world.spawnParticle(Particle.SPELL_WITCH, location, 1, 0.3F, 0.3F, 0.3F, 0, null, true);
+                                    EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
+                                    EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
+                                    EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3F, 0.3F, 0.3F, 0);
                                 }
                             })
                     );

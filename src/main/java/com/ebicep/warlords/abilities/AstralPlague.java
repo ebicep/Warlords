@@ -21,6 +21,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -60,8 +61,10 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
 
-        Utils.playGlobalSound(wp.getLocation(), "arcanist.astralplague.activation", 2, 1.2f);
-        EffectUtils.playCircularEffectAround(wp, Particle.FLAME, 1);
+        Utils.playGlobalSound(wp.getLocation(), "arcanist.astralplague.activation", 2, 1.1f);
+        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2, 0.7f);
+        EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.SOUL, 8, 3, 1);
+        EffectUtils.playCircularEffectAround(wp.getGame(), wp.getLocation(), Particle.FLAME, 1, 1, 0.25, 1, 1, 2);
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
