@@ -7,14 +7,19 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float energyCost = ability.getEnergyCost();
     float hitbox = ability.getPlayerHitbox();
     double projectileSpeed = ability.getProjectileSpeed();
 
     public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.multiplyMinMax(1.3f);
+        }
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",

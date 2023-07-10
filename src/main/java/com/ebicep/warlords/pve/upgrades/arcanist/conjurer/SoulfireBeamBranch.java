@@ -7,13 +7,18 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float cooldown = ability.getCooldown();
 
 
     public SoulfireBeamBranch(AbilityTree abilityTree, SoulfireBeam ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.multiplyMinMax(1.3f);
+        }
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
 
         treeA.add(new Upgrade(
                 "Zeal - Tier I",

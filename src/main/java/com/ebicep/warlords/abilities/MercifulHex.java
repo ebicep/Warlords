@@ -54,7 +54,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     public MercifulHex() {
         super("Merciful Hex", 307, 415, 0, 70, 20, 180, 2.5, 20, true);
-        this.playerHitbox += .5; //TODO maybe inflate y separately
+        this.playerHitbox += .75; //TODO maybe inflate y separately
     }
 
     @Override

@@ -8,11 +8,16 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
 
     float cooldown = ability.getCooldown();
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
 
     public RayOfLightBranch(AbilityTree abilityTree, RayOfLight ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.multiplyMinMax(1.3f);
+        }
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
 
         treeA.add(new Upgrade(
                 "Zeal - Tier I",

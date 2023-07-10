@@ -7,18 +7,35 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
 
-    float minDamageHeal = ability.getMinDamageHeal();
-    float maxDamageHeal = ability.getMaxDamageHeal();
-    float minSelfHeal = ability.getMinSelfHeal();
-    float maxSelfHeal = ability.getMaxSelfHeal();
-    float dotMinHeal = ability.getDotMinHeal();
-    float dotMaxHeal = ability.getDotMaxHeal();
+    float minDamageHeal;
+    float maxDamageHeal;
+    float minSelfHeal;
+    float maxSelfHeal;
+    float dotMinHeal;
+    float dotMaxHeal;
+    float minDamage;
+    float maxDamage;
     float energyCost = ability.getEnergyCost();
-    float minDamage = ability.getMinDamage();
-    float maxDamage = ability.getMaxDamage();
 
     public MercifulHexBranch(AbilityTree abilityTree, MercifulHex ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.multiplyMinMax(1.3f);
+            ability.setMinSelfHeal(ability.getMinSelfHeal() * 1.3f);
+            ability.setMaxSelfHeal(ability.getMaxSelfHeal() * 1.3f);
+            ability.setDotMinHeal(ability.getDotMinHeal() * 1.3f);
+            ability.setDotMaxHeal(ability.getDotMaxHeal() * 1.3f);
+            ability.setMinDamage(ability.getMinDamage() * 1.3f);
+            ability.setMaxDamage(ability.getMaxDamage() * 1.3f);
+        }
+        minDamageHeal = ability.getMinDamageHeal();
+        maxDamageHeal = ability.getMaxDamageHeal();
+        minSelfHeal = ability.getMinSelfHeal();
+        maxSelfHeal = ability.getMaxSelfHeal();
+        dotMinHeal = ability.getDotMinHeal();
+        dotMaxHeal = ability.getDotMaxHeal();
+        minDamage = ability.getMinDamage();
+        maxDamage = ability.getMaxDamage();
 
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",

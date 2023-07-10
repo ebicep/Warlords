@@ -51,7 +51,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
         treeB.add(new Upgrade(
                 "Chronos - Tier I",
                 "+5s Lifespan",
-                10000,
+                5000,
                 () -> {
                     ability.setLifeSpan(lifeSpan + 5);
                 }
@@ -59,7 +59,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
         treeB.add(new Upgrade(
                 "Chronos - Tier II",
                 "+10s Lifespan",
-                15000,
+                10000,
                 () -> {
                     ability.setLifeSpan(lifeSpan + 10);
                 }
@@ -67,7 +67,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
         treeB.add(new Upgrade(
                 "Chronos - Tier III",
                 "+15s Lifespan",
-                20000,
+                15000,
                 () -> {
                     ability.setLifeSpan(lifeSpan + 15);
                 }
@@ -75,7 +75,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
         treeB.add(new Upgrade(
                 "Chronos - Tier IV",
                 "+20s Lifespan",
-                25000,
+                20000,
                 () -> {
                     ability.setLifeSpan(lifeSpan + 20);
                 }

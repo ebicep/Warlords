@@ -7,13 +7,18 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float cooldown = ability.getCooldown();
     double maxDistance = ability.getMaxDistance();
 
     public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.multiplyMinMax(1.3f);
+        }
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",

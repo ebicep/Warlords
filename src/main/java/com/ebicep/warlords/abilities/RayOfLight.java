@@ -113,6 +113,8 @@ public class RayOfLight extends AbstractBeam {
             }
             wp.getCooldownManager().removeDebuffCooldowns();
             wp.getSpeed().removeSlownessModifiers();
+            hit.getCooldownManager().removeDebuffCooldowns();
+            hit.getSpeed().removeSlownessModifiers();
             hit.addHealingInstance(wp, name, minHeal, maxHeal, critChance, critMultiplier);
         }
     }
