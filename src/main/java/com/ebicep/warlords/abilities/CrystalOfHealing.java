@@ -31,9 +31,9 @@ import java.util.List;
 public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIcon {
 
     private static final float RADIUS = 1.5f;
-    private int duration = 20; // seconds
-    private float maxHeal = 1200f;
-    private int lifeSpan = 40; // seconds
+    private int duration = 15; // seconds
+    private float maxHeal = 1500;
+    private int lifeSpan = 45; // seconds
 
     public CrystalOfHealing() {
         super("Crystal of Healing", 0, 0, 20, 20, 0, 0);
@@ -193,5 +193,13 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
 
     public void setLifeSpan(int lifeSpan) {
         this.lifeSpan = lifeSpan;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }
