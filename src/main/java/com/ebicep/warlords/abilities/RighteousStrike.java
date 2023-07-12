@@ -27,7 +27,7 @@ public class RighteousStrike extends AbstractStrike {
     private int abilityReductionInTicks = 10;
 
     public RighteousStrike() {
-        super("Righteous Strike", 412, 523, 0, 90, 20, 175);
+        super("Righteous Strike", 391, 497, 0, 90, 20, 175);
     }
 
     @Override

@@ -8,9 +8,9 @@ public class Earthwarden extends AbstractShaman {
     public Earthwarden() {
         super(
                 "Earthwarden",
-                5530,
+                6300,
                 355,
-                10,
+                0,
                 new EarthenSpike(),
                 new Boulder(),
                 new EarthlivingWeapon(),
