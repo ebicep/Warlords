@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 
-import com.ebicep.warlords.abilties.TimeWarpCryomancer;
+import com.ebicep.warlords.abilities.TimeWarpCryomancer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -87,7 +87,7 @@ public class TimeWarpBranchCryomancer extends AbstractUpgradeBranch<TimeWarpCryo
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

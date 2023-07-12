@@ -5,8 +5,10 @@ import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Skeleton;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 
 import javax.annotation.Nonnull;
 
@@ -39,6 +41,16 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
     @Override
     public boolean canCollideWithBukkit(@Nonnull Entity entity) {
         return !stunned;
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float pullProgress) {
+
+    }
+
+    @Override
+    public boolean canFireProjectileWeapon(ProjectileWeaponItem weapon) {
+        return false;
     }
 
     @Override

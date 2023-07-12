@@ -61,7 +61,7 @@ public class WanderWalker extends AbstractZombie implements EliteMob {
         if (!recovered && self.getHealth() <= self.getMaxHealth() * .1f) {
             recovered = true;
             float healAmount = self.getMaxHealth() * healthRecover;
-            self.addHealingInstance(self, "Void Recovery", healAmount, healAmount, 0, 100, false, false);
+            self.addHealingInstance(self, "Void Recovery", healAmount, healAmount, 0, 100);
             removeTarget();
             self.getSpeed().addBaseModifier(speedIncrease);
             warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(

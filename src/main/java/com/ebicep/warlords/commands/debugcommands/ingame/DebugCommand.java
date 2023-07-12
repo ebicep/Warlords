@@ -163,7 +163,7 @@ public class DebugCommand extends BaseCommand {
     @CommandCompletion("@warlordsplayers")
     @Description("Heals a player based on the amount or sender if there is no target")
     public void heal(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
-        target.addHealingInstance(target, "God", amount, amount, 0, 100, false, false);
+        target.addHealingInstance(target, "God", amount, amount, 0, 100);
         target.resetRegenTimer();
         sendDebugMessage(issuer, Component.empty()
                                           .append(target.getColoredName())
@@ -174,7 +174,7 @@ public class DebugCommand extends BaseCommand {
     @CommandCompletion("@warlordsplayers")
     @Description("Damages a player based on the amount or sender if there is no target")
     public void damage(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
-        target.addDamageInstance(target, "God", amount, amount, 0, 100, false);
+        target.addDamageInstance(target, "God", amount, amount, 0, 100);
         target.resetRegenTimer();
         sendDebugMessage(issuer, Component.empty()
                                           .append(target.getColoredName())

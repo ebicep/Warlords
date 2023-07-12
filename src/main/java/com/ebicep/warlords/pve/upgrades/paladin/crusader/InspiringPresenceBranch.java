@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 
-import com.ebicep.warlords.abilties.InspiringPresence;
+import com.ebicep.warlords.abilities.InspiringPresence;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -93,7 +93,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 50000,
                 () -> {
                     ability.setCooldown(ability.getCooldown() * 0.8f);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

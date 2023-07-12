@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
-import com.ebicep.warlords.abilties.ChainHeal;
+import com.ebicep.warlords.abilities.ChainHeal;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -90,10 +90,10 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
         masterUpgrade = new Upgrade(
                 "Chain of Eradication",
                 "Chain Heal - Master Upgrade",
-                "+5 Blocks cast and bounce range.\n\nIncrease the crit chance by 20% and crit multiplier by 40% of all healed allies for 8 seconds.",
+                "+5 Blocks cast and bounce range.\n\nIncrease the Crit Chance by 20% and Crit Multiplier by 40% of all healed allies for 8 seconds.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setBounceRange(ability.getBounceRange() + 5);
                     ability.setRadius(ability.getRadius() + 5);
                 }

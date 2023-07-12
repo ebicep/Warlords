@@ -23,7 +23,7 @@ public class DatabasePlayerPvEEventNarmersTombDifficultyStats extends PvEEventNa
     private DatabasePaladinPvEEventNarmersTomb paladin = new DatabasePaladinPvEEventNarmersTomb();
     private DatabaseShamanPvEEventNarmersTomb shaman = new DatabaseShamanPvEEventNarmersTomb();
     private DatabaseRoguePvEEventNarmersTomb rogue = new DatabaseRoguePvEEventNarmersTomb();
-    private DatabaseDruidPvEEventNarmersTomb druid = new DatabaseDruidPvEEventNarmersTomb();
+    private DatabaseArcanistPvEEventNarmersTomb arcanist = new DatabaseArcanistPvEEventNarmersTomb();
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEEventNarmersTombPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
         put(1, new DatabasePlayerPvEEventNarmersTombPlayerCountStats());
@@ -85,9 +85,9 @@ public class DatabasePlayerPvEEventNarmersTombDifficultyStats extends PvEEventNa
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> druid.getConjurer();
-            case SENTINEL -> druid.getGuardian();
-            case CLERIC -> druid.getPriest();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case LUMINARY -> arcanist.getLuminary();
         };
     }
 
@@ -99,7 +99,7 @@ public class DatabasePlayerPvEEventNarmersTombDifficultyStats extends PvEEventNa
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
-            case ARCANIST -> druid;
+            case ARCANIST -> arcanist;
         };
     }
 

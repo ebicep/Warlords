@@ -3,8 +3,7 @@ package com.ebicep.warlords.player.ingame.cooldowns.instances;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.TextComponent;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * <p>FromSelf - used on self cooldowns to others</p>
@@ -20,17 +19,17 @@ public interface PlayerNameInstance {
         return null;
     }
 
-    default PlayerNameData addPrefixFromEnemy() {
+    default PlayerNameData addPrefixFromOther() {
         return null;
     }
 
-    default PlayerNameData addSuffixFromEnemy() {
+    default PlayerNameData addSuffixFromOther() {
         return null;
     }
 
-    record PlayerNameData(TextComponent text, Collection<WarlordsEntity> targets) {
+    record PlayerNameData(TextComponent text, Predicate<WarlordsEntity> displayPredicate) {
         public PlayerNameData(TextComponent text, WarlordsEntity target) {
-            this(text, List.of(target));
+            this(text, entity -> entity == target);
         }
     }
 

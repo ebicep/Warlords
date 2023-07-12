@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.defender;
 
-import com.ebicep.warlords.abilties.LastStand;
+import com.ebicep.warlords.abilities.LastStand;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -94,7 +94,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "Doubles the radius of Last Stand and enemies within half the radius will target you on cast, can be re-casted once. Reduce cooldown by 20%.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setCooldown(ability.getCooldown() * 0.8f);
                     ability.setRadius(ability.getRadius() * 2);
                 }

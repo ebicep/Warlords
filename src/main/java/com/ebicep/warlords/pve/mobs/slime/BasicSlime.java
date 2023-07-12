@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
 import com.ebicep.customentities.nms.pve.CustomSlime;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -12,15 +13,19 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BasicMob;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 
 public class BasicSlime extends AbstractSlime implements BasicMob {
 
-    private final double hitRadius = 2.5;
+    private static final double hitRadius = 2.5;
     private final double shimmerRadius = 3;
 
     public BasicSlime(Location spawnLocation) {
@@ -33,7 +38,8 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                 0.5f,
                 20,
                 0,
-                0
+                0,
+                new Shimmer()
         );
     }
 
@@ -53,15 +59,6 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                     new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(0.75),
                     new DoubleLineEffect(Particle.SPELL)
             ).playEffects();
-        }
-
-        if (ticksElapsed % 6 == 0) {
-            for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                enemy.addDamageInstance(warlordsNPC, "Shimmer", 400, 400, 0, 100, false);
-            }
         }
     }
 
@@ -129,8 +126,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                                     healthDamage,
                                     healthDamage,
                                     0,
-                                    100,
-                                    false
+                                    100
                             );
                         }
                     })
@@ -144,6 +140,34 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                                                                        .build());
         EffectUtils.playHelixAnimation(deathLocation, shimmerRadius, 0, 255, 0);
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SLIME_JUMP, 2, 0.5f);
+    }
+
+    private static class Shimmer extends AbstractAbility {
+
+        public Shimmer() {
+            super("Shimmer", 0.3f, 100);
+        }
+
+        @Override
+        public void updateDescription(Player player) {
+
+        }
+
+        @Override
+        public List<Pair<String, String>> getAbilityInfo() {
+            return null;
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(wp, hitRadius, hitRadius, hitRadius)
+                    .aliveEnemiesOf(wp)
+            ) {
+                enemy.addDamageInstance(wp, "Shimmer", 400, 400, 0, 100);
+            }
+            return true;
+        }
     }
 
 }

@@ -23,7 +23,7 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
     private DatabasePaladinPvEEvent paladin = new DatabasePaladinPvEEvent();
     private DatabaseShamanPvEEvent shaman = new DatabaseShamanPvEEvent();
     private DatabaseRoguePvEEvent rogue = new DatabaseRoguePvEEvent();
-    private DatabaseDruidPvEEvent druid = new DatabaseDruidPvEEvent();
+    private DatabaseArcanistPvEEvent arcanist = new DatabaseArcanistPvEEvent();
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEEventPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
         put(1, new DatabasePlayerPvEEventPlayerCountStats());
@@ -88,9 +88,9 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
             case ASSASSIN -> rogue.getAssassin();
             case VINDICATOR -> rogue.getVindicator();
             case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> druid.getConjurer();
-            case SENTINEL -> druid.getGuardian();
-            case CLERIC -> druid.getPriest();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case LUMINARY -> arcanist.getLuminary();
         };
     }
 
@@ -102,7 +102,7 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
             case PALADIN -> paladin;
             case SHAMAN -> shaman;
             case ROGUE -> rogue;
-            case ARCANIST -> druid;
+            case ARCANIST -> arcanist;
         };
     }
 

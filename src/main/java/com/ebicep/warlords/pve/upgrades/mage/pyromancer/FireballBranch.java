@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 
-import com.ebicep.warlords.abilties.Fireball;
+import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -99,7 +99,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                         BURN: Enemies take 20% more damage from all sources and burn for 0.5% of their max health every second.""",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

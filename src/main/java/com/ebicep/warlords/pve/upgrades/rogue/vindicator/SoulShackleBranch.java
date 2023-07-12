@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.vindicator;
 
-import com.ebicep.warlords.abilties.SoulShackle;
+import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -91,7 +91,7 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
                 "Soul Shackle now hits up to 8 enemies in a cone and increase silence duration by 4s.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setMinSilenceDurationInTicks(ability.getMinSilenceDurationInTicks() + 80);
                     ability.setMaxSilenceDurationInTicks(ability.getMaxSilenceDurationInTicks() + 80);
                 }

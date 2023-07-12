@@ -66,8 +66,8 @@ public class LilithsClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
                     }
                     event.setMin(warlordsEntity.getHealth() + 1);
                     event.setMax(warlordsEntity.getHealth() + 1);
-                    event.setIgnoreReduction(true);
                     event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
+                    event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
                 }
             }
 

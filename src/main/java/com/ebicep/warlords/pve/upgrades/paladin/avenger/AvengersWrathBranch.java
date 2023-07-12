@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
-import com.ebicep.warlords.abilties.AvengersWrath;
+import com.ebicep.warlords.abilities.AvengersWrath;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;

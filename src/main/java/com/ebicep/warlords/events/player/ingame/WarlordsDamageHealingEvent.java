@@ -23,8 +23,6 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     private float max;
     private float critChance;
     private float critMultiplier;
-    private boolean ignoreReduction;
-    private boolean isLastStandFromShield;
     private boolean isDamageInstance;
 
     private final EnumSet<InstanceFlags> flags;
@@ -40,8 +38,6 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
-            boolean isLastStandFromShield,
             boolean isDamageInstance,
             EnumSet<InstanceFlags> flags,
             @Nullable UUID uuid
@@ -53,8 +49,6 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.max = max;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
-        this.ignoreReduction = ignoreReduction;
-        this.isLastStandFromShield = isLastStandFromShield;
         this.isDamageInstance = isDamageInstance;
         this.flags = flags;
         this.uuid = uuid;
@@ -68,12 +62,10 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
-            boolean isLastStandFromShield,
             boolean isDamageInstance,
             EnumSet<InstanceFlags> flags
     ) {
-        this(player, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, isDamageInstance, flags, null);
+        this(player, attacker, ability, min, max, critChance, critMultiplier, isDamageInstance, flags, null);
     }
 
     public WarlordsEntity getAttacker() {
@@ -122,22 +114,6 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
 
     public void setCritMultiplier(float critMultiplier) {
         this.critMultiplier = critMultiplier;
-    }
-
-    public boolean isIgnoreReduction() {
-        return ignoreReduction;
-    }
-
-    public void setIgnoreReduction(boolean ignoreReduction) {
-        this.ignoreReduction = ignoreReduction;
-    }
-
-    public boolean isIsLastStandFromShield() {
-        return isLastStandFromShield;
-    }
-
-    public void setIsLastStandFromShield(boolean isLastStandFromShield) {
-        this.isLastStandFromShield = isLastStandFromShield;
     }
 
     public boolean isDamageInstance() {
@@ -195,8 +171,6 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
                 ", max=" + max +
                 ", critChance=" + critChance +
                 ", critMultiplier=" + critMultiplier +
-                ", ignoreReduction=" + ignoreReduction +
-                ", isLastStandFromShield=" + isLastStandFromShield +
                 ", isDamageInstance=" + isDamageInstance +
                 ", cancelled=" + cancelled +
                 '}';

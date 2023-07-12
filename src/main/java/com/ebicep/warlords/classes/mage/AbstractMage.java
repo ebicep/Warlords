@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.mage;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 
 public abstract class AbstractMage extends AbstractPlayerClass {

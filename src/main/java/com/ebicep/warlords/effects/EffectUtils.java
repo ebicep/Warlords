@@ -3,6 +3,7 @@ package com.ebicep.warlords.effects;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
@@ -25,16 +26,12 @@ import static java.lang.Math.sin;
 public class EffectUtils {
 
     /**
-     * @param player       what player should the sphere be around.
+     * @param particleLoc  what location should the sphere be around.
      * @param sphereRadius is how big the sphere should be.
      * @param red          is the RGB assigned color for the particles.
      * @param green        is the RGB assigned color for the particles.
      * @param blue         is the RGB assigned color for the particles.
      */
-    public static void playSphereAnimation(Player player, double sphereRadius, int red, int green, int blue) {
-        playSphereAnimation(player.getLocation(), sphereRadius, red, green, blue);
-    }
-
     public static void playSphereAnimation(Location particleLoc, double sphereRadius, int red, int green, int blue) {
         particleLoc.add(0, 1, 0);
         for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
@@ -53,16 +50,11 @@ public class EffectUtils {
     }
 
     /**
-     * @param player        what player should the sphere be around.
+     * @param particleLoc   what location should the sphere be around.
      * @param sphereRadius  is how big the sphere should be.
      * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
      */
-    @Deprecated
-    public static void playSphereAnimation(Player player, double sphereRadius, Particle effect, int particleCount) {
-        playSphereAnimation(player.getLocation(), sphereRadius, effect, particleCount);
-    }
-
     public static void playSphereAnimation(Location particleLoc, double sphereRadius, Particle effect, int particleCount) {
         particleLoc.add(0, 1, 0);
         for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
@@ -80,17 +72,12 @@ public class EffectUtils {
     }
 
     /**
-     * @param player      what player should the helix be around.
+     * @param location    what location should the helix be around.
      * @param helixRadius is how big the helix should be.
      * @param red         is the RGB assigned color for the particles.
      * @param green       is the RGB assigned color for the particles.
      * @param blue        is the RGB assigned color for the particles.
      */
-    @Deprecated
-    public static void playHelixAnimation(Player player, double helixRadius, int red, int green, int blue) {
-        playHelixAnimation(player.getLocation(), helixRadius, red, green, blue);
-    }
-
     public static void playHelixAnimation(Location location, double helixRadius, int red, int green, int blue) {
         double rotation = Math.PI / 4;
         int particles = 40;
@@ -110,18 +97,12 @@ public class EffectUtils {
         }
     }
 
-
     /**
-     * @param player        what player should the helix be around.
+     * @param location      what location should the helix be around.
      * @param helixRadius   is how big the helix should be.
      * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
      */
-    @Deprecated
-    public static void playHelixAnimation(Player player, double helixRadius, Particle effect, int particleCount, int helixDots) {
-        playHelixAnimation(player.getLocation(), helixRadius, effect, particleCount, helixDots);
-    }
-
     public static void playHelixAnimation(Location location, double helixRadius, Particle effect, int particleCount, int helixDots) {
         double rotation = Math.PI / 4;
         int strands = 8;
@@ -140,17 +121,12 @@ public class EffectUtils {
     }
 
     /**
-     * @param player         what player should the cylinder be around.
+     * @param location       what location should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
      * @param red            which particle effect should be displayed.
      * @param green          the amount of particles that should be displayed.
      * @param blue           the amount of particles that should be displayed.
      */
-    @Deprecated
-    public static void playCylinderAnimation(Player player, double cylinderRadius, int red, int green, int blue) {
-        playCylinderAnimation(player.getLocation(), cylinderRadius, red, green, blue);
-    }
-
     public static void playCylinderAnimation(Location location, double cylinderRadius, int red, int green, int blue) {
         Location particleLoc = location.clone();
         for (int i = 0; i < 10; i++) {
@@ -180,27 +156,6 @@ public class EffectUtils {
     }
 
     /**
-     * @param player         what player should the cylinder be around.
-     * @param cylinderRadius is how big the helix should be.
-     * @param effect         which particle effect should be displayed.
-     * @param particleCount  the amount of particles that should be displayed.
-     */
-    @Deprecated
-    public static void playCylinderAnimation(Player player, double cylinderRadius, Particle effect, int particleCount) {
-        Location playerLoc = player.getLocation();
-        Location particleLoc = playerLoc.clone();
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                double angle = j / 10D * Math.PI * 2;
-                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * cylinderRadius);
-                particleLoc.setY(playerLoc.getY() + i / 5D);
-                particleLoc.setZ(playerLoc.getZ() + cos(angle) * cylinderRadius);
-                particleLoc.getWorld().spawnParticle(effect, particleLoc, particleCount, 0, 0, 0, 0, null, true);
-            }
-        }
-    }
-
-    /**
      * @param location       what location should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
      * @param effect         which particle effect should be displayed.
@@ -218,16 +173,6 @@ public class EffectUtils {
                 location.getWorld().spawnParticle(effect, location, particleCount, 0, 0, 0, 0, null, true);
             }
         }
-    }
-
-    /**
-     * @param player     what player should the star be around.
-     * @param starRadius is how big the star should be.
-     * @param effect     which particle effect should be displayed.
-     */
-    @Deprecated
-    public static void playStarAnimation(Player player, float starRadius, Particle effect) {
-        playStarAnimation(player.getLocation(), starRadius, effect);
     }
 
     /**
@@ -411,29 +356,188 @@ public class EffectUtils {
         return v.setX(x).setY(y);
     }
 
-    public static void playCircularEffectAround(WarlordsEntity we, Particle effect, int particleCount) {
-        Location loc = we.getLocation().clone();
-        new GameRunnable(we.getGame()) {
+    public static void playCircularEffectAround(
+            Game game,
+            Location location,
+            Particle effect,
+            int particleCount,
+            double radius,
+            double yAxisElevation,
+            int interval,
+            int delayBetweenParticles,
+            int amountOfSwirls
+    ) {
+        Location loc = location.clone();
+        new GameRunnable(game) {
+            double t = 0;
             @Override
             public void run() {
-                double t = 0;
-                double r = 2;
-                t = t + Math.PI / 16;
-                double x = r * cos(t);
-                double y = 0.5 * t;
-                double z = r * sin(t);
+                t++;
+                t = t + Math.PI / interval;
+                double x = radius * cos(t);
+                double y = yAxisElevation * t;
+                double z = radius * sin(t);
                 loc.add(x, y ,z);
                 loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
                 loc.subtract(x, y, z);
 
-                if (t > Math.PI * 8) {
+                if (t > Math.PI * amountOfSwirls) {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(0, 0);
+        }.runTaskTimer(0, delayBetweenParticles);
     }
 
-    public static void playRadialWaveAnimation(WarlordsEntity we) {
+    public static void playCircularEffectAround(
+            Game game,
+            Location location,
+            Particle effect,
+            int particleCount,
+            double radius,
+            double yAxisElevation,
+            double yLimit,
+            int interval,
+            int delayBetweenParticles,
+            int amountOfSwirls,
+            int counter
+    ) {
+        Location loc = location.clone();
+        new GameRunnable(game) {
+            double t = counter;
+            @Override
+            public void run() {
+                t++;
+                t = t + Math.PI / interval;
+                double x = radius * cos(t);
+                double y = yAxisElevation * t;
+                double z = radius * sin(t);
+                if (y > yLimit) {
+                    y = yLimit;
+                }
+                loc.add(x, y ,z);
+                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                loc.subtract(x, y, z);
 
+                if (t > Math.PI * amountOfSwirls) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, delayBetweenParticles);
+    }
+
+    public static void playCircularShieldAnimation(Location location, Particle particle, int amountOfCircles, double circleRadius, double distance) {
+        Location loc = location.clone();
+        loc.setPitch(0);
+        loc.setYaw(0);
+        loc.add(0, 1, 0);
+        Matrix4d matrix = new Matrix4d();
+        for (int i = 0; i < amountOfCircles; i++) {
+            loc.setYaw(loc.getYaw() + 360F / amountOfCircles);
+            matrix.updateFromLocation(loc);
+            for (int c = 0; c < 20; c++) {
+                double angle = c / 20D * Math.PI * 2;
+                displayParticle(
+                        particle,
+                        matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0
+                );
+            }
+        }
+    }
+
+    /**
+     * @param location
+     * @param particle particle effect of outer circle
+     * @param innerParticle particle effect of inner circle
+     * @param amountOfCircles amount of circles to spawn
+     * @param circleRadius how big the circle has to be
+     * @param innerCricleRadius how big the inner circle has to be
+     * @param distance how far away from the location the circles have to be
+     */
+    public static void playCircularShieldAnimationWithInnerCircle(
+            Location location,
+            Particle particle,
+            Particle innerParticle,
+            int amountOfCircles,
+            double circleRadius,
+            double innerCricleRadius,
+            double distance
+    ) {
+        Location loc = location.clone();
+        loc.setPitch(0);
+        loc.setYaw(0);
+        Matrix4d matrix = new Matrix4d();
+        for (int i = 0; i < amountOfCircles; i++) {
+            loc.setYaw(loc.getYaw() + 360F / 3F);
+            matrix.updateFromLocation(loc);
+            for (int c = 0; c < 20; c++) {
+                double angle = c / 20D * Math.PI * 2;
+                loc.getWorld().spawnParticle(
+                        particle,
+                        matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        null,
+                        true
+                );
+            }
+
+            for (int c = 0; c < 10; c++) {
+                double angle = c / 10D * Math.PI * 2;
+
+                loc.getWorld().spawnParticle(
+                        innerParticle,
+                        matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * innerCricleRadius, Math.cos(angle) * innerCricleRadius),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        null,
+                        true
+                );
+            }
+        }
+    }
+
+    /**
+     * @param particle which particle to display
+     * @param loc location of the particle
+     * @param count particle count
+     * @param offsetX particle X axis offset
+     * @param offsetY particle Y axis offset
+     * @param offsetZ particle Z axis offset
+     * @param speed speed of the particle animation
+     */
+    public static void displayParticle(
+            Particle particle,
+            Location loc,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed
+    ) {
+        loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
+    }
+
+    public static <T> void displayParticle(
+            Particle particle,
+            Location loc,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed,
+            T data
+    ) {
+        loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
     }
 }

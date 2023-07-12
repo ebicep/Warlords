@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option;
 
-import com.ebicep.warlords.abilties.internal.*;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
@@ -448,7 +448,7 @@ public class PowerupOption implements Option {
         SELF_DAMAGE(NamedTextColor.DARK_RED, 0, Material.RED_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.addDamageInstance(we, "Self Damage Powerup", 5000, 5000, 0, 100, true);
+                we.addDamageInstance(we, "Self Damage Powerup", 5000, 5000, 0, 100);
             }
 
             @Override
@@ -461,7 +461,7 @@ public class PowerupOption implements Option {
         SELF_HEAL(NamedTextColor.DARK_GREEN, 0, Material.GREEN_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, 0, 100, true, false);
+                we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, 0, 100);
             }
 
             @Override

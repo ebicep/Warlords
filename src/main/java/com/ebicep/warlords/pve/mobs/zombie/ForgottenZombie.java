@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
-import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -77,7 +77,7 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (Utils.isProjectile(event.getAbility())) {
-            attacker.addDamageInstance(self, "Projectile Thorns", 300, 300, -1, 100, false);
+            attacker.addDamageInstance(self, "Projectile Thorns", 300, 300, -1, 100);
         }
     }
 

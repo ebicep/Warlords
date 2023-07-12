@@ -426,7 +426,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                                                                                              .append(Component.text(" - ", NamedTextColor.GRAY))
                                                                                              .append(Component.text(specializations.name, specializations.specType.textColor))
                                                                                              .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                                                             .append(Component.text(playersSR.get(uuid),
+                                                                                             .append(Component.text(playersSR.getOrDefault(uuid, 500),
                                                                                                      NamedTextColor.GOLD
                                                                                              )));
                             });

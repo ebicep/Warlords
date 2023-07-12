@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.vindicator;
 
-import com.ebicep.warlords.abilties.PrismGuard;
+import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -96,7 +96,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 50000,
                 () -> {
                     abilityTree.getWarlordsPlayer().setDamageResistance(abilityTree.getWarlordsPlayer().getSpec().getDamageResistance() + 25);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

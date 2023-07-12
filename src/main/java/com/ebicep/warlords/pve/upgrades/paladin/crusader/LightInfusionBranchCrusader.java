@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 
-import com.ebicep.warlords.abilties.LightInfusionCrusader;
+import com.ebicep.warlords.abilities.LightInfusionCrusader;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -90,7 +90,7 @@ public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfu
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() + 60);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

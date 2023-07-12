@@ -153,10 +153,9 @@ public class PartyCommand extends BaseCommand {
     }
 
     @Subcommand("join")
-    @CommandCompletion("@partyleaders")
     @Description("Joins a party")
-    public void join(@Conditions("party:false") Player player, @Values("@partyleaders") String partyLeaderName) {
-        Optional<Party> optionalParty = PartyManager.getPartyFromLeaderName(partyLeaderName);
+    public void join(@Conditions("party:false") Player player, @Flags("other") Player partyLeader) {
+        Optional<Party> optionalParty = PartyManager.getPartyFromLeaderName(partyLeader.getName());
         if (optionalParty.isEmpty()) {
             Party.sendPartyMessage(player, Component.text("That player does not have a party!", NamedTextColor.RED));
             return;

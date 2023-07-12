@@ -1,8 +1,8 @@
 package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.abilties.internal.*;
+import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -33,6 +33,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -46,9 +47,9 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -67,8 +68,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-
-import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
+import java.util.stream.Collectors;
 
 public abstract class WarlordsEntity {
 
@@ -92,6 +92,10 @@ public abstract class WarlordsEntity {
     protected Specializations specClass;
     @Nullable
     protected CompassTargetMarker compassTarget;
+    protected CooldownManager cooldownManager = new CooldownManager(this);
+    protected float health;
+    protected float maxHealth;
+    protected float maxBaseHealth;
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();
@@ -101,12 +105,8 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
     private final Location deathLocation;
-    protected CooldownManager cooldownManager = new CooldownManager(this);
     private Vector currentVector;
     private Team team;
-    protected float health;
-    protected float maxHealth;
-    protected float maxBaseHealth;
     private int regenTickTimer;
     private float regenTickTimerModifier = 1;
     private int respawnTickTimer = -1;
@@ -222,7 +222,6 @@ public abstract class WarlordsEntity {
         appendDebugMessage(debugMessage, "Crit Multiplier", event.getCritMultiplier(), false);
         debugMessage.append(Component.newline())
                     .append(Component.text(" - ", NamedTextColor.GRAY));
-        appendDebugMessage(debugMessage, "Ignore Reduction", "" + event.isIgnoreReduction(), false);
         debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Flags", "" + event.getFlags(), false);
     }
@@ -253,13 +252,12 @@ public abstract class WarlordsEntity {
     /**
      * Adds a damage instance to an ability or a player.
      *
-     * @param attacker        Assigns the damage value to the original caster.
-     * @param ability         Name of the ability.
-     * @param min             The minimum damage amount.
-     * @param max             The maximum damage amount.
-     * @param critChance      The critical chance of the damage instance.
-     * @param critMultiplier  The critical multiplier of the damage instance.
-     * @param ignoreReduction Whether the instance has to ignore damage reductions.
+     * @param attacker       Assigns the damage value to the original caster.
+     * @param ability        Name of the ability.
+     * @param min            The minimum damage amount.
+     * @param max            The maximum damage amount.
+     * @param critChance     The critical chance of the damage instance.
+     * @param critMultiplier The critical multiplier of the damage instance.
      */
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
             WarlordsEntity attacker,
@@ -267,10 +265,9 @@ public abstract class WarlordsEntity {
             float min,
             float max,
             float critChance,
-            float critMultiplier,
-            boolean ignoreReduction
+            float critMultiplier
     ) {
-        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, EnumSet.noneOf(InstanceFlags.class), null);
+        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class), null);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -280,10 +277,9 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
             UUID uuid
     ) {
-        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, EnumSet.noneOf(InstanceFlags.class), uuid);
+        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class), uuid);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -293,10 +289,9 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
             EnumSet<InstanceFlags> flags
     ) {
-        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, flags, null);
+        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, flags, null);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -306,7 +301,6 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
             EnumSet<InstanceFlags> flags,
             UUID uuid
     ) {
@@ -317,8 +311,6 @@ public abstract class WarlordsEntity {
                 max,
                 critChance,
                 critMultiplier,
-                ignoreReduction,
-                false,
                 true,
                 flags,
                 uuid
@@ -339,12 +331,11 @@ public abstract class WarlordsEntity {
         float max = event.getMax();
         float critChance = event.getCritChance();
         float critMultiplier = event.getCritMultiplier();
-        boolean trueDamage = event.isIgnoreReduction();
-        boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
         EnumSet<InstanceFlags> flags = event.getFlags();
-
+        boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
+        boolean pierceDamage = flags.contains(InstanceFlags.PIERCE_DAMAGE);
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
@@ -354,7 +345,6 @@ public abstract class WarlordsEntity {
 
         debugMessage.append(Component.newline()).append(Component.text("Post Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
-
 
         float initialHealth = health;
 
@@ -476,40 +466,39 @@ public abstract class WarlordsEntity {
             return Optional.empty();
         }
         float previousDamageValue = damageValue;
-        // Reduction before Intervene.
-        if (!trueDamage) {
-            // Flag carrier multiplier.
-            double flagMultiplier = getFlagDamageMultiplier();
-            if (flagMultiplier != 1) {
-                debugMessage.append(Component.newline()).append(Component.text("Flag Damage Multiplier:", NamedTextColor.AQUA));
-            }
+        // Flag carrier multiplier.
+        double flagMultiplier = getFlagDamageMultiplier();
+        if (flagMultiplier != 1) {
+            debugMessage.append(Component.newline()).append(Component.text("Flag Damage Multiplier:", NamedTextColor.AQUA));
             damageValue *= flagMultiplier;
-            if (flagMultiplier != 1) {
-                appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
-            }
-            // Checks whether the player is standing in a Hammer of Light.
-            if (HammerOfLight.notStandingInHammer(attacker, this)) {
-                debugMessage.append(Component.newline()).append(Component.text("Before Intervene", NamedTextColor.AQUA));
-                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
-                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    damageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
-                    if (previousDamageValue != damageValue) {
-                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
-                    }
-                    previousDamageValue = damageValue;
-                }
+            appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
+        }
+        // Reduction before Intervene.
 
-                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
-                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                    damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
-                    if (previousDamageValue != damageValue) {
-                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
-                    }
-                    previousDamageValue = damageValue;
+        if (!trueDamage) {
+            debugMessage.append(Component.newline()).append(Component.text("Before Intervene", NamedTextColor.AQUA));
+            appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
+            for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                float newDamageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
+                if (newDamageValue < damageValue && pierceDamage) { // pierce ignores victim dmg reduction
+                    continue;
                 }
-            } else {
-                debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
+                damageValue = newDamageValue;
+                if (previousDamageValue != damageValue) {
+                    appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                }
+                previousDamageValue = damageValue;
             }
+
+            appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
+            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
+                if (previousDamageValue != damageValue) {
+                    appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                }
+                previousDamageValue = damageValue;
+            }
+            //debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
         }
 
         final float damageHealValueBeforeInterveneReduction = damageValue;
@@ -518,10 +507,8 @@ public abstract class WarlordsEntity {
                 .filterCooldownClass(Intervene.class)
                 .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), this))
                 .findFirst();
-        if (!trueDamage &&
-                optionalInterveneCooldown.isPresent() &&
-                optionalInterveneCooldown.get().getTicksLeft() > 0 &&
-                HammerOfLight.notStandingInHammer(attacker, this) &&
+        if (!trueDamage && !pierceDamage &&
+                optionalInterveneCooldown.isPresent() && optionalInterveneCooldown.get().getTicksLeft() > 0 &&
                 isEnemy(attacker)
         ) {
             debugMessage.append(Component.newline()).append(Component.text("Intervene:", NamedTextColor.AQUA));
@@ -550,11 +537,11 @@ public abstract class WarlordsEntity {
                         remainingVeneDamage,
                         isCrit ? 100 : 0,
                         100,
-                        true
+                        EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                 );
                 //extra overVeneDamage to target
                 float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
-                addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : 0, 100, true)
+                addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : 0, 100)
                         .ifPresent(finalEvent::set);
             } else {
                 intervenedBy.addDamageInstance(attacker,
@@ -562,8 +549,7 @@ public abstract class WarlordsEntity {
                         damageValue,
                         damageValue,
                         isCrit ? 100 : 0,
-                        100,
-                        false
+                        100
                 );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
@@ -602,30 +588,31 @@ public abstract class WarlordsEntity {
         } else {
             // Damage reduction after Intervene
             if (!trueDamage) {
-                if (HammerOfLight.notStandingInHammer(attacker, this)) {
-                    // Damage Reduction
-                    // Example: .8 = 20% reduction.
-                    debugMessage.append(Component.newline()).append(Component.text("After Intervene:", NamedTextColor.AQUA));
-                    appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
-                    for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                        damageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
-                        if (previousDamageValue != damageValue) {
-                            appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
-                        }
-                        previousDamageValue = damageValue;
+                // Damage Reduction
+                // Example: .8 = 20% reduction.
+                debugMessage.append(Component.newline()).append(Component.text("After Intervene:", NamedTextColor.AQUA));
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
+                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                    float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
+                    if (newDamageValue < damageValue && pierceDamage) { // pierce ignores victim dmg reduction
+                        continue;
                     }
-
-                    appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
-                    for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                        damageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
-                        if (previousDamageValue != damageValue) {
-                            appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
-                        }
-                        previousDamageValue = damageValue;
+                    damageValue = newDamageValue;
+                    if (previousDamageValue != damageValue) {
+                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
                     }
-                } else {
-                    debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
+                    previousDamageValue = damageValue;
                 }
+
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
+                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                    damageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
+                    if (previousDamageValue != damageValue) {
+                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                    }
+                    previousDamageValue = damageValue;
+                }
+                //debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
             }
 
             final float damageHealValueBeforeShieldReduction = damageValue;
@@ -635,9 +622,9 @@ public abstract class WarlordsEntity {
                     .filter(RegularCooldown::hasTicksLeft)
                     .findFirst();
             if (!trueDamage &&
+                    !pierceDamage &&
                     shieldCooldown.isPresent() &&
-                    isEnemy(attacker) &&
-                    HammerOfLight.notStandingInHammer(attacker, this)
+                    isEnemy(attacker)
             ) {
                 RegularCooldown cooldown = shieldCooldown.get();
                 Shield shield = (Shield) cooldown.getCooldownObject();
@@ -663,10 +650,8 @@ public abstract class WarlordsEntity {
                             newDamage,
                             isCrit ? 100 : 0,
                             1,
-                            false,
                             true,
-                            true,
-                            EnumSet.noneOf(InstanceFlags.class)
+                            EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                     ));
 
                     addAbsorbed(-(shield.getShieldHealth()));
@@ -937,14 +922,12 @@ public abstract class WarlordsEntity {
     /**
      * Adds a healing instance to an ability or a player.
      *
-     * @param attacker              Assigns the damage value to the original caster.
-     * @param ability               Name of the ability.
-     * @param min                   The minimum healing amount.
-     * @param max                   The maximum healing amount.
-     * @param critChance            The critical chance of the damage instance.
-     * @param critMultiplier        The critical multiplier of the damage instance.
-     * @param ignoreReduction       Whether the instance has to ignore damage reductions.
-     * @param isLastStandFromShield Whether the instance if from last stand and absorbed healing
+     * @param attacker       Assigns the damage value to the original caster.
+     * @param ability        Name of the ability.
+     * @param min            The minimum healing amount.
+     * @param max            The maximum healing amount.
+     * @param critChance     The critical chance of the damage instance.
+     * @param critMultiplier The critical multiplier of the damage instance.
      */
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
             WarlordsEntity attacker,
@@ -952,24 +935,9 @@ public abstract class WarlordsEntity {
             float min,
             float max,
             float critChance,
-            float critMultiplier,
-            boolean ignoreReduction,
-            boolean isLastStandFromShield
+            float critMultiplier
     ) {
-        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
-                        this,
-                        attacker,
-                        ability,
-                        min,
-                        max,
-                        critChance,
-                        critMultiplier,
-                        ignoreReduction,
-                        isLastStandFromShield,
-                        false,
-                        EnumSet.noneOf(InstanceFlags.class)
-                )
-        );
+        return this.addHealingInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class));
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
@@ -979,23 +947,20 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
-            boolean isLastStandFromShield,
             EnumSet<InstanceFlags> flags
     ) {
         return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
-                        this,
-                        attacker,
-                        ability,
-                        min, max,
-                        critChance,
-                        critMultiplier,
-                        ignoreReduction,
-                        isLastStandFromShield,
-                        false,
-                        flags
-                )
-        );
+                this,
+                attacker,
+                ability,
+                min,
+                max,
+                critChance,
+                critMultiplier,
+                false,
+                flags,
+                null
+        ));
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
@@ -1005,8 +970,7 @@ public abstract class WarlordsEntity {
         float max = event.getMax();
         float critChance = event.getCritChance();
         float critMultiplier = event.getCritMultiplier();
-        boolean ignoreReduction = event.isIgnoreReduction();
-        boolean isLastStandFromShield = event.isIsLastStandFromShield();
+        boolean isLastStandFromShield = event.getFlags().contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
         boolean isMeleeHit = ability.isEmpty();
 
         WarlordsDamageHealingFinalEvent finalEvent;
@@ -1660,32 +1624,49 @@ public abstract class WarlordsEntity {
         return specClass;
     }
 
-    public void setRedCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getRedAbility().setCurrentCooldown(currentCooldown);
-            updateRedItem();
-        }
-    }
-
     public boolean isDisableCooldowns() {
         return disableCooldowns;
     }
 
-    public AbstractAbility getRedAbility() {
-        return spec.getRed();
+    public void setDisableCooldowns(boolean disableCooldowns) {
+        this.disableCooldowns = disableCooldowns;
     }
 
-    public void updateRedItem() {
-        if (entity instanceof Player) {
-            updateRedItem((Player) entity);
+    public void updateItem(AbstractAbility ability) {
+        if (entity instanceof Player player) {
+            updateItem(player, ability);
         }
     }
 
-    public void updateRedItem(Player player) {
-        updateItem(player, 1, spec.getRed(), RED_ABILITY);
+    public void updateItem(Player player, AbstractAbility ability) {
+        Integer inventoryIndex = spec.getInventoryAbilityIndex(ability);
+        if (inventoryIndex == null || inventoryIndex == 0) { // exclude weapon
+            return;
+        }
+        if (ability.getCurrentCooldown() > 0) {
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
+                    .flags(ItemFlag.HIDE_ENCHANTS);
+            if (!ability.getSecondaryAbilities().isEmpty()) {
+                cooldown.enchant(Enchantment.OXYGEN, 1);
+            }
+            player.getInventory().setItem(inventoryIndex, cooldown.get());
+        } else {
+            player.getInventory().setItem(
+                    inventoryIndex,
+                    ability.getItem()
+            );
+        }
     }
 
-    public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
+    /**
+     * Used for custom abilities not in the spec, like legendary weapons
+     *
+     * @param player
+     * @param slot
+     * @param ability
+     * @param item
+     */
+    public void updateCustomItem(Player player, int slot, AbstractAbility ability, @Nullable ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
             ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
                     .flags(ItemFlag.HIDE_ENCHANTS);
@@ -1701,99 +1682,11 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void setDisableCooldowns(boolean disableCooldowns) {
-        this.disableCooldowns = disableCooldowns;
-    }
-
-    public void subtractRedCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getRedAbility().subtractCurrentCooldown(cooldown);
-            updateRedItem();
-        }
-    }
-
-    public void setPurpleCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getPurpleAbility().setCurrentCooldown(currentCooldown);
-            updatePurpleItem();
-        }
-    }
-
-    public AbstractAbility getPurpleAbility() {
-        return spec.getPurple();
-    }
-
-    public void updatePurpleItem() {
-        if (entity instanceof Player) {
-            updatePurpleItem((Player) entity);
-        }
-    }
-
-    public void updatePurpleItem(Player player) {
-        updateItem(player, 2, spec.getPurple(), PURPLE_ABILITY);
-    }
-
-    public void subtractPurpleCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getPurpleAbility().subtractCurrentCooldown(cooldown);
-            updatePurpleItem();
-        }
-    }
-
-    public void setBlueCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getBlueAbility().setCurrentCooldown(currentCooldown);
-            updateBlueItem();
-        }
-    }
-
-    public AbstractAbility getBlueAbility() {
-        return spec.getBlue();
-    }
-
-    public void updateBlueItem() {
-        if (entity instanceof Player) {
-            updateBlueItem((Player) entity);
-        }
-    }
-
-    public void updateBlueItem(Player player) {
-        updateItem(player, 3, spec.getBlue(), BLUE_ABILITY);
-    }
-
-    public void subtractBlueCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getBlueAbility().subtractCurrentCooldown(cooldown);
-            updateBlueItem();
-        }
-    }
-
-    public void setOrangeCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getOrangeAbility().setCurrentCooldown(currentCooldown);
-            updateOrangeItem();
-        }
-    }
-
-    public AbstractAbility getOrangeAbility() {
-        return spec.getOrange();
-    }
-
-    public void updateOrangeItem() {
-        if (entity instanceof Player) {
-            updateOrangeItem((Player) entity);
-        }
-    }
-
-    public void updateOrangeItem(Player player) {
-        updateItem(player, 4, spec.getOrange(), ORANGE_ABILITY);
-    }
-
-    public void subtractOrangeCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getOrangeAbility().subtractCurrentCooldown(cooldown);
-            updateOrangeItem();
-        }
+    public <T> List<T> getAbilitiesMatching(Class<T> clazz) {
+        return spec.getAbilities().stream()
+                   .filter(clazz::isInstance)
+                   .map(clazz::cast)
+                   .collect(Collectors.toList());
     }
 
     public boolean isActive() {
@@ -1805,10 +1698,14 @@ public abstract class WarlordsEntity {
     }
 
     public void resetAbilities(boolean closeInventory) {
-        for (AbstractAbility ability : spec.getAbilities()) {
+        for (AbstractAbility ability : getAbilities()) {
             ability.setCurrentCooldown(0);
         }
         updateInventory(closeInventory);
+    }
+
+    public <T> List<AbstractAbility> getAbilities() {
+        return spec.getAbilities();
     }
 
     public void updateInventory(boolean closeInventory) {
@@ -1987,6 +1884,10 @@ public abstract class WarlordsEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public float subtractEnergy(FloatModifiable amount, boolean fromAttacker) {
+        return subtractEnergy(amount.getCurrentValue(), fromAttacker);
     }
 
     public float subtractEnergy(float amount, boolean fromAttacker) {
@@ -2649,8 +2550,7 @@ public abstract class WarlordsEntity {
                             getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
                             getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
                             0,
-                            100,
-                            false
+                            100
                     );
 
                     if (undyingArmy.isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
@@ -2670,8 +2570,7 @@ public abstract class WarlordsEntity {
                                                 458 + healthDamage,
                                                 612 + healthDamage,
                                                 0,
-                                                100,
-                                                false
+                                                100
                                         );
                                     });
 
@@ -2761,10 +2660,7 @@ public abstract class WarlordsEntity {
 
     public void updateItems() {
         if (entity instanceof Player player) {
-            updateRedItem(player);
-            updatePurpleItem(player);
-            updateBlueItem(player);
-            updateOrangeItem(player);
+            spec.getAbilities().forEach(ability -> updateItem(player, ability));
         }
     }
 

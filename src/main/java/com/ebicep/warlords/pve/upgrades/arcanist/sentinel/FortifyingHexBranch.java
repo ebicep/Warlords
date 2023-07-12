@@ -1,20 +1,25 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.FortifyingHex;
+import com.ebicep.warlords.abilities.FortifyingHex;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float energyCost = ability.getEnergyCost();
     float hitbox = ability.getPlayerHitbox();
     double projectileSpeed = ability.getProjectileSpeed();
 
     public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.multiplyMinMax(1.3f);
+        }
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
@@ -56,52 +61,55 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "-2.5 Energy cost\n+0.25 Block hit radius",
+                "-2.5 Energy cost\n+0.5 Block hit radius",
                 5000,
                 () -> {
                     ability.setEnergyCost(energyCost - 2.5f);
-                    ability.setPlayerHitbox(hitbox + 0.25f);
-                }
-        ));
-
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "-5 Energy cost\n+0.5 Block hit radius",
-                10000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 5);
                     ability.setPlayerHitbox(hitbox + 0.5f);
                 }
         ));
 
         treeB.add(new Upgrade(
+                "Spark - Tier II",
+                "-5 Energy cost\n+1 Block hit radius",
+                10000,
+                () -> {
+                    ability.setEnergyCost(energyCost - 5);
+                    ability.setPlayerHitbox(hitbox + 1f);
+                }
+        ));
+
+        treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "-7.5 Energy cost\n+0.75 Block hit radius",
+                "-7.5 Energy cost\n+1.5 Block hit radius",
                 15000,
                 () -> {
                     ability.setEnergyCost(energyCost - 7.5f);
-                    ability.setPlayerHitbox(hitbox + 0.75f);
+                    ability.setPlayerHitbox(hitbox + 1.5f);
                 }
         ));
 
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-10 Energy cost\n+1 Block hit radius",
+                "-10 Energy cost\n+2 Block hit radius",
                 20000,
                 () -> {
                     ability.setEnergyCost(energyCost - 10);
-                    ability.setPlayerHitbox(hitbox + 1f);
+                    ability.setPlayerHitbox(hitbox + 2f);
                 }
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Fortifying Hex - Master Upgrade",
                 """
+                        Fortifying Hex can now pierce through targets. Energy cost -15.
                         """,
                 50000,
                 () -> {
-
+                    ability.setMaxEnemiesHit(Integer.MAX_VALUE);
+                    ability.setMaxAlliesHit(Integer.MAX_VALUE);
+                    ability.setEnergyCostAdditive(ability.getEnergyCostAdditive() - 15);
                 }
         );
     }

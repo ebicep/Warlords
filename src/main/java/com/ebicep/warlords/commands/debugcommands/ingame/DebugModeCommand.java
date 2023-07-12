@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
@@ -34,7 +34,7 @@ public class DebugModeCommand extends BaseCommand {
             ability.setCurrentCooldown(0);
         }
         warlordsPlayer.updateItems();
-        warlordsPlayer.setHorseCooldown(0);
+        warlordsPlayer.setHorseCooldown(0.05f);
         if (gmc) {
             if (warlordsPlayer.getEntity() instanceof Player) {
                 ((Player) warlordsPlayer.getEntity()).setGameMode(GameMode.CREATIVE);

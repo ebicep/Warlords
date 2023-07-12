@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.revenant;
 
-import com.ebicep.warlords.abilties.OrbsOfLife;
+import com.ebicep.warlords.abilities.OrbsOfLife;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -89,7 +89,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 "Spawn 1 additional orb on active, double healing increase over time orbs last twice as long.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setOrbTickMultiplier(2);
                 }
         );

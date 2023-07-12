@@ -1,12 +1,12 @@
 package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.IceBarrier;
-import com.ebicep.warlords.abilties.OrderOfEviscerate;
-import com.ebicep.warlords.abilties.SoulShackle;
-import com.ebicep.warlords.abilties.UndyingArmy;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractTimeWarp;
+import com.ebicep.warlords.abilities.IceBarrier;
+import com.ebicep.warlords.abilities.OrderOfEviscerate;
+import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -38,13 +38,14 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_19_R3.inventory.*;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -134,7 +135,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, Component.textOfChildren(
                     Component.text("Welcome to Warlords 2.0 ", NamedTextColor.GOLD, TextDecoration.BOLD),
                     Component.text("(", NamedTextColor.GRAY),
-                    Component.text(Warlords.VERSION, NamedTextColor.RED),
+                    Component.text(Warlords.VERSION, Warlords.VERSION_COLOR),
                     Component.text(")", NamedTextColor.GRAY)
             ));
 
@@ -146,14 +147,18 @@ public class WarlordsEvents implements Listener {
             );
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player, Component.text("More Information: ", NamedTextColor.GOLD));
-            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://docs.flairy.me/index.html", NamedTextColor.RED));
-            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://ojagerl.nl/", NamedTextColor.RED));
+            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://docs.flairy.me/index.html", NamedTextColor.RED)
+                                                           .clickEvent(ClickEvent.openUrl("https://docs.flairy.me/index.html")));
+            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://ojagerl.nl/", NamedTextColor.RED)
+                                                           .clickEvent(ClickEvent.openUrl("https://ojagerl.nl/")));
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player,
-                    Component.text("Discord: ", NamedTextColor.GOLD).append(Component.text("discord.gg/GWPAx9sEG7", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD))
+                    Component.text("Discord: ", NamedTextColor.GOLD).append(Component.text("discord.gg/GWPAx9sEG7", NamedTextColor.DARK_PURPLE, TextDecoration.BOLD)
+                                                                                     .clickEvent(ClickEvent.openUrl("https://discord.gg/GWPAx9sEG7")))
             );
             ChatUtils.sendCenteredMessage(player,
-                    Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/3J1lGGn", NamedTextColor.GREEN, TextDecoration.BOLD))
+                    Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/3J1lGGn", NamedTextColor.GREEN, TextDecoration.BOLD)
+                                                                                           .clickEvent(ClickEvent.openUrl("https://bit.ly/3J1lGGn")))
             );
             ChatUtils.sendCenteredMessage(player, Component.text("-----------------------------------------------------", NamedTextColor.GRAY));
         }
@@ -365,8 +370,7 @@ public class WarlordsEvents implements Listener {
                             warlordsNPC.getMinMeleeDamage(),
                             warlordsNPC.getMaxMeleeDamage(),
                             0,
-                            100,
-                            false
+                            100
                     );
                 }
                 wpAttacker.setHitCooldown(20);
@@ -380,8 +384,7 @@ public class WarlordsEvents implements Listener {
                         weapon.getMeleeDamageMin(),
                         weapon.getMeleeDamageMax(),
                         weapon.getCritChance(),
-                        weapon.getCritMultiplier(),
-                        false
+                        weapon.getCritMultiplier()
                 );
             } else {
                 wpVictim.addDamageInstance(
@@ -390,8 +393,7 @@ public class WarlordsEvents implements Listener {
                         132,
                         179,
                         25,
-                        200,
-                        false
+                        200
                 );
             }
         }
@@ -435,8 +437,7 @@ public class WarlordsEvents implements Listener {
                                 100000,
                                 100000,
                                 0,
-                                100,
-                                false
+                                100
                         );
                     }
                     case COMPASS -> {
@@ -613,7 +614,7 @@ public class WarlordsEvents implements Listener {
                     if (wp.isDead()) {
                         wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
                     } else {
-                        wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100, false);
+                        wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100);
                     }
                 }
             } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
@@ -632,7 +633,7 @@ public class WarlordsEvents implements Listener {
                     if (wp != null) {
                         int damage = (int) e.getDamage();
                         if (damage > 5) {
-                            wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100, false);
+                            wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100);
                             wp.resetRegenTimer();
                         }
                     }
@@ -642,7 +643,7 @@ public class WarlordsEvents implements Listener {
                 if (e.getEntity() instanceof Player) {
                     WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
                     if (wp != null && !wp.getGame().isFrozen()) {
-                        wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100, false);
+                        wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100);
                         wp.resetRegenTimer();
                     }
                 }

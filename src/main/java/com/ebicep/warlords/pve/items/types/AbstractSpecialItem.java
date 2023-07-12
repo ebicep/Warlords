@@ -29,6 +29,11 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
     }
 
     @Override
+    public AbstractItem clone() {
+        return null; // TODO if needed
+    }
+
+    @Override
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
         addStatPoolAndBlessing(itemBuilder, null);

@@ -52,7 +52,7 @@ public class LegendaryGradient extends AbstractLegendaryWeapon implements Passiv
                 if (tickCountdown <= 0) {
                     tickCountdown = interval;
                     float healValue = player.getMaxHealth() * .07f;
-                    player.addHealingInstance(player, "Gradient", healValue, healValue, 0, 100, false, false);
+                    player.addHealingInstance(player, "Gradient", healValue, healValue, 0, 100);
                 }
             }
         }.runTaskTimer(0, 0);

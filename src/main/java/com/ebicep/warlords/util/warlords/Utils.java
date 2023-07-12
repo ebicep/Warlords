@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -47,7 +47,7 @@ public class Utils {
             "Apothecary",
             "Conjurer",
             "Sentinel",
-            "Cleric"
+            "Luminary"
     };
     // Sorted wool id color
     // https://prnt.sc/UN80GeSpeyly
@@ -93,7 +93,7 @@ public class Utils {
     }
 
     /**
-     * see org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity#getLineOfSight(Set, int, int)}
+     * see org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity#getLineOfSight(Set, int, int)}
      * this accounts for banners
      *
      * @param player

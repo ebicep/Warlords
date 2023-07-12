@@ -124,8 +124,7 @@ public class EventDjer extends AbstractZombie implements BossMob {
                         920,
                         1080,
                         0,
-                        100,
-                        false
+                        100
                 );
             }
             new GameRunnable(option.getGame()) {

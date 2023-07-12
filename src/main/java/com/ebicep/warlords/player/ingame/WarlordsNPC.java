@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Specializations;
@@ -61,10 +62,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     private AbstractMob<?> mob;
     private int stunTicks;
     private Component mobNamePrefix = Component.empty();
-
-    public Component getMobNamePrefix() {
-        return mobNamePrefix;
-    }
 
     public WarlordsNPC(
             UUID uuid,
@@ -138,6 +135,45 @@ public final class WarlordsNPC extends WarlordsEntity {
         setSpawnGrave(false);
         setMaxBaseHealth(maxHealth);
         spec.setDamageResistance(damageResistance);
+    }
+
+    public WarlordsNPC(
+            UUID uuid,
+            String name,
+            Weapons weapon,
+            LivingEntity entity,
+            Game game,
+            Team team,
+            Specializations specClass,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            AbstractMob<?> mob,
+            AbstractPlayerClass playerClass
+    ) {
+        super(uuid, name, entity, game, team, specClass);
+        this.mob = mob;
+        if (mob != null && mob.getMobTier() != null) {
+            mobNamePrefix = Component.textOfChildren(
+                    mob.getMobTier().getSymbol(),
+                    Component.text(" - ", NamedTextColor.GRAY)
+            );
+        }
+        this.spec = playerClass;
+        this.minMeleeDamage = minMeleeDamage;
+        this.maxMeleeDamage = maxMeleeDamage;
+        this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
+        this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
+        updateEntity();
+        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        setSpawnGrave(false);
+        setMaxBaseHealth(maxHealth);
+    }
+
+    public Component getMobNamePrefix() {
+        return mobNamePrefix;
     }
 
     @Override

@@ -164,7 +164,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
         if (thornsDamage > maxThornsDamage) {
             thornsDamage = maxThornsDamage;
         }
-        event.getAttacker().addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, false);
+        event.getAttacker().addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100);
     }
 
     @Override

@@ -1,12 +1,13 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.abilties.Earthliving;
-import com.ebicep.warlords.abilties.Windfury;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.EarthlivingWeapon;
+import com.ebicep.warlords.abilities.WindfuryWeapon;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -54,10 +55,10 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
         float procChanceIncrease = PROC_CHANCE_INCREASE + PROC_CHANCE_INCREASE_PER_UPGRADE * getTitleLevel();
 
         for (AbstractAbility ability : player.getSpec().getAbilities()) {
-            if (ability instanceof Windfury windfury) {
-                windfury.setProcChance(windfury.getProcChance() + procChanceIncrease);
-            } else if (ability instanceof Earthliving earthliving) {
-                earthliving.setProcChance(earthliving.getProcChance() + procChanceIncrease);
+            if (ability instanceof WindfuryWeapon windfuryWeapon) {
+                windfuryWeapon.setProcChance(windfuryWeapon.getProcChance() + procChanceIncrease);
+            } else if (ability instanceof EarthlivingWeapon earthlivingWeapon) {
+                earthlivingWeapon.setProcChance(earthlivingWeapon.getProcChance() + procChanceIncrease);
             }
         }
 
@@ -97,7 +98,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                     event.setMin(event.getMin() * 7);
                     event.setMax(event.getMax() * 7);
-                    event.setIgnoreReduction(true);
+                    event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
                 }
             }
         });

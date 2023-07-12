@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
-import com.ebicep.warlords.abilties.SoulSwitch;
+import com.ebicep.warlords.abilities.SoulSwitch;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -88,7 +88,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                         " reducing their damage dealt by 50%. Additionally, heal for 10% of your missing health when swapping.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

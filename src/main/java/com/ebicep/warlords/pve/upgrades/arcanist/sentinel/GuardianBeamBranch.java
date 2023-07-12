@@ -1,19 +1,24 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.GuardianBeam;
+import com.ebicep.warlords.abilities.GuardianBeam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
 public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+    float minDamage;
+    float maxDamage;
     float cooldown = ability.getCooldown();
     double maxDistance = ability.getMaxDistance();
 
     public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
         super(abilityTree, ability);
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.multiplyMinMax(1.3f);
+        }
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
@@ -87,13 +92,15 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Guardian Beam - Master Upgrade",
                 """
+                        Enemy rune timers are increased by an additional 1.5s. Shield health is increased by 15%.
                         """,
                 50000,
                 () -> {
-
+                    ability.setRuneTimerIncrease(ability.getRuneTimerIncrease() + 1.5f);
+                    ability.setShieldPercent(ability.getShieldPercent() + 15);
                 }
         );
     }

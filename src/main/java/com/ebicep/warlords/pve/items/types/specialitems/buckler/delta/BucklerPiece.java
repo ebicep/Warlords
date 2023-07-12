@@ -68,8 +68,7 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
                                             damageValue,
                                             damageValue,
                                             0,
-                                            100,
-                                            false
+                                            100
                                     );
                                 });
                 }

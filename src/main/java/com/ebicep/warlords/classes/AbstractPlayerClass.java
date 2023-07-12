@@ -1,12 +1,12 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.abilties.EarthenSpike;
-import com.ebicep.warlords.abilties.SoulShackle;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -15,25 +15,30 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractPlayerClass {
+
+    public static void sendRightClickPacket(Player player) {
+        if (player == null) {
+            return;
+        }
+        PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
+    }
 
     protected int maxHealth;
     protected int maxEnergy;
     protected float energyPerSec;
     protected float energyPerHit;
     protected int damageResistance;
-    protected AbstractAbility weapon;
-    protected AbstractAbility red;
-    protected AbstractAbility purple;
-    protected AbstractAbility blue;
-    protected AbstractAbility orange;
+    protected List<AbstractAbility> abilities;
+    protected int abilityGroup = 0; // each group is 4 abilities, excluding weapon
     protected boolean abilityCD = true;
     protected boolean secondaryAbilityCD = true;
     protected String name;
@@ -47,22 +52,14 @@ public abstract class AbstractPlayerClass {
             int energyPerSec,
             int energyPerHit,
             int damageResistance,
-            AbstractAbility weapon,
-            AbstractAbility red,
-            AbstractAbility purple,
-            AbstractAbility blue,
-            AbstractAbility orange
+            AbstractAbility... abilities
     ) {
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;
         this.energyPerSec = energyPerSec;
         this.energyPerHit = energyPerHit;
         this.damageResistance = damageResistance;
-        this.weapon = weapon;
-        this.red = red;
-        this.purple = purple;
-        this.blue = blue;
-        this.orange = orange;
+        this.abilities = new ArrayList<>(List.of(abilities));
         this.name = name;
 
         updateCustomStats();
@@ -74,12 +71,17 @@ public abstract class AbstractPlayerClass {
         }
     }
 
-    public AbstractAbility[] getAbilities() {
-        return new AbstractAbility[]{weapon, red, purple, blue, orange};
+    public List<AbstractAbility> getAbilities() {
+        return abilities;
     }
 
     public void setUpgradeBranches(WarlordsPlayer wp) {
-
+        AbilityTree abilityTree = wp.getAbilityTree();
+        List<AbstractUpgradeBranch<?>> branch = abilityTree.getUpgradeBranches();
+        abilities.stream()
+                 .map((AbstractAbility ability) -> ability.getUpgradeBranch(abilityTree))
+                 .filter(Objects::nonNull)
+                 .forEach(branch::add);
     }
 
     public List<Component> getFormattedData() {
@@ -91,8 +93,8 @@ public abstract class AbstractPlayerClass {
                 NamedTextColor.GOLD
         };
         List<Component> components = new ArrayList<>();
-        for (int i = 0; i < getAbilities().length; i++) {
-            AbstractAbility ability = getAbilities()[i];
+        for (int i = 0; i < abilities.size(); i++) {
+            AbstractAbility ability = abilities.get(i);
             TextComponent.Builder abilityInfo = Component.text();
             List<Pair<String, String>> info = ability.getAbilityInfo();
             if (info != null) {
@@ -110,8 +112,8 @@ public abstract class AbstractPlayerClass {
         return components;
     }
 
-    public AbstractAbility[] getAbilitiesExcludingWeapon() {
-        return new AbstractAbility[]{red, purple, blue, orange};
+    public List<AbstractAbility> getAbilitiesExcludingWeapon() {
+        return abilities.subList(1, abilities.size());
     }
 
     public void onRightClick(@Nonnull WarlordsEntity wp, @Nonnull Player player, int slot, boolean hotkeyMode) {
@@ -119,21 +121,25 @@ public abstract class AbstractPlayerClass {
         if (!wp.isActive()) {
             return;
         }
-
         if (wp.isDead()) {
             return;
         }
-
         if (!wp.getGame().isFrozen()) {
 
-            AbstractAbility ability = switch (slot) {
-                case 0 -> weapon;
-                case 1 -> red;
-                case 2 -> purple;
-                case 3 -> blue;
-                case 4 -> orange;
-                default -> null;
-            };
+            if (slot > 4) {
+                return;
+            }
+
+            AbstractAbility ability;
+            if (slot == 0) {
+                ability = abilities.get(0);
+            } else {
+                int abilityIndex = abilityGroup * 4 + slot;
+                if (abilityIndex >= abilities.size()) {
+                    return;
+                }
+                ability = abilities.get(abilityIndex);
+            }
 
             if (ability == null) {
                 return;
@@ -144,21 +150,7 @@ public abstract class AbstractPlayerClass {
                     player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
                     player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 } else {
-                    if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                        WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, player, ability);
-                        Bukkit.getPluginManager().callEvent(event);
-                        if (event.isCancelled()) {
-                            return;
-                        }
-                        weapon.onActivate(wp, player);
-                        if (!(weapon instanceof AbstractStrike) && !(weapon instanceof EarthenSpike)) {
-                            weapon.addTimesUsed();
-                            sendRightClickPacket(player);
-                        }
-                        resetAbilityCD(wp);
-                    } else {
-                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-                    }
+                    onRightClickAbility(ability, wp, player);
                 }
             } else {
                 onRightClickAbility(ability, wp, player);
@@ -169,18 +161,9 @@ public abstract class AbstractPlayerClass {
             }
 
         }
-
         if (hotkeyMode) {
             player.getInventory().setHeldItemSlot(0);
         }
-
-    }
-
-    public static void sendRightClickPacket(Player player) {
-        if (player == null) {
-            return;
-        }
-        PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
     }
 
     private void resetAbilityCD(WarlordsEntity we) {
@@ -217,6 +200,8 @@ public abstract class AbstractPlayerClass {
                 sendRightClickPacket(player);
             }
             resetAbilityCD(wp);
+        } else {
+            player.playSound(player.getLocation(), "notreadyalert", 1, 1);
         }
 
     }
@@ -230,6 +215,26 @@ public abstract class AbstractPlayerClass {
                 secondaryAbilityCD = true;
             }
         }.runTaskLater(5);
+    }
+
+    /**
+     * https://www.spigotmc.org/attachments/23c935453df410b299e4aee3c8cca21ff94ea98d-png.474751/
+     *
+     * @param ability
+     * @return
+     */
+    public Integer getInventoryAbilityIndex(AbstractAbility ability) {
+        int index = abilities.indexOf(ability);
+        if (index == 0) {
+            return index;
+        }
+        return switch (abilityGroup) {
+            case 0 -> index;
+            case 1 -> 22 + index;
+            case 2 -> 9 + index;
+            case 3 -> -4 + index;
+            default -> null;
+        };
     }
 
     public int getMaxHealth() {
@@ -273,43 +278,27 @@ public abstract class AbstractPlayerClass {
     }
 
     public AbstractAbility getWeapon() {
-        return weapon;
+        return abilities.get(0);
     }
 
-    public void setWeapon(AbstractAbility weapon) {
-        this.weapon = weapon;
-    }
-
+    @Deprecated
     public AbstractAbility getRed() {
-        return red;
+        return abilities.get(1);
     }
 
+    @Deprecated
     public void setRed(AbstractAbility red) {
-        this.red = red;
+        this.abilities.set(1, red);
     }
 
-    public AbstractAbility getPurple() {
-        return purple;
-    }
-
-    public void setPurple(AbstractAbility purple) {
-        this.purple = purple;
-    }
-
+    @Deprecated
     public AbstractAbility getBlue() {
-        return blue;
+        return abilities.get(3);
     }
 
+    @Deprecated
     public void setBlue(AbstractAbility blue) {
-        this.blue = blue;
-    }
-
-    public AbstractAbility getOrange() {
-        return orange;
-    }
-
-    public void setOrange(AbstractAbility orange) {
-        this.orange = orange;
+        this.abilities.set(3, blue);
     }
 
     public String getName() {
@@ -331,32 +320,18 @@ public abstract class AbstractPlayerClass {
     }
 
     public void runEverySecond() {
-        this.red.runEverySecond();
-        this.blue.runEverySecond();
-        this.orange.runEverySecond();
-        this.purple.runEverySecond();
-        this.weapon.runEverySecond();
+        abilities.forEach(AbstractAbility::runEverySecond);
     }
 
     public void runEveryTick() {
-        this.red.runEveryTick();
-        this.blue.runEveryTick();
-        this.orange.runEveryTick();
-        this.purple.runEveryTick();
-        this.weapon.runEveryTick();
+        abilities.forEach(AbstractAbility::runEveryTick);
     }
 
     public void increaseAllCooldownTimersBy(float amount) {
-        this.red.addCurrentCooldown(amount);
-        this.purple.addCurrentCooldown(amount);
-        this.blue.addCurrentCooldown(amount);
-        this.orange.addCurrentCooldown(amount);
+        abilities.forEach(ability -> ability.addCurrentCooldown(amount));
     }
 
     public void decreaseAllCooldownTimersBy(float amount) {
-        this.red.subtractCurrentCooldown(amount);
-        this.purple.subtractCurrentCooldown(amount);
-        this.blue.subtractCurrentCooldown(amount);
-        this.orange.subtractCurrentCooldown(amount);
+        abilities.forEach(ability -> ability.subtractCurrentCooldown(amount));
     }
 }

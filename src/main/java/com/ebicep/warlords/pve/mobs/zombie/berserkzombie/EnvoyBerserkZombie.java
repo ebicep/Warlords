@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
-import com.ebicep.warlords.abilties.Berserk;
-import com.ebicep.warlords.abilties.BloodLust;
+import com.ebicep.warlords.abilities.Berserk;
+import com.ebicep.warlords.abilities.BloodLust;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
@@ -34,10 +34,10 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                 0.43f,
                 20,
                 450,
-                600
+                600,
+                new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.setMinDamageHeal(woundingStrike.getMinDamageHeal() * 1.5f);
-        woundingStrike.setMaxDamageHeal(woundingStrike.getMaxDamageHeal() * 1.5f);
+        woundingStrike.multiplyMinMax(1.5f);
     }
 
     @Override
@@ -113,9 +113,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
                         currentDamageValue * .65f,
                         currentDamageValue * .65f,
                         0,
-                        100,
-                        false,
-                        false
+                        100
                 );
             }
         });

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.general.Weapons;

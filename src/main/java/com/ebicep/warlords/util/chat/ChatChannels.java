@@ -302,10 +302,10 @@ public enum ChatChannels {
      */
     public static void playerSendMessage(Player player, ChatChannels chatChannel, Component message) {
         try {
-            Component prefixWithColor = Permissions.getPrefixWithColor(player, false);
+            Component prefixWithColor = Permissions.getPrefixWithColor(player, true);
             Component component = chatChannel.getFormat(player)
-                                             .append(prefixWithColor.append(Component.text(player.getName())))
-                                             .append(Component.text(": ").append(message));
+                                             .append(prefixWithColor)
+                                             .append(Component.text(": ", NamedTextColor.WHITE).append(message));
             Set<Audience> viewers = new HashSet<>(Bukkit.getOnlinePlayers());
             chatChannel.setRecipients(player, viewers);
             viewers.add(Bukkit.getConsoleSender());

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
 
-import com.ebicep.warlords.abilties.Soulbinding;
+import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -85,7 +85,7 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                 "Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase the allied ability\ncooldown reduction by 0.15s",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

@@ -125,8 +125,8 @@ public class AbilityTree {
                             .lore(WordWrap.wrap(Component.text("Create a new profile to customize your experience.", NamedTextColor.GRAY), 150))
                             .get(),
                     (m, e) -> {
-                        if (autoUpgradeProfiles.size() >= 4) {
-                            warlordsPlayer.sendMessage(Component.text("You can only have up to 4 profiles per spec!", NamedTextColor.RED));
+                        if (autoUpgradeProfiles.size() >= 8) {
+                            warlordsPlayer.sendMessage(Component.text("You can only have up to 8 profiles per spec!", NamedTextColor.RED));
                         } else {
                             new SignGUI()
                                     .lines("", "Enter", "Profile Name", "")

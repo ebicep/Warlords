@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option.pve;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
@@ -31,7 +31,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Zombie;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -50,6 +50,7 @@ public interface PveOption extends Option {
     default void mobTick() {
         for (AbstractMob<?> mob : new ArrayList<>(getMobs())) {
             mob.whileAlive(getMobsMap().get(mob) - getTicksElapsed(), this);
+            mob.activateAbilities();
             if (mob.isShowBossBar()) {
                 mob.bossBar(getGame(), true);
             }
@@ -320,7 +321,7 @@ public interface PveOption extends Option {
             }
 
             list.add(Component.text(we.getName() + ": ")
-                              .append(Component.text(we.isDead() ? "DEAD" : "❤ " + we.getHealth() , we.isDead() ? NamedTextColor.DARK_RED : healthColor))
+                              .append(Component.text(we.isDead() ? "DEAD" : "❤ " + Math.round(we.getHealth()), we.isDead() ? NamedTextColor.DARK_RED : healthColor))
                               .append(Component.text(" / "))
                               .append(Component.text("⚔ " + we.getMinuteStats().total().getKills(), NamedTextColor.RED)));
         }

@@ -1,11 +1,11 @@
 package com.ebicep.warlords.game.option.pve.tutorial;
 
-import com.ebicep.warlords.abilties.ArcaneShield;
-import com.ebicep.warlords.abilties.AvengersStrike;
-import com.ebicep.warlords.abilties.Fireball;
-import com.ebicep.warlords.abilties.FlameBurst;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.AbstractTimeWarp;
+import com.ebicep.warlords.abilities.ArcaneShield;
+import com.ebicep.warlords.abilities.AvengersStrike;
+import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;

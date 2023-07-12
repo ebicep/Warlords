@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage;
 
-import com.ebicep.warlords.abilties.ArcaneShield;
+import com.ebicep.warlords.abilities.ArcaneShield;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -88,7 +88,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                 "When arcane shield ends or breaks, unleash a shockwave that stuns enemies for 6 seconds.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

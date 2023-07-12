@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 
-import com.ebicep.warlords.abilties.Inferno;
+import com.ebicep.warlords.abilities.Inferno;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -14,7 +14,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+15% Crit multiplier bonus",
+                "+15% Crit Multiplier bonus",
                 5000,
                 () -> {
                     ability.setCritMultiplierIncrease(critMultiplierIncrease + 15);
@@ -22,7 +22,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier II",
-                "+30% Crit multiplier bonus",
+                "+30% Crit Multiplier bonus",
                 10000,
                 () -> {
                     ability.setCritMultiplierIncrease(critMultiplierIncrease + 30);
@@ -30,7 +30,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier III",
-                "+45% Crit multiplier bonus",
+                "+45% Crit Multiplier bonus",
                 15000,
                 () -> {
                     ability.setCritMultiplierIncrease(critMultiplierIncrease + 45);
@@ -38,7 +38,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         ));
         treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+60% Crit multiplier bonus",
+                "+60% Crit Multiplier bonus",
                 20000,
                 () -> {
                     ability.setCritMultiplierIncrease(critMultiplierIncrease + 60);
@@ -84,7 +84,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 "Inferno's cooldown gets reduced by 0.5 seconds and duration gets increased by 0.25 seconds for each critical hit (max 40 hits)",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
 
-import com.ebicep.warlords.abilties.DeathsDebt;
+import com.ebicep.warlords.abilities.DeathsDebt;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -92,7 +92,7 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                         "gain 80% knockback resistance while Spirit's Respite is active and reduce damage taken by an additional 40%",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                     ability.setDamagePercent(ability.getDamagePercent() * 2);
                     ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.2f);
                 }

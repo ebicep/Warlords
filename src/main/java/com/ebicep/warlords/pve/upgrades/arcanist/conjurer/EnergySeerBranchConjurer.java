@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
 
-import com.ebicep.warlords.abilties.EnergySeerConjurer;
+import com.ebicep.warlords.abilities.EnergySeerConjurer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -80,13 +80,15 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Energy Seer - Master Upgrade",
                 """
+                        When your Energy Seer ends, add an additional 15% damage bonus and triple energy restored.
                         """,
                 50000,
                 () -> {
-
+                    ability.setDamageIncrease(ability.getDamageIncrease() + 15);
+                    ability.setEnergyRestore(ability.getEnergyRestore() * 3);
                 }
         );
     }

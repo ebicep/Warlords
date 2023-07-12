@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
-import com.ebicep.warlords.abilties.Berserk;
+import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
@@ -31,10 +31,10 @@ public class EliteBerserkZombie extends AbstractBerserkZombie {
                 0.494f, //30% more than basic zombie
                 10,
                 300,
-                500
+                500,
+                new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.setMinDamageHeal(woundingStrike.getMinDamageHeal() * 1.25f);
-        woundingStrike.setMaxDamageHeal(woundingStrike.getMaxDamageHeal() * 1.25f);
+        woundingStrike.multiplyMinMax(1.25f);
     }
 
     @Override

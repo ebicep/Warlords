@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
-import com.ebicep.warlords.abilties.ShadowStep;
+import com.ebicep.warlords.abilities.ShadowStep;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -90,7 +90,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                 "Gain 80% speed and knockback resistance upon landing for 5 seconds.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

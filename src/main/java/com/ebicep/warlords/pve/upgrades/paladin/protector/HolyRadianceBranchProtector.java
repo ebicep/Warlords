@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
-import com.ebicep.warlords.abilties.HolyRadianceProtector;
+import com.ebicep.warlords.abilities.HolyRadianceProtector;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -92,7 +92,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
                 "Protector's Mark is now AoE and has no target limit.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

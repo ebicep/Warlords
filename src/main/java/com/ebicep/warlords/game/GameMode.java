@@ -559,9 +559,8 @@ public enum GameMode {
             Specializations selectedSpec = playerSettings.getSelectedSpec();
             AbstractPlayerClass apc = selectedSpec.create.get();
 
-            return new ItemBuilder(apc.getWeapon()
-                                      .getItem(playerSettings.getWeaponSkins()
-                                                             .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
+            ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
+            return new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                     .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
                     .get();
         }));

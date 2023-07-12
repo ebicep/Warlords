@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.defender;
 
-import com.ebicep.warlords.abilties.WoundingStrikeDefender;
+import com.ebicep.warlords.abilities.WoundingStrikeDefender;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -97,7 +97,7 @@ public class WoundingStrikeBranchDef extends AbstractUpgradeBranch<WoundingStrik
                 50000,
                 () -> {
                     ability.setCritChance(100);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

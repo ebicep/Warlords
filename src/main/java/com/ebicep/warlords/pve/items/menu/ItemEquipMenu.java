@@ -288,8 +288,8 @@ public class ItemEquipMenu {
                         .lore(WordWrap.wrap(Component.text("Create a new loadout to customize your experience.", NamedTextColor.GRAY), 150))
                         .get(),
                 (m, e) -> {
-                    if (itemsManager.getLoadouts().size() >= 9) {
-                        player.sendMessage(Component.text("You can only have up to 9 loadouts!", NamedTextColor.RED));
+                    if (itemsManager.getLoadouts().size() >= 15) {
+                        player.sendMessage(Component.text("You can only have up to 15 loadouts!", NamedTextColor.RED));
                     } else {
                         new SignGUI()
                                 .lines("", "Enter", "Loadout Name", "")

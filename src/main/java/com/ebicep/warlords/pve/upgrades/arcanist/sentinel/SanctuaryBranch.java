@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
-import com.ebicep.warlords.abilties.Sanctuary;
+import com.ebicep.warlords.abilities.Sanctuary;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -80,13 +80,14 @@ public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
         ));
 
         masterUpgrade = new Upgrade(
-                "Electrifying Storm",
-                "Healing Rain - Master Upgrade",
+                "NAME",
+                "Sanctuary - Master Upgrade",
                 """
+                        All allies with max stacks of Fortifying Hex gain an additional 15% damage reduction. Reflection damage ignores enemy defenses and resistances.
                         """,
                 50000,
                 () -> {
-
+                    ability.setAdditionalDamageReduction(ability.getAdditionalDamageReduction() + 15);
                 }
         );
     }

@@ -1,17 +1,17 @@
 package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
-import com.ebicep.warlords.abilties.Windfury;
+import com.ebicep.warlords.abilities.WindfuryWeapon;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
+public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
 
     float weaponDamage = ability.getWeaponDamage();
     float cooldown = ability.getCooldown();
     int maxHits = ability.getMaxHits();
 
-    public WindfuryBranch(AbilityTree abilityTree, Windfury ability) {
+    public WindfuryBranch(AbilityTree abilityTree, WindfuryWeapon ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",
@@ -92,7 +92,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<Windfury> {
                         Hits on an enemy will permanently reduce their damage reduction by 2% for each additional Windfury proc.""",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

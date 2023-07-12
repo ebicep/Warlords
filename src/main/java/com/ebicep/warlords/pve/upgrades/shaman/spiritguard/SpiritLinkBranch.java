@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
 
-import com.ebicep.warlords.abilties.SpiritLink;
+import com.ebicep.warlords.abilities.SpiritLink;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -98,7 +98,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                     ability.setAdditionalBounces(ability.getAdditionalBounces() + 1);
                     ability.setDamageReductionDuration(ability.getDamageReductionDuration() * 2);
                     ability.setSpeedDuration(ability.getSpeedDuration() * 2);
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

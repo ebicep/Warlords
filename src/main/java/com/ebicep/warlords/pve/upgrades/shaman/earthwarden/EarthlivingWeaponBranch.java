@@ -1,17 +1,17 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
-import com.ebicep.warlords.abilties.Earthliving;
+import com.ebicep.warlords.abilities.EarthlivingWeapon;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> {
+public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWeapon> {
 
     int weaponDamage = ability.getWeaponDamage();
     int maxHits = ability.getMaxHits();
     float cooldown = ability.getCooldown();
 
-    public EarthlivingWeaponBranch(AbilityTree abilityTree, Earthliving ability) {
+    public EarthlivingWeaponBranch(AbilityTree abilityTree, EarthlivingWeapon ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -92,7 +92,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
                         "nearby allies for 10% of their missing health and restore energy equal to the same amount.",
                 50000,
                 () -> {
-                    ability.setPveMasterUpgrade(true);
+
                 }
         );
     }

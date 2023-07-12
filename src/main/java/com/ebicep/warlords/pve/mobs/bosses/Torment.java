@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -146,8 +146,7 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
                                             1000,
                                             1000,
                                             -1,
-                                            100,
-                                            true
+                                            100
                                     );
                                 }
                             }
