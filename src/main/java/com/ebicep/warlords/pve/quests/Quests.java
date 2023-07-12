@@ -41,8 +41,8 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 7_500L);
-                put(Currencies.SYNTHETIC_SHARD, 30L);
+                put(Currencies.COIN, 15_000L);
+                put(Currencies.SYNTHETIC_SHARD, 60L);
             }}
     ) {
         @Override
@@ -59,8 +59,8 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 7_500L);
-                put(Currencies.SYNTHETIC_SHARD, 30L);
+                put(Currencies.COIN, 15_000L);
+                put(Currencies.SYNTHETIC_SHARD, 60L);
             }}
     ) {
         @Override
@@ -83,8 +83,8 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 15_000L);
-                put(Currencies.SYNTHETIC_SHARD, 50L);
+                put(Currencies.COIN, 30_000L);
+                put(Currencies.SYNTHETIC_SHARD, 100L);
             }}
     ) {
         @Override
@@ -100,8 +100,8 @@ public enum Quests {
             PlayersCollections.DAILY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 7_500L);
-                put(Currencies.SYNTHETIC_SHARD, 30L);
+                put(Currencies.COIN, 15_000L);
+                put(Currencies.SYNTHETIC_SHARD, 60L);
             }}
     ) {
         @Override
@@ -128,7 +128,7 @@ public enum Quests {
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 50_000L);
+                put(Currencies.COIN, 100_000L);
                 put(Currencies.SYNTHETIC_SHARD, 300L);
             }}
     ) {
@@ -152,7 +152,7 @@ public enum Quests {
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
-                put(Currencies.COIN, 50_000L);
+                put(Currencies.COIN, 100_000L);
                 put(Currencies.SYNTHETIC_SHARD, 1500L);
             }}
     ) {
