@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -17,7 +18,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -89,9 +89,8 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
-                        World world = location.getWorld();
-                        world.spawnParticle(Particle.SMOKE_NORMAL, location, 1, 0.3, 0.3, 0.3, 0.02, null, true);
-                        world.spawnParticle(Particle.SPELL, location, 2, 0.3, 0.3, 0.3, 0.5, null, true);
+                        EffectUtils.displayParticle(Particle.SMOKE_NORMAL, location, 1, 0.3, 0.3, 0.3, 0.02);
+                        EffectUtils.displayParticle(Particle.SPELL, location, 2, 0.3, 0.3, 0.3, 0.5);
                     }
                 })
         ) {

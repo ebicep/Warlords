@@ -12,11 +12,13 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
 
     public CrystalOfHealingBranch(AbilityTree abilityTree, CrystalOfHealing ability) {
         super(abilityTree, ability);
-
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.setDuration(5);
+        }
 
         treeA.add(new Upgrade(
                 "Alleviate - Tier I",
-                "+100 Max health",
+                "+125 Max health",
                 5000,
                 () -> {
                     ability.setMaxHeal(maxHeal + 100);
@@ -24,7 +26,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier II",
-                "+200 Max health",
+                "+250 Max health",
                 10000,
                 () -> {
                     ability.setMaxHeal(maxHeal + 200);
@@ -32,7 +34,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier III",
-                "+300 Max health",
+                "+375 Max health",
                 15000,
                 () -> {
                     ability.setMaxHeal(maxHeal + 300);
@@ -40,7 +42,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
         ));
         treeA.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+400 Max health",
+                "+500 Max health",
                 20000,
                 () -> {
                     ability.setMaxHeal(maxHeal + 400);

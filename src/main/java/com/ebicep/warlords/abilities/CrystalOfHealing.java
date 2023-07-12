@@ -27,13 +27,14 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIcon {
 
     private static final float RADIUS = 1.5f;
-    private int duration = 20; // seconds
-    private float maxHeal = 1200f;
-    private int lifeSpan = 40; // seconds
+    private int duration = 15; // seconds
+    private float maxHeal = 1500;
+    private int lifeSpan = 45; // seconds
 
     public CrystalOfHealing() {
         super("Crystal of Healing", 0, 0, 20, 20, 0, 0);
@@ -45,7 +46,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                .append(Component.text(format(duration), NamedTextColor.GOLD))
                                .append(Component.text(" seconds, gradually increasing the amount of health it will restore to one ally when they absorb it, to a maximum of "))
                                .append(Component.text(format(maxHeal), NamedTextColor.GREEN))
-                               .append(Component.text(" health. The crystal of healing has a lifespan of "))
+                               .append(Component.text(" health. Grants 3 stacks of Merciful Hex at maximum charge. The crystal of healing has a lifespan of "))
                                .append(Component.text(format(lifeSpan), NamedTextColor.GOLD))
                                .append(Component.text(" seconds after its completion."));
     }
@@ -65,8 +66,10 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
         Location groundLocation = targetBlock.getLocation().clone();
         groundLocation.add(.5, 1, .5);
         double baseY = groundLocation.getY();
+        AtomicBoolean isCharged = new AtomicBoolean(false);
 
         Utils.playGlobalSound(wp.getLocation(), "arcanist.crystalofhealing.activation", 2, 0.85f);
+        EffectUtils.playParticleLinkAnimation(wp.getLocation(), groundLocation, 0, 200, 0, 1);
 
         CircleEffect teamCircleEffect = new CircleEffect(
                 wp.getGame(),
@@ -118,9 +121,10 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                     if (ticksElapsed % 20 == 0) {
                         int secondsElapsed = ticksElapsed / 20;
                         if (secondsElapsed < duration) {
-                            crystal.customName(Component.text(duration - secondsElapsed, NamedTextColor.YELLOW));
+                            crystal.customName(Component.text(duration - secondsElapsed, NamedTextColor.RED));
                         } else {
                             crystal.customName(Component.text(lifeSpan - (secondsElapsed - duration), NamedTextColor.GREEN));
+                            isCharged.set(true);
                         }
                         if (pveMasterUpgrade) {
                             for (WarlordsEntity allyTarget : PlayerFilter
@@ -158,6 +162,11 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                 .closestFirst(groundLocation)
                                 .first(teammate -> {
                                     teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.45f);
+                                    if (isCharged.get()) {
+                                        for (int i = 0; i < 3; i++) {
+                                            MercifulHex.giveMercifulHex(wp, teammate);
+                                        }
+                                    }
                                     FireWorkEffectPlayer.playFirework(groundLocation, FireworkEffect.builder()
                                                                                                     .withColor(Color.WHITE)
                                                                                                     .with(FireworkEffect.Type.STAR)
@@ -192,5 +201,13 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
 
     public void setLifeSpan(int lifeSpan) {
         this.lifeSpan = lifeSpan;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }
