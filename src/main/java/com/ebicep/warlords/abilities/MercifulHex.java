@@ -59,11 +59,11 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of piercing magical wind forward. The first ally hit by the magical wind heals ")
+        description = Component.text("Send a wave of piercing magical wind forward. The first ally hit heals ")
                 .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                 .append(Component.text(" health (subsequent hit allies are healed for 40%) and receives "))
                 .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit by the wind takes "))
+                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit takes "))
                 .append(formatRangeDamage(minDamage, maxDamage))
                 .append(Component.text(" damage. Also heal yourself for "))
                 .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
@@ -156,7 +156,12 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     }
 
-    private void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
+    public static void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
+        MercifulHex fromHex = getFromHex(from);
+        int tickDuration = fromHex.getTickDuration();
+        float dotMinHeal = fromHex.getDotMinHeal();
+        float dotMaxHeal = fromHex.getDotMaxHeal();
+        String name = fromHex.getName();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, MercifulHex.class, 3);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Merciful Hex",
