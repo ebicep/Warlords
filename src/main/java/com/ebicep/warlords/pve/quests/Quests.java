@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.quests;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
@@ -304,5 +305,18 @@ public enum Quests {
                 Component.text("/", NamedTextColor.AQUA),
                 Component.text(targetValue, NamedTextColor.GOLD)
         );
+    }
+
+    public LinkedHashMap<Spendable, Long> getRewards() {
+        LinkedHashMap<Spendable, Long> editedRewards = new LinkedHashMap<>(rewards);
+        if (DatabaseGameEvent.currentGameEvent != null && !DatabaseGameEvent.currentGameEvent.getEndDate().isBefore(Instant.now())) {
+            return editedRewards;
+        }
+        rewards.forEach((spendable, aLong) -> {
+            if (spendable instanceof Currencies) {
+                editedRewards.put(spendable, Math.round(aLong * .5));
+            }
+        });
+        return editedRewards;
     }
 }
