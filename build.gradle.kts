@@ -81,7 +81,7 @@ dependencies {
     implementation("com.github.Rapha149.SignGUI:signgui:7d7633b4d6")
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.3-SNAPSHOT")
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.14")
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.15")
     compileOnly("net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
