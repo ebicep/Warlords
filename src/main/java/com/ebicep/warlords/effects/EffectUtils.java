@@ -511,6 +511,14 @@ public class EffectUtils {
         }
     }
 
+    public static void displayParticle(
+            Particle particle,
+            Location loc,
+            int count
+    ) {
+        loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
+    }
+
     /**
      * @param particle which particle to display
      * @param loc location of the particle

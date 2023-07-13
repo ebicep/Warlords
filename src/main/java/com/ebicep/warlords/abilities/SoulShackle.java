@@ -59,7 +59,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
                                .append(Component.text("1.5", NamedTextColor.GOLD))
                                .append(Component.text(" seconds after shackling an enemy."))
                                .append(Component.newline())
-                               .append(Component.text("Has a range of "))
+                               .append(Component.text("\n\nHas a range of "))
                                .append(Component.text(shackleRange, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }

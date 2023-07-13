@@ -59,7 +59,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of piercing magical wind forward. The first ally hit heals ")
+        description = Component.text("Send a wave of energy forward. The first ally hit heals ")
                 .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                 .append(Component.text(" health (subsequent hit allies are healed for 40%) and receives "))
                 .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
@@ -69,7 +69,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
                 .append(Component.text(". If Merciful Hex hits a target, you receive "))
                 .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                .append(Component.text(" stack of Merciful Hex. Each stack of Merciful Hex heals "))
+                .append(Component.text(" stack of Merciful Hex.\n\nEach stack of Merciful Hex heals "))
                 .append(formatRangeHealing(dotMinHeal, dotMaxHeal))
                 .append(Component.text(" health every "))
                 .append(Component.text("2", NamedTextColor.GOLD))

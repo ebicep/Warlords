@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -165,11 +166,12 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
                         nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
 
                         if (pveMasterUpgrade && nearEntity instanceof WarlordsNPC) {
-                            FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
+                            EffectUtils.playFirework(newLoc, FireworkEffect.builder()
                                                                                     .withColor(Color.RED)
                                                                                     .withColor(Color.BLACK)
                                                                                     .with(FireworkEffect.Type.BALL_LARGE)
-                                                                                    .build());
+                                                                                    .build(),
+                                    1);
 
                             nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
                             nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(

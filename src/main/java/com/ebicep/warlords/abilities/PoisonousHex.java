@@ -122,7 +122,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         Location currentLocation = projectile.getCurrentLocation();
         Location startingLocation = projectile.getStartingLocation();
 
-        Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 2, 0.9f);
+        Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 0.3f, 0.9f);
 
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :

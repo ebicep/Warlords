@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -68,16 +69,10 @@ public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
         for (float i = 0; i < 4; i++) {
             double angle = Math.toRadians(i * 90) + ticksLived * 0.45;
             double width = projectileWidth;
-            currentLocation.getWorld().spawnParticle(
+            EffectUtils.displayParticle(
                     Particle.FLAME,
                     center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                    2,
-                    0,
-                    0,
-                    0,
-                    0,
-                    null,
-                    true
+                    2
             );
         }
     }
