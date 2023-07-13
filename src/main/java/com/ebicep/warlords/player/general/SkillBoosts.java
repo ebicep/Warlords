@@ -80,16 +80,16 @@ public enum SkillBoosts {
             }
     ),
     FROST_BOLT("Frostbolt",
-            Component.text("Increase the direct hit damage bonus of Frostbolt by 30% and increase the slowness by 5%.", NamedTextColor.GRAY),
-            Component.text("Increase the direct hit damage bonus of Frostbolt by ", NamedTextColor.GREEN)
-                     .append(Component.text("30% ", NamedTextColor.RED))
+            Component.text("Increase the damage of Frostbolt by 20% and increase the slowness by 5%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Frostbolt by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
                      .append(Component.text("and increase the slowness by ", NamedTextColor.GREEN))
                      .append(Component.text("5%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             FrostBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FrostBolt frostBolt) {
-                    frostBolt.setDirectHitMultiplier(frostBolt.getDirectHitMultiplier() + 0.3);
+                    abstractAbility.multiplyMinMax(1.2f);
                     frostBolt.setSlowness(frostBolt.getSlowness() + 5);
                 }
             }
@@ -149,20 +149,20 @@ public enum SkillBoosts {
             }
     ),
     WATER_BOLT("Water Bolt",
-            Component.text("Increase the direct hit healing bonus of Water Bolt by 35%.", NamedTextColor.GRAY),
-            Component.text("Increase the direct hit healing bonus of Water Bolt by ", NamedTextColor.GREEN)
-                     .append(Component.text("35%", NamedTextColor.RED))
+            Component.text("Increase the healing of Water Bolt by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Water Bolt by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             WaterBolt.class,
             abstractAbility -> {
-                if (abstractAbility instanceof WaterBolt waterBolt) {
-                    waterBolt.setDirectHitMultiplier(waterBolt.getDirectHitMultiplier() + 0.35);
+                if (abstractAbility instanceof WaterBolt) {
+                    abstractAbility.multiplyMinMax(1.2f);
                 }
             }
     ),
     WATER_BREATH("Water Breath",
-            Component.text("Reduce the cooldown of Water Breath by 15% and reduce the energy cost by 30.", NamedTextColor.GRAY),
-            Component.text("Reduce the cooldown of Water Breath by ", NamedTextColor.GREEN)
+            Component.text("Increase the healing of Water Breath by 15% and reduce the energy cost by 30.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Water Breath by ", NamedTextColor.GREEN)
                      .append(Component.text("15% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the energy cost by ", NamedTextColor.GREEN))
                      .append(Component.text("30", NamedTextColor.RED))
@@ -170,20 +170,20 @@ public enum SkillBoosts {
             WaterBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBreath) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .15f);
+                    abstractAbility.multiplyMinMax(1.15f);
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 30);
                 }
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            Component.text("Increase the duration of Time Warp by 100%.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Time Warp by 3 seconds.", NamedTextColor.GRAY),
             Component.text("Increase the duration of Time Warp by ", NamedTextColor.GREEN)
-                     .append(Component.text("100%", NamedTextColor.RED))
-                     .append(Component.text(".", NamedTextColor.GREEN)),
+                     .append(Component.text("3", NamedTextColor.RED))
+                     .append(Component.text(" seconds.", NamedTextColor.GREEN)),
             TimeWarpAquamancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpAquamancer timeWarpAquamancer) {
-                    timeWarpAquamancer.setTickDuration(timeWarpAquamancer.getTickDuration() * 2);
+                    timeWarpAquamancer.setTickDuration(timeWarpAquamancer.getTickDuration() + 3);
                 }
             }
     ),
