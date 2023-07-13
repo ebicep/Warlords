@@ -183,7 +183,7 @@ public enum SkillBoosts {
             TimeWarpAquamancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpAquamancer timeWarpAquamancer) {
-                    timeWarpAquamancer.setTickDuration(timeWarpAquamancer.getTickDuration() + 3);
+                    timeWarpAquamancer.setTickDuration(timeWarpAquamancer.getTickDuration() + 60);
                 }
             }
     ),

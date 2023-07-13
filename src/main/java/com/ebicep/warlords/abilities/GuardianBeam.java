@@ -18,7 +18,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +29,7 @@ import java.util.List;
 public class GuardianBeam extends AbstractBeam implements Duration {
 
     private float runeTimerIncrease = 1.5f;
-    private int shieldPercent = 25;
+    private int shieldPercent = 20;
     private int tickDuration = 120;
 
     public GuardianBeam() {
@@ -117,7 +116,6 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
         shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
-        Utils.playGlobalSound(shooter.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_3, 2, 2);
         return super.onActivate(shooter, player);
     }
 
