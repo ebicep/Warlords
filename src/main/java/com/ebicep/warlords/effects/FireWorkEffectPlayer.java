@@ -9,6 +9,9 @@ import org.bukkit.inventory.meta.FireworkMeta;
 @Deprecated
 public class FireWorkEffectPlayer {
 
+    /**
+     * @deprecated use EffectUtils.playFirework() instead.
+     */
     @Deprecated
     public static void playFirework(Location loc, FireworkEffect fe) {
         Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);

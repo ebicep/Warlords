@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -58,7 +57,6 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
                                .append(Component.text(" movement speed for "))
                                .append(Component.text("1.5", NamedTextColor.GOLD))
                                .append(Component.text(" seconds after shackling an enemy."))
-                               .append(Component.newline())
                                .append(Component.text("\n\nHas a range of "))
                                .append(Component.text(shackleRange, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
@@ -129,10 +127,14 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
 
     private void activateAbility(@Nonnull WarlordsEntity wp, WarlordsEntity shackleTarget) {
         EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 15);
-        FireWorkEffectPlayer.playFirework(shackleTarget.getLocation(), FireworkEffect.builder()
-                                                                                     .withColor(Color.YELLOW)
-                                                                                     .with(FireworkEffect.Type.BALL)
-                                                                                     .build());
+        EffectUtils.playFirework(
+                shackleTarget.getLocation(),
+                FireworkEffect.builder()
+                     .withColor(Color.YELLOW)
+                     .with(FireworkEffect.Type.BALL)
+                     .build(),
+                1
+        );
 
         wp.addSpeedModifier(wp, "Shackle Speed", 40, 30, "BASE");
 

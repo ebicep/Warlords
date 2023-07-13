@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -104,16 +103,14 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
                 boolean shouldExplode;
 
                 if (last) {
-                    newLoc.getWorld().spawnParticle(
+                    EffectUtils.displayParticle(
                             Particle.FIREWORKS_SPARK,
                             newLoc.clone().add(0, -1, 0),
                             1,
                             0.1,
                             0.1,
                             0.1,
-                            0.1,
-                            null,
-                            true
+                            0.1
                     );
 
                 }
@@ -140,13 +137,17 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
 
                     Utils.playGlobalSound(newLoc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.1f);
 
-                    FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
+                    EffectUtils.playFirework(
+                        newLoc,
+                        FireworkEffect.builder()
                             .withColor(Color.ORANGE)
                             .withColor(Color.RED)
                             .with(FireworkEffect.Type.BURST)
-                            .build());
+                            .build(),
+                        1
+                    );
 
-                    newLoc.getWorld().spawnParticle(Particle.SMOKE_NORMAL, newLoc, 100, 0.4, 0.05, 0.4, 0.2, null, true);
+                    EffectUtils.displayParticle(Particle.SMOKE_NORMAL, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
 
                     for (WarlordsEntity nearEntity : PlayerFilter
                             .entitiesAround(newLoc, hitbox, hitbox, hitbox)
@@ -166,11 +167,13 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
                         nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
 
                         if (pveMasterUpgrade && nearEntity instanceof WarlordsNPC) {
-                            EffectUtils.playFirework(newLoc, FireworkEffect.builder()
-                                                                                    .withColor(Color.RED)
-                                                                                    .withColor(Color.BLACK)
-                                                                                    .with(FireworkEffect.Type.BALL_LARGE)
-                                                                                    .build(),
+                            EffectUtils.playFirework(
+                                    newLoc,
+                                    FireworkEffect.builder()
+                                        .withColor(Color.RED)
+                                        .withColor(Color.BLACK)
+                                        .with(FireworkEffect.Type.BALL_LARGE)
+                                        .build(),
                                     1);
 
                             nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
