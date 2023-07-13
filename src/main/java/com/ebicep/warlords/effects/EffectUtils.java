@@ -7,11 +7,15 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -539,5 +543,19 @@ public class EffectUtils {
             T data
     ) {
         loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+    }
+
+    /**
+     * @param loc at what location should the firework be played at,
+     * @param fe which effects should the firework have.
+     * @param flightTime 1 = 0.5 seconds of flight time.
+     */
+    public static void playFirework(Location loc, FireworkEffect fe, int flightTime) {
+        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+        FireworkMeta fireworkMeta = firework.getFireworkMeta();
+        fireworkMeta.addEffect(fe);
+        fireworkMeta.setPower(flightTime);
+        firework.setFireworkMeta(fireworkMeta);
+        firework.detonate();
     }
 }
