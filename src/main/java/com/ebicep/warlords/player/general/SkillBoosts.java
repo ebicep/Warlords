@@ -10,14 +10,17 @@ import java.util.function.Consumer;
 
 public enum SkillBoosts {
     FIREBALL("Fireball",
-            Component.text("Increase the damage of Fireball by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Fireball by 10% and increase the direct hit damage bonus by 20%.", NamedTextColor.GRAY),
             Component.text("Increase the damage of Fireball by ", NamedTextColor.GREEN)
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(" and increase the direct hit damage bonus by ", NamedTextColor.GREEN))
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             Fireball.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Fireball) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                if (abstractAbility instanceof Fireball fireball) {
+                    abstractAbility.multiplyMinMax(1.1f);
+                    fireball.setDirectHitMultiplier(fireball.getDirectHitMultiplier() + 0.2);
                 }
             }
     ),
@@ -173,14 +176,14 @@ public enum SkillBoosts {
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            Component.text("Reduce the cooldown of Time Warp by 50%.", NamedTextColor.GRAY),
-            Component.text("Reduce the cooldown of Time Warp by ", NamedTextColor.GREEN)
-                     .append(Component.text("50%", NamedTextColor.RED))
-                     .append(Component.text(".", NamedTextColor.GREEN)),
+            Component.text("Increase the duration of Time Warp by 3 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Time Warp by ", NamedTextColor.GREEN)
+                     .append(Component.text("3", NamedTextColor.RED))
+                     .append(Component.text(" seconds.", NamedTextColor.GREEN)),
             TimeWarpAquamancer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof TimeWarpAquamancer) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
+                if (abstractAbility instanceof TimeWarpAquamancer timeWarpAquamancer) {
+                    timeWarpAquamancer.setTickDuration(timeWarpAquamancer.getTickDuration() + 3);
                 }
             }
     ),
