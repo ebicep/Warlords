@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.Mobs;
@@ -11,7 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Function;
 
-public class SpawnMobAbility extends AbstractAbility {
+public class SpawnMobAbility extends AbstractPveAbility {
 
     private final Mobs mobToSpawn;
     private final Function<PveOption, Integer> spawnAmount;
@@ -38,18 +37,9 @@ public class SpawnMobAbility extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-        PveOption pve = wp.getGame()
-                          .getOptions()
-                          .stream()
-                          .filter(PveOption.class::isInstance)
-                          .map(PveOption.class::cast)
-                          .findFirst().orElse(null);
-        if (pve == null) {
-            return false;
-        }
-        for (int i = 0; i < spawnAmount.apply(pve); i++) {
-            pve.spawnNewMob(mobToSpawn.createMob.apply(wp.getLocation()), wp.getTeam());
+    public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+        for (int i = 0; i < spawnAmount.apply(pveOption); i++) {
+            pveOption.spawnNewMob(mobToSpawn.createMob.apply(wp.getLocation()), wp.getTeam());
         }
         return true;
     }

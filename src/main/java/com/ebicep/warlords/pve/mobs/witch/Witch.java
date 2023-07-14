@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.mobs.witch;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -11,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -72,7 +72,7 @@ public class Witch extends AbstractWitch implements EliteMob {
         attacker.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 5);
     }
 
-    private static class WitchBuff extends AbstractAbility {
+    private static class WitchBuff extends AbstractPveAbility {
 
         public WitchBuff() {
             super("Witch Buff", 0, 100);
@@ -89,17 +89,8 @@ public class Witch extends AbstractWitch implements EliteMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            PveOption pve = wp.getGame()
-                              .getOptions()
-                              .stream()
-                              .filter(PveOption.class::isInstance)
-                              .map(PveOption.class::cast)
-                              .findFirst().orElse(null);
-            if (pve == null) {
-                return false;
-            }
-            DifficultyIndex difficulty = pve.getDifficulty();
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            DifficultyIndex difficulty = pveOption.getDifficulty();
             boolean removeDebuffs = difficulty == DifficultyIndex.HARD || difficulty == DifficultyIndex.EXTREME || difficulty == DifficultyIndex.ENDLESS;
             for (WarlordsEntity ally : PlayerFilter
                     .entitiesAround(wp, 9, 9, 9)

@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.SoulShackle;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
@@ -139,7 +139,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         }
     }
 
-    public static class GhoulcallersFury extends AbstractAbility {
+    public static class GhoulcallersFury extends AbstractPveAbility {
 
         private int timesInARowDamageMaxReduced = 0;
 
@@ -158,17 +158,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            //every 5 seconds. [this mob’s fury] deals (Damage values depending on total players in game) * 0.95 ^ x damage, where x is the amount of attacks that hit this mob in the past 5s.
-            PveOption pve = wp.getGame()
-                              .getOptions()
-                              .stream()
-                              .filter(PveOption.class::isInstance)
-                              .map(PveOption.class::cast)
-                              .findFirst().orElse(null);
-            if (pve == null) {
-                return false;
-            }
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
                 return true;
             }
@@ -195,7 +185,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 timesInARowDamageMaxReduced = 0;
             }
 
-            int playerCount = pve.playerCount();
+            int playerCount = pveOption.playerCount();
             float minDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
                     playerCount,
                     PLAYER_COUNT_DAMAGE_VALUES.get(1)
@@ -207,7 +197,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
             ).getB() * Math.pow(0.95, attacksInLast5Seconds)
             );
 
-            float multiplier = switch (pve.getDifficulty()) {
+            float multiplier = switch (pveOption.getDifficulty()) {
                 case EASY -> 0.5f;
                 case HARD -> 1.5f;
                 case EXTREME -> 2f;
