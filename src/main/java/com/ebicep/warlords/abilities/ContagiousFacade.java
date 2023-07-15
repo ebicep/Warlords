@@ -84,23 +84,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
-                },
-                tickDuration
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * (100 - damageAbsorption) / 100f;
-                totalAbsorbed.addAndGet(currentDamageValue - afterValue);
-                return afterValue;
-            }
-        };
-        wp.getCooldownManager().addCooldown(protectiveLayerCooldown);
-        addSecondaryAbility(() -> {
                     if (!wp.isAlive()) {
                         return;
                     }
-                    wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
 
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
@@ -112,9 +98,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                             new Shield(name, shieldHealth),
                             wp,
                             CooldownTypes.ABILITY,
-                            cooldownManager -> {
+                            cooldownManager1 -> {
                             },
-                            cooldownManager -> {
+                            cooldownManager1 -> {
                             },
                             shieldTickDuration,
                             Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -129,12 +115,26 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     );
                     if (pveMasterUpgrade) {
                         PlayerFilter.entitiesAround(wp, 4, 4, 4)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach(enemy -> {
-                                        enemy.addDamageInstance(wp, name, shieldHealth, shieldHealth, 0, 100);
-                                        enemy.addSpeedModifier(wp, name, -50, 60, "BASE");
-                                    });
+                                .aliveEnemiesOf(wp)
+                                .forEach(enemy -> {
+                                    enemy.addDamageInstance(wp, name, shieldHealth, shieldHealth, 0, 100);
+                                    enemy.addSpeedModifier(wp, name, -50, 60, "BASE");
+                                });
                     }
+                },
+                tickDuration
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                float afterValue = currentDamageValue * (100 - damageAbsorption) / 100f;
+                totalAbsorbed.addAndGet(currentDamageValue - afterValue);
+                return afterValue;
+            }
+        };
+        wp.getCooldownManager().addCooldown(protectiveLayerCooldown);
+        addSecondaryAbility(() -> {
+                    wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
+                    wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(protectiveLayerCooldown)

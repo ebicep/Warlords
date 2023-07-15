@@ -44,7 +44,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                    .orElse(new PoisonousHex());
     }
 
-    private int maxFullDistance = 30;
+    private int maxFullDistance = 40;
     private int hexStacksPerHit = 1;
     private float dotMinDamage = 30;
     private float dotMaxDamage = 40;
@@ -54,11 +54,11 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     private int maxEnemiesHit = 2;
 
     public PoisonousHex() {
-        super("Poisonous Hex", 307, 415, 0, 70, 20, 175, 2.5, 300, false);
+        super("Poisonous Hex", 307, 415, 0, 70, 20, 175, 2.5, 40, false);
         this.shotsFiredAtATime = 2;
-        this.maxAngleOfShots = 30;
+        this.maxAngleOfShots = 26;
         this.forwardTeleportAmount = 1.6f;
-        this.playerHitbox += .25;
+        this.playerHitbox += .35;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                                .append(Component.text(" seconds. Stacks up to "))
                                .append(Component.text(maxStacks, NamedTextColor.BLUE))
                                .append(Component.text(" times."))
-                               .append(Component.text("\n\nHas an optimal range of "))
+                               .append(Component.text("\n\nHas a maximum of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
                                .append(Component.text("blocks."));
     }

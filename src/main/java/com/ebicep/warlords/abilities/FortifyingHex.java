@@ -36,14 +36,14 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 1;
-    private int maxFullDistance = 20;
+    private int maxFullDistance = 30;
     private int tickDuration = 80;
-    private int damageReduction = 5;
+    private int damageReduction = 8;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
 
     public FortifyingHex() {
-        super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 300, true);
+        super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 30, true);
         this.playerHitbox += .25;
     }
 
@@ -65,7 +65,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                                .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage reduction. Stacks up to"))
                                .append(Component.text(maxStacks, NamedTextColor.BLUE))
-                               .append(Component.text(" times.\n\nHas an optimal range of "))
+                               .append(Component.text(" times.\n\nHas a maximum of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
                                .append(Component.text("blocks."));
     }

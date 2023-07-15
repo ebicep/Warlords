@@ -31,9 +31,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private float runeTimerIncrease = 0.5f;
     private int tickDuration = 100;
     private float meleeDamageReduction = 50;
-    private int shieldBase = 200;
+    private int shieldBase = 400;
     private int shieldIncrease = 80;
-    private int shieldMaxHealth = 1000;
+    private int shieldMaxHealth = 1200;
     private int reactivateTickDuration = 100;
 
     public MysticalBarrier() {
@@ -86,6 +86,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                 .forEach(ally -> {
                                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                                     giveShield(ally, shieldHealth);
+                                    FortifyingHex.giveFortifyingHex(wp, ally);
                                 });
                 },
                 tickDuration,
@@ -125,6 +126,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     wp.getCooldownManager().removeCooldownNoForce(mysticalBarrierCooldown);
                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                     giveShield(wp, shieldHealth);
+                    FortifyingHex.giveFortifyingHex(wp, wp);
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(mysticalBarrierCooldown)
