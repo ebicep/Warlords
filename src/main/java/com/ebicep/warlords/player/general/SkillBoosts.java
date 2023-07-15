@@ -20,7 +20,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Fireball fireball) {
                     abstractAbility.multiplyMinMax(1.1f);
-                    fireball.setDirectHitMultiplier(fireball.getDirectHitMultiplier() + 0.2);
+                    fireball.setDirectHitMultiplier(fireball.getDirectHitMultiplier() + 20);
                 }
             }
     ),

@@ -38,7 +38,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
     public int playersHit = 0;
 
     private float hitbox = 5;
-    private int blindDurationInTicks = 40;
+    private int blindDurationInTicks = 30;
 
     public IncendiaryCurse() {
         super("Incendiary Curse", 408, 552, 8, 60, 25, 175);
@@ -50,7 +50,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text("damage. Enemies hit are blinded for "))
                                .append(Component.text(format(blindDurationInTicks / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. " + (inPve ? "Mobs that are blinded become stunned and lose agro on their current target." : ".")));
+                               .append(Component.text(" seconds. " + (inPve ? "Mobs that are blinded become stunned and lose agro on their current target." : "")));
     }
 
     @Override

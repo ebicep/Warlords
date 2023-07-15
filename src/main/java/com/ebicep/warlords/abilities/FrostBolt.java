@@ -24,7 +24,7 @@ import java.util.List;
 public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
 
     private int maxFullDistance = 30;
-    private double directHitMultiplier = 1.15;
+    private float directHitMultiplier = 15;
     private float hitbox = 4;
     private int slowness = 25;
 
@@ -41,7 +41,7 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
                                .append(Component.text("for "))
                                .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text(" seconds. A direct hit will cause the enemy to take an additional "))
-                               .append(Component.text("15%", NamedTextColor.RED))
+                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.RED))
                                .append(Component.text(" extra damage."))
                                .append(Component.newline())
                                .append(Component.text("Has an optimal range of "))
@@ -104,8 +104,8 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
             hit.addDamageInstance(
                     shooter,
                     name,
-                    (float) (minDamageHeal * directHitMultiplier * toReduceBy),
-                    (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
+                    (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                    (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                     critChance,
                     critMultiplier
             );
@@ -190,11 +190,11 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
         this.maxFullDistance = maxFullDistance;
     }
 
-    public double getDirectHitMultiplier() {
+    public float getDirectHitMultiplier() {
         return directHitMultiplier;
     }
 
-    public void setDirectHitMultiplier(double directHitMultiplier) {
+    public void setDirectHitMultiplier(float directHitMultiplier) {
         this.directHitMultiplier = directHitMultiplier;
     }
 

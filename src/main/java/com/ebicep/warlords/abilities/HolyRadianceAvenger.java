@@ -42,11 +42,11 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                                .append(Component.newline())
                                .append(Component.text("You may look at an enemy to mark them for "))
                                .append(Component.text(markDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Mark has an optimal range of "))
-                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks. Reducing their energy per second by "))
+                               .append(Component.text(" seconds. Reducing their energy per second by "))
                                .append(Component.text(energyDrainPerSecond, NamedTextColor.YELLOW))
-                               .append(Component.text(" for the duration."));
+                               .append(Component.text(" for the duration."))
+                               .append(Component.text("\n\nMark has an optimal range of "))
+                               .append(Component.text(markRadius, NamedTextColor.YELLOW));
     }
 
     @Override

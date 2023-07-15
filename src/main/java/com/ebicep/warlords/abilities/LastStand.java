@@ -67,9 +67,8 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                                .append(Component.text(" for "))
                                .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. You are healed for the amount of damage prevented on allies."))
-                               .append(Component.newline())
-                               .append(Component.text("Has a maximum range of "))
-                               .append(Component.text(radius, NamedTextColor.GOLD))
+                               .append(Component.text("\n\nHas a maximum range of "))
+                               .append(Component.text(radius, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
 
@@ -117,7 +116,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * (100 - selfDamageReductionPercent) / 100f;
+                float afterValue = currentDamageValue * convertToDivisionDecimal(selfDamageReductionPercent);
                 tempLastStand.addAmountPrevented(currentDamageValue - afterValue);
                 return afterValue;
             }
@@ -150,7 +149,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
             ) {
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * (100 - teammateDamageReductionPercent) / 100f;
+                    return currentDamageValue * convertToDivisionDecimal(teammateDamageReductionPercent);
                 }
 
                 @Override
