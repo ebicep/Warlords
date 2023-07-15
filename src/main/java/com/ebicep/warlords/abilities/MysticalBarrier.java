@@ -30,6 +30,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     private float runeTimerIncrease = 0.5f;
     private int tickDuration = 100;
+    private float meleeDamageReduction = 50;
     private int shieldBase = 200;
     private int shieldIncrease = 80;
     private int shieldMaxHealth = 1000;
@@ -106,6 +107,11 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 event.getAttacker().getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
                 damageInstances.getAndIncrement();
+            }
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return event.getAbility().isEmpty() ? currentDamageValue * convertToPercent(100 - meleeDamageReduction) : 1;
             }
         };
         wp.getCooldownManager().addCooldown(mysticalBarrierCooldown);
