@@ -50,7 +50,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
         description = Component.text("Place a highly conductive totem on the ground. Casting Chain Lightning or Lightning Rod on the totem will cause it to pulse, dealing ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" damage to all enemies in a "))
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(format(radius), NamedTextColor.YELLOW))
                                .append(Component.text(" block radius. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));

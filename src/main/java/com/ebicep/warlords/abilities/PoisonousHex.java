@@ -51,6 +51,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     private int maxStacks = 3;
     private int tickDuration = 40;
     private int dotTickFrequency = 40;
+    private int maxEnemiesHit = 2;
 
     public PoisonousHex() {
         super("Poisonous Hex", 307, 415, 0, 70, 20, 175, 2.5, 300, false);
@@ -64,16 +65,18 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     public void updateDescription(Player player) {
         description = Component.text("Throw Hex Fangs in front of you, dealing ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" damage to up to 2 enemies. Additionally, hit targets receive "))
+                               .append(Component.text(" damage to up to ")
+                               .append(Component.text(maxEnemiesHit, NamedTextColor.RED))
+                               .append(Component.text(" enemies. Additionally, hit targets receive ")))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex. Dealing "))
+                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex.\n\nEach stack of Poisonous Hex deals "))
                                .append(formatRangeDamage(dotMinDamage, dotMaxDamage))
                                .append(Component.text(" damage every "))
                                .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text(" seconds for "))
                                .append(Component.text(format(tickDuration / 10f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. Stacks up to "))
-                               .append(Component.text(maxStacks, NamedTextColor.RED))
+                               .append(Component.text(maxStacks, NamedTextColor.BLUE))
                                .append(Component.text(" times."))
                                .append(Component.text("\n\nHas an optimal range of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
@@ -115,7 +118,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         if (projectile.getHit().contains(hit)) {
             return;
         }
-        if (projectile.getHit().size() >= 2) {
+        if (projectile.getHit().size() >= maxEnemiesHit) {
             return;
         }
         WarlordsEntity wp = projectile.getShooter();
@@ -149,7 +152,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                         .limit(2)
                         .forEach(enemy -> givePoisonousHex(wp, enemy));
         }
-        if (projectile.getHit().size() >= 2) {
+        if (projectile.getHit().size() >= maxEnemiesHit) {
             getProjectiles(projectile).forEach(InternalProjectile::cancel);
         }
     }
@@ -307,5 +310,13 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     public void setDotTickFrequency(int dotTickFrequency) {
         this.dotTickFrequency = dotTickFrequency;
+    }
+
+    public int getMaxEnemiesHit() {
+        return maxEnemiesHit;
+    }
+
+    public void setMaxEnemiesHit(int maxEnemiesHit) {
+        this.maxEnemiesHit = maxEnemiesHit;
     }
 }

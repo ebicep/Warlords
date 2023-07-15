@@ -42,7 +42,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Surround yourself with magical spirits that increase the attacker’s rune timers by ")
+        description = Component.text("Surround yourself with magical spirits that reduce the melee damage you take by")
+                               .append(Component.text(format(meleeDamageReduction) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text("and increase the attacker’s cooldowns by "))
                                .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds for every instance of damage they deal to you for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
@@ -193,5 +195,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     public void setReactivateTickDuration(int reactivateTickDuration) {
         this.reactivateTickDuration = reactivateTickDuration;
+    }
+
+    public float getMeleeDamageReduction() {
+        return meleeDamageReduction;
+    }
+
+    public void setMeleeDamageReduction(float meleeDamageReduction) {
+        this.meleeDamageReduction = meleeDamageReduction;
     }
 }

@@ -16,6 +16,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
         super(abilityTree, ability);
         if (abilityTree.getWarlordsPlayer().isInPve()) {
             ability.multiplyMinMax(1.3f);
+            ability.setMaxEnemiesHit(4);
         }
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
