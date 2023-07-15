@@ -303,6 +303,13 @@ public abstract class AbstractAbility implements AbilityIcon {
         return input / 100f;
     }
 
+    /**
+     * @return returns the input subtracted from 100 and then divided by 100
+     */
+    public float convertToMultiplicativeDecimal(float input) {
+        return (100 - input) / 100f;
+    }
+
     public void runEverySecond() {
     }
 

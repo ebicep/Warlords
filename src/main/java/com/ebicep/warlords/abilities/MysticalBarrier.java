@@ -111,7 +111,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return event.getAbility().isEmpty() ? currentDamageValue * convertToPercent(100 - meleeDamageReduction) : 1;
+                return event.getAbility().isEmpty() ? currentDamageValue * convertToMultiplicativeDecimal(meleeDamageReduction) : 1;
             }
         };
         wp.getCooldownManager().addCooldown(mysticalBarrierCooldown);
