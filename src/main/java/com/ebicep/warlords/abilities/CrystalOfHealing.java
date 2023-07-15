@@ -166,7 +166,9 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                 .first(teammate -> {
                                     teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.45f);
                                     if (isCharged.get()) {
-                                        MercifulHex.giveMercifulHex(wp, teammate);
+                                        for (int i = 0; i < 3; i++) {
+                                            MercifulHex.giveMercifulHex(wp, teammate);
+                                        }
                                     }
                                     EffectUtils.playFirework(
                                             groundLocation,

@@ -157,7 +157,13 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         }
     }
 
-    private void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
+    public static void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
+        PoisonousHex fromHex = getFromHex(from);
+        String hexName = fromHex.getName();
+        int tickDuration = fromHex.getTickDuration();
+        int dotTickFrequency = fromHex.getDotTickFrequency();
+        float dotMinDamage = fromHex.getDotMinDamage();
+        float dotMaxDamage = fromHex.getDotMaxDamage();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Poisonous Hex",
@@ -169,7 +175,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 cooldownManager -> {
                     to.addDamageInstance(
                             from,
-                            name,
+                            hexName,
                             dotMinDamage,
                             dotMaxDamage,
                             0,
@@ -182,7 +188,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                     if (ticksElapsed % dotTickFrequency == 0 && ticksElapsed != 0) {
                         to.addDamageInstance(
                                 from,
-                                name,
+                                hexName,
                                 dotMinDamage,
                                 dotMaxDamage,
                                 0,

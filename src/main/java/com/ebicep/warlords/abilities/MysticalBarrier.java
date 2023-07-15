@@ -86,7 +86,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                 .forEach(ally -> {
                                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                                     giveShield(ally, shieldHealth);
-                                    FortifyingHex.giveFortifyingHex(wp, ally);
+                                    for (int i = 0; i < 3; i++) {
+                                        FortifyingHex.giveFortifyingHex(wp, ally);
+                                    }
                                 });
                 },
                 tickDuration,
@@ -126,7 +128,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     wp.getCooldownManager().removeCooldownNoForce(mysticalBarrierCooldown);
                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                     giveShield(wp, shieldHealth);
-                    FortifyingHex.giveFortifyingHex(wp, wp);
+                    for (int i = 0; i < 3; i++) {
+                        FortifyingHex.giveFortifyingHex(wp, wp);
+                    }
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(mysticalBarrierCooldown)
