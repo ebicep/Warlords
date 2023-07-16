@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -79,7 +80,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 3 == 0) {
-                                wp.getLocation().getWorld().spawnParticle(
+                                EffectUtils.displayParticle(
                                         Particle.REDSTONE,
                                         wp.getLocation().add(
                                                 (Math.random() - 0.5) * 1,
@@ -91,8 +92,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                                         0,
                                         0,
                                         0,
-                                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1),
-                                        true
+                                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
                                 );
                             }
                         }

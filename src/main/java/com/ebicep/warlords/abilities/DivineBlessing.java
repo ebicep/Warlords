@@ -114,16 +114,14 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 10 == 0) {
-                        wp.getWorld().spawnParticle(
+                        EffectUtils.displayParticle(
                                 Particle.CRIMSON_SPORE,
                                 wp.getLocation(),
                                 10,
                                 0.1,
                                 0.1,
                                 0.1,
-                                0.5,
-                                null,
-                                true
+                                0.5
                         );
                     }
 

@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -85,31 +86,23 @@ public class FreezingBreath extends AbstractAbility implements RedAbilityIcon {
                     this.cancel();
                 }
 
-                wp.getWorld().spawnParticle(
+                EffectUtils.displayParticle(
                         Particle.CLOUD,
                         center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0),
                         5,
                         0,
                         0,
                         0,
-                        0.6f,
-                        null,
-                        true
+                        0.6f
                 );
 
                 for (int i = 0; i < 4; i++) {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
                     double width = animationTimer * 0.3;
-                    wp.getWorld().spawnParticle(
+                    EffectUtils.displayParticle(
                             Particle.FIREWORKS_SPARK,
                             center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width),
-                            1,
-                            0,
-                            0,
-                            0,
-                            0,
-                            null,
-                            true
+                            1
                     );
                 }
 

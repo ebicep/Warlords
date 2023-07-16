@@ -321,8 +321,8 @@ public class DeathsDebt extends AbstractTotem implements Duration {
             allyTarget.addHealingInstance(
                     wp,
                     name,
-                    damage * (damagePercent / 100f),
-                    damage * (damagePercent / 100f),
+                    damage * convertToPercent(damagePercent),
+                    damage * convertToPercent(damagePercent),
                     critChance,
                     critMultiplier
             );

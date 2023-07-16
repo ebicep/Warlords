@@ -206,7 +206,6 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                     if (target instanceof WarlordsNPC) {
                         ((WarlordsNPC) target).setStunTicks(2);
                     }
-                    //target.addSpeedModifier(giver, "Earthliving Slow", -99, 1, "BASE");
 
                     if (ticksElapsed % 5 == 0) {
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, Particle.VILLAGER_HAPPY, 1);

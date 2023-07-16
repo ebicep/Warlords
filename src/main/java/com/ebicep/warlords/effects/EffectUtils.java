@@ -30,14 +30,14 @@ import static java.lang.Math.sin;
 public class EffectUtils {
 
     /**
-     * @param particleLoc  what location should the sphere be around.
+     * @param loc  what location should the sphere be around.
      * @param sphereRadius is how big the sphere should be.
      * @param red          is the RGB assigned color for the particles.
      * @param green        is the RGB assigned color for the particles.
      * @param blue         is the RGB assigned color for the particles.
      */
-    public static void playSphereAnimation(Location particleLoc, double sphereRadius, int red, int green, int blue) {
-        particleLoc.add(0, 1, 0);
+    public static void playSphereAnimation(Location loc, double sphereRadius, int red, int green, int blue) {
+        loc.add(0, 1, 0);
         for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
             double radius = Math.sin(i) * sphereRadius + 0.5;
             double y = cos(i) * sphereRadius;
@@ -45,22 +45,22 @@ public class EffectUtils {
                 double x = cos(a) * radius;
                 double z = Math.sin(a) * radius;
 
-                particleLoc.add(x, y, z);
+                loc.add(x, y, z);
                 Particle.DustOptions data = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                particleLoc.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 1, 0, 0, 0, 0, data, true);
-                particleLoc.subtract(x, y, z);
+                loc.getWorld().spawnParticle(Particle.REDSTONE, loc, 1, 0, 0, 0, 0, data, true);
+                loc.subtract(x, y, z);
             }
         }
     }
 
     /**
-     * @param particleLoc   what location should the sphere be around.
+     * @param loc   what location should the sphere be around.
      * @param sphereRadius  is how big the sphere should be.
      * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
      */
-    public static void playSphereAnimation(Location particleLoc, double sphereRadius, Particle effect, int particleCount) {
-        particleLoc.add(0, 1, 0);
+    public static void playSphereAnimation(Location loc, double sphereRadius, Particle effect, int particleCount) {
+        loc.add(0, 1, 0);
         for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
             double radius = Math.sin(i) * sphereRadius + 0.5;
             double y = cos(i) * sphereRadius;
@@ -68,21 +68,21 @@ public class EffectUtils {
                 double x = cos(a) * radius;
                 double z = Math.sin(a) * radius;
 
-                particleLoc.add(x, y, z);
-                particleLoc.getWorld().spawnParticle(effect, particleLoc, particleCount, 0, 0, 0, 0, null, true);
-                particleLoc.subtract(x, y, z);
+                loc.add(x, y, z);
+                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                loc.subtract(x, y, z);
             }
         }
     }
 
     /**
-     * @param location    what location should the helix be around.
+     * @param loc    what location should the helix be around.
      * @param helixRadius is how big the helix should be.
      * @param red         is the RGB assigned color for the particles.
      * @param green       is the RGB assigned color for the particles.
      * @param blue        is the RGB assigned color for the particles.
      */
-    public static void playHelixAnimation(Location location, double helixRadius, int red, int green, int blue) {
+    public static void playHelixAnimation(Location loc, double helixRadius, int red, int green, int blue) {
         double rotation = Math.PI / 4;
         int particles = 40;
         int strands = 8;
@@ -93,21 +93,21 @@ public class EffectUtils {
                 double angle = curve * ratio * 2 * Math.PI / strands + (2 * Math.PI * i / strands) + rotation;
                 double x = cos(angle) * ratio * helixRadius;
                 double z = Math.sin(angle) * ratio * helixRadius;
-                location.add(x, 0, z);
+                loc.add(x, 0, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, 0, 0, 0, 0, dustOptions, true);
-                location.subtract(x, 0, z);
+                loc.getWorld().spawnParticle(Particle.REDSTONE, loc, 1, 0, 0, 0, 0, dustOptions, true);
+                loc.subtract(x, 0, z);
             }
         }
     }
 
     /**
-     * @param location      what location should the helix be around.
+     * @param loc      what location should the helix be around.
      * @param helixRadius   is how big the helix should be.
      * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
      */
-    public static void playHelixAnimation(Location location, double helixRadius, Particle effect, int particleCount, int helixDots) {
+    public static void playHelixAnimation(Location loc, double helixRadius, Particle effect, int particleCount, int helixDots) {
         double rotation = Math.PI / 4;
         int strands = 8;
         int curve = 10;
@@ -117,74 +117,74 @@ public class EffectUtils {
                 double angle = curve * ratio * 2 * Math.PI / strands + (2 * Math.PI * i / strands) + rotation;
                 double x = cos(angle) * ratio * helixRadius;
                 double z = Math.sin(angle) * ratio * helixRadius;
-                location.add(x, 0, z);
-                location.getWorld().spawnParticle(effect, location, particleCount, 0, 0, 0, 0, null, true);
-                location.subtract(x, 0, z);
+                loc.add(x, 0, z);
+                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                loc.subtract(x, 0, z);
             }
         }
     }
 
     /**
-     * @param location       what location should the cylinder be around.
+     * @param loc       what location should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
      * @param red            which particle effect should be displayed.
      * @param green          the amount of particles that should be displayed.
      * @param blue           the amount of particles that should be displayed.
      */
-    public static void playCylinderAnimation(Location location, double cylinderRadius, int red, int green, int blue) {
-        Location particleLoc = location.clone();
+    public static void playCylinderAnimation(Location loc, double cylinderRadius, int red, int green, int blue) {
+        Location particleLoc = loc.clone();
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 double angle = j / 10D * Math.PI * 2;
-                particleLoc.setX(location.getX() + Math.sin(angle) * cylinderRadius);
-                particleLoc.setY(location.getY() + i / 5D);
-                particleLoc.setZ(location.getZ() + cos(angle) * cylinderRadius);
+                particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
+                particleLoc.setY(loc.getY() + i / 5D);
+                particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                location.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 1, 0, 0, 0, 0, dustOptions, true);
+                loc.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 1, 0, 0, 0, 0, dustOptions, true);
             }
         }
     }
 
-    public static void playCylinderAnimation(Location location, double cylinderRadius, int red, int green, int blue, int cylinderDots, int cylinderHeight) {
-        Location particleLoc = location.clone();
+    public static void playCylinderAnimation(Location loc, double cylinderRadius, int red, int green, int blue, int cylinderDots, int cylinderHeight) {
+        Location particleLoc = loc.clone();
         for (int i = 0; i < cylinderHeight; i++) {
             for (int j = 0; j < cylinderDots; j++) {
                 double angle = j / 10D * Math.PI * 2;
-                particleLoc.setX(location.getX() + Math.sin(angle) * cylinderRadius);
-                particleLoc.setY(location.getY() + i / 5D);
-                particleLoc.setZ(location.getZ() + cos(angle) * cylinderRadius);
+                particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
+                particleLoc.setY(loc.getY() + i / 5D);
+                particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                location.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 1, 0, 0, 0, 0, dustOptions, true);
+                loc.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 1, 0, 0, 0, 0, dustOptions, true);
             }
         }
     }
 
     /**
-     * @param location       what location should the cylinder be around.
+     * @param loc       what location should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
      * @param effect         which particle effect should be displayed.
      * @param particleCount  the amount of particles that should be displayed.
      */
 
-    public static void playCylinderAnimation(Location location, double cylinderRadius, Particle effect, int particleCount) {
-        Location particleLoc = location.clone();
+    public static void playCylinderAnimation(Location loc, double cylinderRadius, Particle effect, int particleCount) {
+        Location particleLoc = loc.clone();
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 double angle = j / 10D * Math.PI * 2;
-                particleLoc.setX(location.getX() + Math.sin(angle) * cylinderRadius);
-                particleLoc.setY(location.getY() + i / 5D);
-                particleLoc.setZ(location.getZ() + cos(angle) * cylinderRadius);
-                location.getWorld().spawnParticle(effect, location, particleCount, 0, 0, 0, 0, null, true);
+                particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
+                particleLoc.setY(loc.getY() + i / 5D);
+                particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
+                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
             }
         }
     }
 
     /**
-     * @param location   what location should the star be around.
+     * @param loc   what location should the star be around.
      * @param starRadius is how big the star should be.
      * @param effect     which particle effect should be displayed.
      */
-    public static void playStarAnimation(Location location, float starRadius, Particle effect) {
+    public static void playStarAnimation(Location loc, float starRadius, Particle effect) {
         int spikesHalf = 3;
         float spikeHeight = 3.5f;
         int particles = 30;
@@ -199,9 +199,9 @@ public class EffectUtils {
                 v.multiply((spikeHeight - height) * radius / spikeHeight);
                 v.setY(starRadius + height);
                 EffectUtils.rotateAroundAxisY(v, xRotation);
-                location.add(v);
-                location.getWorld().spawnParticle(effect, location, 1, 0, 0, 0, 0, null, true);
-                location.subtract(v);
+                loc.add(v);
+                loc.getWorld().spawnParticle(effect, loc, 1, 0, 0, 0, 0, null, true);
+                loc.subtract(v);
             }
         }
     }
@@ -276,7 +276,7 @@ public class EffectUtils {
         Location lineLocation = to.add(0, 1, 0).clone();
         lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));
         for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
-            lineLocation.getWorld().spawnParticle(effect, lineLocation, 1, 0, 0, 0, 0, null, true);
+            displayParticle(effect, lineLocation, 1);
             lineLocation.add(lineLocation.getDirection().multiply(.5));
         }
     }
@@ -508,6 +508,21 @@ public class EffectUtils {
                         true
                 );
             }
+        }
+    }
+
+    public static void playCrownAnimation(Location loc, Particle particle) {
+        double angle = 0;
+        for (int i = 0; i < 9; i++) {
+            double x = .4 * Math.cos(angle);
+            double z = .4 * Math.sin(angle);
+            angle += 40;
+            Vector v = new Vector(x, 2, z);
+            displayParticle(
+                    particle,
+                    loc.clone().add(v),
+                    1
+            );
         }
     }
 

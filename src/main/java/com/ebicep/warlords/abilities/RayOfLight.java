@@ -64,11 +64,7 @@ public class RayOfLight extends AbstractBeam {
             EffectUtils.displayParticle(
                     Particle.FLAME,
                     center.translateVector(projectile.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                    2,
-                    0,
-                    0,
-                    0,
-                    0
+                    2
             );
         }
     }

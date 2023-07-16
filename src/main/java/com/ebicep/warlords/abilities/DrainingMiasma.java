@@ -129,7 +129,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                             Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.BLOCK_SNOW_BREAK, 2, 0.4f);
 
                             for (int i = 0; i < 3; i++) {
-                                miasmaTarget.getLocation().getWorld().spawnParticle(
+                                EffectUtils.displayParticle(
                                         Particle.REDSTONE,
                                         miasmaTarget.getLocation().clone().add(
                                                 (Math.random() * 2) - 1,
@@ -141,8 +141,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                         0,
                                         0,
                                         0,
-                                        new Particle.DustOptions(Color.fromRGB(30, 200, 30), 1),
-                                        true
+                                        new Particle.DustOptions(Color.fromRGB(30, 200, 30), 1)
                                 );
 
                             }

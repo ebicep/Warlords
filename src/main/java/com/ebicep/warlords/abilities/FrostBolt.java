@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -13,7 +14,10 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,16 +67,10 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
-        currentLocation.getWorld().spawnParticle(
+        EffectUtils.spawnParticle(
                 Particle.CLOUD,
                 currentLocation,
-                1,
-                0,
-                0,
-                0,
-                0,
-                null,
-                true
+                1
         );
     }
 
@@ -81,12 +79,11 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
-        World world = currentLocation.getWorld();
 
         Utils.playGlobalSound(currentLocation, "mage.frostbolt.impact", 2, 1);
 
-        world.spawnParticle(Particle.EXPLOSION_LARGE, currentLocation, 1, 0, 0, 0, 0, null, true);
-        world.spawnParticle(Particle.CLOUD, currentLocation, 3, .3, .3, .3, 1, null, true);
+        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, currentLocation, 1);
+        EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3, 0.3, 0.3, 1);
 
 
         double distanceSquared = currentLocation.distanceSquared(startingLocation);

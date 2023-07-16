@@ -15,7 +15,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,13 +81,12 @@ public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
-        World world = currentLocation.getWorld();
 
         Utils.playGlobalSound(currentLocation, "mage.flameburst.impact", 2, 1);
 
-        world.spawnParticle(Particle.EXPLOSION_LARGE, currentLocation, 2, 0, 0, 0, 0.5, null, true);
-        world.spawnParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 2, null, true);
-        world.spawnParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1, null, true);
+        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, currentLocation, 2, 0, 0, 0, 0.5);
+        EffectUtils.displayParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 2);
+        EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1);
 
         int playersHit = 0;
         for (WarlordsEntity nearEntity : PlayerFilter
