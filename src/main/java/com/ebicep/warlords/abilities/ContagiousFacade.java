@@ -34,6 +34,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     private float damageAbsorption = 30;
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
+    private double poisonRadius = 8;
     private int speedIncrease = 40;
     private int speedIncreaseDuration = 100;
 
@@ -57,7 +58,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                .append(Component.text(" stacks of Poisonous Hex on "))
                                .append(Component.text("2", NamedTextColor.YELLOW))
                                .append(Component.text(" nearby enemies in a "))
-                               .append(Component.text("6", NamedTextColor.YELLOW))
+                               .append(Component.text(format(poisonRadius), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks radius."))
                                .append(Component.text("\n\nNot reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts "))
                                .append(Component.text(format(shieldTickDuration / 20f), NamedTextColor.GOLD))
@@ -72,16 +73,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(wp.getLocation(), "arcanist.contagiousfacade.activation", 2, 1.5f);
+        Utils.playGlobalSound(wp.getLocation(), "arcanist.contagiousfacade.activation", 2, 1.4f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, 2, 0.7f);
-        EffectUtils.playHelixAnimation(wp.getLocation(), 3, Particle.CHERRY_LEAVES, 3, 20);
-        new CircleEffect(
-                wp.getGame(),
-                wp.getTeam(),
-                wp.getLocation().add(0, 1, 0),
-                3,
-                new CircumferenceEffect(Particle.END_ROD, Particle.REDSTONE).particlesPerCircumference(1)
-        ).playEffects();
+        EffectUtils.playHelixAnimation(wp.getLocation().add(0, 0.25, 0), 3, Particle.CHERRY_LEAVES, 3, 20);
         AtomicDouble totalAbsorbed = new AtomicDouble(0);
         RegularCooldown<ContagiousFacade> protectiveLayerCooldown = new RegularCooldown<>(
                 name,
@@ -129,7 +123,27 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                 });
                     }
                 },
-                tickDuration
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    EffectUtils.displayParticle(
+                            Particle.CRIMSON_SPORE,
+                            wp.getLocation(),
+                            1,
+                            0.05,
+                            0.1,
+                            0.05,
+                            0.25
+                    );
+                    EffectUtils.displayParticle(
+                            Particle.CHERRY_LEAVES,
+                            wp.getLocation(),
+                            2,
+                            0.15F,
+                            0.3F,
+                            0.15F,
+                            0
+                    );
+                })
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -143,8 +157,15 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
                     wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
+                    new CircleEffect(
+                            wp.getGame(),
+                            wp.getTeam(),
+                            wp.getLocation(),
+                            poisonRadius,
+                            new CircumferenceEffect(Particle.REDSTONE, Particle.REDSTONE).particlesPerCircumference(1)
+                    ).playEffects();
                     for (WarlordsEntity hexTarget : PlayerFilter
-                            .entitiesAround(wp, 6, 6, 6)
+                            .entitiesAround(wp, poisonRadius, poisonRadius, poisonRadius)
                             .aliveEnemiesOf(wp)
                             .closestFirst(wp)
                             .limit(2)

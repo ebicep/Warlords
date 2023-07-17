@@ -84,6 +84,8 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                 .closestFirst(wp)
                                 .limit(1)
                                 .forEach(ally -> {
+                                    EffectUtils.playParticleLinkAnimation(wp.getLocation(), ally.getLocation(), 0, 180, 180, 2);
+                                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
                                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                                     giveShield(ally, shieldHealth);
                                     for (int i = 0; i < 3; i++) {
@@ -125,6 +127,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     if (!wp.isAlive()) {
                         return;
                     }
+                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
                     wp.getCooldownManager().removeCooldownNoForce(mysticalBarrierCooldown);
                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                     giveShield(wp, shieldHealth);
@@ -152,6 +155,15 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    EffectUtils.displayParticle(
+                            Particle.FIREWORKS_SPARK,
+                            giveTo.getLocation().add(0, 1.5, 0),
+                            2,
+                            0.1,
+                            0.05,
+                            0.1,
+                            0.01
+                    );
                 })
         ));
     }

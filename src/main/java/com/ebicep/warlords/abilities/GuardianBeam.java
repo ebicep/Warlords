@@ -87,7 +87,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
             if (!hasSanctuary) {
                 wp.getCooldownManager().removeCooldown(FortifyingHex.class, false);
             }
-            Utils.playGlobalSound(wp.getLocation(), "arcanist.guardianbeam.giveshield", 1, 0.7f);
+            Utils.playGlobalSound(wp.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "SHIELD",
@@ -142,7 +142,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     @Override
     protected float getSoundPitch() {
-        return 1.6f;
+        return 1;
     }
 
     @Override

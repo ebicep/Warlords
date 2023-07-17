@@ -67,7 +67,7 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
-        EffectUtils.spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.CLOUD,
                 currentLocation,
                 1
