@@ -34,9 +34,8 @@ import java.util.List;
 
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
-    private int damageReflected = 25;
     private int hexTickDurationIncrease = 40;
-    private int additionalDamageReduction = 10;
+    private int additionalDamageReduction = 12;
     private int tickDuration = 240;
 
     public Sanctuary() {
@@ -159,14 +158,6 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
-    }
-
-    public int getDamageReflected() {
-        return damageReflected;
-    }
-
-    public void setDamageReflected(int damageReflected) {
-        this.damageReflected = damageReflected;
     }
 
     public int getHexTickDurationIncrease() {

@@ -48,7 +48,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds for every instance of damage they deal to you for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Reactivate the ability to grant yourself a shield equal to"))
+                               .append(Component.text(" seconds.\n\nReactivate the ability to grant yourself a shield equal to"))
                                .append(Component.text(shieldBase, NamedTextColor.YELLOW))
                                .append(Component.text(" + "))
                                .append(Component.text(shieldIncrease, NamedTextColor.YELLOW))
@@ -56,9 +56,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                .append(Component.text(shieldMaxHealth, NamedTextColor.YELLOW))
                                .append(Component.text(" health, that lasts "))
                                .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Not reactivating the ability will instead grant the nearest ally the shield for "))
-                               .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+                               .append(Component.text(" seconds.\n\nNot reactivating the ability will instead grant the nearest ally the shield for the same duration."));
     }
 
     @Override
