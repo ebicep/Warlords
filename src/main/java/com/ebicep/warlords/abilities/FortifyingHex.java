@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -36,14 +37,14 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 1;
-    private int maxFullDistance = 30;
+    private int maxFullDistance = 40;
     private int tickDuration = 80;
     private int damageReduction = 8;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
 
     public FortifyingHex() {
-        super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 30, true);
+        super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 40, true);
         this.playerHitbox += .25;
     }
 
@@ -65,7 +66,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                                .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage reduction. Stacks up to"))
                                .append(Component.text(maxStacks, NamedTextColor.BLUE))
-                               .append(Component.text(" times.\n\nHas a maximum of "))
+                               .append(Component.text(" times.\n\nHas a maximum range of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
                                .append(Component.text("blocks."));
     }
@@ -166,15 +167,17 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
             @Override
             public void run(InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                EffectUtils.displayParticle(
-                        Particle.END_ROD,
-                        projectile.getCurrentLocation().clone().add(0, 0, 0),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0
-                );
+                Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
+
+                for (float i = 0; i < 2; i++) {
+                    double angle = Math.toRadians(i * 180) + projectile.getTicksLived() * 0.45;
+                    double width = 0.32D;
+                    EffectUtils.displayParticle(
+                            Particle.END_ROD,
+                            center.translateVector(projectile.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                            2
+                    );
+                }
             }
 
             @Override
@@ -206,7 +209,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     @Override
     protected float getSoundPitch() {
-        return 0.75f;
+        return 1.4f;
     }
 
     public static void giveFortifyingHex(WarlordsEntity from, WarlordsEntity to) {

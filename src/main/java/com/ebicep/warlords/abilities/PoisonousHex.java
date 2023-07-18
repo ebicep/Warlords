@@ -78,7 +78,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                                .append(Component.text(" seconds. Stacks up to "))
                                .append(Component.text(maxStacks, NamedTextColor.BLUE))
                                .append(Component.text(" times."))
-                               .append(Component.text("\n\nHas a maximum of "))
+                               .append(Component.text("\n\nHas a maximum range of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
                                .append(Component.text("blocks."));
     }
@@ -125,7 +125,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         Location currentLocation = projectile.getCurrentLocation();
         Location startingLocation = projectile.getStartingLocation();
 
-        Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 0.3f, 0.9f);
+        Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 1, 0.9f);
 
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
@@ -232,7 +232,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
 
                 for (float i = 0; i < 2; i++) {
-                    double angle = Math.toRadians(i * 90) + projectile.getTicksLived() * 0.45;
+                    double angle = Math.toRadians(i * 180) + projectile.getTicksLived() * 0.45;
                     double width = 0.2D;
                     EffectUtils.displayParticle(
                             Particle.REDSTONE,
@@ -250,7 +250,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
             @Override
             public void onDestroy(InternalProjectile projectile) {
                 fallenSoul.remove();
-                Utils.playGlobalSound(projectile.getCurrentLocation(), Sound.ENTITY_EVOKER_FANGS_ATTACK, 2, 2);
+                Utils.playGlobalSound(projectile.getCurrentLocation(), Sound.ENTITY_EVOKER_FANGS_ATTACK, 0.2f, 2);
                 EffectUtils.displayParticle(
                         Particle.EXPLOSION_LARGE,
                         projectile.getCurrentLocation(),
