@@ -95,12 +95,12 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                 "NAME",
                 "Guardian Beam - Master Upgrade",
                 """
-                        Enemy rune timers are increased by an additional 1.5s. Shield health is increased by 15%.
+                        Enemy cooldowns are increased by an additional 3.5s. Additionally, shield health is increased by 25%.
                         """,
                 50000,
                 () -> {
-                    ability.setRuneTimerIncrease(ability.getRuneTimerIncrease() + 1.5f);
-                    ability.setShieldPercent(ability.getShieldPercent() + 15);
+                    ability.setRuneTimerIncrease(ability.getRuneTimerIncrease() + 3.5f);
+                    ability.setShieldPercent(ability.getShieldPercent() + 25);
                 }
         );
     }
