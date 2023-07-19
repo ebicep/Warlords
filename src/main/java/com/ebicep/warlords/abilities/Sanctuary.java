@@ -68,8 +68,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         Utils.playGlobalSound(loc, "arcanist.sanctuary.activation", 2, 0.55f);
 
         EffectUtils.playCircularShieldAnimation(loc, Particle.END_ROD, 5, 0.8, 2);
-        EffectUtils.playCircularShieldAnimation(loc, Particle.DRIP_LAVA, 3, 0.6, 1.2);
-        EffectUtils.playCylinderAnimation(loc, 1.05, Particle.SOUL_FIRE_FLAME, 1);
+        EffectUtils.playCircularShieldAnimation(loc, Particle.DRIP_WATER, 3, 0.6, 1.2);
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -82,7 +81,6 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                 },
                 tickDuration
         ) {
-
             @Override
             protected Listener getListener() {
                 return new Listener() {
