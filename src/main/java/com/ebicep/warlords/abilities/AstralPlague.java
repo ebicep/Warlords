@@ -122,6 +122,9 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         event.getFlags().add(InstanceFlags.PIERCE_DAMAGE);
+                        if (inPve) {
+                            event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
+                        }
                         if (pveMasterUpgrade && Objects.equals(event.getAbility(), "Soulfire Beam")) {
                             event.setCritChance(100);
                         }
