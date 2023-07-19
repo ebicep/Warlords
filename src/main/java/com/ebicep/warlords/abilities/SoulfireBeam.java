@@ -61,7 +61,6 @@ public class SoulfireBeam extends AbstractBeam {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             float minDamage = minDamageHeal;
             float maxDamage = maxDamageHeal;
-            float critMulti = critMultiplier;
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                     .filterCooldownClass(PoisonousHex.class)
                     .stream()
@@ -71,13 +70,15 @@ public class SoulfireBeam extends AbstractBeam {
                 if (!hasAstral) {
                     hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
                 }
-                minDamage *= 2;
-                maxDamage *= 2;
                 if (projectile.getHit().size() <= 4 && pveMasterUpgrade) {
-                    critMulti *= 8;
+                    minDamage *= 10;
+                    maxDamage *= 10;
+                } else {
+                    minDamage *= 2;
+                    maxDamage *= 2;
                 }
             }
-            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMulti)
+            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier)
                .ifPresent(finalEvent -> {
                    if (pveMasterUpgrade && finalEvent.isDead()) {
                        wp.addEnergy(wp, name, 8);
