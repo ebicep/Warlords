@@ -61,6 +61,7 @@ public class SoulfireBeam extends AbstractBeam {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             float minDamage = minDamageHeal;
             float maxDamage = maxDamageHeal;
+            float critMulti = critMultiplier;
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                     .filterCooldownClass(PoisonousHex.class)
                     .stream()
@@ -72,8 +73,11 @@ public class SoulfireBeam extends AbstractBeam {
                 }
                 minDamage *= 2;
                 maxDamage *= 2;
+                if (projectile.getHit().size() <= 4 && pveMasterUpgrade) {
+                    critMulti *= 8;
+                }
             }
-            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier)
+            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMulti)
                .ifPresent(finalEvent -> {
                    if (pveMasterUpgrade && finalEvent.isDead()) {
                        wp.addEnergy(wp, name, 8);
@@ -87,12 +91,6 @@ public class SoulfireBeam extends AbstractBeam {
                    }
                });
         }
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
-        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
-        return super.onActivate(shooter, player);
     }
 
     @Nullable
@@ -109,6 +107,12 @@ public class SoulfireBeam extends AbstractBeam {
     @Override
     protected float getSoundPitch() {
         return 0.5f;
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
+        return super.onActivate(shooter, player);
     }
 
     @Override
