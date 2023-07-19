@@ -6,17 +6,22 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -25,6 +30,7 @@ public class ItemFilterMenu {
     public static void openItemFilterMenu(Player player, DatabasePlayer databasePlayer, BiConsumer<Menu, InventoryClickEvent> backAction) {
         Menu menu = new Menu("Item Filter", 9 * 4);
 
+        //stat pool
         //tier
         //type
         //modifier
@@ -33,6 +39,28 @@ public class ItemFilterMenu {
 
         ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
         ItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings menuSettings = itemsManager.getMenuFilterSettings();
+
+        EnumSet<BasicStatPool> statPoolFilter = menuSettings.getStatPoolFilter();
+        menu.setItem(1, 1,
+                new ItemBuilder(statPoolFilter.isEmpty() ? Material.BARRIER : Material.BOOK)
+                        .name(Component.text("Stat Pool", NamedTextColor.GREEN))
+                        .lore(
+                                Arrays.stream(BasicStatPool.VALUES)
+                                      .map(value -> Component.text(value.name, statPoolFilter.contains(value) ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                                      .collect(Collectors.toList())
+                        )
+                        .addLore(
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to change stat pool filter", NamedTextColor.GREEN)
+                                )
+                        )
+                        .get(),
+                (m, e) -> {
+                    openStatPoolFilterMenu(player, databasePlayer, menuSettings, backAction);
+                }
+        );
 
         ItemTier tierFilter = menuSettings.getTierFilter();
         menu.setItem(2, 1,
@@ -152,6 +180,43 @@ public class ItemFilterMenu {
         );
 
         menu.setItem(4, 3, Menu.MENU_BACK, backAction);
+        menu.openForPlayer(player);
+    }
+
+    private static void openStatPoolFilterMenu(
+            Player player,
+            DatabasePlayer databasePlayer,
+            ItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings menuFilterSettings,
+            BiConsumer<Menu, InventoryClickEvent> backAction
+    ) {
+        Menu menu = new Menu("Stat Pool Filter", 5);
+
+        EnumSet<BasicStatPool> statPoolFilter = menuFilterSettings.getStatPoolFilter();
+        BasicStatPool[] values = BasicStatPool.VALUES;
+        for (int i = 0; i < values.length; i++) {
+            BasicStatPool stat = values[i];
+            ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i))
+                    .name(Component.text(stat.name, NamedTextColor.GREEN));
+            boolean filtered = statPoolFilter.contains(stat);
+            if (filtered) {
+                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+            }
+            menu.setItem(i % 9 + 1, i / 9 + 1,
+                    itemBuilder
+                            .get(),
+                    (m, e) -> {
+                        if (filtered) {
+                            statPoolFilter.remove(stat);
+                        } else {
+                            statPoolFilter.add(stat);
+                        }
+                        openStatPoolFilterMenu(player, databasePlayer, menuFilterSettings, backAction);
+                    }
+            );
+        }
+
+        menu.setItem(4, 4, Menu.MENU_BACK, (m, e) -> openItemFilterMenu(player, databasePlayer, backAction));
         menu.openForPlayer(player);
     }
 

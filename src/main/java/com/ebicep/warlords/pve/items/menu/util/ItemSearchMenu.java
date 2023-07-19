@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.MobDrops;
@@ -321,7 +322,7 @@ public class ItemSearchMenu extends Menu {
         private int page = 1;
         private List<AbstractItem> itemInventory = new ArrayList<>();
         private List<AbstractItem> sortedItemInventory = new ArrayList<>();
-        private PlayerItemMenuFilterSettings filterSettings = new PlayerItemMenuFilterSettings();
+        private PlayerItemMenuFilterSettings filterSettings;
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
 
@@ -350,6 +351,7 @@ public class ItemSearchMenu extends Menu {
 
         public void reset() {
             this.page = 1;
+            this.filterSettings.statPoolFilter = EnumSet.noneOf(BasicStatPool.class);
             this.filterSettings.tierFilter = ItemTier.NONE;
             this.filterSettings.typeFilter = ItemType.NONE;
             this.filterSettings.modifierFilter = ModifierFilter.NONE;
@@ -361,6 +363,16 @@ public class ItemSearchMenu extends Menu {
 
         public void sort() {
             sortedItemInventory = new ArrayList<>(itemInventory);
+            if (!filterSettings.statPoolFilter.isEmpty()) {
+                sortedItemInventory.removeIf(item -> {
+                    for (BasicStatPool statPool : filterSettings.statPoolFilter) {
+                        if (!item.getStatPool().containsKey(statPool)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
             if (filterSettings.tierFilter != ItemTier.NONE) {
                 sortedItemInventory.removeIf(item -> item.getTier() != filterSettings.tierFilter);
             }
@@ -415,16 +427,18 @@ public class ItemSearchMenu extends Menu {
         }
 
         public static class PlayerItemMenuFilterSettings {
-            public ItemTier tierFilter;
-            public ItemType typeFilter;
-            public ModifierFilter modifierFilter;
+            public EnumSet<BasicStatPool> statPoolFilter = EnumSet.noneOf(BasicStatPool.class);
+            public ItemTier tierFilter = ItemTier.NONE;
+            public ItemType typeFilter = ItemType.NONE;
+            public ModifierFilter modifierFilter = ModifierFilter.NONE;
             public boolean addonFilter = false; // false = none, true = class
             private boolean favoriteFilter = false;
 
             public PlayerItemMenuFilterSettings() {
-                this.tierFilter = ItemTier.NONE;
-                this.typeFilter = ItemType.NONE;
-                this.modifierFilter = ModifierFilter.NONE;
+            }
+
+            public EnumSet<BasicStatPool> getStatPoolFilter() {
+                return statPoolFilter;
             }
 
             public ItemTier getTierFilter() {
