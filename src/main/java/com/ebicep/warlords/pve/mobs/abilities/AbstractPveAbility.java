@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class AbstractPveAbility extends AbstractAbility {
 
-    private PveOption pveOption;
+    protected PveOption pveOption;
 
     public AbstractPveAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost);

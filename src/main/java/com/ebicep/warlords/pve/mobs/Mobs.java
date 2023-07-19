@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroShadow;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmerAcolyte;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaro;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjer;
@@ -97,6 +98,7 @@ public enum Mobs {
     BOLTARO_SHADOW(BoltaroShadow.class, BoltaroShadow::new),
     BOLTARO_EXLIED(BoltaroExiled.class, BoltaroExiled::new),
     TORMENTED_SOUL(TormentedSoul.class, TormentedSoul::new),
+    NARMER_ACOLYTE(NarmerAcolyte.class, NarmerAcolyte::new),
 
     // Raid Boss
     PHYSIRA(Physira.class, Physira::new),

@@ -61,8 +61,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 new SpawnMobAbility(
                         "Tormented Soul",
                         20,
-                        Mobs.TORMENTED_SOUL,
-                        pve -> (int) (2 * pve.getGame().warlordsPlayers().count())
+                        Mobs.TORMENTED_SOUL
                 ) {
                     @Override
                     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
@@ -71,6 +70,11 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
                         }
                         return activate;
+                    }
+
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) (2 * pveOption.getGame().warlordsPlayers().count());
                     }
                 }
         );

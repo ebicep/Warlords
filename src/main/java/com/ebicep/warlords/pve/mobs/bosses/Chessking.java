@@ -39,15 +39,23 @@ public class Chessking extends AbstractSlime implements BossMob {
                 new SpawnMobAbility(
                         "Slime Zombies",
                         5,
-                        Mobs.SLIME_ZOMBIE,
-                        pve -> Math.toIntExact(pve.getGame().warlordsPlayers().count())
-                ),
+                        Mobs.SLIME_ZOMBIE
+                ) {
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                },
                 new SpawnMobAbility(
                         "Void Slimes",
                         60,
-                        Mobs.VOID_SLIME,
-                        pve -> Math.toIntExact(pve.getGame().warlordsPlayers().count())
-                )
+                        Mobs.VOID_SLIME
+                ) {
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                }
         );
     }
 
