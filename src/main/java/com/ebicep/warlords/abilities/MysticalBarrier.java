@@ -86,6 +86,19 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                     Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
                                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                                     giveShield(ally, shieldHealth);
+                                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                            .append(Component.text(" Your Mystical Barrier is now protecting ", NamedTextColor.GRAY))
+                                            .append(Component.text(ally.getName(), NamedTextColor.YELLOW))
+                                            .append(Component.text("!", NamedTextColor.GRAY))
+                                    );
+
+                                    ally.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                            .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                            .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
+                                            .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
+                                            .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                            .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                                    );
                                     for (int i = 0; i < 3; i++) {
                                         FortifyingHex.giveFortifyingHex(wp, ally);
                                     }
@@ -156,11 +169,11 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     EffectUtils.displayParticle(
                             Particle.FIREWORKS_SPARK,
                             giveTo.getLocation().add(0, 1.5, 0),
-                            2,
+                            1,
                             0.1,
                             0.05,
                             0.1,
-                            0.01
+                            0
                     );
                 })
         ));
