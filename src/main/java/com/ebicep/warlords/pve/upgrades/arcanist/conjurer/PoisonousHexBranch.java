@@ -95,13 +95,11 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 "NAME",
                 "Poisonous Hex - Master Upgrade",
                 """
-                        Whenever you apply 1 stack of Poisonous Hex, apply 1 additional stack to up to 2 nearby enemies.
-                        Poisonous Hex now deals damage every 1s.
+                        Poisonous Hex now pierces through all enemies.
                         """,
                 50000,
                 () -> {
                     ability.setMaxEnemiesHit(Integer.MAX_VALUE);
-                    ability.setDotTickFrequency(20);
                 }
         );
     }

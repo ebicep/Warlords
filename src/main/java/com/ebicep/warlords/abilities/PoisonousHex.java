@@ -15,7 +15,6 @@ import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.PoisonousHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -146,12 +145,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 critMultiplier
         );
         givePoisonousHex(wp, hit);
-        if (pveMasterUpgrade) {
-            PlayerFilter.entitiesAround(hit, 2, 2, 2)
-                        .aliveEnemiesOf(wp)
-                        .limit(2)
-                        .forEach(enemy -> givePoisonousHex(wp, enemy));
-        }
         if (projectile.getHit().size() >= maxEnemiesHit) {
             getProjectiles(projectile).forEach(InternalProjectile::cancel);
         }
