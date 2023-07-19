@@ -163,6 +163,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
             if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
                 return true;
             }

@@ -90,6 +90,8 @@ public class Witch extends AbstractWitch implements EliteMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+
             DifficultyIndex difficulty = pveOption.getDifficulty();
             boolean removeDebuffs = difficulty == DifficultyIndex.HARD || difficulty == DifficultyIndex.EXTREME || difficulty == DifficultyIndex.ENDLESS;
             for (WarlordsEntity ally : PlayerFilter
