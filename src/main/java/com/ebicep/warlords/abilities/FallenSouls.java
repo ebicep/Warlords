@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -158,32 +159,24 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
             @Override
             public void run(InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                projectile.getCurrentLocation().getWorld().spawnParticle(
+                EffectUtils.displayParticle(
                         Particle.SPELL_WITCH,
                         projectile.getCurrentLocation().clone().add(0, 0, 0),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        null,
-                        true
+                        1
                 );
             }
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
                 fallenSoul.remove();
-                projectile.getCurrentLocation().getWorld().spawnParticle(
+                EffectUtils.displayParticle(
                         Particle.SPELL_WITCH,
                         projectile.getCurrentLocation(),
                         1,
                         0,
                         0,
                         0,
-                        0.7f,
-                        null,
-                        true
+                        0.7f
                 );
             }
         });

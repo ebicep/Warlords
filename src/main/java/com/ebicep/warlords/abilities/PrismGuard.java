@@ -60,7 +60,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. All projectiles that pass through the barrier have their damage reduced by "))
                                .append(Component.text(projectileDamageReduction + "%", NamedTextColor.RED))
-                               .append(Component.text(".\nAfter "))
+                               .append(Component.text(".\n\nAfter "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds the bubble will burst, healing you and all allies for "))
                                .append(Component.text(bubbleHealing + " ", NamedTextColor.GREEN))

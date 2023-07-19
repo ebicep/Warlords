@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -80,16 +81,14 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
-                        wp.getLocation().getWorld().spawnParticle(
+                        EffectUtils.displayParticle(
                                 Particle.SPELL,
                                 wp.getLocation().add(0, 1.2, 0),
                                 6,
                                 0.3F,
                                 0.1F,
                                 0.3F,
-                                0.2F,
-                                null,
-                                true
+                                0.2F
                         );
                     }
                 })

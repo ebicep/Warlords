@@ -50,9 +50,9 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon {
                                .append(Component.text(vindDuration, NamedTextColor.GOLD))
                                .append(Component.text(" seconds, granting immunity to de-buffs. You are healed for "))
                                .append(Component.text(format(healthRestore), NamedTextColor.GREEN))
-                               .append(Component.text(" health after reaching your ally. Has a range of"))
+                               .append(Component.text(" health after reaching your ally. Has a maximum range of"))
                                .append(Component.text(radius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks.\nHeart to Heart's range is greatly reduced when holding a flag.", NamedTextColor.GRAY));
+                               .append(Component.text(" blocks.\n\nHeart to Heart's range is greatly reduced when holding a flag.", NamedTextColor.GRAY));
 
     }
 

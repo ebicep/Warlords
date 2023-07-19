@@ -44,38 +44,41 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                    .orElse(new PoisonousHex());
     }
 
-    private int maxFullDistance = 30;
+    private int maxFullDistance = 40;
     private int hexStacksPerHit = 1;
     private float dotMinDamage = 30;
     private float dotMaxDamage = 40;
     private int maxStacks = 3;
     private int tickDuration = 40;
     private int dotTickFrequency = 40;
+    private int maxEnemiesHit = 2;
 
     public PoisonousHex() {
-        super("Poisonous Hex", 307, 415, 0, 70, 20, 175, 2.5, 300, false);
+        super("Poisonous Hex", 307, 415, 0, 70, 20, 175, 2.5, 40, false);
         this.shotsFiredAtATime = 2;
-        this.maxAngleOfShots = 30;
+        this.maxAngleOfShots = 26;
         this.forwardTeleportAmount = 1.6f;
-        this.playerHitbox += .25;
+        this.playerHitbox += .35;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Throw Hex Fangs in front of you, dealing ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" damage to up to 2 enemies. Additionally, hit targets receive "))
+                               .append(Component.text(" damage to up to ")
+                               .append(Component.text(maxEnemiesHit, NamedTextColor.RED))
+                               .append(Component.text(" enemies. Additionally, hit targets receive ")))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex. Dealing "))
+                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex.\n\nEach stack of Poisonous Hex deals "))
                                .append(formatRangeDamage(dotMinDamage, dotMaxDamage))
                                .append(Component.text(" damage every "))
                                .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text(" seconds for "))
                                .append(Component.text(format(tickDuration / 10f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. Stacks up to "))
-                               .append(Component.text(maxStacks, NamedTextColor.RED))
+                               .append(Component.text(maxStacks, NamedTextColor.BLUE))
                                .append(Component.text(" times."))
-                               .append(Component.text("\n\nHas an optimal range of "))
+                               .append(Component.text("\n\nHas a maximum range of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
                                .append(Component.text("blocks."));
     }
@@ -115,14 +118,14 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         if (projectile.getHit().contains(hit)) {
             return;
         }
-        if (projectile.getHit().size() >= 2) {
+        if (projectile.getHit().size() >= maxEnemiesHit) {
             return;
         }
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
         Location startingLocation = projectile.getStartingLocation();
 
-        Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 2, 0.9f);
+        Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 1, 0.9f);
 
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
         double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
@@ -149,12 +152,18 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                         .limit(2)
                         .forEach(enemy -> givePoisonousHex(wp, enemy));
         }
-        if (projectile.getHit().size() >= 2) {
+        if (projectile.getHit().size() >= maxEnemiesHit) {
             getProjectiles(projectile).forEach(InternalProjectile::cancel);
         }
     }
 
-    private void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
+    public static void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
+        PoisonousHex fromHex = getFromHex(from);
+        String hexName = fromHex.getName();
+        int tickDuration = fromHex.getTickDuration();
+        int dotTickFrequency = fromHex.getDotTickFrequency();
+        float dotMinDamage = fromHex.getDotMinDamage();
+        float dotMaxDamage = fromHex.getDotMaxDamage();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Poisonous Hex",
@@ -166,7 +175,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 cooldownManager -> {
                     to.addDamageInstance(
                             from,
-                            name,
+                            hexName,
                             dotMinDamage,
                             dotMaxDamage,
                             0,
@@ -179,7 +188,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                     if (ticksElapsed % dotTickFrequency == 0 && ticksElapsed != 0) {
                         to.addDamageInstance(
                                 from,
-                                name,
+                                hexName,
                                 dotMinDamage,
                                 dotMaxDamage,
                                 0,
@@ -223,7 +232,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
 
                 for (float i = 0; i < 2; i++) {
-                    double angle = Math.toRadians(i * 90) + projectile.getTicksLived() * 0.45;
+                    double angle = Math.toRadians(i * 180) + projectile.getTicksLived() * 0.45;
                     double width = 0.2D;
                     EffectUtils.displayParticle(
                             Particle.REDSTONE,
@@ -241,7 +250,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
             @Override
             public void onDestroy(InternalProjectile projectile) {
                 fallenSoul.remove();
-                Utils.playGlobalSound(projectile.getCurrentLocation(), Sound.ENTITY_EVOKER_FANGS_ATTACK, 2, 2);
+                Utils.playGlobalSound(projectile.getCurrentLocation(), Sound.ENTITY_EVOKER_FANGS_ATTACK, 0.2f, 2);
                 EffectUtils.displayParticle(
                         Particle.EXPLOSION_LARGE,
                         projectile.getCurrentLocation(),
@@ -307,5 +316,13 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     public void setDotTickFrequency(int dotTickFrequency) {
         this.dotTickFrequency = dotTickFrequency;
+    }
+
+    public int getMaxEnemiesHit() {
+        return maxEnemiesHit;
+    }
+
+    public void setMaxEnemiesHit(int maxEnemiesHit) {
+        this.maxEnemiesHit = maxEnemiesHit;
     }
 }

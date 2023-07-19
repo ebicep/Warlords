@@ -30,9 +30,10 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     private float runeTimerIncrease = 0.5f;
     private int tickDuration = 100;
-    private int shieldBase = 200;
+    private float meleeDamageReduction = 50;
+    private int shieldBase = 400;
     private int shieldIncrease = 80;
-    private int shieldMaxHealth = 1000;
+    private int shieldMaxHealth = 1200;
     private int reactivateTickDuration = 100;
 
     public MysticalBarrier() {
@@ -41,11 +42,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Surround yourself with magical spirits that increase the attacker’s rune timers by ")
+        description = Component.text("Surround yourself with magical spirits that reduce the melee damage you take by")
+                               .append(Component.text(format(meleeDamageReduction) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text("and increase the attacker’s cooldowns by "))
                                .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds for every instance of damage they deal to you for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Reactivate the ability to grant yourself a shield equal to"))
+                               .append(Component.text(" seconds.\n\nReactivate the ability to grant yourself a shield equal to"))
                                .append(Component.text(shieldBase, NamedTextColor.YELLOW))
                                .append(Component.text(" + "))
                                .append(Component.text(shieldIncrease, NamedTextColor.YELLOW))
@@ -53,9 +56,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                .append(Component.text(shieldMaxHealth, NamedTextColor.YELLOW))
                                .append(Component.text(" health, that lasts "))
                                .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Not reactivating the ability will instead grant the nearest ally the shield for "))
-                               .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+                               .append(Component.text(" seconds.\n\nNot reactivating the ability will instead grant the nearest ally the shield for the same duration."));
     }
 
     @Override
@@ -81,8 +82,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                 .closestFirst(wp)
                                 .limit(1)
                                 .forEach(ally -> {
+                                    EffectUtils.playParticleLinkAnimation(wp.getLocation(), ally.getLocation(), 0, 180, 180, 2);
+                                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
                                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                                     giveShield(ally, shieldHealth);
+                                    for (int i = 0; i < 3; i++) {
+                                        FortifyingHex.giveFortifyingHex(wp, ally);
+                                    }
                                 });
                 },
                 tickDuration,
@@ -107,6 +113,11 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 event.getAttacker().getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
                 damageInstances.getAndIncrement();
             }
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return event.getAbility().isEmpty() ? currentDamageValue * convertToDivisionDecimal(meleeDamageReduction) : 1;
+            }
         };
         wp.getCooldownManager().addCooldown(mysticalBarrierCooldown);
 
@@ -114,9 +125,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     if (!wp.isAlive()) {
                         return;
                     }
+                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
                     wp.getCooldownManager().removeCooldownNoForce(mysticalBarrierCooldown);
                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                     giveShield(wp, shieldHealth);
+                    for (int i = 0; i < 3; i++) {
+                        FortifyingHex.giveFortifyingHex(wp, wp);
+                    }
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(mysticalBarrierCooldown)
@@ -138,6 +153,15 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    EffectUtils.displayParticle(
+                            Particle.FIREWORKS_SPARK,
+                            giveTo.getLocation().add(0, 1.5, 0),
+                            2,
+                            0.1,
+                            0.05,
+                            0.1,
+                            0.01
+                    );
                 })
         ));
     }
@@ -187,5 +211,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     public void setReactivateTickDuration(int reactivateTickDuration) {
         this.reactivateTickDuration = reactivateTickDuration;
+    }
+
+    public float getMeleeDamageReduction() {
+        return meleeDamageReduction;
+    }
+
+    public void setMeleeDamageReduction(float meleeDamageReduction) {
+        this.meleeDamageReduction = meleeDamageReduction;
     }
 }

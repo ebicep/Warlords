@@ -302,17 +302,17 @@ public class PlayingState implements State, TimerDebugAble {
     public void onPlayerReJoinGame(@Nonnull Player player) {
         WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp == null) {
+            Location spawn = Stream.concat(
+                    getGame().getMarkers(SpawnLocationMarker.class).stream(),
+                    getGame().getMarkers(LobbyLocationMarker.class).stream()
+            ).map(LocationMarker::getLocation).collect(Utils.randomElement());
+            player.teleport(spawn);
             // Spectator - delay because multiverse is dumb
             new BukkitRunnable() {
 
                 @Override
                 public void run() {
                     player.setGameMode(GameMode.SPECTATOR);
-                    Location spawn = Stream.concat(
-                            getGame().getMarkers(SpawnLocationMarker.class).stream(),
-                            getGame().getMarkers(LobbyLocationMarker.class).stream()
-                    ).map(LocationMarker::getLocation).collect(Utils.randomElement());
-                    player.teleport(spawn);
                 }
             }.runTaskLater(Warlords.getInstance(), 1);
         }

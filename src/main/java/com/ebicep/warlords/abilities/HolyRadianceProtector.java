@@ -41,14 +41,14 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
         description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
                                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" health."))
-                               .append(Component.newline())
-                               .append(Component.text("You may look at an ally to mark them for "))
+                               .append(Component.text("\n\nYou may look at an ally to mark them for "))
                                .append(Component.text(markDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Mark has an optimal range of "))
-                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks. Your marked ally will emit a second Holy Radiance for "))
+                               .append(Component.text("seconds. Your marked ally will emit a second Holy Radiance for "))
                                .append(Component.text(markHealing + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of the original healing amount after the mark ends."));
+                               .append(Component.text(" of the original healing amount after the mark ends."))
+                               .append(Component.text("\n\nMark has an optimal range of "))
+                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
+                                .append(Component.text(" blocks."));
     }
 
     @Override

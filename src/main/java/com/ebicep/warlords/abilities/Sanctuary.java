@@ -34,9 +34,8 @@ import java.util.List;
 
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
-    private int damageReflected = 25;
     private int hexTickDurationIncrease = 40;
-    private int additionalDamageReduction = 10;
+    private int additionalDamageReduction = 12;
     private int tickDuration = 240;
 
     public Sanctuary() {
@@ -107,7 +106,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                         }
                         FortifyingHex fromHex = FortifyingHex.getFromHex(wp);
                         float damageToReflect = (additionalDamageReduction + fromHex.getDamageReduction() * 3) / 100f;
-                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1.5f, 1.9f);
+                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1, 1.9f);
                         event.getAttacker().addDamageInstance(
                                 teammate,
                                 name,
@@ -159,14 +158,6 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
-    }
-
-    public int getDamageReflected() {
-        return damageReflected;
-    }
-
-    public void setDamageReflected(int damageReflected) {
-        this.damageReflected = damageReflected;
     }
 
     public int getHexTickDurationIncrease() {

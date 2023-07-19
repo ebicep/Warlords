@@ -22,9 +22,6 @@ import java.util.List;
 
 public class SoulfireBeam extends AbstractBeam {
 
-    private int speedBuff = 40;
-    private int speedTickDuration = 60;
-
     public SoulfireBeam() {
         super("Soulfire Beam", 376, 508, 10, 10, 20, 175, 30, 30, false);
         this.maxTicks = 0;
@@ -37,11 +34,7 @@ public class SoulfireBeam extends AbstractBeam {
                                .append(Component.text(" damage to all enemies hit. " +
                                        " If the target is affected by the max stacks of Poisonous Hex, remove all stacks, increase the damage dealt of " + name + " by "))
                                .append(Component.text("100%", NamedTextColor.RED))
-                               .append(Component.text(". Gain"))
-                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" speed for "))
-                               .append(Component.text(format(speedTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nHas a maximum range of "))
+                               .append(Component.text(".\n\nHas a maximum range of"))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }

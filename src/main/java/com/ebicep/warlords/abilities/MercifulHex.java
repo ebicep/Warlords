@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.MercifulHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -53,23 +55,23 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     private int tickDuration = 40;
 
     public MercifulHex() {
-        super("Merciful Hex", 307, 415, 0, 70, 20, 180, 2.5, 20, true);
+        super("Merciful Hex", 307, 415, 0, 70, 20, 180, 2.5, 40, true);
         this.playerHitbox += .75; //TODO maybe inflate y separately
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of piercing magical wind forward. The first ally hit by the magical wind heals ")
+        description = Component.text("Send a wave of energy forward. The first ally hit heals ")
                 .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                 .append(Component.text(" health (subsequent hit allies are healed for 40%) and receives "))
                 .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit by the wind takes "))
+                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit takes "))
                 .append(formatRangeDamage(minDamage, maxDamage))
                 .append(Component.text(" damage. Also heal yourself for "))
                 .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
                 .append(Component.text(". If Merciful Hex hits a target, you receive "))
                 .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                .append(Component.text(" stack of Merciful Hex. Each stack of Merciful Hex heals "))
+                .append(Component.text(" stack of Merciful Hex.\n\nEach stack of Merciful Hex heals "))
                 .append(formatRangeHealing(dotMinHeal, dotMaxHeal))
                 .append(Component.text(" health every "))
                 .append(Component.text("2", NamedTextColor.GOLD))
@@ -156,7 +158,12 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     }
 
-    private void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
+    public static void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
+        MercifulHex fromHex = getFromHex(from);
+        int tickDuration = fromHex.getTickDuration();
+        float dotMinHeal = fromHex.getDotMinHeal();
+        float dotMaxHeal = fromHex.getDotMaxHeal();
+        String name = fromHex.getName();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, MercifulHex.class, 3);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Merciful Hex",
@@ -234,17 +241,17 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             @Override
             public void run(InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.SPELL,
-                        projectile.getCurrentLocation().clone().add(0, 0, 0),
-                        2,
-                        0,
-                        0,
-                        0,
-                        0,
-                        null,
-                        true
-                );
+                Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
+
+                for (float i = 0; i < 2; i++) {
+                    double angle = Math.toRadians(i * 180) + projectile.getTicksLived() * 0.45;
+                    double width = 0.35D;
+                    EffectUtils.displayParticle(
+                            Particle.SPELL,
+                            center.translateVector(projectile.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                            2
+                    );
+                }
             }
 
             @Override

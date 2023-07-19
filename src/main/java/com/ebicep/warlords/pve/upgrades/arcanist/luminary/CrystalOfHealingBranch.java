@@ -21,7 +21,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
                 "+125 Max health",
                 5000,
                 () -> {
-                    ability.setMaxHeal(maxHeal + 100);
+                    ability.setMaxHeal(maxHeal + 125);
                 }
         ));
         treeA.add(new Upgrade(
@@ -29,7 +29,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
                 "+250 Max health",
                 10000,
                 () -> {
-                    ability.setMaxHeal(maxHeal + 200);
+                    ability.setMaxHeal(maxHeal + 250);
                 }
         ));
         treeA.add(new Upgrade(
@@ -37,7 +37,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
                 "+375 Max health",
                 15000,
                 () -> {
-                    ability.setMaxHeal(maxHeal + 300);
+                    ability.setMaxHeal(maxHeal + 375);
                 }
         ));
         treeA.add(new Upgrade(
@@ -45,7 +45,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
                 "+500 Max health",
                 20000,
                 () -> {
-                    ability.setMaxHeal(maxHeal + 400);
+                    ability.setMaxHeal(maxHeal + 500);
                 }
         ));
 

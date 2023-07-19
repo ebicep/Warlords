@@ -11,6 +11,9 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -23,7 +26,9 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,8 +40,6 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         put(3, new Pair<>(1502f, 1599f));
         put(4, new Pair<>(1744f, 1859f));
     }};
-    private boolean skipNextAttack = false;
-    private int timesInARowDamageMaxReduced = 0;
 
     public Ghoulcaller(Location spawnLocation) {
         super(spawnLocation,
@@ -53,7 +56,23 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 0.42f,
                 5,
                 277,
-                416
+                416,
+                new GhoulcallersFury(),
+                new SpawnMobAbility(
+                        "Tormented Soul",
+                        20,
+                        Mobs.TORMENTED_SOUL,
+                        pve -> (int) (2 * pve.getGame().warlordsPlayers().count())
+                ) {
+                    @Override
+                    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+                        boolean activate = super.onActivate(wp, player);
+                        if (activate) {
+                            Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
+                        }
+                        return activate;
+                    }
+                }
         );
     }
 
@@ -66,77 +85,6 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 20 == 0) {
-            if (getWarlordsNPC().getCooldownManager().hasCooldown(SoulShackle.class) && !skipNextAttack) {
-                skipNextAttack = true;
-            }
-        }
-        //every 5 seconds. [this mob’s fury] deals (Damage values depending on total players in game) * 0.95 ^ x damage, where x is the amount of attacks that hit this mob in the past 5s.
-        if (ticksElapsed % 100 == 0) {
-            if (skipNextAttack) {
-                PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
-                            .aliveEnemiesOf(getWarlordsNPC())
-                            .forEach(enemyPlayer -> enemyPlayer.sendMessage(Component.text("Ghoulcaller's Fury has been silenced!", NamedTextColor.RED)));
-                skipNextAttack = false;
-            } else {
-                List<WarlordsDamageHealingFinalEvent> eventsInLast5Seconds = getWarlordsNPC().getSecondStats().getEventsAsSelfFromLastSecondStream(5)
-                                                                                             .filter(WarlordsDamageHealingFinalEvent::isDamageInstance)
-                                                                                             .toList();
-                int attacksInLast5Seconds = (int) (eventsInLast5Seconds.size() - eventsInLast5Seconds.stream()
-                                                                                                     .filter(event -> event.getAbility()
-                                                                                                                           .equals("Windfury Weapon"))
-                                                                                                     .count() / 2
-                );
-                if (attacksInLast5Seconds > 20) {
-                    attacksInLast5Seconds = 20;
-                    timesInARowDamageMaxReduced++;
-                    PlayerFilterGeneric.playingGameWarlordsPlayers(getWarlordsNPC().getGame())
-                            .limit(1)
-                            .forEach(warlordsPlayer -> ChallengeAchievements.checkForAchievement(warlordsPlayer, ChallengeAchievements.CONTROLLED_FURY));
-                } else {
-                    timesInARowDamageMaxReduced = 0;
-                }
-
-                int playerCount = option.playerCount();
-                float minDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
-                        playerCount,
-                        PLAYER_COUNT_DAMAGE_VALUES.get(1)
-                ).getA() * Math.pow(0.95, attacksInLast5Seconds)
-                );
-                float maxDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
-                        playerCount,
-                        PLAYER_COUNT_DAMAGE_VALUES.get(1)
-                ).getB() * Math.pow(0.95, attacksInLast5Seconds)
-                );
-
-                float multiplier = switch (option.getDifficulty()) {
-                    case EASY -> 0.5f;
-                    case HARD -> 1.5f;
-                    case EXTREME -> 2f;
-                    default -> 1;
-                };
-                Location loc = warlordsNPC.getLocation();
-                Utils.playGlobalSound(loc, "paladin.consecrate.activation", 2, 0.3f);
-                EffectUtils.playHelixAnimation(loc, 10, Particle.VILLAGER_ANGRY, 1, 20);
-                PlayerFilter.entitiesAround(getWarlordsNPC(), 10, 10, 10)
-                            .aliveEnemiesOf(getWarlordsNPC())
-                            .forEach(enemyPlayer -> {
-                                enemyPlayer.addDamageInstance(
-                                        getWarlordsNPC(),
-                                        "Fury",
-                                        minDamage * multiplier,
-                                        maxDamage * multiplier,
-                                        0,
-                                        100
-                                );
-                        });
-            }
-        }
-        //Spawn 2 * (The number of players in the game) Tormented Souls every 20 seconds
-        if (ticksElapsed % 400 == 0) {
-            spawnTormentedSouls(option, (int) (2 * option.getGame().warlordsPlayers().count()));
-        }
-
         if (ticksElapsed % 10 == 0) {
             EffectUtils.playCylinderAnimation(warlordsNPC.getLocation(), 1.1, 150, 120, 120);
         }
@@ -148,15 +96,15 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         if (event.getAbility().isEmpty()) {
             SoulShackle.shacklePlayer(attacker, receiver, 40);
             PlayerFilter.entitiesAround(getWarlordsNPC(), 3, 3, 3)
-                    .aliveEnemiesOf(getWarlordsNPC())
-                    .excluding(attacker)
-                    .forEach(enemyPlayer -> SoulShackle.shacklePlayer(attacker, enemyPlayer, 40));
+                        .aliveEnemiesOf(getWarlordsNPC())
+                        .excluding(attacker)
+                        .forEach(enemyPlayer -> SoulShackle.shacklePlayer(attacker, enemyPlayer, 40));
         }
 
         FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
-                .withColor(Color.BLACK)
-                .with(FireworkEffect.Type.BURST)
-                .build());
+                                                                                .withColor(Color.BLACK)
+                                                                                .with(FireworkEffect.Type.BURST)
+                                                                                .build());
     }
 
     @Override
@@ -191,7 +139,90 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         }
     }
 
-    public int getTimesInARowDamageMaxReduced() {
-        return timesInARowDamageMaxReduced;
+    public static class GhoulcallersFury extends AbstractPveAbility {
+
+        private int timesInARowDamageMaxReduced = 0;
+
+        public GhoulcallersFury() {
+            super("Ghoulcaller's Fury", 5, 100);
+        }
+
+        @Override
+        public void updateDescription(Player player) {
+
+        }
+
+        @Override
+        public List<Pair<String, String>> getAbilityInfo() {
+            return null;
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
+                return true;
+            }
+            List<WarlordsDamageHealingFinalEvent> eventsInLast5Seconds = wp
+                    .getSecondStats()
+                    .getEventsAsSelfFromLastSecondStream(5)
+                    .filter(WarlordsDamageHealingFinalEvent::isDamageInstance)
+                    .toList();
+            int attacksInLast5Seconds = (int) (
+                    eventsInLast5Seconds.size() - eventsInLast5Seconds
+                            .stream()
+                            .filter(event -> event.getAbility().equals("Windfury Weapon"))
+                            .count() / 2
+            );
+            if (attacksInLast5Seconds > 20) {
+                attacksInLast5Seconds = 20;
+                timesInARowDamageMaxReduced++;
+                PlayerFilterGeneric.playingGameWarlordsPlayers(wp.getGame())
+                                   .limit(1)
+                                   .forEach(warlordsPlayer -> ChallengeAchievements.checkForAchievement(warlordsPlayer,
+                                           ChallengeAchievements.CONTROLLED_FURY
+                                   ));
+            } else {
+                timesInARowDamageMaxReduced = 0;
+            }
+
+            int playerCount = pveOption.playerCount();
+            float minDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
+                    playerCount,
+                    PLAYER_COUNT_DAMAGE_VALUES.get(1)
+            ).getA() * Math.pow(0.95, attacksInLast5Seconds)
+            );
+            float maxDamage = (float) (PLAYER_COUNT_DAMAGE_VALUES.getOrDefault(
+                    playerCount,
+                    PLAYER_COUNT_DAMAGE_VALUES.get(1)
+            ).getB() * Math.pow(0.95, attacksInLast5Seconds)
+            );
+
+            float multiplier = switch (pveOption.getDifficulty()) {
+                case EASY -> 0.5f;
+                case HARD -> 1.5f;
+                case EXTREME -> 2f;
+                default -> 1;
+            };
+            Location loc = wp.getLocation();
+            Utils.playGlobalSound(loc, "paladin.consecrate.activation", 2, 0.3f);
+            EffectUtils.playHelixAnimation(loc, 10, Particle.VILLAGER_ANGRY, 1, 20);
+            PlayerFilter.entitiesAround(wp, 10, 10, 10)
+                        .aliveEnemiesOf(wp)
+                        .forEach(enemyPlayer -> {
+                            enemyPlayer.addDamageInstance(
+                                    wp,
+                                    "Fury",
+                                    minDamage * multiplier,
+                                    maxDamage * multiplier,
+                                    critChance,
+                                    critMultiplier
+                            );
+                        });
+            return true;
+        }
+
+        public int getTimesInARowDamageMaxReduced() {
+            return timesInARowDamageMaxReduced;
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -16,7 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +29,7 @@ import java.util.List;
 public class GuardianBeam extends AbstractBeam implements Duration {
 
     private float runeTimerIncrease = 1.5f;
-    private int shieldPercent = 20;
+    private int shieldPercent = 25;
     private int tickDuration = 120;
 
     public GuardianBeam() {
@@ -39,11 +40,11 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     public void updateDescription(Player player) {
         description = Component.text("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" damage damage and have their rune timers increased by "))
+                               .append(Component.text(" damage damage and have their cooldowns increased by "))
                                .append(Component.text(format(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. If an ally has max stacks of Fortifying Hex, remove all stacks and grant them a shield with "))
                                .append(Component.text(shieldPercent + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of the ally’s maximum health and lasts "))
+                               .append(Component.text(" of the ally’s maximum health that lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. If Guardian Beam hits a target and you have max stacks of Fortifying Hex, you also receive the shield." +
                                        "\n\nHas a maximum range of "))
@@ -86,6 +87,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
             if (!hasSanctuary) {
                 wp.getCooldownManager().removeCooldown(FortifyingHex.class, false);
             }
+            Utils.playGlobalSound(wp.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "SHIELD",
@@ -99,6 +101,13 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                     },
                     tickDuration,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 4 == 0) {
+                            Location location = wp.getLocation();
+                            location.add(0, 1.5, 0);
+                            EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
+                            EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
+                            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
+                        }
                     })
             ));
         }
@@ -107,7 +116,6 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
         shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
-        Utils.playGlobalSound(shooter.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_3, 2, 2);
         return super.onActivate(shooter, player);
     }
 
@@ -134,7 +142,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     @Override
     protected float getSoundPitch() {
-        return 1.6f;
+        return 1;
     }
 
     @Override

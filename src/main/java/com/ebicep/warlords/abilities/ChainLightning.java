@@ -166,12 +166,8 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Com
             WarlordsEntity hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
             float damageMultiplier = switch (playersSize) {
-                case 0 ->
-                    // We hit the first player
-                        pveMasterUpgrade ? 1.1f : 1f;
-                case 1 ->
-                    // We hit the second player
-                        pveMasterUpgrade ? 1.2f : .85f;
+                case 0 -> pveMasterUpgrade ? 1.1f : 1f;
+                case 1 -> pveMasterUpgrade ? 1.2f : .85f;
                 default -> pveMasterUpgrade ? 1.3f : .7f;
             };
 

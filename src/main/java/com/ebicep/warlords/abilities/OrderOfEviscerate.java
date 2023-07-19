@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -131,11 +132,10 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.3f, 2);
-                    wp.getWorld().spawnParticle(Particle.SMOKE_NORMAL, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05, null, true);
-                    if (ticksElapsed % 10 == 0) {
-                        //Particle.FOOTSTEP.display(0, 0, 0, 1, 1, wp.getLocation().add(0, 0.1, 0), 500);
+                    if (ticksElapsed % 2 == 0) {
+                        Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.25f, 2);
                     }
+                    EffectUtils.displayParticle(Particle.SMOKE_NORMAL, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
                 })
         ) {
 

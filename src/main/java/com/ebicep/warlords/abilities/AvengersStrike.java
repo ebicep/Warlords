@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -60,16 +61,14 @@ public class AvengersStrike extends AbstractStrike {
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
-        location.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.SPELL,
                 location,
                 4,
                 (float) ((Math.random() * 2) - 1),
                 (float) ((Math.random() * 2) - 1),
                 (float) ((Math.random() * 2) - 1),
-                1,
-                null,
-                true
+                1
         );
     }
 

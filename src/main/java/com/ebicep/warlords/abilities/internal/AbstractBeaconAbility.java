@@ -102,7 +102,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
             }
         }.runTaskTimer(0, 2);
 
-        Utils.playGlobalSound(beacon.getLocation(), Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD, 0.3f, 0.5f);
+        Utils.playGlobalSound(beacon.getLocation(), Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD, 0.2f, 0.5f);
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
