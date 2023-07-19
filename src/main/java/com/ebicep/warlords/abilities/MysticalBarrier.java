@@ -42,7 +42,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Surround yourself with magical spirits that reduce the melee damage you take by")
+        description = Component.text("Surround yourself with magical spirits that reduce all melee damage you take by")
                                .append(Component.text(format(meleeDamageReduction) + "%", NamedTextColor.YELLOW))
                                .append(Component.text("and increase the attacker’s cooldowns by "))
                                .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
@@ -99,6 +99,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                             .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                             .append(Component.text(" seconds!", NamedTextColor.GRAY))
                                     );
+
                                     for (int i = 0; i < 3; i++) {
                                         FortifyingHex.giveFortifyingHex(wp, ally);
                                     }

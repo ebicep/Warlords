@@ -81,7 +81,6 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                 },
                 tickDuration
         ) {
-
             @Override
             protected Listener getListener() {
                 return new Listener() {
