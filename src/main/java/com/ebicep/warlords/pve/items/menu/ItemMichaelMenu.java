@@ -844,7 +844,11 @@ public class ItemMichaelMenu {
                                     item.setModifier(item.getModifier() + 1);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     player.playSound(player.getLocation(), Sound.ENTITY_GENERIC_SPLASH, 2, 0.1f);
-                                    player.closeInventory();
+                                    if (item.getModifier() == 0) {
+                                        player.closeInventory();
+                                    } else {
+                                        openPurifyItemMenu(player, databasePlayer, item);
+                                    }
 
                                     AbstractItem.sendItemMessage(player, component.append(item.getHoverComponent()));
                                 },
