@@ -80,9 +80,7 @@ public class RewardInventory {
             }
 
             menu.setItem(3, 5,
-                    new ItemBuilder(Material.GOLD_BLOCK)
-                            .name(Component.text("Click to claim all rewards!", NamedTextColor.GREEN))
-                            .get(),
+                    Menu.CLAIM_ALL,
                     (m, e) -> {
                         for (AbstractReward reward : rewards) {
                             reward.giveToPlayer(databasePlayer);

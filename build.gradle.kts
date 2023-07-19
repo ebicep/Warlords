@@ -74,7 +74,7 @@ dependencies {
     implementation("net.dv8tion:JDA:4.4.0_350")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.4")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("com.github.Rapha149.SignGUI:signgui:7d7633b4d6")
+    implementation("com.github.Rapha149.SignGUI:signgui:5232fbd3f6")
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.3-SNAPSHOT")
     compileOnly("net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT") {

@@ -9,6 +9,10 @@ import java.util.LinkedHashMap;
 
 public class LevelUpReward extends AbstractReward {
 
+    /**
+     * @param level 1-100
+     * @return The rewards for the level
+     */
     public static LinkedHashMap<Spendable, Long> getRewardForLevel(int level) {
         LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
         if (level <= 50) {
