@@ -410,6 +410,18 @@ public class Warlords extends JavaPlugin {
 
         MemoryManager.init();
 
+        //cancel swimming - https://github.com/PaperMC/Paper/issues/1328
+//        new BukkitRunnable() {
+//            public void run() {
+//                for (Player player : Bukkit.getOnlinePlayers()) {
+//                    if (!player.isSwimming()) {
+//                        player.setSprinting(true);
+//                        player.setSprinting(false);
+//                    }
+//                }
+//            }
+//        }.runTaskTimer(this, 1, 1);
+
         ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is enabled");
     }
 
