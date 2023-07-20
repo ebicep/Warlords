@@ -123,6 +123,8 @@ public class Chessking extends AbstractSlime implements BossMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 8, 8, 8)
                     .aliveEnemiesOf(wp)

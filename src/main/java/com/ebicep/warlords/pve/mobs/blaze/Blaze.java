@@ -80,6 +80,8 @@ public class Blaze extends AbstractBlaze implements EliteMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             Location loc = wp.getLocation();
             EffectUtils.playSphereAnimation(loc, kindleRadius, Particle.FLAME, 1);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 2, 0.2f);

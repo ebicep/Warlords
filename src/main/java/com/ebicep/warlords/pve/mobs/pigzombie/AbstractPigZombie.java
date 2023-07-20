@@ -70,6 +70,8 @@ public abstract class AbstractPigZombie extends AbstractMob<CustomPigZombie> {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             Location location = wp.getLocation();
             Utils.playGlobalSound(location, Sound.ENTITY_ZOMBIFIED_PIGLIN_ANGRY, 1, 0.5f);
             Utils.playGlobalSound(location, "paladin.holyradiance.activation", 0.8f, 0.6f);

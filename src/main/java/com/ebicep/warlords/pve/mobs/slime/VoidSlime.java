@@ -71,6 +71,8 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 10, 10, 10)
                     .aliveEnemiesOf(wp)

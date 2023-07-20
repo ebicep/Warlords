@@ -145,6 +145,8 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.FLAME, 1);
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(wp, 6, 6, 6)

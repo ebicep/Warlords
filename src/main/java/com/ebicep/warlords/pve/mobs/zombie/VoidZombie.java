@@ -108,6 +108,8 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             float healthDamage = wp.getMaxHealth() * 0.01f;
             wp.addDamageInstance(wp, "Void Shred", healthDamage, healthDamage, 0, 100);
             return true;
