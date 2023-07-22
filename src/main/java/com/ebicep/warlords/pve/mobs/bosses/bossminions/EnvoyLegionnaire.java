@@ -6,7 +6,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -14,6 +16,8 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
+
+import javax.annotation.Nonnull;
 
 public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
 
@@ -32,7 +36,8 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                 0.32f,
                 10,
                 1000,
-                1500
+                1500,
+                new Remedy()
         );
     }
 
@@ -44,28 +49,7 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        WarlordsEntity zenith = PlayerFilter
-                .playingGame(warlordsNPC.getGame())
-                .filter(we -> we.getName()
-                                .equals("Zenith"))
-                .findFirstOrNull();
 
-        if (ticksElapsed % 200 == 0) {
-            if (zenith != null) {
-                zenith.addHealingInstance(
-                        warlordsNPC,
-                        "Remedy",
-                        500,
-                        500,
-                        -1,
-                        100
-                );
-
-                Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);
-                EffectUtils.playParticleLinkAnimation(zenith.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
-            }
-            warlordsNPC.getMob().removeTarget();
-        }
     }
 
     @Override
@@ -86,5 +70,44 @@ public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL)
                                                                        .withTrail()
                                                                        .build());
+    }
+
+    private static class Remedy extends AbstractPveAbility {
+
+        public Remedy() {
+            super(
+                    "Remedy",
+                    500,
+                    500,
+                    10,
+                    100
+            );
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+
+            PlayerFilter.playingGame(wp.getGame())
+                        .filter(we -> we.getName().equals("Zenith"))
+                        .forEach(zenith -> {
+                            zenith.addHealingInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier
+                            );
+
+                            Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);
+                            EffectUtils.playParticleLinkAnimation(zenith.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY);
+                        });
+            if (wp instanceof WarlordsNPC warlordsNPC) {
+                warlordsNPC.getMob().removeTarget();
+            }
+
+            return true;
+        }
     }
 }

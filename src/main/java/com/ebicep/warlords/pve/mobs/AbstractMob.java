@@ -454,10 +454,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
     }
 
-    protected BossBar getHealthModifiedBossBar() {
-        return bossBar.progress(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth());
-    }
-
     public net.minecraft.world.entity.LivingEntity getTarget() {
         return this.entity.getTarget();
     }

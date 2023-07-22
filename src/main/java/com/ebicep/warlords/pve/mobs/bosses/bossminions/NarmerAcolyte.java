@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.abilities.RemoveTarget;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -30,7 +31,8 @@ public class NarmerAcolyte extends AbstractZombie implements BossMob {
                 0.35f,
                 0,
                 540,
-                765
+                765,
+                new RemoveTarget(20)
         );
     }
 
@@ -42,9 +44,6 @@ public class NarmerAcolyte extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 400 == 0) {
-            warlordsNPC.getMob().removeTarget();
-        }
     }
 
     @Override
