@@ -27,6 +27,7 @@ public class AdminCommand extends BaseCommand {
     public static final Set<DatabasePlayerPvE> BYPASSED_PLAYER_CURRENCIES = new HashSet<>();
     public static boolean DISABLE_RESTART_CHECK = false;
     public static boolean DISABLE_SPECTATOR_MESSAGES = false;
+    public static boolean NEW_SWIMMING = false;
 
     @Subcommand("bypasscurrencies")
     @Description("Bypasses player pve currency costs - Prevents any from being added")
@@ -105,6 +106,13 @@ public class AdminCommand extends BaseCommand {
         ChatChannels.sendDebugMessage(player,
                 Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Mount = " + target.getVehicle(), NamedTextColor.GREEN))
         );
+    }
+
+    @Subcommand("toggleswimming")
+    @Description("Toggles swimming")
+    public void toggleSwimming(CommandIssuer issuer) {
+        NEW_SWIMMING = !NEW_SWIMMING;
+        ChatChannels.sendDebugMessage(issuer, Component.text("New Swimming = " + NEW_SWIMMING, NamedTextColor.GREEN));
     }
 
     @HelpCommand

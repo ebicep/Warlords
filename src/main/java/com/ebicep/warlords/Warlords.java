@@ -8,6 +8,7 @@ import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.commands.CommandManager;
+import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.WarlordsEvents;
@@ -111,6 +112,14 @@ public class Warlords extends JavaPlugin {
         // ().name);
     }
 
+//    @Nullable
+//    public static WarlordsEntity getPlayer(@Nullable Entity entity) {
+//        if (entity != null) {
+//            return getPlayer(entity.getBukkitEntity());
+//        }
+//        return null;
+//    }
+
     @Nullable
     public static WarlordsEntity getPlayer(@Nullable Entity entity) {
         if (entity != null) {
@@ -124,14 +133,6 @@ public class Warlords extends JavaPlugin {
         }
         return null;
     }
-
-//    @Nullable
-//    public static WarlordsEntity getPlayer(@Nullable Entity entity) {
-//        if (entity != null) {
-//            return getPlayer(entity.getBukkitEntity());
-//        }
-//        return null;
-//    }
 
     @Nullable
     public static WarlordsEntity getPlayer(@Nullable Player player) {
@@ -207,7 +208,6 @@ public class Warlords extends JavaPlugin {
     public static boolean hasPlayer(@Nonnull UUID player) {
         return PLAYERS.containsKey(player);
     }
-
     private GameManager gameManager;
 
     @Override
@@ -410,17 +410,21 @@ public class Warlords extends JavaPlugin {
 
         MemoryManager.init();
 
-        //cancel swimming - https://github.com/PaperMC/Paper/issues/1328
-//        new BukkitRunnable() {
-//            public void run() {
-//                for (Player player : Bukkit.getOnlinePlayers()) {
-//                    if (!player.isSwimming()) {
-//                        player.setSprinting(true);
-//                        player.setSprinting(false);
-//                    }
-//                }
-//            }
-//        }.runTaskTimer(this, 1, 1);
+        //cancel swimming, modified from - https://github.com/PaperMC/Paper/issues/1328
+        //added player.isInWater() check or else there is no dynamic fov while on land
+        new BukkitRunnable() {
+            public void run() {
+                if (!AdminCommand.NEW_SWIMMING) {
+                    return;
+                }
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (!player.isSwimming() && player.isInWater()) {
+                        player.setSprinting(true);
+                        player.setSprinting(false);
+                    }
+                }
+            }
+        }.runTaskTimer(this, 1, 1);
 
         ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is enabled");
     }
