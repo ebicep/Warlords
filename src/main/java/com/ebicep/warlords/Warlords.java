@@ -414,7 +414,7 @@ public class Warlords extends JavaPlugin {
         //added player.isInWater() check or else there is no dynamic fov while on land
         new BukkitRunnable() {
             public void run() {
-                if (!AdminCommand.NEW_SWIMMING) {
+                if (AdminCommand.NEW_SWIMMING) {
                     return;
                 }
                 for (Player player : Bukkit.getOnlinePlayers()) {

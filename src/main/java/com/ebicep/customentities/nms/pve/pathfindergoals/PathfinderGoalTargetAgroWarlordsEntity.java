@@ -51,7 +51,7 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
         List<LivingEntity> list = this.mob.level().getEntitiesOfClass(LivingEntity.class, this.getTargetSearchArea(followRange)); // getEntitiesWithinAABB
         list.removeIf(entity -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
-            return warlordsEntity == null || warlordsEntity.isTeammate(thisWarlordsEntity) || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.CREATIVE);
+            return warlordsEntity == null || warlordsEntity.isDead() || warlordsEntity.isTeammate(thisWarlordsEntity) || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.CREATIVE);
         });
         list.sort((o1, o2) -> Double.compare(o1.distanceToSqr(this.mob), o2.distanceToSqr(this.mob)));
         if (list.isEmpty()) {

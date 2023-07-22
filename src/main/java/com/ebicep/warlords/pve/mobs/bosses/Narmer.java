@@ -271,6 +271,7 @@ public class Narmer extends AbstractZombie implements BossMob {
         public SpawnNarmerAcolyteAbility(Narmer narmer) {
             super("Narmer Acolyte", 15);
             this.narmer = narmer;
+            this.pveOption = narmer.pveOption;
         }
 
         @Override
