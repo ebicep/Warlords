@@ -80,7 +80,7 @@ public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> 
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Graceful Ascent",
                 "Divine Blessing - Master Upgrade",
                 """
                         Lethal damage healing increased to 30%. All allies restore another 800 health after Divine Blessing ends.

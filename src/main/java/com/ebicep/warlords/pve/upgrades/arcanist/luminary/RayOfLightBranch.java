@@ -91,7 +91,7 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Divine Light",
                 "Ray of Light - Master Upgrade",
                 """
                         Ray of Light will grant allies with max stacks of Merciful Hex a 10% damage bonus for 5s. Additionally, increase bonus healing for max stack allies by 25%.

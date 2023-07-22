@@ -102,7 +102,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Bolstering Hex",
                 "Fortifying Hex - Master Upgrade",
                 """
                         Fortifying Hex can now pierce through targets. Energy cost -15.

@@ -92,7 +92,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Intrusive Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
                         Poisonous Hex now pierces through all enemies.

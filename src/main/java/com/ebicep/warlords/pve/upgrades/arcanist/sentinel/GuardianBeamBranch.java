@@ -92,7 +92,7 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Sentry Beam",
                 "Guardian Beam - Master Upgrade",
                 """
                         Enemy cooldowns are increased by an additional 3.5s. Additionally, shield health is increased by 25%.
