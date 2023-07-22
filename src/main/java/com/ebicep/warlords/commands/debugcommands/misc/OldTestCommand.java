@@ -1,6 +1,5 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -171,8 +170,6 @@ public class OldTestCommand implements CommandExecutor {
 //            for (int i = 0; i < 10_000; i++) {
 //                player.sendMessage(NumberFormat.addCommaAndRound(i));
 //            }
-
-            Warlords.swimTest = !Warlords.swimTest;
 
         }
 
