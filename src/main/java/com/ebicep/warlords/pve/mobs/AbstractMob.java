@@ -207,9 +207,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                     this
             );
         }
-        AbstractAbility weapon = warlordsNPC.getSpec().getWeapon();
-        if (weapon instanceof Fireball) {
-            ((Fireball) weapon).setMaxDistance(150);
+        for (AbstractAbility ability : warlordsNPC.getAbilities()) {
+            if (ability instanceof Fireball fireball) {
+                fireball.setMaxDistance(150);
+            }
         }
 
         modifyStats.accept(warlordsNPC);
@@ -502,6 +503,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public boolean isShowBossBar() {
-        return showBossBar;
+        return showBossBar && !warlordsNPC.isDead();
     }
 }
