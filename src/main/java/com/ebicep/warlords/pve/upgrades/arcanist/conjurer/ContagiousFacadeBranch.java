@@ -83,7 +83,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Corrosive Facade",
                 "Contagious Facade - Master Upgrade",
                 """
                         Your shield also deals the value of damage absorbed to all nearby enemies and slows them by 25% for 3s.

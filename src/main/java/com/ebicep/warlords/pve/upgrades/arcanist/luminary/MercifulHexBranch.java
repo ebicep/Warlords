@@ -131,7 +131,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Benevolent Hex",
                 "Merciful Hex - Master Upgrade",
                 """
                         All allies hit receive 1 stack of Merciful Hex. Increase additional targets hit healing/damage by 20%.

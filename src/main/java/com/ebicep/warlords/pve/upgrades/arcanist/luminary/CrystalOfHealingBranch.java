@@ -84,7 +84,7 @@ public class CrystalOfHealingBranch extends AbstractUpgradeBranch<CrystalOfHeali
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Lucid Healing",
                 "Crystal of Healing - Master Upgrade",
                 """
                         Crystal of Healing provide 50 healing per second for allies within 6 blocks.

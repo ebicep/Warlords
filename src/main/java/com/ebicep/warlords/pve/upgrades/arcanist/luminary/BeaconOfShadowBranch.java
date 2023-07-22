@@ -80,7 +80,7 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> 
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Beacon of Gloom",
                 "Beacon of Shadow - Master Upgrade",
                 """
                         Increase Crit Multiplier reduction by 30%. Enemies within the radius have their movement speed reduced by 15%.

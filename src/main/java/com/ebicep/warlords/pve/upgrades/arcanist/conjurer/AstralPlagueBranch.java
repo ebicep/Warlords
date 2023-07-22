@@ -80,7 +80,7 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Virulent State",
                 "Astral Plague - Master Upgrade",
                 """
                         For the duration of Astral Plague, increase Crit Multiplier by 40%, and Soulfire Beam is guaranteed to crit on enemies with max Hex stacks.

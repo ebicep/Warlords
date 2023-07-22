@@ -92,7 +92,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Eradicating Beam",
                 "Soulfire Beam - Master Upgrade",
                 """
                         Increase the damage multiplier on the first 4 max stack targets by 800%.
