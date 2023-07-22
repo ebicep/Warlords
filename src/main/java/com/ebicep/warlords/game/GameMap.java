@@ -3579,6 +3579,225 @@ public enum GameMap {
         }
 
     },
+    ILLUSION_RIFT_EVENT_5(
+            "The Borderline of Illusion",
+            4,
+            1,
+            120 * SECOND,
+            "IllusionRiftEvent5",
+            6,
+            GameMode.EVENT_WAVE_DEFENSE
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    Component.text(getMapName(), NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    Component.text("Kill mobs to gain event points!", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                    Component.empty()
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Kill as many mobs as possible!", NamedTextColor.YELLOW)
+            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-9.5, 22, 0.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-17.5, 22, -4.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(6.5, 22, -7.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 22, 6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
+
+            options.add(new PowerupOption(loc.addXYZ(16.5, 24.5, 17.5), PowerupType.COOLDOWN, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(-15.5, 24.5, -18.5), PowerupType.HEALING, 5, 90, 30));
+
+            //options.add(new RespawnOption(20));
+            options.add(new RespawnWaveOption(2, 1, 20));
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
+                    .add(1, new SimpleWave(16, 10 * SECOND, null)
+                            .add(0.4, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_SLIME)
+                            .add(0.2, Mobs.ELITE_SKELETON)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.2, Mobs.SLIME_ZOMBIE)
+                    )
+                    .add(4, new SimpleWave(16, 10 * SECOND, null)
+                            .add(0.3, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.2, Mobs.ELITE_ZOMBIE)
+                            .add(0.2, Mobs.FORGOTTEN_LANCER)
+                            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.1, Mobs.VOID_SKELETON)
+                    )
+                    .add(9, new SimpleWave(16, 10 * SECOND, null)
+                            .add(0.3, Mobs.FORGOTTEN_LANCER)
+                            .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_SLIME)
+                            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.2, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.2, Mobs.ENVOY_ZOMBIE)
+                    )
+                    .add(10, new SimpleWave(44951, 10 * SECOND, null)
+                            .add(1, Mobs.EVENT_ILLUSION_CORE)
+                    )
+                    .add(11, new SimpleWave(16, 10 * SECOND, null)
+                            .add(0.2, Mobs.FORGOTTEN_LANCER)
+                            .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.2, Mobs.BASIC_SLIME)
+                            .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.2, Mobs.GHOST_ZOMBIE)
+                    )
+                    .add(14, new SimpleWave(25, 10 * SECOND, null)
+                            .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.2, Mobs.SPIDER)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.2, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.3, Mobs.BASIC_SLIME)
+                    )
+                    .add(19, new SimpleWave(30, 10 * SECOND, null)
+                            .add(0.3, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_SKELETON)
+                            .add(0.1, Mobs.SPIDER)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_ZOMBIE)
+                            .add(0.1, Mobs.VOID_SKELETON)
+                    )
+                    .add(20, new SimpleWave(30, 10 * SECOND, null)
+                            .add(1, Mobs.EVENT_EXILED_CORE)
+                    )
+                    .add(21, new SimpleWave(30, 10 * SECOND, null)
+                            .add(0.1, Mobs.EXTREME_ZEALOT)
+                            .add(0.1, Mobs.ENVOY_ZOMBIE)
+                            .add(0.2, Mobs.EXILED_SKELETON)
+                            .add(0.2, Mobs.BASIC_SLIME)
+                            .add(0.6, Mobs.SLIME_ZOMBIE)
+                    )
+                    .add(22, new SimpleWave(15, 10 * SECOND, null)
+                            .add(0.1, Mobs.EXTREME_ZEALOT)
+                            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.2, Mobs.EXILED_ZOMBIE_RIFT)
+                            .add(0.2, Mobs.EXILED_SKELETON)
+                            .add(0.1, Mobs.EXILED_VOID_LANCER)
+                            .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_SKELETON)
+                    )
+                    .add(25, new SimpleWave(20, 10 * SECOND, null)
+                            .add(0.05, Mobs.BASIC_ZOMBIE)
+                            .add(0.05, Mobs.BASIC_PIG_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.05, Mobs.SPIDER)
+                            .add(0.05, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.2, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.05, Mobs.ENVOY_ZOMBIE)
+                            .add(0.05, Mobs.SLIME_ZOMBIE)
+                            .add(0.1, Mobs.EXILED_ZOMBIE_RIFT)
+                            .add(0.1, Mobs.EXILED_SKELETON)
+                            .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.1, Mobs.BASIC_SLIME)
+                    )
+                    .add(29, new SimpleWave(15, 10 * SECOND, null)
+                            .add(0.2, Mobs.VOID_SKELETON)
+                            .add(0.3, Mobs.FORGOTTEN_LANCER)
+                            .add(0.1, Mobs.EXILED_ZOMBIE_RIFT)
+                            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.2, Mobs.ENVOY_SKELETON)
+                            .add(0.1, Mobs.EXILED_SKELETON)
+                    )
+                    .add(30, new SimpleWave(25, 10 * SECOND, null)
+                            .add(1, Mobs.ILLUMINA)
+                    )
+                    .add(31, new SimpleWave(20, 10 * SECOND, null)
+                            .add(0.2, Mobs.EXILED_SKELETON)
+                            .add(0.4, Mobs.FORGOTTEN_LANCER)
+                            //.add(0.1, Mobs.Illusion Anomaly)
+                            .add(0.1, Mobs.EXILED_VOID_LANCER)
+                            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
+                            .add(0.1, Mobs.SLIME_ZOMBIE)
+                    )
+                    .add(36, new SimpleWave(24, 10 * SECOND, null)
+                            .add(0.1, Mobs.VOID_SKELETON)
+                            .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
+                            .add(0.1, Mobs.GHOST_ZOMBIE)
+                            .add(0.1, Mobs.SPIDER)
+                            .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
+                            .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
+                            .add(0.05, Mobs.EXILED_ZOMBIE_RIFT)
+                            .add(0.05, Mobs.EXILED_VOID_LANCER)
+                            .add(0.1, Mobs.ELITE_ZOMBIE)
+                            .add(0.1, Mobs.FORGOTTEN_LANCER)
+                            .add(0.1, Mobs.BASIC_SLIME)
+                    )
+                    .add(40, new SimpleWave(10, 10 * SECOND, null)
+                            .add(1, Mobs.EVENT_CALAMITY_CORE)
+                    )
+                    .loop(6, 36, 5)
+                    .loop(6, 40, 5)
+                    ,
+                    DifficultyIndex.EVENT
+            ) {
+
+                @Override
+                public List<Component> getWaveScoreboard(WarlordsPlayer player) {
+                    return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                }
+
+                @Override
+                public float getSpawnCountMultiplier(int playerCount) {
+                    return switch (playerCount) {
+                        case 3 -> 1.25f;
+                        case 4 -> 1.5f;
+                        default -> 1;
+                    };
+                }
+            });
+            options.add(new ItemOption());
+            options.add(new WinAfterTimeoutOption(600, 50, "spec"));
+            options.add(new SpidersDwellingOption());
+            options.add(new SafeZoneOption());
+            options.add(new EventPointsOption()
+                    .reduceScoreOnAllDeath(30, Team.BLUE)
+                    .onPerWaveClear(1, 500)
+                    .onPerWaveClear(5, 2000)
+
+            );
+            options.add(new CurrencyOnEventOption()
+                    .startWith(120000)
+                    .onKill(500)
+                    .setPerWaveClear(5, 10000)
+            );
+            options.add(new CoinGainOption()
+                    //.clearMobCoinValueAndSet("Mithra Killed", "Mithra", 100)
+                    .guildCoinInsigniaConvertBonus(1000)
+                    .guildCoinPerXSec(1, 1)
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerXSec(15, 10)
+                    .guildExpPerXSec(1, 60)
+            );
+            options.add(new FieldEffect(options, FieldEffect.FieldEffects.ARACHNOPHOBIA));
+
+            return options;
+        }
+
+    },
     ILLUSION_PHANTOM(
             "Illusion Phantom",
             6,

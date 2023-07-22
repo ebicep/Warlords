@@ -98,7 +98,12 @@ public enum SkullID {
     WITHER_SOUL("NjIxNzg2OWVjMjA1ZDE3MjdmYzRjNjA1NWJkODY4Yjc4ODZmMmM4YWQ5OGZhNzA0Y2I3NmUxMWJkZDgwMjg3OSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/monsters/58154-seek-doors
     SEEK_DOORS("ZWZmZWU5MDZlYjBlNWJhODAzZWJhOTk2ZDQxZTM5ZjM5ZjM3YzFjMDNmZTA0ODUzNjMwOTRlMDA4MDQyMjU5In19fQ=="),
-
+    //https://minecraft-heads.com/custom-heads/miscellaneous/46577-enchantment-cube
+    ENCHANTMENT_CUBE("M2JiNzg4YzBmZjBmYzU3NDY5ODc4N2MzYzdmMWIzODVhMTljMTczODM1OTMyMzU2MzU0MmI1MzdkMDVmMWYyZSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/miscellaneous/5765-fancy-cube
+    FANCY_CUBE_3("NGViYjEwZTczMWE0YmRkZTNkOWRmM2E1M2M2MjdhOGI4YzMyZDgyODM1ZGJiYjk4OGY0YTY5NzI3YTc2MSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/miscellaneous/41877-explosion,
+    EXPLOSION("NjAyYTExNjkzMDlmMDVlZjJmMDYxYjFmYTBmZTIyNWYyOWQ3M2EyNGY4ZjA3Y2NjMmE3MDVkZWVhY2EwNjlkMSJ9fX0="),
 
     ;
 
