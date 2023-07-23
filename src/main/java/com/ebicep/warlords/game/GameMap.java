@@ -3624,6 +3624,7 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
+            Location bossSpawnLocation = new Location(loc.getWorld(), 2.5, 26, -2.5);
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(16, 10 * SECOND, null)
                             .add(0.4, Mobs.GHOST_ZOMBIE)
@@ -3649,7 +3650,7 @@ public enum GameMap {
                             .add(0.2, Mobs.ENVOY_ZOMBIE)
                     )
                     .add(10, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
-                            .add(1, Mobs.EVENT_ILLUSION_CORE)
+                            .add(1, Mobs.EVENT_ILLUSION_CORE, bossSpawnLocation)
                     )
                     .add(11, new SimpleWave(16, 10 * SECOND, null)
                             .add(0.2, Mobs.FORGOTTEN_LANCER)
@@ -3677,7 +3678,7 @@ public enum GameMap {
                             .add(0.1, Mobs.VOID_SKELETON)
                     )
                     .add(20, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
-                            .add(1, Mobs.EVENT_EXILED_CORE)
+                            .add(1, Mobs.EVENT_EXILED_CORE, bossSpawnLocation)
                     )
                     .add(21, new SimpleWave(30, 10 * SECOND, null)
                             .add(0.1, Mobs.EXTREME_ZEALOT)
@@ -3719,7 +3720,7 @@ public enum GameMap {
                             .add(0.1, Mobs.EXILED_SKELETON)
                     )
                     .add(30, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
-                            .add(1, Mobs.EVENT_ILLUMINA)
+                            .add(1, Mobs.EVENT_ILLUMINA, bossSpawnLocation)
                     )
                     .add(31, new SimpleWave(20, 10 * SECOND, null)
                             .add(0.2, Mobs.EXILED_SKELETON)
@@ -3743,7 +3744,7 @@ public enum GameMap {
                             .add(0.1, Mobs.BASIC_SLIME)
                     )
                     .add(40, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
-                            .add(1, Mobs.EVENT_CALAMITY_CORE)
+                            .add(1, Mobs.EVENT_CALAMITY_CORE, bossSpawnLocation)
                     )
                     .loop(6, 36, 5)
                     .loop(6, 40, 5)

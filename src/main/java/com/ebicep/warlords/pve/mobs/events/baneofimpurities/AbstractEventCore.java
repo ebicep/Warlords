@@ -86,7 +86,8 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
                 });
             }
 
-            option.spawnNewMob(summonList.next().createMob.apply(warlordsNPC.getLocation()));
+            option.spawnNewMob(summonList.next().createMob.apply(pveOption.getRandomSpawnLocation(warlordsNPC)));
+
             if (secondsElapsed % 15 == 0) {
                 for (WarlordsEntity we : PlayerFilter
                         .playingGame(getWarlordsNPC().getGame())

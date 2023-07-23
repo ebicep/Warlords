@@ -379,30 +379,8 @@ public class WaveDefenseOption implements PveOption {
             }
 
             private Location getSpawnLocation(WarlordsEntity entity) {
-                List<Location> candidates = new ArrayList<>();
-                double priority = Double.NEGATIVE_INFINITY;
-                for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
-                    if (entity == null) {
-                        return marker.getLocation();
-                    }
-                    if (candidates.isEmpty()) {
-                        candidates.add(marker.getLocation());
-                        priority = marker.getPriority(entity);
-                    } else {
-                        double newPriority = marker.getPriority(entity);
-                        if (newPriority >= priority) {
-                            if (newPriority > priority) {
-                                candidates.clear();
-                                priority = newPriority;
-                            }
-                            candidates.add(marker.getLocation());
-                        }
-                    }
-                }
-                if (!candidates.isEmpty()) {
-                    return candidates.get((int) (Math.random() * candidates.size()));
-                }
-                return lastLocation;
+                Location randomSpawnLocation = getRandomSpawnLocation(entity);
+                return randomSpawnLocation != null ? randomSpawnLocation : lastLocation;
             }
 
         }.runTaskTimer(currentWave.getDelay(), 8);
