@@ -3800,8 +3800,10 @@ public enum GameMap {
                     .disableGuildBonus()
             );
             options.add(new CoinGainOption()
+                    .playerCoinPerXSec(150, 10)
                     .guildCoinInsigniaConvertBonus(1000)
                     .guildCoinPerXSec(1, 1)
+                    .disableCoinConversionUpgrade()
             );
             options.add(new ExperienceGainOption()
                     .playerExpPerXSec(10, 10)

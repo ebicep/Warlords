@@ -77,7 +77,7 @@ public class EventIllumina extends AbstractZombie implements BossMob {
 
     @Override
     public Component getDescription() {
-        return Component.text("General of the Illusion Legion", NamedTextColor.DARK_GRAY);
+        return Component.text("", NamedTextColor.DARK_GRAY);
     }
 
     @Override

@@ -41,6 +41,7 @@ public class CoinGainOption implements Option {
         }});
     }};
     private long playerCoinPerKill = 0;
+    private Pair<Long, Integer> playerCoinPerXSec = null;
     private long guildCoinInsigniaConvertBonus = 0;
     private Pair<Long, Integer> guildCoinPerXSec = null;
     private boolean disableCoinConversionUpgrade = false;
@@ -77,6 +78,11 @@ public class CoinGainOption implements Option {
         return this;
     }
 
+    public CoinGainOption playerCoinPerXSec(long coins, int seconds) {
+        playerCoinPerXSec = new Pair<>(coins, seconds);
+        return this;
+    }
+
     public CoinGainOption guildCoinInsigniaConvertBonus(long guildCoinInsigniaConvertBonus) {
         this.guildCoinInsigniaConvertBonus = guildCoinInsigniaConvertBonus;
         return this;
@@ -98,6 +104,10 @@ public class CoinGainOption implements Option {
 
     public long getPlayerCoinPerKill() {
         return playerCoinPerKill;
+    }
+
+    public Pair<Long, Integer> getPlayerCoinPerXSec() {
+        return playerCoinPerXSec;
     }
 
     public long getGuildCoinInsigniaConvertBonus() {
