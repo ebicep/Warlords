@@ -11,6 +11,7 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.theborderlineofillusion.DatabaseGamePvEEventTheBorderlineOfIllusion;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
@@ -18,6 +19,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabasePlayerPvEEventIlluminaDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
@@ -26,10 +28,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltarosLairOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.NarmersTombOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.SpidersDwellingOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.*;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
@@ -719,10 +718,15 @@ public enum GameEvents {
     },
     ILLUMINA("The Bane Of Impurities",
             Currencies.EVENT_POINTS_ILLUIMINA,
-            null,
-            null,
-            null,
+            DatabasePlayerPvEEventStats::getIlluminaStats,
+            DatabasePlayerPvEEventStats::getIlluminaEventStats,
+            DatabasePlayerPvEEventStats::getIlluminaStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
+                for (Option option : game.getOptions()) {
+                    if (option instanceof TheBorderlineOfIllusionEvent) {
+                        return new DatabaseGamePvEEventTheBorderlineOfIllusion(game, warlordsGameTriggerWinEvent, aBoolean);
+                    }
+                }
                 return null;
             },
             new ArrayList<>() {{
@@ -740,16 +744,6 @@ public enum GameEvents {
                 add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
             }}
     ) {
-        @Override
-        public void initialize() {
-            super.initialize();
-//            Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
-//                @EventHandler
-//                public void onPreWeaponSalvage(PreWeaponSalvageEvent event) {
-//                    event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
-//                }
-//            }, Warlords.getInstance());
-        }
 
         @Override
         public LinkedHashMap<Spendable, Long> getRewards(int position) {
@@ -822,45 +816,45 @@ public enum GameEvents {
 
         @Override
         public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
-//            long eventStart = currentGameEvent.getStartDateSecond();
-//            EventLeaderboard spidersDwellingBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Highest Game Event Points",
-//                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 751.5),
-//                    (databasePlayer, time) -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getMithraEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
-//                            .getSpidersDwellingStats()
-//                            .getHighestEventPointsGame(),
-//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getMithraEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
-//                            .getSpidersDwellingStats()
-//                            .getHighestEventPointsGame())
-//            );
-//            EventLeaderboard totalBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Event Points",
-//                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 737.5),
-//                    (databasePlayer, time) -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getMithraEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
-//                            .getEventPointsCumulative(),
-//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getMithraEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventMithraDifficultyStats())
-//                            .getEventPointsCumulative())
-//            );
-//            leaderboards.put(spidersDwellingBoard, "Spiders Dwelling");
-//            leaderboards.put(totalBoard, "Total Event Points");
+            long eventStart = currentGameEvent.getStartDateSecond();
+            EventLeaderboard borderlineOfIllusionBoard = new EventLeaderboard(
+                    eventStart,
+                    "Highest Game Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 751.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getIlluminaEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
+                            .getBorderLineOfIllusionStats()
+                            .getHighestEventPointsGame(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getIlluminaEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
+                            .getBorderLineOfIllusionStats()
+                            .getHighestEventPointsGame())
+            );
+            EventLeaderboard totalBoard = new EventLeaderboard(
+                    eventStart,
+                    "Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 737.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getIlluminaEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
+                            .getEventPointsCumulative(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getIlluminaEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
+                            .getEventPointsCumulative())
+            );
+            leaderboards.put(borderlineOfIllusionBoard, "The Borderline of Illusion");
+            leaderboards.put(totalBoard, "Total Event Points");
         }
 
         @Override
@@ -894,26 +888,26 @@ public enum GameEvents {
 
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BONE)
-                            .name(Component.text("????", NamedTextColor.GREEN))
+                            .name(Component.text("The Borderline of Illusion", NamedTextColor.GREEN))
                             .lore(
-                                    Component.text("???!", NamedTextColor.YELLOW),
+                                    Component.text("On the edge.", NamedTextColor.YELLOW),
                                     Component.empty(),
                                     Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("900 Seconds", NamedTextColor.GREEN)),
                                     Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("1-4 Players", NamedTextColor.GREEN))
                             )
                             .get(),
                     (m, e) -> {
-//                        if (privateGame) {
-//                            GameStartCommand.startGamePvEEvent(player,
-//                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4)
-//                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
-//
-//                            );
-//                        } else {
-//                            GameStartCommand.startGamePvEEvent(player,
-//                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_4)
-//                            );
-//                        }
+                        if (privateGame) {
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_5)
+                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+
+                            );
+                        } else {
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_5)
+                            );
+                        }
                     }
             );
 
