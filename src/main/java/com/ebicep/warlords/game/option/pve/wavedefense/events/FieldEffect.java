@@ -208,12 +208,12 @@ public class FieldEffect implements Option {
                     public void run() {
                         PlayerFilter.playingGame(game)
                                     .forEach(warlordsEntity -> {
-                                        float maxHealth = warlordsEntity.getMaxHealth();
+                                        float damage = warlordsEntity.getMaxHealth() * .01f;
                                         warlordsEntity.addDamageInstance(
                                                 warlordsEntity,
                                                 "Lost Buff",
-                                                maxHealth,
-                                                maxHealth,
+                                                damage,
+                                                damage,
                                                 0,
                                                 100,
                                                 EnumSet.of(InstanceFlags.TRUE_DAMAGE)

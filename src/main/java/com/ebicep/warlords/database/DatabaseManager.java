@@ -205,8 +205,7 @@ public class DatabaseManager {
     public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
         if (playerService == null || !enabled) {
             ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
-            concurrentHashMap.putIfAbsent(uuid, new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
-            databasePlayerConsumer.accept(concurrentHashMap.get(uuid));
+            databasePlayerConsumer.accept(concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName())));
             return;
         }
         ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
@@ -313,6 +312,8 @@ public class DatabaseManager {
 
     public static void updatePlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
         if (playerService == null || !enabled) {
+            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
+            databasePlayerConsumer.accept(concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName())));
             return;
         }
         getPlayer(uuid, playersCollections, databasePlayer -> {

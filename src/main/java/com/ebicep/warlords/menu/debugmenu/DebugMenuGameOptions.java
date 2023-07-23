@@ -68,7 +68,7 @@ public class DebugMenuGameOptions {
             Menu menu = new Menu("Gamemode Picker", 9 * rows);
             int i = -1;
             for (GameMode gm : values) {
-                if (gm.isHiddenInMenu()) {
+                if (gm.isHiddenInMenu() && !player.isOp()) {
                     continue;
                 }
                 i++;
