@@ -3806,7 +3806,7 @@ public enum GameMap {
                     .playerExpPerXSec(10, 10)
                     .guildExpPerXSec(1, 3)
             );
-            options.add(new FieldEffect(options, FieldEffect.FieldEffects.ARACHNOPHOBIA));
+            options.add(new FieldEffect(options, FieldEffect.FieldEffects.LOST_BUFF));
 
             return options;
         }

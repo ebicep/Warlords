@@ -14,11 +14,13 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventPoisonousSpider;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -193,6 +195,33 @@ public class FieldEffect implements Option {
 //                    }
 
                 });
+            }
+        },
+        LOST_BUFF("Lost Buff",
+                "Players and mobs will lose 1% of their max health every second."
+        ) {
+            @Override
+            public void onStart(Game game) {
+                new GameRunnable(game) {
+
+                    @Override
+                    public void run() {
+                        PlayerFilter.playingGame(game)
+                                    .forEach(warlordsEntity -> {
+                                        float maxHealth = warlordsEntity.getMaxHealth();
+                                        warlordsEntity.addDamageInstance(
+                                                warlordsEntity,
+                                                "Lost Buff",
+                                                maxHealth,
+                                                maxHealth,
+                                                0,
+                                                100,
+                                                EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                                        );
+                                    });
+                    }
+
+                }.runTaskTimer(200, 20);
             }
         },
         ;
