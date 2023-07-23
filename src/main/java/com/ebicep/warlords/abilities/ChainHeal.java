@@ -104,11 +104,11 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
         Utils.playGlobalSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
 
         for (Boulder boulder : wp.getAbilitiesMatching(Boulder.class)) {
-            float redCurrentCooldown = boulder.getCurrentCooldown();
-            if ((hitCounter + 1) * 2.5f > redCurrentCooldown) {
+            float currentCD = boulder.getCurrentCooldown();
+            if ((hitCounter + 1) * 2.5f > currentCD) {
                 boulder.setCurrentCooldown(0);
             } else {
-                boulder.setCurrentCooldown(redCurrentCooldown - (hitCounter + 1) * 2.5f);
+                boulder.subtractCurrentCooldown((hitCounter + 1) * 2.5f);
             }
             wp.updateItem(boulder);
         }

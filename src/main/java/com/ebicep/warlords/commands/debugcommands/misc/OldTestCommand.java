@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -13,6 +14,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -161,6 +163,16 @@ public class OldTestCommand implements CommandExecutor {
                         .forward(5);
                 AbstractChain.spawnChain(from, player.getLocation(), new ItemStack(Material.SPRUCE_FENCE_GATE));
             }
+
+            EffectUtils.displayParticle(
+                    Particle.SPELL_WITCH,
+                    player.getLocation().subtract(0, 3, 0),
+                    1000,
+                    10,
+                    0,
+                    10,
+                    0
+            );
 
 //            ArmorStand stand = Utils.spawnArmorStand(player.getLocation(), armorStand -> {
 //                armorStand.getEquipment().setHelmet(new ItemStack(Material.SPRUCE_FENCE_GATE));

@@ -164,6 +164,11 @@ public class CooldownManager {
         }
     }
 
+    public void removeCooldown(AbstractCooldown<?> abstractCooldown) {
+        abstractCooldown.getOnRemoveForce().accept(this);
+        abstractCooldowns.remove(abstractCooldown);
+    }
+
     public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
@@ -357,24 +362,8 @@ public class CooldownManager {
         ));
     }
 
-    public void removeCooldown(AbstractCooldown<?> abstractCooldown) {
-        abstractCooldown.getOnRemoveForce().accept(this);
-        abstractCooldowns.remove(abstractCooldown);
-    }
-
     public void removeCooldownNoForce(AbstractCooldown<?> abstractCooldown) {
         abstractCooldowns.remove(abstractCooldown);
-    }
-
-    public void removeCooldown(Class<?> cooldownClass, boolean noForce) {
-        new ArrayList<>(abstractCooldowns).forEach(cd -> {
-            if (abstractCooldowns.contains(cd) && (Objects.equals(cd.getCooldownClass(), cooldownClass) || cooldownClass.isAssignableFrom(cd.getCooldownClass()))) {
-                if (!noForce) {
-                    cd.getOnRemoveForce().accept(this);
-                }
-                abstractCooldowns.remove(cd);
-            }
-        });
     }
 
     public void removeCooldownByObject(Object cooldownObject) {
@@ -429,6 +418,20 @@ public class CooldownManager {
     public void removePreviousWounding() {
         removeCooldown(WoundingStrikeBerserker.class, true);
         removeCooldown(WoundingStrikeDefender.class, true);
+    }
+
+    public void removeCooldown(Class<?> cooldownClass, boolean noForce) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (cd.getCooldownClass() == null) {
+                return;
+            }
+            if (abstractCooldowns.contains(cd) && (Objects.equals(cd.getCooldownClass(), cooldownClass) || cooldownClass.isAssignableFrom(cd.getCooldownClass()))) {
+                if (!noForce) {
+                    cd.getOnRemoveForce().accept(this);
+                }
+                abstractCooldowns.remove(cd);
+            }
+        });
     }
 
     public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {

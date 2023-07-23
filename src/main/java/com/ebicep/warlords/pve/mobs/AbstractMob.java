@@ -500,6 +500,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public boolean isShowBossBar() {
-        return showBossBar && !warlordsNPC.isDead();
+        return bossBar != null && showBossBar && !warlordsNPC.isDead();
     }
 }

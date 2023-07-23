@@ -3624,7 +3624,7 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
-            Location bossSpawnLocation = new Location(loc.getWorld(), 2.5, 26, -2.5);
+            Location bossSpawnLocation = new Location(loc.getWorld(), 2.5, 25.5, -2.5);
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new SimpleWave(16, 10 * SECOND, null)
                             .add(0.4, Mobs.GHOST_ZOMBIE)
@@ -3769,7 +3769,7 @@ public enum GameMap {
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(900, 50, "spec"));
             options.add(new TheBorderlineOfIllusionEvent());
-            options.add(new SafeZoneOption());
+            options.add(new SafeZoneOption(1));
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(50, Team.BLUE)
                     .onPerWaveClear(1, 500)
@@ -3795,7 +3795,7 @@ public enum GameMap {
             );
             options.add(new CurrencyOnEventOption()
                     .startWith(25000)
-                    .onKill(450)
+                    .onKill(500)
                     .setPerWaveClear(5, 10000)
                     .disableGuildBonus()
             );

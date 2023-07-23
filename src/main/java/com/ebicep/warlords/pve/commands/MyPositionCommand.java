@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.function.Function;
 
 @CommandAlias("myposition|mp")
-@Conditions("database:player")
 public class MyPositionCommand extends BaseCommand {
 
     private static final StatLeaderboardTarget[] STAT_LEADERBOARD_TARGETS = new StatLeaderboardTarget[]{

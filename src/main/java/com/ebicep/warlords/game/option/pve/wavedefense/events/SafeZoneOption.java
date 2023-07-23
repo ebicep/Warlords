@@ -36,12 +36,17 @@ public class SafeZoneOption implements Option {
     private final Material safeMaterial = Material.BEDROCK;
     private final int yLevel = 20;//0;
     private final int safeDuration = 15;
-    private final int maxEnterableTimes = 3;
+    private final int maxEnterableTimes;
     private final HashMap<WarlordsPlayer, Integer> timesEntered = new HashMap<>();
 
     public SafeZoneOption() {
-
+        this.maxEnterableTimes = 3;
     }
+
+    public SafeZoneOption(int maxEnterableTimes) {
+        this.maxEnterableTimes = maxEnterableTimes;
+    }
+
 
     @Override
     public void start(@Nonnull Game game) {

@@ -649,7 +649,7 @@ public abstract class WarlordsEntity {
                             newDamage,
                             newDamage,
                             isCrit ? 100 : 0,
-                            1,
+                            100,
                             true,
                             EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                     ));
