@@ -18,6 +18,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventPoisonousSpider;
+import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -208,6 +209,9 @@ public class FieldEffect implements Option {
                     public void run() {
                         PlayerFilter.playingGame(game)
                                     .forEach(warlordsEntity -> {
+                                        if (warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
+                                            return;
+                                        }
                                         float damage = warlordsEntity.getMaxHealth() * .01f;
                                         warlordsEntity.addDamageInstance(
                                                 warlordsEntity,
