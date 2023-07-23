@@ -250,7 +250,7 @@ public class FieldEffect implements Option {
                         @Override
                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                             int debuffDamageBoost = Math.min(event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns().size(), 12);
-                            return currentDamageValue * (1 + (debuffDamageBoost * .1f));
+                            return currentDamageValue * (1 + (debuffDamageBoost * .2f));
                         }
                     });
                 }
