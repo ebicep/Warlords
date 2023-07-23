@@ -64,7 +64,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final int damageResistance;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
-    protected final BossBar bossBar = BossBar.bossBar(Component.empty(), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    protected BossBar bossBar = BossBar.bossBar(Component.empty(), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
     protected boolean showBossBar;
 
     protected WarlordsNPC warlordsNPC;
@@ -278,6 +278,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         bossBar(option.getGame(), false);
+        bossBar = null;
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }

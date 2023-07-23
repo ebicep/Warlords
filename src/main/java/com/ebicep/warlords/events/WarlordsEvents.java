@@ -37,6 +37,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -197,6 +198,9 @@ public class WarlordsEvents implements Listener {
             player.removePotionEffect(PotionEffectType.BLINDNESS);
             player.removePotionEffect(PotionEffectType.SLOW);
             player.removePotionEffect(PotionEffectType.ABSORPTION);
+            for (BossBar bossBar : player.activeBossBars()) {
+                player.hideBossBar(bossBar);
+            }
             player.setGameMode(GameMode.ADVENTURE);
             player.setMaxHealth(20);
             player.setHealth(20);

@@ -14,7 +14,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
-import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.Illumina;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
@@ -72,16 +71,7 @@ public class EventIllumina extends AbstractZombie implements BossMob {
                 0,
                 950,
                 1350,
-                new Illumina.Bramble(),
-                new Illumina.BrambleSlowness(),
-                new SpawnMobAbility("Exiled Skeleton", 30, Mobs.EXILED_SKELETON) {
-                    @Override
-                    public int getSpawnAmount() {
-                        long playerCount = pveOption.getGame().warlordsPlayers().count();
-                        DifficultyIndex difficulty = pveOption.getDifficulty();
-                        return (int) (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount);
-                    }
-                }
+                new Illumina.BrambleSlowness()
         );
     }
 
@@ -140,13 +130,13 @@ public class EventIllumina extends AbstractZombie implements BossMob {
 
         if (!phaseOneTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .7f)) {
             phaseOneTriggered = true;
-            timedDamage(option, playerCount, 35000, 30);
+            timedDamage(option, playerCount, 25000, 11);
         } else if (!phaseTwoTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .4f)) {
             phaseTwoTriggered = true;
-            timedDamage(option, playerCount, 70000, 30);
+            timedDamage(option, playerCount, 37000, 11);
         } else if (!phaseThreeTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f)) {
             phaseThreeTriggered = true;
-            timedDamage(option, playerCount, 100000, 30);
+            timedDamage(option, playerCount, 50000, 11);
         }
 
         if (ticksElapsed % 200 == 0) {

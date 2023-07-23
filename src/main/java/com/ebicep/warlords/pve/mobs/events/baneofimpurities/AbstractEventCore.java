@@ -9,8 +9,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
+import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.java.RandomCollection;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -25,7 +26,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.EnumSet;
 
-public abstract class AbstractEventCore extends AbstractSkeleton implements BossMob {
+public abstract class AbstractEventCore extends AbstractZombie implements BossMob {
 
     private final int killTime;
     private final RandomCollection<Mobs> summonList;
@@ -46,19 +47,21 @@ public abstract class AbstractEventCore extends AbstractSkeleton implements Boss
         super(spawnLocation, name, mobTier, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
         this.killTime = killTime;
         this.summonList = summonList;
+        livingEntity.setGravity(false);
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         warlordsNPC.setStunTicks(Integer.MAX_VALUE);
+        warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         int secondsElapsed = ticksElapsed / 20;
         if (ticksElapsed % 20 == 0) {
-            if (secondsElapsed < killTime) {
+            if (secondsElapsed < killTime && secondsElapsed != 0) {
                 for (WarlordsEntity we : PlayerFilter
                         .playingGame(getWarlordsNPC().getGame())
                         .aliveEnemiesOf(warlordsNPC)
@@ -71,13 +74,16 @@ public abstract class AbstractEventCore extends AbstractSkeleton implements Boss
                     Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
                 }
             } else if (secondsElapsed == killTime) {
-                for (WarlordsEntity we : PlayerFilter
-                        .playingGame(getWarlordsNPC().getGame())
-                        .aliveEnemiesOf(warlordsNPC)
-                ) {
-                    we.getEntity().clearTitle();
-                    we.addDamageInstance(warlordsNPC, "Core Explosion", 25000, 25000, 0, 100, EnumSet.of(InstanceFlags.TRUE_DAMAGE));
-                }
+                playDeathAnimation(() -> {
+                    warlordsNPC.die(warlordsNPC);
+                    for (WarlordsEntity we : PlayerFilter
+                            .playingGame(getWarlordsNPC().getGame())
+                            .aliveEnemiesOf(warlordsNPC)
+                    ) {
+                        we.getEntity().clearTitle();
+                        we.addDamageInstance(warlordsNPC, "Core Explosion", 25000, 25000, 0, 100, EnumSet.of(InstanceFlags.TRUE_DAMAGE));
+                    }
+                });
             }
 
             option.spawnNewMob(summonList.next().createMob.apply(warlordsNPC.getLocation()));
@@ -112,6 +118,39 @@ public abstract class AbstractEventCore extends AbstractSkeleton implements Boss
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Core..", NamedTextColor.DARK_GRAY);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.GOLD;
+    }
+
+    private void playDeathAnimation(Runnable afterAnimation) {
+        // spin + elevate then explode
+        new GameRunnable(warlordsNPC.getGame()) {
+
+            float yaw = warlordsNPC.getEntity().getBodyYaw();
+
+            @Override
+            public void run() {
+                //TODO swirl?
+                warlordsNPC.getEntity().teleport(warlordsNPC.getLocation().add(0, 0.05, 0));
+                warlordsNPC.getEntity().setRotation(yaw, 0);
+                yaw += 10;
+
+                if (yaw > 360 * 3) {
+                    //TODO explosion particle + firework?
+                    afterAnimation.run();
+                    cancel();
+                }
+            }
+
+        }.runTaskTimer(0, 0);
     }
 
 }

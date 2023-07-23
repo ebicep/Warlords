@@ -3724,7 +3724,7 @@ public enum GameMap {
                     .add(31, new SimpleWave(20, 10 * SECOND, null)
                             .add(0.2, Mobs.EXILED_SKELETON)
                             .add(0.4, Mobs.FORGOTTEN_LANCER)
-                            //.add(0.1, Mobs.Illusion Anomaly)
+                            .add(0.1, Mobs.BASIC_SLIME)
                             .add(0.1, Mobs.EXILED_VOID_LANCER)
                             .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.1, Mobs.SLIME_ZOMBIE)
