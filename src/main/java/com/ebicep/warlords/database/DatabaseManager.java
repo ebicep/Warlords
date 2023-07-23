@@ -204,6 +204,9 @@ public class DatabaseManager {
 
     public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
         if (playerService == null || !enabled) {
+            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
+            concurrentHashMap.putIfAbsent(uuid, new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            databasePlayerConsumer.accept(concurrentHashMap.get(uuid));
             return;
         }
         ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
