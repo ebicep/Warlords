@@ -15,10 +15,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.SafeZoneOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltarosLairOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.NarmersTombOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.SpidersDwellingOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.*;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.SimpleWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.StaticWaveList;
 import com.ebicep.warlords.game.option.pvp.*;
@@ -3651,7 +3648,7 @@ public enum GameMap {
                             .add(0.2, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.2, Mobs.ENVOY_ZOMBIE)
                     )
-                    .add(10, new SimpleWave(44951, 10 * SECOND, null)
+                    .add(10, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
                             .add(1, Mobs.EVENT_ILLUSION_CORE)
                     )
                     .add(11, new SimpleWave(16, 10 * SECOND, null)
@@ -3679,7 +3676,7 @@ public enum GameMap {
                             .add(0.1, Mobs.ENVOY_ZOMBIE)
                             .add(0.1, Mobs.VOID_SKELETON)
                     )
-                    .add(20, new SimpleWave(30, 10 * SECOND, null)
+                    .add(20, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
                             .add(1, Mobs.EVENT_EXILED_CORE)
                     )
                     .add(21, new SimpleWave(30, 10 * SECOND, null)
@@ -3721,8 +3718,8 @@ public enum GameMap {
                             .add(0.2, Mobs.ENVOY_SKELETON)
                             .add(0.1, Mobs.EXILED_SKELETON)
                     )
-                    .add(30, new SimpleWave(25, 10 * SECOND, null)
-                            .add(1, Mobs.ILLUMINA)
+                    .add(30, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
+                            .add(1, Mobs.EVENT_ILLUMINA)
                     )
                     .add(31, new SimpleWave(20, 10 * SECOND, null)
                             .add(0.2, Mobs.EXILED_SKELETON)
@@ -3745,7 +3742,7 @@ public enum GameMap {
                             .add(0.1, Mobs.FORGOTTEN_LANCER)
                             .add(0.1, Mobs.BASIC_SLIME)
                     )
-                    .add(40, new SimpleWave(10, 10 * SECOND, null)
+                    .add(40, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
                             .add(1, Mobs.EVENT_CALAMITY_CORE)
                     )
                     .loop(6, 36, 5)
@@ -3769,28 +3766,28 @@ public enum GameMap {
                 }
             });
             options.add(new ItemOption());
-            options.add(new WinAfterTimeoutOption(600, 50, "spec"));
-            options.add(new SpidersDwellingOption());
+            options.add(new WinAfterTimeoutOption(900, 50, "spec"));
+            options.add(new TheBorderlineOfIllusionEvent());
             options.add(new SafeZoneOption());
             options.add(new EventPointsOption()
-                    .reduceScoreOnAllDeath(30, Team.BLUE)
+                    .reduceScoreOnAllDeath(50, Team.BLUE)
                     .onPerWaveClear(1, 500)
                     .onPerWaveClear(5, 2000)
 
             );
             options.add(new CurrencyOnEventOption()
-                    .startWith(120000)
-                    .onKill(500)
+                    .startWith(25000)
+                    .onKill(450)
                     .setPerWaveClear(5, 10000)
+                    .disableGuildBonus()
             );
             options.add(new CoinGainOption()
-                    //.clearMobCoinValueAndSet("Mithra Killed", "Mithra", 100)
                     .guildCoinInsigniaConvertBonus(1000)
                     .guildCoinPerXSec(1, 1)
             );
             options.add(new ExperienceGainOption()
-                    .playerExpPerXSec(15, 10)
-                    .guildExpPerXSec(1, 60)
+                    .playerExpPerXSec(10, 10)
+                    .guildExpPerXSec(1, 3)
             );
             options.add(new FieldEffect(options, FieldEffect.FieldEffects.ARACHNOPHOBIA));
 

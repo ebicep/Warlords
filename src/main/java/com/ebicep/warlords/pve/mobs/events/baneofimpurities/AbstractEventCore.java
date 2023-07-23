@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
@@ -21,6 +22,8 @@ import org.bukkit.Sound;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.EnumSet;
 
 public abstract class AbstractEventCore extends AbstractSkeleton implements BossMob {
 
@@ -72,7 +75,7 @@ public abstract class AbstractEventCore extends AbstractSkeleton implements Boss
                         .playingGame(getWarlordsNPC().getGame())
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    we.addDamageInstance(warlordsNPC, "Core Explosion", 1000000, 1000000, 0, 100);
+                    we.addDamageInstance(warlordsNPC, "Core Explosion", 25000, 25000, 0, 100, EnumSet.of(InstanceFlags.TRUE_DAMAGE));
                 }
             }
 

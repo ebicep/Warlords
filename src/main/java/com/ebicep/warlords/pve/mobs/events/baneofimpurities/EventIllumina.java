@@ -1,9 +1,8 @@
-package com.ebicep.warlords.pve.mobs.bosses;
+package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
 import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -11,22 +10,21 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
-import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
+import com.ebicep.warlords.pve.mobs.bosses.Illumina;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.pve.mobs.skeleton.ExiledSkeleton;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.pve.mobs.zombie.ForgottenZombie;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -35,23 +33,30 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nonnull;
+import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Illumina extends AbstractZombie implements BossMob {
+public class EventIllumina extends AbstractZombie implements BossMob {
 
+    private final RandomCollection<Mobs> summonList = new RandomCollection<Mobs>()
+            .add(0.1, Mobs.EXTREME_ZEALOT)
+            .add(0.3, Mobs.EXILED_SKELETON)
+            .add(0.2, Mobs.FORGOTTEN_LANCER)
+            .add(0.1, Mobs.EXILED_ZOMBIE_RIFT)
+            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
+            .add(0.1, Mobs.SLIME_ZOMBIE)
+            .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
+            .add(0.05, Mobs.EXILED_VOID_LANCER)
+            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA);
     private boolean phaseOneTriggered = false;
     private boolean phaseTwoTriggered = false;
     private boolean phaseThreeTriggered = false;
-    private boolean phaseFourTriggered = false;
-
     private AtomicInteger damageToDeal = new AtomicInteger(0);
-
     private PrismGuard prismGuard = new PrismGuard() {{
         setTickDuration(200);
     }};
 
-    public Illumina(Location spawnLocation) {
+    public EventIllumina(Location spawnLocation) {
         super(spawnLocation,
                 "Illumina",
                 MobTier.BOSS,
@@ -62,13 +67,13 @@ public class Illumina extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
                         Weapons.NEW_LEAF_SCYTHE.getItem()
                 ),
-                110000,
+                350000,
                 0.33f,
-                25,
-                2000,
-                3000,
-                new Bramble(),
-                new BrambleSlowness(),
+                0,
+                950,
+                1350,
+                new Illumina.Bramble(),
+                new Illumina.BrambleSlowness(),
                 new SpawnMobAbility("Exiled Skeleton", 30, Mobs.EXILED_SKELETON) {
                     @Override
                     public int getSpawnAmount() {
@@ -133,32 +138,20 @@ public class Illumina extends AbstractZombie implements BossMob {
         Location loc = warlordsNPC.getLocation();
         DifficultyIndex difficulty = option.getDifficulty();
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
+        if (!phaseOneTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .7f)) {
             phaseOneTriggered = true;
-            timedDamage(option, playerCount, 10000, 11);
-        }
-
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
+            timedDamage(option, playerCount, 35000, 30);
+        } else if (!phaseTwoTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .4f)) {
             phaseTwoTriggered = true;
-            timedDamage(option, playerCount, 12000, 11);
-            for (int i = 0; i < (2 * playerCount); i++) {
-                option.spawnNewMob(new ExiledSkeleton(loc));
-            }
-        }
-
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
+            timedDamage(option, playerCount, 70000, 30);
+        } else if (!phaseThreeTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f)) {
             phaseThreeTriggered = true;
-            timedDamage(option, playerCount, 14000, 11);
-            for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
-                option.spawnNewMob(new ForgottenZombie(loc));
-            }
+            timedDamage(option, playerCount, 100000, 30);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
-            phaseFourTriggered = true;
-            timedDamage(option, playerCount, 5000, 6);
-            for (int i = 0; i < ((difficulty == DifficultyIndex.EXTREME ? 1 : 2) * playerCount); i++) {
-                option.spawnNewMob(new IronGolem(loc));
+        if (ticksElapsed % 200 == 0) {
+            for (int i = 0; i < 5; i++) {
+                option.spawnNewMob(summonList.next().createMob.apply(loc));
             }
         }
     }
@@ -270,10 +263,11 @@ public class Illumina extends AbstractZombie implements BossMob {
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Death Ray",
-                                we.getMaxHealth() * 0.9f,
-                                we.getMaxHealth() * 0.9f,
+                                7500,
+                                7500,
                                 -1,
-                                100
+                                100,
+                                EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                         );
 
                         warlordsNPC.addHealingInstance(
@@ -297,59 +291,5 @@ public class Illumina extends AbstractZombie implements BossMob {
                 );
             }
         }.runTaskTimer(40, 0);
-    }
-
-    public static class Bramble extends AbstractPveAbility {
-
-        public Bramble() {
-            super("Bramble", 1200, 1800, 5, 100);
-        }
-
-        @Override
-        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(energyCost, false);
-            Location loc = wp.getLocation();
-
-            Utils.playGlobalSound(loc, Sound.BLOCK_GRASS_BREAK, 500, 0.4f);
-            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.OAK_LEAVES).play();
-            for (WarlordsEntity we : PlayerFilterGeneric
-                    .entitiesAround(wp, 7, 7, 7)
-                    .aliveEnemiesOf(wp)
-            ) {
-                we.addSpeedModifier(wp, "Bramble Slowness", -99, 30);
-                we.addDamageInstance(
-                        wp,
-                        "Bramble",
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
-                );
-            }
-            return true;
-        }
-    }
-
-    public static class BrambleSlowness extends AbstractPveAbility {
-
-        public BrambleSlowness() {
-            super("Bramble Slowness", 5, 100);
-        }
-
-        @Override
-        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(energyCost, false);
-            Location loc = wp.getLocation();
-
-            EffectUtils.strikeLightningInCylinder(loc, 6, false);
-            for (WarlordsEntity we : PlayerFilterGeneric
-                    .entitiesAround(wp, 6, 6, 6)
-                    .aliveEnemiesOf(wp)
-            ) {
-                we.addSpeedModifier(wp, "Bramble Slowness", -99, 30);
-                Utils.addKnockback(name, loc, we, -2, 0.3);
-            }
-            return true;
-        }
     }
 }

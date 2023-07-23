@@ -7,6 +7,7 @@ import com.ebicep.warlords.pve.mobs.bosses.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.*;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventCalamityCore;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventExiledCore;
+import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventIllumina;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventIllusionCore;
 import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaro;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjer;
@@ -123,6 +124,7 @@ public enum Mobs {
     EVENT_ILLUSION_CORE(EventIllusionCore.class, EventIllusionCore::new),
     EVENT_EXILED_CORE(EventExiledCore.class, EventExiledCore::new),
     EVENT_CALAMITY_CORE(EventCalamityCore.class, EventCalamityCore::new),
+    EVENT_ILLUMINA(EventIllumina.class, EventIllumina::new),
 
     //EXTREME
     WANDER_KNIGHTS(WanderKnights.class, WanderKnights::new),

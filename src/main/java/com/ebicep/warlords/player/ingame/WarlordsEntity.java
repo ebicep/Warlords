@@ -406,7 +406,7 @@ public abstract class WarlordsEntity {
         appendDebugMessage(debugMessage, 1, "Crit", "" + isCrit);
 
         final float damageHealValueBeforeAllReduction = damageValue;
-        if (!flags.contains(InstanceFlags.IGNORE_SELF_RES)) {
+        if (!flags.contains(InstanceFlags.IGNORE_SELF_RES) && !trueDamage) {
             debugMessage.append(Component.newline())
                         .append(Component.text("Spec Damage Reduction: ", NamedTextColor.AQUA))
                         .append(Component.text(spec.getDamageResistance(), NamedTextColor.BLUE));
