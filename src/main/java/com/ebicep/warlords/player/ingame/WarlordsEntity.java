@@ -788,8 +788,9 @@ public abstract class WarlordsEntity {
                 doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
                 doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
-                sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
-
+                if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
+                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
+                }
                 //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {

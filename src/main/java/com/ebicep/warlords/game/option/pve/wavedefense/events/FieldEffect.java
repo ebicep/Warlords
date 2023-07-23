@@ -216,7 +216,7 @@ public class FieldEffect implements Option {
                                                 damage,
                                                 0,
                                                 100,
-                                                EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                                                EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.NO_MESSAGE)
                                         );
                                     });
                     }

@@ -65,7 +65,7 @@ public abstract class AbstractEventCore extends AbstractSkeleton implements Boss
                 ) {
                     we.getEntity().showTitle(Title.title(
                             Component.text("", NamedTextColor.RED),
-                            Component.text(secondsElapsed, NamedTextColor.RED),
+                            Component.text(killTime - secondsElapsed, NamedTextColor.RED),
                             Title.Times.times(Ticks.duration(10), Ticks.duration(35), Ticks.duration(0))
                     ));
                     Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
@@ -75,6 +75,7 @@ public abstract class AbstractEventCore extends AbstractSkeleton implements Boss
                         .playingGame(getWarlordsNPC().getGame())
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
+                    we.getEntity().clearTitle();
                     we.addDamageInstance(warlordsNPC, "Core Explosion", 25000, 25000, 0, 100, EnumSet.of(InstanceFlags.TRUE_DAMAGE));
                 }
             }
