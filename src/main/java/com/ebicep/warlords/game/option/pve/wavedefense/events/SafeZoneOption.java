@@ -138,7 +138,8 @@ public class SafeZoneOption implements Option {
 
     public void giveSafeZoneEffect(@Nonnull WarlordsEntity wp) {
         wp.getCooldownManager().removeCooldownByName("Safe Zone");
-        RegularCooldown<SafeZoneOption> safeZoneCooldown = new RegularCooldown<>("Safe Zone",
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Safe Zone",
                 "SAFE",
                 SafeZoneOption.class,
                 null,
@@ -154,7 +155,8 @@ public class SafeZoneOption implements Option {
                     if (wpEntity instanceof Player) {
                         PlayerFilter.playingGame(wp.getGame())
                                     .enemiesOf(wp)
-                                    .stream().map(WarlordsEntity::getEntity)
+                                    .stream()
+                                    .map(WarlordsEntity::getEntity)
                                     .filter(Player.class::isInstance)
                                     .map(Player.class::cast)
                                     .forEach(enemyPlayer -> enemyPlayer.showPlayer(Warlords.getInstance(), (Player) wpEntity));
@@ -170,15 +172,15 @@ public class SafeZoneOption implements Option {
                             ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
                             PlayerFilter.playingGame(wp.getGame())
                                         .enemiesOf(wp)
-                                        .stream().map(WarlordsEntity::getEntity)
+                                        .stream()
+                                        .map(WarlordsEntity::getEntity)
                                         .filter(Player.class::isInstance)
                                         .map(Player.class::cast)
                                         .forEach(enemyPlayer -> enemyPlayer.hidePlayer(Warlords.getInstance(), (Player) wpEntity));
                         }
                     }
                 })
-        );
-        wp.getCooldownManager().addCooldown(safeZoneCooldown);
+        ));
     }
 
     public void sendEnterMessage(WarlordsPlayer warlordsPlayer) {

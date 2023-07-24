@@ -3,6 +3,7 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.RandomCollection;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -51,7 +52,11 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
         List<LivingEntity> list = this.mob.level().getEntitiesOfClass(LivingEntity.class, this.getTargetSearchArea(followRange)); // getEntitiesWithinAABB
         list.removeIf(entity -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
-            return warlordsEntity == null || warlordsEntity.isDead() || warlordsEntity.isTeammate(thisWarlordsEntity) || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.CREATIVE);
+            return warlordsEntity == null ||
+                    warlordsEntity.isDead() ||
+                    warlordsEntity.isTeammate(thisWarlordsEntity) ||
+                    entity.hasEffect(MobEffects.INVISIBILITY) ||
+                    (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.CREATIVE);
         });
         list.sort((o1, o2) -> Double.compare(o1.distanceToSqr(this.mob), o2.distanceToSqr(this.mob)));
         if (list.isEmpty()) {

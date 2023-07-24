@@ -28,12 +28,10 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Zombie;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -191,8 +189,7 @@ public interface PveOption extends Option {
 
             @EventHandler
             public void onMobTarget(EntityTargetLivingEntityEvent event) {
-                Entity entity = ((CraftEntity) event.getEntity()).getHandle();
-                if (!(entity instanceof LivingEntity entityLiving)) {
+                if (!(event.getEntity() instanceof LivingEntity entityLiving)) {
                     return;
                 }
                 if (getMobsMap().keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getLivingEntity(), entityLiving))) {
