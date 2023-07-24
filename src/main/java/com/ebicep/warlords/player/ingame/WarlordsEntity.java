@@ -222,7 +222,6 @@ public abstract class WarlordsEntity {
         appendDebugMessage(debugMessage, "Crit Multiplier", event.getCritMultiplier(), false);
         debugMessage.append(Component.newline())
                     .append(Component.text(" - ", NamedTextColor.GRAY));
-        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Flags", "" + event.getFlags(), false);
     }
 

@@ -5,6 +5,7 @@ public enum InstanceFlags {
     STRIKE_IN_CONS,
     AVENGER_WRATH_STRIKE,
     LAST_STAND_FROM_SHIELD, // for last stand healing from absorbing from players with shield
+    SANCTUARY,
     IGNORE_SELF_RES,
     NO_DISMOUNT,
 
