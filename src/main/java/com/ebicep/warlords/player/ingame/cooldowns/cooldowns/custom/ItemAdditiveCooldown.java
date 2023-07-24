@@ -6,9 +6,11 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import org.bukkit.util.Vector;
 
+import java.util.EnumSet;
 import java.util.Objects;
 
 public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
@@ -154,7 +156,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     @Override
     public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
         // prevent recursion
-        if (Objects.equals(event.getAttacker(), from)) {
+        if (Objects.equals(event.getAttacker(), from) || event.getFlags().contains(InstanceFlags.THORNS)) {
             return;
         }
         if (thorns <= 0) {
@@ -164,7 +166,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
         if (thornsDamage > maxThornsDamage) {
             thornsDamage = maxThornsDamage;
         }
-        event.getAttacker().addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100);
+        event.getAttacker().addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, EnumSet.of(InstanceFlags.THORNS));
     }
 
     @Override
