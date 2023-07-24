@@ -507,7 +507,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        if (e.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) {
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE) {
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(e.getPlayer().getUniqueId());
             if (warlordsPlayer == null) {
                 return;
