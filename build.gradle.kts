@@ -7,7 +7,7 @@ plugins {
     `java-library`
     id("io.papermc.paperweight.userdev") version "1.5.4"
     id("xyz.jpenilla.run-paper") version "2.1.0" // Adds runServer and runMojangMappedServer tasks for testing
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3" // Generates plugin.yml
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0" // Generates plugin.yml
 }
 
 group = "com.ebicep"
@@ -135,6 +135,10 @@ tasks {
         }
     }
 
+    runServer {
+        version.set("1.20.1")
+    }
+
 }
 
 
@@ -157,7 +161,7 @@ tasks.withType<JavaCompile>().configureEach {
 bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.ebicep.warlords.Warlords"
-    apiVersion = "1.19"
+    apiVersion = "1.20"
     authors = listOf("ebicep", "Plikie")
     depend = listOf("ProtocolLib", "HolographicDisplays", "Citizens", "Multiverse-Core")
     commands {

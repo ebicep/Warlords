@@ -148,9 +148,9 @@ public class WarlordsEvents implements Listener {
             );
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player, Component.text("More Information: ", NamedTextColor.GOLD));
-            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://docs.flairy.me/index.html", NamedTextColor.RED)
+            ChatUtils.sendCenteredMessage(player, Component.text("https://docs.flairy.me/index.html", NamedTextColor.RED)
                                                            .clickEvent(ClickEvent.openUrl("https://docs.flairy.me/index.html")));
-            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://ojagerl.nl/", NamedTextColor.RED)
+            ChatUtils.sendCenteredMessage(player, Component.text("https://ojagerl.nl/", NamedTextColor.RED)
                                                            .clickEvent(ClickEvent.openUrl("https://ojagerl.nl/")));
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player,
