@@ -49,6 +49,11 @@ public class CustomIronGolem extends IronGolem implements CustomEntity<CustomIro
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.IRON_GOLEM;
     }

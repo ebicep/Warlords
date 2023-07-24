@@ -37,6 +37,11 @@ public class CustomCreeper extends Creeper implements CustomEntity<CustomCreeper
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.CREEPER;
     }

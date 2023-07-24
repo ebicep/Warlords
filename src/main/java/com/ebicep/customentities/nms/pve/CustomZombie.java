@@ -41,6 +41,11 @@ public class CustomZombie extends Zombie implements CustomEntity<CustomZombie> {
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.ZOMBIE;
     }

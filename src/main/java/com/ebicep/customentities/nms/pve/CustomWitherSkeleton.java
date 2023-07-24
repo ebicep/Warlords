@@ -41,6 +41,11 @@ public class CustomWitherSkeleton extends WitherSkeleton implements CustomEntity
         return !stunned;
     }
 
+    @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
     public PathfinderGoalPredictTargetFutureLocationGoal getPathfinderGoalFireAtPlayer() {
         return pathfinderGoalPredictTargetFutureLocationGoal;
     }

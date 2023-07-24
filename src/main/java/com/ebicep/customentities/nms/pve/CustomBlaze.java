@@ -37,6 +37,11 @@ public class CustomBlaze extends Blaze implements CustomEntity<CustomBlaze> {
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.BLAZE;
     }

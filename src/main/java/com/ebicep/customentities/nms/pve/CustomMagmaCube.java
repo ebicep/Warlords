@@ -58,6 +58,11 @@ public class CustomMagmaCube extends MagmaCube implements CustomEntity<CustomMag
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.MAGMA_CUBE;
     }
