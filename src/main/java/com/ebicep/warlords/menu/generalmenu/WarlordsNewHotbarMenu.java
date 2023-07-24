@@ -32,7 +32,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -128,7 +127,6 @@ public class WarlordsNewHotbarMenu {
                     if (hasRewards) {
                         itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
                         itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                        itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                         hasRewardsForAny = true;
                     }
                     menu.setItem(
@@ -222,7 +220,6 @@ public class WarlordsNewHotbarMenu {
                 if (hasRewards) {
                     itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                     hasRewardsForAny = true;
                 }
                 menu.setItem(
@@ -493,7 +490,6 @@ public class WarlordsNewHotbarMenu {
                         Component.empty(),
                         Component.text("Click to equip!", NamedTextColor.YELLOW)
                 )
-                .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .get();
         public static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
                 .name(Component.text("Weapon Skill Boost", NamedTextColor.AQUA))
@@ -546,8 +542,7 @@ public class WarlordsNewHotbarMenu {
                 if (weapon.isUnlocked) {
 
                     builder = new ItemBuilder(weapon.getItem())
-                            .name(Component.text(weapon.getName(), NamedTextColor.GREEN))
-                            .flags(ItemFlag.HIDE_ENCHANTS);
+                            .name(Component.text(weapon.getName(), NamedTextColor.GREEN));
                     List<Component> lore = new ArrayList<>();
 
                     if (weapon == selectedWeapon) {
@@ -683,8 +678,7 @@ public class WarlordsNewHotbarMenu {
                 ItemBuilder builder = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
                         .name(Component.text(helmet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
                         .lore(HELMET_DESCRIPTION)
-                        .addLore(Component.empty())
-                        .flags(ItemFlag.HIDE_ENCHANTS);
+                        .addLore(Component.empty());
                 if (selectedHelmet.contains(helmet)) {
                     builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.OXYGEN, 1);
@@ -713,8 +707,7 @@ public class WarlordsNewHotbarMenu {
                 ItemBuilder builder = new ItemBuilder(i % 3 == 0 ? ArmorManager.ArmorSets.applyColor(armorSet.itemBlue, onBlueTeam) : armorSet.itemBlue)
                         .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
                         .lore(ARMOR_DESCRIPTION)
-                        .addLore(Component.empty())
-                        .flags(ItemFlag.HIDE_ENCHANTS);
+                        .addLore(Component.empty());
                 if (playerSettings.getArmorSet(classes) == armorSet) {
                     builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.OXYGEN, 1);
@@ -790,9 +783,12 @@ public class WarlordsNewHotbarMenu {
             for (int i = 0; i < values.size(); i++) {
                 SkillBoosts skillBoost = values.get(i);
                 ItemBuilder builder = new ItemBuilder(selectedSpec.specType.itemStack)
-                        .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")", skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED))
-                        .flags(ItemFlag.HIDE_ENCHANTS);
-                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description, 130));
+                        .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")",
+                                skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED
+                        ));
+                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description,
+                        130
+                ));
                 lore.add(Component.empty());
                 if (skillBoost == selectedBoost) {
                     lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
@@ -1025,7 +1021,6 @@ public class WarlordsNewHotbarMenu {
                                                 NamedTextColor.YELLOW
                                         )
                                 )
-                                .flags(ItemFlag.HIDE_ENCHANTS)
                                 .get(),
                         (m, e) -> {
                             Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());

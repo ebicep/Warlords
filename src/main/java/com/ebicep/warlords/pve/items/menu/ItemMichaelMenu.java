@@ -25,7 +25,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -161,7 +160,6 @@ public class ItemMichaelMenu {
                                 ))
                                 .amount(tier)
                                 .enchant(Enchantment.OXYGEN, 1)
-                                .flags(ItemFlag.HIDE_ENCHANTS)
                                 .get(),
                         (m, e) -> {
 
@@ -231,7 +229,6 @@ public class ItemMichaelMenu {
                                 .addLore(lore)
                                 .amount(tier)
                                 .enchant(Enchantment.OXYGEN, 1)
-                                .flags(ItemFlag.HIDE_ENCHANTS)
                                 .get(),
                         (m, e) -> {
                             if (stock <= 0) {
@@ -314,7 +311,6 @@ public class ItemMichaelMenu {
                             );
                     if (!blessingFound) {
                         selectedBlessing.enchant(Enchantment.OXYGEN, 1);
-                        selectedBlessing.flags(ItemFlag.HIDE_ENCHANTS);
                     }
                 } else {
                     selectedBlessing = new ItemBuilder(Material.PAPER)
@@ -502,7 +498,6 @@ public class ItemMichaelMenu {
                         .amount(blessingBoughtAmount);
                 if (normalItem) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                 }
                 menu.setItem(tier + 2, 1,
                         itemBuilder.get(),

@@ -17,7 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -200,7 +199,6 @@ public class ItemFilterMenu {
             boolean filtered = statPoolFilter.contains(stat);
             if (filtered) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
             menu.setItem(i % 9 + 1, i / 9 + 1,
                     itemBuilder

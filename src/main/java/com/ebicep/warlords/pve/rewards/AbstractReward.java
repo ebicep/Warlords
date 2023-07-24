@@ -6,7 +6,6 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -51,7 +50,6 @@ public abstract class AbstractReward {
         return new ItemBuilder(Material.CHEST)
                 .name(Component.text(from + " Reward", getNameColor()))
                 .lore(lore)
-                .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
     }
 
@@ -59,7 +57,6 @@ public abstract class AbstractReward {
         return new ItemBuilder(Material.CHEST)
                 .name(Component.text(from + " Reward", getNameColor()))
                 .lore(getLore())
-                .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                 .get();
     }
 

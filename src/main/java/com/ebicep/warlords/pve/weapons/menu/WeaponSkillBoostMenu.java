@@ -15,7 +15,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -47,8 +46,7 @@ public class WeaponSkillBoostMenu {
         for (int i = 0; i < values.size(); i++) {
             SkillBoosts skillBoost = values.get(i);
             ItemBuilder builder = new ItemBuilder(specializations.specType.itemStack)
-                    .name(Component.text(skillBoost.name, NamedTextColor.GREEN))
-                    .flags(ItemFlag.HIDE_ENCHANTS);
+                    .name(Component.text(skillBoost.name, NamedTextColor.GREEN));
             List<Component> lore = new ArrayList<>();
             boolean selected = skillBoost == weapon.getSelectedSkillBoost();
             if (selected) {

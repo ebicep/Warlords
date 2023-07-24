@@ -21,7 +21,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -134,7 +133,6 @@ public class DebugMenuGameOptions {
                         .lore(WordWrap.wrap(Component.text(gameAddon.getDescription(), NamedTextColor.GOLD), 150));
                 if (isASelectedAddon) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                 }
 
                 menu.setItem(i % 7 + 1, 1 + i / 7,
@@ -241,7 +239,6 @@ public class DebugMenuGameOptions {
                         );
                 if (game.hasPlayer(player.getUniqueId())) {
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                 }
                 menu.setItem(
                         x,

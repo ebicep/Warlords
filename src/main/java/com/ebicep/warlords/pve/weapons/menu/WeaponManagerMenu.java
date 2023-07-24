@@ -30,7 +30,6 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -350,7 +349,6 @@ public class WeaponManagerMenu {
                 ));
         if (isBound) {
             bindWeapon.enchant(Enchantment.OXYGEN, 1);
-            bindWeapon.flags(ItemFlag.HIDE_ENCHANTS);
         }
         weaponOptions.add(new Pair<>(
                 bindWeapon.get(),

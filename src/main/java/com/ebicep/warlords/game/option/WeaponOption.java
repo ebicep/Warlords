@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiConsumer;
@@ -105,7 +104,6 @@ public class WeaponOption implements Option {
                                 Component.text("stats!", NamedTextColor.GREEN)
                         )
                         .unbreakable()
-                        .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
                         .get()
         );
     }
@@ -121,8 +119,7 @@ public class WeaponOption implements Option {
                 .name(Component.text(weapon.getName(), NamedTextColor.GREEN)
                                .append(Component.text(" - ", NamedTextColor.GRAY))
                                .append(Component.text(" Right-Click!", NamedTextColor.YELLOW)))
-                .unbreakable()
-                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+                .unbreakable();
 
         itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)
                                      .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getEnergyCost()), NamedTextColor.YELLOW)));

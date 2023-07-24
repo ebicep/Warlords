@@ -24,7 +24,6 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -290,7 +289,6 @@ public class ItemSearchMenu extends Menu {
         BLESSED("Blessed",
                 new ItemBuilder(Material.PAPER)
                         .enchant(Enchantment.OXYGEN, 1)
-                        .flags(ItemFlag.HIDE_ENCHANTS)
                         .get(),
                 item -> item.getModifier() > 0
         ),

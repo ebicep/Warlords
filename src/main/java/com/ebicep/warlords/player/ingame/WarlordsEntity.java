@@ -54,7 +54,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.potion.PotionEffect;
@@ -1644,8 +1643,7 @@ public abstract class WarlordsEntity {
             return;
         }
         if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
-                    .flags(ItemFlag.HIDE_ENCHANTS);
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
             if (!ability.getSecondaryAbilities().isEmpty()) {
                 cooldown.enchant(Enchantment.OXYGEN, 1);
             }
@@ -1668,8 +1666,7 @@ public abstract class WarlordsEntity {
      */
     public void updateCustomItem(Player player, int slot, AbstractAbility ability, @Nullable ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
-                    .flags(ItemFlag.HIDE_ENCHANTS);
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
             if (!ability.getSecondaryAbilities().isEmpty()) {
                 cooldown.enchant(Enchantment.OXYGEN, 1);
             }

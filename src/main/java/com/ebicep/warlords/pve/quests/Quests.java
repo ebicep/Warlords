@@ -19,7 +19,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Instant;
@@ -268,7 +267,6 @@ public enum Quests {
                 );
         rewards.forEach((currencies, aLong) -> itemBuilder.addLore(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
         if (!completed) {
-            itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             itemBuilder.enchant(Enchantment.OXYGEN, 1);
         }
         return itemBuilder.get();

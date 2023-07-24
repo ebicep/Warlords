@@ -16,10 +16,6 @@ import java.util.*;
 
 public class ItemBuilder {
 
-    public static final ItemStack RED_ABILITY = new ItemStack(Material.RED_DYE);
-    public static final ItemStack PURPLE_ABILITY = new ItemStack(Material.GLOWSTONE_DUST);
-    public static final ItemStack BLUE_ABILITY = new ItemStack(Material.LIME_DYE);
-    public static final ItemStack ORANGE_ABILITY = new ItemStack(Material.ORANGE_DYE);
     @Nonnull
     private final ItemStack item;
     @Nullable
@@ -27,10 +23,12 @@ public class ItemBuilder {
 
     public ItemBuilder(@Nonnull Material type, int amount) {
         item = new ItemStack(type, amount);
+        hideAllFlags();
     }
 
     public ItemBuilder(@Nonnull ItemStack stack) throws IllegalArgumentException {
         item = new ItemStack(stack);
+        hideAllFlags();
     }
 
     public ItemBuilder(@Nonnull Material material, @Nonnull PotionType potionType) {
@@ -38,10 +36,24 @@ public class ItemBuilder {
         PotionMeta potionMeta = (PotionMeta) meta();
         potionMeta.setBasePotionData(new PotionData(potionType));
         item.setItemMeta(potionMeta);
+        hideAllFlags();
     }
 
     public ItemBuilder(@Nonnull Material type) {
         item = new ItemStack(type);
+        hideAllFlags();
+    }
+
+    private void hideAllFlags() {
+        meta().addItemFlags(
+                ItemFlag.HIDE_ENCHANTS,
+                ItemFlag.HIDE_ATTRIBUTES,
+                ItemFlag.HIDE_UNBREAKABLE,
+                ItemFlag.HIDE_DESTROYS,
+                ItemFlag.HIDE_ITEM_SPECIFICS,
+                ItemFlag.HIDE_DYE,
+                ItemFlag.HIDE_ARMOR_TRIM
+        );
     }
 
     protected ItemMeta meta() {
@@ -64,8 +76,8 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder flags(ItemFlag... ifs) {
-        meta().addItemFlags(ifs);
+    public ItemBuilder removeFlags(ItemFlag... ifs) {
+        meta().removeItemFlags(ifs);
         return this;
     }
 

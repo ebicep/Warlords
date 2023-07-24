@@ -19,7 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -359,7 +358,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         )
                 );
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             } else {
                 itemBuilder.addLore(
                         Component.empty(),
@@ -397,7 +395,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         )
                 );
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             } else {
                 itemBuilder.addLore(
                         Component.empty(),

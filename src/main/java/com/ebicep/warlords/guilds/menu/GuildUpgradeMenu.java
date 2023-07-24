@@ -18,7 +18,6 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -43,8 +42,7 @@ public class GuildUpgradeMenu {
         for (T value : values) {
             ItemBuilder itemBuilder = new ItemBuilder(value.getMaterial())
                     .name(Component.text(value.getName(), NamedTextColor.GREEN))
-                    .lore(WordWrap.wrap(Component.text(value.getDescription(), NamedTextColor.GRAY), 160))
-                    .flags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
+                    .lore(WordWrap.wrap(Component.text(value.getDescription(), NamedTextColor.GRAY), 160));
             AbstractGuildUpgrade<?> upgrade = null;
             for (AbstractGuildUpgrade<?> abstractGuildUpgrade : upgrades) {
                 if (abstractGuildUpgrade.getUpgrade() == value) {

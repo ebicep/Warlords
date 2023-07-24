@@ -13,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -47,7 +46,6 @@ public class DebugMenu {
                                     Component.text("Players - ", NamedTextColor.DARK_GRAY).append(Component.text(String.valueOf(game.playersCount()), NamedTextColor.RED))
                             )
                             .enchant(Enchantment.OXYGEN, 1)
-                            .flags(ItemFlag.HIDE_ENCHANTS)
                             .get(),
                     (m, e) -> DebugMenuGameOptions.GamesMenu.openGameEditorMenu(player, game)
             );

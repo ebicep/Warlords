@@ -54,7 +54,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -1078,7 +1077,6 @@ public enum GameEvents {
                                         Component.text("Cost: ", NamedTextColor.GRAY).append(currency.getCostColoredName(rewardPrice)),
                                         Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(stock, NamedTextColor.YELLOW))
                                 )
-                                .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                                 .get(),
                         (m, e) -> {
                             if (eventMode == null || pveStats.getCurrencyValue(currency) < rewardPrice) {

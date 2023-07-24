@@ -34,7 +34,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -106,7 +105,6 @@ public class DebugMenuPlayerOptions {
         );
         firstRow.add(new ItemBuilder(Material.SPLASH_POTION, PotionType.INSTANT_DAMAGE)
                         .name(Component.text("Kill", NamedTextColor.GREEN))
-                        .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                         .get(),
                 (m, e) -> {
                     target.addDamageInstance(target, "God", 100000, 100000, 0, 100);
@@ -162,7 +160,6 @@ public class DebugMenuPlayerOptions {
         );
         secondRow.add(new ItemBuilder(Material.SPLASH_POTION, PotionType.INSTANT_HEAL)
                         .name(Component.text("Add Health", NamedTextColor.GREEN))
-                        .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                         .get(),
                 (m, e) -> {
                     new SignGUI()
@@ -194,7 +191,6 @@ public class DebugMenuPlayerOptions {
         );
         secondRow.add(new ItemBuilder(Material.DIAMOND_SWORD)
                         .name(Component.text("Take Damage", NamedTextColor.GREEN))
-                        .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .get(),
                 (m, e) -> {
                     new SignGUI()
@@ -366,7 +362,6 @@ public class DebugMenuPlayerOptions {
                 menu.setItem((i % 7) + 1, yLevel,
                         new ItemBuilder(cooldown.itemStack)
                                 .name(Component.text(cooldown.name, cooldown.color))
-                                .flags(ItemFlag.HIDE_ATTRIBUTES)
                                 .get(),
                         (m, e) -> {
                             new SignGUI()
@@ -563,7 +558,6 @@ public class DebugMenuPlayerOptions {
                     ItemBuilder spec = new ItemBuilder(aClasses.get(j).specType.itemStack).name(Component.text(aClasses.get(j).name, NamedTextColor.GREEN));
                     if (target.getSpecClass() == aClasses.get(j)) {
                         spec.enchant(Enchantment.OXYGEN, 1);
-                        spec.flags(ItemFlag.HIDE_ENCHANTS);
                     }
                     menu.setItem(4 + j, i,
                             spec.get(),

@@ -24,7 +24,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
@@ -54,7 +53,6 @@ public class CompensateCommand extends BaseCommand {
                     new ItemBuilder(currency.item)
                             .name(currency.getColoredName())
                             .lore(Component.text(compensation.getOrDefault(currency, 0L), NamedTextColor.GREEN))
-                            .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                             .get(),
                     (m, e) -> {
                         String[] text = new String[]{"", "", "", ""};

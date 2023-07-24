@@ -24,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -234,7 +233,7 @@ public class GamesCommand extends BaseCommand {
                     .lore(WordWrap.wrap(Component.text(gameAddon.getDescription(), NamedTextColor.GOLD), 150));
             if (isASelectedAddon) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                ;
             }
 
             menu.setItem(i % 7 + 1, 1 + i / 7,
