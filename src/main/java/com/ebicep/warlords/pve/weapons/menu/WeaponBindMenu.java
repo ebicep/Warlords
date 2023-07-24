@@ -75,7 +75,7 @@ public class WeaponBindMenu {
                         menu.setItem(
                                 column + i,
                                 row + 1,
-                                boundWeapon.generateItemStackInLore(Component.text("Click to replace binding"))
+                                boundWeapon.generateItemStackInLore(Component.text("Click to replace binding", NamedTextColor.GREEN))
                                            .enchant(Enchantment.OXYGEN, 1)
                                            .get(),
                                 (m, e) -> {
@@ -144,5 +144,42 @@ public class WeaponBindMenu {
 
         menu.setItem(4, 5, Menu.MENU_BACK, (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, selectedWeapon));
         menu.openForPlayer(player);
+    }
+
+    public static void bindWeaponDirectly(Player player, DatabasePlayer databasePlayer, AbstractWeapon selectedWeapon) {
+        List<AbstractWeapon> weaponInventory = databasePlayer
+                .getPveStats()
+                .getWeaponInventory();
+        AbstractWeapon boundWeapon = weaponInventory
+                .stream()
+                .filter(AbstractWeapon::isBound)
+                .filter(w -> w.getSpecializations() == selectedWeapon.getSpecializations())
+                .findFirst()
+                .orElse(null);
+        if (boundWeapon == null) {
+            //bind the new weapon
+            selectedWeapon.setBound(true);
+
+            player.sendMessage(Component.text("You bound ", NamedTextColor.AQUA)
+                                        .append(selectedWeapon.getName())
+                                        .hoverEvent(selectedWeapon.generateItemStack(false).asHoverEvent())
+            );
+        } else {
+            boundWeapon.setBound(false);
+            selectedWeapon.setBound(true);
+
+            player.sendMessage(Component.text("You unbounded ", NamedTextColor.GRAY)
+                                        .append(boundWeapon.getName().hoverEvent(boundWeapon.generateItemStack(false).asHoverEvent()))
+                                        .append(Component.text(" and bound "))
+                                        .append(selectedWeapon.getName().hoverEvent(selectedWeapon.generateItemStack(false).asHoverEvent()))
+            );
+
+            //remove unbounded starter weapon as it is no longer needed
+            if (boundWeapon instanceof StarterWeapon) {
+                weaponInventory.remove(boundWeapon);
+            }
+        }
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 }

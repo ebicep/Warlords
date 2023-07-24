@@ -27,8 +27,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -324,18 +326,46 @@ public class WeaponManagerMenu {
     public static void openWeaponEditor(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon) {
         List<Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>>> weaponOptions = new ArrayList<>();
         //bind common/rare/epic/legendary
+        boolean isBound = weapon.isBound();
+        ItemBuilder bindWeapon = new ItemBuilder(Material.SLIME_BALL)
+                .name(Component.text("Bind Weapon", NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(Component.text(
+                                "Only the weapon bound to your selected specialization will be used in game.", NamedTextColor.GRAY),
+                        180
+                ))
+                .addLore(Component.empty())
+                .addLore(WordWrap.wrap(
+                        Component.textOfChildren(
+                                Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to bind this weapon to your its specialization", NamedTextColor.GREEN)
+                        ),
+                        180
+                ))
+                .addLore(WordWrap.wrap(
+                        Component.textOfChildren(
+                                Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to view all bound weapons", NamedTextColor.GREEN)
+                        ),
+                        180
+                ));
+        if (isBound) {
+            bindWeapon.enchant(Enchantment.OXYGEN, 1);
+            bindWeapon.flags(ItemFlag.HIDE_ENCHANTS);
+        }
         weaponOptions.add(new Pair<>(
-                new ItemBuilder(Material.SLIME_BALL)
-                        .name(Component.text("Bind Weapon", NamedTextColor.GREEN))
-                        .lore(WordWrap.wrap(Component.text(
-                                        """
-                                                Only the weapon bound to your selected specialization will be used in game.
-
-                                                If you want to use this weapon, bind it to its specialization.""", NamedTextColor.GRAY),
-                                180
-                        ))
-                        .get(),
-                (m, e) -> openWeaponBindMenu(player, databasePlayer, weapon)
+                bindWeapon.get(),
+                (m, e) -> {
+                    if (e.isLeftClick()) {
+                        if (isBound) {
+                            player.sendMessage(Component.text("This weapon is already bound!", NamedTextColor.RED));
+                        } else {
+                            WeaponBindMenu.bindWeaponDirectly(player, databasePlayer, weapon);
+                            openWeaponEditor(player, databasePlayer, weapon);
+                        }
+                    } else if (e.isRightClick()) {
+                        openWeaponBindMenu(player, databasePlayer, weapon);
+                    }
+                }
         ));
         //fairy essence reskin commmon/rare/epic/legendary
         weaponOptions.add(new Pair<>(
@@ -388,7 +418,7 @@ public class WeaponManagerMenu {
                             )
                             .get(),
                     (m, e) -> {
-                        if (weapon.isBound()) {
+                        if (isBound) {
                             player.sendMessage(Component.text("You cannot salvage a bound weapon!", NamedTextColor.RED));
                             return;
                         }
@@ -476,16 +506,16 @@ public class WeaponManagerMenu {
                                     180
                             ))
                             .addLore(legendaryWeapon.getStarPieceCostLore(selectedStarPiece))
-                                    .addLore(Component.empty(),
-                                            Component.textOfChildren(
-                                                    Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                                    Component.text("to apply star piece.", NamedTextColor.GRAY)
-                                            ),
-                                            Component.textOfChildren(
-                                                    Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                                    Component.text("to change star piece selection.", NamedTextColor.GRAY)
-                                            )
+                            .addLore(Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                            Component.text("to apply star piece.", NamedTextColor.GRAY)
+                                    ),
+                                    Component.textOfChildren(
+                                            Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                            Component.text("to change star piece selection.", NamedTextColor.GRAY)
                                     )
+                            )
 
                                     .get(),
                             (m, e) -> {
