@@ -91,7 +91,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                         if (event.isHealingInstance()) {
                             return;
                         }
-                        if (event.getFlags().contains(InstanceFlags.SANCTUARY)) {
+                        if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                             return;
                         }
                         if (teammate.isEnemy(wp)) {
@@ -108,7 +108,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                         FortifyingHex fromHex = FortifyingHex.getFromHex(wp);
                         float damageToReflect = (additionalDamageReduction + fromHex.getDamageReduction() * 3) / 100f;
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1, 1.9f);
-                        EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.SANCTUARY);
+                        EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.RECURSIVE);
                         if (pveMasterUpgrade) {
                             flags.add(InstanceFlags.TRUE_DAMAGE);
                         }

@@ -156,7 +156,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     @Override
     public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
         // prevent recursion
-        if (Objects.equals(event.getAttacker(), from) || event.getFlags().contains(InstanceFlags.THORNS)) {
+        if (Objects.equals(event.getAttacker(), from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
             return;
         }
         if (thorns <= 0) {
@@ -166,7 +166,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
         if (thornsDamage > maxThornsDamage) {
             thornsDamage = maxThornsDamage;
         }
-        event.getAttacker().addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, EnumSet.of(InstanceFlags.THORNS));
+        event.getAttacker().addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, EnumSet.of(InstanceFlags.RECURSIVE));
     }
 
     @Override
