@@ -610,18 +610,24 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player) {
-            if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
-                WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
-                if (wp != null) {
-                    if (wp.isDead()) {
-                        wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
-                    } else {
-                        wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100);
-                    }
+        e.setCancelled(true);
+        if (!(e.getEntity() instanceof Player player)) {
+            return;
+        }
+        switch (e.getCause()) {
+            case VOID, KILL -> {
+                player.teleport(Warlords.getRejoinPoint(player.getUniqueId()));
+                WarlordsEntity wp = Warlords.getPlayer(player);
+                if (wp == null) {
+                    return;
                 }
-            } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+                if (wp.isDead()) {
+                    wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
+                } else {
+                    wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100);
+                }
+            }
+            case FALL -> {
                 //HEIGHT - DAMAGE
                 //PLAYER
                 //9 - 160 - 6
@@ -632,28 +638,26 @@ public class WarlordsEvents implements Listener {
                 //HEIGHT - DAMAGE
                 //18 - 160
                 //HEIGHT x 40 - 200
-                if (e.getEntity() instanceof Player) {
-                    WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
-                    if (wp != null) {
-                        int damage = (int) e.getDamage();
-                        if (damage > 5) {
-                            wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100);
-                            wp.resetRegenTimer();
-                        }
-                    }
+                WarlordsEntity wp = Warlords.getPlayer(player);
+                if (wp == null) {
+                    return;
                 }
-            } else if (e.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
-                //100 flat
-                if (e.getEntity() instanceof Player) {
-                    WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
-                    if (wp != null && !wp.getGame().isFrozen()) {
-                        wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100);
-                        wp.resetRegenTimer();
-                    }
+                int damage = (int) e.getDamage();
+                if (damage > 5) {
+                    wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100);
+                    wp.resetRegenTimer();
                 }
             }
+            case DROWNING -> {
+                //100 flat
+                WarlordsEntity wp = Warlords.getPlayer(player);
+                if (wp == null || wp.getGame().isFrozen()) {
+                    return;
+                }
+                wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100);
+                wp.resetRegenTimer();
+            }
         }
-        e.setCancelled(true);
     }
 
     @EventHandler
