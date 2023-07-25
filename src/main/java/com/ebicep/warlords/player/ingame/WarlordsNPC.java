@@ -273,7 +273,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             Mob entityInsentient = customEntity.get();
             entityInsentient.setNoAi(noAI.get());
             //tick later to prevent collision issues
-            if (noAI.get()) {
+            if (!noAI.get()) {
                 new GameRunnable(game) {
                     @Override
                     public void run() {
