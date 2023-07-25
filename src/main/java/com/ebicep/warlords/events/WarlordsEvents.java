@@ -224,9 +224,11 @@ public class WarlordsEvents implements Listener {
                                                                                               .build()
                         );
                         player.showTitle(Title.title(
-                                Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)
-                                         .append(Component.text(" Prestige " + value.name + " ", NamedTextColor.GOLD, TextDecoration.BOLD))
-                                         .append(Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)),
+                                Component.textOfChildren(
+                                        Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED),
+                                        Component.text(" Prestige " + value.name + " ", NamedTextColor.GOLD, TextDecoration.BOLD),
+                                        Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)
+                                ),
                                 Component.text(prestige - 1, ExperienceManager.PRESTIGE_COLORS.get(prestige - 1))
                                          .append(Component.text(" > ", NamedTextColor.GRAY))
                                          .append(Component.text(prestige, ExperienceManager.PRESTIGE_COLORS.get(prestige))),

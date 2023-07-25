@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ExperienceManager {
 
@@ -323,11 +324,9 @@ public class ExperienceManager {
     }
 
     public static long getExperienceForClass(UUID uuid, Classes classes) {
-        if (DatabaseManager.playerService == null) {
-            return 0;
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getClass(classes).getExperience();
+        AtomicLong experience = new AtomicLong(0);
+        DatabaseManager.getPlayer(uuid, databasePlayer -> experience.set(databasePlayer.getClass(classes).getExperience()));
+        return experience.get();
     }
 
     public static long getExperienceForSpec(UUID uuid, Specializations spec) {
@@ -335,11 +334,9 @@ public class ExperienceManager {
     }
 
     private static long getExperienceFromSpec(UUID uuid, Specializations specializations) {
-        if (DatabaseManager.playerService == null) {
-            return 0;
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getSpec(specializations).getExperience();
+        AtomicLong experience = new AtomicLong(0);
+        DatabaseManager.getPlayer(uuid, databasePlayer -> experience.set(databasePlayer.getSpec(specializations).getExperience()));
+        return experience.get();
     }
 
     public static int getLevelForSpec(UUID uuid, Specializations spec) {
