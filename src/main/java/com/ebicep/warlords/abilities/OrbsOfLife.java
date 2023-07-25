@@ -34,7 +34,9 @@ import java.util.*;
 public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration {
 
     public static final double SPAWN_RADIUS = 1.15;
-    public static float ORB_HEALING = 225;
+    public static final float ORB_HEALING = 225;
+    public static final double ORB_HITBOX = 1.35;
+    public static final double ORB_HITBOX_SQUARED = ORB_HITBOX * ORB_HITBOX;
 
     public int orbsProduced = 0;
 
@@ -111,14 +113,14 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                     while (itr.hasNext()) {
                         OrbOfLife orb = itr.next();
                         Location orbPosition = orb.getArmorStand().getLocation();
-                        WarlordsEntity teammateToHeal = orb.getPlayerToMoveTowards() != null && orbPosition.distanceSquared(orb.getPlayerToMoveTowards()
-                                                                                                                               .getLocation()) < 1.35 * 1.35 ?
-                                                        orb.getPlayerToMoveTowards() :
-                                                        PlayerFilter.entitiesAround(orbPosition, 1.35, 1.35, 1.35)
-                                                                    .aliveTeammatesOf(wp)
-                                                                    .closestFirst(orbPosition)
-                                                                    .findFirst()
-                                                                    .orElse(null);
+                        WarlordsEntity teammateToHeal =
+                                orb.getPlayerToMoveTowards() != null && orbPosition.distanceSquared(orb.getPlayerToMoveTowards().getLocation()) < ORB_HITBOX_SQUARED ?
+                                orb.getPlayerToMoveTowards() :
+                                PlayerFilter.entitiesAround(orbPosition, ORB_HITBOX, ORB_HITBOX, ORB_HITBOX)
+                                            .aliveTeammatesOf(wp)
+                                            .closestFirst(orbPosition)
+                                            .findFirst()
+                                            .orElse(null);
                         if (teammateToHeal != null) {
                             orb.remove();
                             itr.remove();
