@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.abilities.DeathsDebt;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -70,12 +69,13 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
 
         Location standLocation = LocationUtils.getGroundLocation(player);
         standLocation.setYaw(0);
-        standLocation.setY(standLocation.getY() - 1.25);
+        standLocation.setY(standLocation.getY() - 0.6);
 
         playSound(player, standLocation);
 
-        ArmorStand totemStand = Utils.spawnArmorStand(this instanceof DeathsDebt ? standLocation.clone().add(0, -.25, 0) : standLocation, armorStand -> {
+        ArmorStand totemStand = Utils.spawnArmorStand(standLocation, armorStand -> {
             armorStand.getEquipment().setHelmet(getTotemItemStack());
+            armorStand.setSmall(true);
         });
 
         onActivation(wp, player, totemStand);
@@ -94,7 +94,7 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
             return false;
         }
         Location eye = new LocationBuilder(player.getEyeLocation()).addY(.5).backward(1);
-        Vector toEntity = this.totem.getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
+        Vector toEntity = this.totem.getEyeLocation().add(0, 0, 0).toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
         return dot > .93f;
     }
