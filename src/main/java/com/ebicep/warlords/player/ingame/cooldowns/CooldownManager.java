@@ -1,10 +1,14 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.WoundingStrikeDefender;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.state.PlayingState;
+import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
@@ -67,11 +71,29 @@ public class CooldownManager {
                     if (abstractCooldowns.contains(abstractCooldown)) {
                         abstractCooldowns.remove(i);
                         i--;
+
+                        if (abstractCooldown.changesPlayerName()) {
+                            updatePlayerNames();
+                        }
                     }
                 }
             }
         }
 
+    }
+
+    private void updatePlayerNames() {
+        Game game = warlordsEntity.getGame();
+        game.getState(PlayingState.class)
+            .ifPresent(playingState -> {
+                game.forEachOnlinePlayer((player, team) -> {
+                    WarlordsEntity wp = Warlords.getPlayer(player);
+                    if (wp == null) {
+                        return;
+                    }
+                    playingState.updateNames(CustomScoreboard.getPlayerScoreboard(player), wp);
+                });
+            });
     }
 
     public List<AbstractCooldown<?>> getCooldownsDistinct() {
@@ -258,6 +280,9 @@ public class CooldownManager {
         Bukkit.getPluginManager().callEvent(new WarlordsAddCooldownEvent(warlordsEntity, abstractCooldown));
         this.totalCooldowns++;
         abstractCooldowns.add(abstractCooldown);
+        if (abstractCooldown.changesPlayerName()) {
+            updatePlayerNames();
+        }
     }
 
     public boolean hasCooldownFromName(String name) {

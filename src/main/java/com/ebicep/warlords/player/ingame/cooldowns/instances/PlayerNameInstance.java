@@ -11,6 +11,13 @@ import java.util.function.Predicate;
  */
 public interface PlayerNameInstance {
 
+    default boolean changesPlayerName() {
+        return addPrefixFromSelf() != null ||
+                addSuffixFromSelf() != null ||
+                addPrefixFromOther() != null ||
+                addSuffixFromOther() != null;
+    }
+
     default PlayerNameData addPrefixFromSelf() {
         return null;
     }

@@ -138,25 +138,14 @@ public class PlayingState implements State, TimerDebugAble {
         });
         new GameRunnable(game) {
 
-            int counter = 0;
 
             @Override
             public void run() {
-                if (counter % 4 == 0) {
-                    game.forEachOnlinePlayer((player, team) -> {
-                        updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(player), (WarlordsPlayer) Warlords.getPlayer(player));
-                    });
-                } else if (counter % 2 == 0) {
-                    game.forEachOnlinePlayer((player, team) -> {
-                        WarlordsEntity wp = Warlords.getPlayer(player);
-                        if (wp != null) {
-                            updateNames(CustomScoreboard.getPlayerScoreboard(player), wp);
-                        }
-                    });
-                }
-                counter++;
+                game.forEachOnlinePlayer((player, team) -> {
+                    updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(player), (WarlordsPlayer) Warlords.getPlayer(player));
+                });
             }
-        }.runTaskTimer(0, 2);
+        }.runTaskTimer(0, 10);
 
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Started recording timed stats");
 
@@ -293,11 +282,6 @@ public class PlayingState implements State, TimerDebugAble {
         }
     }
 
-    @Nonnull
-    public Game getGame() {
-        return game;
-    }
-
     @Override
     public void onPlayerReJoinGame(@Nonnull Player player) {
         WarlordsEntity wp = Warlords.getPlayer(player);
@@ -322,6 +306,16 @@ public class PlayingState implements State, TimerDebugAble {
             CustomScoreboard sb = CustomScoreboard.getPlayerScoreboard(player);
             updateBasedOnGameState(sb, (WarlordsPlayer) wp);
         }
+    }
+
+    @Override
+    public int getTicksElapsed() {
+        return this.timer;
+    }
+
+    @Nonnull
+    public Game getGame() {
+        return game;
     }
 
     private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
@@ -367,7 +361,7 @@ public class PlayingState implements State, TimerDebugAble {
         });
     }
 
-    private void updateNames(@Nonnull CustomScoreboard customScoreboard, WarlordsEntity warlordsPlayer) {
+    public void updateNames(@Nonnull CustomScoreboard customScoreboard, WarlordsEntity warlordsPlayer) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         List<AbstractCooldown<?>> cooldowns = warlordsPlayer.getCooldownManager().getCooldowns();
         this.getGame().forEachOfflineWarlordsPlayer((player, team) -> {
@@ -460,11 +454,6 @@ public class PlayingState implements State, TimerDebugAble {
             }
         }
         customScoreboard.giveNewSideBar(false, scoreboard);
-    }
-
-    @Override
-    public int getTicksElapsed() {
-        return this.timer;
     }
 
     @Override
