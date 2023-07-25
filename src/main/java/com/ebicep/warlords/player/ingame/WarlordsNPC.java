@@ -259,21 +259,21 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     public void setStunTicks(int stunTicks, boolean decrement) {
-        AtomicReference<Boolean> ai = new AtomicReference<>();
+        AtomicReference<Boolean> noAI = new AtomicReference<>();
         CustomEntity<?> customEntity = mob.getEntity();
         if (stunTicks > 0) {
             if (this.stunTicks <= 0) {
                 customEntity.setStunned(true);
-                ai.set(false);
+                noAI.set(true);
             }
         } else {
-            ai.set(true);
+            noAI.set(false);
         }
-        if (ai.get() != null) {
+        if (noAI.get() != null) {
             Mob entityInsentient = customEntity.get();
-            entityInsentient.setNoAi(ai.get());
+            entityInsentient.setNoAi(noAI.get());
             //tick later to prevent collision issues
-            if (ai.get()) {
+            if (noAI.get()) {
                 new GameRunnable(game) {
                     @Override
                     public void run() {
