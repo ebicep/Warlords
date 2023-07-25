@@ -111,7 +111,8 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                     while (itr.hasNext()) {
                         OrbOfLife orb = itr.next();
                         Location orbPosition = orb.getArmorStand().getLocation();
-                        WarlordsEntity teammateToHeal = orb.getPlayerToMoveTowards() != null ?
+                        WarlordsEntity teammateToHeal = orb.getPlayerToMoveTowards() != null && orbPosition.distanceSquared(orb.getPlayerToMoveTowards()
+                                                                                                                               .getLocation()) < 1.35 * 1.35 ?
                                                         orb.getPlayerToMoveTowards() :
                                                         PlayerFilter.entitiesAround(orbPosition, 1.35, 1.35, 1.35)
                                                                     .aliveTeammatesOf(wp)
@@ -190,19 +191,27 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
                     //setting target player to move towards (includes self)
                     if (wp.isInPve()) {
-                        tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                                .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
-                                .aliveTeammatesOf(wp)
-                                .leastAliveFirst()
-                                .findFirstOrNull()
-                        ));
+                        tempOrbsOfLight.getSpawnedOrbs()
+                                       .forEach(orb -> {
+                                           orb.getArmorStand().setGravity(false);
+                                           orb.setPlayerToMoveTowards(PlayerFilter
+                                                   .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                                   .aliveTeammatesOf(wp)
+                                                   .leastAliveFirst()
+                                                   .findFirstOrNull()
+                                           );
+                                       });
                     } else {
-                        tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                                .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
-                                .aliveTeammatesOf(wp)
-                                .closestFirst(orb.getArmorStand().getLocation())
-                                .findFirstOrNull()
-                        ));
+                        tempOrbsOfLight.getSpawnedOrbs()
+                                       .forEach(orb -> {
+                                           orb.getArmorStand().setGravity(false);
+                                           orb.setPlayerToMoveTowards(PlayerFilter
+                                                   .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                                   .aliveTeammatesOf(wp)
+                                                   .closestFirst(orb.getArmorStand().getLocation())
+                                                   .findFirstOrNull()
+                                           );
+                                       });
                     }
                     //moving orb
                     new GameRunnable(wp.getGame()) {
@@ -221,7 +230,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                 );
                                 orb.forEach(orbArmorStand::addPassenger);
                                 orbArmorStand.getWorld().spawnParticle(
-                                        Particle.SPELL_WITCH,
+                                        Particle.VILLAGER_HAPPY,
                                         orbArmorStand.getLocation().add(0, 1.65, 0),
                                         1,
                                         0,
@@ -297,11 +306,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return spawnLocation;
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new OrbsOfLifeBranch(abilityTree, this);
-    }
-
     public int getOrbsProduced() {
         return orbsProduced;
     }
@@ -318,6 +322,11 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
             }
         }
         return false;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new OrbsOfLifeBranch(abilityTree, this);
     }
 
     public void setOrbTickMultiplier(int orbTickMultiplier) {
