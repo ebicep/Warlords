@@ -26,25 +26,10 @@ public class ItemBuilder {
         hideAllFlags();
     }
 
-    public ItemBuilder(@Nonnull ItemStack stack) throws IllegalArgumentException {
-        item = new ItemStack(stack);
-        hideAllFlags();
-    }
-
-    public ItemBuilder(@Nonnull Material material, @Nonnull PotionType potionType) {
-        this(material);
-        PotionMeta potionMeta = (PotionMeta) meta();
-        potionMeta.setBasePotionData(new PotionData(potionType));
-        item.setItemMeta(potionMeta);
-        hideAllFlags();
-    }
-
-    public ItemBuilder(@Nonnull Material type) {
-        item = new ItemStack(type);
-        hideAllFlags();
-    }
-
     private void hideAllFlags() {
+        if (item.getType() == Material.AIR) {
+            return;
+        }
         meta().addItemFlags(
                 ItemFlag.HIDE_ENCHANTS,
                 ItemFlag.HIDE_ATTRIBUTES,
@@ -64,6 +49,24 @@ public class ItemBuilder {
             }
         }
         return meta;
+    }
+
+    public ItemBuilder(@Nonnull ItemStack stack) throws IllegalArgumentException {
+        item = new ItemStack(stack);
+        hideAllFlags();
+    }
+
+    public ItemBuilder(@Nonnull Material material, @Nonnull PotionType potionType) {
+        this(material);
+        PotionMeta potionMeta = (PotionMeta) meta();
+        potionMeta.setBasePotionData(new PotionData(potionType));
+        item.setItemMeta(potionMeta);
+        hideAllFlags();
+    }
+
+    public ItemBuilder(@Nonnull Material type) {
+        item = new ItemStack(type);
+        hideAllFlags();
     }
 
     public ItemBuilder name(Component component) {

@@ -11,7 +11,6 @@ import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
-import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.MenuItemPairList;
 import com.ebicep.warlords.permissions.Permissions;
@@ -121,9 +120,8 @@ public class DebugMenuPlayerOptions {
                     Game game = target.getGame();
                     Team currentTeam = target.getTeam();
                     Team otherTeam = target.getTeam().enemy();
-                    game.setPlayerTeam(player, otherTeam);
+                    game.setPlayerTeam(target.getUuid(), otherTeam);
                     target.setTeam(otherTeam);
-                    target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
                     PlayerSettings.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
                     LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
                     if (randomLobbyLocation != null) {
@@ -587,8 +585,6 @@ public class DebugMenuPlayerOptions {
                                 ).get(),
                         (m, e) -> {
                             target.setSpec(selectedSpec, skillBoost);
-
-                            target.getGame().getState(PlayingState.class).ifPresent(s -> s.updatePlayerName(target));
                             openSpecMenu(player, target);
                             sendDebugMessage(player, Component.text("Changed ", NamedTextColor.GREEN)
                                                               .append(target.getColoredName())

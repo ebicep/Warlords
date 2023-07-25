@@ -485,22 +485,4 @@ public class PlayingState implements State, TimerDebugAble {
     public void resetTimer() throws IllegalStateException {
     }
 
-    /**
-     * Updates the names of the player on the scoreboard. To be used when the spec of a warlord player changes
-     *
-     * @param we the player changing
-     */
-    public void updatePlayerName(@Nonnull WarlordsEntity we) {
-        this.getGame().forEachOfflineWarlordsPlayer((player, team) -> {
-            Scoreboard scoreboard = CustomScoreboard.getPlayerScoreboard(player.getUniqueId()).getScoreboard();
-            int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
-//            scoreboard.getTeam(we.getName())
-//                      .prefix(Component.text(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
-//                                                                                            .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor()));
-//            scoreboard.getTeam(we.getName())
-//                      .suffix(Component.text(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]"));
-
-        });
-    }
-
 }
