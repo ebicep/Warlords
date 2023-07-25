@@ -52,7 +52,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     private float dotMinHeal = 30;
     private float dotMaxHeal = 40;
     private int maxStacks = 3;
-    private int tickDuration = 40;
+    private int tickDuration = 60;
 
     public MercifulHex() {
         super("Merciful Hex", 307, 415, 0, 70, 20, 180, 2.5, 40, true);

@@ -39,7 +39,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 1;
     private int maxFullDistance = 40;
-    private int tickDuration = 80;
+    private int tickDuration = 120;
     private int damageReduction = 8;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
