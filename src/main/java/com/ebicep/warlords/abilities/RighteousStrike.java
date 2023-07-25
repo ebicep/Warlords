@@ -27,7 +27,7 @@ public class RighteousStrike extends AbstractStrike {
     private int abilityReductionInTicks = 10;
 
     public RighteousStrike() {
-        super("Righteous Strike", 412, 523, 0, 90, 20, 175);
+        super("Righteous Strike", 391, 497, 0, 90, 20, 175);
     }
 
     @Override
@@ -37,8 +37,7 @@ public class RighteousStrike extends AbstractStrike {
                                .append(Component.text(" damage. Each strike reduces the duration of your struck target's active ability timers by "))
                                .append(Component.text(format(abilityReductionInTicks / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."))
-                               .append(Component.newline())
-                               .append(Component.text("Additionally, if your struck target is silenced, reduce the cooldown of your Prism Guard by "))
+                               .append(Component.text("\n\nAdditionally, if your struck target is silenced, reduce the cooldown of your Prism Guard by "))
                                .append(Component.text(format((abilityReductionInTicks * 1.6f) / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds and reduce their active ability timers by "))
                                .append(Component.text("0.8", NamedTextColor.GOLD))

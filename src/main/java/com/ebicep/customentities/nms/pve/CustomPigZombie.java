@@ -39,6 +39,11 @@ public class CustomPigZombie extends ZombifiedPiglin implements CustomEntity<Cus
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.PIG_ZOMBIE;
     }

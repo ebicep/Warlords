@@ -31,7 +31,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
     public int enemiesHit = 0;
 
     private int maxFullDistance = 40;
-    private double directHitMultiplier = 1.15;
+    private float directHitMultiplier = 15;
     private float hitbox = 4;
     private float minDamage = 231;
     private float maxDamage = 299;
@@ -47,7 +47,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                                .append(Component.text(" damage and restore"))
                                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" health to allies. A direct hit will cause "))
-                               .append(Component.text("15%", NamedTextColor.GOLD))
+                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.GOLD))
                                .append(Component.text(" increased damage or healing for the target hit."))
                                .append(Component.text("\n\nHas an optimal range of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
@@ -105,8 +105,8 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                 teammatesHit++;
                 hit.addHealingInstance(shooter,
                         name,
-                        (float) (minDamageHeal * directHitMultiplier * toReduceBy),
-                        (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
+                        (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                        (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                         critChance,
                         critMultiplier
                 );
@@ -250,11 +250,11 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
         this.maxFullDistance = maxFullDistance;
     }
 
-    public double getDirectHitMultiplier() {
+    public float getDirectHitMultiplier() {
         return directHitMultiplier;
     }
 
-    public void setDirectHitMultiplier(double directHitMultiplier) {
+    public void setDirectHitMultiplier(float directHitMultiplier) {
         this.directHitMultiplier = directHitMultiplier;
     }
 

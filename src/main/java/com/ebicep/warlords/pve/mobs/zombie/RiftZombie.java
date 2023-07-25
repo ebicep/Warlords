@@ -37,7 +37,8 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
                 0.33f,
                 10,
                 800,
-                1000
+                1000,
+                new RiftSpeed()
         );
     }
 
@@ -94,6 +95,8 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.2f);
             wp.addSpeedModifier(wp, "Rift Speed", 100, 2 * 20);
             return true;

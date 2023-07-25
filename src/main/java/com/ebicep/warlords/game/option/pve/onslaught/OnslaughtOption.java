@@ -9,7 +9,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
-import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -245,30 +244,8 @@ public class OnslaughtOption implements PveOption {
             }
 
             private Location getSpawnLocation(WarlordsEntity entity) {
-                List<Location> candidates = new ArrayList<>();
-                double priority = Double.NEGATIVE_INFINITY;
-                for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
-                    if (entity == null) {
-                        return marker.getLocation();
-                    }
-                    if (candidates.isEmpty()) {
-                        candidates.add(marker.getLocation());
-                        priority = marker.getPriority(entity);
-                    } else {
-                        double newPriority = marker.getPriority(entity);
-                        if (newPriority >= priority) {
-                            if (newPriority > priority) {
-                                candidates.clear();
-                                priority = newPriority;
-                            }
-                            candidates.add(marker.getLocation());
-                        }
-                    }
-                }
-                if (!candidates.isEmpty()) {
-                    return candidates.get((int) (Math.random() * candidates.size()));
-                }
-                return lastLocation;
+                Location randomSpawnLocation = getRandomSpawnLocation(entity);
+                return randomSpawnLocation != null ? randomSpawnLocation : lastLocation;
             }
 
         }.runTaskTimer(10 * GameRunnable.SECOND, 6);

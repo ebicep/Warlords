@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -55,21 +56,22 @@ public class RayOfLight extends AbstractBeam {
     }
 
     @Override
+    protected void playEffect(@Nonnull InternalProjectile projectile) {
+        Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
+        for (int i = 0; i < 4; i++) {
+            double angle = Math.toRadians(i * 90) + (projectile.getTicksLived() * 30) * 0.45;
+            double width = 0.4D;
+            EffectUtils.displayParticle(
+                    Particle.FLAME,
+                    center.translateVector(projectile.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                    2
+            );
+        }
+    }
+
+    @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
-        Matrix4d center = new Matrix4d(currentLocation);
-        double angle = Math.toRadians(4 * 90) + 30 * 0.45;
-        double width = 0.5D;
-        currentLocation.getWorld().spawnParticle(
-                Particle.VILLAGER_ANGRY,
-                center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                2,
-                0,
-                0,
-                0,
-                0,
-                null,
-                true
-        );
+
     }
 
     @Override

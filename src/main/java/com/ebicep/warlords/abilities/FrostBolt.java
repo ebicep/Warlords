@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -13,7 +14,10 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +28,7 @@ import java.util.List;
 public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
 
     private int maxFullDistance = 30;
-    private double directHitMultiplier = 1.15;
+    private float directHitMultiplier = 15;
     private float hitbox = 4;
     private int slowness = 25;
 
@@ -41,7 +45,7 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
                                .append(Component.text("for "))
                                .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text(" seconds. A direct hit will cause the enemy to take an additional "))
-                               .append(Component.text("15%", NamedTextColor.RED))
+                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.RED))
                                .append(Component.text(" extra damage."))
                                .append(Component.newline())
                                .append(Component.text("Has an optimal range of "))
@@ -63,16 +67,10 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
-        currentLocation.getWorld().spawnParticle(
+        EffectUtils.displayParticle(
                 Particle.CLOUD,
                 currentLocation,
-                1,
-                0,
-                0,
-                0,
-                0,
-                null,
-                true
+                1
         );
     }
 
@@ -81,12 +79,11 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
-        World world = currentLocation.getWorld();
 
         Utils.playGlobalSound(currentLocation, "mage.frostbolt.impact", 2, 1);
 
-        world.spawnParticle(Particle.EXPLOSION_LARGE, currentLocation, 1, 0, 0, 0, 0, null, true);
-        world.spawnParticle(Particle.CLOUD, currentLocation, 3, .3, .3, .3, 1, null, true);
+        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, currentLocation, 1);
+        EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3, 0.3, 0.3, 1);
 
 
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
@@ -104,8 +101,8 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
             hit.addDamageInstance(
                     shooter,
                     name,
-                    (float) (minDamageHeal * directHitMultiplier * toReduceBy),
-                    (float) (maxDamageHeal * directHitMultiplier * toReduceBy),
+                    (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                    (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                     critChance,
                     critMultiplier
             );
@@ -190,11 +187,11 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
         this.maxFullDistance = maxFullDistance;
     }
 
-    public double getDirectHitMultiplier() {
+    public float getDirectHitMultiplier() {
         return directHitMultiplier;
     }
 
-    public void setDirectHitMultiplier(double directHitMultiplier) {
+    public void setDirectHitMultiplier(float directHitMultiplier) {
         this.directHitMultiplier = directHitMultiplier;
     }
 

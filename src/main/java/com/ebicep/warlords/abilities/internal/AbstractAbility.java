@@ -16,7 +16,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -193,8 +192,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     public ItemStack getItem(ItemStack item) {
         ItemBuilder itemBuilder = new ItemBuilder(item)
                 .name(Component.text(getName(), NamedTextColor.GOLD))
-                .unbreakable()
-                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+                .unbreakable();
 
         if (getCooldown() != 0) {
             itemBuilder.addLore(Component.text("Cooldown: ", NamedTextColor.GRAY)
@@ -301,6 +299,20 @@ public abstract class AbstractAbility implements AbilityIcon {
      */
     public float convertToPercent(float input) {
         return input / 100f;
+    }
+
+    /**
+     * @return returns the input subtracted from 100 and then divided by 100
+     */
+    public float convertToDivisionDecimal(float input) {
+        return (100 - input) / 100f;
+    }
+
+    /**
+     * @return returns the input divided by 100 and then added on 1
+     */
+    public float convertToMultiplicationDecimal(float input) {
+        return 1 + (input / 100f);
     }
 
     public void runEverySecond() {

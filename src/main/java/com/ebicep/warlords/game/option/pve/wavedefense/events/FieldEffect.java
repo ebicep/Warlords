@@ -12,13 +12,18 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventPoisonousSpider;
+import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -193,6 +198,62 @@ public class FieldEffect implements Option {
 //                    }
 
                 });
+            }
+        },
+        LOST_BUFF("Lost Buff",
+                "Players and mobs will lose 1% of their max health every second."
+        ) {
+            @Override
+            public void onStart(Game game) {
+                new GameRunnable(game) {
+
+                    @Override
+                    public void run() {
+                        PlayerFilter.playingGame(game)
+                                    .forEach(warlordsEntity -> {
+                                        if (warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
+                                            return;
+                                        }
+                                        float damage = warlordsEntity.getMaxHealth() * .01f;
+                                        warlordsEntity.addDamageInstance(
+                                                warlordsEntity,
+                                                "Lost Buff",
+                                                damage,
+                                                damage,
+                                                0,
+                                                100,
+                                                EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.NO_MESSAGE)
+                                        );
+                                    });
+                    }
+
+                }.runTaskTimer(200, 20);
+            }
+        },
+        DEBUFF_THING("Debuff Thing",
+                "Each debuff on a mobs will increase the damage they take by 10%. (Max 120%)"
+        ) {
+            @Override
+            public void onWarlordsEntityCreated(WarlordsEntity player) {
+                if (player instanceof WarlordsNPC) {
+                    player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Debuff Thing",
+                            null,
+                            null,
+                            null,
+                            player,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            false
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            int debuffDamageBoost = Math.min(event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns().size(), 12);
+                            return currentDamageValue * (1 + (debuffDamageBoost * .2f));
+                        }
+                    });
+                }
             }
         },
         ;

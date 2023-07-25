@@ -1,9 +1,12 @@
 package com.ebicep.warlords.game.option.pve.rewards;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.util.java.Pair;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -59,35 +62,38 @@ public abstract class PveRewards<T extends PveOption> {
                 }
             }
         }
+        Game game = pveOption.getGame();
         if (coinGainOption.getPlayerCoinPerKill() != 0) {
-            int totalKills = pveOption
-                    .getGame()
-                    .warlordsPlayers()
-                    .mapToInt(wp -> wp.getMinuteStats().total().getKills()).sum();
+            int totalKills = game.warlordsPlayers()
+                                 .mapToInt(wp -> wp.getMinuteStats().total().getKills()).sum();
             cachedBaseCoinSummary.put("Kills", coinGainOption.getPlayerCoinPerKill() * totalKills);
+        }
+        Pair<Long, Integer> playerCoinPerXSec = coinGainOption.getPlayerCoinPerXSec();
+        if (playerCoinPerXSec != null) {
+            game.getOptions()
+                .stream()
+                .filter(option -> option instanceof RecordTimeElapsedOption)
+                .map(RecordTimeElapsedOption.class::cast)
+                .findAny()
+                .ifPresent(recordTimeElapsedOption -> {
+                    int secondsElapsed = recordTimeElapsedOption.getTicksElapsed() / 20;
+                    cachedBaseCoinSummary.put("Seconds Survived",
+                            (long) (secondsElapsed / playerCoinPerXSec.getB() * playerCoinPerXSec.getA() * difficulty.getRewardsMultiplier())
+                    );
+                });
         }
         long convertBonus = coinGainOption.getGuildCoinInsigniaConvertBonus();
         if (convertBonus != 0 && shouldStoreInsigniaConverted()) {
-            pveOption.getGame()
-                     .warlordsPlayers()
-                     .forEach(warlordsPlayer -> cachedBaseCoinSummary.put(
-                             "Excess Insignia Converted",
-                             Math.min(warlordsPlayer.getCurrency() / 100, convertBonus)
-                     ));
+            game.warlordsPlayers()
+                .forEach(warlordsPlayer -> cachedBaseCoinSummary.put(
+                        "Excess Insignia Converted",
+                        Math.min(warlordsPlayer.getCurrency() / 100, convertBonus)
+                ));
         }
 
-        pveOption.getGame()
-                 .warlordsPlayers()
-                 .forEach(warlordsPlayer -> getPlayerRewards(warlordsPlayer.getUuid()).setCachedBaseCoinSummary(cachedBaseCoinSummary));
+        game.warlordsPlayers()
+            .forEach(warlordsPlayer -> getPlayerRewards(warlordsPlayer.getUuid()).setCachedBaseCoinSummary(cachedBaseCoinSummary));
 
-    }
-
-    protected abstract void storeCustomBaseCoinSummary(LinkedHashMap<String, Long> cachedBaseCoinSummary);
-
-    protected abstract boolean shouldStoreInsigniaConverted();
-
-    public PlayerPveRewards getPlayerRewards(UUID uuid) {
-        return playerRewards.computeIfAbsent(uuid, k -> new PlayerPveRewards());
     }
 
     public void storeWeaponFragmentGain() {
@@ -98,7 +104,25 @@ public abstract class PveRewards<T extends PveOption> {
         storeWeaponFragmentGainInternal();
     }
 
+    public void storeIllusionShardGain() {
+        if (difficulty == DifficultyIndex.EVENT) {
+            return;
+        }
+
+        storeIllusionShardGainInternal();
+    }
+
+    protected abstract void storeCustomBaseCoinSummary(LinkedHashMap<String, Long> cachedBaseCoinSummary);
+
+    protected abstract boolean shouldStoreInsigniaConverted();
+
+    public PlayerPveRewards getPlayerRewards(UUID uuid) {
+        return playerRewards.computeIfAbsent(uuid, k -> new PlayerPveRewards());
+    }
+
     protected abstract void storeWeaponFragmentGainInternal();
+
+    protected abstract void storeIllusionShardGainInternal();
 
     protected void addExtraFragmentGain(int per5, Specializations currentSpec, DatabasePlayer databasePlayer, AtomicLong legendFragmentGain) {
         legendFragmentGain.updateAndGet(v -> (long) (v * difficulty.getRewardsMultiplier()));
@@ -113,16 +137,6 @@ public abstract class PveRewards<T extends PveOption> {
         legendFragmentGain.addAndGet((long) ((specPrestigeBonus + otherSpecPrestigeBonus) * difficulty.getRewardsMultiplier() * (per5 / 25)));
         //warlordsPlayer.sendMessage("Legend Fragment Gain After Prestiges: " + legendFragmentGain.get());
     }
-
-    public void storeIllusionShardGain() {
-        if (difficulty == DifficultyIndex.EVENT) {
-            return;
-        }
-
-        storeIllusionShardGainInternal();
-    }
-
-    protected abstract void storeIllusionShardGainInternal();
 
     public HashMap<String, Long> getMobsKilled() {
         return mobsKilled;

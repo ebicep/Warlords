@@ -19,7 +19,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -93,10 +92,9 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                     if (ticksElapsed % 3 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
-                        World world = location.getWorld();
-                        world.spawnParticle(Particle.CLOUD, location, 2, 0.15F, 0.3F, 0.15F, 0.01, null, true);
-                        world.spawnParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001, null, true);
-                        world.spawnParticle(Particle.SPELL_WITCH, location, 1, 0.3F, 0.3F, 0.3F, 0, null, true);
+                        EffectUtils.displayParticle(Particle.CLOUD, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
+                        EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
+                        EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3F, 0.3F, 0.3F, 0);
                     }
                 })
         );

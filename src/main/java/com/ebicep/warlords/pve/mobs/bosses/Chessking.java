@@ -5,6 +5,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.slime.AbstractSlime;
 import com.ebicep.warlords.pve.mobs.slime.VoidSlime;
@@ -33,7 +35,27 @@ public class Chessking extends AbstractSlime implements BossMob {
                 30,
                 0,
                 0,
-                new Belch(), new SpawnSlimeZombies(), new SpawnVoidSlimes()
+                new Belch(),
+                new SpawnMobAbility(
+                        "Slime Zombies",
+                        5,
+                        Mobs.SLIME_ZOMBIE
+                ) {
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                },
+                new SpawnMobAbility(
+                        "Void Slimes",
+                        60,
+                        Mobs.VOID_SLIME
+                ) {
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                }
         );
     }
 
@@ -101,6 +123,8 @@ public class Chessking extends AbstractSlime implements BossMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 8, 8, 8)
                     .aliveEnemiesOf(wp)
@@ -118,71 +142,4 @@ public class Chessking extends AbstractSlime implements BossMob {
         }
     }
 
-    private static class SpawnSlimeZombies extends AbstractAbility {
-
-        public SpawnSlimeZombies() {
-            super("Spawn Slime Zombies", 5, 100);
-        }
-
-        @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            PveOption pve = wp.getGame()
-                              .getOptions()
-                              .stream()
-                              .filter(PveOption.class::isInstance)
-                              .map(PveOption.class::cast)
-                              .findFirst().orElse(null);
-            if (pve == null) {
-                return false;
-            }
-            for (int i = 0; i < pve.getGame().warlordsPlayers().count(); i++) {
-                pve.spawnNewMob(new SlimeZombie(wp.getLocation()), wp.getTeam());
-            }
-            return true;
-        }
-    }
-
-    private static class SpawnVoidSlimes extends AbstractAbility {
-
-        public SpawnVoidSlimes() {
-            super("Spawn Void Slimes", 60, 100);
-        }
-
-        @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            PveOption pve = wp.getGame()
-                              .getOptions()
-                              .stream()
-                              .filter(PveOption.class::isInstance)
-                              .map(PveOption.class::cast)
-                              .findFirst().orElse(null);
-            if (pve == null) {
-                return false;
-            }
-            for (int i = 0; i < pve.getGame().warlordsPlayers().count(); i++) {
-                pve.spawnNewMob(new SlimeZombie(wp.getLocation()), wp.getTeam());
-            }
-            return true;
-        }
-    }
 }

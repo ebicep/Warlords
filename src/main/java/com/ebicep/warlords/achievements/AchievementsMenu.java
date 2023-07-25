@@ -16,7 +16,6 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -130,8 +129,7 @@ public class AchievementsMenu {
                 boolean hasAchievement = unlockedAchievements.contains(achievement);
                 boolean shouldObfuscate = !hasAchievement && achievement.isHidden();
                 ItemBuilder itemBuilder = new ItemBuilder(hasAchievement ? Material.WATER_BUCKET : Material.BUCKET)
-                        .name(Component.text(achievement.getName(), NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate))
-                        .flags(ItemFlag.HIDE_ENCHANTS);
+                        .name(Component.text(achievement.getName(), NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate));
                 if (!achievement.getDescription().isEmpty()) {
                     itemBuilder.lore(
                             WordWrap.wrap(
@@ -214,8 +212,7 @@ public class AchievementsMenu {
             boolean hasAchievement = unlockedAchievements.contains(achievement);
             boolean shouldObfuscate = !hasAchievement && achievement.isHidden();
             ItemBuilder itemBuilder = new ItemBuilder(hasAchievement ? Material.WATER_BUCKET : Material.BUCKET)
-                    .name(Component.text(achievement.getName(), NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate))
-                    .flags(ItemFlag.HIDE_ENCHANTS);
+                    .name(Component.text(achievement.getName(), NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate));
             if (!achievement.getDescription().isEmpty()) {
                 itemBuilder.lore(
                         WordWrap.wrap(

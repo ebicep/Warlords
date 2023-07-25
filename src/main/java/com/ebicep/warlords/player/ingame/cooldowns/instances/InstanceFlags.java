@@ -5,11 +5,15 @@ public enum InstanceFlags {
     STRIKE_IN_CONS,
     AVENGER_WRATH_STRIKE,
     LAST_STAND_FROM_SHIELD, // for last stand healing from absorbing from players with shield
+    RECURSIVE,
+
     IGNORE_SELF_RES,
     NO_DISMOUNT,
 
     // Damage types - all effected by flag multiplier
     TRUE_DAMAGE, // does exact value damage regardless of shield/vene/reductions/dmg increase
-    PIERCE_DAMAGE // ignores shield/vene, and victim dmg reductions
+    PIERCE_DAMAGE, // ignores shield/vene, and victim dmg reductions
+
+    NO_MESSAGE, // doesnt send dmg/heal message to any player
 
 }

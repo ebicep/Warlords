@@ -80,7 +80,7 @@ public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Oasis",
                 "Sanctuary - Master Upgrade",
                 """
                         All allies with max stacks of Fortifying Hex gain an additional 15% damage reduction. Reflection damage ignores enemy defenses and resistances.

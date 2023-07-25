@@ -4,8 +4,11 @@ import com.ebicep.warlords.game.option.raid.bosses.Physira;
 import com.ebicep.warlords.pve.mobs.blaze.Blaze;
 import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.*;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroExiled;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroShadow;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.*;
+import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventCalamityCore;
+import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventExiledCore;
+import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventIllumina;
+import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventIllusionCore;
 import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaro;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjer;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjet;
@@ -95,6 +98,9 @@ public enum Mobs {
     // Boss minions
     BOLTARO_SHADOW(BoltaroShadow.class, BoltaroShadow::new),
     BOLTARO_EXLIED(BoltaroExiled.class, BoltaroExiled::new),
+    TORMENTED_SOUL(TormentedSoul.class, TormentedSoul::new),
+    NARMER_ACOLYTE(NarmerAcolyte.class, NarmerAcolyte::new),
+    ENVOY_LEGIONNAIRE(EnvoyLegionnaire.class, EnvoyLegionnaire::new),
 
     // Raid Boss
     PHYSIRA(Physira.class, Physira::new),
@@ -115,6 +121,18 @@ public enum Mobs {
     EVENT_MITHRA_FORSAKEN_APPARITION(EventForsakenApparition.class, EventForsakenApparition::new),
     EVENT_MITHRA_POISONOUS_SPIDER(EventPoisonousSpider.class, EventPoisonousSpider::new),
     EVENT_MITHRA_EGG_SAC(EventEggSac.class, EventEggSac::new),
+    EVENT_ILLUSION_CORE(EventIllusionCore.class, EventIllusionCore::new),
+    EVENT_EXILED_CORE(EventExiledCore.class, EventExiledCore::new),
+    EVENT_CALAMITY_CORE(EventCalamityCore.class, EventCalamityCore::new),
+    EVENT_ILLUMINA(EventIllumina.class, EventIllumina::new),
+
+    //EXTREME
+    WANDER_KNIGHTS(WanderKnights.class, WanderKnights::new),
+    VOID_RAIDER(VoidRaider.class, VoidRaider::new),
+    EXTREME_ZEALOT(ExtremeZealot.class, ExtremeZealot::new),
+    WANDER_WALKER(WanderWalker.class, WanderWalker::new),
+    FORGOTTEN_PYROMANCER(ForgottenPyromancer.class, ForgottenPyromancer::new),
+    VOID_ANOMALY(VoidAnomaly.class, VoidAnomaly::new),
 
     ;
 

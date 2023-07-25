@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -15,7 +16,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -104,11 +104,11 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
         Utils.playGlobalSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
 
         for (Boulder boulder : wp.getAbilitiesMatching(Boulder.class)) {
-            float redCurrentCooldown = boulder.getCurrentCooldown();
-            if ((hitCounter + 1) * 2.5f > redCurrentCooldown) {
+            float currentCD = boulder.getCurrentCooldown();
+            if ((hitCounter + 1) * 2.5f > currentCD) {
                 boulder.setCurrentCooldown(0);
             } else {
-                boulder.setCurrentCooldown(redCurrentCooldown - (hitCounter + 1) * 2.5f);
+                boulder.subtractCurrentCooldown((hitCounter + 1) * 2.5f);
             }
             wp.updateItem(boulder);
         }
@@ -171,17 +171,14 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                 8 * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 6 == 0) {
-                        Location loc = we.getLocation().add(0, 1.2, 0);
-                        loc.getWorld().spawnParticle(
+                        EffectUtils.displayParticle(
                                 Particle.VILLAGER_HAPPY,
-                                loc,
+                                we.getLocation().add(0, 1.2, 0),
                                 1,
                                 0.5F,
                                 0.3F,
                                 0.5F,
-                                0.01F,
-                                null,
-                                true
+                                0.01F
                         );
                     }
                 })

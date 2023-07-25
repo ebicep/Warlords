@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 @CommandAlias("editstats")
 @CommandPermission("group.adminisrator")
-@Conditions("database:player")
 public class EditStatsCommand extends BaseCommand {
 
     @Default

@@ -54,7 +54,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.potion.PotionEffect;
@@ -222,7 +221,6 @@ public abstract class WarlordsEntity {
         appendDebugMessage(debugMessage, "Crit Multiplier", event.getCritMultiplier(), false);
         debugMessage.append(Component.newline())
                     .append(Component.text(" - ", NamedTextColor.GRAY));
-        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Flags", "" + event.getFlags(), false);
     }
 
@@ -406,7 +404,7 @@ public abstract class WarlordsEntity {
         appendDebugMessage(debugMessage, 1, "Crit", "" + isCrit);
 
         final float damageHealValueBeforeAllReduction = damageValue;
-        if (!flags.contains(InstanceFlags.IGNORE_SELF_RES)) {
+        if (!flags.contains(InstanceFlags.IGNORE_SELF_RES) && !trueDamage) {
             debugMessage.append(Component.newline())
                         .append(Component.text("Spec Damage Reduction: ", NamedTextColor.AQUA))
                         .append(Component.text(spec.getDamageResistance(), NamedTextColor.BLUE));
@@ -649,7 +647,7 @@ public abstract class WarlordsEntity {
                             newDamage,
                             newDamage,
                             isCrit ? 100 : 0,
-                            1,
+                            100,
                             true,
                             EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                     ));
@@ -788,8 +786,9 @@ public abstract class WarlordsEntity {
                 doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
                 doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
-                sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
-
+                if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
+                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
+                }
                 //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
@@ -1644,8 +1643,7 @@ public abstract class WarlordsEntity {
             return;
         }
         if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
-                    .flags(ItemFlag.HIDE_ENCHANTS);
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
             if (!ability.getSecondaryAbilities().isEmpty()) {
                 cooldown.enchant(Enchantment.OXYGEN, 1);
             }
@@ -1668,8 +1666,7 @@ public abstract class WarlordsEntity {
      */
     public void updateCustomItem(Player player, int slot, AbstractAbility ability, @Nullable ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem())
-                    .flags(ItemFlag.HIDE_ENCHANTS);
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
             if (!ability.getSecondaryAbilities().isEmpty()) {
                 cooldown.enchant(Enchantment.OXYGEN, 1);
             }

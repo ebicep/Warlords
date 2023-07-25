@@ -86,6 +86,8 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 5, 5, 5)
                     .aliveEnemiesOf(wp)

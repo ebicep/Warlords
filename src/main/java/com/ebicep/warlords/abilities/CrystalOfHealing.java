@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -79,11 +78,15 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                 new CircumferenceEffect(Particle.WAX_OFF, Particle.REDSTONE)
         );
 
-        FireWorkEffectPlayer.playFirework(groundLocation, FireworkEffect.builder()
-                                                                        .withColor(Color.LIME)
-                                                                        .with(FireworkEffect.Type.BALL)
-                                                                        .trail(true)
-                                                                        .build());
+        EffectUtils.playFirework(
+                groundLocation,
+                FireworkEffect.builder()
+                    .withColor(Color.LIME)
+                    .with(FireworkEffect.Type.BALL)
+                    .trail(true)
+                    .build(),
+                1
+        );
 
         ArmorStand crystal = Utils.spawnArmorStand(groundLocation, armorStand -> {
             armorStand.setGravity(true);
@@ -167,10 +170,14 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                             MercifulHex.giveMercifulHex(wp, teammate);
                                         }
                                     }
-                                    FireWorkEffectPlayer.playFirework(groundLocation, FireworkEffect.builder()
-                                                                                                    .withColor(Color.WHITE)
-                                                                                                    .with(FireworkEffect.Type.STAR)
-                                                                                                    .build());
+                                    EffectUtils.playFirework(
+                                            groundLocation,
+                                            FireworkEffect.builder()
+                                                .withColor(Color.WHITE)
+                                                .with(FireworkEffect.Type.STAR)
+                                                .build(),
+                                            1
+                                    );
                                     cooldown.setTicksLeft(0);
                                     int secondsElapsed = ticksElapsed / 20;
                                     float healAmount = secondsElapsed >= duration ? maxHeal : (maxHeal * ticksElapsed) / (duration * 20);

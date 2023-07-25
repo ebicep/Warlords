@@ -44,6 +44,11 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public void performRangedAttack(LivingEntity target, float pullProgress) {
 
     }

@@ -29,7 +29,6 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -306,8 +305,7 @@ public class ItemCraftingMenu {
                         Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                         Component.text(" to select a" + (boughtBlessing != null ? " different " : " ") + "blessing", NamedTextColor.GREEN)
                 ))
-                .enchant(Enchantment.OXYGEN, 1)
-                .flags(ItemFlag.HIDE_ENCHANTS);
+                .enchant(Enchantment.OXYGEN, 1);
         if (boughtBlessing == null) {
             itemBuilder.name(Component.textOfChildren(
                     Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
@@ -358,7 +356,6 @@ public class ItemCraftingMenu {
                                     Component.text(blessingBoughtAmount, NamedTextColor.YELLOW)
                             ))
                             .enchant(Enchantment.OXYGEN, 1)
-                            .flags(ItemFlag.HIDE_ENCHANTS)
                             .get(),
                     (m, e) -> {
                         if (blessingBoughtAmount > 0) {

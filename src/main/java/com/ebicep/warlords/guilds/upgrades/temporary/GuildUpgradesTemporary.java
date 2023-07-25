@@ -9,6 +9,7 @@ import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.time.Instant;
@@ -72,9 +73,12 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
         public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
             game.registerEvents(new Listener() {
 
-                @EventHandler
+                @EventHandler(priority = EventPriority.HIGHEST)
                 public void onEvent(WarlordsAddCurrencyEvent event) {
                     if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
+                        return;
+                    }
+                    if (!event.isModifiable()) {
                         return;
                     }
                     event.getCurrencyToAdd().set((int) (event.getCurrencyToAdd().get() * getValueFromTier(tier)));

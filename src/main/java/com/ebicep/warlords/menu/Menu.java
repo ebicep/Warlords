@@ -41,6 +41,9 @@ public class Menu extends AbstractMenuBase {
 
     public static final List<Component> GO_BACK = Collections.singletonList(Component.text("Go Back", NamedTextColor.GRAY));
     public static final Component DENY = Component.text("Deny", NamedTextColor.RED);
+    public static ItemStack CLAIM_ALL = new ItemBuilder(Material.GOLD_BLOCK)
+            .name(Component.text("Click to claim all rewards!", NamedTextColor.GREEN))
+            .get();
 
     public static void openConfirmationMenu(
             Player player,

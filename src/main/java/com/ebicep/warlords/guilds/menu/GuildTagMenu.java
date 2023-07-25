@@ -13,7 +13,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 
 import java.util.Objects;
 
@@ -35,7 +34,6 @@ public class GuildTagMenu {
                                    .append(Component.text("]")));
             if (Objects.equals(color.textColor.toString(), guildTag.getBracketColor())) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
             menu.setItem(column, row,
                     itemBuilder.get(),
@@ -76,7 +74,6 @@ public class GuildTagMenu {
                                    .append(Component.text("]")));
             if (Objects.equals(color.textColor.toString(), guildTag.getNameColor())) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
             menu.setItem(column, row,
                     itemBuilder.get(),

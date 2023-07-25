@@ -7,7 +7,7 @@ plugins {
     `java-library`
     id("io.papermc.paperweight.userdev") version "1.5.4"
     id("xyz.jpenilla.run-paper") version "2.1.0" // Adds runServer and runMojangMappedServer tasks for testing
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.3" // Generates plugin.yml
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0" // Generates plugin.yml
 }
 
 group = "com.ebicep"
@@ -78,7 +78,7 @@ dependencies {
     implementation("net.dv8tion:JDA:4.4.0_350")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.4")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("com.github.Rapha149.SignGUI:signgui:7d7633b4d6")
+    implementation("com.github.Rapha149.SignGUI:signgui:5232fbd3f6")
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.3-SNAPSHOT")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.15")
@@ -140,6 +140,10 @@ tasks {
         }
     }
 
+    runServer {
+        version.set("1.20.1")
+    }
+
 }
 
 
@@ -162,7 +166,7 @@ tasks.withType<JavaCompile>().configureEach {
 bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
     main = "com.ebicep.warlords.Warlords"
-    apiVersion = "1.19"
+    apiVersion = "1.20"
     authors = listOf("ebicep", "Plikie")
     depend = listOf("ProtocolLib", "HolographicDisplays", "Citizens", "Multiverse-Core")
     commands {

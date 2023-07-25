@@ -22,9 +22,6 @@ import java.util.List;
 
 public class SoulfireBeam extends AbstractBeam {
 
-    private int speedBuff = 40;
-    private int speedTickDuration = 60;
-
     public SoulfireBeam() {
         super("Soulfire Beam", 376, 508, 10, 10, 20, 175, 30, 30, false);
         this.maxTicks = 0;
@@ -37,11 +34,7 @@ public class SoulfireBeam extends AbstractBeam {
                                .append(Component.text(" damage to all enemies hit. " +
                                        " If the target is affected by the max stacks of Poisonous Hex, remove all stacks, increase the damage dealt of " + name + " by "))
                                .append(Component.text("100%", NamedTextColor.RED))
-                               .append(Component.text(". Gain"))
-                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" speed for "))
-                               .append(Component.text(format(speedTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nHas a maximum range of "))
+                               .append(Component.text(".\n\nHas a maximum range of"))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
@@ -77,8 +70,13 @@ public class SoulfireBeam extends AbstractBeam {
                 if (!hasAstral) {
                     hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
                 }
-                minDamage *= 2;
-                maxDamage *= 2;
+                if (projectile.getHit().size() <= 4 && pveMasterUpgrade) {
+                    minDamage *= 10;
+                    maxDamage *= 10;
+                } else {
+                    minDamage *= 2;
+                    maxDamage *= 2;
+                }
             }
             hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier)
                .ifPresent(finalEvent -> {
@@ -96,12 +94,6 @@ public class SoulfireBeam extends AbstractBeam {
         }
     }
 
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
-        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
-        return super.onActivate(shooter, player);
-    }
-
     @Nullable
     @Override
     protected String getActivationSound() {
@@ -116,6 +108,12 @@ public class SoulfireBeam extends AbstractBeam {
     @Override
     protected float getSoundPitch() {
         return 0.5f;
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
+        return super.onActivate(shooter, player);
     }
 
     @Override

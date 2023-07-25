@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WarlordsAddCurrencyEvent extends AbstractWarlordsEntityEvent {
     private static final HandlerList handlers = new HandlerList();
     private final AtomicInteger currencyToAdd;
+    private boolean modifiable = true;
 
     public WarlordsAddCurrencyEvent(WarlordsEntity player, AtomicInteger currencyToAdd) {
         super(player);
@@ -18,6 +19,14 @@ public class WarlordsAddCurrencyEvent extends AbstractWarlordsEntityEvent {
 
     public AtomicInteger getCurrencyToAdd() {
         return currencyToAdd;
+    }
+
+    public boolean isModifiable() {
+        return modifiable;
+    }
+
+    public void setModifiable(boolean modifiable) {
+        this.modifiable = modifiable;
     }
 
     @Nonnull

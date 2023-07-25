@@ -11,7 +11,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -100,8 +99,7 @@ public abstract class AbstractWeapon {
     public ItemStack generateItemStack(boolean enchantIfBound) {
         ItemBuilder itemBuilder = new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(getName())
-                .unbreakable()
-                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
+                .unbreakable();
         List<Component> lore = new ArrayList<>();
         lore.addAll(getBaseStats());
         lore.addAll(getLore());
@@ -153,8 +151,7 @@ public abstract class AbstractWeapon {
         return new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(name)
                 .lore(lore)
-                .unbreakable()
-                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
+                .unbreakable();
     }
 
     public UUID getUUID() {

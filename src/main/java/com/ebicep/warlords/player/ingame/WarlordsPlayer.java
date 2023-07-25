@@ -309,7 +309,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                                    .stream()
                                    .map(WarlordsNPC::getMob)
                                    .filter(Objects::nonNull)
-                                   .filter(abstractMob -> abstractMob != null && abstractMob.getTarget() != null && abstractMob.getTarget().getUUID().equals(uuid))
+                                   .filter(abstractMob -> abstractMob.getTarget() != null && abstractMob.getTarget().getUUID().equals(uuid))
                                    .forEach(AbstractMob::removeTarget);
             }
         }

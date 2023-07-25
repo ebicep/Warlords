@@ -50,6 +50,11 @@ public class CustomCaveSpider extends CaveSpider implements CustomEntity<CustomC
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.CAVE_SPIDER;
     }

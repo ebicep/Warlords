@@ -19,7 +19,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -69,7 +68,6 @@ public class WeaponTitleMenu {
                             Component.text("Selected", NamedTextColor.GREEN)
                     );
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                 } else {
                     if (titleIsLocked) {
                         itemBuilder.addLore(loreCost);

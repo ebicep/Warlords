@@ -23,7 +23,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 
 import java.util.Comparator;
 import java.util.List;
@@ -81,7 +80,6 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                     Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.ILLUSION_SHARD.getCostColoredName(rewardPrice)),
                                     Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(stock, NamedTextColor.YELLOW))
                             )
-                            .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                             .get(),
                     (m, e) -> {
                         if (pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD) < finalRewardPrice) {
@@ -141,7 +139,6 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                                   Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.ILLUSION_SHARD.getCostColoredName(cost)),
                                                   Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(1 - purchasedAmount))
                                           )
-                                          .flags(ItemFlag.HIDE_ITEM_SPECIFICS)
                                           .get(),
                                   (m, e) -> {
                                       if (pveStats.getCurrencyValue(Currencies.ILLUSION_SHARD) < cost) {

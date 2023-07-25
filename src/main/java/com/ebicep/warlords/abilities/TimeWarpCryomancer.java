@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.TimeWarpBranchCryomancer;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
@@ -53,33 +54,25 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
             cryoPod = new CryoPod(warpLocation, wp.getName()) {
                 @Override
                 public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            "Frostbite Leap",
-                            "WARP RES",
-                            TimeWarpCryomancer.class,
-                            null,
-                            wp,
-                            CooldownTypes.ABILITY,
-                            cooldownManager2 -> {
-                            },
-                            cooldownManager2 -> {
-                            },
-                            5 * 20,
-                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            })
-                    ) {
-                        @Override
-                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * .2f;
-                        }
-                    });
                     PlayerFilter.entitiesAround(warpLocation, 5, 5, 5)
                                 .aliveEnemiesOf(wp)
                                 .forEach(warlordsEntity -> {
                                     if (warlordsEntity instanceof WarlordsNPC) {
                                         warlordsEntity.addSpeedModifier(wp, "Frostbite Leap", -80, 60);
+
                                     }
                                 });
+                    new GameRunnable(wp.getGame()) {
+                        @Override
+                        public void run() {
+                            PlayerFilter.playingGame(wp.getGame())
+                                    .aliveEnemiesOf(wp).forEach(warlordsEntity -> {
+                                        if (warlordsEntity instanceof WarlordsNPC) {
+                                            ((WarlordsNPC) warlordsEntity).getMob().setTarget(wp);
+                                        }
+                                    });
+                        }
+                    }.runTaskLater(5);
                 }
             };
             pveOption.spawnNewMob(cryoPod, Team.BLUE);
@@ -197,7 +190,29 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
 
         if (pveMasterUpgrade) {
             addSecondaryAbility(
-                    () -> timeWarpCooldown.setTicksLeft(1),
+                    () -> {
+                        timeWarpCooldown.setTicksLeft(1);
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Frostbite Leap",
+                                "WARP RES",
+                                TimeWarpCryomancer.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager2 -> {
+                                },
+                                cooldownManager2 -> {
+                                },
+                                5 * 20,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                })
+                        ) {
+                            @Override
+                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                return currentDamageValue * .2f;
+                            }
+                        });
+                    },
                     false,
                     secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown)
             );

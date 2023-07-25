@@ -81,7 +81,7 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Energizing Clairvoyant",
                 "Energy Seer - Master Upgrade",
                 """
                         Increase damage reduction by 15% and triple the energy restored.

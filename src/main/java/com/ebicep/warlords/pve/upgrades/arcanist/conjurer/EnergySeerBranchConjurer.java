@@ -80,7 +80,7 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Energizing Oracle",
                 "Energy Seer - Master Upgrade",
                 """
                         When your Energy Seer ends, add an additional 15% damage bonus and triple energy restored.

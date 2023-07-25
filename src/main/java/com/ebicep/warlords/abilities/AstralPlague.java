@@ -45,7 +45,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         description = Component.text("Grant yourself Astral Energy, increasing Poisonous Hex duration by ")
                                .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds and causing Soulfire Beam to not consume Poisonous Hex stacks. " +
-                                       "Your attacks pierces shields and defenses of enemies with "))
+                                       "\n\nYour attacks pierces shields and defenses of enemies with "))
                                .append(Component.text("3", NamedTextColor.RED))
                                .append(Component.text(" stacks of Poisonous Hex. Lasts"))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
@@ -122,6 +122,9 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         event.getFlags().add(InstanceFlags.PIERCE_DAMAGE);
+                        if (inPve) {
+                            event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
+                        }
                         if (pveMasterUpgrade && Objects.equals(event.getAbility(), "Soulfire Beam")) {
                             event.setCritChance(100);
                         }

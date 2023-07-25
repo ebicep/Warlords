@@ -92,16 +92,13 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Eradicating Beam",
                 "Soulfire Beam - Master Upgrade",
                 """
-                        Increase hit block radius by 3 blocks.
-                        Every enemy killed by Soulfire Beam refunds 8 energy and reduces Soulfire's cooldown by 0.5s.
+                        Increase the damage multiplier on the first 4 max stack targets by 800%.
                         """,
                 50000,
                 () -> {
-
-                    ability.setPlayerHitbox(ability.getPlayerHitbox() + 1.5f);
                 }
         );
     }

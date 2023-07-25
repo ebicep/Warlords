@@ -16,7 +16,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -149,7 +148,6 @@ public class DebugMenuTeamOptions {
                 new ItemBuilder(Material.DIAMOND_SWORD)
                         .name(Component.text("Kill All", NamedTextColor.RED))
                         .lore(Component.text("Kills all the players on the team", NamedTextColor.GRAY))
-                        .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .get(), (m, e) -> {
                     warlordsEntities.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, 0, 100));
                     sendDebugMessage(player, Component.text("Killed all " + team.name + " players", NamedTextColor.GREEN));

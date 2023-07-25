@@ -37,6 +37,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -147,9 +148,9 @@ public class WarlordsEvents implements Listener {
             );
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player, Component.text("More Information: ", NamedTextColor.GOLD));
-            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://docs.flairy.me/index.html", NamedTextColor.RED)
+            ChatUtils.sendCenteredMessage(player, Component.text("https://docs.flairy.me/index.html", NamedTextColor.RED)
                                                            .clickEvent(ClickEvent.openUrl("https://docs.flairy.me/index.html")));
-            ChatUtils.sendCenteredMessage(player, Component.text("§lhttps://ojagerl.nl/", NamedTextColor.RED)
+            ChatUtils.sendCenteredMessage(player, Component.text("https://ojagerl.nl/", NamedTextColor.RED)
                                                            .clickEvent(ClickEvent.openUrl("https://ojagerl.nl/")));
             ChatUtils.sendCenteredMessage(player, Component.empty());
             ChatUtils.sendCenteredMessage(player,
@@ -197,6 +198,9 @@ public class WarlordsEvents implements Listener {
             player.removePotionEffect(PotionEffectType.BLINDNESS);
             player.removePotionEffect(PotionEffectType.SLOW);
             player.removePotionEffect(PotionEffectType.ABSORPTION);
+            for (BossBar bossBar : player.activeBossBars()) {
+                player.hideBossBar(bossBar);
+            }
             player.setGameMode(GameMode.ADVENTURE);
             player.setMaxHealth(20);
             player.setHealth(20);
@@ -503,7 +507,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        if (e.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) {
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE) {
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(e.getPlayer().getUniqueId());
             if (warlordsPlayer == null) {
                 return;
@@ -606,18 +610,24 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player) {
-            if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
-                WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
-                if (wp != null) {
-                    if (wp.isDead()) {
-                        wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
-                    } else {
-                        wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100);
-                    }
+        e.setCancelled(true);
+        if (!(e.getEntity() instanceof Player player)) {
+            return;
+        }
+        switch (e.getCause()) {
+            case VOID, KILL -> {
+                player.teleport(Warlords.getRejoinPoint(player.getUniqueId()));
+                WarlordsEntity wp = Warlords.getPlayer(player);
+                if (wp == null) {
+                    return;
                 }
-            } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+                if (wp.isDead()) {
+                    wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
+                } else {
+                    wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100);
+                }
+            }
+            case FALL -> {
                 //HEIGHT - DAMAGE
                 //PLAYER
                 //9 - 160 - 6
@@ -628,28 +638,26 @@ public class WarlordsEvents implements Listener {
                 //HEIGHT - DAMAGE
                 //18 - 160
                 //HEIGHT x 40 - 200
-                if (e.getEntity() instanceof Player) {
-                    WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
-                    if (wp != null) {
-                        int damage = (int) e.getDamage();
-                        if (damage > 5) {
-                            wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100);
-                            wp.resetRegenTimer();
-                        }
-                    }
+                WarlordsEntity wp = Warlords.getPlayer(player);
+                if (wp == null) {
+                    return;
                 }
-            } else if (e.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
-                //100 flat
-                if (e.getEntity() instanceof Player) {
-                    WarlordsEntity wp = Warlords.getPlayer(e.getEntity());
-                    if (wp != null && !wp.getGame().isFrozen()) {
-                        wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100);
-                        wp.resetRegenTimer();
-                    }
+                int damage = (int) e.getDamage();
+                if (damage > 5) {
+                    wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100);
+                    wp.resetRegenTimer();
                 }
             }
+            case DROWNING -> {
+                //100 flat
+                WarlordsEntity wp = Warlords.getPlayer(player);
+                if (wp == null || wp.getGame().isFrozen()) {
+                    return;
+                }
+                wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100);
+                wp.resetRegenTimer();
+            }
         }
-        e.setCancelled(true);
     }
 
     @EventHandler

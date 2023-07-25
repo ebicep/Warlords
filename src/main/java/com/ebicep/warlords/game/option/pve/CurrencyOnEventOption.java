@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve;
 
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
@@ -13,6 +14,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
@@ -32,6 +34,7 @@ public class CurrencyOnEventOption implements Option, Listener {
     private int currencyOnKill = 100;
     private int startingCurrency = 0;
     private boolean scaleWithPlayerCount = false;
+    private boolean disableGuildBonus = false;
 
     public CurrencyOnEventOption() {
     }
@@ -60,6 +63,11 @@ public class CurrencyOnEventOption implements Option, Listener {
     public CurrencyOnEventOption setPerWaveClear(int wave, int currency) {
         currencyPerXWaveClear.clear();
         currencyPerXWaveClear.put(wave, currency);
+        return this;
+    }
+
+    public CurrencyOnEventOption disableGuildBonus() {
+        this.disableGuildBonus = true;
         return this;
     }
 
@@ -124,5 +132,10 @@ public class CurrencyOnEventOption implements Option, Listener {
                 .filter(integer -> waveCleared % integer == 0)
                 .max(Comparator.naturalOrder())
                 .ifPresent(wave -> event.getGame().forEachOnlineWarlordsPlayer(warlordsPlayer -> warlordsPlayer.addCurrency(currencyPerXWaveClear.get(wave))));
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onCurrencyAdd(WarlordsAddCurrencyEvent event) {
+        event.setModifiable(!disableGuildBonus); //TODO redo if other things add to currency
     }
 }

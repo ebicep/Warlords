@@ -160,6 +160,8 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(wp, hitRadius, hitRadius, hitRadius)
                     .aliveEnemiesOf(wp)

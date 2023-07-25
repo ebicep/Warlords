@@ -47,6 +47,11 @@ public class CustomSlime extends Slime implements CustomEntity<CustomSlime> {
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.SLIME;
     }

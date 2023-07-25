@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
+import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -25,13 +26,14 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class ChainLightning extends AbstractChain implements RedAbilityIcon, Comparable<ChainLightning> {
+public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration, Comparable<ChainLightning> {
 
     public int numberOfDismounts = 0;
 
     private int damageReduction = 0;
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 30;
+    private int damageReductionTickDuration = 90;
 
     public ChainLightning() {
         super("Chain Lightning", 370, 499, 9.4f, 40, 20, 175, 20, 10, 3);
@@ -61,7 +63,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Com
                                .append(Component.text(" damage resistance for each target hit, up to "))
                                .append(Component.text(format(maxDamageReduction) + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage resistance. This buff lasts "))
-                               .append(Component.text("4.5", NamedTextColor.GOLD))
+                               .append(Component.text(format(damageReductionTickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds.\n\nHas an initial cast range of "))
                                .append(Component.text(radius, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
@@ -97,7 +99,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Com
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
-                4 * 20 + 10
+                damageReductionTickDuration
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -166,12 +168,8 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Com
             WarlordsEntity hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
             float damageMultiplier = switch (playersSize) {
-                case 0 ->
-                    // We hit the first player
-                        pveMasterUpgrade ? 1.1f : 1f;
-                case 1 ->
-                    // We hit the second player
-                        pveMasterUpgrade ? 1.2f : .85f;
+                case 0 -> pveMasterUpgrade ? 1.1f : 1f;
+                case 1 -> pveMasterUpgrade ? 1.2f : .85f;
                 default -> pveMasterUpgrade ? 1.3f : .7f;
             };
 
@@ -235,5 +233,15 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Com
 
     public void setMaxDamageReduction(float maxDamageReduction) {
         this.maxDamageReduction = maxDamageReduction;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return damageReductionTickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.damageReductionTickDuration = tickDuration;
     }
 }

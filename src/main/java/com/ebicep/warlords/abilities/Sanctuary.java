@@ -34,9 +34,8 @@ import java.util.List;
 
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
-    private int damageReflected = 25;
     private int hexTickDurationIncrease = 40;
-    private int additionalDamageReduction = 10;
+    private int additionalDamageReduction = 12;
     private int tickDuration = 240;
 
     public Sanctuary() {
@@ -69,8 +68,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         Utils.playGlobalSound(loc, "arcanist.sanctuary.activation", 2, 0.55f);
 
         EffectUtils.playCircularShieldAnimation(loc, Particle.END_ROD, 5, 0.8, 2);
-        EffectUtils.playCircularShieldAnimation(loc, Particle.DRIP_LAVA, 3, 0.6, 1.2);
-        EffectUtils.playCylinderAnimation(loc, 1.05, Particle.SOUL_FIRE_FLAME, 1);
+        EffectUtils.playCircularShieldAnimation(loc, Particle.DRIP_WATER, 3, 0.6, 1.2);
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -83,7 +81,6 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                 },
                 tickDuration
         ) {
-
             @Override
             protected Listener getListener() {
                 return new Listener() {
@@ -94,7 +91,10 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                         if (event.isHealingInstance()) {
                             return;
                         }
-                        if (teammate.isEnemy(wp) || teammate.equals(wp)) {
+                        if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                            return;
+                        }
+                        if (teammate.isEnemy(wp)) {
                             return;
                         }
                         int hexStacks = (int) new CooldownFilter<>(teammate, RegularCooldown.class)
@@ -107,7 +107,11 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                         }
                         FortifyingHex fromHex = FortifyingHex.getFromHex(wp);
                         float damageToReflect = (additionalDamageReduction + fromHex.getDamageReduction() * 3) / 100f;
-                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1.5f, 1.9f);
+                        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1, 1.9f);
+                        EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.RECURSIVE);
+                        if (pveMasterUpgrade) {
+                            flags.add(InstanceFlags.TRUE_DAMAGE);
+                        }
                         event.getAttacker().addDamageInstance(
                                 teammate,
                                 name,
@@ -115,7 +119,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 event.getMax() * damageToReflect,
                                 0,
                                 100,
-                                pveMasterUpgrade ? EnumSet.of(InstanceFlags.TRUE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class)
+                                flags
                         );
                         float damageToReduce = 1 - damageToReflect;
                         event.setMin(event.getMin() * damageToReduce);
@@ -159,14 +163,6 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
-    }
-
-    public int getDamageReflected() {
-        return damageReflected;
-    }
-
-    public void setDamageReflected(int damageReflected) {
-        this.damageReflected = damageReflected;
     }
 
     public int getHexTickDurationIncrease() {

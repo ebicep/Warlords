@@ -36,12 +36,17 @@ public class SafeZoneOption implements Option {
     private final Material safeMaterial = Material.BEDROCK;
     private final int yLevel = 20;//0;
     private final int safeDuration = 15;
-    private final int maxEnterableTimes = 3;
+    private final int maxEnterableTimes;
     private final HashMap<WarlordsPlayer, Integer> timesEntered = new HashMap<>();
 
     public SafeZoneOption() {
-
+        this.maxEnterableTimes = 3;
     }
+
+    public SafeZoneOption(int maxEnterableTimes) {
+        this.maxEnterableTimes = maxEnterableTimes;
+    }
+
 
     @Override
     public void start(@Nonnull Game game) {
@@ -133,7 +138,8 @@ public class SafeZoneOption implements Option {
 
     public void giveSafeZoneEffect(@Nonnull WarlordsEntity wp) {
         wp.getCooldownManager().removeCooldownByName("Safe Zone");
-        RegularCooldown<SafeZoneOption> safeZoneCooldown = new RegularCooldown<>("Safe Zone",
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Safe Zone",
                 "SAFE",
                 SafeZoneOption.class,
                 null,
@@ -149,7 +155,8 @@ public class SafeZoneOption implements Option {
                     if (wpEntity instanceof Player) {
                         PlayerFilter.playingGame(wp.getGame())
                                     .enemiesOf(wp)
-                                    .stream().map(WarlordsEntity::getEntity)
+                                    .stream()
+                                    .map(WarlordsEntity::getEntity)
                                     .filter(Player.class::isInstance)
                                     .map(Player.class::cast)
                                     .forEach(enemyPlayer -> enemyPlayer.showPlayer(Warlords.getInstance(), (Player) wpEntity));
@@ -165,15 +172,15 @@ public class SafeZoneOption implements Option {
                             ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
                             PlayerFilter.playingGame(wp.getGame())
                                         .enemiesOf(wp)
-                                        .stream().map(WarlordsEntity::getEntity)
+                                        .stream()
+                                        .map(WarlordsEntity::getEntity)
                                         .filter(Player.class::isInstance)
                                         .map(Player.class::cast)
                                         .forEach(enemyPlayer -> enemyPlayer.hidePlayer(Warlords.getInstance(), (Player) wpEntity));
                         }
                     }
                 })
-        );
-        wp.getCooldownManager().addCooldown(safeZoneCooldown);
+        ));
     }
 
     public void sendEnterMessage(WarlordsPlayer warlordsPlayer) {

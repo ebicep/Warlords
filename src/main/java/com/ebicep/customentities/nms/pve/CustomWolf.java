@@ -48,6 +48,11 @@ public class CustomWolf extends Wolf implements CustomEntity<CustomWolf> {
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.WOLF;
     }

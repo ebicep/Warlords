@@ -49,7 +49,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
                                .append(Component.text(energyPerSecond, NamedTextColor.YELLOW))
                                .append(Component.text(" and speed by "))
                                .append(Component.text(markSpeed + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for the duration. Mark has an optimal range of "))
+                               .append(Component.text(" for the duration.\n\nMark has an optimal range of "))
                                .append(Component.text(markRadius, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
 

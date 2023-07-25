@@ -17,6 +17,8 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
         super(abilityTree, ability);
         if (abilityTree.getWarlordsPlayer().isInPve()) {
             ability.multiplyMinMax(1.3f);
+            ability.setMaxEnemiesHit(2);
+            ability.setMaxAlliesHit(2);
         }
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
@@ -100,7 +102,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Bolstering Hex",
                 "Fortifying Hex - Master Upgrade",
                 """
                         Fortifying Hex can now pierce through targets. Energy cost -15.

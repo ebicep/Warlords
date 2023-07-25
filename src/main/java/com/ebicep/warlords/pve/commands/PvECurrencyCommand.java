@@ -16,7 +16,6 @@ import java.util.Comparator;
 
 @CommandAlias("pvecurrency")
 @CommandPermission("group.administrator")
-@Conditions("database:player")
 public class PvECurrencyCommand extends BaseCommand {
 
     @Subcommand("add")

@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.WeaponOption;
+import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -27,11 +28,10 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Zombie;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -42,14 +42,45 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public interface PveOption extends Option {
 
+    @Nullable
+    default Location getRandomSpawnLocation(WarlordsEntity entity) {
+        List<Location> candidates = new ArrayList<>();
+        double priority = Double.NEGATIVE_INFINITY;
+        for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+            if (entity == null) {
+                return marker.getLocation();
+            }
+            if (candidates.isEmpty()) {
+                candidates.add(marker.getLocation());
+                priority = marker.getPriority(entity);
+            } else {
+                double newPriority = marker.getPriority(entity);
+                if (newPriority >= priority) {
+                    if (newPriority > priority) {
+                        candidates.clear();
+                        priority = newPriority;
+                    }
+                    candidates.add(marker.getLocation());
+                }
+            }
+        }
+        if (!candidates.isEmpty()) {
+            return candidates.get((int) (Math.random() * candidates.size()));
+        }
+        return null;
+    }
+
+    Game getGame();
+
     default void mobTick() {
         for (AbstractMob<?> mob : new ArrayList<>(getMobs())) {
-            mob.whileAlive(getMobsMap().get(mob) - getTicksElapsed(), this);
+            mob.whileAlive(getTicksElapsed() - getMobsMap().get(mob), this);
             mob.activateAbilities();
             if (mob.isShowBossBar()) {
                 mob.bossBar(getGame(), true);
@@ -59,11 +90,9 @@ public interface PveOption extends Option {
 
     Set<AbstractMob<?>> getMobs();
 
-    ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
-
     int getTicksElapsed();
 
-    Game getGame();
+    ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
 
     int playerCount();
 
@@ -110,7 +139,7 @@ public interface PveOption extends Option {
                 if (event.isDamageInstance()) {
                     if (attacker instanceof WarlordsNPC) {
                         AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
-                        if (getMobsMap().containsKey(mob)) {
+                        if (getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
                             mob.onAttack(attacker, receiver, event);
                         }
                     }
@@ -160,8 +189,7 @@ public interface PveOption extends Option {
 
             @EventHandler
             public void onMobTarget(EntityTargetLivingEntityEvent event) {
-                Entity entity = ((CraftEntity) event.getEntity()).getHandle();
-                if (!(entity instanceof LivingEntity entityLiving)) {
+                if (!(event.getEntity() instanceof LivingEntity entityLiving)) {
                     return;
                 }
                 if (getMobsMap().keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getLivingEntity(), entityLiving))) {
@@ -236,14 +264,17 @@ public interface PveOption extends Option {
         };
     }
 
-    @Override
-    default void onGameEnding(@Nonnull Game game) {
-        getMobs().forEach(mob -> mob.bossBar(game, false));
+    PveRewards<?> getRewards();
+
+    private void addMobDrop(WarlordsEntity event, MobDrops event1) {
+        getRewards().getPlayerRewards(event.getUuid())
+                    .getMobDropsGained()
+                    .merge(event1, 1L, Long::sum);
     }
 
     @Override
-    default void onPlayerQuit(Player player) {
-        getMobs().forEach(mob -> player.hideBossBar(mob.getBossBar()));
+    default void onGameEnding(@Nonnull Game game) {
+        getMobs().forEach(mob -> mob.bossBar(game, false));
     }
 
     @Override
@@ -299,12 +330,9 @@ public interface PveOption extends Option {
         }
     }
 
-    PveRewards<?> getRewards();
-
-    private void addMobDrop(WarlordsEntity event, MobDrops event1) {
-        getRewards().getPlayerRewards(event.getUuid())
-                    .getMobDropsGained()
-                    .merge(event1, 1L, Long::sum);
+    @Override
+    default void onPlayerQuit(Player player) {
+        getMobs().forEach(mob -> player.hideBossBar(mob.getBossBar()));
     }
 
     default List<Component> healthScoreboard(Game game) {

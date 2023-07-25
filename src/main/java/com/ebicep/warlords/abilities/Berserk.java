@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -83,16 +84,14 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        wp.getLocation().getWorld().spawnParticle(
+                        EffectUtils.displayParticle(
                                 Particle.VILLAGER_ANGRY,
-                                wp.getLocation().add(0, 1.2, 0),
+                                wp.getLocation().add(0, 1.75, 0),
                                 1,
                                 0,
                                 0,
                                 0,
-                                0.1F,
-                                null,
-                                true
+                                0.1F
                         );
                     }
                 })

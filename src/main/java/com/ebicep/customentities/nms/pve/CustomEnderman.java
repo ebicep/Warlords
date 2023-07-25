@@ -39,6 +39,11 @@ public class CustomEnderman extends EnderMan implements CustomEntity<CustomEnder
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.ENDERMAN;
     }

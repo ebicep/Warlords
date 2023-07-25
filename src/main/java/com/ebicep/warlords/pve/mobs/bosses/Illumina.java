@@ -13,6 +13,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.skeleton.ExiledSkeleton;
@@ -32,6 +35,7 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Illumina extends AbstractZombie implements BossMob {
@@ -42,6 +46,10 @@ public class Illumina extends AbstractZombie implements BossMob {
     private boolean phaseFourTriggered = false;
 
     private AtomicInteger damageToDeal = new AtomicInteger(0);
+
+    private PrismGuard prismGuard = new PrismGuard() {{
+        setTickDuration(200);
+    }};
 
     public Illumina(Location spawnLocation) {
         super(spawnLocation,
@@ -58,8 +66,28 @@ public class Illumina extends AbstractZombie implements BossMob {
                 0.33f,
                 25,
                 2000,
-                3000
+                3000,
+                new Bramble(),
+                new BrambleSlowness(),
+                new SpawnMobAbility("Exiled Skeleton", 30, Mobs.EXILED_SKELETON) {
+                    @Override
+                    public int getSpawnAmount() {
+                        long playerCount = pveOption.getGame().warlordsPlayers().count();
+                        DifficultyIndex difficulty = pveOption.getDifficulty();
+                        return (int) (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount);
+                    }
+                }
         );
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("General of the Illusion Legion", NamedTextColor.DARK_GRAY);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.BLUE;
     }
 
     @Override
@@ -69,10 +97,6 @@ public class Illumina extends AbstractZombie implements BossMob {
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new IronGolem(spawnLocation));
         }
-
-        PrismGuard prismGuard = new PrismGuard();
-        prismGuard.setTickDuration(200);
-        warlordsNPC.getSpec().setBlue(prismGuard);
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -102,48 +126,12 @@ public class Illumina extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        long playerCount = option.getGame().warlordsPlayers().count();
         // immune to slowness
         warlordsNPC.getSpeed().removeSlownessModifiers();
 
+        long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();
-        if (ticksElapsed % 100 == 0) {
-            Utils.playGlobalSound(loc, Sound.BLOCK_GRASS_BREAK, 500, 0.4f);
-            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.OAK_LEAVES).play();
-            for (WarlordsEntity we : PlayerFilterGeneric
-                    .entitiesAround(warlordsNPC, 7, 7, 7)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                we.addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
-                we.addDamageInstance(
-                        warlordsNPC,
-                        "Bramble",
-                        1200,
-                        1800,
-                        -1,
-                        100
-                );
-            }
-        }
-
-        if (ticksElapsed % 220 == 0) {
-            EffectUtils.strikeLightningInCylinder(loc, 6, false);
-            for (WarlordsEntity we : PlayerFilterGeneric
-                    .entitiesAround(warlordsNPC, 6, 6, 6)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                we.addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
-                Utils.addKnockback(name, loc, we, -2, 0.3);
-            }
-        }
-
         DifficultyIndex difficulty = option.getDifficulty();
-
-        if (ticksElapsed % 600 == 0) {
-            for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
-                option.spawnNewMob(new ExiledSkeleton(spawnLocation));
-            }
-        }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
             phaseOneTriggered = true;
@@ -195,16 +183,6 @@ public class Illumina extends AbstractZombie implements BossMob {
         EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 
-    @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.BLUE;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("General of the Illusion Legion", NamedTextColor.DARK_GRAY);
-    }
-
     private void timedDamage(PveOption option, long playerCount, int damageValue, int timeToDealDamage) {
         damageToDeal.set((int) (damageValue * playerCount));
 
@@ -238,7 +216,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                                                                                                .withColor(Color.WHITE)
                                                                                                .with(FireworkEffect.Type.BALL_LARGE)
                                                                                                .build());
-                    warlordsNPC.getSpec().getBlue().onActivate(warlordsNPC, null);
+                    prismGuard.onActivate(warlordsNPC, null);
                     this.cancel();
                     return;
                 }
@@ -319,5 +297,59 @@ public class Illumina extends AbstractZombie implements BossMob {
                 );
             }
         }.runTaskTimer(40, 0);
+    }
+
+    public static class Bramble extends AbstractPveAbility {
+
+        public Bramble() {
+            super("Bramble", 1200, 1800, 5, 100);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+            Location loc = wp.getLocation();
+
+            Utils.playGlobalSound(loc, Sound.BLOCK_GRASS_BREAK, 500, 0.4f);
+            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.OAK_LEAVES).play();
+            for (WarlordsEntity we : PlayerFilterGeneric
+                    .entitiesAround(wp, 7, 7, 7)
+                    .aliveEnemiesOf(wp)
+            ) {
+                we.addSpeedModifier(wp, "Bramble Slowness", -99, 30);
+                we.addDamageInstance(
+                        wp,
+                        "Bramble",
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier
+                );
+            }
+            return true;
+        }
+    }
+
+    public static class BrambleSlowness extends AbstractPveAbility {
+
+        public BrambleSlowness() {
+            super("Bramble Slowness", 5, 100);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+            Location loc = wp.getLocation();
+
+            EffectUtils.strikeLightningInCylinder(loc, 6, false);
+            for (WarlordsEntity we : PlayerFilterGeneric
+                    .entitiesAround(wp, 6, 6, 6)
+                    .aliveEnemiesOf(wp)
+            ) {
+                we.addSpeedModifier(wp, "Bramble Slowness", -99, 30);
+                Utils.addKnockback(name, loc, we, -2, 0.3);
+            }
+            return true;
+        }
     }
 }

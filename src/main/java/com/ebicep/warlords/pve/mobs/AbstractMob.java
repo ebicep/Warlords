@@ -64,7 +64,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final int damageResistance;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
-    protected final BossBar bossBar = BossBar.bossBar(Component.empty(), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    protected BossBar bossBar = BossBar.bossBar(Component.empty(), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
     protected boolean showBossBar;
 
     protected WarlordsNPC warlordsNPC;
@@ -207,9 +207,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                     this
             );
         }
-        AbstractAbility weapon = warlordsNPC.getSpec().getWeapon();
-        if (weapon instanceof Fireball) {
-            ((Fireball) weapon).setMaxDistance(150);
+        for (AbstractAbility ability : warlordsNPC.getAbilities()) {
+            if (ability instanceof Fireball fireball) {
+                fireball.setMaxDistance(150);
+            }
         }
 
         modifyStats.accept(warlordsNPC);
@@ -277,6 +278,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         bossBar(option.getGame(), false);
+        bossBar = null;
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
@@ -453,10 +455,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
     }
 
-    protected BossBar getHealthModifiedBossBar() {
-        return bossBar.progress(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth());
-    }
-
     public net.minecraft.world.entity.LivingEntity getTarget() {
         return this.entity.getTarget();
     }
@@ -502,6 +500,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public boolean isShowBossBar() {
-        return showBossBar;
+        return bossBar != null && showBossBar && !warlordsNPC.isDead();
     }
 }

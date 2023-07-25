@@ -16,6 +16,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
         super(abilityTree, ability);
         if (abilityTree.getWarlordsPlayer().isInPve()) {
             ability.multiplyMinMax(1.3f);
+            ability.setMaxEnemiesHit(4);
         }
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
@@ -91,16 +92,14 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Intrusive Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
-                        Whenever you apply 1 stack of Poisonous Hex, apply 1 additional stack to up to 2 nearby enemies.
-                        Poisonous Hex now deals damage every 1s.
+                        Poisonous Hex now pierces through all enemies.
                         """,
                 50000,
                 () -> {
-
-                    ability.setDotTickFrequency(20);
+                    ability.setMaxEnemiesHit(Integer.MAX_VALUE);
                 }
         );
     }

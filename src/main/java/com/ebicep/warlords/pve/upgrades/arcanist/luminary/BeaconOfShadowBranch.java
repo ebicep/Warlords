@@ -15,7 +15,7 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> 
 
         treeA.add(new Upgrade(
                 "Zeal - Tier I",
-                "5% Cooldown reduction",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
                     ability.setCooldown(cooldown * 0.95f);
@@ -23,7 +23,7 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> 
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier II",
-                "10% Cooldown reduction",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
                     ability.setCooldown(cooldown * 0.9f);
@@ -31,7 +31,7 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> 
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier III",
-                "15% Cooldown reduction",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
                     ability.setCooldown(cooldown * 0.85f);
@@ -39,7 +39,7 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> 
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier IV",
-                "20% Cooldown reduction",
+                "-20% Cooldown reduction",
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.8f);
@@ -80,7 +80,7 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> 
         ));
 
         masterUpgrade = new Upgrade(
-                "NAME",
+                "Beacon of Gloom",
                 "Beacon of Shadow - Master Upgrade",
                 """
                         Increase Crit Multiplier reduction by 30%. Enemies within the radius have their movement speed reduced by 15%.

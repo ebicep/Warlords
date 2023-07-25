@@ -10,6 +10,8 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.abilities.RemoveTarget;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -17,6 +19,8 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
+
+import javax.annotation.Nonnull;
 
 public class SoulOfGradient extends AbstractZombie implements BossMob {
 
@@ -35,7 +39,9 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
                 0.15f,
                 0,
                 2000,
-                2500
+                2500,
+                new RemoveTarget(20),
+                new TormentingMark()
         );
     }
 
@@ -50,36 +56,6 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 400 == 0) {
-            warlordsNPC.getMob().removeTarget();
-        }
-
-        if (ticksElapsed % 10 == 0) {
-            new CircleEffect(
-                    warlordsNPC.getGame(),
-                    warlordsNPC.getTeam(),
-                    warlordsNPC.getLocation().add(0, 0.25, 0),
-                    6,
-                    new CircumferenceEffect(Particle.SPELL_WITCH, Particle.FIREWORKS_SPARK).particlesPerCircumference(1),
-                    new DoubleLineEffect(Particle.SPELL)
-            ).playEffects();
-
-            for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(warlordsNPC, 6, 6, 6)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                if (we.getCooldownManager().hasCooldown(DamageCheck.class)) {
-                    we.addDamageInstance(
-                            warlordsNPC,
-                            "Tormenting Mark",
-                            1000,
-                            1000,
-                            -1,
-                            100
-                    );
-                }
-            }
-        }
     }
 
     @Override
@@ -90,5 +66,51 @@ public class SoulOfGradient extends AbstractZombie implements BossMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    private static class TormentingMark extends AbstractPveAbility {
+
+        public TormentingMark() {
+            super(
+                    "Tormenting Mark",
+                    1000,
+                    1000,
+                    .5f,
+                    50,
+                    0,
+                    100
+            );
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+
+            new CircleEffect(
+                    wp.getGame(),
+                    wp.getTeam(),
+                    wp.getLocation().add(0, 0.25, 0),
+                    6,
+                    new CircumferenceEffect(Particle.SPELL_WITCH, Particle.FIREWORKS_SPARK).particlesPerCircumference(1),
+                    new DoubleLineEffect(Particle.SPELL)
+            ).playEffects();
+
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(wp, 6, 6, 6)
+                    .aliveEnemiesOf(wp)
+            ) {
+                if (we.getCooldownManager().hasCooldown(DamageCheck.class)) {
+                    we.addDamageInstance(
+                            wp,
+                            name,
+                            minDamageHeal,
+                            maxDamageHeal,
+                            critChance,
+                            critMultiplier
+                    );
+                }
+            }
+            return true;
+        }
     }
 }
