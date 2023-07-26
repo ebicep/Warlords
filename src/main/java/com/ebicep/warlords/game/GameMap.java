@@ -4062,7 +4062,7 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 33, 0.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 33, 0.5), Team.RED));
 
-            options.add(new BoundingBoxOption(new Location(loc.getWorld(), 0, 32, 0), new Location(loc.getWorld(), 127, 64, 127)));
+            options.add(new BoundingBoxOption(new Location(loc.getWorld(), 0, 32, 0), new Location(loc.getWorld(), 255, 128, 255)));
             options.add(DungeonRoomMarker.create(
                     loc.getWorld(),
                     32, -48, -48,
@@ -4153,7 +4153,7 @@ public enum GameMap {
 
             options.add(new GraveOption());
             options.add(new BasicScoreboardOption());
-            options.add(new TreasureHuntOption(10));
+            options.add(new TreasureHuntOption(20));
 
             return options;
         }

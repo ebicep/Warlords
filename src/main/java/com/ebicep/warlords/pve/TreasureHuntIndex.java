@@ -53,8 +53,10 @@ public enum TreasureHuntIndex {
                     Component.text("Weapon", NamedTextColor.GOLD)
                             .append(Component.text(" or higher equipped.", NamedTextColor.GRAY)),
                     Component.empty(),
-                    Component.text("Traverse the hidden rooms as a duo", NamedTextColor.GRAY),
-                    Component.text("to find the secrets from the last floor.", NamedTextColor.GRAY)
+                    Component.text("Unearth the forgotten history of this"),
+                    Component.text("enigmatic realm, where each level holds"),
+                    Component.text("its own tales of lost treasures and"),
+                    Component.text("legendary artifacts from ages past.")
             ),
             NamedTextColor.RED
     )
