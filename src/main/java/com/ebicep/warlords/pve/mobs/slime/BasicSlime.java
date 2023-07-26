@@ -147,7 +147,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
     private static class Shimmer extends AbstractAbility {
 
         public Shimmer() {
-            super("Shimmer", 0.3f, 0);
+            super("Shimmer", 0.3f, 50);
         }
 
         @Override
