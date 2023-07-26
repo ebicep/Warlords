@@ -57,7 +57,7 @@ public class RayOfLight extends AbstractBeam {
 
     @Override
     protected void playEffect(@Nonnull InternalProjectile projectile) {
-        Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
+        Matrix4d center = new Matrix4d(projectile.getShooter().getLocation());
         for (int i = 0; i < 4; i++) {
             double angle = Math.toRadians(i * 90) + (projectile.getTicksLived() * 30) * 0.45;
             double width = 0.4D;

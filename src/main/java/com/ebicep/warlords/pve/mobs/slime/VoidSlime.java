@@ -56,7 +56,7 @@ public class VoidSlime extends AbstractSlime implements EliteMob {
     private static class Blob extends AbstractAbility {
 
         public Blob() {
-            super("Blob", 1, 100);
+            super("Blob", 1, 0);
         }
 
         @Override

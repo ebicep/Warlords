@@ -443,11 +443,7 @@ public class EffectUtils {
                 displayParticle(
                         particle,
                         matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0
+                        1
                 );
             }
         }
@@ -480,32 +476,19 @@ public class EffectUtils {
             matrix.updateFromLocation(loc);
             for (int c = 0; c < 20; c++) {
                 double angle = c / 20D * Math.PI * 2;
-                loc.getWorld().spawnParticle(
+                displayParticle(
                         particle,
                         matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        null,
-                        true
+                        1
                 );
             }
 
             for (int c = 0; c < 10; c++) {
                 double angle = c / 10D * Math.PI * 2;
-
-                loc.getWorld().spawnParticle(
+                displayParticle(
                         innerParticle,
                         matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * innerCricleRadius, Math.cos(angle) * innerCricleRadius),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        null,
-                        true
+                        1
                 );
             }
         }
@@ -526,6 +509,11 @@ public class EffectUtils {
         }
     }
 
+    /**
+     * @param particle which particle to display
+     * @param loc location of the particle
+     * @param count particle count
+     */
     public static void displayParticle(
             Particle particle,
             Location loc,
@@ -555,6 +543,16 @@ public class EffectUtils {
         loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
     }
 
+    /**
+     * @param particle which particle to display
+     * @param loc location of the particle
+     * @param count particle count
+     * @param offsetX particle X axis offset
+     * @param offsetY particle Y axis offset
+     * @param offsetZ particle Z axis offset
+     * @param speed speed of the particle animation
+     * @param data optional extra data for the particle (e.g. DustOptions)
+     */
     public static <T> void displayParticle(
             Particle particle,
             Location loc,
@@ -566,6 +564,19 @@ public class EffectUtils {
             T data
     ) {
         loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+    }
+
+    /**
+     * @param loc at what location should the firework be played at,
+     * @param fe which effects should the firework have.
+     */
+    public static void playFirework(Location loc, FireworkEffect fe) {
+        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+        FireworkMeta fireworkMeta = firework.getFireworkMeta();
+        fireworkMeta.addEffect(fe);
+        fireworkMeta.setPower(1);
+        firework.setFireworkMeta(fireworkMeta);
+        firework.detonate();
     }
 
     /**

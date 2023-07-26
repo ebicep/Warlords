@@ -98,7 +98,7 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
             wp.subtractEnergy(energyCost, false);
 
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.2f);
-            wp.addSpeedModifier(wp, "Rift Speed", 100, 2 * 20);
+            wp.addSpeedModifier(wp, "Rift Speed", 80, 2 * 20);
             return true;
         }
     }

@@ -1,8 +1,6 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -13,15 +11,10 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.abilities.AdvancedVoidShred;
 import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
-
-import javax.annotation.Nonnull;
-import java.util.List;
 
 public class VoidZombie extends AbstractZombie implements EliteMob {
 
@@ -44,7 +37,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                 0,
                 1500,
                 2000,
-                new VoidShred(), new AdvancedVoidShred(200, 300, 2, -70, voidRadius, 20)
+                new AdvancedVoidShred(200, 300, 2, -70, voidRadius, 20)
         );
     }
 
@@ -66,12 +59,16 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                     new DoubleLineEffect(Particle.SPELL)
             ).playEffects();
         }
+
+        if (ticksElapsed % 100 == 0) {
+            float healthDamage = warlordsNPC.getMaxHealth() * 0.01f;
+            warlordsNPC.addDamageInstance(warlordsNPC, "Void Shred", healthDamage, healthDamage, 0, 100);
+        }
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 0.7f);
-        receiver.addSpeedModifier(attacker, "Envoy Slowness", -20, 2 * 20);
+
     }
 
     @Override
@@ -82,38 +79,15 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.WHITE)
-                                                                       .with(FireworkEffect.Type.BURST)
-                                                                       .withTrail()
-                                                                       .build());
+        EffectUtils.playFirework(
+                deathLocation,
+                FireworkEffect.builder()
+                   .withColor(Color.WHITE)
+                   .with(FireworkEffect.Type.BURST)
+                   .withTrail()
+                   .build(),
+                1
+        );
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
-
-    private static class VoidShred extends AbstractAbility {
-
-        public VoidShred() {
-            super("Void Shred", 0.5f, 100);
-        }
-
-        @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            wp.subtractEnergy(energyCost, false);
-
-            float healthDamage = wp.getMaxHealth() * 0.01f;
-            wp.addDamageInstance(wp, "Void Shred", healthDamage, healthDamage, 0, 100);
-            return true;
-        }
-    }
-
 }
