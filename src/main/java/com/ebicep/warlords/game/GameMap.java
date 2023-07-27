@@ -28,6 +28,7 @@ import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.game.state.SyncTimerState;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -3764,6 +3765,29 @@ public enum GameMap {
                         case 4 -> 1.5f;
                         default -> 1;
                     };
+                }
+
+                @Override
+                protected void modifyStats(WarlordsNPC warlordsNPC) {
+                    warlordsNPC.getMob().onSpawn(this);
+                    int playerCount = playerCount();
+                    int wavesCleared = getWavesCleared();
+                    double waveClearedMultiplier = 1 + wavesCleared * .01;
+
+                    float maxHealth = warlordsNPC.getMaxHealth();
+                    switch (playerCount) {
+                        case 1, 2 -> maxHealth *= 1;
+                        case 3 -> maxHealth *= 1.12;
+                        default -> maxHealth *= 1.5;
+                    }
+                    maxHealth *= waveClearedMultiplier;
+                    warlordsNPC.setMaxBaseHealth(maxHealth);
+                    warlordsNPC.setHealth(maxHealth);
+
+                    float minMeleeDamage = warlordsNPC.getMinMeleeDamage();
+                    float maxMeleeDamage = warlordsNPC.getMaxMeleeDamage();
+                    warlordsNPC.setMinMeleeDamage((int) (minMeleeDamage * waveClearedMultiplier));
+                    warlordsNPC.setMaxMeleeDamage((int) (maxMeleeDamage * waveClearedMultiplier));
                 }
             });
             options.add(new ItemOption());
