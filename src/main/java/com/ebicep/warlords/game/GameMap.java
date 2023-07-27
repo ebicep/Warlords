@@ -3796,7 +3796,7 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption()
                     .startWith(50000)
                     .onKill(500)
-                    .setPerWaveClear(5, 10000)
+                    .setPerWaveClear(5, 25000)
                     .disableGuildBonus()
             );
             options.add(new CoinGainOption()
