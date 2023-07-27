@@ -227,7 +227,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
                         float pveCheck = teammate.isInPve() ? 0.5f : 1;
                         if (masterUpgrade) {
-                            pveCheck += 0.15f;
+                            pveCheck += 0.3f;
                         }
                         for (AbstractAbility ability : teammate.getAbilities()) {
                             ability.subtractCurrentCooldown(pveCheck);

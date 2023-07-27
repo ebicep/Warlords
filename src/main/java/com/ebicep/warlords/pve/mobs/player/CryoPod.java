@@ -17,7 +17,7 @@ public class CryoPod extends AbstractZombie {
                 playerName + "'s Cryopod",
                 MobTier.BASE,
                 null,
-                10000,
+                20000,
                 0,
                 0,
                 0,

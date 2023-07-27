@@ -104,10 +104,10 @@ public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
                 nearEntity.addDamageInstance(
                         shooter,
                         name,
-                        minDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.7),
-                        maxDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.7),
-                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.7),
-                        critMultiplier + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.7)
+                        minDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685),
+                        maxDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685),
+                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685),
+                        critMultiplier + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685)
                 );
             } else {
                 nearEntity.addDamageInstance(
