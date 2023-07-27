@@ -28,6 +28,7 @@ import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.game.state.SyncTimerState;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -3765,6 +3766,48 @@ public enum GameMap {
                         default -> 1;
                     };
                 }
+
+                @Override
+                protected void modifyStats(WarlordsNPC warlordsNPC) {
+                    warlordsNPC.getMob().onSpawn(this);
+                    int playerCount = playerCount();
+                    int wavesCleared = getWavesCleared();
+
+                    float healthMultiplier;
+                    float meleeDamageMultiplier = 1;
+
+                    float waveHealthMultiplier = 0;
+                    float waveMeleeDamageMultiplier = 0;
+                    switch (playerCount) {
+                        case 1, 2 -> healthMultiplier = 1;
+                        case 3 -> healthMultiplier = 1.12f;
+                        default -> healthMultiplier = 1.5f;
+                    }
+                    if (wavesCleared >= 10) {
+                        waveHealthMultiplier += .05;
+                    }
+                    if (wavesCleared >= 20) {
+                        waveHealthMultiplier += .05;
+                        waveMeleeDamageMultiplier += .05;
+                    }
+                    if (wavesCleared >= 30) {
+                        waveMeleeDamageMultiplier += .05;
+                    }
+                    if (wavesCleared >= 40) {
+                        waveHealthMultiplier += .1;
+                    }
+                    if (warlordsNPC.getMobTier() != MobTier.BOSS) {
+                        healthMultiplier += waveHealthMultiplier;
+                        meleeDamageMultiplier += waveMeleeDamageMultiplier;
+                    }
+                    float maxHealth = warlordsNPC.getMaxHealth();
+                    float minMeleeDamage = warlordsNPC.getMinMeleeDamage();
+                    float maxMeleeDamage = warlordsNPC.getMaxMeleeDamage();
+                    warlordsNPC.setMaxBaseHealth(maxHealth * healthMultiplier);
+                    warlordsNPC.setHealth(maxHealth * healthMultiplier);
+                    warlordsNPC.setMinMeleeDamage((int) (minMeleeDamage * meleeDamageMultiplier));
+                    warlordsNPC.setMaxMeleeDamage((int) (maxMeleeDamage * meleeDamageMultiplier));
+                }
             });
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(900, 50, "spec"));
@@ -3796,7 +3839,7 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption()
                     .startWith(50000)
                     .onKill(500)
-                    .setPerWaveClear(5, 10000)
+                    .setPerWaveClear(5, 25000)
                     .disableGuildBonus()
             );
             options.add(new CoinGainOption()
@@ -3807,7 +3850,7 @@ public enum GameMap {
             );
             options.add(new ExperienceGainOption()
                     .playerExpPerXSec(10, 10)
-                    .guildExpPerXSec(1, 3)
+                    .guildExpPerXSec(20, 30)
             );
             options.add(new FieldEffect(options, FieldEffect.FieldEffects.LOST_BUFF, FieldEffect.FieldEffects.DEBUFF_THING));
 

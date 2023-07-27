@@ -386,7 +386,7 @@ public class WaveDefenseOption implements PveOption {
         }.runTaskTimer(currentWave.getDelay(), 8);
     }
 
-    private void modifyStats(WarlordsNPC warlordsNPC) {
+    protected void modifyStats(WarlordsNPC warlordsNPC) {
         warlordsNPC.getMob().onSpawn(WaveDefenseOption.this);
 
         boolean isEndless = difficulty == DifficultyIndex.ENDLESS;
