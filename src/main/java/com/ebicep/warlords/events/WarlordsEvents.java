@@ -668,6 +668,11 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
+    public void onEntityCombust(EntityCombustEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         e.getBlock().getDrops().clear();
         //e.setCancelled(true);

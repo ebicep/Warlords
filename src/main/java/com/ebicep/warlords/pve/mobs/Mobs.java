@@ -134,6 +134,10 @@ public enum Mobs {
     FORGOTTEN_PYROMANCER(ForgottenPyromancer.class, ForgottenPyromancer::new),
     VOID_ANOMALY(VoidAnomaly.class, VoidAnomaly::new),
 
+
+    //SmartSkeleton
+    SMART_SKELETON(SmartSkeleton.class, SmartSkeleton::new),
+
     ;
 
     public static final Mobs[] MOBS = values();
