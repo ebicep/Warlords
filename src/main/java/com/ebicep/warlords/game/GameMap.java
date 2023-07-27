@@ -3772,22 +3772,41 @@ public enum GameMap {
                     warlordsNPC.getMob().onSpawn(this);
                     int playerCount = playerCount();
                     int wavesCleared = getWavesCleared();
-                    double waveClearedMultiplier = 1 + wavesCleared * .01;
 
-                    float maxHealth = warlordsNPC.getMaxHealth();
+                    float healthMultiplier;
+                    float meleeDamageMultiplier = 1;
+
+                    float waveHealthMultiplier = 0;
+                    float waveMeleeDamageMultiplier = 0;
                     switch (playerCount) {
-                        case 1, 2 -> maxHealth *= 1;
-                        case 3 -> maxHealth *= 1.12;
-                        default -> maxHealth *= 1.5;
+                        case 1, 2 -> healthMultiplier = 1;
+                        case 3 -> healthMultiplier = 1.12f;
+                        default -> healthMultiplier = 1.5f;
                     }
-                    maxHealth *= waveClearedMultiplier;
-                    warlordsNPC.setMaxBaseHealth(maxHealth);
-                    warlordsNPC.setHealth(maxHealth);
-
+                    if (wavesCleared >= 10) {
+                        waveHealthMultiplier += .05;
+                    }
+                    if (wavesCleared >= 20) {
+                        waveHealthMultiplier += .05;
+                        waveMeleeDamageMultiplier += .05;
+                    }
+                    if (wavesCleared >= 30) {
+                        waveMeleeDamageMultiplier += .05;
+                    }
+                    if (wavesCleared >= 40) {
+                        waveHealthMultiplier += .1;
+                    }
+                    if (warlordsNPC.getMobTier() != MobTier.BOSS) {
+                        healthMultiplier += waveHealthMultiplier;
+                        meleeDamageMultiplier += waveMeleeDamageMultiplier;
+                    }
+                    float maxHealth = warlordsNPC.getMaxHealth();
                     float minMeleeDamage = warlordsNPC.getMinMeleeDamage();
                     float maxMeleeDamage = warlordsNPC.getMaxMeleeDamage();
-                    warlordsNPC.setMinMeleeDamage((int) (minMeleeDamage * waveClearedMultiplier));
-                    warlordsNPC.setMaxMeleeDamage((int) (maxMeleeDamage * waveClearedMultiplier));
+                    warlordsNPC.setMaxBaseHealth(maxHealth * healthMultiplier);
+                    warlordsNPC.setHealth(maxHealth * healthMultiplier);
+                    warlordsNPC.setMinMeleeDamage((int) (minMeleeDamage * meleeDamageMultiplier));
+                    warlordsNPC.setMaxMeleeDamage((int) (maxMeleeDamage * meleeDamageMultiplier));
                 }
             });
             options.add(new ItemOption());
