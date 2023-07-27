@@ -3850,7 +3850,7 @@ public enum GameMap {
             );
             options.add(new ExperienceGainOption()
                     .playerExpPerXSec(10, 10)
-                    .guildExpPerXSec(1, 3)
+                    .guildExpPerXSec(20, 30)
             );
             options.add(new FieldEffect(options, FieldEffect.FieldEffects.LOST_BUFF, FieldEffect.FieldEffects.DEBUFF_THING));
 
