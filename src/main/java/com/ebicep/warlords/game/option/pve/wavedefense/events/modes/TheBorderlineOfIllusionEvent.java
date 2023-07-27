@@ -34,7 +34,7 @@ public class TheBorderlineOfIllusionEvent implements Option, EventGameEndOption 
 
             @EventHandler
             public void onWeaponDrop(WarlordsDropWeaponEvent event) {
-                event.getFlags().remove(EventFlags.GUILD);
+                event.getEventFlags().remove(EventFlags.GUILD);
                 event.addModifier(weaponDropBonus);
             }
         });

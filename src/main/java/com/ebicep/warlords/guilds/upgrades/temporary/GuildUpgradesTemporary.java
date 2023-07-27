@@ -79,7 +79,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
                     if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
-                    if (!event.getFlags().contains(EventFlags.GUILD)) {
+                    if (!event.getEventFlags().contains(EventFlags.GUILD)) {
                         return;
                     }
                     event.getCurrencyToAdd().set((int) (event.getCurrencyToAdd().get() * getValueFromTier(tier)));
@@ -113,7 +113,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
                     if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
                         return;
                     }
-                    if (!event.getFlags().contains(EventFlags.GUILD)) {
+                    if (!event.getEventFlags().contains(EventFlags.GUILD)) {
                         return;
                     }
                     event.addModifier(getValueFromTier(tier));

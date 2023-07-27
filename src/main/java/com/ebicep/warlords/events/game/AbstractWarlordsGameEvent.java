@@ -26,7 +26,7 @@ public abstract class AbstractWarlordsGameEvent extends Event {
         return game;
     }
 
-    public EnumSet<EventFlags> getFlags() {
+    public EnumSet<EventFlags> getEventFlags() {
         return flags;
     }
 }

@@ -137,6 +137,6 @@ public class CurrencyOnEventOption implements Option, Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCurrencyAdd(WarlordsAddCurrencyEvent event) {
-        event.getFlags().remove(EventFlags.GUILD);
+        event.getEventFlags().remove(EventFlags.GUILD);
     }
 }
