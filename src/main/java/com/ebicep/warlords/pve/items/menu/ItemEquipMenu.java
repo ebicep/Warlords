@@ -224,11 +224,22 @@ public class ItemEquipMenu {
                                         Component.textOfChildren(
                                                 Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                                 Component.text(" to unequip this item.", NamedTextColor.GREEN)
+                                        ),
+                                        Component.textOfChildren(
+                                                Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                                Component.text(" to favorite this item.", NamedTextColor.GREEN)
                                         )
                                 )
                                 .get(),
                             (m, e) -> {
-                                if (e.isLeftClick()) {
+                                if (e.isShiftClick()) {
+                                    item.setFavorite(!item.isFavorite());
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    AbstractItem.sendItemMessage(player, Component.text("You " + (item.isFavorite() ? "favorited" : "unfavorited") + " ", NamedTextColor.GRAY)
+                                                                                  .append(item.getHoverComponent())
+                                    );
+                                    openItemLoadoutMenu(player, itemLoadout, databasePlayer);
+                                } else if (e.isLeftClick()) {
                                     openItemEquipMenu(player, databasePlayer, itemLoadout, tier, item);
                                 } else if (e.isRightClick()) {
                                     itemLoadout.getItems().remove(item.getUUID());

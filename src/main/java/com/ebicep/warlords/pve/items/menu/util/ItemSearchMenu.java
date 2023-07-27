@@ -103,9 +103,6 @@ public class ItemSearchMenu extends Menu {
             if (itemNumber < itemInventory.size()) {
                 AbstractItem item = itemInventory.get(itemNumber);
                 ItemBuilder itemBuilder = item.generateItemBuilder();
-                if (item.isFavorite()) {
-                    itemBuilder.addLore(Component.empty(), Component.text("FAVORITE", NamedTextColor.LIGHT_PURPLE));
-                }
                 if (equippedItems.contains(item.getUUID())) {
                     if (!item.isFavorite()) {
                         itemBuilder.addLore(Component.empty());
