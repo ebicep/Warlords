@@ -165,11 +165,7 @@ public class FlagSpawnPointOption implements Option {
                                 entityLoc.getY() + 2,
                                 entityLoc.getZ() + 0.5
                         );
-//                        HitResult mop = aabb.a(from, to);
-//                        if (mop != null) {
-//                            onFlagInteract(wp);
-//                            break;
-//                        }
+                        aabb.clip(from, to).ifPresent(vec3 -> onFlagInteract(wp));
                     }
                 }
             }
