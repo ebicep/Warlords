@@ -35,8 +35,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
     public int directHits = 0;
     public int numberOfDismounts = 0;
     protected final boolean hitTeammates;
-    //protected final boolean canBeReflected;
-    protected float playerHitbox = 0.75f;
+    protected double playerHitbox = 0.75;
     protected int maxTicks;
     protected double maxDistance;
     protected float forwardTeleportAmount = 0;
@@ -63,7 +62,6 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
         this.hitTeammates = hitTeammates;
-        //this.canBeReflected = canBeReflected;
     }
 
     /**
@@ -82,7 +80,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
     protected abstract void playEffect(@Nonnull Location currentLocation, int ticksLived);
 
     /**
-     * Called when the projectile is destroyed by an collision
+     * Called when the projectile is destroyed by a collision
      *
      * @param projectile The projectile
      * @param hit        The player that this projectile impacted on, if any
@@ -196,7 +194,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
             }
             // If we hit this point, we either have collided with a
             // player closer by, or we hit a block. Blocks are
-            // checked in order so we can bail out early
+            // checked in order, so we can bail out early
             break;
         }
 
@@ -381,11 +379,11 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility {
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }
 
-    public float getPlayerHitbox() {
+    public double getPlayerHitbox() {
         return playerHitbox;
     }
 
-    public void setPlayerHitbox(float playerHitbox) {
+    public void setPlayerHitbox(double playerHitbox) {
         this.playerHitbox = playerHitbox;
     }
 

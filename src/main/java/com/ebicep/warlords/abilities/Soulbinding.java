@@ -37,6 +37,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
     private int tickDuration = 240;
+    private float selfCooldownReduction = 1.5f;
     private int bindDuration = 40;
 
     public Soulbinding() {
@@ -56,7 +57,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                                .append(Component.text(" health (half for "))
                                .append(Component.text("2", NamedTextColor.YELLOW))
                                .append(Component.text(" nearby allies). Your next Fallen Souls will reduce the cooldown of all abilities by "))
-                               .append(Component.text("1.5", NamedTextColor.GOLD))
+                               .append(Component.text(format(selfCooldownReduction), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. ("))
                                .append(Component.text("1", NamedTextColor.GOLD))
                                .append(Component.text(" second for "))
@@ -276,6 +277,14 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public float getSelfCooldownReduction() {
+        return selfCooldownReduction;
+    }
+
+    public void setSelfCooldownReduction(float selfCooldownReduction) {
+        this.selfCooldownReduction = selfCooldownReduction;
     }
 
     public static class SoulBoundPlayer {

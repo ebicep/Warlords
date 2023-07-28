@@ -10,7 +10,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
     float minDamage;
     float maxDamage;
     float energyCost = ability.getEnergyCost();
-    float hitbox = ability.getPlayerHitbox();
+    double hitbox = ability.getPlayerHitbox();
     double projectileSpeed = ability.getProjectileSpeed();
 
     public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
@@ -67,7 +67,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 5000,
                 () -> {
                     ability.setEnergyCost(energyCost - 2.5f);
-                    ability.setPlayerHitbox(hitbox + 0.5f);
+                    ability.setPlayerHitbox(hitbox + 0.5);
                 }
         ));
 
@@ -77,7 +77,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 10000,
                 () -> {
                     ability.setEnergyCost(energyCost - 5);
-                    ability.setPlayerHitbox(hitbox + 1f);
+                    ability.setPlayerHitbox(hitbox + 1);
                 }
         ));
 
@@ -87,7 +87,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 15000,
                 () -> {
                     ability.setEnergyCost(energyCost - 7.5f);
-                    ability.setPlayerHitbox(hitbox + 1.5f);
+                    ability.setPlayerHitbox(hitbox + 1.5);
                 }
         ));
 
@@ -97,7 +97,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 20000,
                 () -> {
                     ability.setEnergyCost(energyCost - 10);
-                    ability.setPlayerHitbox(hitbox + 2f);
+                    ability.setPlayerHitbox(hitbox + 2);
                 }
         ));
 
