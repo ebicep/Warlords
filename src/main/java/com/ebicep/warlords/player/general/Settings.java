@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -10,6 +11,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -109,146 +117,213 @@ public class Settings {
 
     public static class ChatSettings {
 
+        private static final List<ChatMenuSetting<?>> MENU_SETTINGS = new ArrayList<>() {{
+            add(new ChatMenuSetting<>(
+                    ChatDamage.VALUES,
+                    new ItemStack(Material.NETHER_WART),
+                    "Damage Messages",
+                    "Damage received and damage dealt",
+                    PlayerSettings::getChatDamageMode,
+                    playerSettings -> playerSettings.setChatDamageMode(playerSettings.getChatDamageMode().next()),
+                    databasePlayer -> databasePlayer.setChatDamageMode(databasePlayer.getChatDamageMode().next())
+            ));
+            add(new ChatMenuSetting<>(
+                    ChatHealing.VALUES,
+                    new ItemStack(Material.CYAN_DYE),
+                    "Healing Messages",
+                    "Healing received and healing dealt",
+                    PlayerSettings::getChatHealingMode,
+                    playerSettings -> playerSettings.setChatHealingMode(playerSettings.getChatHealingMode().next()),
+                    databasePlayer -> databasePlayer.setChatHealingMode(databasePlayer.getChatHealingMode().next())
+            ));
+            add(new ChatMenuSetting<>(
+                    ChatEnergy.VALUES,
+                    new ItemStack(Material.SUGAR_CANE),
+                    "Energy Messages",
+                    "Energy received and energy dealt",
+                    PlayerSettings::getChatEnergyMode,
+                    playerSettings -> playerSettings.setChatEnergyMode(playerSettings.getChatEnergyMode().next()),
+                    databasePlayer -> databasePlayer.setChatEnergyMode(databasePlayer.getChatEnergyMode().next())
+            ));
+            add(new ChatMenuSetting<>(
+                    ChatKills.VALUES,
+                    new ItemStack(Material.BONE),
+                    "Kill/Assist Messages",
+                    "Kill and Assist messages",
+                    PlayerSettings::getChatKillsMode,
+                    playerSettings -> playerSettings.setChatKillsMode(playerSettings.getChatKillsMode().next()),
+                    databasePlayer -> databasePlayer.setChatKillsMode(databasePlayer.getChatKillsMode().next())
+            ));
+        }};
+
         public static void openChatSettingsMenu(Player player) {
             PlayerSettings settings = PlayerSettings.getPlayerSettings(player);
 
             Menu menu = new Menu("Chat Settings", 9 * 4);
 
-            menu.setItem(1, 1,
-                    new ItemBuilder(Material.NETHER_WART)
-                            .name(Component.text("Damage Messages", NamedTextColor.GREEN))
-                            .lore(
-                                    Component.text("Currently Selected ", NamedTextColor.AQUA)
-                                             .append(Component.text(settings.getChatDamageMode().name, NamedTextColor.YELLOW)),
-                                    Component.text("Damage received and damage dealt", NamedTextColor.GRAY),
-                                    Component.empty(),
-                                    Component.text("Click to change", NamedTextColor.YELLOW)
-                            )
-                            .get(),
-                    (m, e) -> {
-                        settings.setChatDamageMode(settings.getChatDamageMode().next());
-                        DatabaseManager.updatePlayer(player, databasePlayer -> databasePlayer.setChatDamageMode(settings.getChatDamageMode()));
-                        openChatSettingsMenu(player);
-                    }
-            );
-            menu.setItem(2, 1,
-                    new ItemBuilder(Material.CYAN_DYE)
-                            .name(Component.text("Healing Messages", NamedTextColor.GREEN))
-                            .lore(
-                                    Component.text("Currently Selected ", NamedTextColor.AQUA)
-                                             .append(Component.text(settings.getChatHealingMode().name, NamedTextColor.YELLOW)),
-                                    Component.text("Healing received and healing dealt", NamedTextColor.GRAY),
-                                    Component.empty(),
-                                    Component.text("Click to change", NamedTextColor.YELLOW)
-                            )
-                            .get(),
-                    (m, e) -> {
-                        settings.setChatHealingMode(settings.getChatHealingMode().next());
-                        DatabaseManager.updatePlayer(player, databasePlayer -> databasePlayer.setChatHealingMode(settings.getChatHealingMode()));
-                        openChatSettingsMenu(player);
-                    }
-            );
-            menu.setItem(3, 1,
-                    new ItemBuilder(Material.SUGAR_CANE)
-                            .name(Component.text("Energy Messages", NamedTextColor.GREEN))
-                            .lore(
-                                    Component.text("Currently Selected ", NamedTextColor.AQUA)
-                                             .append(Component.text(settings.getChatEnergyMode().name, NamedTextColor.YELLOW)),
-                                    Component.text("Energy received and energy dealt", NamedTextColor.GRAY),
-                                    Component.empty(),
-                                    Component.text("Click to change", NamedTextColor.YELLOW)
-                            )
-                            .get(),
-                    (m, e) -> {
-                        settings.setChatEnergyMode(settings.getChatEnergyMode().next());
-                        DatabaseManager.updatePlayer(player, databasePlayer -> databasePlayer.setChatEnergyMode(settings.getChatEnergyMode()));
-                        openChatSettingsMenu(player);
-                    }
-            );
-            menu.setItem(4, 1,
-                    new ItemBuilder(Material.BONE)
-                            .name(Component.text("Kill Messages", NamedTextColor.GREEN))
-                            .lore(
-                                    Component.text("Currently Selected ", NamedTextColor.AQUA)
-                                             .append(Component.text(settings.getChatKillsMode().name, NamedTextColor.YELLOW)),
-                                    Component.text("Kill messages", NamedTextColor.GRAY),
-                                    Component.empty(),
-                                    Component.text("Click to change", NamedTextColor.YELLOW)
-                            )
-                            .get(),
-                    (m, e) -> {
-                        settings.setChatKillsMode(settings.getChatKillsMode().next());
-                        DatabaseManager.updatePlayer(player, databasePlayer -> databasePlayer.setChatKillsMode(settings.getChatKillsMode()));
-                        openChatSettingsMenu(player);
-                    }
-            );
+            for (int i = 0; i < MENU_SETTINGS.size(); i++) {
+                ChatMenuSetting<?> menuSetting = MENU_SETTINGS.get(i);
+                ChatSetting<?> selectedSetting = menuSetting.getCurrentSetting.apply(settings);
+                menu.setItem(i % 7 + 1, i / 7 + 1,
+                        new ItemBuilder(menuSetting.itemStack)
+                                .name(Component.text(menuSetting.name, NamedTextColor.GREEN))
+                                .lore(Component.text(menuSetting.description, NamedTextColor.GRAY))
+                                .addLore(Component.empty())
+                                .addLore(
+                                        Arrays.stream(menuSetting.settings)
+                                              .map(chatSetting -> Component.text("🠒 " + chatSetting.getName(),
+                                                      chatSetting == selectedSetting ? NamedTextColor.AQUA : NamedTextColor.GRAY
+                                              ))
+                                              .collect(Collectors.toList())
+                                )
+                                .addLore(
+                                        Component.empty(),
+                                        Component.text("Click to change", NamedTextColor.YELLOW)
+                                )
+                                .get(),
+                        (m, e) -> {
+                            menuSetting.updatePlayerSettings.accept(settings);
+                            DatabaseManager.updatePlayer(player, menuSetting.updateDatabasePlayerSettings);
+                            openChatSettingsMenu(player);
+                        }
+                );
+            }
 
             menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(player));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
 
-        public enum ChatDamage {
+        public enum ChatDamage implements ChatSetting<ChatDamage> {
             ALL("All"),
             CRITS_ONLY("Crits Only"),
             NONE("None");
 
+            public static final ChatDamage[] VALUES = values();
             public final String name;
 
             ChatDamage(String name) {
                 this.name = name;
             }
 
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
             public ChatDamage next() {
-                return values()[(ordinal() + 1) % values().length];
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatDamage[] getValues() {
+                return VALUES;
             }
         }
 
-        public enum ChatHealing {
+        public enum ChatHealing implements ChatSetting<ChatHealing> {
             ALL("All"),
             CRITS_ONLY("Crits Only"),
             NONE("None");
 
+            public static final ChatHealing[] VALUES = values();
             public final String name;
 
             ChatHealing(String name) {
                 this.name = name;
             }
 
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
             public ChatHealing next() {
-                return values()[(ordinal() + 1) % values().length];
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatHealing[] getValues() {
+                return VALUES;
             }
         }
 
-        public enum ChatEnergy {
+        public enum ChatEnergy implements ChatSetting<ChatEnergy> {
             ALL("All"),
             OFF("Off");
 
+            public static final ChatEnergy[] VALUES = values();
             public final String name;
 
             ChatEnergy(String name) {
                 this.name = name;
             }
 
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
             public ChatEnergy next() {
-                return values()[(ordinal() + 1) % values().length];
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatEnergy[] getValues() {
+                return VALUES;
             }
         }
 
-        public enum ChatKills {
+        public enum ChatKills implements ChatSetting<ChatKills> {
             ALL("All"),
+            ONLY_ASSISTS("Only Assists"),
+            NO_ASSISTS("No Assists"),
             OFF("Off");
 
+            public static final ChatKills[] VALUES = values();
             public final String name;
 
             ChatKills(String name) {
                 this.name = name;
             }
 
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
             public ChatKills next() {
-                return values()[(ordinal() + 1) % values().length];
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatKills[] getValues() {
+                return VALUES;
             }
         }
+
+        interface ChatSetting<T> {
+
+            String getName();
+
+            T next();
+
+            T[] getValues();
+        }
+
+        private record ChatMenuSetting<T extends ChatSetting<T>>(
+                T[] settings,
+                ItemStack itemStack,
+                String name,
+                String description,
+                Function<PlayerSettings, T> getCurrentSetting,
+                Consumer<PlayerSettings> updatePlayerSettings,
+                Consumer<DatabasePlayer> updateDatabasePlayerSettings
+        ) {}
 
 
     }

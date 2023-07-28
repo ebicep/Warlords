@@ -856,7 +856,8 @@ public abstract class WarlordsEntity {
 
                     game.forEachOnlinePlayer((p, t) -> {
                         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                        if (playerSettings.getChatKillsMode() == Settings.ChatSettings.ChatKills.ALL) {
+                        Settings.ChatSettings.ChatKills killsMode = playerSettings.getChatKillsMode();
+                        if (killsMode == Settings.ChatSettings.ChatKills.ALL || killsMode == Settings.ChatSettings.ChatKills.NO_ASSISTS) {
                             if (p == this.entity) {
                                 sendMessage(Component.text("You were killed by ", NamedTextColor.GRAY)
                                                      .append(attacker.getColoredName()));
@@ -1504,16 +1505,23 @@ public abstract class WarlordsEntity {
 
         //giving out assists
         hitBy.forEach((assisted, value) -> {
-            if (attacker == assisted || attacker == this) {
-                assisted.sendMessage(Component.text("You assisted in killing ", NamedTextColor.GRAY)
-                                              .append(getColoredName())
-                );
-            } else {
-                if (attacker != null) {
-                    assisted.sendMessage(Component.text("You assisted ", NamedTextColor.GRAY)
-                                                  .append(attacker.getColoredName())
-                                                  .append(Component.text(" in killing "))
-                                                  .append(getColoredName()));
+            if (!(assisted.getEntity() instanceof Player player)) {
+                return;
+            }
+            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player);
+            Settings.ChatSettings.ChatKills killsMode = playerSettings.getChatKillsMode();
+            if (killsMode == Settings.ChatSettings.ChatKills.ALL || killsMode == Settings.ChatSettings.ChatKills.ONLY_ASSISTS) {
+                if (attacker == assisted || attacker == this) {
+                    assisted.sendMessage(Component.text("You assisted in killing ", NamedTextColor.GRAY)
+                                                  .append(getColoredName())
+                    );
+                } else {
+                    if (attacker != null) {
+                        assisted.sendMessage(Component.text("You assisted ", NamedTextColor.GRAY)
+                                                      .append(attacker.getColoredName())
+                                                      .append(Component.text(" in killing "))
+                                                      .append(getColoredName()));
+                    }
                 }
             }
             assisted.addAssist();
