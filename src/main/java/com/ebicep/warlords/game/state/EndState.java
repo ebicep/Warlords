@@ -103,7 +103,7 @@ public class EndState implements State, TimerDebugAble {
                 Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),
                 true
         );
-        sendGlobalMessage(game, Component.text("  Warlords 2.0", NamedTextColor.WHITE, TextDecoration.BOLD), true);
+        sendGlobalMessage(game, Component.text("Warlords 2.0", NamedTextColor.WHITE, TextDecoration.BOLD), true);
         sendGlobalMessage(game, Component.empty(), false);
         if (teamBlueWins) {
             if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
@@ -324,16 +324,6 @@ public class EndState implements State, TimerDebugAble {
     @Override
     public int getTicksElapsed() {
         return 0;
-    }
-
-    private void sendGlobalMessage(Game game, String message, boolean centered) {
-        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
-            if (centered) {
-                ChatUtils.sendCenteredMessage(p, message);
-            } else {
-                p.sendMessage(message);
-            }
-        });
     }
 
     private void sendGlobalMessage(Game game, Component message, boolean centered) {
