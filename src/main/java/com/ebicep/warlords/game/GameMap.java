@@ -7,6 +7,8 @@ import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.cuboid.GateOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.pve.ItemOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
@@ -41,6 +43,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
@@ -3752,10 +3755,16 @@ public enum GameMap {
                     ,
                     DifficultyIndex.EVENT
             ) {
-
                 @Override
-                public List<Component> getWaveScoreboard(WarlordsPlayer player) {
-                    return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                public void register(@Nonnull Game game) {
+                    super.register(game);
+                    game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 2, "wave") {
+                        @Nonnull
+                        @Override
+                        public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                            return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                        }
+                    });
                 }
 
                 @Override

@@ -60,8 +60,7 @@ import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class WaveDefenseOption implements PveOption {
-    private static final int SCOREBOARD_PRIORITY = 5;
-    SimpleScoreboardHandler scoreboard;
+    protected static final int SCOREBOARD_PRIORITY = 5;
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
     private final Team team;
     private final WaveList waves;
@@ -174,14 +173,14 @@ public class WaveDefenseOption implements PveOption {
 
 
         });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 1, "wave") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return getWaveScoreboard(player);
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
@@ -191,7 +190,7 @@ public class WaveDefenseOption implements PveOption {
                 );
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
