@@ -3,14 +3,14 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.RandomCollection;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.util.EnumSet;
@@ -56,7 +56,7 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
                     warlordsEntity.isDead() ||
                     warlordsEntity.isTeammate(thisWarlordsEntity) ||
                     entity.hasEffect(MobEffects.INVISIBILITY) ||
-                    (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.CREATIVE);
+                    (entity instanceof ServerPlayer p && p.gameMode.getGameModeForPlayer() == GameType.CREATIVE);
         });
         list.sort((o1, o2) -> Double.compare(o1.distanceToSqr(this.mob), o2.distanceToSqr(this.mob)));
         if (list.isEmpty()) {
@@ -82,14 +82,14 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
         return true;
     }
 
+    protected AABB getTargetSearchArea(double distance) {
+        return this.mob.getBoundingBox().inflate(distance, 4.0D, distance);
+    }
+
     @Override
     public void start() {
         this.mob.setTarget(this.targetEntity, EntityTargetEvent.TargetReason.CUSTOM, true);
         super.start();
-    }
-
-    protected AABB getTargetSearchArea(double distance) {
-        return this.mob.getBoundingBox().inflate(distance, 4.0D, distance);
     }
 
 }
