@@ -3823,7 +3823,7 @@ public enum GameMap {
             options.add(new TheBorderlineOfIllusionEvent());
             options.add(new SafeZoneOption(1));
             options.add(new EventPointsOption()
-                    .reduceScoreOnAllDeath(50, Team.BLUE)
+                    .reduceScoreOnAllDeath(35, Team.BLUE)
                     .onPerWaveClear(1, 500)
                     .onPerWaveClear(5, 2000)
                     .onPerMobKill(Mobs.GHOST_ZOMBIE, 10)
