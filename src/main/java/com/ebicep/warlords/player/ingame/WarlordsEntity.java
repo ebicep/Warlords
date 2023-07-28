@@ -2823,7 +2823,10 @@ public abstract class WarlordsEntity {
         AtomicInteger currencyToAdd = new AtomicInteger(currency);
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(this, currencyToAdd));
         this.currency += currencyToAdd.get();
-        sendMessage(Component.text("+" + currencyToAdd.get() + " ❂ Insignia", NamedTextColor.GOLD));
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
+        if (playerSettings.getChatInsigniaMode() == Settings.ChatSettings.ChatInsignia.ALL) {
+            sendMessage(Component.text("+" + currencyToAdd.get() + " ❂ Insignia", NamedTextColor.GOLD));
+        }
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyFinalEvent(this));
     }
 

@@ -154,6 +154,15 @@ public class Settings {
                     playerSettings -> playerSettings.setChatKillsMode(playerSettings.getChatKillsMode().next()),
                     databasePlayer -> databasePlayer.setChatKillsMode(databasePlayer.getChatKillsMode().next())
             ));
+            add(new ChatMenuSetting<>(
+                    ChatInsignia.VALUES,
+                    new ItemStack(Material.GOLD_NUGGET),
+                    "Insignia Messages",
+                    "Insignia gain messages",
+                    PlayerSettings::getChatInsigniaMode,
+                    playerSettings -> playerSettings.setChatInsigniaMode(playerSettings.getChatInsigniaMode().next()),
+                    databasePlayer -> databasePlayer.setChatInsigniaMode(databasePlayer.getChatInsigniaMode().next())
+            ));
         }};
 
         public static void openChatSettingsMenu(Player player) {
@@ -302,6 +311,33 @@ public class Settings {
 
             @Override
             public ChatKills[] getValues() {
+                return VALUES;
+            }
+        }
+
+        public enum ChatInsignia implements ChatSetting<ChatInsignia> {
+            ALL("All"),
+            OFF("Off");
+
+            public static final ChatInsignia[] VALUES = values();
+            public final String name;
+
+            ChatInsignia(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public ChatInsignia next() {
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatInsignia[] getValues() {
                 return VALUES;
             }
         }

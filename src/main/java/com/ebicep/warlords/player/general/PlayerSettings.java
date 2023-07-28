@@ -53,6 +53,7 @@ public class PlayerSettings {
     private Settings.ChatSettings.ChatHealing chatHealingMode = Settings.ChatSettings.ChatHealing.ALL;
     private Settings.ChatSettings.ChatEnergy chatEnergyMode = Settings.ChatSettings.ChatEnergy.ALL;
     private Settings.ChatSettings.ChatKills chatKillsMode = Settings.ChatSettings.ChatKills.ALL;
+    private Settings.ChatSettings.ChatInsignia chatInsigniaMode = Settings.ChatSettings.ChatInsignia.ALL;
 
     public PlayerSettings(UUID uuid) {
         this.uuid = uuid;
@@ -260,5 +261,13 @@ public class PlayerSettings {
 
     public void setChatKillsMode(Settings.ChatSettings.ChatKills chatKillsMode) {
         this.chatKillsMode = chatKillsMode;
+    }
+
+    public Settings.ChatSettings.ChatInsignia getChatInsigniaMode() {
+        return chatInsigniaMode;
+    }
+
+    public void setChatInsigniaMode(Settings.ChatSettings.ChatInsignia chatInsigniaMode) {
+        this.chatInsigniaMode = chatInsigniaMode;
     }
 }
