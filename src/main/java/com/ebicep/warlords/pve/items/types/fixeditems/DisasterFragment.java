@@ -1,15 +1,30 @@
 package com.ebicep.warlords.pve.items.types.fixeditems;
 
+import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.util.java.RandomCollection;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DisasterFragment extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
@@ -18,8 +33,15 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
         put(BasicStatPool.EPH, 2);
         put(BasicStatPool.SPEED, 70);
         put(BasicStatPool.CRIT_MULTI, 150);
-
     }};
+    private static final RandomCollection<String> DEBUFFS = new RandomCollection<String>()
+            .add(25, "Wounding")
+            .add(15, "Burn")
+            .add(15, "Bleed")
+            .add(10, "Leech")
+            .add(5, "Silence")
+            .add(5, "Stun");
+
 
     public DisasterFragment() {
         super(ItemTier.DELTA);
@@ -27,7 +49,106 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
+        warlordsPlayer.getGame().registerEvents(new Listener() {
+            @EventHandler
+            public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+                WarlordsEntity victim = event.getWarlordsEntity();
+                WarlordsEntity attacker = event.getAttacker();
+                if (Objects.equals(attacker, warlordsPlayer)) {
+                    return;
+                }
+                if (event.isHealingInstance()) {
+                    return;
+                }
+                if (!event.getAbility().contains("Strike")) {
+                    return;
+                }
+                if (ThreadLocalRandom.current().nextDouble() > .1) {
+                    return;
+                }
+                switch (DEBUFFS.next()) {
+                    case "Wounding" -> {
+                        victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Wounding");
+                        victim.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Disaster Fragment - Wounding",
+                                "WND",
+                                DisasterFragment.class,
+                                new DisasterFragment(),
+                                attacker,
+                                CooldownTypes.DEBUFF,
+                                cooldownManager -> {
+                                },
+                                cooldownManager -> {
+                                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
+                                        victim.sendMessage(
+                                                Component.text("You are no longer ", NamedTextColor.GRAY)
+                                                         .append(Component.text("wounded", NamedTextColor.RED))
+                                                         .append(Component.text(".", NamedTextColor.GRAY))
+                                        );
+                                    }
+                                },
+                                40
+                        ) {
+                            @Override
+                            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                return currentHealValue * .6f;
+                            }
+                        });
+                    }
+                    case "Burn" -> {
+                        victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Burn");
+                        victim.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Disaster Fragment - Burn",
+                                "BRN",
+                                DisasterFragment.class,
+                                new DisasterFragment(),
+                                attacker,
+                                CooldownTypes.DEBUFF,
+                                cooldownManager -> {
+                                },
+                                40,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksLeft % 20 == 0) {
+                                        float healthDamage = victim.getMaxHealth() * 0.005f;
+                                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                        }
+                                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                        }
+                                        victim.addDamageInstance(
+                                                attacker,
+                                                "Burn",
+                                                healthDamage,
+                                                healthDamage,
+                                                0,
+                                                100
+                                        );
+                                    }
+                                })
+                        ) {
+                            @Override
+                            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                return currentDamageValue * 1.2f;
+                            }
+                        });
+                    }
+                    case "Bleed" -> {
 
+                    }
+                    case "Leech" -> {
+
+                    }
+                    case "Silence" -> {
+
+                    }
+                    case "Stun" -> {
+
+                    }
+                }
+
+            }
+        });
     }
 
     @Override
@@ -62,6 +183,15 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
 
     @Override
     public String getEffectDescription() {
-        return "Your strikes have 10% chance to give mobs a random debuff 2s.";
+        return """
+                Your strikes have 10% chance to give mobs a random debuff below for 2s.
+                                
+                25% Wounding
+                15% Burn
+                15% Bleed
+                10% Leech
+                5% Silence
+                5% Stun
+                """;
     }
 }
