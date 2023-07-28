@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.RayOfLightBranch;
-import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -57,13 +56,14 @@ public class RayOfLight extends AbstractBeam {
 
     @Override
     protected void playEffect(@Nonnull InternalProjectile projectile) {
-        Matrix4d center = new Matrix4d(projectile.getShooter().getLocation());
+        Location loc = projectile.getStartingLocation().clone();
+        loc.setDirection(loc.toVector().multiply(-1));
         for (int i = 0; i < 4; i++) {
-            double angle = Math.toRadians(i * 90) + (projectile.getTicksLived() * 30) * 0.45;
+            double angle = Math.toRadians(i * 90) + 30 * 0.45;
             double width = 0.4D;
             EffectUtils.displayParticle(
                     Particle.FLAME,
-                    center.translateVector(projectile.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                    loc,
                     2
             );
         }
@@ -90,8 +90,8 @@ public class RayOfLight extends AbstractBeam {
                 if (!hasDivineBlessing) {
                     hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
                 }
-                minHeal *= 1 + (healingIncrease / 100f);
-                maxHeal *= 1 + (healingIncrease / 100f);
+                minHeal *= convertToMultiplicationDecimal(healingIncrease);
+                maxHeal *= convertToMultiplicationDecimal(healingIncrease);
                 if (pveMasterUpgrade) {
                     hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name,

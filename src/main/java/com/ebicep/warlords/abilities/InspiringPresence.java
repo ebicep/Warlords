@@ -160,7 +160,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             if (ability.getClass() == InspiringPresence.class) {
                 continue;
             }
-            ability.subtractCurrentCooldown(10);
+            ability.subtractCurrentCooldown(20);
         }
         we.updateItems();
     }

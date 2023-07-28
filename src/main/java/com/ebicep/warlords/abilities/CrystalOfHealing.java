@@ -84,8 +84,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                     .withColor(Color.LIME)
                     .with(FireworkEffect.Type.BALL)
                     .trail(true)
-                    .build(),
-                1
+                    .build()
         );
 
         ArmorStand crystal = Utils.spawnArmorStand(groundLocation, armorStand -> {

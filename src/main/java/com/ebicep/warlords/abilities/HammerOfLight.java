@@ -339,8 +339,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                             "Hammer of Illusion",
                             minDamageHeal * 5,
                             maxDamageHeal * 5,
-                            -1,
-                            100
+                            20,
+                            150
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                         tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                     });
@@ -355,8 +355,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                             "Hammer of Illusion",
                             minDamage * 5,
                             maxDamage * 5,
-                            -1,
-                            100
+                            20,
+                            150
                     );
                 }
             }
