@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.types.fixeditems;
 
+import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -134,7 +135,42 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                         });
                     }
                     case "Bleed" -> {
-
+                        victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Bleed");
+                        victim.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Disaster Fragment - Bleed",
+                                "BLEED",
+                                WoundingStrikeBerserker.class,
+                                new WoundingStrikeBerserker(),
+                                attacker,
+                                CooldownTypes.DEBUFF,
+                                cooldownManager -> {
+                                },
+                                40,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksLeft % 20 == 0) {
+                                        float healthDamage = victim.getMaxHealth() * 0.005f;
+                                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                        }
+                                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                        }
+                                        victim.addDamageInstance(
+                                                attacker,
+                                                "Bleed",
+                                                healthDamage,
+                                                healthDamage,
+                                                0,
+                                                100
+                                        );
+                                    }
+                                })
+                        ) {
+                            @Override
+                            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                return currentHealValue * .2f;
+                            }
+                        });
                     }
                     case "Leech" -> {
 
