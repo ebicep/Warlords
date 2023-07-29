@@ -113,7 +113,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             tempPresence.getPlayersAffected().add(presenceTarget);
             if (pveMasterUpgrade) {
                 resetCooldowns(presenceTarget);
-                presenceTarget.setCooldownModifier(0.9);
+                presenceTarget.setCooldownModifier(0.8);
             }
 
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
@@ -160,7 +160,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             if (ability.getClass() == InspiringPresence.class) {
                 continue;
             }
-            ability.subtractCurrentCooldown(20);
+            ability.subtractCurrentCooldown(15);
         }
         we.updateItems();
     }
