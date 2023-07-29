@@ -92,8 +92,8 @@ public enum Weapons {
     FABLED_HEROICS_DRUMSTICK("Cornelius", new ItemStack(Material.SUGAR_CANE), LEGENDARY, WeaponsPvE.LEGENDARY),
     LUNAR_JUSTICE("Lunar Justice", new ItemStack(Material.MAGMA_CREAM), LEGENDARY, WeaponsPvE.LEGENDARY),
     VORPAL_SWORD("Vorpal Sword", new ItemStack(Material.FERMENTED_SPIDER_EYE), LEGENDARY, WeaponsPvE.LEGENDARY),
-    ARCANE_WEAPON_1("Placeholder", new ItemStack(Material.COOKIE), LEGENDARY, WeaponsPvE.LEGENDARY),
-    ARCANE_WEAPON_2("Placeholder", new ItemStack(Material.WARPED_FENCE_GATE), LEGENDARY, WeaponsPvE.LEGENDARY),
+    VIRIDIAN_BLADE("Viridian Blade", new ItemStack(Material.COOKIE), LEGENDARY, WeaponsPvE.LEGENDARY),
+    SEVENTH("Seventh", new ItemStack(Material.WARPED_FENCE_GATE), LEGENDARY, WeaponsPvE.LEGENDARY),
 
     ;
 
@@ -124,7 +124,7 @@ public enum Weapons {
     }
 
     public static Weapons getWeapon(String name) {
-        if(name == null) {
+        if (name == null) {
             return FELFLAME_BLADE;
         }
         for (Weapons value : Weapons.VALUES) {
