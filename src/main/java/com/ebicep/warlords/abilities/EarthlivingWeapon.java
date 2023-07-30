@@ -89,16 +89,14 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
-                        wp.getLocation().getWorld().spawnParticle(
+                        EffectUtils.displayParticle(
                                 Particle.VILLAGER_HAPPY,
                                 wp.getLocation().add(0, 1.2, 0),
                                 2,
-                                0.3f,
-                                0.3f,
-                                0.3f,
-                                0.1f,
-                                null,
-                                true
+                                0.3,
+                                0.3,
+                                0.3,
+                                0.1
                         );
                     }
                 })
@@ -134,8 +132,8 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                                 attacker.addHealingInstance(
                                         attacker,
                                         name,
-                                        minDamage * (weaponDamage / 100f),
-                                        maxDamage * (weaponDamage / 100f),
+                                        minDamage * convertToPercent(weaponDamage),
+                                        maxDamage * convertToPercent(weaponDamage),
                                         critChance,
                                         critMultiplier
                                 );
@@ -149,8 +147,8 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                                     nearPlayer.addHealingInstance(
                                             attacker,
                                             name,
-                                            minDamage * (weaponDamage / 100f),
-                                            maxDamage * (weaponDamage / 100f),
+                                            minDamage * convertToPercent(weaponDamage),
+                                            maxDamage * convertToPercent(weaponDamage),
                                             critChance,
                                             critMultiplier
                                     );

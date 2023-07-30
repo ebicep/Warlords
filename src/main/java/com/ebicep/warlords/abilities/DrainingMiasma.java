@@ -7,7 +7,6 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -84,19 +83,24 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
 
         EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.SLIME, 1);
-
-        FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                                                                          .withColor(Color.LIME)
-                                                                          .with(FireworkEffect.Type.BALL_LARGE)
-                                                                          .build());
+        EffectUtils.playFirework(
+                wp.getLocation(),
+                FireworkEffect.builder()
+                  .withColor(Color.LIME)
+                  .with(FireworkEffect.Type.BALL_LARGE)
+                  .build()
+        );
 
         if (pveMasterUpgrade) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 1);
             EffectUtils.playSphereAnimation(wp.getLocation(), enemyHitRadius, Particle.SLIME, 1);
-            FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                                                                          .withColor(Color.WHITE)
-                                                                          .with(FireworkEffect.Type.BALL_LARGE)
-                                                                          .build());
+            EffectUtils.playFirework(
+                    wp.getLocation(),
+                    FireworkEffect.builder()
+                      .withColor(Color.WHITE)
+                      .with(FireworkEffect.Type.BALL_LARGE)
+                      .build()
+            );
         }
 
         int hitCounter = 0;

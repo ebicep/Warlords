@@ -148,7 +148,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                         ) {
                                             @Override
                                             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                                return currentHealValue * (1 + hexHealingBonus / 100f);
+                                                return currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
                                             }
 
                                             @Override

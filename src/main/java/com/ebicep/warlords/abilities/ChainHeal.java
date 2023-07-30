@@ -175,10 +175,10 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                                 Particle.VILLAGER_HAPPY,
                                 we.getLocation().add(0, 1.2, 0),
                                 1,
-                                0.5F,
-                                0.3F,
-                                0.5F,
-                                0.01F
+                                0.5,
+                                0.3,
+                                0.5,
+                                0.01
                         );
                     }
                 })
