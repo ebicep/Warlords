@@ -83,11 +83,12 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> 
                 "Beacon of Gloom",
                 "Beacon of Shadow - Master Upgrade",
                 """
-                        Increase Crit Multiplier reduction by 30%. Enemies within the radius have their movement speed reduced by 15%.
+                        Increase the damage de-buff on enemies by 20%. Enemies within the radius have their movement speed reduced by 30%. Additionally, the beacon will grant Merciful Hex stacks twice as fast.
                         """,
                 50000,
                 () -> {
-                    ability.setCritMultiplierReducedTo(ability.getCritMultiplierReducedTo() - 30);
+                    ability.setHexIntervalTicks((int) (ability.getHexIntervalTicks() * 0.5f));
+                    ability.setDamageReductionPve(ability.getDamageReductionPve() + 20);
                 }
         );
     }

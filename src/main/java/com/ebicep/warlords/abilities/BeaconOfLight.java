@@ -11,8 +11,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -90,8 +90,8 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     }
 
     @Override
-    public Material getGlassMaterial() {
-        return Material.GREEN_STAINED_GLASS;
+    public ArmorStand getCrystal() {
+        return null;
     }
 
     @Override

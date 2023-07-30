@@ -91,9 +91,9 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 EffectUtils.playSphereAnimation(
                         beacon.getLocation(),
                         2.5 + interval,
-                        60,
-                        0,
-                        40
+                        150,
+                        80,
+                        80
                 );
 
                 if (interval <= 0) {
@@ -115,9 +115,12 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 },
                 cooldownManager -> {
                     beacon.remove();
+                    if (getCrystal() != null) {
+                        getCrystal().remove();
+                    }
                 },
                 false,
-                tickDuration,
+                tickDuration + 1,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     //particle effects
                     teamCircleEffect.playEffects();
@@ -137,7 +140,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<T> cooldown, Integer ticksLeft, Integer ticksElapsed);
 
-    public abstract Material getGlassMaterial();
+    public abstract ArmorStand getCrystal();
 
     @Override
     public int getTickDuration() {
