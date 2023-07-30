@@ -9,6 +9,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Collections;
@@ -19,11 +20,18 @@ public class LobbyGameOption implements Option {
 
     public static void start() {
         new BukkitRunnable() {
+
+            final World mainLobby = Bukkit.getWorld("MainLobby");
             long ticksElapsed = 0;
             Game game;
 
             @Override
             public void run() {
+                if (mainLobby == null) {
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("MainLobby world is null");
+                    cancel();
+                    return;
+                }
                 if (ticksElapsed == 0) {
                     GameManager.QueueEntryBuilder entryBuilder = Warlords.getGameManager().newEntry(Collections.emptyList());
                     entryBuilder.setRequestedGameAddons(GameAddon.CUSTOM_GAME);
@@ -39,33 +47,29 @@ public class LobbyGameOption implements Option {
                         return;
                     }
                 }
-                Bukkit.getOnlinePlayers()
-                      .stream()
-                      .filter(player -> player.getWorld().getName().equals("MainLobby"))
-                      .forEach(player -> {
-                          LocationBuilder locationToCheck = new LocationBuilder(player.getLocation()).y(49);
-                          boolean inPlayerZone = player.getWorld().getBlockAt(locationToCheck).getType() == Material.BEDROCK && player.getLocation().getY() < 60;
-                          Map<UUID, Team> players = game.getPlayers();
-                          UUID uniqueId = player.getUniqueId();
-                          if (players.containsKey(uniqueId) && !inPlayerZone) {
-                              Warlords.SPAWN_POINTS.put(uniqueId, player.getLocation());
-                              game.removePlayer(uniqueId);
-                              Warlords.SPAWN_POINTS.remove(uniqueId);
-                          } else if (!players.containsKey(uniqueId) && inPlayerZone) {
-                              PlayerSettings.getPlayerSettings(uniqueId).setWantedTeam(Team.BLUE);
-                              Warlords.SPAWN_POINTS.put(uniqueId, player.getLocation());
-                              Warlords.addPlayer(new WarlordsPlayer(
-                                      player,
-                                      game,
-                                      Team.BLUE
-                              ));
-                              game.addPlayer(player, false);
-                          }
-                      });
+                mainLobby.getPlayers().forEach(player -> {
+                    LocationBuilder locationToCheck = new LocationBuilder(player.getLocation()).y(49);
+                    boolean inPlayerZone = player.getWorld().getBlockAt(locationToCheck).getType() == Material.BEDROCK && player.getLocation().getY() < 60;
+                    Map<UUID, Team> players = game.getPlayers();
+                    UUID uniqueId = player.getUniqueId();
+                    if (players.containsKey(uniqueId) && !inPlayerZone) {
+                        Warlords.SPAWN_POINTS.put(uniqueId, player.getLocation());
+                        game.removePlayer(uniqueId);
+                        Warlords.SPAWN_POINTS.remove(uniqueId);
+                    } else if (!players.containsKey(uniqueId) && inPlayerZone) {
+                        PlayerSettings.getPlayerSettings(uniqueId).setWantedTeam(Team.BLUE);
+                        Warlords.SPAWN_POINTS.put(uniqueId, player.getLocation());
+                        Warlords.addPlayer(new WarlordsPlayer(
+                                player,
+                                game,
+                                Team.BLUE
+                        ));
+                        game.addPlayer(player, false);
+                    }
+                });
                 ticksElapsed++;
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 10);
     }
-
 
 }
