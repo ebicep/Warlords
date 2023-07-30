@@ -163,7 +163,7 @@ public enum Specializations {
             Luminary::new,
             Component.text("A healing-oriented Arcanist specialization who can bend the space between light and darkness to aid their allies and weaken foes.", NamedTextColor.GRAY),
             SpecType.HEALER,
-            MERCIFUL_HEX, RAY_OF_LIGHT, CRYSTAL_OF_HEALING, BEACON_OF_SHADOW, DIVINE_BLESSING
+            MERCIFUL_HEX, RAY_OF_LIGHT, CRYSTAL_OF_HEALING, SANCTIFIED_BEACON, DIVINE_BLESSING
     ),
 
     ;

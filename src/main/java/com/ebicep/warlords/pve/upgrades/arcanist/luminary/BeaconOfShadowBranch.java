@@ -1,16 +1,16 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
-import com.ebicep.warlords.abilities.BeaconOfShadow;
+import com.ebicep.warlords.abilities.SanctifiedBeacon;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> {
+public class BeaconOfShadowBranch extends AbstractUpgradeBranch<SanctifiedBeacon> {
 
     float cooldown = ability.getCooldown();
     float radius = ability.getRadius();
 
-    public BeaconOfShadowBranch(AbilityTree abilityTree, BeaconOfShadow ability) {
+    public BeaconOfShadowBranch(AbilityTree abilityTree, SanctifiedBeacon ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(

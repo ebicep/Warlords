@@ -1261,15 +1261,15 @@ public enum SkillBoosts {
                 }
             }
     ),
-    BEACON_OF_SHADOW("Beacon of Shadow",
-            Component.text("Increase the Crit Multiplier reduction inflicted by Beacon of Shadow by 30%.", NamedTextColor.GRAY),
-            Component.text("Increase the Crit Multiplier reduction inflicted by Beacon of Shadow by ", NamedTextColor.GREEN)
+    SANCTIFIED_BEACON("Sanctified Beacon",
+            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by ", NamedTextColor.GREEN)
                      .append(Component.text("30%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            BeaconOfShadow.class,
+            SanctifiedBeacon.class,
             abstractAbility -> {
-                if (abstractAbility instanceof BeaconOfShadow beaconOfShadow) {
-                    beaconOfShadow.setCritMultiplierReducedTo(beaconOfShadow.getCritMultiplierReducedTo() - 30);
+                if (abstractAbility instanceof SanctifiedBeacon sanctifiedBeacon) {
+                    sanctifiedBeacon.setCritMultiplierReducedTo(sanctifiedBeacon.getCritMultiplierReducedTo() - 30);
                 }
             }
     ),

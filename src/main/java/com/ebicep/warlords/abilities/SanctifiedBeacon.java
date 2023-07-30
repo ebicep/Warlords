@@ -24,20 +24,20 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implements BlueAbilityIcon {
+public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> implements BlueAbilityIcon {
 
     private int critMultiplierReducedTo = 100;
-    private int darknessTickDuration = 160;
     private ArmorStand crystal;
     private int hexIntervalTicks = 80;
     private float damageReductionPve = 30;
+    private final int maxAllies = 2;
 
-    public BeaconOfShadow() {
+    public SanctifiedBeacon() {
         this(null, null);
     }
 
-    public BeaconOfShadow(Location location, CircleEffect effect) {
-        super("Beacon of Shadow", 0, 0, 15, 40, 0, 0, location, 8, 20, effect);
+    public SanctifiedBeacon(Location location, CircleEffect effect) {
+        super("Sanctified Beacon", 0, 0, 15, 40, 0, 0, location, 8, 20, effect);
     }
 
     @Override
@@ -46,9 +46,13 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
                         .append(Component.text(format(radius), NamedTextColor.YELLOW))
                         .append(Component.text(" block radius have their Crit Multiplier reduced to "))
                         .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
-                        .append(Component.text(" and receive the Darkness effect for "))
-                        .append(Component.text(format(darknessTickDuration / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(" seconds.\n\nOnly one beacon can be present on the field at once."));
+                        .append(Component.text(". The beacon will emit a wave of energy that grants "))
+                        .append(Component.text(maxAllies, NamedTextColor.YELLOW))
+                        .append(Component.text(" nearby allies "))
+                        .append(Component.text("1", NamedTextColor.BLUE))
+                        .append(Component.text(" stack of Merciful Hex every "))
+                        .append(Component.text(format(hexIntervalTicks / 20f), NamedTextColor.GOLD))
+                        .append(Component.text(" seconds within the same radius.\n\nOnly one beacon can be present on the field at once."));
     }
 
     @Override
@@ -62,23 +66,23 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
     }
 
     @Override
-    public Class<BeaconOfShadow> getBeaconClass() {
-        return BeaconOfShadow.class;
+    public Class<SanctifiedBeacon> getBeaconClass() {
+        return SanctifiedBeacon.class;
     }
 
     @Override
-    public BeaconOfShadow getObject(Location groundLocation, CircleEffect effect) {
+    public SanctifiedBeacon getObject(Location groundLocation, CircleEffect effect) {
         crystal = Utils.spawnArmorStand(groundLocation, armorStand -> {
             armorStand.setGravity(true);
             armorStand.getEquipment().setHelmet(new ItemStack(Material.BROWN_STAINED_GLASS_PANE));
         });
-        return new BeaconOfShadow(groundLocation, effect);
+        return new SanctifiedBeacon(groundLocation, effect);
 
     }
 
     @Override
-    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfShadow> cooldown, Integer ticksLeft, Integer ticksElapsed) {
-        BeaconOfShadow beacon = cooldown.getCooldownObject();
+    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<SanctifiedBeacon> cooldown, Integer ticksLeft, Integer ticksElapsed) {
+        SanctifiedBeacon beacon = cooldown.getCooldownObject();
         float rad = beacon.getRadius();
         if (ticksElapsed % 5 == 0) {
             for (WarlordsEntity enemy : PlayerFilter
@@ -89,7 +93,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
                 enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
                         null,
-                        BeaconOfShadow.class,
+                        SanctifiedBeacon.class,
                         beacon,
                         wp,
                         CooldownTypes.ABILITY,
@@ -129,7 +133,7 @@ public class BeaconOfShadow extends AbstractBeaconAbility<BeaconOfShadow> implem
                     .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
                     .aliveTeammatesOf(wp)
                     .closestFirst(beacon.getGroundLocation())
-                    .limit(2)
+                    .limit(maxAllies)
             ) {
                 EffectUtils.playParticleLinkAnimation(
                         crystal.getLocation().clone().add(0, .5, 0),

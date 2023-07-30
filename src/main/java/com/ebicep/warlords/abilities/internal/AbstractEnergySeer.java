@@ -31,7 +31,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     protected int bonusDuration = 100;
 
     public AbstractEnergySeer() {
-        super("Energy Seer", 0, 0, 28, 0, 0, 0);
+        super("Energy Seer", 0, 0, 26, 0, 0, 0);
     }
 
     @Override

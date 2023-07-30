@@ -37,7 +37,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private int reactivateTickDuration = 100;
 
     public MysticalBarrier() {
-        super("Mystical Barrier", 0, 0, 30, 20, 0, 0);
+        super("Mystical Barrier", 0, 0, 28, 20, 0, 0);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                .append(Component.text(shieldMaxHealth, NamedTextColor.YELLOW))
                                .append(Component.text(" health, that lasts "))
                                .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nNot reactivating the ability will instead grant the nearest ally the shield for the same duration."));
+                               .append(Component.text(" seconds.\n\nNot reactivating the ability will instead grant the nearest two allies the shield for the same duration."));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     PlayerFilter.playingGame(wp.getGame())
                                 .teammatesOfExcludingSelf(wp)
                                 .closestFirst(wp)
-                                .limit(1)
+                                .limit(2)
                                 .forEach(ally -> {
                                     EffectUtils.playParticleLinkAnimation(wp.getLocation(), ally.getLocation(), 0, 180, 180, 2);
                                     Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
