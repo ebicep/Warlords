@@ -2188,7 +2188,7 @@ public abstract class WarlordsEntity {
 
     public void teleportLocationOnly(Location location) {
         if (this.entity instanceof Player) {
-            TeleportUtils.teleport((Player) this.entity, location);
+            TeleportUtils.smoothTeleport((Player) this.entity, location);
         } else {
             Location location1 = this.getLocation();
             location1.setX(location.getX());
