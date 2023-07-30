@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.fixeditems;
 
-import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -15,9 +16,12 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.util.java.RandomCollection;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Material;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
+import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -36,7 +40,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
         put(BasicStatPool.CRIT_MULTI, 150);
     }};
     private static final RandomCollection<String> DEBUFFS = new RandomCollection<String>()
-            .add(25, "Wounding")
+            .add(25, "Wound")
             .add(15, "Burn")
             .add(15, "Bleed")
             .add(10, "Leech")
@@ -55,7 +59,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
             public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
                 WarlordsEntity victim = event.getWarlordsEntity();
                 WarlordsEntity attacker = event.getAttacker();
-                if (Objects.equals(attacker, warlordsPlayer)) {
+                if (!Objects.equals(attacker, warlordsPlayer)) {
                     return;
                 }
                 if (event.isHealingInstance()) {
@@ -67,8 +71,15 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                 if (ThreadLocalRandom.current().nextDouble() > .1) {
                     return;
                 }
-                switch (DEBUFFS.next()) {
-                    case "Wounding" -> {
+                String debuff = DEBUFFS.next();
+                attacker.sendMessage(Component.text("Your Disaster Fragment applied the ", NamedTextColor.GREEN)
+                        .append(Component.text(debuff, NamedTextColor.RED))
+                        .append(Component.text(" debuff to "))
+                        .append(victim.getColoredName())
+                        .append(Component.text("."))
+                );
+                switch (debuff) {
+                    case "Wound" -> {
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Wounding");
                         victim.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Disaster Fragment - Wounding",
@@ -139,8 +150,8 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                         victim.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Disaster Fragment - Bleed",
                                 "BLEED",
-                                WoundingStrikeBerserker.class,
-                                new WoundingStrikeBerserker(),
+                                DisasterFragment.class,
+                                new DisasterFragment(),
                                 attacker,
                                 CooldownTypes.DEBUFF,
                                 cooldownManager -> {
@@ -173,16 +184,93 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                         });
                     }
                     case "Leech" -> {
-
+                        victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Leech");
+                        victim.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Disaster Fragment - Leech",
+                                "LCH",
+                                DisasterFragment.class,
+                                new DisasterFragment(),
+                                attacker,
+                                CooldownTypes.DEBUFF,
+                                cooldownManager -> {
+                                },
+                                40
+                        ) {
+                            @Override
+                            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                                float healingMultiplier;
+                                if (event.getAttacker() == attacker) {
+                                    healingMultiplier = 15;
+                                } else {
+                                    healingMultiplier = 25;
+                                }
+                                event.getAttacker().addHealingInstance(
+                                        attacker,
+                                        "Leech",
+                                        currentDamageValue * healingMultiplier,
+                                        currentDamageValue * healingMultiplier,
+                                        -1,
+                                        100
+                                );
+                            }
+                        });
                     }
                     case "Silence" -> {
+                        victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Silence");
+                        if (!victim.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+                            victim.getEntity().showTitle(Title.title(
+                                    Component.empty(),
+                                    Component.text("SILENCED", NamedTextColor.RED),
+                                    Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                            ));
+                        }
+                        victim.getCooldownManager().addRegularCooldown(
+                                "Disaster Fragment - Silence",
+                                "SILENCE",
+                                SoulShackle.class,
+                                new SoulShackle(),
+                                attacker,
+                                CooldownTypes.DEBUFF,
+                                cooldownManager -> {
+                                },
+                                40,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksElapsed % 10 == 0) {
+                                        Utils.playGlobalSound(victim.getLocation(), Sound.BLOCK_SAND_BREAK, 2, 2);
 
+                                        Location playerLoc = victim.getLocation();
+                                        Location particleLoc = playerLoc.clone();
+                                        for (int i = 0; i < 10; i++) {
+                                            for (int j = 0; j < 10; j++) {
+                                                double angle = j / 10D * Math.PI * 2;
+                                                double width = 1.075;
+                                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                                particleLoc.setY(playerLoc.getY() + i / 5D);
+                                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                                particleLoc.getWorld().spawnParticle(
+                                                        Particle.REDSTONE,
+                                                        particleLoc,
+                                                        1,
+                                                        0,
+                                                        0,
+                                                        0,
+                                                        0,
+                                                        new Particle.DustOptions(Color.fromRGB(25, 25, 25), 1),
+                                                        true
+                                                );
+                                            }
+                                        }
+                                    }
+                                })
+                        );
                     }
                     case "Stun" -> {
-
+                        if (victim instanceof WarlordsNPC warlordsNPC) {
+                            warlordsNPC.setStunTicks(40);
+                        }
                     }
                 }
-
             }
         });
     }
