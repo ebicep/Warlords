@@ -13,7 +13,7 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -218,10 +218,12 @@ public class WarlordsEvents implements Listener {
                         }
                         databasePlayer.getSpec(value).addPrestige();
                         int prestige = databasePlayer.getSpec(value).getPrestige();
-                        FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
-                                                                                              .with(FireworkEffect.Type.BALL)
-                                                                                              .withColor(Color.fromRGB(ExperienceManager.PRESTIGE_COLORS.get(prestige).value()))
-                                                                                              .build()
+                        EffectUtils.playFirework(
+                                player.getLocation(),
+                                FireworkEffect.builder()
+                                  .with(FireworkEffect.Type.BALL)
+                                  .withColor(Color.fromRGB(ExperienceManager.PRESTIGE_COLORS.get(prestige).value()))
+                                  .build()
                         );
                         player.showTitle(Title.title(
                                 Component.textOfChildren(

@@ -153,7 +153,7 @@ public enum GameMode {
             DatabaseGameTDM::new,
             GamesCollections.TDM,
             16,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -174,11 +174,7 @@ public enum GameMode {
                     Component.text("GO!", NamedTextColor.GREEN),
                     Component.text("First team to reach 1000 points wins!", NamedTextColor.YELLOW)
             ));
-            options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
-                    .name(Component.text("Pre-game Menu ", NamedTextColor.AQUA))
-                    .lore(WordWrap.wrap(Component.text("Allows you to change your class, select a weapon, and edit your settings.", NamedTextColor.GRAY), 150))
-                    .get(), (g, p) -> openMainMenu(p)));
-
+            options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
@@ -256,7 +252,7 @@ public enum GameMode {
             DatabaseGamePvEWaveDefense::new,
             GamesCollections.PVE,
             1,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -292,7 +288,7 @@ public enum GameMode {
             DatabaseGamePvEOnslaught::new,
             GamesCollections.PVE,
             1,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -366,7 +362,7 @@ public enum GameMode {
         }
     },
     TREASURE_HUNT(
-            "Anomaly Heist",
+            "Cryptic Conquest",
             "PVE",
             null,//new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
             null,

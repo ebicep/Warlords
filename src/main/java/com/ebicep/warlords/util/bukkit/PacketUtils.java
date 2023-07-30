@@ -20,7 +20,7 @@ import java.util.List;
 
 public class PacketUtils {
 
-    private static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
+    public static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
 
     public static void init(Warlords instance) {
         ProtocolManager protocolManager;
