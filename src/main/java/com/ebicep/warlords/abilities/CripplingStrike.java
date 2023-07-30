@@ -140,13 +140,13 @@ public class CripplingStrike extends AbstractStrike {
                     name,
                     new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
                     crippleDuration * 20,
-                    ((100 - cripple) / 100f) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * (cripplePerStrike / 100f)
+                    convertToDivisionDecimal(cripple) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(cripplePerStrike)
             );
         } else {
             nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
                                             .append(Component.text("crippled", NamedTextColor.RED))
                                             .append(Component.text(".", NamedTextColor.GRAY)));
-            cripple(wp, nearPlayer, name, crippleDuration * 20, (100 - cripple) / 100f);
+            cripple(wp, nearPlayer, name, crippleDuration * 20, convertToDivisionDecimal(cripple));
         }
 
         return true;

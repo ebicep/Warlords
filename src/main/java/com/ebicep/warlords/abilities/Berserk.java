@@ -101,14 +101,14 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 hitsTakenAmplified++;
-                return currentDamageValue * (1 + damageTakenIncrease / 100);
+                return currentDamageValue * convertToMultiplicationDecimal(damageTakenIncrease);
             }
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 hitsDoneAmplified++;
                 multiplier++;
-                return currentDamageValue * (1 + damageIncrease / 100);
+                return currentDamageValue * convertToMultiplicationDecimal(damageIncrease);
             }
 
             @Override

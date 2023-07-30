@@ -47,7 +47,7 @@ public class EffectUtils {
 
                 loc.add(x, y, z);
                 Particle.DustOptions data = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.REDSTONE, loc, 1);
+                displayParticle(Particle.REDSTONE, loc, 1, data);
                 loc.subtract(x, y, z);
             }
         }
@@ -94,7 +94,7 @@ public class EffectUtils {
                 double z = Math.sin(angle) * ratio * helixRadius;
                 loc.add(x, 0, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.REDSTONE, loc, 1);
+                displayParticle(Particle.REDSTONE, loc, 1, dustOptions);
                 loc.subtract(x, 0, z);
             }
         }

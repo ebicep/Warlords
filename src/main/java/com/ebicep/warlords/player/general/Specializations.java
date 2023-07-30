@@ -147,7 +147,7 @@ public enum Specializations {
     CONJURER("Conjurer",
             List.of("con"),
             Conjurer::new,
-            Component.text("A damage-oriented Arcanist specialization that uses venomous attacks and pure magical spells to get the upper hand.", NamedTextColor.GRAY),
+            Component.text("A damage-oriented Arcanist specialization that uses venomous attacks and pure magical spells to eliminate their foes.", NamedTextColor.GRAY),
             SpecType.DAMAGE,
             POISONOUS_HEX, SOULFIRE_BEAM, ENERGY_SEER_CONJURER, CONTAGIOUS_FACADE, ASTRAL_PLAGUE
     ),

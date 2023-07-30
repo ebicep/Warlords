@@ -89,7 +89,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 """
                         -20% Cooldown reduction
 
-                        Reduce the cooldown on all caster's and nearby allies' abilities by 20 seconds (excluding Inspiring Presence.) Additionally, allies gain 10% cooldown reduction for the duration of Inspiring Presence""",
+                        Reduce the cooldown on all caster's and nearby allies' abilities by 15 seconds (excluding Inspiring Presence.) Additionally, allies gain 20% cooldown reduction for the duration of Inspiring Presence""",
                 50000,
                 () -> {
                     ability.setCooldown(ability.getCooldown() * 0.8f);
