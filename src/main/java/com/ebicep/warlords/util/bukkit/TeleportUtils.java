@@ -8,8 +8,6 @@ import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import java.util.Set;
-
 public class TeleportUtils {
 
     public static void smoothTeleport(Player player, Location location) {
@@ -27,7 +25,7 @@ public class TeleportUtils {
                 z,
                 serverPlayer.getYRot(),
                 serverPlayer.getXRot(),
-                Set.of(RelativeMovement.X_ROT, RelativeMovement.Y_ROT),
+                RelativeMovement.ROTATION,
                 PlayerTeleportEvent.TeleportCause.PLUGIN
         );
     }
