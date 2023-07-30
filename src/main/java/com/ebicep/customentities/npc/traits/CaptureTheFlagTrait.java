@@ -9,8 +9,9 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.ChatColor;
 
-public class GameStartTrait extends WarlordsTrait {
-    public GameStartTrait() {
+public class CaptureTheFlagTrait extends WarlordsTrait {
+
+    public CaptureTheFlagTrait() {
         super("GameStartTrait");
     }
 
@@ -21,18 +22,17 @@ public class GameStartTrait extends WarlordsTrait {
                 ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.CAPTURE_THE_FLAG) + " Players"
         );
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.CAPTURE_THE_FLAG) + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.AQUA + "Capture the Flag");
+        hologramTrait.setLine(2, ChatColor.AQUA + ChatColor.BOLD.toString() + "Capture The Flag");
         hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
     }
 
     @Override
     public void rightClick(NPCRightClickEvent event) {
-        GameStartCommand.startGamePublic(event.getClicker());
+        GameStartCommand.startGamePublic(event.getClicker(), GameMode.CAPTURE_THE_FLAG);
     }
 
     @Override
     public void leftClick(NPCLeftClickEvent event) {
-        GameStartCommand.startGamePublic(event.getClicker());
+        GameStartCommand.startGamePublic(event.getClicker(), GameMode.CAPTURE_THE_FLAG);
     }
-
 }

@@ -149,10 +149,10 @@ public class GameStartCommand {
         );
     }
 
-    public static void startGamePublic(Player player) {
+    public static void startGamePublic(Player player, GameMode gameMode) {
         startGame(player, false, queueEntryBuilder -> {
             queueEntryBuilder
-                    .setGameMode(GameMode.CAPTURE_THE_FLAG)
+                    .setGameMode(gameMode)
                     .setExpiresTime(System.currentTimeMillis() + 60 * 1000)
                     .setPriority(0)
                     .setOnResult((result, game) -> {

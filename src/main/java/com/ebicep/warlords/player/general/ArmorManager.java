@@ -189,25 +189,25 @@ public class ArmorManager {
                 "Simple Rogue Helmet",
                 Classes.ROGUE,
                 new ItemStack(Material.OAK_LOG),
-                new ItemStack(Material.OAK_WOOD)
+                new ItemStack(Material.OAK_PLANKS)
         ),
         GREATER_ROGUE_HELMET(
                 "Greater Rogue Helmet",
                 Classes.ROGUE,
                 new ItemStack(Material.SPRUCE_LOG),
-                new ItemStack(Material.SPRUCE_WOOD)
+                new ItemStack(Material.SPRUCE_PLANKS)
         ),
         MASTERWORK_ROGUE_HELMET(
                 "Masterwork Rogue Helmet",
                 Classes.ROGUE,
                 new ItemStack(Material.BIRCH_LOG),
-                new ItemStack(Material.BIRCH_WOOD)
+                new ItemStack(Material.BIRCH_PLANKS)
         ),
         LEGENDARY_ROGUE_HELMET(
                 "Legendary Rogue Helmet",
                 Classes.ROGUE,
                 new ItemStack(Material.JUNGLE_LOG),
-                new ItemStack(Material.JUNGLE_WOOD)
+                new ItemStack(Material.JUNGLE_PLANKS)
         ),
 
         SIMPLE_ARCANIST_HELMET(

@@ -33,6 +33,8 @@ public class NPCManager {
         Warlords.newChain()
                 .sync(() -> {
                     createGameNPC();
+                    createTeamDeathmatchNPC();
+                    createInterceptionNPC();
                     createWaveDefenseNPC();
                     createOnslaughtNPC();
                     createTreasureHuntNPC();
@@ -42,14 +44,38 @@ public class NPCManager {
     }
 
     private static void createGameNPC() {
-        registerTrait(GameStartTrait.class, "GameStartTrait");
+        registerTrait(CaptureTheFlagTrait.class, "GameStartTrait");
 
         NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "capture-the-flag");
-        npc.addTrait(GameStartTrait.class);
+        npc.addTrait(CaptureTheFlagTrait.class);
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2537.5, 52, 738.5, 45, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 742.5, 90, 0));
+    }
+
+    public static void createTeamDeathmatchNPC() {
+        registerTrait(TeamDeathmatchTrait.class, "TeamDeathmatchTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "team-deathmatch");
+        npc.addTrait(TeamDeathmatchTrait.class);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 50, 739.5, 90, 0));
+    }
+
+    public static void createInterceptionNPC() {
+        registerTrait(InterceptionTrait.class, "InterceptionTrait");
+
+        NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "interception");
+        npc.addTrait(InterceptionTrait.class);
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
+
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 50, 736.5, 90, 0));
     }
 
     private static void createWaveDefenseNPC() {
@@ -60,7 +86,7 @@ public class NPCManager {
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 741.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 746.5, 90, 0));
     }
 
     private static void createOnslaughtNPC() {
@@ -71,7 +97,7 @@ public class NPCManager {
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Heatran");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 744.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 749.5, 90, 0));
     }
 
     private static void createTreasureHuntNPC() {
@@ -82,7 +108,7 @@ public class NPCManager {
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 747.5, 90, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2535.5, 52, 752.5, 90, 0));
     }
 
     private static void createBossRushNPC() {
@@ -93,7 +119,7 @@ public class NPCManager {
         npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2537.5, 52, 750.5, 135, 0));
+        npc.spawn(new Location(StatsLeaderboardManager.SPAWN_POINT.getWorld(), -2537.5, 52, 755.5, 135, 0));
     }
 
     public static void registerTrait(Class<? extends Trait> trait, String traitName) {

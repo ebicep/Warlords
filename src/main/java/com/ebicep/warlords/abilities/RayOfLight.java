@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -16,7 +15,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -56,17 +54,7 @@ public class RayOfLight extends AbstractBeam {
 
     @Override
     protected void playEffect(@Nonnull InternalProjectile projectile) {
-        Location loc = projectile.getStartingLocation().clone();
-        loc.setDirection(loc.toVector().multiply(-1));
-        for (int i = 0; i < 4; i++) {
-            double angle = Math.toRadians(i * 90) + 30 * 0.45;
-            double width = 0.4D;
-            EffectUtils.displayParticle(
-                    Particle.FLAME,
-                    loc,
-                    2
-            );
-        }
+
     }
 
     @Override
