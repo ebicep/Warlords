@@ -21,7 +21,9 @@ public class IllusionVendorWeeklyShop {
     public static IllusionVendorWeeklyShop currentIllusionVendorWeeklyShop;
     public static final Map<String, PurchasableItem> ITEM_COSTS = new HashMap<>() {{
         put("RANDOM_ALPHA_ITEM", new PurchasableItem(25L));
+        put("RANDOM_ALPHA_ITEM_2", new PurchasableItem(25L));
         put("RANDOM_BETA_ITEM", new PurchasableItem(50L));
+        put("RANDOM_BETA_ITEM_2", new PurchasableItem(50L));
     }};
 
     public static void loadWeeklyIllusionVendor() {
