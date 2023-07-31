@@ -190,6 +190,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
 
         if (pveMasterUpgrade) {
             addSecondaryAbility(
+                    1,
                     () -> {
                         timeWarpCooldown.setTicksLeft(1);
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(

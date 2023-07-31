@@ -153,7 +153,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
             }
         };
         wp.getCooldownManager().addCooldown(protectiveLayerCooldown);
-        addSecondaryAbility(() -> {
+        addSecondaryAbility(
+                5,
+                () -> {
                     wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
                     wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);

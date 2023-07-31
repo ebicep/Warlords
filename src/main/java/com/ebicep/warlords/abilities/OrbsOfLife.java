@@ -174,7 +174,9 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
             spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
         }
 
-        addSecondaryAbility(() -> {
+        addSecondaryAbility(
+                1,
+                () -> {
                     if (!wp.isAlive()) {
                         return;
                     }

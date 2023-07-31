@@ -168,7 +168,9 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         );
         wp.getCooldownManager().addCooldown(healingRainCooldown);
 
-        addSecondaryAbility(() -> {
+        addSecondaryAbility(
+                1,
+                () -> {
                     if (wp.isAlive()) {
                         wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " §7You moved your §aHealing Rain §7to your current location.");
