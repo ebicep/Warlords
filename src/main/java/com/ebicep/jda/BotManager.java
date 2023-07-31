@@ -6,6 +6,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.ServerStatusCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -107,6 +108,9 @@ public class BotManager {
             if (game == null) {
                 continue;
             }
+            if (game.getGameMode() == GameMode.LOBBY) {
+                continue;
+            }
             if (game.getState() instanceof PreLobbyState state) {
                 if (!state.hasEnoughPlayers()) {
                     eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
@@ -137,9 +141,10 @@ public class BotManager {
                     break;
                 }
                 if (!pve) {
-                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
-                                                                                                      .getMapName() + " - " + time + word + " - " + game.getPoints(
-                            Team.BLUE) + ":" + game.getPoints(Team.RED) + "\n");
+                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " +
+                            game.getMap().getMapName() + " - " +
+                            time + word + " - " +
+                            game.getPoints(Team.BLUE) + ":" + game.getPoints(Team.RED) + "\n");
                 }
             }
         }
