@@ -77,33 +77,15 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    PlayerFilter.playingGame(wp.getGame())
-                                .teammatesOfExcludingSelf(wp)
-                                .closestFirst(wp)
-                                .limit(2)
-                                .forEach(ally -> {
-                                    EffectUtils.playParticleLinkAnimation(wp.getLocation(), ally.getLocation(), 0, 180, 180, 2);
-                                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
-                                    int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
-                                    giveShield(ally, shieldHealth);
-                                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                            .append(Component.text(" Your Mystical Barrier is now protecting ", NamedTextColor.GRAY))
-                                            .append(Component.text(ally.getName(), NamedTextColor.YELLOW))
-                                            .append(Component.text("!", NamedTextColor.GRAY))
-                                    );
-
-                                    ally.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                                            .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                                            .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
-                                            .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
-                                            .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                            .append(Component.text(" seconds!", NamedTextColor.GRAY))
-                                    );
-
-                                    for (int i = 0; i < 3; i++) {
-                                        FortifyingHex.giveFortifyingHex(wp, ally);
-                                    }
-                                });
+                    if (!wp.isAlive()) {
+                        return;
+                    }
+                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
+                    int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
+                    giveShield(wp, shieldHealth);
+                    for (int i = 0; i < 3; i++) {
+                        FortifyingHex.giveFortifyingHex(wp, wp);
+                    }
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -135,17 +117,36 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         };
         wp.getCooldownManager().addCooldown(mysticalBarrierCooldown);
 
-        addSecondaryAbility(() -> {
-                    if (!wp.isAlive()) {
-                        return;
-                    }
-                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
-                    wp.getCooldownManager().removeCooldownNoForce(mysticalBarrierCooldown);
-                    int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
-                    giveShield(wp, shieldHealth);
-                    for (int i = 0; i < 3; i++) {
-                        FortifyingHex.giveFortifyingHex(wp, wp);
-                    }
+        addSecondaryAbility(
+                5,
+                () -> {
+                    PlayerFilter.playingGame(wp.getGame())
+                            .teammatesOfExcludingSelf(wp)
+                            .closestFirst(wp)
+                            .limit(2)
+                            .forEach(ally -> {
+                                EffectUtils.playParticleLinkAnimation(wp.getLocation(), ally.getLocation(), 0, 180, 180, 2);
+                                Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
+                                int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
+                                giveShield(ally, shieldHealth);
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" Your Mystical Barrier is now protecting ", NamedTextColor.GRAY))
+                                        .append(Component.text(ally.getName(), NamedTextColor.YELLOW))
+                                        .append(Component.text("!", NamedTextColor.GRAY))
+                                );
+
+                                ally.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                        .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                        .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
+                                        .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
+                                        .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                        .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                                );
+
+                                for (int i = 0; i < 3; i++) {
+                                    FortifyingHex.giveFortifyingHex(wp, ally);
+                                }
+                            });
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(mysticalBarrierCooldown)

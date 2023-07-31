@@ -243,6 +243,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
         if (pveMasterUpgrade) {
             addSecondaryAbility(
+                    1,
                     () -> {
                         float kbRadius = radius * 2;
                         for (WarlordsNPC warlordsNPC : PlayerFilterGeneric
