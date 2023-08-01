@@ -62,8 +62,8 @@ public enum GameMap {
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-2547.5, 50, 755.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-2547.5, 50, 755.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-2572, 50, 777.5, -145, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-2580, 50, 775.5, -120, 0), Team.RED).asOption());
 
             options.add(new DummySpawnOption(loc.addXYZ(-2547, 50, 759), Team.RED));
             options.add(new DummySpawnOption(loc.addXYZ(-2547, 50, 752.5), Team.BLUE));
