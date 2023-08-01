@@ -14,8 +14,6 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltarosLairOption;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -223,11 +221,7 @@ public class EndState implements State, TimerDebugAble {
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
 
-            //TODO MERGE ERROR
-            if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) &&
-                    options.stream().noneMatch(BoltaroBonanzaOption.class::isInstance) &&
-                    options.stream().noneMatch(BoltarosLairOption.class::isInstance)
-            ) {
+            if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) && options.stream().noneMatch(option -> option instanceof EventGameEndOption)) {
                 if (winEvent == null || winEvent.getDeclaredWinner() == null) {
                     player.playSound(player.getLocation(), "defeat", 500, 1);
                     player.showTitle(Title.title(

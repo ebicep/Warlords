@@ -79,7 +79,7 @@ public class MasterworksFairMenu {
                                         .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
                                         .collect(JavaUtils.lastN(10))
                                         .stream()
-                                        .sorted(Comparator.comparing(MasterworksFairEntry::getTime).reversed()) //TODO CHECK
+                                        .sorted(Comparator.comparing(MasterworksFairEntry::getTime).reversed())
                                         .map(masterworksFairEntry ->
                                                 Component.text(MasterworksFairManager.FORMATTER.format(masterworksFairEntry.getTime()) + ": ",
                                                                  NamedTextColor.GRAY

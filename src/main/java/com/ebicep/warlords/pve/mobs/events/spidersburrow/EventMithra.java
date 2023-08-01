@@ -127,7 +127,6 @@ public class EventMithra extends AbstractZombie implements BossMob {
                     if (ticksElapsed == 0) {
                         warlordsNPC.setStunTicks(195);
                         spawnWebs();
-                        // TODO check valid spawns
                         spawnEggSacs();
                     }
 

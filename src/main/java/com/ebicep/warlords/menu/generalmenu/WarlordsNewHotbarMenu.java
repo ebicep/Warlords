@@ -588,6 +588,7 @@ public class WarlordsNewHotbarMenu {
                                 ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
                                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                         .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                                        .noLore()
                                         .get()
                                 );
                                 DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));

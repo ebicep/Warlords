@@ -73,7 +73,6 @@ public abstract class AbstractAbility implements AbilityIcon {
      */
     public abstract boolean onActivate(@Nonnull WarlordsEntity wp, Player player);
 
-    //TODO
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return null;
     }
