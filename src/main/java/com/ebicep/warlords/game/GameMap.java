@@ -65,8 +65,8 @@ public enum GameMap {
             options.add(LobbyLocationMarker.create(loc.addXYZ(-2572, 50, 777.5, -145, 0), Team.BLUE).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(-2580, 50, 775.5, -120, 0), Team.RED).asOption());
 
-            options.add(new DummySpawnOption(loc.addXYZ(-2547, 50, 759), Team.RED));
-            options.add(new DummySpawnOption(loc.addXYZ(-2547, 50, 752.5), Team.BLUE));
+            options.add(new DummySpawnOption(loc.addXYZ(-2568, 50, 779), Team.RED));
+            options.add(new DummySpawnOption(loc.addXYZ(-2581, 50, 777.5), Team.BLUE));
 
             return options;
         }

@@ -59,7 +59,7 @@ public class NPCManager {
 
         NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "team-deathmatch");
         npc.addTrait(TeamDeathmatchTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("Richdragon123");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
@@ -71,7 +71,7 @@ public class NPCManager {
 
         NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "interception");
         npc.addTrait(InterceptionTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
+        npc.getOrAddTrait(SkinTrait.class).setSkinName("AwesomeRaki");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 

@@ -8,6 +8,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.luminary.EnergySeerBranchLuminary;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -21,7 +24,6 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EnergySeerLuminary extends AbstractAbility implements PurpleAbilityIcon {
@@ -104,14 +106,11 @@ public class EnergySeerLuminary extends AbstractAbility implements PurpleAbility
                 return new Listener() {
                     @EventHandler
                     public void onHealing(WarlordsDamageHealingFinalEvent event) {
-                        if (!Objects.equals(event.getWarlordsEntity(), wp)) {
-                            return;
-                        }
                         float value = event.getValue();
                         if (value <= 0) {
                             return;
                         }
-                        float energyValue = value * convertToPercent(conversionAmount);
+                        float energyValue = Math.min(value * convertToPercent(conversionAmount), 20);
                         if (energyValue <= 0) {
                             return;
                         }
@@ -123,6 +122,11 @@ public class EnergySeerLuminary extends AbstractAbility implements PurpleAbility
         });
 
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new EnergySeerBranchLuminary(abilityTree, this);
     }
 
     private void giveBonusCooldown(WarlordsEntity we) {
