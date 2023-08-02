@@ -5,12 +5,12 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class BeaconOfShadowBranch extends AbstractUpgradeBranch<SanctifiedBeacon> {
+public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeacon> {
 
     float cooldown = ability.getCooldown();
     float radius = ability.getRadius();
 
-    public BeaconOfShadowBranch(AbilityTree abilityTree, SanctifiedBeacon ability) {
+    public SanctifiedBeaconBranch(AbilityTree abilityTree, SanctifiedBeacon ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -83,12 +83,11 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<SanctifiedBeacon
                 "Beacon of Gloom",
                 "Beacon of Shadow - Master Upgrade",
                 """
-                        Increase the damage de-buff on enemies by 20%. Enemies within the radius have their movement speed reduced by 30%. Additionally, the beacon will grant Merciful Hex stacks twice as fast.
+                        Enemies within the radius have their movement speed reduced by 30%. Additionally, the beacon will grant Merciful Hex stacks twice as fast.
                         """,
                 50000,
                 () -> {
                     ability.setHexIntervalTicks((int) (ability.getHexIntervalTicks() * 0.5f));
-                    ability.setDamageReductionPve(ability.getDamageReductionPve() + 20);
                 }
         );
     }

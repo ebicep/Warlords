@@ -10,7 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.arcanist.luminary.CrystalOfHealingBranch;
+import com.ebicep.warlords.pve.upgrades.arcanist.luminary.EnergySeerBranchLuminary;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -190,7 +190,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new CrystalOfHealingBranch(abilityTree, this);
+        return new EnergySeerBranchLuminary(abilityTree, this);
     }
 
     public float getMaxHeal() {

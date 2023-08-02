@@ -147,7 +147,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * (100 - damageAbsorption) / 100f;
+                float afterValue = currentDamageValue * convertToDivisionDecimal(damageAbsorption);
                 totalAbsorbed.addAndGet(currentDamageValue - afterValue);
                 return afterValue;
             }

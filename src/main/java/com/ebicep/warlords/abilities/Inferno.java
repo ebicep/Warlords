@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -16,7 +17,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -77,11 +77,10 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        Location location = wp.getLocation().add(0, 1.2, 0);
-                        World world = location.getWorld();
-                        world.spawnParticle(Particle.DRIP_LAVA, location, 1, 0.5, 0.3, 0.5, 0.4, null, true);
-                        world.spawnParticle(Particle.FLAME, location, 1, 0.5, 0.3, 0.5, 0.0001, null, true);
-                        world.spawnParticle(Particle.CRIT, location, 1, 0.5, 0.3, 0.5, 0.0001, null, true);
+                        Location loc = wp.getLocation().add(0, 1.2, 0);
+                        EffectUtils.displayParticle(Particle.DRIP_LAVA, loc, 1, 0.5, 0.3, 0.5, 0.4);
+                        EffectUtils.displayParticle(Particle.FLAME, loc, 1, 0.5, 0.3, 0.5, 0.0001);
+                        EffectUtils.displayParticle(Particle.CRIT, loc, 1, 0.5, 0.3, 0.5, 0.0001);
                     }
                 })
         ) {
