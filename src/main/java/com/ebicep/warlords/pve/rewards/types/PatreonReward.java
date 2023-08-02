@@ -73,7 +73,7 @@ public class PatreonReward extends AbstractReward implements Listener {
 
     @EventHandler
     public void onDatabasePlayerFirstLoad(DatabasePlayerFirstLoadEvent event) {
-        if (!event.getPlayer().hasPermission("group.patreon")) {
+        if (!event.getPlayer().hasPermission("group.patreon") || !event.getPlayer().hasPermission("group.contentcreator")) {
             return;
         }
         DatabasePlayer databasePlayer = event.getDatabasePlayer();
