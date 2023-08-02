@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
@@ -447,34 +446,4 @@ public class Void extends AbstractSkeleton implements BossMob {
         }.runTaskTimer(40, 0);
     }
 
-    private void shockwave(Location loc, double radius, int tickDelay, long playerCount) {
-        new GameRunnable(warlordsNPC.getGame()) {
-            @Override
-            public void run() {
-                if (warlordsNPC.isDead() || preventArmageddon) {
-                    this.cancel();
-                    return;
-                }
-
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 10, 0.4f);
-                Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
-                for (WarlordsEntity we : PlayerFilter
-                        .entitiesAround(loc, radius, radius, radius)
-                        .aliveEnemiesOf(warlordsNPC)
-                ) {
-                    if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC,
-                                "Augmented Armageddon",
-                                (550 * playerCount),
-                                (700 * playerCount),
-                                0,
-                                100,
-                                false
-                        );
-                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
-                    }
-                }
-            }
-        }.runTaskLater(tickDelay);
-    }
 }
