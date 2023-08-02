@@ -94,6 +94,13 @@ public class Illumina extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
+        if (option.getDifficulty() == DifficultyIndex.EXTREME) {
+            float newHealth = 70000;
+            warlordsNPC.setMaxBaseHealth(newHealth);
+            warlordsNPC.setHealth(newHealth);
+            warlordsNPC.setMaxHealth(newHealth);
+        }
+
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new IronGolem(spawnLocation));
         }
@@ -135,12 +142,12 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
             phaseOneTriggered = true;
-            timedDamage(option, playerCount, 10000, 11);
+            timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 7000 : 9000, 11);
         }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
             phaseTwoTriggered = true;
-            timedDamage(option, playerCount, 12000, 11);
+            timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 9000 : 11000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
                 option.spawnNewMob(new ExiledSkeleton(loc));
             }
@@ -148,7 +155,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
-            timedDamage(option, playerCount, 14000, 11);
+            timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 11000 : 13000, 11);
             for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
                 option.spawnNewMob(new ForgottenZombie(loc));
             }
@@ -156,7 +163,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
-            timedDamage(option, playerCount, 5000, 6);
+            timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 4000 : 5000, 6);
             for (int i = 0; i < ((difficulty == DifficultyIndex.EXTREME ? 1 : 2) * playerCount); i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }

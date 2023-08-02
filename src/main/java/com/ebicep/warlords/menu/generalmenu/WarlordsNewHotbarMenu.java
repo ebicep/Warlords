@@ -716,7 +716,7 @@ public class WarlordsNewHotbarMenu {
             }
             int xPosition = 1;
             for (int i = (pageNumber - 1) * 6; i < pageNumber * 6; i++) {
-                if (pageNumber == 3 && i == 15) {
+                if (pageNumber == 3 && i == Specializations.VALUES.length) {
                     break;
                 }
                 ArmorManager.ArmorSets armorSet = ArmorManager.ArmorSets.VALUES[(i % 3) * 3];

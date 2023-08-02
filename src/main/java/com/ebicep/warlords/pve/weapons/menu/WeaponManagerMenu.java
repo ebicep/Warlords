@@ -150,7 +150,7 @@ public class WeaponManagerMenu {
                         .addLore(Component.text("This feature is for Patreons only!", NamedTextColor.LIGHT_PURPLE))
                         .get(),
                 (m, e) -> {
-                    if (!player.hasPermission("group.patreon") && !Permissions.isAdmin(player)) {
+                    if (!(player.hasPermission("group.patreon") || player.hasPermission("group.contentcreator")) && !Permissions.isAdmin(player)) {
                         player.sendMessage(Component.text("You must be a Patreon to use this feature!", NamedTextColor.RED));
                         return;
                     }

@@ -74,7 +74,7 @@ public enum DifficultyIndex {
             ),
             NamedTextColor.DARK_RED,
             25,
-            4
+            6
     ),
     ENDLESS("Endless",
             List.of(
