@@ -86,6 +86,8 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Settings.ChatSettings.ChatInsignia chatInsigniaMode = Settings.ChatSettings.ChatInsignia.ALL;
     @Field("chat_insignia")
     private Settings.ChatSettings.ChatEventPoints chatEventPointsMode = Settings.ChatSettings.ChatEventPoints.ALL;
+    @Field("chat_upgrade")
+    private Settings.ChatSettings.ChatUpgrade chatUpgradeMode = Settings.ChatSettings.ChatUpgrade.ALL;
 
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
     private List<String> permissions = new ArrayList<>();
@@ -384,6 +386,14 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public void setChatEventPointsMode(Settings.ChatSettings.ChatEventPoints chatEventPointsMode) {
         this.chatEventPointsMode = chatEventPointsMode;
+    }
+
+    public Settings.ChatSettings.ChatUpgrade getChatUpgradeMode() {
+        return chatUpgradeMode;
+    }
+
+    public void setChatUpgradeMode(Settings.ChatSettings.ChatUpgrade chatUpgradeMode) {
+        this.chatUpgradeMode = chatUpgradeMode;
     }
 
     public String getId() {
