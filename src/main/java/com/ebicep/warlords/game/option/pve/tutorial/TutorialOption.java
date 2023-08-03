@@ -423,7 +423,6 @@ public class TutorialOption implements Option {
         testDummies.clear();
         for (Location location : locations) {
             WarlordsNPC testDummy = game.addNPC(new WarlordsNPC(
-                    UUID.randomUUID(),
                     "TestDummy",
                     Weapons.BLUDGEON,
                     WarlordsNPC.spawnZombieNoAI(location, null),

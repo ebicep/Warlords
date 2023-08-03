@@ -15,10 +15,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.world.entity.Mob;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
@@ -30,7 +32,6 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class WarlordsNPC extends WarlordsEntity {
@@ -64,7 +65,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     private Component mobNamePrefix = Component.empty();
 
     public WarlordsNPC(
-            UUID uuid,
             String name,
             Weapons weapon,
             LivingEntity entity,
@@ -72,14 +72,13 @@ public final class WarlordsNPC extends WarlordsEntity {
             Team team,
             Specializations specClass
     ) {
-        super(uuid, name, entity, game, team, specClass);
+        super(entity.getUniqueId(), name, entity, game, team, specClass);
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
     }
 
     public WarlordsNPC(
-            UUID uuid,
             String name,
             Weapons weapon,
             LivingEntity entity,
@@ -92,7 +91,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
-        super(uuid, name, entity, game, team, specClass);
+        super(entity.getUniqueId(), name, entity, game, team, specClass);
         this.walkSpeed = walkSpeed;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
@@ -104,7 +103,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     public WarlordsNPC(
-            UUID uuid,
             String name,
             Weapons weapon,
             LivingEntity entity,
@@ -118,7 +116,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             float maxMeleeDamage,
             AbstractMob<?> mob
     ) {
-        super(uuid, name, entity, game, team, specClass);
+        super(entity.getUniqueId(), name, entity, game, team, specClass);
         this.mob = mob;
         if (mob != null && mob.getMobTier() != null) {
             mobNamePrefix = Component.textOfChildren(
@@ -138,7 +136,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     public WarlordsNPC(
-            UUID uuid,
             String name,
             Weapons weapon,
             LivingEntity entity,
@@ -153,7 +150,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             AbstractMob<?> mob,
             AbstractPlayerClass playerClass
     ) {
-        super(uuid, name, entity, game, team, specClass);
+        super(entity.getUniqueId(), name, entity, game, team, specClass);
         this.mob = mob;
         if (mob != null && mob.getMobTier() != null) {
             mobNamePrefix = Component.textOfChildren(
@@ -210,6 +207,11 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void runEveryTick() {
+        // updating entity reference in case it was unloaded
+        Entity updatedEntity = Bukkit.getEntity(uuid);
+        if (!Objects.equals(updatedEntity, entity) && updatedEntity instanceof LivingEntity) {
+            this.entity = (LivingEntity) updatedEntity;
+        }
         super.runEveryTick();
         if (getStunTicks() > 0) {
             setStunTicks(getStunTicks() - 1, true);
@@ -230,9 +232,9 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void updateEntity() {
-        getEntity().customName(Component.empty()
-                                        .append(mobNamePrefix)
-                                        .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED, TextDecoration.BOLD))
+        entity.customName(Component.empty()
+                                   .append(mobNamePrefix)
+                                   .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED, TextDecoration.BOLD))
         );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
