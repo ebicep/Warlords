@@ -158,6 +158,14 @@ public class Settings {
                     DatabasePlayer::getChatInsigniaMode,
                     databasePlayer -> databasePlayer.setChatInsigniaMode(databasePlayer.getChatInsigniaMode().next())
             ));
+            add(new ChatMenuSetting<>(
+                    ChatEventPoints.VALUES,
+                    new ItemStack(Material.GOLD_INGOT),
+                    "Event Point Messages",
+                    "Event Point messages",
+                    DatabasePlayer::getChatEventPointsMode,
+                    databasePlayer -> databasePlayer.setChatEventPointsMode(databasePlayer.getChatEventPointsMode().next())
+            ));
         }};
 
         public static void openChatSettingsMenu(Player player) {
@@ -332,6 +340,33 @@ public class Settings {
 
             @Override
             public ChatInsignia[] getValues() {
+                return VALUES;
+            }
+        }
+
+        public enum ChatEventPoints implements ChatSetting<ChatEventPoints> {
+            ALL("All"),
+            OFF("Off");
+
+            public static final ChatEventPoints[] VALUES = values();
+            public final String name;
+
+            ChatEventPoints(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public ChatEventPoints next() {
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatEventPoints[] getValues() {
                 return VALUES;
             }
         }
