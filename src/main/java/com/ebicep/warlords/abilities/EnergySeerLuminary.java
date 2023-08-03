@@ -24,6 +24,7 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EnergySeerLuminary extends AbstractAbility implements PurpleAbilityIcon {
@@ -107,6 +108,9 @@ public class EnergySeerLuminary extends AbstractAbility implements PurpleAbility
                 return new Listener() {
                     @EventHandler
                     public void onHealing(WarlordsDamageHealingFinalEvent event) {
+                        if (!Objects.equals(event.getWarlordsEntity(), wp)) {
+                            return;
+                        }
                         if (event.isDamageInstance()) {
                             return;
                         }
