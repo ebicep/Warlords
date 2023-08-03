@@ -16,7 +16,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventPoisonousSpider;
@@ -215,15 +214,14 @@ public class FieldEffect implements Option {
                                             return;
                                         }
                                         float damage = warlordsEntity.getMaxHealth() * .01f;
-                                        warlordsEntity.addDamageInstance(
-                                                warlordsEntity,
-                                                "Lost Buff",
-                                                damage,
-                                                damage,
-                                                0,
-                                                100,
-                                                EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.NO_MESSAGE)
-                                        );
+                                        warlordsEntity.resetRegenTimer();
+                                        if (warlordsEntity.getHealth() - damage <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
+                                            warlordsEntity.setHealth(0);
+                                            warlordsEntity.die(warlordsEntity);
+                                        } else {
+                                            warlordsEntity.setHealth(warlordsEntity.getHealth() - damage);
+                                            warlordsEntity.playHurtAnimation(warlordsEntity.getEntity(), warlordsEntity);
+                                        }
                                     });
                     }
 

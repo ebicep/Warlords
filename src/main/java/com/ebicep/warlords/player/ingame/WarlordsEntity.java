@@ -1448,7 +1448,7 @@ public abstract class WarlordsEntity {
      * @param entity   which entity is assigned to the hurt animation?
      * @param attacker what warlords player should play the hurt animation?
      */
-    private void playHurtAnimation(LivingEntity entity, WarlordsEntity attacker) {
+    public void playHurtAnimation(LivingEntity entity, WarlordsEntity attacker) {
         ServerLevel serverLevel = ((CraftWorld) entity.getWorld()).getHandle();
         serverLevel.broadcastDamageEvent(((CraftEntity) entity).getHandle(), serverLevel.damageSources().generic());
         for (Player player1 : attacker.getWorld().getPlayers()) {
