@@ -276,7 +276,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         bossBar(option.getGame(), false);
-        bossBar = null;
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
