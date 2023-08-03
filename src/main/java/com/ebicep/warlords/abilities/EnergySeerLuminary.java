@@ -43,18 +43,18 @@ public class EnergySeerLuminary extends AbstractAbility implements PurpleAbility
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Gain ")
-                .append(Component.text("30%", NamedTextColor.YELLOW))
-                .append(Component.text(" speed and receive energy equal to "))
-                .append(Component.text(format(conversionAmount) + "%", NamedTextColor.GREEN))
-                .append(Component.text(" of the healing done in the next "))
-                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                .append(Component.text(" seconds. If you healed for 4 instances, restore energy "))
-                .append(Component.text(energyRestore, NamedTextColor.YELLOW))
-                .append(Component.text(" and increase your healing by "))
-                .append(Component.text(format(healingIncrease) + "%", NamedTextColor.GREEN))
-                .append(Component.text(" for "))
-                .append(Component.text(format(bonusDuration / 20f), NamedTextColor.GOLD))
-                .append(Component.text(" seconds after Energy Seer ends."));
+                               .append(Component.text("30%", NamedTextColor.YELLOW))
+                               .append(Component.text(" speed and receive energy equal to "))
+                               .append(Component.text(format(conversionAmount) + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" of the healing done in the next "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds. If you healed for 4 instances, restore energy "))
+                               .append(Component.text(energyRestore, NamedTextColor.YELLOW))
+                               .append(Component.text(" and increase your healing by "))
+                               .append(Component.text(format(healingIncrease) + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" for "))
+                               .append(Component.text(format(bonusDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds after Energy Seer ends."));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class EnergySeerLuminary extends AbstractAbility implements PurpleAbility
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.energyseer.activation", 2, 0.9f);
         for (int i = 0; i < 20; i++) {
-            EffectUtils.displayParticle(Particle.SOUL_FIRE_FLAME, wp.getLocation(), 3, 0.3, 0.1,0.3, 0.1);
+            EffectUtils.displayParticle(Particle.SOUL_FIRE_FLAME, wp.getLocation(), 3, 0.3, 0.1, 0.3, 0.1);
         }
         wp.addSpeedModifier(wp, name, 30, tickDuration);
         AtomicInteger timesHealed = new AtomicInteger();
@@ -100,12 +100,16 @@ public class EnergySeerLuminary extends AbstractAbility implements PurpleAbility
                                 );
                             }
                         }
-                )) {
+                )
+        ) {
             @Override
             protected Listener getListener() {
                 return new Listener() {
                     @EventHandler
                     public void onHealing(WarlordsDamageHealingFinalEvent event) {
+                        if (event.isDamageInstance()) {
+                            return;
+                        }
                         float value = event.getValue();
                         if (value <= 0) {
                             return;
