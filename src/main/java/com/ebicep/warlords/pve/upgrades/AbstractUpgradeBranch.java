@@ -2,10 +2,12 @@ package com.ebicep.warlords.pve.upgrades;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -411,6 +413,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     private void globalAnnouncement(Game game, Upgrade upgrade, T ability, boolean autoUpgraded) {
         Component prefix = autoUpgraded ? AutoUpgradeProfile.AUTO_UPGRADE_PREFIX : Component.empty();
         game.forEachOnlinePlayer((p, t) -> {
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
+            if (databasePlayer.getChatUpgradeMode() != Settings.ChatSettings.ChatUpgrade.ALL) {
+                return;
+            }
             if (upgrade.equals(masterUpgrade) || upgrade.equals(masterUpgrade2)) {
                 p.sendMessage(Component.textOfChildren(
                         prefix,
