@@ -108,7 +108,7 @@ public class EnergySeerLuminary extends AbstractAbility implements PurpleAbility
                 return new Listener() {
                     @EventHandler
                     public void onHealing(WarlordsDamageHealingFinalEvent event) {
-                        if (!Objects.equals(event.getWarlordsEntity(), wp)) {
+                        if (!Objects.equals(event.getAttacker(), wp)) {
                             return;
                         }
                         if (event.isDamageInstance()) {
