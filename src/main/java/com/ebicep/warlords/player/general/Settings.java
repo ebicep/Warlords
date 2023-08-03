@@ -123,8 +123,7 @@ public class Settings {
                     new ItemStack(Material.NETHER_WART),
                     "Damage Messages",
                     "Damage received and damage dealt",
-                    PlayerSettings::getChatDamageMode,
-                    playerSettings -> playerSettings.setChatDamageMode(playerSettings.getChatDamageMode().next()),
+                    DatabasePlayer::getChatDamageMode,
                     databasePlayer -> databasePlayer.setChatDamageMode(databasePlayer.getChatDamageMode().next())
             ));
             add(new ChatMenuSetting<>(
@@ -132,8 +131,7 @@ public class Settings {
                     new ItemStack(Material.CYAN_DYE),
                     "Healing Messages",
                     "Healing received and healing dealt",
-                    PlayerSettings::getChatHealingMode,
-                    playerSettings -> playerSettings.setChatHealingMode(playerSettings.getChatHealingMode().next()),
+                    DatabasePlayer::getChatHealingMode,
                     databasePlayer -> databasePlayer.setChatHealingMode(databasePlayer.getChatHealingMode().next())
             ));
             add(new ChatMenuSetting<>(
@@ -141,8 +139,7 @@ public class Settings {
                     new ItemStack(Material.SUGAR_CANE),
                     "Energy Messages",
                     "Energy received and energy dealt",
-                    PlayerSettings::getChatEnergyMode,
-                    playerSettings -> playerSettings.setChatEnergyMode(playerSettings.getChatEnergyMode().next()),
+                    DatabasePlayer::getChatEnergyMode,
                     databasePlayer -> databasePlayer.setChatEnergyMode(databasePlayer.getChatEnergyMode().next())
             ));
             add(new ChatMenuSetting<>(
@@ -150,8 +147,7 @@ public class Settings {
                     new ItemStack(Material.BONE),
                     "Kill/Assist Messages",
                     "Kill and Assist messages",
-                    PlayerSettings::getChatKillsMode,
-                    playerSettings -> playerSettings.setChatKillsMode(playerSettings.getChatKillsMode().next()),
+                    DatabasePlayer::getChatKillsMode,
                     databasePlayer -> databasePlayer.setChatKillsMode(databasePlayer.getChatKillsMode().next())
             ));
             add(new ChatMenuSetting<>(
@@ -159,48 +155,46 @@ public class Settings {
                     new ItemStack(Material.GOLD_NUGGET),
                     "Insignia Messages",
                     "Insignia gain messages",
-                    PlayerSettings::getChatInsigniaMode,
-                    playerSettings -> playerSettings.setChatInsigniaMode(playerSettings.getChatInsigniaMode().next()),
+                    DatabasePlayer::getChatInsigniaMode,
                     databasePlayer -> databasePlayer.setChatInsigniaMode(databasePlayer.getChatInsigniaMode().next())
             ));
         }};
 
         public static void openChatSettingsMenu(Player player) {
-            PlayerSettings settings = PlayerSettings.getPlayerSettings(player);
+            DatabaseManager.getPlayer(player, databasePlayer -> {
+                Menu menu = new Menu("Chat Settings", 9 * 4);
 
-            Menu menu = new Menu("Chat Settings", 9 * 4);
+                for (int i = 0; i < MENU_SETTINGS.size(); i++) {
+                    ChatMenuSetting<?> menuSetting = MENU_SETTINGS.get(i);
+                    ChatSetting<?> selectedSetting = menuSetting.getCurrentSetting.apply(databasePlayer);
+                    menu.setItem(i % 7 + 1, i / 7 + 1,
+                            new ItemBuilder(menuSetting.itemStack)
+                                    .name(Component.text(menuSetting.name, NamedTextColor.GREEN))
+                                    .lore(Component.text(menuSetting.description, NamedTextColor.GRAY))
+                                    .addLore(Component.empty())
+                                    .addLore(
+                                            Arrays.stream(menuSetting.settings)
+                                                  .map(chatSetting -> Component.text("🠒 " + chatSetting.getName(),
+                                                          chatSetting == selectedSetting ? NamedTextColor.AQUA : NamedTextColor.GRAY
+                                                  ))
+                                                  .collect(Collectors.toList())
+                                    )
+                                    .addLore(
+                                            Component.empty(),
+                                            Component.text("Click to change", NamedTextColor.YELLOW)
+                                    )
+                                    .get(),
+                            (m, e) -> {
+                                DatabaseManager.updatePlayer(player, menuSetting.updateDatabasePlayerSettings);
+                                openChatSettingsMenu(player);
+                            }
+                    );
+                }
 
-            for (int i = 0; i < MENU_SETTINGS.size(); i++) {
-                ChatMenuSetting<?> menuSetting = MENU_SETTINGS.get(i);
-                ChatSetting<?> selectedSetting = menuSetting.getCurrentSetting.apply(settings);
-                menu.setItem(i % 7 + 1, i / 7 + 1,
-                        new ItemBuilder(menuSetting.itemStack)
-                                .name(Component.text(menuSetting.name, NamedTextColor.GREEN))
-                                .lore(Component.text(menuSetting.description, NamedTextColor.GRAY))
-                                .addLore(Component.empty())
-                                .addLore(
-                                        Arrays.stream(menuSetting.settings)
-                                              .map(chatSetting -> Component.text("🠒 " + chatSetting.getName(),
-                                                      chatSetting == selectedSetting ? NamedTextColor.AQUA : NamedTextColor.GRAY
-                                              ))
-                                              .collect(Collectors.toList())
-                                )
-                                .addLore(
-                                        Component.empty(),
-                                        Component.text("Click to change", NamedTextColor.YELLOW)
-                                )
-                                .get(),
-                        (m, e) -> {
-                            menuSetting.updatePlayerSettings.accept(settings);
-                            DatabaseManager.updatePlayer(player, menuSetting.updateDatabasePlayerSettings);
-                            openChatSettingsMenu(player);
-                        }
-                );
-            }
-
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(player));
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
+                menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(player));
+                menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.openForPlayer(player);
+            });
         }
 
         public enum ChatDamage implements ChatSetting<ChatDamage> {
@@ -356,8 +350,7 @@ public class Settings {
                 ItemStack itemStack,
                 String name,
                 String description,
-                Function<PlayerSettings, T> getCurrentSetting,
-                Consumer<PlayerSettings> updatePlayerSettings,
+                Function<DatabasePlayer, T> getCurrentSetting,
                 Consumer<DatabasePlayer> updateDatabasePlayerSettings
         ) {}
 

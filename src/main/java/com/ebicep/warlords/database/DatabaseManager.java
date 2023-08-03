@@ -34,6 +34,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -219,6 +220,27 @@ public class DatabaseManager {
         }
     }
 
+    @Nonnull
+    public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections, boolean computeIfAbsent) {
+        if (playerService == null || !enabled) {
+            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
+            if (computeIfAbsent) {
+                return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            } else {
+                return concurrentHashMap.getOrDefault(uuid, new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            }
+        }
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
+                playersCollections
+        ));
+        return DatabaseManager.playerService.findByUUID(uuid, playersCollections);
+    }
+
+    @Nonnull
+    public static DatabasePlayer getPlayer(UUID uuid, boolean computeIfAbsent) {
+        return getPlayer(uuid, PlayersCollections.LIFETIME, computeIfAbsent);
+    }
+
     private static void loadPlayerInfo(UUID uuid, DatabasePlayer databasePlayer) {
         //check weapon inventory
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
@@ -260,10 +282,6 @@ public class DatabaseManager {
         playerSettings.setHotkeyMode(databasePlayer.getHotkeyMode());
         playerSettings.setParticleQuality(databasePlayer.getParticleQuality());
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
-
-        playerSettings.setChatDamageMode(databasePlayer.getChatDamageMode());
-        playerSettings.setChatHealingMode(databasePlayer.getChatHealingMode());
-        playerSettings.setChatEnergyMode(databasePlayer.getChatEnergyMode());
     }
 
     public static boolean inCache(UUID uuid, PlayersCollections collection) {
@@ -341,6 +359,11 @@ public class DatabaseManager {
 
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
         getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, () -> {
+        });
+    }
+
+    public static void getPlayer(Player player, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, databasePlayerConsumer, () -> {
         });
     }
 
