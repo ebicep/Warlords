@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -43,8 +45,19 @@ public class Mithra extends AbstractZombie implements BossMob {
                 0.28f,
                 20,
                 1200,
-                1600
+                1600,
+                new FlameBurst(1000)
         );
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.LIGHT_PURPLE;
     }
 
     @Override
@@ -134,16 +147,6 @@ public class Mithra extends AbstractZombie implements BossMob {
         EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 
-    @Override
-    public Component getDescription() {
-        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
-    }
-
-    @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.LIGHT_PURPLE;
-    }
-
     private void flameBurstBarrage(int delayBetweenShots, int amountOfShots) {
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
@@ -156,7 +159,12 @@ public class Mithra extends AbstractZombie implements BossMob {
                 }
 
                 counter++;
-                warlordsNPC.getSpec().getRed().onActivate(warlordsNPC, null);
+                for (AbstractAbility ability : warlordsNPC.getAbilities()) {
+                    if (ability instanceof FlameBurst) {
+                        ability.setCurrentCooldown(0);
+                        warlordsNPC.addEnergy(warlordsNPC, "Flame Burst Barrage", ability.getEnergyCost());
+                    }
+                }
 
                 if (counter == amountOfShots) {
                     this.cancel();
