@@ -223,7 +223,7 @@ public class DatabaseGameEvent {
             messages.add(Component.text("Claim your rewards through your", NamedTextColor.GREEN));
             messages.add(Component.text("Reward Inventory!", NamedTextColor.GREEN));
             messages.add(Component.text("------------------------------------------------", NamedTextColor.GREEN));
-            databasePlayer.addFutureMessage(new FutureMessage(messages, true));
+            databasePlayer.addFutureMessage(FutureMessage.create(messages, true));
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         });
     }

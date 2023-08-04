@@ -158,7 +158,7 @@ public class ExperienceManager {
                     .asyncFirst(() -> DatabaseManager.playerService.findByUUID(UUID.fromString(s)))
                     .syncLast(databasePlayer -> {
                         databasePlayer.setExperience(databasePlayer.getExperience() + totalExperienceGain);
-                        databasePlayer.addFutureMessage(new FutureMessage(awardSummary.getMessages(), true));
+                        databasePlayer.addFutureMessage(FutureMessage.create(awardSummary.getMessages(), true));
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }).execute();
         });
