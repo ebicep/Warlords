@@ -216,7 +216,7 @@ public class MasterworksFair {
                             message.add(Component.text("Claim your rewards through your", NamedTextColor.GREEN));
                             message.add(Component.text("Reward Inventory!", NamedTextColor.GREEN));
                             message.add(Component.text("------------------------------------------------", NamedTextColor.GOLD));
-                            databasePlayer.addFutureMessage(new FutureMessage(message, true));
+                            databasePlayer.addFutureMessage(FutureMessage.create(message, true));
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                         })
                         .execute());

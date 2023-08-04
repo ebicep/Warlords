@@ -69,7 +69,7 @@ public class DatabaseManager {
     public static GameEventsService gameEventsService;
     public static WeeklyBlessingsService weeklyBlessingsService;
     public static IllusionVendorService illusionVendorService;
-    public static boolean enabled = false;
+    public static boolean enabled = true;
 
     public static void init() {
         if (!enabled) {
@@ -221,10 +221,10 @@ public class DatabaseManager {
     }
 
     @Nonnull
-    public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections, boolean computeIfAbsent) {
-        if (playerService == null || !enabled) {
+    public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections, boolean isAPlayer) {
+        if (!isAPlayer || playerService == null || !enabled) {
             ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
-            if (computeIfAbsent) {
+            if (isAPlayer) {
                 return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
             } else {
                 return concurrentHashMap.getOrDefault(uuid, new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
@@ -237,8 +237,8 @@ public class DatabaseManager {
     }
 
     @Nonnull
-    public static DatabasePlayer getPlayer(UUID uuid, boolean computeIfAbsent) {
-        return getPlayer(uuid, PlayersCollections.LIFETIME, computeIfAbsent);
+    public static DatabasePlayer getPlayer(UUID uuid, boolean isAPlayer) {
+        return getPlayer(uuid, PlayersCollections.LIFETIME, isAPlayer);
     }
 
     private static void loadPlayerInfo(UUID uuid, DatabasePlayer databasePlayer) {

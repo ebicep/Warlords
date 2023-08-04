@@ -63,7 +63,9 @@ public class IllusionVendorWeeklyShop {
     private Instant week = DateUtil.getResetDateLatestMonday();
     private Map<String, AbstractItem> items = new HashMap<>() {{
         put("RANDOM_ALPHA_ITEM", ItemType.getRandom().createBasic(ItemTier.ALPHA));
+        put("RANDOM_ALPHA_ITEM_2", ItemType.getRandom().createBasic(ItemTier.ALPHA));
         put("RANDOM_BETA_ITEM", ItemType.getRandom().createBasic(ItemTier.BETA));
+        put("RANDOM_BETA_ITEM_2", ItemType.getRandom().createBasic(ItemTier.BETA));
     }};
 
     public IllusionVendorWeeklyShop() {

@@ -92,7 +92,7 @@ public class CurrencyOnEventOption implements Option, Listener {
 
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (startingCurrency == 0) {
+        if (startingCurrency == 0 || !(player instanceof WarlordsPlayer)) {
             return;
         }
         player.addCurrency(startingCurrency);
