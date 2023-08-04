@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.abilities;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.entity.Player;
@@ -41,6 +42,7 @@ public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
         AbstractMob<?> mob = createMob(wp);
         onMobCreate(mob);
         pveOption.spawnNewMob(mob, wp.getTeam());
+        onMobSpawn(mob.getWarlordsNPC());
     }
 
     public int getSpawnAmount() {
@@ -48,6 +50,10 @@ public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
     }
 
     public void onMobCreate(AbstractMob<?> mobSpawned) {
+
+    }
+
+    public void onMobSpawn(WarlordsNPC warlordsNPC) {
 
     }
 }
