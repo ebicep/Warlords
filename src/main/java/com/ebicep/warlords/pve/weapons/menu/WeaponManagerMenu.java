@@ -387,7 +387,8 @@ public class WeaponManagerMenu {
                             .lore(
                                     Component.text("Click here to salvage this weapon and claim its materials.", NamedTextColor.GRAY),
                                     Component.empty(),
-                                    Component.text("Shift-Click" + Component.text(" to instantly salvage this weapon.", NamedTextColor.GRAY)),
+                                    Component.text("Shift-Click", NamedTextColor.YELLOW)
+                                             .append(Component.text(" to instantly salvage this weapon.", NamedTextColor.GRAY)),
                                     Component.empty(),
                                     Component.textOfChildren(
                                             Component.text("Rewards: ", NamedTextColor.GREEN),

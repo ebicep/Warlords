@@ -620,8 +620,8 @@ public class EndState implements State, TimerDebugAble {
                 gotAnyDrops = true;
                 ChatUtils.sendCenteredMessage(player,
                         Component.text("+", NamedTextColor.GRAY)
-                                 .append(Component.text(NumberFormat.addCommaAndRound(illusionShardGain), NamedTextColor.GREEN))
-                                 .append(Component.text(" " + Currencies.ILLUSION_SHARD.getColoredName() + (illusionShardGain == 1 ? "" : "s")))
+                                 .append(Component.text(NumberFormat.addCommaAndRound(illusionShardGain) + " ", NamedTextColor.GREEN))
+                                 .append(Currencies.ILLUSION_SHARD.getColoredName().append(Component.text(illusionShardGain == 1 ? "" : "s")))
                 );
             }
             List<AbstractWeapon> weaponsFound = playerPveRewards.getWeaponsFound();

@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -619,7 +620,11 @@ public class ItemMichaelMenu {
                             Component.text(NumberFormat.formatOptionalHundredths(item.getTier().blessedChance * 100) + "%", NamedTextColor.YELLOW)
                     ));
                     for (int i = 1; i <= 5; i++) {
-                        add(Component.text("   ").append(getModifiedLore(i, ItemModifier.BLESSING_TIER_CHANCE.get(i), 5)));
+                        Pair<Component, Component> modifiedLore = getModifiedLore(i, ItemModifier.BLESSING_TIER_CHANCE.get(i), 5);
+                        add(Component.text("   ").append(modifiedLore.getA()));
+                        if (modifiedLore.getB() != null) {
+                            add(modifiedLore.getB());
+                        }
                     }
                     add(Component.empty());
                     add(Component.textOfChildren(
@@ -628,28 +633,32 @@ public class ItemMichaelMenu {
                             Component.text(NumberFormat.formatOptionalHundredths(item.getTier().cursedChance * 100) + "%", NamedTextColor.YELLOW)
                     ));
                     for (int i = 1; i <= 5; i++) {
-                        add(Component.text("   ").append(getModifiedLore(-i, ItemModifier.CURSE_TIER_CHANCE.get(i), 5)));
+                        Pair<Component, Component> modifiedLore = getModifiedLore(-i, ItemModifier.CURSE_TIER_CHANCE.get(i), 5);
+                        add(Component.text("   ").append(modifiedLore.getA()));
+                        if (modifiedLore.getB() != null) {
+                            add(modifiedLore.getB());
+                        }
                     }
                 }};
             }
 
-            private Component getModifiedLore(int newModifier, double chance, int extraSpace) {
+            private Pair<Component, Component> getModifiedLore(int newModifier, double chance, int extraSpace) {
                 if (newModifier == 0) {
-                    return Component.textOfChildren(
+                    return new Pair<>(Component.textOfChildren(
                             Component.text("Normal", NamedTextColor.WHITE),
                             Component.text(" - ", NamedTextColor.GRAY),
                             Component.text(NumberFormat.formatOptionalHundredths(item.getTier().blessedChance * 100) + "%", NamedTextColor.YELLOW)
-                    );
+                    ), null);
                 } else {
                     ItemModifier itemModifier = item.getItemModifier(newModifier);
                     boolean isBlessing = newModifier > 0;
-                    return Component.textOfChildren(
+                    return new Pair<>(Component.textOfChildren(
                             Component.text(itemModifier.getName(), isBlessing ? NamedTextColor.GREEN : NamedTextColor.RED),
                             Component.text(" - ", NamedTextColor.GRAY),
                             Component.text((blessingFound ? NumberFormat.formatOptionalHundredths(chance) : (isBlessing ? "100" : "0")) + "%",
                                     NamedTextColor.YELLOW
-                            ),
-                            Component.newline(),
+                            )
+                    ),
                             Component.text(" ".repeat(extraSpace + 1) + itemModifier.getDescription(), NamedTextColor.GREEN)
                     );
                 }
@@ -672,12 +681,20 @@ public class ItemMichaelMenu {
                 }
                 int modifier = item.getModifier();
                 int tier = blessing + 1;
-                return Arrays.asList(
-                        Component.empty(),
-                        getModifiedLore(Math.min(modifier + tier, 5), item.getTier().blessedChance * 100, 0),
-                        Component.empty(),
-                        getModifiedLore(Math.max(modifier - tier, -5), item.getTier().cursedChance * 100, 0)
-                );
+                List<Component> lore = new ArrayList<>();
+                lore.add(Component.empty());
+                Pair<Component, Component> modifiedLore = getModifiedLore(Math.min(modifier + tier, 5), item.getTier().blessedChance * 100, 0);
+                lore.add(modifiedLore.getA());
+                if (modifiedLore.getB() != null) {
+                    lore.add(modifiedLore.getB());
+                }
+                lore.add(Component.empty());
+                modifiedLore = getModifiedLore(Math.max(modifier - tier, -5), item.getTier().cursedChance * 100, 0);
+                lore.add(modifiedLore.getA());
+                if (modifiedLore.getB() != null) {
+                    lore.add(modifiedLore.getB());
+                }
+                return lore;
             }
 
             public AbstractItem getItem() {
