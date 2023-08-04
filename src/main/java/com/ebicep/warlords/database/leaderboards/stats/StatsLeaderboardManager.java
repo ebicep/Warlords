@@ -28,6 +28,10 @@ import com.ebicep.warlords.util.java.Pair;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -53,7 +57,7 @@ public class StatsLeaderboardManager {
         }
     }};
 
-    public static boolean enabled = false;
+    public static boolean enabled = true;
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
@@ -117,7 +121,7 @@ public class StatsLeaderboardManager {
                                 if (value == PlayersCollections.LIFETIME && (lessThan20Plays || notLoggedInPast10Days) && noCurrentEventPlays) {
                                     continue;
                                 }
-                                if (value == PlayersCollections.SEASON_7 && lessThan20Plays) {
+                                if (value == PlayersCollections.SEASON_8 && lessThan20Plays) {
                                     continue;
                                 }
                                 concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
@@ -377,16 +381,21 @@ public class StatsLeaderboardManager {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
                         Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
-                        String guildTag = "";
+                        Component guildTag = Component.empty();
                         if (guildPlayerPair != null) {
                             GuildTag tag = guildPlayerPair.getA().getTag();
                             if (tag != null) {
-                                guildTag = " " + tag.getTag(true);
+                                guildTag = tag.getTag(true);
                             }
                         }
-                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
-                                Permissions.getColor(databasePlayer) + ChatColor.BOLD + databasePlayer.getName() + guildTag + ChatColor.GRAY + ChatColor.BOLD + " - " +
-                                ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction().apply(databasePlayer));
+                        hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
+                                Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                         .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                                         .append(Component.space())
+                                         .append(guildTag)
+                                         .append(Component.text(" - ", NamedTextColor.GRAY))
+                                         .append(Component.text(statsLeaderboard.getStringFunction().apply(databasePlayer)))
+                        ));
                         break;
                     }
                 }
@@ -410,16 +419,21 @@ public class StatsLeaderboardManager {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
                         Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
-                        String guildTag = "";
+                        Component guildTag = Component.empty();
                         if (guildPlayerPair != null) {
                             GuildTag tag = guildPlayerPair.getA().getTag();
                             if (tag != null) {
-                                guildTag = " " + tag.getTag(true);
+                                guildTag = tag.getTag(true);
                             }
                         }
-                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
-                                Permissions.getColor(databasePlayer) + ChatColor.BOLD + databasePlayer.getName() + guildTag + ChatColor.GRAY + ChatColor.BOLD + " - " +
-                                ChatColor.YELLOW + ChatColor.BOLD + eventLeaderboard.getStringFunction().apply(databasePlayer, eventLeaderboard.getEventTime()));
+                        hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
+                                Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                         .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                                         .append(Component.space())
+                                         .append(guildTag)
+                                         .append(Component.text(" - ", NamedTextColor.GRAY))
+                                         .append(Component.text(eventLeaderboard.getStringFunction().apply(databasePlayer, eventLeaderboard.getEventTime())))
+                        ));
                         break;
                     }
                 }

@@ -479,14 +479,6 @@ public abstract class DatabaseGameBase {
         holograms.add(topDHPPerMinute);
         topDHPPerMinute.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
 
-        Hologram topDamageOnCarrier = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
-        holograms.add(topDamageOnCarrier);
-        topDamageOnCarrier.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage On Carrier");
-
-        Hologram topHealingOnCarrier = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
-        holograms.add(topHealingOnCarrier);
-        topHealingOnCarrier.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing On Carrier");
-
         //last game stats
         appendLastGameStats(lastGameStats);
 
@@ -495,7 +487,7 @@ public abstract class DatabaseGameBase {
         for (DatabaseGamePlayerBase allPlayer : allPlayers) {
             Team team = getTeam(allPlayer);
             if (team != null) {
-                //playerColor.put(allPlayer, team.teamColor); TODO
+                playerColor.put(allPlayer, team.oldTeamColor);
             }
         }
 

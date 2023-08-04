@@ -166,6 +166,14 @@ public class Settings {
                     DatabasePlayer::getChatEventPointsMode,
                     databasePlayer -> databasePlayer.setChatEventPointsMode(databasePlayer.getChatEventPointsMode().next())
             ));
+            add(new ChatMenuSetting<>(
+                    ChatUpgrade.VALUES,
+                    new ItemStack(Material.BOOK),
+                    "Upgrade Messages",
+                    "Upgrade messages",
+                    DatabasePlayer::getChatUpgradeMode,
+                    databasePlayer -> databasePlayer.setChatUpgradeMode(databasePlayer.getChatUpgradeMode().next())
+            ));
         }};
 
         public static void openChatSettingsMenu(Player player) {
@@ -367,6 +375,33 @@ public class Settings {
 
             @Override
             public ChatEventPoints[] getValues() {
+                return VALUES;
+            }
+        }
+
+        public enum ChatUpgrade implements ChatSetting<ChatUpgrade> {
+            ALL("All"),
+            OFF("Off");
+
+            public static final ChatUpgrade[] VALUES = values();
+            public final String name;
+
+            ChatUpgrade(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public ChatUpgrade next() {
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatUpgrade[] getValues() {
                 return VALUES;
             }
         }

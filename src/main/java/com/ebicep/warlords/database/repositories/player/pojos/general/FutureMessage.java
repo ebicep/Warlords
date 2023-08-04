@@ -7,14 +7,18 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FutureMessage {
+
+    public static FutureMessage create(List<Component> messages, boolean centered) {
+        return new FutureMessage(messages.stream().map(component -> MiniMessage.miniMessage().serialize(component)).toList(), centered);
+    }
+
     private List<String> messages;
     private boolean centered;
 
-    public FutureMessage(List<Component> messages, boolean centered) {
-        this.messages = messages.stream().map(component -> MiniMessage.miniMessage().serialize(component)).collect(Collectors.toList());
+    public FutureMessage(List<String> messages, boolean centered) {
+        this.messages = messages;
         this.centered = centered;
     }
 

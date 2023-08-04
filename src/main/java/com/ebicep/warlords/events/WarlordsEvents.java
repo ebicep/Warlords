@@ -158,8 +158,8 @@ public class WarlordsEvents implements Listener {
                                                                                      .clickEvent(ClickEvent.openUrl("https://discord.gg/GWPAx9sEG7")))
             );
             ChatUtils.sendCenteredMessage(player,
-                    Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/3DFZTmI", NamedTextColor.GREEN, TextDecoration.BOLD)
-                                                                                           .clickEvent(ClickEvent.openUrl("https://bit.ly/3DFZTmI")))
+                    Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/47lZHGz", NamedTextColor.GREEN, TextDecoration.BOLD)
+                                                                                           .clickEvent(ClickEvent.openUrl("https://bit.ly/47lZHGz")))
             );
             ChatUtils.sendCenteredMessage(player, Component.text("-----------------------------------------------------", NamedTextColor.GRAY));
         }

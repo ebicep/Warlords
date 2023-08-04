@@ -15,6 +15,10 @@ import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.HologramLines;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -150,16 +154,28 @@ public class StatsLeaderboard {
         for (int i = page * PLAYERS_PER_PAGE; i < (page + 1) * PLAYERS_PER_PAGE && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
-            String guildTag = "";
+            Component guildTag = Component.empty();
             if (guildPlayerPair != null) {
                 GuildTag tag = guildPlayerPair.getA().getTag();
                 if (tag != null) {
-                    guildTag = " " + tag.getTag(false);
+                    guildTag = tag.getTag(false);
                 }
             }
-            hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " +
-                    Permissions.getColor(databasePlayer) + databasePlayer.getName() + guildTag +
-                    ChatColor.GRAY + " - " + ChatColor.YELLOW + stringFunction.apply(databasePlayer));
+            String name = databasePlayer.getName();
+            if (name == null) {
+                name = Bukkit.getOfflinePlayer(databasePlayer.getUuid()).getName();
+            }
+            if (name == null) {
+                name = "Unknown";
+            }
+            hologramLines.appendText(LegacyComponentSerializer.legacySection().serialize(
+                    Component.text((i + 1) + ". ", NamedTextColor.YELLOW)
+                             .append(Component.text(name, Permissions.getColor(databasePlayer)))
+                             .append(Component.space())
+                             .append(guildTag)
+                             .append(Component.text(" - ", NamedTextColor.GRAY))
+                             .append(Component.text(stringFunction.apply(databasePlayer)))
+            ));
         }
         hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
 

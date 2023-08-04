@@ -38,11 +38,18 @@ public class GuildTag {
     }
 
     public Component getTag(boolean bold) {
-        return Component.textOfChildren(
-                Component.text("["),
-                Component.text(name, getNameTextColor()),
-                Component.text("]")
-        ).color(getBracketTextColor()).decoration(TextDecoration.BOLD, bold);
+        return Component.text("[", getBracketTextColor())
+                        .decoration(TextDecoration.BOLD, bold)
+                        .append(Component.text(name, getNameTextColor()))
+                        .append(Component.text("]"));
+    }
+
+    public NamedTextColor getBracketTextColor() {
+        return NamedTextColor.NAMES.value(bracketColor);
+    }
+
+    public NamedTextColor getNameTextColor() {
+        return NamedTextColor.NAMES.value(nameColor);
     }
 
     public void setInfo(String name, String nameColor, String bracketColor) {
@@ -69,10 +76,6 @@ public class GuildTag {
         return nameColor;
     }
 
-    public NamedTextColor getNameTextColor() {
-        return NamedTextColor.NAMES.value(nameColor);
-    }
-
     public void setNameColor(NamedTextColor nameColor) {
         this.nameColor = nameColor.toString();
         CustomScoreboard.updateLobbyPlayerNames();
@@ -80,10 +83,6 @@ public class GuildTag {
 
     public String getBracketColor() {
         return bracketColor;
-    }
-
-    public NamedTextColor getBracketTextColor() {
-        return NamedTextColor.NAMES.value(bracketColor);
     }
 
     public void setBracketColor(NamedTextColor bracketColor) {
