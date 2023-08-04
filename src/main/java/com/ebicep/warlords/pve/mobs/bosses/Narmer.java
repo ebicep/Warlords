@@ -291,6 +291,7 @@ public class Narmer extends AbstractZombie implements BossMob {
         @Override
         public void onMobSpawn(WarlordsNPC warlordsNPC) {
             narmer.getAcolytes().add(warlordsNPC);
+            selfAcolytes.add(warlordsNPC);
         }
 
         public List<WarlordsEntity> getSelfAcolytes() {
