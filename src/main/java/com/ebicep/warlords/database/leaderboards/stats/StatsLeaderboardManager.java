@@ -117,7 +117,7 @@ public class StatsLeaderboardManager {
                                 if (value == PlayersCollections.LIFETIME && (lessThan20Plays || notLoggedInPast10Days) && noCurrentEventPlays) {
                                     continue;
                                 }
-                                if (value == PlayersCollections.SEASON_7 && lessThan20Plays) {
+                                if (value == PlayersCollections.SEASON_8 && lessThan20Plays) {
                                     continue;
                                 }
                                 concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
