@@ -83,7 +83,7 @@ public enum Weapons {
     SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), LEGENDARY, WeaponsPvE.LEGENDARY),
     SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SAC), LEGENDARY, WeaponsPvE.LEGENDARY),
     SILVER_PHANTASM_SCIMITAR("Bloodquench", new ItemStack(Material.CARROT), LEGENDARY, WeaponsPvE.LEGENDARY),
-    SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.CHORUS_FRUIT), LEGENDARY, WeaponsPvE.LEGENDARY),
+    SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.BAMBOO_STAIRS), LEGENDARY, WeaponsPvE.LEGENDARY),
     SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), LEGENDARY, WeaponsPvE.LEGENDARY),
     CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY, WeaponsPvE.LEGENDARY),
     FABLED_HEROICS_SCYTHE("Ghostly Sickles", new ItemStack(Material.SPIDER_EYE), LEGENDARY, WeaponsPvE.LEGENDARY),
