@@ -108,7 +108,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
 
                     @Override
                     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        if (pveMasterUpgrade) {
+                        if (wp.isInPve()) {
                             return currentDamageValue * convertToDivisionDecimal(damageReductionPve);
                         }
                         return currentDamageValue;
