@@ -124,7 +124,10 @@ public class StatsLeaderboardManager {
                                 if (value == PlayersCollections.SEASON_8 && lessThan20Plays) {
                                     continue;
                                 }
-                                concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
+                                DatabasePlayer cachedPlayer = concurrentHashMap.get(databasePlayer.getUuid());
+                                if (cachedPlayer == null || !cachedPlayer.getId().equals(databasePlayer.getId())) {
+                                    concurrentHashMap.put(databasePlayer.getUuid(), databasePlayer);
+                                }
                             }
                             resetLeaderboards(value, true);
                             loadedBoards.getAndIncrement();
