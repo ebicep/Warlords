@@ -117,10 +117,12 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         return uuid.equals(that.uuid);
     }
 
+
     @Override
     public String toString() {
         return "DatabasePlayer{" +
-                "uuid='" + uuid + '\'' +
+                "id='" + id + '\'' +
+                ", uuid=" + uuid +
                 ", name='" + name + '\'' +
                 '}';
     }
