@@ -381,16 +381,20 @@ public class StatsLeaderboardManager {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
                         Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
-                        String guildTag = "";
+                        Component guildTag = Component.empty();
                         if (guildPlayerPair != null) {
                             GuildTag tag = guildPlayerPair.getA().getTag();
                             if (tag != null) {
-                                guildTag = " " + tag.getTag(true);
+                                guildTag = tag.getTag(true);
                             }
                         }
-                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
-                                Permissions.getColor(databasePlayer) + ChatColor.BOLD + databasePlayer.getName() + guildTag + ChatColor.GRAY + ChatColor.BOLD + " - " +
-                                ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction().apply(databasePlayer));
+                        hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
+                                Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                         .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                                         .append(guildTag)
+                                         .append(Component.text(" - ", NamedTextColor.GRAY))
+                                         .append(Component.text(statsLeaderboard.getStringFunction().apply(databasePlayer)))
+                        ));
                         break;
                     }
                 }
