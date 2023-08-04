@@ -197,7 +197,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     }
                 }
             }.runTaskLater(40);
-            return false;
+            return true;
         }
 
         private void shockwave(Location loc, double radius, int tickDelay, long playerCount, float damageMultiplier, WarlordsEntity wp) {
