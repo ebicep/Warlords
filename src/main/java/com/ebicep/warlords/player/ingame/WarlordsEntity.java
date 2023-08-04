@@ -1324,7 +1324,7 @@ public abstract class WarlordsEntity {
                                                    .append(hitBuilder)
                                                    .append(secondHalf);
 
-        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid, receiver.getEntity() instanceof Player);
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(getUuid(), receiver.getEntity() instanceof Player);
         switch (databasePlayer.getChatDamageMode()) {
             case ALL -> {
                 if (receiver.showDebugMessage) {
@@ -1360,7 +1360,7 @@ public abstract class WarlordsEntity {
                                                  .append(GIVE_ARROW_GREEN)
                                                  .append(hitBuilder)
                                                  .append(secondHalf);
-        databasePlayer = DatabaseManager.getPlayer(uuid, sender.getEntity() instanceof Player);
+        databasePlayer = DatabaseManager.getPlayer(sender.getUuid(), sender.getEntity() instanceof Player);
         switch (databasePlayer.getChatDamageMode()) {
             case ALL -> {
                 if (sender.showDebugMessage) {
