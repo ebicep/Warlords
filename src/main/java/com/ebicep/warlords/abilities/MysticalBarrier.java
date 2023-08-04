@@ -125,10 +125,10 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 () -> {
                     wp.getCooldownManager().removeCooldown(mysticalBarrierCooldown);
                     PlayerFilter.playingGame(wp.getGame())
-                            .teammatesOfExcludingSelf(wp)
-                            .closestFirst(wp)
-                            .limit(1)
-                            .forEach(ally -> {
+                                .aliveTeammatesOfExcludingSelf(wp)
+                                .closestFirst(wp)
+                                .limit(1)
+                                .forEach(ally -> {
                                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), ally.getLocation(), 0, 180, 180, 2);
                                 Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
                                 int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
