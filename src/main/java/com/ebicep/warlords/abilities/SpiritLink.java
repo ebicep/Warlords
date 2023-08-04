@@ -127,25 +127,25 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
     }
 
     @Override
-    protected void onHit(WarlordsEntity warlordsPlayer, Player player, int hitCounter) {
+    protected void onHit(WarlordsEntity we, Player player, int hitCounter) {
         player.playSound(player.getLocation(), "mage.firebreath.activation", 1, 1);
-        if (warlordsPlayer.isInPve()) {
-            List<RegularCooldown> currentSpiritLinks = new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+        if (we.isInPve()) {
+            List<RegularCooldown> currentSpiritLinks = new CooldownFilter<>(we, RegularCooldown.class)
                     .filterCooldownClass(SpiritLink.class)
                     .stream()
                     .toList();
             if (currentSpiritLinks.size() >= 4) {
-                warlordsPlayer.getCooldownManager().removeCooldown(currentSpiritLinks.get(0));
+                we.getCooldownManager().removeCooldown(currentSpiritLinks.get(0));
             }
         }
         // speed buff
-        warlordsPlayer.addSpeedModifier(warlordsPlayer, "Spirit Link", 40, (int) (speedDuration * 20)); // 30 is ticks
-        warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+        we.addSpeedModifier(we, "Spirit Link", 40, (int) (speedDuration * 20)); // 30 is ticks
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LINK",
                 SpiritLink.class,
                 new SpiritLink(),
-                warlordsPlayer,
+                we,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
