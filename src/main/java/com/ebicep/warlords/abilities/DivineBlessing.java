@@ -28,10 +28,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -217,7 +214,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     @EventHandler(priority = EventPriority.LOWEST)
                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
                         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (cooldown.getFrom().equals(wp) &&
+                        if (Objects.equals(cooldown.getFrom(), wp) &&
                                 cooldown instanceof RegularCooldown<?> regularCooldown &&
                                 cooldown.getCooldownObject() instanceof MercifulHex
                         ) {
