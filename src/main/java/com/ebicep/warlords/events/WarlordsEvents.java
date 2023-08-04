@@ -80,6 +80,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public static void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         if (Bukkit.hasWhitelist() && Bukkit.getWhitelistedPlayers().stream().noneMatch(p -> p.getUniqueId().equals(event.getUniqueId()))) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, Component.text("The server is currently under maintenance!"));
             return;
         }
         if (DatabaseManager.playerService == null && DatabaseManager.enabled) {

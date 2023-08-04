@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.PoisonousHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -33,15 +34,6 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
-
-    @Nonnull
-    public static PoisonousHex getFromHex(WarlordsEntity from) {
-        return from.getSpec().getAbilities().stream()
-                   .filter(PoisonousHex.class::isInstance)
-                   .map(PoisonousHex.class::cast)
-                   .findFirst()
-                   .orElse(new PoisonousHex());
-    }
 
     private int maxFullDistance = 40;
     private int hexStacksPerHit = 1;
@@ -65,8 +57,8 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         description = Component.text("Throw Hex Fangs in front of you, dealing ")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" damage to up to ")
-                               .append(Component.text(maxEnemiesHit, NamedTextColor.RED))
-                               .append(Component.text(" enemies. Additionally, hit targets receive ")))
+                                                .append(Component.text(maxEnemiesHit, NamedTextColor.RED))
+                                                .append(Component.text(" enemies. Additionally, hit targets receive ")))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex.\n\nEach stack of Poisonous Hex deals "))
                                .append(formatRangeDamage(dotMinDamage, dotMaxDamage))
@@ -99,7 +91,21 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        return 0;
+        if (hit != null) {
+            return 0;
+        }
+
+        int playersHit = 0;
+        for (WarlordsEntity enemy : PlayerFilter
+                .entitiesAround(projectile.getCurrentLocation(), 2, 2, 2)
+                .aliveEnemiesOf(projectile.getShooter())
+                .excluding(projectile.getHit())
+        ) {
+            if (hitProjectile(projectile, enemy)) {
+                playersHit++;
+            }
+        }
+        return playersHit;
     }
 
     @Override
@@ -114,88 +120,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
-        if (projectile.getHit().contains(hit)) {
-            return;
-        }
-        if (projectile.getHit().size() >= maxEnemiesHit) {
-            return;
-        }
-        WarlordsEntity wp = projectile.getShooter();
-        Location currentLocation = projectile.getCurrentLocation();
-        Location startingLocation = projectile.getStartingLocation();
-
-        Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 1, 0.9f);
-
-        double distanceSquared = startingLocation.distanceSquared(currentLocation);
-        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
-        if (toReduceBy < .2) {
-            toReduceBy = .2;
-        }
-        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-        if (hit.onHorse()) {
-            numberOfDismounts++;
-        }
-        hit.addDamageInstance(
-                wp,
-                name,
-                (float) (minDamageHeal * toReduceBy),
-                (float) (maxDamageHeal * toReduceBy),
-                critChance,
-                critMultiplier
-        );
-        givePoisonousHex(wp, hit);
-        if (projectile.getHit().size() >= maxEnemiesHit) {
-            getProjectiles(projectile).forEach(InternalProjectile::cancel);
-        }
-    }
-
-    public static void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
-        PoisonousHex fromHex = getFromHex(from);
-        String hexName = fromHex.getName();
-        int tickDuration = fromHex.getTickDuration();
-        int dotTickFrequency = fromHex.getDotTickFrequency();
-        float dotMinDamage = fromHex.getDotMinDamage();
-        float dotMaxDamage = fromHex.getDotMaxDamage();
-        to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
-        to.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Poisonous Hex",
-                "PHEX",
-                PoisonousHex.class,
-                new PoisonousHex(),
-                from,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                    to.addDamageInstance(
-                            from,
-                            hexName,
-                            dotMinDamage,
-                            dotMaxDamage,
-                            0,
-                            100,
-                            EnumSet.of(InstanceFlags.NO_DISMOUNT)
-                    );
-                },
-                tickDuration * 2,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % dotTickFrequency == 0 && ticksElapsed != 0) {
-                        to.addDamageInstance(
-                                from,
-                                hexName,
-                                dotMinDamage,
-                                dotMaxDamage,
-                                0,
-                                100,
-                                EnumSet.of(InstanceFlags.NO_DISMOUNT)
-                        );
-                    }
-                })
-        ) {
-            @Override
-            public PlayerNameData addSuffixFromOther() {
-                return new PlayerNameData(Component.text("PHEX", NamedTextColor.RED), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CONJURER);
-            }
-        });
+        hitProjectile(projectile, hit);
     }
 
     @Override
@@ -273,6 +198,101 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         return 0.7f;
     }
 
+    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
+        if (projectile.getHit().contains(hit)) {
+            return false;
+        }
+        if (projectile.getHit().size() >= maxEnemiesHit) {
+            return false;
+        }
+        WarlordsEntity wp = projectile.getShooter();
+        Location currentLocation = projectile.getCurrentLocation();
+        Location startingLocation = projectile.getStartingLocation();
+
+        Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 1, 0.9f);
+
+        double distanceSquared = startingLocation.distanceSquared(currentLocation);
+        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+        if (toReduceBy < .2) {
+            toReduceBy = .2;
+        }
+        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+        if (hit.onHorse()) {
+            numberOfDismounts++;
+        }
+        hit.addDamageInstance(
+                wp,
+                name,
+                (float) (minDamageHeal * toReduceBy),
+                (float) (maxDamageHeal * toReduceBy),
+                critChance,
+                critMultiplier
+        );
+        givePoisonousHex(wp, hit);
+        if (projectile.getHit().size() >= maxEnemiesHit) {
+            getProjectiles(projectile).forEach(InternalProjectile::cancel);
+        }
+        return true;
+    }
+
+    public static void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
+        PoisonousHex fromHex = getFromHex(from);
+        String hexName = fromHex.getName();
+        int tickDuration = fromHex.getTickDuration();
+        int dotTickFrequency = fromHex.getDotTickFrequency();
+        float dotMinDamage = fromHex.getDotMinDamage();
+        float dotMaxDamage = fromHex.getDotMaxDamage();
+        to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Poisonous Hex",
+                "PHEX",
+                PoisonousHex.class,
+                new PoisonousHex(),
+                from,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                    to.addDamageInstance(
+                            from,
+                            hexName,
+                            dotMinDamage,
+                            dotMaxDamage,
+                            0,
+                            100,
+                            EnumSet.of(InstanceFlags.NO_DISMOUNT)
+                    );
+                },
+                tickDuration * 2,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % dotTickFrequency == 0 && ticksElapsed != 0) {
+                        to.addDamageInstance(
+                                from,
+                                hexName,
+                                dotMinDamage,
+                                dotMaxDamage,
+                                0,
+                                100,
+                                EnumSet.of(InstanceFlags.NO_DISMOUNT)
+                        );
+                    }
+                })
+        ) {
+            @Override
+            public PlayerNameData addSuffixFromOther() {
+                return new PlayerNameData(Component.text("PHEX", NamedTextColor.RED), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CONJURER);
+            }
+        });
+    }
+
+    @Nonnull
+    public static PoisonousHex getFromHex(WarlordsEntity from) {
+        return from.getSpec().getAbilities().stream()
+                   .filter(PoisonousHex.class::isInstance)
+                   .map(PoisonousHex.class::cast)
+                   .findFirst()
+                   .orElse(new PoisonousHex());
+    }
+
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -281,6 +301,10 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public int getDotTickFrequency() {
+        return dotTickFrequency;
     }
 
     public float getDotMinDamage() {
@@ -299,16 +323,12 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         this.dotMaxDamage = dotMaxDamage;
     }
 
-    public int getMaxStacks() {
-        return maxStacks;
-    }
-
-    public int getDotTickFrequency() {
-        return dotTickFrequency;
-    }
-
     public void setDotTickFrequency(int dotTickFrequency) {
         this.dotTickFrequency = dotTickFrequency;
+    }
+
+    public int getMaxStacks() {
+        return maxStacks;
     }
 
     public int getMaxEnemiesHit() {

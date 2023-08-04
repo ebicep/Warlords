@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.arcanist.luminary.MercifulHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -102,7 +103,22 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        return 0;
+        if (hit != null) {
+            return 0;
+        }
+
+        int playersHit = 0;
+        for (WarlordsEntity enemy : PlayerFilter
+                .entitiesAround(projectile.getCurrentLocation(), 2, 2, 2)
+                .excluding(projectile.getHit())
+        ) {
+            if (hitProjectile(projectile, enemy)) {
+                playersHit++;
+            } else {
+                break;
+            }
+        }
+        return playersHit;
     }
 
     @Override
@@ -117,8 +133,13 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        hitProjectile(projectile, hit);
+
+    }
+
+    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
         if (projectile.getHit().contains(hit)) {
-            return;
+            return false;
         }
 
         WarlordsEntity wp = projectile.getShooter();
@@ -145,7 +166,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                     critMultiplier
             );
             if (teammatesHit > maxAlliesHit) {
-                return;
+                return false;
             }
             giveMercifulHex(wp, hit);
             if (pveMasterUpgrade) {
@@ -163,7 +184,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                     critMultiplier
             );
         }
-
+        return true;
     }
 
     public static void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {

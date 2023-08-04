@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -89,7 +90,20 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        return 0;
+        if (hit != null) {
+            return 0;
+        }
+
+        int playersHit = 0;
+        for (WarlordsEntity enemy : PlayerFilter
+                .entitiesAround(projectile.getCurrentLocation(), 2, 2, 2)
+                .excluding(projectile.getHit())
+        ) {
+            if (hitProjectile(projectile, enemy)) {
+                playersHit++;
+            }
+        }
+        return playersHit;
     }
 
     @Override
@@ -104,8 +118,12 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        hitProjectile(projectile, hit);
+    }
+
+    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
         if (projectile.getHit().contains(hit)) {
-            return;
+            return false;
         }
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
@@ -116,13 +134,13 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         if (hit.isTeammate(wp)) {
             int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
             if (teammatesHit > maxAlliesHit) {
-                return;
+                return false;
             }
             giveFortifyingHex(wp, hit);
         } else {
             int enemiesHit = (int) hits.stream().filter(we -> !we.isTeammate(wp)).count();
             if (enemiesHit > maxEnemiesHit) {
-                return;
+                return false;
             }
             double distanceSquared = startingLocation.distanceSquared(currentLocation);
             double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
@@ -142,6 +160,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         if (hits.size() == 1) {
             giveFortifyingHex(wp, wp);
         }
+        return true;
     }
 
     @Override
