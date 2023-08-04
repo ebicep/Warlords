@@ -179,7 +179,8 @@ public class WeaponManagerMenu {
                     for (int i = 0; i < weaponsToSalvage.size(); i++) {
                         AbstractWeapon weapon = weaponsToSalvage.get(i);
                         salvageLore.add(Component.textOfChildren(
-                                Component.text(" - " + weapon.getName(), NamedTextColor.GRAY),
+                                Component.text(" - ", NamedTextColor.GRAY)
+                                         .append(weapon.getName()),
                                 Component.text(" (" + ((WeaponScore) weapon).getWeaponScore() + ")", NamedTextColor.YELLOW)
                         ));
                         if (i > 50) {
@@ -515,15 +516,15 @@ public class WeaponManagerMenu {
                                     )
                             )
 
-                                    .get(),
-                            (m, e) -> {
-                                if (e.isLeftClick()) {
-                                    for (Map.Entry<Currencies, Long> currenciesLongEntry : legendaryWeapon.getStarPieceBonusCost(selectedStarPiece)
-                                                                                                          .entrySet()
-                                    ) {
-                                        Currencies currency = currenciesLongEntry.getKey();
-                                        Long cost = currenciesLongEntry.getValue();
-                                        if (pveStats.getCurrencyValue(currency) < cost) {
+                            .get(),
+                    (m, e) -> {
+                        if (e.isLeftClick()) {
+                            for (Map.Entry<Currencies, Long> currenciesLongEntry : legendaryWeapon.getStarPieceBonusCost(selectedStarPiece)
+                                                                                                  .entrySet()
+                            ) {
+                                Currencies currency = currenciesLongEntry.getKey();
+                                Long cost = currenciesLongEntry.getValue();
+                                if (pveStats.getCurrencyValue(currency) < cost) {
                                             player.sendMessage(Component.text("You need ", NamedTextColor.RED)
                                                                         .append(currency.getCostColoredName(cost))
                                                                         .append(Component.text(" to apply this star piece!"))
