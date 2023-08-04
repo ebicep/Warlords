@@ -15,7 +15,7 @@ public class ResourcePackCommand extends BaseCommand {
     @Default
     @Description("Prints the resourcepack link")
     public void resource(Player player) {
-        player.sendMessage(Component.text("Download Link: https://bit.ly/3DFZTmI", NamedTextColor.GREEN, TextDecoration.BOLD));
+        player.sendMessage(Component.text("Download Link: https://bit.ly/47lZHGz", NamedTextColor.GREEN, TextDecoration.BOLD));
     }
 
 }
