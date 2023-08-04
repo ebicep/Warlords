@@ -391,6 +391,7 @@ public class StatsLeaderboardManager {
                         hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
                                 Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
                                          .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                                         .append(Component.space())
                                          .append(guildTag)
                                          .append(Component.text(" - ", NamedTextColor.GRAY))
                                          .append(Component.text(statsLeaderboard.getStringFunction().apply(databasePlayer)))
@@ -428,6 +429,7 @@ public class StatsLeaderboardManager {
                         hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
                                 Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
                                          .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                                         .append(Component.space())
                                          .append(guildTag)
                                          .append(Component.text(" - ", NamedTextColor.GRAY))
                                          .append(Component.text(eventLeaderboard.getStringFunction().apply(databasePlayer, eventLeaderboard.getEventTime())))

@@ -124,6 +124,7 @@ public class EventLeaderboard {
             hologramLines.appendText(LegacyComponentSerializer.legacySection().serialize(
                     Component.text((i + 1) + ". ", NamedTextColor.YELLOW)
                              .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                             .append(Component.space())
                              .append(guildTag)
                              .append(Component.text(" - ", NamedTextColor.GRAY))
                              .append(Component.text(stringFunction.apply(databasePlayer, eventTime)))
