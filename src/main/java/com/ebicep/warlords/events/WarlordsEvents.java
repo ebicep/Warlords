@@ -92,7 +92,7 @@ public class WarlordsEvents implements Listener {
             UUID uuid = event.getUniqueId();
             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                 DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
-                    if (!Objects.equals(databasePlayer.getName(), event.getName())) {
+                    if (databasePlayer.getName() == null || !Objects.equals(databasePlayer.getName(), event.getName())) {
                         databasePlayer.setName(event.getName());
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
                     }

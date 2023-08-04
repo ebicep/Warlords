@@ -18,7 +18,6 @@ import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -161,16 +160,9 @@ public class StatsLeaderboard {
                     guildTag = tag.getTag(false);
                 }
             }
-            String name = databasePlayer.getName();
-            if (name == null) {
-                name = Bukkit.getOfflinePlayer(databasePlayer.getUuid()).getName();
-            }
-            if (name == null) {
-                name = "Unknown";
-            }
             hologramLines.appendText(LegacyComponentSerializer.legacySection().serialize(
                     Component.text((i + 1) + ". ", NamedTextColor.YELLOW)
-                             .append(Component.text(name, Permissions.getColor(databasePlayer)))
+                             .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
                              .append(Component.space())
                              .append(guildTag)
                              .append(Component.text(" - ", NamedTextColor.GRAY))

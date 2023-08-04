@@ -172,8 +172,19 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     }
 
 
-
     public String getName() {
+        if (name == null) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                name = player.getName();
+            }
+        }
+        if (name == null) {
+            name = Bukkit.getOfflinePlayer(uuid).getName();
+        }
+        if (name == null) {
+            name = "?";
+        }
         return name;
     }
 
@@ -410,12 +421,12 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         this.permissions = permissions;
     }
 
-    public boolean hasPermission(String permission) {
-        return permissions.contains(permission);
-    }
-
     public boolean isPatreon() {
         return hasPermission("group.patreon") || hasPermission("group.contentcreator");
+    }
+
+    public boolean hasPermission(String permission) {
+        return permissions.contains(permission);
     }
 
 }
