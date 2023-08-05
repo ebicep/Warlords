@@ -100,7 +100,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
                         },
-                        6 // a little longer to make sure theres no gaps in the effect
+                        6 // a little longer to make sure there's no gaps in the effect
                 ) {
                     @Override
                     public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
