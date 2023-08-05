@@ -523,7 +523,7 @@ public class EndState implements State, TimerDebugAble {
             ExperienceManager.giveLevelUpMessage(player, experienceOnSpec - experienceEarnedSpec, experienceOnSpec);
             ChatUtils.sendCenteredMessage(player,
                     Component.text("+", NamedTextColor.DARK_GRAY)
-                             .append(Component.text(NumberFormat.addCommaAndRound(experienceUniversal), NamedTextColor.DARK_AQUA))
+                             .append(Component.text(NumberFormat.addCommaAndRound(experienceEarnedUniversal), NamedTextColor.DARK_AQUA))
                              .append(Component.text(" Universal Experience", NamedTextColor.GOLD))
                              .hoverEvent(HoverEvent.showText(universalExpSummary.build()))
             );

@@ -442,7 +442,7 @@ public class ExperienceManager {
                     true,
                     Component.text().color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD)
                              .append(Component.text("   ", NamedTextColor.GREEN, TextDecoration.OBFUSCATED))
-                             .append(Component.text("LEVEL UP!", NamedTextColor.AQUA))
+                             .append(Component.text("LEVEL UP! ", NamedTextColor.AQUA))
                              .append(Component.text("["))
                              .append(Component.text(levelBefore, NamedTextColor.GRAY))
                              .append(Component.text("]"))
