@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -119,7 +118,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+        EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.ORANGE)
                                                                        .with(FireworkEffect.Type.BURST)
                                                                        .withTrail()
@@ -152,7 +151,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                     .entitiesAround(wp, 6, 6, 6)
                     .aliveEnemiesOf(wp)
             ) {
-                enemy.getCooldownManager().removeCooldown(Fireball.class, false);
+                enemy.getCooldownManager().removeCooldown(BlightedScorch.class, false);
                 enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
                         "BLI",
