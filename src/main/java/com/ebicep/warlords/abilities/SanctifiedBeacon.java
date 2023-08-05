@@ -74,6 +74,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     public SanctifiedBeacon getObject(Location groundLocation, CircleEffect effect) {
         crystal = Utils.spawnArmorStand(groundLocation, armorStand -> {
             armorStand.setGravity(true);
+            armorStand.setMarker(true);
             armorStand.getEquipment().setHelmet(new ItemStack(Material.BROWN_STAINED_GLASS_PANE));
         });
         return new SanctifiedBeacon(groundLocation, effect);
