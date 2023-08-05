@@ -674,8 +674,8 @@ public class EndState implements State, TimerDebugAble {
                 gotAnyDrops = true;
                 ChatUtils.sendCenteredMessage(player,
                         Component.text("+", NamedTextColor.GRAY)
-                                 .append(Component.text(NumberFormat.addCommaAndRound(fragmentGain), NamedTextColor.GREEN))
-                                 .append(Component.text(" " + Currencies.LEGEND_FRAGMENTS.getColoredName() + (fragmentGain == 1 ? "" : "s")))
+                                 .append(Component.text(NumberFormat.addCommaAndRound(fragmentGain) + " ", NamedTextColor.GREEN))
+                                 .append(Currencies.LEGEND_FRAGMENTS.getColoredName().append(Component.text(fragmentGain == 1 ? "" : "s")))
                 );
             }
             HashMap<MobDrops, Long> mobDropsGained = playerPveRewards.getMobDropsGained();
