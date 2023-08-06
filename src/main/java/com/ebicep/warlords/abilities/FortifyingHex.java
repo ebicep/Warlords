@@ -306,6 +306,10 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         this.maxAlliesHit = maxAlliesHit;
     }
 
+    public void setDamageReduction(int damageReduction) {
+        this.damageReduction = damageReduction;
+    }
+
     static class FortifyingHexShield extends Shield {
 
         private int maxStacks;

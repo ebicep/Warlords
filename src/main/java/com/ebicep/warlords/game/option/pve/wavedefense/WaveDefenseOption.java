@@ -544,7 +544,7 @@ public class WaveDefenseOption implements PveOption {
 
                     if (difficulty == DifficultyIndex.ENDLESS) {
                         switch (waveCounter) {
-                            case 50, 100 -> getGame().forEachOnlineWarlordsPlayer(wp -> {
+                            case 50, 75 -> getGame().forEachOnlineWarlordsPlayer(wp -> {
                                 wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
                                 wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                             });

@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 
 public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
 
-    private int damageResistance = 15;
+    private int damageResistance = 10;
 
     @Override
     public Component getBonus() {

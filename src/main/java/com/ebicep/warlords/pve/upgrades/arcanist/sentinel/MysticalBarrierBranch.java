@@ -13,6 +13,10 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
     public MysticalBarrierBranch(AbilityTree abilityTree, MysticalBarrier ability) {
         super(abilityTree, ability);
 
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.setRuneTimerIncrease(0.5f);
+        }
+
         treeA.add(new Upgrade(
                 "Zeal - Tier I",
                 "-5% Cooldown reduction",
