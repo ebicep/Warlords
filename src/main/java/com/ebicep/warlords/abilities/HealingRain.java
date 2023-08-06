@@ -173,7 +173,12 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 () -> {
                     if (wp.isAlive()) {
                         wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " §7You moved your §aHealing Rain §7to your current location.");
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text(" You moved your ", NamedTextColor.GRAY)
+                                                 .append(Component.text("Healing Rain", NamedTextColor.GREEN))
+                                                 .append(Component.text(" to your current location."))
+                                )
+                        );
                         location.setX(wp.getLocation().getX());
                         location.setY(wp.getLocation().getY());
                         location.setZ(wp.getLocation().getZ());
