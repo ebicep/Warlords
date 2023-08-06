@@ -44,7 +44,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                 1500,
                 2000,
                 new VoidShred(),
-                new AdvancedVoidShred(200, 300, 2, -70, voidRadius, 20)
+                new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 20)
         );
     }
 
