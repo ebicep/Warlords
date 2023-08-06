@@ -69,7 +69,7 @@ public class DatabaseManager {
     public static GameEventsService gameEventsService;
     public static WeeklyBlessingsService weeklyBlessingsService;
     public static IllusionVendorService illusionVendorService;
-    public static boolean enabled = true;
+    public static boolean enabled = false;
 
     public static void init() {
         if (!enabled) {

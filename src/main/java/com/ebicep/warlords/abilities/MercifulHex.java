@@ -51,13 +51,13 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     private int subsequentReduction = 40;
     private float minSelfHeal = 230;
     private float maxSelfHeal = 310;
-    private float dotMinHeal = 24;
-    private float dotMaxHeal = 34;
+    private float dotMinHeal = 20;
+    private float dotMaxHeal = 30;
     private int maxStacks = 3;
     private int tickDuration = 60;
 
     public MercifulHex() {
-        super("Merciful Hex", 307, 415, 0, 70, 20, 180, 2.5, 40, true);
+        super("Merciful Hex", 297, 405, 0, 70, 20, 180, 2.5, 40, true);
         this.playerHitbox += .75; //TODO maybe inflate y separately
     }
 
