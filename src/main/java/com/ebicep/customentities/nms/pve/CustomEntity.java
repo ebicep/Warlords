@@ -93,7 +93,7 @@ public interface CustomEntity<T extends Mob> {
     default void aiMeleeAttack(double speedTowardsTarget) {
         T entity = get();
         if (entity instanceof PathfinderMob) {
-            entity.goalSelector.addGoal(1, new MeleeAttackGoal((PathfinderMob) entity, speedTowardsTarget, true));
+            entity.goalSelector.addGoal(1, new MeleeAttackGoal((PathfinderMob) entity, speedTowardsTarget, false));
         }
     }
 

@@ -106,6 +106,29 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
 
                     wp.getEntity().teleport(warpLocation);
                     warpTrail.clear();
+
+                    if (pveMasterUpgrade) {
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Frostbite Leap",
+                                "WARP RES",
+                                TimeWarpCryomancer.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager2 -> {
+                                },
+                                cooldownManager2 -> {
+                                },
+                                5 * 20,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                })
+                        ) {
+                            @Override
+                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                return currentDamageValue * .2f;
+                            }
+                        });
+                    }
                 },
                 cooldownManager -> {
                     if (pveOption != null && cryoPod != null && pveOption.getMobs().contains(cryoPod)) {
@@ -193,26 +216,6 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                     1,
                     () -> {
                         timeWarpCooldown.setTicksLeft(1);
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Frostbite Leap",
-                                "WARP RES",
-                                TimeWarpCryomancer.class,
-                                null,
-                                wp,
-                                CooldownTypes.ABILITY,
-                                cooldownManager2 -> {
-                                },
-                                cooldownManager2 -> {
-                                },
-                                5 * 20,
-                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                })
-                        ) {
-                            @Override
-                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * .2f;
-                            }
-                        });
                     },
                     false,
                     secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown)

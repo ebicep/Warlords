@@ -82,6 +82,11 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
         return true;
     }
 
+    @Override
+    public boolean canContinueToUse() {
+        return mob.getTarget() != null && mob.getTarget().valid;
+    }
+
     protected AABB getTargetSearchArea(double distance) {
         return this.mob.getBoundingBox().inflate(distance, 4.0D, distance);
     }
@@ -91,5 +96,6 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
         this.mob.setTarget(this.targetEntity, EntityTargetEvent.TargetReason.CUSTOM, true);
         super.start();
     }
+
 
 }
