@@ -218,9 +218,9 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
             location.add(0, 1, 0);
         }
         Location blockToGet = location.clone().add(0, -1, 0);
-        if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR) {
+        if (location.getWorld().getBlockAt(blockToGet).getType() == Material.AIR) {
             blockToGet.add(0, -1, 0);
-            if (location.getWorld().getBlockAt(location.clone().add(0, -2, 0)).getType() == Material.AIR) {
+            if (location.getWorld().getBlockAt(blockToGet).getType() == Material.AIR) {
                 blockToGet.add(0, -1, 0);
             }
         }
@@ -230,7 +230,7 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
                 type = Material.DIRT;
             }
         }
-        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
+        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location.add(0, .6, 0), type.createBlockData());
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         WarlordsEvents.addEntityUUID(fallingBlock);
