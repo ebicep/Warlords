@@ -675,7 +675,7 @@ public class ItemMichaelMenu {
                                     Component.text((blessingFound ? NumberFormat.formatOptionalHundredths(item.getTier().blessedChance * 100) : "100") + "%",
                                             NamedTextColor.YELLOW
                                     ),
-                                    Component.text(" " + itemBlessing.getDescription(), NamedTextColor.GREEN)
+                                    Component.text(" ", NamedTextColor.GREEN).append(itemBlessing.getDescription())
                             )
                     );
                 }
