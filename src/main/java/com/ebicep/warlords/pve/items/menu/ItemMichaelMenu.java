@@ -659,7 +659,7 @@ public class ItemMichaelMenu {
                                     NamedTextColor.YELLOW
                             )
                     ),
-                            Component.text(" ".repeat(extraSpace + 1) + itemModifier.getDescription(), NamedTextColor.GREEN)
+                            Component.text(" ".repeat(extraSpace + 1), NamedTextColor.GREEN).append(itemModifier.getDescription())
                     );
                 }
             }
