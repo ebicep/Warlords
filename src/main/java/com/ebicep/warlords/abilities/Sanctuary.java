@@ -35,7 +35,7 @@ import java.util.List;
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     private int hexTickDurationIncrease = 40;
-    private int additionalDamageReduction = 12;
+    private int additionalDamageReduction = 10;
     private int tickDuration = 240;
 
     public Sanctuary() {

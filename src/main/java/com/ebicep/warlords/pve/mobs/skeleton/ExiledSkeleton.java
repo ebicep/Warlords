@@ -119,10 +119,10 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.ORANGE)
-                                                                       .with(FireworkEffect.Type.BURST)
-                                                                       .withTrail()
-                                                                       .build());
+                                                           .withColor(Color.ORANGE)
+                                                           .with(FireworkEffect.Type.BURST)
+                                                           .withTrail()
+                                                           .build());
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
     }
 

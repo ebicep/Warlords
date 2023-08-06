@@ -31,11 +31,11 @@ public class EnergySeerLuminary extends AbstractAbility implements PurpleAbility
 
     // TODO:  reintegrate with abstract energy seer
 
-    private float conversionAmount = 4;
+    private float conversionAmount = 2;
     private int tickDuration = 100;
     private int energyRestore = 40;
     private int bonusDuration = 100;
-    private float healingIncrease = 20;
+    private float healingIncrease = 10;
 
     public EnergySeerLuminary() {
         super("Energy Seer", 0, 0, 26, 20, 0, 0);

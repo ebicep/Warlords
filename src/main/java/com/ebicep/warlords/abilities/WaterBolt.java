@@ -134,8 +134,8 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                 }
                 hit.addDamageInstance(shooter,
                         name,
-                        (float) (minDamage * directHitMultiplier * toReduceBy),
-                        (float) (maxDamage * directHitMultiplier * toReduceBy),
+                        (float) (minDamage * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                        (float) (maxDamage * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                         critChance,
                         critMultiplier
                 );

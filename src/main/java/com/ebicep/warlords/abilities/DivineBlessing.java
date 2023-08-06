@@ -33,7 +33,7 @@ import java.util.*;
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     private int hexTickDurationIncrease = 40;
-    private int hexHealingBonus = 50;
+    private int hexHealingBonus = 30;
     private int lethalDamageHealing = 15;
     private int postHealthTickDelay = 40;
     private int postHealthHealAmount = 800;
