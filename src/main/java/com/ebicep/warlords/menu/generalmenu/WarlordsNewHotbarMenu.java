@@ -844,7 +844,9 @@ public class WarlordsNewHotbarMenu {
                 }
                 ItemStack icon;
                 if (ability == apc.getWeapon()) {
-                    icon = apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem());
+                    icon = new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem()))
+                            .noLore()
+                            .get();
                 } else {
                     icon = ability.getAbilityIcon();
                 }
