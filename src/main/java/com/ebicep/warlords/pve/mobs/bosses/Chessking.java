@@ -120,8 +120,8 @@ public class Chessking extends AbstractSlime implements BossMob {
                 we.addDamageInstance(
                         wp,
                         name,
-                        minDamageHeal,
-                        maxDamageHeal,
+                        2800,
+                        3600,
                         critChance,
                         critMultiplier
                 );
