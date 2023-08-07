@@ -81,7 +81,7 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
 
         masterUpgrade = new Upgrade(
                 "Beacon of Gloom",
-                "Beacon of Shadow - Master Upgrade",
+                "Sanctified Beacon - Master Upgrade",
                 """
                         Enemies within the radius have their movement speed reduced by 30%. Additionally, the beacon will grant Merciful Hex stacks twice as fast.
                         """,

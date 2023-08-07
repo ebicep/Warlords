@@ -81,12 +81,11 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
         ));
         treeB.add(new Upgrade(
                 "Alleviate - Tier IV",
-                "+40% Healing\n-30 Energy cost",
+                "+40% Healing",
                 20000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.4f);
                     ability.setMaxDamageHeal(maxDamage * 1.4f);
-                    ability.setEnergyCost(ability.getEnergyCost() - 30);
                 }
         ));
 

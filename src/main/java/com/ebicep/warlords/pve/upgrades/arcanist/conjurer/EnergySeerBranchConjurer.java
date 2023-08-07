@@ -48,7 +48,7 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
 
         treeB.add(new Upgrade(
                 "Zeal - Tier I",
-                "5% Cooldown reduction",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
                     ability.setCooldown(cooldown * 0.95f);
@@ -56,7 +56,7 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
         ));
         treeB.add(new Upgrade(
                 "Zeal - Tier II",
-                "10% Cooldown reduction",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
                     ability.setCooldown(cooldown * 0.9f);
@@ -64,7 +64,7 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
         ));
         treeB.add(new Upgrade(
                 "Zeal - Tier III",
-                "15% Cooldown reduction",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
                     ability.setCooldown(cooldown * 0.85f);
@@ -72,7 +72,7 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
         ));
         treeB.add(new Upgrade(
                 "Zeal - Tier IV",
-                "20% Cooldown reduction",
+                "-20% Cooldown reduction",
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.8f);

@@ -134,7 +134,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                 "Benevolent Hex",
                 "Merciful Hex - Master Upgrade",
                 """
-                        All allies hit receive 1 stack of Merciful Hex. Increase additional targets hit healing/damage by 20%.
+                        All allies hit receive 1 extra stack of Merciful Hex. Increase additional targets hit healing/damage by 20%.
                         """,
                 50000,
                 () -> {
