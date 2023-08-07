@@ -96,7 +96,7 @@ public class Chessking extends AbstractSlime implements BossMob {
     private static class Belch extends AbstractAbility {
 
         public Belch() {
-            super("Belch", 10, 100);
+            super("Belch", 2800, 3600, 10, 100);
         }
 
         @Override
@@ -120,8 +120,8 @@ public class Chessking extends AbstractSlime implements BossMob {
                 we.addDamageInstance(
                         wp,
                         name,
-                        2800,
-                        3600,
+                        minDamageHeal,
+                        maxDamageHeal,
                         critChance,
                         critMultiplier
                 );
