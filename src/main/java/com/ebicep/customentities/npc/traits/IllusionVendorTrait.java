@@ -139,7 +139,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
                                           .addLore(
                                                   Component.empty(),
                                                   Component.text("Cost: ", NamedTextColor.GRAY).append(Currencies.ILLUSION_SHARD.getCostColoredName(cost)),
-                                                  Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(1 - purchasedAmount))
+                                                  Component.text("Stock: ", NamedTextColor.GRAY).append(Component.text(1 - purchasedAmount, NamedTextColor.YELLOW))
                                           )
                                           .get(),
                                   (m, e) -> {
