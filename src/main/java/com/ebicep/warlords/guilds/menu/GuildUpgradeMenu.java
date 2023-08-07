@@ -94,7 +94,7 @@ public class GuildUpgradeMenu {
                     new ItemBuilder(Utils.getWoolFromIndex(i + 5))
                             .name(Component.text("Tier " + tier, NamedTextColor.GREEN))
                             .lore(
-                                    Component.text("Effect Bonus: ", NamedTextColor.GRAY)
+                                    Component.text("Effect Bonus: ", NamedTextColor.YELLOW)
                                              .append(Component.text(upgradesTemporary.getEffectBonusFromTier(tier), NamedTextColor.GREEN)),
                                     Component.text("Cost: ", NamedTextColor.GRAY)
                                              .append(Component.text(NumberFormat.addCommas(upgradeCost) + " Guild Coins", NamedTextColor.GREEN)),
@@ -116,7 +116,7 @@ public class GuildUpgradeMenu {
                                                 Component.text(tier, NamedTextColor.GREEN)
                                         ),
                                         Component.textOfChildren(
-                                                Component.text("Effect Bonus: ", NamedTextColor.GRAY),
+                                                Component.text("Effect Bonus: ", NamedTextColor.YELLOW),
                                                 Component.text(upgradesTemporary.getEffectBonusFromTier(tier), NamedTextColor.GREEN)
                                         ),
                                         Component.empty(),
@@ -181,7 +181,7 @@ public class GuildUpgradeMenu {
                                 Component.text(nextTier, NamedTextColor.GREEN)
                         ),
                         Component.textOfChildren(
-                                Component.text("Effect Bonus: ", NamedTextColor.GRAY),
+                                Component.text("Effect Bonus: ", NamedTextColor.YELLOW),
                                 Component.text(upgradesPermanent.getEffectBonusFromTier(nextTier), NamedTextColor.GREEN)
                         ),
                         Component.empty(),

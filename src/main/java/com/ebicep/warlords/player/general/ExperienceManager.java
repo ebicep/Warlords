@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ExperienceManager {
 
@@ -157,7 +158,7 @@ public class ExperienceManager {
                     .asyncFirst(() -> DatabaseManager.playerService.findByUUID(UUID.fromString(s)))
                     .syncLast(databasePlayer -> {
                         databasePlayer.setExperience(databasePlayer.getExperience() + totalExperienceGain);
-                        databasePlayer.addFutureMessage(new FutureMessage(awardSummary.getMessages(), true));
+                        databasePlayer.addFutureMessage(FutureMessage.create(awardSummary.getMessages(), true));
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     }).execute();
         });
@@ -227,7 +228,7 @@ public class ExperienceManager {
             Bukkit.getPluginManager().callEvent(new WarlordsGiveExperienceEvent(warlordsPlayer, expGain));
         } else {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME);
-            float multiplier = 1;
+            float multiplier = 1.5f;
             //pubs
 //            if (!isCompGame) {
 //                multiplier *= .1;
@@ -323,11 +324,9 @@ public class ExperienceManager {
     }
 
     public static long getExperienceForClass(UUID uuid, Classes classes) {
-        if (DatabaseManager.playerService == null) {
-            return 0;
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getClass(classes).getExperience();
+        AtomicLong experience = new AtomicLong(0);
+        DatabaseManager.getPlayer(uuid, databasePlayer -> experience.set(databasePlayer.getClass(classes).getExperience()));
+        return experience.get();
     }
 
     public static long getExperienceForSpec(UUID uuid, Specializations spec) {
@@ -335,11 +334,9 @@ public class ExperienceManager {
     }
 
     private static long getExperienceFromSpec(UUID uuid, Specializations specializations) {
-        if (DatabaseManager.playerService == null) {
-            return 0;
-        }
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-        return databasePlayer == null ? 0L : databasePlayer.getSpec(specializations).getExperience();
+        AtomicLong experience = new AtomicLong(0);
+        DatabaseManager.getPlayer(uuid, databasePlayer -> experience.set(databasePlayer.getSpec(specializations).getExperience()));
+        return experience.get();
     }
 
     public static int getLevelForSpec(UUID uuid, Specializations spec) {
@@ -445,7 +442,7 @@ public class ExperienceManager {
                     true,
                     Component.text().color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD)
                              .append(Component.text("   ", NamedTextColor.GREEN, TextDecoration.OBFUSCATED))
-                             .append(Component.text("LEVEL UP!", NamedTextColor.AQUA))
+                             .append(Component.text("LEVEL UP! ", NamedTextColor.AQUA))
                              .append(Component.text("["))
                              .append(Component.text(levelBefore, NamedTextColor.GRAY))
                              .append(Component.text("]"))

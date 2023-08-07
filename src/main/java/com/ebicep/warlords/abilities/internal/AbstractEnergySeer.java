@@ -31,7 +31,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     protected int bonusDuration = 100;
 
     public AbstractEnergySeer() {
-        super("Energy Seer", 0, 0, 28, 0, 0, 0);
+        super("Energy Seer", 0, 0, 26, 0, 0, 0);
     }
 
     @Override
@@ -42,9 +42,9 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                                .append(Component.text(format(healingMultiplier * 100) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the energy expended for the next "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. If you healed for 4 instances, restore energy "))
+                               .append(Component.text(" seconds. If you healed for 4 instances, restore "))
                                .append(Component.text(energyRestore, NamedTextColor.YELLOW))
-                               .append(Component.text(" and "))
+                               .append(Component.text(" energy and "))
                                .append(getBonus())
                                .append(Component.text(" for "))
                                .append(Component.text(format(bonusDuration / 20f), NamedTextColor.GOLD))

@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.arcanist.luminary.MercifulHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -44,24 +45,25 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     }
 
     private int hexStacksPerHit = 1;
+    private int maxAlliesHit = 2;
     private float minDamage = 217;
     private float maxDamage = 292;
     private int subsequentReduction = 40;
     private float minSelfHeal = 230;
     private float maxSelfHeal = 310;
-    private float dotMinHeal = 30;
-    private float dotMaxHeal = 40;
+    private float dotMinHeal = 20;
+    private float dotMaxHeal = 30;
     private int maxStacks = 3;
-    private int tickDuration = 40;
+    private int tickDuration = 60;
 
     public MercifulHex() {
-        super("Merciful Hex", 307, 415, 0, 70, 20, 180, 2.5, 40, true);
+        super("Merciful Hex", 297, 405, 0, 70, 20, 180, 2.5, 40, true);
         this.playerHitbox += .75; //TODO maybe inflate y separately
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of energy forward. The first ally hit heals ")
+        description = Component.text("Send a wave of energy forward. The first two allies hit heal ")
                 .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                 .append(Component.text(" health (subsequent hit allies are healed for 40%) and receives "))
                 .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
@@ -101,7 +103,22 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        return 0;
+        if (hit != null) {
+            return 0;
+        }
+
+        int playersHit = 0;
+        for (WarlordsEntity enemy : PlayerFilter
+                .entitiesAround(projectile.getCurrentLocation(), 2, 2, 2)
+                .excluding(projectile.getHit())
+        ) {
+            if (hitProjectile(projectile, enemy)) {
+                playersHit++;
+            } else {
+                break;
+            }
+        }
+        return playersHit;
     }
 
     @Override
@@ -116,22 +133,30 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        hitProjectile(projectile, hit);
+
+    }
+
+    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
         if (projectile.getHit().contains(hit)) {
-            return;
+            return false;
         }
+
         WarlordsEntity wp = projectile.getShooter();
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         if (hit.onHorse()) {
             numberOfDismounts++;
         }
+
         List<WarlordsEntity> hits = projectile.getHit();
         if (hits.size() == 1) {
             giveMercifulHex(wp, wp);
         }
+
         boolean isTeammate = hit.isTeammate(wp);
         if (isTeammate) {
             int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
-            float reduction = teammatesHit == 1 ? 1 : subsequentReduction / 100f;
+            float reduction = teammatesHit <= maxAlliesHit ? 1 : convertToPercent(subsequentReduction);
             hit.addHealingInstance(
                     wp,
                     name,
@@ -140,12 +165,16 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                     critChance,
                     critMultiplier
             );
-            if (teammatesHit == 1 || pveMasterUpgrade) {
+            if (teammatesHit > maxAlliesHit) {
+                return false;
+            }
+            giveMercifulHex(wp, hit);
+            if (pveMasterUpgrade) {
                 giveMercifulHex(wp, hit);
             }
         } else {
             int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
-            float reduction = enemiesHit == 1 ? 1 : subsequentReduction / 100f;
+            float reduction = enemiesHit == 1 ? 1 : convertToPercent(subsequentReduction);
             hit.addDamageInstance(
                     wp,
                     name,
@@ -155,7 +184,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                     critMultiplier
             );
         }
-
+        return true;
     }
 
     public static void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
@@ -198,14 +227,17 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         ) {
             @Override
             public PlayerNameData addSuffixFromOther() {
-                return new PlayerNameData(Component.text("MHEX", NamedTextColor.GREEN), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.LUMINARY);
+                return new PlayerNameData(Component.text("MHEX",
+                        NamedTextColor.GREEN),
+                        we -> we.isTeammate(from) && we.getSpecClass() == Specializations.LUMINARY
+                );
             }
         });
     }
 
     @Override
     protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
+        return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(-.5f);
     }
 
     @Override
@@ -241,8 +273,8 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             @Override
             public void run(InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
 
+                Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
                 for (float i = 0; i < 2; i++) {
                     double angle = Math.toRadians(i * 180) + projectile.getTicksLived() * 0.45;
                     double width = 0.35D;
@@ -258,16 +290,14 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             public void onDestroy(InternalProjectile projectile) {
                 fallenSoul.remove();
                 Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
-                projectile.getCurrentLocation().getWorld().spawnParticle(
+                EffectUtils.displayParticle(
                         Particle.EXPLOSION_LARGE,
                         projectile.getCurrentLocation(),
                         1,
                         0,
                         0,
                         0,
-                        0.7f,
-                        null,
-                        true
+                        0.7
                 );
             }
         });
@@ -286,7 +316,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     protected float getSoundPitch() {
-        return 1.3f;
+        return 1.2f;
     }
 
     public int getMaxStacks() {

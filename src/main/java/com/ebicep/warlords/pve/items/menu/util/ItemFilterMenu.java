@@ -188,7 +188,7 @@ public class ItemFilterMenu {
             ItemSearchMenu.PlayerItemMenuSettings.PlayerItemMenuFilterSettings menuFilterSettings,
             BiConsumer<Menu, InventoryClickEvent> backAction
     ) {
-        Menu menu = new Menu("Stat Pool Filter", 5);
+        Menu menu = new Menu("Stat Pool Filter", 5 * 9);
 
         EnumSet<BasicStatPool> statPoolFilter = menuFilterSettings.getStatPoolFilter();
         BasicStatPool[] values = BasicStatPool.VALUES;
@@ -200,7 +200,7 @@ public class ItemFilterMenu {
             if (filtered) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
             }
-            menu.setItem(i % 9 + 1, i / 9 + 1,
+            menu.setItem(i % 7 + 1, i / 7 + 1,
                     itemBuilder
                             .get(),
                     (m, e) -> {

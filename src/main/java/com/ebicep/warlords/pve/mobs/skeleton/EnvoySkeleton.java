@@ -21,7 +21,7 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.PINK_CARPET),
-                        new ItemStack(Material.DIAMOND_HELMET),
+                        new ItemStack(Material.DIAMOND_CHESTPLATE),
                         new ItemStack(Material.DIAMOND_LEGGINGS),
                         new ItemStack(Material.DIAMOND_BOOTS),
                         Weapons.VOID_TWIG.getItem()

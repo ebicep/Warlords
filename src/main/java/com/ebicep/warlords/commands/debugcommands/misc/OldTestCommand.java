@@ -1,25 +1,21 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.kyori.adventure.text.Component;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -154,25 +150,35 @@ public class OldTestCommand implements CommandExecutor {
             // System.out.println(LegacyComponentSerializer.legacyAmpersand().serialize(component));
 
 
-            Location eyeLocation = player.getEyeLocation();
-            eyeLocation.setPitch(0);
-            for (int i = 0; i < 90; i++) {
-                Location from = new LocationBuilder(eyeLocation)
-                        .addY(2)
-                        .yaw(i * 4)
-                        .forward(5);
-                AbstractChain.spawnChain(from, player.getLocation(), new ItemStack(Material.SPRUCE_FENCE_GATE));
-            }
+//            Location eyeLocation = player.getEyeLocation();
+//            eyeLocation.setPitch(0);
+//            for (int i = 0; i < 90; i++) {
+//                Location from = new LocationBuilder(eyeLocation)
+//                        .addY(2)
+//                        .yaw(i * 4)
+//                        .forward(5);
+//                AbstractChain.spawnChain(from, player.getLocation(), new ItemStack(Material.SPRUCE_FENCE_GATE));
+//            }
+//
+//            EffectUtils.displayParticle(
+//                    Particle.SPELL_WITCH,
+//                    player.getLocation().subtract(0, 3, 0),
+//                    1000,
+//                    10,
+//                    0,
+//                    10,
+//                    0
+//            );
 
-            EffectUtils.displayParticle(
-                    Particle.SPELL_WITCH,
-                    player.getLocation().subtract(0, 3, 0),
-                    1000,
-                    10,
-                    0,
-                    10,
-                    0
-            );
+            player.playerListName(Component.text("TEST"));
+            new BukkitRunnable() {
+
+
+                @Override
+                public void run() {
+                    player.playerListName(null);
+                }
+            }.runTaskLater(Warlords.getInstance(), 60);
 
 //            ArmorStand stand = Utils.spawnArmorStand(player.getLocation(), armorStand -> {
 //                armorStand.getEquipment().setHelmet(new ItemStack(Material.SPRUCE_FENCE_GATE));

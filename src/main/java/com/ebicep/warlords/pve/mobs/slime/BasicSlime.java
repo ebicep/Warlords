@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.slime;
 import com.ebicep.customentities.nms.pve.CustomSlime;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -133,11 +132,14 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
             );
         }
 
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.GREEN)
-                                                                       .with(FireworkEffect.Type.BALL_LARGE)
-                                                                       .withTrail()
-                                                                       .build());
+        EffectUtils.playFirework(
+                deathLocation,
+                FireworkEffect.builder()
+                   .withColor(Color.GREEN)
+                   .with(FireworkEffect.Type.BALL_LARGE)
+                   .withTrail()
+                   .build(),
+                1);
         EffectUtils.playHelixAnimation(deathLocation, shimmerRadius, 0, 255, 0);
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SLIME_JUMP, 2, 0.5f);
     }
@@ -145,7 +147,7 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
     private static class Shimmer extends AbstractAbility {
 
         public Shimmer() {
-            super("Shimmer", 0.3f, 100);
+            super("Shimmer", 0.3f, 50);
         }
 
         @Override

@@ -266,6 +266,7 @@ public class WarlordsShopMenu {
                                                                                                                    )
                                                                                                                    .getItem()))
                                     .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                                    .noLore()
                                     .get());
 
                             DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));

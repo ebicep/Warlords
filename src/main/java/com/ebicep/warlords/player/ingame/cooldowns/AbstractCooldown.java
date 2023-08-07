@@ -70,9 +70,17 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             this.onRemoveForce = cooldownManager -> {
                 HandlerList.unregisterAll(listener);
                 onRemoveForce.accept(cooldownManager);
+                if (changesPlayerName()) {
+                    cooldownManager.updatePlayerNames();
+                }
             };
         } else {
-            this.onRemoveForce = onRemoveForce;
+            this.onRemoveForce = cooldownManager -> {
+                onRemoveForce.accept(cooldownManager);
+                if (changesPlayerName()) {
+                    cooldownManager.updatePlayerNames();
+                }
+            };
         }
     }
 

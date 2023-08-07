@@ -13,6 +13,7 @@ public enum FixedItems implements Spendable {
 
     SHAWL_OF_MITHRA(ShawlOfMithra::new),
     SPIDER_GAUNTLET(SpiderGauntlet::new),
+    DISASTER_FRAGMENT(DisasterFragment::new),
 
     ;
 

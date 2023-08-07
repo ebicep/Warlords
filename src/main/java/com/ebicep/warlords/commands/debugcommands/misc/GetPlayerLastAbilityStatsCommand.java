@@ -31,7 +31,7 @@ public class GetPlayerLastAbilityStatsCommand extends BaseCommand {
                 ChatUtils.sendCenteredMessage(player, Component.text("--------------------------------------------------", NamedTextColor.GREEN));
                 ChatUtils.sendCenteredMessage(player, Component.text("Last ability stats for ", NamedTextColor.GREEN)
                                                                .append(Component.text(offlinePlayer.getName(), NamedTextColor.AQUA)));
-                ChatUtils.sendCenteredMessage(player, "");
+                ChatUtils.sendCenteredMessage(player, Component.empty());
                 sendLastAbilityStats(player, uuid);
                 ChatUtils.sendCenteredMessage(player, Component.text("--------------------------------------------------", NamedTextColor.GREEN));
                 return;

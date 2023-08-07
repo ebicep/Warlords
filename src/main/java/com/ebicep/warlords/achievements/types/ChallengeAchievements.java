@@ -132,9 +132,9 @@ public enum ChallengeAchievements implements Achievement {
             Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
-                return lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getWarlordsEntity()
-                                                                               .getLocation()
-                                                                               .distanceSquared(lastEvent.getAttacker().getLocation()) > 900;
+                return lastEvent != null && lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getWarlordsEntity()
+                                                                                                    .getLocation()
+                                                                                                    .distanceSquared(lastEvent.getAttacker().getLocation()) > 900;
             }
     ),
     DUCK_TANK("Duck Tank",
@@ -205,7 +205,7 @@ public enum ChallengeAchievements implements Achievement {
             Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
-                if (lastDamageEvent.isDead()) {
+                if (lastDamageEvent != null && lastDamageEvent.isDead()) {
                     return new CooldownFilter<>(lastDamageEvent.getWarlordsEntity(), RegularCooldown.class)
                             .filterCooldownFrom(warlordsEntity)
                             .filterCooldownClassAndMapToObjectsOfClass(SoulShackle.class)
@@ -276,7 +276,7 @@ public enum ChallengeAchievements implements Achievement {
             Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
-                if (lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
+                if (lastDamageEvent != null && lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
                     return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                             .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
                             .anyMatch(undyingArmy -> undyingArmy.getPlayersPopped().getOrDefault(warlordsEntity, false));
@@ -324,7 +324,7 @@ public enum ChallengeAchievements implements Achievement {
             Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
-                if (lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
+                if (lastDamageEvent != null && lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
                     return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                             .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
                             .anyMatch(inspiringPresence -> inspiringPresence.getPlayersAffected().size() >= 4);
@@ -382,13 +382,13 @@ public enum ChallengeAchievements implements Achievement {
             Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
-                return lastDamageEvent.getAttackerCooldowns().stream()
-                                      .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
-                                      .filter(RegularCooldown.class::isInstance)
-                                      .map(RegularCooldown.class::cast)
-                                      .filter(regularCooldown -> Objects.equals(regularCooldown.getCooldownClass(), CapacitorTotem.class))
-                                      .map(regularCooldown -> ((CapacitorTotem) regularCooldown.getCooldownObject()))
-                                      .anyMatch(capacitorTotem -> capacitorTotem.getNumberOfProcsAfterCarrierPassed() >= 3);
+                return lastDamageEvent != null && lastDamageEvent.getAttackerCooldowns().stream()
+                                                                 .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                                                                 .filter(RegularCooldown.class::isInstance)
+                                                                 .map(RegularCooldown.class::cast)
+                                                                 .filter(regularCooldown -> Objects.equals(regularCooldown.getCooldownClass(), CapacitorTotem.class))
+                                                                 .map(regularCooldown -> ((CapacitorTotem) regularCooldown.getCooldownObject()))
+                                                                 .anyMatch(capacitorTotem -> capacitorTotem.getNumberOfProcsAfterCarrierPassed() >= 3);
             }
     ),
     PERSISTENT_THREAT("Persistent Threat",
@@ -499,7 +499,7 @@ public enum ChallengeAchievements implements Achievement {
                 return PlayerFilterGeneric.playingGame(warlordsEntity.getGame())
                                           .teammatesOf(warlordsEntity)
                                           .stream()
-                                          .allMatch(entity -> entity.getSecondStats().getLastEventAsSelf().isDead());
+                                          .allMatch(entity -> entity.isDead());
 
             }
     ) {
@@ -561,6 +561,9 @@ public enum ChallengeAchievements implements Achievement {
             Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastEventAsSelf = warlordsEntity.getSecondStats().getLastEventAsSelf();
+                if (lastEventAsSelf == null) {
+                    return false;
+                }
                 for (WarlordsDamageHealingFinalEvent.CooldownRecord playerCooldown : lastEventAsSelf.getPlayerCooldowns()) {
                     if (Objects.equals(playerCooldown.getAbstractCooldown().getCooldownClass(), IceBarrier.class)) {
                         int secondsLeft = playerCooldown.getTicksLeft() / 20;
@@ -819,16 +822,6 @@ public enum ChallengeAchievements implements Achievement {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
     public GameMode getGameMode() {
         return gameMode;
     }
@@ -846,6 +839,16 @@ public enum ChallengeAchievements implements Achievement {
     @Override
     public Difficulty getDifficulty() {
         return difficulty;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     public static class ChallengeAchievementRecord extends AbstractAchievementRecord<ChallengeAchievements> {

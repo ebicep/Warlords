@@ -25,6 +25,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -51,12 +52,24 @@ public class WarlordsNewHotbarMenu {
             DatabasePlayer databasePlayer,
             DatabaseSpecialization databasePlayerSpec,
             LinkedHashMap<Spendable, Long> rewardForLevel,
+            int prestigeCheck,
             int levelCheck,
-            int prestigeCheck
+            Specializations spec
     ) {
+        // precaution
+        if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+            return;
+        }
         rewardForLevel.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
         databasePlayerSpec.addLevelUpReward(new LevelUpReward(rewardForLevel, levelCheck, prestigeCheck));
-        player.sendMessage(Component.text("You claimed the reward for level " + levelCheck + "!", NamedTextColor.GREEN));
+        player.sendMessage(Component.text("You claimed the reward for level " + levelCheck + "!", NamedTextColor.GREEN)
+                                    .hoverEvent(HoverEvent.showText(Component.textOfChildren(
+                                            Component.text("Specialization: ", NamedTextColor.GRAY),
+                                            Component.text(spec.name, NamedTextColor.GOLD),
+                                            Component.newline(),
+                                            Component.text("Prestige: ", NamedTextColor.GRAY),
+                                            Component.text(prestigeCheck, NamedTextColor.GOLD)
+                                    ))));
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
@@ -112,7 +125,7 @@ public class WarlordsNewHotbarMenu {
                         for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
                             int maxLevel = prestigeCheck == prestige ? level : 100;
                             for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
-                                if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
+                                if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
                                     hasRewards = true;
                                     break;
                                 }
@@ -151,7 +164,7 @@ public class WarlordsNewHotbarMenu {
                                 for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
                                     int maxLevel = prestigeCheck == prestige ? level : 100;
                                     for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
-                                        if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
+                                        if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
                                             continue;
                                         }
                                         claimLevelReward(player,
@@ -159,13 +172,14 @@ public class WarlordsNewHotbarMenu {
                                                 databasePlayerSpec,
                                                 LevelUpReward.getRewardForLevel(levelCheck),
                                                 prestigeCheck,
-                                                levelCheck
+                                                levelCheck,
+                                                spec
                                         );
                                     }
-
                                 }
                             }
                         }
+                        openWarlordsMenu(player);
                     });
                 }
                 menu.openForPlayer(player);
@@ -188,7 +202,7 @@ public class WarlordsNewHotbarMenu {
                 for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
                     int maxLevel = prestigeCheck == prestige ? level : 100;
                     for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
-                        if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
+                        if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
                             hasRewards = true;
                             break;
                         }
@@ -266,7 +280,7 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(3, 3, MENU_BACK, (m, e) -> openWarlordsMenu(player));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
             if (hasRewardsForAny) {
-                menu.setItem(5, 5, CLAIM_ALL, (m, e) -> {
+                menu.setItem(5, 3, CLAIM_ALL, (m, e) -> {
                     for (Specializations spec : specs) {
                         DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
                         int prestige = databasePlayerSpec.getPrestige();
@@ -274,7 +288,7 @@ public class WarlordsNewHotbarMenu {
                         for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
                             int maxLevel = prestigeCheck == prestige ? level : 100;
                             for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
-                                if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
+                                if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
                                     continue;
                                 }
                                 claimLevelReward(player,
@@ -282,12 +296,13 @@ public class WarlordsNewHotbarMenu {
                                         databasePlayerSpec,
                                         LevelUpReward.getRewardForLevel(levelCheck),
                                         prestigeCheck,
-                                        levelCheck
+                                        levelCheck,
+                                        spec
                                 );
                             }
-
                         }
                     }
+                    openLevelingRewardsMenuForClass(player, databasePlayer, classes);
                 });
             }
             menu.openForPlayer(player);
@@ -374,8 +389,7 @@ public class WarlordsNewHotbarMenu {
                                 if (claimed.get()) {
                                     player.sendMessage(Component.text("You already claimed this reward!", NamedTextColor.RED));
                                 } else {
-                                    claimLevelReward(player, databasePlayer, databasePlayerSpec, rewardForLevel, selectedPrestige, menuLevel);
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    claimLevelReward(player, databasePlayer, databasePlayerSpec, rewardForLevel, selectedPrestige, menuLevel, spec);
                                     openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
                                 }
                             } else {
@@ -446,7 +460,7 @@ public class WarlordsNewHotbarMenu {
                 }
             }
             if (hasRewards) {
-                menu.setItem(5, 5, CLAIM_ALL, (m, e) -> {
+                menu.setItem(6, 5, CLAIM_ALL, (m, e) -> {
                     for (int prestigeCheck = 0; prestigeCheck < currentPrestige + 1; prestigeCheck++) {
                         int maxLevel = prestigeCheck == currentPrestige ? level : 100;
                         for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
@@ -458,10 +472,12 @@ public class WarlordsNewHotbarMenu {
                                     databasePlayerSpec,
                                     LevelUpReward.getRewardForLevel(levelCheck),
                                     prestigeCheck,
-                                    levelCheck
+                                    levelCheck,
+                                    spec
                             );
                         }
                     }
+                    openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
                 });
             }
             menu.openForPlayer(player);
@@ -572,6 +588,7 @@ public class WarlordsNewHotbarMenu {
                                 ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
                                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                         .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                                        .noLore()
                                         .get()
                                 );
                                 DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
@@ -699,7 +716,7 @@ public class WarlordsNewHotbarMenu {
             }
             int xPosition = 1;
             for (int i = (pageNumber - 1) * 6; i < pageNumber * 6; i++) {
-                if (pageNumber == 3 && i == 15) {
+                if (pageNumber == 3 && i == Specializations.VALUES.length) {
                     break;
                 }
                 ArmorManager.ArmorSets armorSet = ArmorManager.ArmorSets.VALUES[(i % 3) * 3];

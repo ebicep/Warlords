@@ -7,6 +7,8 @@ import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.cuboid.GateOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.pve.ItemOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
@@ -31,6 +33,7 @@ import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.game.state.SyncTimerState;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -43,6 +46,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
@@ -61,11 +65,14 @@ public enum GameMap {
         public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
 
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-2547.5, 50, 755.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-2547.5, 50, 755.5), Team.RED).asOption());
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-2568, 50, 779, 155, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-2581, 50, 777.5, -120, 0), Team.RED).asOption());
 
-            options.add(new DummySpawnOption(loc.addXYZ(-2547, 50, 759), Team.RED));
-            options.add(new DummySpawnOption(loc.addXYZ(-2547, 50, 752.5), Team.BLUE));
+            options.add(new DummySpawnOption(loc.addXYZ(-2568, 50, 779, 155, 0), Team.BLUE));
+            options.add(new DummySpawnOption(loc.addXYZ(-2581, 50, 777.5, -120, 0), Team.RED));
+
+            options.add(new LobbyGameOption());
 
             return options;
         }
@@ -3754,10 +3761,16 @@ public enum GameMap {
                     ,
                     DifficultyIndex.EVENT
             ) {
-
                 @Override
-                public List<Component> getWaveScoreboard(WarlordsPlayer player) {
-                    return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                public void register(@Nonnull Game game) {
+                    super.register(game);
+                    game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 2, "wave") {
+                        @Nonnull
+                        @Override
+                        public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                            return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                        }
+                    });
                 }
 
                 @Override
@@ -3768,13 +3781,55 @@ public enum GameMap {
                         default -> 1;
                     };
                 }
+
+                @Override
+                protected void modifyStats(WarlordsNPC warlordsNPC) {
+                    warlordsNPC.getMob().onSpawn(this);
+                    int playerCount = playerCount();
+                    int wavesCleared = getWavesCleared();
+
+                    float healthMultiplier;
+                    float meleeDamageMultiplier = 1;
+
+                    float waveHealthMultiplier = 0;
+                    float waveMeleeDamageMultiplier = 0;
+                    switch (playerCount) {
+                        case 1, 2 -> healthMultiplier = .9f;
+                        case 3 -> healthMultiplier = 1.05f;
+                        default -> healthMultiplier = 1.20f;
+                    }
+                    if (wavesCleared >= 10) {
+                        waveHealthMultiplier += .05;
+                    }
+                    if (wavesCleared >= 20) {
+                        waveHealthMultiplier += .05;
+                        waveMeleeDamageMultiplier += .05;
+                    }
+                    if (wavesCleared >= 30) {
+                        waveMeleeDamageMultiplier += .05;
+                    }
+                    if (wavesCleared >= 40) {
+                        waveHealthMultiplier += .1;
+                    }
+                    if (warlordsNPC.getMobTier() != MobTier.BOSS) {
+                        healthMultiplier += waveHealthMultiplier;
+                        meleeDamageMultiplier += waveMeleeDamageMultiplier;
+                    }
+                    float maxHealth = warlordsNPC.getMaxHealth();
+                    float minMeleeDamage = warlordsNPC.getMinMeleeDamage();
+                    float maxMeleeDamage = warlordsNPC.getMaxMeleeDamage();
+                    warlordsNPC.setMaxBaseHealth(maxHealth * healthMultiplier);
+                    warlordsNPC.setHealth(maxHealth * healthMultiplier);
+                    warlordsNPC.setMinMeleeDamage((int) (minMeleeDamage * meleeDamageMultiplier));
+                    warlordsNPC.setMaxMeleeDamage((int) (maxMeleeDamage * meleeDamageMultiplier));
+                }
             });
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(900, 50, "spec"));
             options.add(new TheBorderlineOfIllusionEvent());
             options.add(new SafeZoneOption(1));
             options.add(new EventPointsOption()
-                    .reduceScoreOnAllDeath(50, Team.BLUE)
+                    .reduceScoreOnAllDeath(35, Team.BLUE)
                     .onPerWaveClear(1, 500)
                     .onPerWaveClear(5, 2000)
                     .onPerMobKill(Mobs.GHOST_ZOMBIE, 10)
@@ -3799,7 +3854,7 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption()
                     .startWith(50000)
                     .onKill(500)
-                    .setPerWaveClear(5, 10000)
+                    .setPerWaveClear(5, 25000)
                     .disableGuildBonus()
             );
             options.add(new CoinGainOption()
@@ -3810,7 +3865,7 @@ public enum GameMap {
             );
             options.add(new ExperienceGainOption()
                     .playerExpPerXSec(10, 10)
-                    .guildExpPerXSec(1, 3)
+                    .guildExpPerXSec(20, 30)
             );
             options.add(new FieldEffect(options, FieldEffect.FieldEffects.LOST_BUFF, FieldEffect.FieldEffects.DEBUFF_THING));
 

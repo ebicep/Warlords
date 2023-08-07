@@ -15,8 +15,6 @@ import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.UUID;
-
 @CommandAlias("spawntestdummy")
 @CommandPermission("warlords.game.spawndummy")
 public class SpawnTestDummyCommand extends BaseCommand {
@@ -28,7 +26,6 @@ public class SpawnTestDummyCommand extends BaseCommand {
     public void spawnTestDummy(@Conditions("requireGame:withAddon=PRIVATE_GAME") WarlordsPlayer warlordsPlayer, @Values("@gameteams") Team team, @Values("@boolean") Boolean takeDamage) {
         Game game = warlordsPlayer.getGame();
         WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
-                UUID.randomUUID(),
                 "testdummy",
                 Weapons.BLUDGEON,
                 WarlordsNPC.spawnZombieNoAI(warlordsPlayer.getLocation(), null),

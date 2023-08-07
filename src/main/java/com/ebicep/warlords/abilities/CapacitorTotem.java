@@ -114,7 +114,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
                 tempCapacitorTotem.setRadius(tempCapacitorTotem.getRadius() + 0.5);
             }
 
-            new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), tempCapacitorTotem.getRadius(), 1.2, Material.OAK_SAPLING).play();
+            new FallingBlockWaveEffect(totemStand.getLocation().add(0, .75, 0), tempCapacitorTotem.getRadius(), 1.2, Material.OAK_SAPLING).play();
         });
         wp.getCooldownManager().addRegularCooldown(
                 name,

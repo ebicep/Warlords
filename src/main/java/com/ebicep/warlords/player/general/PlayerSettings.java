@@ -12,6 +12,7 @@ import java.util.*;
 import static com.ebicep.warlords.player.general.ArmorManager.Helmets.*;
 import static com.ebicep.warlords.player.general.Weapons.FELFLAME_BLADE;
 
+@Deprecated // since use databaseplayer since its locally cached, two caches makes no sense
 public class PlayerSettings {
 
     public static final HashMap<UUID, PlayerSettings> PLAYER_SETTINGS = new HashMap<>();
@@ -48,11 +49,6 @@ public class PlayerSettings {
     private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets arcanistArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
-
-    private Settings.ChatSettings.ChatDamage chatDamageMode = Settings.ChatSettings.ChatDamage.ALL;
-    private Settings.ChatSettings.ChatHealing chatHealingMode = Settings.ChatSettings.ChatHealing.ALL;
-    private Settings.ChatSettings.ChatEnergy chatEnergyMode = Settings.ChatSettings.ChatEnergy.ALL;
-    private Settings.ChatSettings.ChatKills chatKillsMode = Settings.ChatSettings.ChatKills.ALL;
 
     public PlayerSettings(UUID uuid) {
         this.uuid = uuid;
@@ -230,35 +226,4 @@ public class PlayerSettings {
         DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setArmor(armor));
     }
 
-    public Settings.ChatSettings.ChatDamage getChatDamageMode() {
-        return chatDamageMode;
-    }
-
-    public void setChatDamageMode(Settings.ChatSettings.ChatDamage chatDamageMode) {
-        this.chatDamageMode = chatDamageMode;
-    }
-
-    public Settings.ChatSettings.ChatHealing getChatHealingMode() {
-        return chatHealingMode;
-    }
-
-    public void setChatHealingMode(Settings.ChatSettings.ChatHealing chatHealingMode) {
-        this.chatHealingMode = chatHealingMode;
-    }
-
-    public Settings.ChatSettings.ChatEnergy getChatEnergyMode() {
-        return chatEnergyMode;
-    }
-
-    public void setChatEnergyMode(Settings.ChatSettings.ChatEnergy chatEnergyMode) {
-        this.chatEnergyMode = chatEnergyMode;
-    }
-
-    public Settings.ChatSettings.ChatKills getChatKillsMode() {
-        return chatKillsMode;
-    }
-
-    public void setChatKillsMode(Settings.ChatSettings.ChatKills chatKillsMode) {
-        this.chatKillsMode = chatKillsMode;
-    }
 }

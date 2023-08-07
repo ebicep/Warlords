@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve;
 
+import com.ebicep.warlords.events.EventFlags;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
@@ -91,7 +92,7 @@ public class CurrencyOnEventOption implements Option, Listener {
 
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (startingCurrency == 0) {
+        if (startingCurrency == 0 || !(player instanceof WarlordsPlayer)) {
             return;
         }
         player.addCurrency(startingCurrency);
@@ -136,6 +137,8 @@ public class CurrencyOnEventOption implements Option, Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCurrencyAdd(WarlordsAddCurrencyEvent event) {
-        event.setModifiable(!disableGuildBonus); //TODO redo if other things add to currency
+        if (disableGuildBonus) {
+            event.getEventFlags().remove(EventFlags.GUILD);
+        }
     }
 }

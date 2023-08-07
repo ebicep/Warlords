@@ -164,7 +164,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 return energyGainPerTick + 2.5f;
                             }
                         });
-                        passiveCooldown = 40;//* GameRunnable.SECOND;
+                        passiveCooldown = 40 * GameRunnable.SECOND;
                     }
                 } else {
                     shiftTickTime = 0;

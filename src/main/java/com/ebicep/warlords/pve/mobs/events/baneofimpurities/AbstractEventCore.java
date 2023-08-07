@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.mobflags.Unswappable;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.java.RandomCollection;
@@ -28,7 +29,7 @@ import org.bukkit.util.Vector;
 
 import java.util.EnumSet;
 
-public abstract class AbstractEventCore extends AbstractZombie implements BossMob {
+public abstract class AbstractEventCore extends AbstractZombie implements BossMob, Unswappable {
 
     private final int killTime;
     private final RandomCollection<Mobs> summonList;

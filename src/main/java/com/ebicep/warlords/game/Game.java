@@ -439,16 +439,20 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public void setPlayerTeam(@Nonnull OfflinePlayer player, @Nonnull Team team) {
-        Validate.notNull(player, "player");
+        setPlayerTeam(player.getUniqueId(), team);
+    }
+
+    public void setPlayerTeam(@Nonnull UUID uuid, @Nonnull Team team) {
+        Validate.notNull(uuid, "uuid");
         Validate.notNull(team, "team");
-        if (!this.players.containsKey(player.getUniqueId())) {
+        if (!this.players.containsKey(uuid)) {
             throw new IllegalArgumentException("The specified player is not part of this game");
         }
-        Team oldTeam = this.players.get(player.getUniqueId());
+        Team oldTeam = this.players.get(uuid);
         if (team == oldTeam) {
             return;
         }
-        this.players.put(player.getUniqueId(), team);
+        this.players.put(uuid, team);
     }
 
     /**

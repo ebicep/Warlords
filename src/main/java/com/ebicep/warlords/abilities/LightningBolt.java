@@ -130,7 +130,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
             //reducing chain cooldown
             if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
                 for (ChainLightning chainLightning : wp.getAbilitiesMatching(ChainLightning.class)) {
-                    chainLightning.setCurrentCooldown(2);
+                    chainLightning.subtractCurrentCooldown(2);
                     wp.updateItem(chainLightning);
                 }
             }

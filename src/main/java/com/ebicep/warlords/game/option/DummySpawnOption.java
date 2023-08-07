@@ -21,7 +21,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
-import java.util.UUID;
 
 public class DummySpawnOption implements Option {
 
@@ -71,7 +70,6 @@ public class DummySpawnOption implements Option {
                 }
 
                 testDummy = game.addNPC(new WarlordsNPC(
-                        UUID.randomUUID(),
                         name,
                         Weapons.ABBADON,
                         WarlordsNPC.spawnZombieNoAI(loc, null),
@@ -79,6 +77,7 @@ public class DummySpawnOption implements Option {
                         team,
                         Specializations.PYROMANCER
                 ));
+                testDummy.getEntity().setRemoveWhenFarAway(false);
                 //SKULL
                 ItemStack playerSkull = new ItemStack(Material.ZOMBIE_HEAD);
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();

@@ -1,16 +1,16 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
-import com.ebicep.warlords.abilities.BeaconOfShadow;
+import com.ebicep.warlords.abilities.SanctifiedBeacon;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> {
+public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeacon> {
 
     float cooldown = ability.getCooldown();
     float radius = ability.getRadius();
 
-    public BeaconOfShadowBranch(AbilityTree abilityTree, BeaconOfShadow ability) {
+    public SanctifiedBeaconBranch(AbilityTree abilityTree, SanctifiedBeacon ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -81,13 +81,13 @@ public class BeaconOfShadowBranch extends AbstractUpgradeBranch<BeaconOfShadow> 
 
         masterUpgrade = new Upgrade(
                 "Beacon of Gloom",
-                "Beacon of Shadow - Master Upgrade",
+                "Sanctified Beacon - Master Upgrade",
                 """
-                        Increase Crit Multiplier reduction by 30%. Enemies within the radius have their movement speed reduced by 15%.
+                        Enemies within the radius have their movement speed reduced by 30%. Additionally, the beacon will grant Merciful Hex stacks twice as fast.
                         """,
                 50000,
                 () -> {
-                    ability.setCritMultiplierReducedTo(ability.getCritMultiplierReducedTo() - 30);
+                    ability.setHexIntervalTicks((int) (ability.getHexIntervalTicks() * 0.5f));
                 }
         );
     }

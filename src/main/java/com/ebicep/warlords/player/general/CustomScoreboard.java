@@ -42,7 +42,7 @@ public class CustomScoreboard {
 
     private static final ConcurrentHashMap<UUID, CustomScoreboard> PLAYER_SCOREBOARDS = new ConcurrentHashMap<>();
     private static final TextComponent UPDATE_TEXT = Component.text("        Update", NamedTextColor.WHITE, TextDecoration.BOLD);
-    private static final TextComponent VERSION_TEXT = Component.text("  " + Warlords.VERSION, Warlords.VERSION_COLOR, TextDecoration.BOLD);
+    private static final TextComponent VERSION_TEXT = Component.text(" " + Warlords.VERSION, Warlords.VERSION_COLOR, TextDecoration.BOLD);
 
 
     public static void reloadPvEScoreboard(DatabasePlayerPvE databasePlayerPvE) {

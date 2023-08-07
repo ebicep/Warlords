@@ -23,7 +23,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -87,8 +86,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 new AreaEffect(5, Particle.DRIP_WATER).particlesPerSurface(0.025)
         );
 
-        BukkitTask particleTask = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
-
         RegularCooldown<HealingRain> healingRainCooldown = new RegularCooldown<>(
                 name,
                 "RAIN",
@@ -97,7 +94,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    particleTask.cancel();
                     if (pveMasterUpgrade) {
                         for (WarlordsEntity enemyInRain : PlayerFilter
                                 .entitiesAround(location, radius, radius, radius)
@@ -116,6 +112,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    circleEffect.playEffects();
                     if (ticksElapsed % 10 == 0) {
                         for (WarlordsEntity teammateInRain : PlayerFilter
                                 .entitiesAround(location, radius, radius, radius)
@@ -168,10 +165,17 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         );
         wp.getCooldownManager().addCooldown(healingRainCooldown);
 
-        addSecondaryAbility(() -> {
+        addSecondaryAbility(
+                1,
+                () -> {
                     if (wp.isAlive()) {
                         wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN + " §7You moved your §aHealing Rain §7to your current location.");
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text(" You moved your ", NamedTextColor.GRAY)
+                                                 .append(Component.text("Healing Rain", NamedTextColor.GREEN))
+                                                 .append(Component.text(" to your current location."))
+                                )
+                        );
                         location.setX(wp.getLocation().getX());
                         location.setY(wp.getLocation().getY());
                         location.setZ(wp.getLocation().getZ());

@@ -175,7 +175,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     public WarlordsNPC toNPC(Game game, Team team, UUID uuid, Consumer<WarlordsNPC> modifyStats) {
         if (playerClass != null) {
             this.warlordsNPC = new WarlordsNPC(
-                    uuid,
                     name,
                     Weapons.ABBADON,
                     livingEntity,
@@ -192,7 +191,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             );
         } else {
             this.warlordsNPC = new WarlordsNPC(
-                    uuid,
                     name,
                     Weapons.ABBADON,
                     livingEntity,
@@ -251,7 +249,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             return;
         }
         warlordsNPC.getAbilities().forEach(ability -> {
-            if (ability.getCurrentCooldown() != 0) {
+            if (ability.getCooldown() != 0 && ability.getCurrentCooldown() != 0) {
                 return;
             }
             if (warlordsNPC.getEnergy() < ability.getEnergyCost() * warlordsNPC.getEnergyModifier()) {
@@ -278,7 +276,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         bossBar(option.getGame(), false);
-        bossBar = null;
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }

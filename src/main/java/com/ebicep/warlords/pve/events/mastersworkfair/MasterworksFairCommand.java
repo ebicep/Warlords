@@ -171,7 +171,7 @@ public class MasterworksFairCommand extends BaseCommand {
                                                     );
                                                 }
                                                 if (resent) {
-                                                    databasePlayer.addFutureMessage(new FutureMessage(Arrays.asList(
+                                                    databasePlayer.addFutureMessage(FutureMessage.create(Arrays.asList(
                                                             Component.text("------------------------------------------------", NamedTextColor.GOLD),
                                                             Component.text("Hey! We noticed you didn't get all your previous Masterworks",
                                                                     NamedTextColor.GREEN

@@ -104,9 +104,10 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float newDamageValue;
+                float reduction = convertToDivisionDecimal(maxDamageReduction);
                 float multiplier = (((10 - hitCounter) / damageReductionPerBounce));
-                if (multiplier > (100 - maxDamageReduction / 100f) && pveMasterUpgrade) {
-                    multiplier = (100 - maxDamageReduction / 100f);
+                if (multiplier > reduction && pveMasterUpgrade) {
+                    multiplier = reduction;
                 }
                 newDamageValue = currentDamageValue * multiplier;
                 event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
@@ -140,7 +141,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 Optional<CapacitorTotem> optionalTotem = getLookingAtTotem(wp);
                 if (optionalTotem.isPresent()) {
                     ArmorStand totem = optionalTotem.get().getTotem();
-                    chain(checkFrom.getLocation(), totem.getLocation().add(0, .75, 0));
+                    chain(checkFrom.getLocation(), totem.getLocation());
                     partOfChainLightningPulseDamage(wp, optionalTotem.get());
                     playersHit.add(null);
                     return partOfChainLightning(wp, playersHit, totem, true);

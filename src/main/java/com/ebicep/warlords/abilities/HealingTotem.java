@@ -238,7 +238,9 @@ public class HealingTotem extends AbstractTotem implements Duration {
         );
         wp.getCooldownManager().addCooldown(healingTotemCooldown);
 
-        addSecondaryAbility(() -> {
+        addSecondaryAbility(
+                1,
+                () -> {
                     Utils.playGlobalSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
                     new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SPRUCE_SAPLING).play();
 

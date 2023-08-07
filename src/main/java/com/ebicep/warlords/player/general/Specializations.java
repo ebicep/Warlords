@@ -147,7 +147,7 @@ public enum Specializations {
     CONJURER("Conjurer",
             List.of("con"),
             Conjurer::new,
-            Component.text("A damage-oriented Arcanist specialization that uses venomous attacks and pure magical spells to get the upper hand.", NamedTextColor.GRAY),
+            Component.text("A damage-oriented Arcanist specialization that uses venomous attacks and pure magical spells to eliminate their foes.", NamedTextColor.GRAY),
             SpecType.DAMAGE,
             POISONOUS_HEX, SOULFIRE_BEAM, ENERGY_SEER_CONJURER, CONTAGIOUS_FACADE, ASTRAL_PLAGUE
     ),
@@ -163,7 +163,7 @@ public enum Specializations {
             Luminary::new,
             Component.text("A healing-oriented Arcanist specialization who can bend the space between light and darkness to aid their allies and weaken foes.", NamedTextColor.GRAY),
             SpecType.HEALER,
-            MERCIFUL_HEX, RAY_OF_LIGHT, CRYSTAL_OF_HEALING, BEACON_OF_SHADOW, DIVINE_BLESSING
+            MERCIFUL_HEX, RAY_OF_LIGHT, ENERGY_SEER_LUMINARY, SANCTIFIED_BEACON, DIVINE_BLESSING
     ),
 
     ;

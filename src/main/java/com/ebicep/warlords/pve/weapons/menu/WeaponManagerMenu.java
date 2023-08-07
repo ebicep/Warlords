@@ -150,7 +150,7 @@ public class WeaponManagerMenu {
                         .addLore(Component.text("This feature is for Patreons only!", NamedTextColor.LIGHT_PURPLE))
                         .get(),
                 (m, e) -> {
-                    if (!player.hasPermission("group.patreon") && !Permissions.isAdmin(player)) {
+                    if (!(player.hasPermission("group.patreon") || player.hasPermission("group.contentcreator")) && !Permissions.isAdmin(player)) {
                         player.sendMessage(Component.text("You must be a Patreon to use this feature!", NamedTextColor.RED));
                         return;
                     }
@@ -179,7 +179,8 @@ public class WeaponManagerMenu {
                     for (int i = 0; i < weaponsToSalvage.size(); i++) {
                         AbstractWeapon weapon = weaponsToSalvage.get(i);
                         salvageLore.add(Component.textOfChildren(
-                                Component.text(" - " + weapon.getName(), NamedTextColor.GRAY),
+                                Component.text(" - ", NamedTextColor.GRAY)
+                                         .append(weapon.getName()),
                                 Component.text(" (" + ((WeaponScore) weapon).getWeaponScore() + ")", NamedTextColor.YELLOW)
                         ));
                         if (i > 50) {
@@ -386,7 +387,8 @@ public class WeaponManagerMenu {
                             .lore(
                                     Component.text("Click here to salvage this weapon and claim its materials.", NamedTextColor.GRAY),
                                     Component.empty(),
-                                    Component.text("Shift-Click" + Component.text(" to instantly salvage this weapon.", NamedTextColor.GRAY)),
+                                    Component.text("Shift-Click", NamedTextColor.YELLOW)
+                                             .append(Component.text(" to instantly salvage this weapon.", NamedTextColor.GRAY)),
                                     Component.empty(),
                                     Component.textOfChildren(
                                             Component.text("Rewards: ", NamedTextColor.GREEN),
@@ -515,15 +517,15 @@ public class WeaponManagerMenu {
                                     )
                             )
 
-                                    .get(),
-                            (m, e) -> {
-                                if (e.isLeftClick()) {
-                                    for (Map.Entry<Currencies, Long> currenciesLongEntry : legendaryWeapon.getStarPieceBonusCost(selectedStarPiece)
-                                                                                                          .entrySet()
-                                    ) {
-                                        Currencies currency = currenciesLongEntry.getKey();
-                                        Long cost = currenciesLongEntry.getValue();
-                                        if (pveStats.getCurrencyValue(currency) < cost) {
+                            .get(),
+                    (m, e) -> {
+                        if (e.isLeftClick()) {
+                            for (Map.Entry<Currencies, Long> currenciesLongEntry : legendaryWeapon.getStarPieceBonusCost(selectedStarPiece)
+                                                                                                  .entrySet()
+                            ) {
+                                Currencies currency = currenciesLongEntry.getKey();
+                                Long cost = currenciesLongEntry.getValue();
+                                if (pveStats.getCurrencyValue(currency) < cost) {
                                             player.sendMessage(Component.text("You need ", NamedTextColor.RED)
                                                                         .append(currency.getCostColoredName(cost))
                                                                         .append(Component.text(" to apply this star piece!"))

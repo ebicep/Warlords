@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
@@ -114,15 +115,15 @@ public class Narmer extends AbstractZombie implements BossMob {
 
             @EventHandler
             private void onAllyDeath(WarlordsDeathEvent event) {
-                WarlordsEntity eventPlayer = event.getWarlordsEntity();
+                WarlordsEntity dead = event.getWarlordsEntity();
                 Location location = warlordsNPC.getLocation();
 
-                if (eventPlayer.isTeammate(warlordsNPC)) {
+                if (dead.isTeammate(warlordsNPC)) {
                     warlordsNPC.setHealth(warlordsNPC.getHealth() * 1.15f);
                 }
 
-                if (acolytes.contains(eventPlayer)) {
-                    acolytes.remove(eventPlayer);
+                if (acolytes.contains(dead)) {
+                    acolytes.remove(dead);
                     Utils.playGlobalSound(location, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
                     EffectUtils.playHelixAnimation(
                             location.add(0, 0.15, 0),
@@ -186,9 +187,9 @@ public class Narmer extends AbstractZombie implements BossMob {
                     }
 
                     List<WarlordsEntity> selfAcolytes = spawnNarmerAcolyteAbility.getSelfAcolytes();
-                    if (selfAcolytes.contains(eventPlayer)) {
+                    if (selfAcolytes.contains(dead)) {
                         spawnNarmerAcolyteAbility.setCurrentCooldown(spawnNarmerAcolyteAbility.getCooldown());
-                        selfAcolytes.remove(eventPlayer);
+                        selfAcolytes.remove(dead);
                     }
 
                 }
@@ -288,8 +289,9 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
 
         @Override
-        public void onMobCreate(AbstractMob<?> mobSpawned) {
-            narmer.getAcolytes().add(mobSpawned.getWarlordsNPC());
+        public void onMobSpawn(WarlordsNPC warlordsNPC) {
+            narmer.getAcolytes().add(warlordsNPC);
+            selfAcolytes.add(warlordsNPC);
         }
 
         public List<WarlordsEntity> getSelfAcolytes() {

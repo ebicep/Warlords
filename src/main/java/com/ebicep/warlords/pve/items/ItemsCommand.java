@@ -121,7 +121,7 @@ public class ItemsCommand extends BaseCommand {
             AbstractFixedItem item = fixedItem.create.get();
             databasePlayer.getPveStats().getItemsManager().addItem(item);
             ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
-                                                                                .hoverEvent(item.getHoverComponent())
+                                                                                .append(item.getHoverComponent())
             );
         });
     }

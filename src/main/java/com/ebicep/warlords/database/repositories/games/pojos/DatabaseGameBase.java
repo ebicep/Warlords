@@ -52,9 +52,9 @@ public abstract class DatabaseGameBase {
     public static final Location TOP_DAMAGE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2540.5, 58, 785.5);
     public static final Location TOP_HEALING_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2546.5, 58, 785.5);
     public static final Location TOP_ABSORBED_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2552.5, 58, 785.5);
-    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2530.5, 59.5, 781.5);
-    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2572.5, 58, 778.5);
-    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2579.5, 58, 774.5);
+    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2534.5, 58.5, 791.5);
+    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2529.5, 60, 779.5);
+    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2532.5, 60, 783.5);
     public static final Location GAME_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2543.5, 53.5, 769.5);
     public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
     protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
@@ -479,14 +479,6 @@ public abstract class DatabaseGameBase {
         holograms.add(topDHPPerMinute);
         topDHPPerMinute.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
 
-        Hologram topDamageOnCarrier = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
-        holograms.add(topDamageOnCarrier);
-        topDamageOnCarrier.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage On Carrier");
-
-        Hologram topHealingOnCarrier = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
-        holograms.add(topHealingOnCarrier);
-        topHealingOnCarrier.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing On Carrier");
-
         //last game stats
         appendLastGameStats(lastGameStats);
 
@@ -495,7 +487,7 @@ public abstract class DatabaseGameBase {
         for (DatabaseGamePlayerBase allPlayer : allPlayers) {
             Team team = getTeam(allPlayer);
             if (team != null) {
-                //playerColor.put(allPlayer, team.teamColor); TODO
+                playerColor.put(allPlayer, team.oldTeamColor);
             }
         }
 

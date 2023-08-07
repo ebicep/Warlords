@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.StringUtils;
 import net.kyori.adventure.text.Component;
@@ -86,7 +87,7 @@ public class GameStartCommand {
         entryEditor.accept(entryBuilder);
 
         if (GameMode.isPvE(entryBuilder.getGameMode())) {
-            if (people.size() == 1) {
+            if (people.size() == 1 && !Permissions.isAdmin(player)) {
                 DatabaseManager.getPlayer(people.get(0).getUniqueId(), databasePlayer -> {
                     if (databasePlayer.getPlays() <= 10 && !databasePlayer.getPveStats().isCompletedTutorial()) {
                         entryBuilder
@@ -148,10 +149,10 @@ public class GameStartCommand {
         );
     }
 
-    public static void startGamePublic(Player player) {
+    public static void startGamePublic(Player player, GameMode gameMode) {
         startGame(player, false, queueEntryBuilder -> {
             queueEntryBuilder
-                    .setGameMode(GameMode.CAPTURE_THE_FLAG)
+                    .setGameMode(gameMode)
                     .setExpiresTime(System.currentTimeMillis() + 60 * 1000)
                     .setPriority(0)
                     .setOnResult((result, game) -> {

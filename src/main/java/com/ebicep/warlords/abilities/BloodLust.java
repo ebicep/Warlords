@@ -118,10 +118,10 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsEntity attacker = event.getAttacker();
-                float healAmount = currentDamageValue * (getDamageConvertPercent() / 100f);
+                float healAmount = currentDamageValue * convertToPercent(damageConvertPercent);
                 if (attacker.isInPve() && event.getUUID() != null) {
                     if (abilitiesHit.contains(event.getUUID())) {
-                        healAmount *= healReductionPercent / 100f;
+                        healAmount *= convertToPercent(healReductionPercent);
                     } else {
                         abilitiesHit.add(event.getUUID());
                     }

@@ -65,7 +65,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
     public boolean chain(WarlordsEntity wp, Player player) {
         if (pveMasterUpgrade) {
             for (WarlordsEntity circleTarget : PlayerFilter
-                    .entitiesAround(wp, 6, 6, 6)
+                    .entitiesAround(wp, 15, 15, 15)
                     .aliveTeammatesOfExcludingSelf(wp)
             ) {
                 emitMarkRadiance(wp, circleTarget);
@@ -131,16 +131,14 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                         return;
                     }
 
-                    target.getLocation().getWorld().spawnParticle(
+                    EffectUtils.displayParticle(
                             Particle.SPELL,
                             target.getLocation(),
                             12,
                             1,
                             1,
                             1,
-                            0.06,
-                            null,
-                            true
+                            0.06
                     );
 
                     Utils.playGlobalSound(target.getLocation(), "paladin.holyradiance.activation", 2, 0.95f);
@@ -173,16 +171,11 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                                 particleLoc.setY(playerLoc.getY() + i / 6D);
                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                particleLoc.getWorld().spawnParticle(
+                                EffectUtils.displayParticle(
                                         Particle.REDSTONE,
                                         particleLoc,
                                         1,
-                                        0,
-                                        0,
-                                        0,
-                                        0,
-                                        new Particle.DustOptions(Color.fromRGB(0, 255, 70), 1),
-                                        true
+                                        new Particle.DustOptions(Color.fromRGB(0, 255, 70), 1)
                                 );
                             }
                         }
@@ -200,12 +193,15 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
         this.markDuration = markDuration;
     }
 
-
     public float getMarkHealing() {
         return markHealing;
     }
 
     public void setMarkHealing(float markHealing) {
         this.markHealing = markHealing;
+    }
+
+    public int getMarkDuration() {
+        return markDuration;
     }
 }

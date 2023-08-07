@@ -33,6 +33,7 @@ import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
@@ -185,7 +186,7 @@ public class OnslaughtOption implements PveOption {
 
                 mobTick();
 
-                if (ticksElapsed.get() % 36000 == 0) {
+                if (ticksElapsed.get() % 18000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {
                         wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
                         addRewardToPlayerPouch(
@@ -194,6 +195,11 @@ public class OnslaughtOption implements PveOption {
                                 playerAspirantPouch,
                                 Component.text("Aspirant Pouch", NamedTextColor.RED)
                         );
+                        if (wp.getAbilityTree().getMaxMasterUpgrades() == 5) {
+                            return;
+                        }
+                        wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                        wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                     });
                 } else if (ticksElapsed.get() % 6000 == 0) {
                     integrityDecayIncrease += 0.1f;

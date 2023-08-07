@@ -31,10 +31,19 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
         ItemBuilder itemBuilder = getBaseItemBuilder();
         addStatPoolAndBlessing(itemBuilder, null);
         if (this instanceof FixedItemAppliesToPlayer bonus) {
-            itemBuilder.addLore(Component.text(bonus.getEffect() + ":", NamedTextColor.GREEN));
+            itemBuilder.addLore(
+                    Component.empty(),
+                    Component.text(bonus.getEffect() + ":", NamedTextColor.GREEN)
+            );
             itemBuilder.addLore(WordWrap.wrap(Component.text(bonus.getEffectDescription(), NamedTextColor.GRAY), 160));
         }
         addItemScoreAndWeight(itemBuilder, false);
+        if (isFavorite()) {
+            itemBuilder.addLore(
+                    Component.empty(),
+                    Component.text("FAVORITE", NamedTextColor.LIGHT_PURPLE)
+            );
+        }
         return itemBuilder;
     }
 

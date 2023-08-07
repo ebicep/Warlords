@@ -4,6 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.TimerDebugAble;
@@ -336,7 +338,7 @@ public class DebugMenuGameOptions {
                             .get(),
                     (m, e) -> {
                         for (Option option : game.getOptions()) {
-                            if (option instanceof WinAfterTimeoutOption) {
+                            if (option instanceof WinAfterTimeoutOption || option instanceof RecordTimeElapsedOption) {
                                 new SignGUI()
                                         .lines("", "^^^^^^^", "Enter new Time Left", "XX:XX")
                                         .onFinish((p, lines) -> {

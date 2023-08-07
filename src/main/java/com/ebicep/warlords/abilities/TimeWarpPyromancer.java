@@ -131,6 +131,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
 
         if (pveMasterUpgrade) {
             addSecondaryAbility(
+                    1,
                     () -> timeWarpCooldown.setTicksLeft(1),
                     false,
                     secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown)

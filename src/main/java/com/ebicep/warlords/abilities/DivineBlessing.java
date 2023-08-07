@@ -21,21 +21,19 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     private int hexTickDurationIncrease = 40;
-    private int hexHealingBonus = 50;
+    private int hexHealingBonus = 30;
     private int lethalDamageHealing = 15;
     private int postHealthTickDelay = 40;
     private int postHealthHealAmount = 800;
@@ -148,14 +146,14 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                         ) {
                                             @Override
                                             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                                return currentHealValue * (1 + hexHealingBonus / 100f);
+                                                return currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
                                             }
 
                                             @Override
                                             public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                                                 if (teammate.getHealth() - currentDamageValue < 0 && !healedLethal.contains(teammate)) {
                                                     healedLethal.add(teammate);
-                                                    float healAmount = teammate.getMaxHealth() * (lethalDamageHealing / 100f);
+                                                    float healAmount = teammate.getMaxHealth() * convertToPercent(lethalDamageHealing);
                                                     teammate.addHealingInstance(
                                                             wp,
                                                             name,
@@ -164,6 +162,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                             0,
                                                             100
                                                     );
+                                                    teammate.playSound(teammate.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
                                                 }
                                                 return currentDamageValue;
                                             }
@@ -194,7 +193,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (hasMaxStacks()) {
                     if (wp.getHealth() - currentDamageValue < 0) {
-                        float healAmount = wp.getMaxHealth() * (lethalDamageHealing / 100f);
+                        float healAmount = wp.getMaxHealth() * convertToPercent(lethalDamageHealing);
                         wp.addHealingInstance(
                                 wp,
                                 name,
@@ -203,6 +202,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 0,
                                 100
                         );
+                        wp.playSound(wp.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
                     }
                 }
                 return currentDamageValue;
@@ -214,7 +214,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     @EventHandler(priority = EventPriority.LOWEST)
                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
                         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (cooldown.getFrom().equals(wp) &&
+                        if (Objects.equals(cooldown.getFrom(), wp) &&
                                 cooldown instanceof RegularCooldown<?> regularCooldown &&
                                 cooldown.getCooldownObject() instanceof MercifulHex
                         ) {

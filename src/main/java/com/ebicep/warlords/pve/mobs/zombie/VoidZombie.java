@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -44,7 +43,8 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
                 0,
                 1500,
                 2000,
-                new VoidShred(), new AdvancedVoidShred(200, 300, 2, -70, voidRadius, 20)
+                new VoidShred(),
+                new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 20)
         );
     }
 
@@ -70,8 +70,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 0.7f);
-        receiver.addSpeedModifier(attacker, "Envoy Slowness", -20, 2 * 20);
+
     }
 
     @Override
@@ -82,11 +81,15 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.WHITE)
-                                                                       .with(FireworkEffect.Type.BURST)
-                                                                       .withTrail()
-                                                                       .build());
+        EffectUtils.playFirework(
+                deathLocation,
+                FireworkEffect.builder()
+                              .withColor(Color.WHITE)
+                              .with(FireworkEffect.Type.BURST)
+                              .withTrail()
+                              .build(),
+                1
+        );
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
 
@@ -111,9 +114,8 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
             wp.subtractEnergy(energyCost, false);
 
             float healthDamage = wp.getMaxHealth() * 0.01f;
-            wp.addDamageInstance(wp, "Void Shred", healthDamage, healthDamage, 0, 100);
+            wp.addDamageInstance(wp, "Void Shred", healthDamage, healthDamage, critChance, critMultiplier);
             return true;
         }
     }
-
 }

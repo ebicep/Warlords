@@ -13,7 +13,7 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -80,6 +80,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public static void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         if (Bukkit.hasWhitelist() && Bukkit.getWhitelistedPlayers().stream().noneMatch(p -> p.getUniqueId().equals(event.getUniqueId()))) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, Component.text("The server is currently under maintenance!"));
             return;
         }
         if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
@@ -91,7 +92,7 @@ public class WarlordsEvents implements Listener {
             UUID uuid = event.getUniqueId();
             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                 DatabaseManager.loadPlayer(uuid, activeCollection, (databasePlayer) -> {
-                    if (!Objects.equals(databasePlayer.getName(), event.getName())) {
+                    if (databasePlayer.getName() == null || !Objects.equals(databasePlayer.getName(), event.getName())) {
                         databasePlayer.setName(event.getName());
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer, activeCollection);
                     }
@@ -158,8 +159,8 @@ public class WarlordsEvents implements Listener {
                                                                                      .clickEvent(ClickEvent.openUrl("https://discord.gg/GWPAx9sEG7")))
             );
             ChatUtils.sendCenteredMessage(player,
-                    Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/3J1lGGn", NamedTextColor.GREEN, TextDecoration.BOLD)
-                                                                                           .clickEvent(ClickEvent.openUrl("https://bit.ly/3J1lGGn")))
+                    Component.text("Resource Pack: ", NamedTextColor.GOLD).append(Component.text("https://bit.ly/47lZHGz", NamedTextColor.GREEN, TextDecoration.BOLD)
+                                                                                           .clickEvent(ClickEvent.openUrl("https://bit.ly/47lZHGz")))
             );
             ChatUtils.sendCenteredMessage(player, Component.text("-----------------------------------------------------", NamedTextColor.GRAY));
         }
@@ -180,6 +181,7 @@ public class WarlordsEvents implements Listener {
     }
 
     public static void joinInteraction(Player player, boolean fromGame) {
+        player.playerListName(null);
         player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(1024); // remove attack charge up / recoil
         UUID uuid = player.getUniqueId();
         Location rejoinPoint = Warlords.getRejoinPoint(uuid);
@@ -218,15 +220,19 @@ public class WarlordsEvents implements Listener {
                         }
                         databasePlayer.getSpec(value).addPrestige();
                         int prestige = databasePlayer.getSpec(value).getPrestige();
-                        FireWorkEffectPlayer.playFirework(player.getLocation(), FireworkEffect.builder()
-                                                                                              .with(FireworkEffect.Type.BALL)
-                                                                                              .withColor(Color.fromRGB(ExperienceManager.PRESTIGE_COLORS.get(prestige).value()))
-                                                                                              .build()
+                        EffectUtils.playFirework(
+                                player.getLocation(),
+                                FireworkEffect.builder()
+                                  .with(FireworkEffect.Type.BALL)
+                                  .withColor(Color.fromRGB(ExperienceManager.PRESTIGE_COLORS.get(prestige).value()))
+                                  .build()
                         );
                         player.showTitle(Title.title(
-                                Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)
-                                         .append(Component.text(" Prestige " + value.name + " ", NamedTextColor.GOLD, TextDecoration.BOLD))
-                                         .append(Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)),
+                                Component.textOfChildren(
+                                        Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED),
+                                        Component.text(" Prestige " + value.name + " ", NamedTextColor.GOLD, TextDecoration.BOLD),
+                                        Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)
+                                ),
                                 Component.text(prestige - 1, ExperienceManager.PRESTIGE_COLORS.get(prestige - 1))
                                          .append(Component.text(" > ", NamedTextColor.GRAY))
                                          .append(Component.text(prestige, ExperienceManager.PRESTIGE_COLORS.get(prestige))),
@@ -663,6 +669,11 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
         e.getDrops().clear();
+    }
+
+    @EventHandler
+    public void onEntityCombust(EntityCombustEvent event) {
+        event.setCancelled(true);
     }
 
     @EventHandler

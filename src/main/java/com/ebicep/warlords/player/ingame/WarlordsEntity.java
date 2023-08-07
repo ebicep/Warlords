@@ -8,6 +8,7 @@ import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.*;
@@ -666,11 +667,17 @@ public abstract class WarlordsEntity {
                     }
 
                     if (isMeleeHit) {
-                        ownMessage.append(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s melee hit.", NamedTextColor.GRAY)));
+                        ownMessage.append(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s melee hit.",
+                                NamedTextColor.GRAY
+                        )));
                         attackerMessage.append(GIVE_ARROW_GREEN.append(Component.text(" Your melee hit was absorbed by " + name + ".", NamedTextColor.GRAY)));
                     } else {
-                        ownMessage.append(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s " + ability + " hit.", NamedTextColor.GRAY)));
-                        attackerMessage.append(GIVE_ARROW_GREEN.append(Component.text(" Your " + ability + " was absorbed by " + name + ".", NamedTextColor.GRAY)));
+                        ownMessage.append(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s " + ability + " hit.",
+                                NamedTextColor.GRAY
+                        )));
+                        attackerMessage.append(GIVE_ARROW_GREEN.append(Component.text(" Your " + ability + " was absorbed by " + name + ".",
+                                NamedTextColor.GRAY
+                        )));
                     }
 
                     addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
@@ -690,8 +697,8 @@ public abstract class WarlordsEntity {
                 }
 
                 if (shield.getShieldHealth() >= 0) {
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(getUuid(), getEntity() instanceof Player);
-                    switch (playerSettings.getChatHealingMode()) {
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(getUuid(), getEntity() instanceof Player);
+                    switch (databasePlayer.getChatHealingMode()) {
                         case ALL -> {
                             if (showDebugMessage) {
                                 sendMessage(ownMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
@@ -709,8 +716,8 @@ public abstract class WarlordsEntity {
                             }
                         }
                     }
-                    PlayerSettings attackerPlayerSettings = PlayerSettings.getPlayerSettings(attacker.getUuid(), attacker.getEntity() instanceof Player);
-                    switch (attackerPlayerSettings.getChatHealingMode()) {
+                    databasePlayer = DatabaseManager.getPlayer(attacker.getUuid(), attacker.getEntity() instanceof Player);
+                    switch (databasePlayer.getChatHealingMode()) {
                         case ALL -> {
                             if (attacker.showDebugMessage) {
                                 attacker.sendMessage(attackerMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
@@ -855,8 +862,9 @@ public abstract class WarlordsEntity {
                     attacker.addKill();
 
                     game.forEachOnlinePlayer((p, t) -> {
-                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                        if (playerSettings.getChatKillsMode() == Settings.ChatSettings.ChatKills.ALL) {
+                        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
+                        Settings.ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+                        if (killsMode == Settings.ChatSettings.ChatKills.ALL || killsMode == Settings.ChatSettings.ChatKills.NO_ASSISTS) {
                             if (p == this.entity) {
                                 sendMessage(Component.text("You were killed by ", NamedTextColor.GRAY)
                                                      .append(attacker.getColoredName()));
@@ -906,14 +914,15 @@ public abstract class WarlordsEntity {
 
     private void sendTookDamageMessage(float damage, String from) {
         if (getEntity() instanceof Player) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(getUuid());
-            if (playerSettings.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
-                sendMessage(RECEIVE_ARROW_RED
-                        .append(Component.text(" You took ", NamedTextColor.GRAY))
-                        .append(Component.text(Math.round(damage), NamedTextColor.RED))
-                        .append(Component.text(" " + from + ".", NamedTextColor.GRAY))
-                );
-            }
+            DatabaseManager.getPlayer(uuid, databasePlayer -> {
+                if (databasePlayer.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
+                    sendMessage(RECEIVE_ARROW_RED
+                            .append(Component.text(" You took ", NamedTextColor.GRAY))
+                            .append(Component.text(Math.round(damage), NamedTextColor.RED))
+                            .append(Component.text(" " + from + ".", NamedTextColor.GRAY))
+                    );
+                }
+            });
         }
     }
 
@@ -1131,8 +1140,8 @@ public abstract class WarlordsEntity {
                                                  .append(hitBuilder)
                                                  .append(secondHalf);
 
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUuid(), player.getEntity() instanceof Player);
-        switch (playerSettings.getChatHealingMode()) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUuid(), player.getEntity() instanceof Player);
+        switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
                 if (player.showDebugMessage) {
                     player.sendMessage(ownFeed.build()
@@ -1203,8 +1212,8 @@ public abstract class WarlordsEntity {
                                                  .append(hitBuilder)
                                                  .append(secondHalf);
 
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid(), sender.getEntity() instanceof Player);
-        switch (playerSettings.getChatHealingMode()) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(sender.getUuid(), sender.getEntity() instanceof Player);
+        switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
                 if (sender.showDebugMessage) {
                     sender.sendMessage(ownFeed.build()
@@ -1243,8 +1252,8 @@ public abstract class WarlordsEntity {
                                                   .append(hitBuilder)
                                                   .append(secondHalf);
 
-        playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid(), receiver.getEntity() instanceof Player);
-        switch (playerSettings.getChatHealingMode()) {
+        databasePlayer = DatabaseManager.getPlayer(receiver.getUuid(), receiver.getEntity() instanceof Player);
+        switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
                 if (receiver.showDebugMessage) {
                     receiver.sendMessage(allyFeed.build()
@@ -1315,8 +1324,8 @@ public abstract class WarlordsEntity {
                                                    .append(hitBuilder)
                                                    .append(secondHalf);
 
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid(), receiver.getEntity() instanceof Player);
-        switch (playerSettings.getChatDamageMode()) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(getUuid(), receiver.getEntity() instanceof Player);
+        switch (databasePlayer.getChatDamageMode()) {
             case ALL -> {
                 if (receiver.showDebugMessage) {
                     receiver.sendMessage(enemyFeed.build()
@@ -1351,9 +1360,8 @@ public abstract class WarlordsEntity {
                                                  .append(GIVE_ARROW_GREEN)
                                                  .append(hitBuilder)
                                                  .append(secondHalf);
-
-        playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid(), sender.getEntity() instanceof Player);
-        switch (playerSettings.getChatDamageMode()) {
+        databasePlayer = DatabaseManager.getPlayer(sender.getUuid(), sender.getEntity() instanceof Player);
+        switch (databasePlayer.getChatDamageMode()) {
             case ALL -> {
                 if (sender.showDebugMessage) {
                     sender.sendMessage(ownFeed.build()
@@ -1375,7 +1383,6 @@ public abstract class WarlordsEntity {
                 }
             }
         }
-
     }
 
     private void appendDebugMessage(TextComponent.Builder debugMessage, String title, String value) {
@@ -1447,7 +1454,7 @@ public abstract class WarlordsEntity {
      * @param entity   which entity is assigned to the hurt animation?
      * @param attacker what warlords player should play the hurt animation?
      */
-    private void playHurtAnimation(LivingEntity entity, WarlordsEntity attacker) {
+    public void playHurtAnimation(LivingEntity entity, WarlordsEntity attacker) {
         ServerLevel serverLevel = ((CraftWorld) entity.getWorld()).getHandle();
         serverLevel.broadcastDamageEvent(((CraftEntity) entity).getHandle(), serverLevel.damageSources().generic());
         for (Player player1 : attacker.getWorld().getPlayers()) {
@@ -1504,16 +1511,20 @@ public abstract class WarlordsEntity {
 
         //giving out assists
         hitBy.forEach((assisted, value) -> {
-            if (attacker == assisted || attacker == this) {
-                assisted.sendMessage(Component.text("You assisted in killing ", NamedTextColor.GRAY)
-                                              .append(getColoredName())
-                );
-            } else {
-                if (attacker != null) {
-                    assisted.sendMessage(Component.text("You assisted ", NamedTextColor.GRAY)
-                                                  .append(attacker.getColoredName())
-                                                  .append(Component.text(" in killing "))
-                                                  .append(getColoredName()));
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(assisted.getUuid(), assisted.getEntity() instanceof Player);
+            Settings.ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+            if (killsMode == Settings.ChatSettings.ChatKills.ALL || killsMode == Settings.ChatSettings.ChatKills.ONLY_ASSISTS) {
+                if (attacker == assisted || attacker == this) {
+                    assisted.sendMessage(Component.text("You assisted in killing ", NamedTextColor.GRAY)
+                                                  .append(getColoredName())
+                    );
+                } else {
+                    if (attacker != null) {
+                        assisted.sendMessage(Component.text("You assisted ", NamedTextColor.GRAY)
+                                                      .append(attacker.getColoredName())
+                                                      .append(Component.text(" in killing "))
+                                                      .append(getColoredName()));
+                    }
                 }
             }
             assisted.addAssist();
@@ -1809,32 +1820,30 @@ public abstract class WarlordsEntity {
             this.energy = 1;
         }
         if ((int) energyGiven != 0) {
-            if (getEntity() instanceof Player) {
-                PlayerSettings receiverSettings = PlayerSettings.getPlayerSettings(getUuid());
-                PlayerSettings giverSettings = PlayerSettings.getPlayerSettings(giver.getUuid());
-                if (receiverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
-                    if (this == giver) {
-                        sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                .append(Component.text(" Your " + ability + " gave you ", NamedTextColor.GRAY))
-                                .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
-                                .append(Component.text(" energy.", NamedTextColor.GRAY))
-                        );
-                    } else {
-                        sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                                .append(Component.text(" " + giver.getName() + "'s " + ability + " gave you ", NamedTextColor.GRAY))
-                                .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
-                                .append(Component.text(" energy.", NamedTextColor.GRAY))
-                        );
-                    }
+            DatabasePlayer receiverSettings = DatabaseManager.getPlayer(getUuid(), getEntity() instanceof Player);
+            DatabasePlayer giverSettings = DatabaseManager.getPlayer(giver.getUuid(), giver.getEntity() instanceof Player);
+            if (receiverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
+                if (this == giver) {
+                    sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your " + ability + " gave you ", NamedTextColor.GRAY))
+                            .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
+                            .append(Component.text(" energy.", NamedTextColor.GRAY))
+                    );
+                } else {
+                    sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                            .append(Component.text(" " + giver.getName() + "'s " + ability + " gave you ", NamedTextColor.GRAY))
+                            .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
+                            .append(Component.text(" energy.", NamedTextColor.GRAY))
+                    );
                 }
-                if (giverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
-                    if (this != giver) {
-                        giver.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                .append(Component.text(" Your " + ability + " gave " + name + " ", NamedTextColor.GRAY))
-                                .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
-                                .append(Component.text(" energy.", NamedTextColor.GRAY))
-                        );
-                    }
+            }
+            if (giverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
+                if (this != giver) {
+                    giver.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your " + ability + " gave " + name + " ", NamedTextColor.GRAY))
+                            .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
+                            .append(Component.text(" energy.", NamedTextColor.GRAY))
+                    );
                 }
             }
         }
@@ -2180,7 +2189,7 @@ public abstract class WarlordsEntity {
 
     public void teleportLocationOnly(Location location) {
         if (this.entity instanceof Player) {
-            TeleportUtils.teleport((Player) this.entity, location);
+            TeleportUtils.smoothTeleport((Player) this.entity, location);
         } else {
             Location location1 = this.getLocation();
             location1.setX(location.getX());
@@ -2815,7 +2824,10 @@ public abstract class WarlordsEntity {
         AtomicInteger currencyToAdd = new AtomicInteger(currency);
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(this, currencyToAdd));
         this.currency += currencyToAdd.get();
-        sendMessage(Component.text("+" + currencyToAdd.get() + " ❂ Insignia", NamedTextColor.GOLD));
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid, getEntity() instanceof Player);
+        if (databasePlayer.getChatInsigniaMode() == Settings.ChatSettings.ChatInsignia.ALL) {
+            sendMessage(Component.text("+" + currencyToAdd.get() + " ❂ Insignia", NamedTextColor.GOLD));
+        }
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyFinalEvent(this));
     }
 

@@ -125,6 +125,9 @@ public abstract class AbstractItem {
         ItemBuilder itemBuilder = getBaseItemBuilder();
         addStatPoolAndBlessing(itemBuilder, null);
         addItemScoreAndWeight(itemBuilder, false);
+        if (isFavorite()) {
+            itemBuilder.addLore(Component.empty(), Component.text("FAVORITE", NamedTextColor.LIGHT_PURPLE));
+        }
         return itemBuilder;
     }
 

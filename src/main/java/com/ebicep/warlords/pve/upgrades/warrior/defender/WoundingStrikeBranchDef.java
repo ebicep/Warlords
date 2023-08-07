@@ -97,7 +97,6 @@ public class WoundingStrikeBranchDef extends AbstractUpgradeBranch<WoundingStrik
                 50000,
                 () -> {
                     ability.setCritChance(100);
-
                 }
         );
     }

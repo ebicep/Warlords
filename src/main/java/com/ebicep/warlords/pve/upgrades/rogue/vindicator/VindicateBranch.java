@@ -87,7 +87,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
         masterUpgrade = new Upgrade(
                 "Reflective Barrier",
                 "Vindicate - Master Upgrade",
-                "Enemies who try to attack you while Vindicate is active are pushed back and reflect 75% of the damage you take back.",
+                "Enemies who try to attack you while Vindicate is active are pushed back and reflect 90% of the damage you take back.",
                 50000,
                 () -> {
 

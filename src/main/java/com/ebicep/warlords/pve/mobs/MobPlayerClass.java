@@ -38,7 +38,12 @@ public class MobPlayerClass extends AbstractPlayerClass {
                 maxHealth,
                 maxEnergy,
                 (int) Math.round(Arrays.stream(abilities)
-                                       .mapToDouble(ability -> ability.getEnergyCost() / Math.max(1, ability.getCooldown()))
+                                       .mapToDouble(ability -> {
+                                           if (ability.getCooldown() == 0) {
+                                               return ability.getEnergyCost();
+                                           }
+                                           return ability.getEnergyCost() / ability.getCooldown();
+                                       })
                                        .sum()),
                 0,
                 damageResistance,

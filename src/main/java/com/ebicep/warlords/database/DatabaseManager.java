@@ -34,6 +34,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -68,7 +69,7 @@ public class DatabaseManager {
     public static GameEventsService gameEventsService;
     public static WeeklyBlessingsService weeklyBlessingsService;
     public static IllusionVendorService illusionVendorService;
-    public static boolean enabled = false;
+    public static boolean enabled = true;
 
     public static void init() {
         if (!enabled) {
@@ -203,7 +204,7 @@ public class DatabaseManager {
     }
 
     public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
-        if (playerService == null || !enabled) {
+        if (playerService == null && !enabled) {
             ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
             databasePlayerConsumer.accept(concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName())));
             return;
@@ -217,6 +218,27 @@ public class DatabaseManager {
         } else {
             onNotFound.run();
         }
+    }
+
+    @Nonnull
+    public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections, boolean isAPlayer) {
+        if (!isAPlayer || (playerService == null && !enabled)) {
+            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
+            if (isAPlayer) {
+                return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            } else {
+                return concurrentHashMap.getOrDefault(uuid, new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            }
+        }
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
+                playersCollections
+        ));
+        return DatabaseManager.playerService.findByUUID(uuid, playersCollections);
+    }
+
+    @Nonnull
+    public static DatabasePlayer getPlayer(UUID uuid, boolean isAPlayer) {
+        return getPlayer(uuid, PlayersCollections.LIFETIME, isAPlayer);
     }
 
     private static void loadPlayerInfo(UUID uuid, DatabasePlayer databasePlayer) {
@@ -260,10 +282,6 @@ public class DatabaseManager {
         playerSettings.setHotkeyMode(databasePlayer.getHotkeyMode());
         playerSettings.setParticleQuality(databasePlayer.getParticleQuality());
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
-
-        playerSettings.setChatDamageMode(databasePlayer.getChatDamageMode());
-        playerSettings.setChatHealingMode(databasePlayer.getChatHealingMode());
-        playerSettings.setChatEnergyMode(databasePlayer.getChatEnergyMode());
     }
 
     public static boolean inCache(UUID uuid, PlayersCollections collection) {
@@ -311,7 +329,7 @@ public class DatabaseManager {
     }
 
     public static void updatePlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
-        if (playerService == null || !enabled) {
+        if (playerService == null && !enabled) {
             ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
             databasePlayerConsumer.accept(concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName())));
             return;
@@ -341,6 +359,11 @@ public class DatabaseManager {
 
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
         getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, () -> {
+        });
+    }
+
+    public static void getPlayer(Player player, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, databasePlayerConsumer, () -> {
         });
     }
 

@@ -226,7 +226,9 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
         location.add(0, 1, 0);
 
-        addSecondaryAbility(() -> {
+        addSecondaryAbility(
+                3,
+                () -> {
                     if (wp.isAlive() && wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
                         hammer.remove();
                         particleTask.cancel();
@@ -339,8 +341,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                             "Hammer of Illusion",
                             minDamageHeal * 5,
                             maxDamageHeal * 5,
-                            -1,
-                            100
+                            20,
+                            150
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                         tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                     });
@@ -355,8 +357,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                             "Hammer of Illusion",
                             minDamage * 5,
                             maxDamage * 5,
-                            -1,
-                            100
+                            20,
+                            150
                     );
                 }
             }

@@ -18,7 +18,7 @@ public class AdvancedVoidShred extends AbstractAbility {
     private final int helixDots;
 
     public AdvancedVoidShred(float minDamageHeal, float maxDamageHeal, float cooldown, int slowness, float voidRadius, int helixDots) {
-        super("Void Shred", minDamageHeal, maxDamageHeal, cooldown, 100);
+        super("Void Shred", minDamageHeal, maxDamageHeal, cooldown, 50);
         this.voidRadius = voidRadius;
         this.slowness = slowness;
         this.helixDots = helixDots;

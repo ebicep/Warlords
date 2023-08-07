@@ -1249,27 +1249,30 @@ public enum SkillBoosts {
                 }
             }
     ),
-    CRYSTAL_OF_HEALING("Crystal of Healing",
-            Component.text("Increase the healing of Crystal of Healing by 40%.", NamedTextColor.GRAY),
-            Component.text("Increase the healing of Crystal of Healing by ", NamedTextColor.GREEN)
-                     .append(Component.text("40%", NamedTextColor.RED))
-                     .append(Component.text(".", NamedTextColor.GREEN)),
-            CrystalOfHealing.class,
+    ENERGY_SEER_LUMINARY("Energy Seer",
+            Component.text("Increase the energy restored by Energy Seer by 40 and increase the healing modifier by 10%.\n", NamedTextColor.GRAY),
+            Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
+                    .append(Component.text("40 ", NamedTextColor.RED))
+                    .append(Component.text("and increase the healing modifier by ", NamedTextColor.GREEN))
+                    .append(Component.text("10%", NamedTextColor.RED))
+                    .append(Component.text(".", NamedTextColor.GREEN)),
+            EnergySeerLuminary.class,
             abstractAbility -> {
-                if (abstractAbility instanceof CrystalOfHealing crystalOfHealing) {
-                    crystalOfHealing.setMaxHeal(crystalOfHealing.getMaxHeal() * 1.4f);
+                if (abstractAbility instanceof EnergySeerLuminary energySeerLuminary) {
+                    energySeerLuminary.setEnergyRestore(energySeerLuminary.getEnergyRestore() + 40);
+                    energySeerLuminary.setHealingIncrease(energySeerLuminary.getHealingIncrease() + 10);
                 }
             }
     ),
-    BEACON_OF_SHADOW("Beacon of Shadow",
-            Component.text("Increase the Crit Multiplier reduction inflicted by Beacon of Shadow by 30%.", NamedTextColor.GRAY),
-            Component.text("Increase the Crit Multiplier reduction inflicted by Beacon of Shadow by ", NamedTextColor.GREEN)
+    SANCTIFIED_BEACON("Sanctified Beacon",
+            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by ", NamedTextColor.GREEN)
                      .append(Component.text("30%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            BeaconOfShadow.class,
+            SanctifiedBeacon.class,
             abstractAbility -> {
-                if (abstractAbility instanceof BeaconOfShadow beaconOfShadow) {
-                    beaconOfShadow.setCritMultiplierReducedTo(beaconOfShadow.getCritMultiplierReducedTo() - 30);
+                if (abstractAbility instanceof SanctifiedBeacon sanctifiedBeacon) {
+                    sanctifiedBeacon.setCritMultiplierReducedTo(sanctifiedBeacon.getCritMultiplierReducedTo() - 30);
                 }
             }
     ),

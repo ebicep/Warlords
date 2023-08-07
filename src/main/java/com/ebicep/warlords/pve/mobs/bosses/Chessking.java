@@ -9,8 +9,6 @@ import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.slime.AbstractSlime;
-import com.ebicep.warlords.pve.mobs.slime.VoidSlime;
-import com.ebicep.warlords.pve.mobs.zombie.SlimeZombie;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -38,7 +36,7 @@ public class Chessking extends AbstractSlime implements BossMob {
                 new Belch(),
                 new SpawnMobAbility(
                         "Slime Zombies",
-                        5,
+                        20,
                         Mobs.SLIME_ZOMBIE
                 ) {
                     @Override
@@ -77,17 +75,7 @@ public class Chessking extends AbstractSlime implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 300 == 0) {
-            for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
-                option.spawnNewMob(new SlimeZombie(warlordsNPC.getLocation()));
-            }
-        }
 
-        if (ticksElapsed % 1200 == 0) {
-            for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
-                option.spawnNewMob(new VoidSlime(warlordsNPC.getLocation()));
-            }
-        }
     }
 
     @Override
@@ -108,7 +96,7 @@ public class Chessking extends AbstractSlime implements BossMob {
     private static class Belch extends AbstractAbility {
 
         public Belch() {
-            super("Belch", 15, 100);
+            super("Belch", 10, 100);
         }
 
         @Override
@@ -132,8 +120,8 @@ public class Chessking extends AbstractSlime implements BossMob {
                 we.addDamageInstance(
                         wp,
                         name,
-                        minDamageHeal,
-                        maxDamageHeal,
+                        2800,
+                        3600,
                         critChance,
                         critMultiplier
                 );

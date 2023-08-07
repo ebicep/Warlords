@@ -16,12 +16,14 @@ import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -36,16 +38,16 @@ import java.util.List;
 public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
 
     private int maxEnemiesHit = 1;
-    private int maxAlliesHit = 1;
+    private int maxAlliesHit = 2;
     private int maxFullDistance = 40;
-    private int tickDuration = 80;
-    private int damageReduction = 8;
+    private int tickDuration = 120;
+    private int damageReduction = 5;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
 
     public FortifyingHex() {
         super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 40, true);
-        this.playerHitbox += .25;
+        this.playerHitbox += .4;
     }
 
     @Override
@@ -88,7 +90,20 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
-        return 0;
+        if (hit != null) {
+            return 0;
+        }
+
+        int playersHit = 0;
+        for (WarlordsEntity enemy : PlayerFilter
+                .entitiesAround(projectile.getCurrentLocation(), 2, 2, 2)
+                .excluding(projectile.getHit())
+        ) {
+            if (hitProjectile(projectile, enemy)) {
+                playersHit++;
+            }
+        }
+        return playersHit;
     }
 
     @Override
@@ -103,8 +118,12 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        hitProjectile(projectile, hit);
+    }
+
+    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
         if (projectile.getHit().contains(hit)) {
-            return;
+            return false;
         }
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
@@ -115,13 +134,13 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         if (hit.isTeammate(wp)) {
             int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
             if (teammatesHit > maxAlliesHit) {
-                return;
+                return false;
             }
             giveFortifyingHex(wp, hit);
         } else {
             int enemiesHit = (int) hits.stream().filter(we -> !we.isTeammate(wp)).count();
             if (enemiesHit > maxEnemiesHit) {
-                return;
+                return false;
             }
             double distanceSquared = startingLocation.distanceSquared(currentLocation);
             double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
@@ -141,6 +160,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         if (hits.size() == 1) {
             giveFortifyingHex(wp, wp);
         }
+        return true;
     }
 
     @Override
@@ -240,6 +260,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                 return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL);
             }
         });
+        from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
     }
 
     @Nonnull
@@ -283,6 +304,10 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     public void setMaxAlliesHit(int maxAlliesHit) {
         this.maxAlliesHit = maxAlliesHit;
+    }
+
+    public void setDamageReduction(int damageReduction) {
+        this.damageReduction = damageReduction;
     }
 
     static class FortifyingHexShield extends Shield {

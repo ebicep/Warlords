@@ -158,7 +158,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                     }
                     if (pveMasterUpgrade && baseLocation != null) {
                         if (ticksElapsed % 4 == 0) {
-                            PlayerFilter.entitiesAround(baseLocation, 5, 4, 5)
+                            PlayerFilter.entitiesAround(baseLocation, 15, 14, 15)
                                         .aliveTeammatesOf(wp)
                                         .forEach(warlordsEntity -> {
                                             warlordsEntity.getSpeed().removeSlownessModifiers();
@@ -185,6 +185,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
 
         if (pveMasterUpgrade) {
             addSecondaryAbility(
+                    1,
                     () -> timeWarpCooldown.setTicksLeft(1),
                     false,
                     secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown)

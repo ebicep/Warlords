@@ -73,7 +73,7 @@ public class PatreonReward extends AbstractReward implements Listener {
 
     @EventHandler
     public void onDatabasePlayerFirstLoad(DatabasePlayerFirstLoadEvent event) {
-        if (!event.getPlayer().hasPermission("group.patreon")) {
+        if (!event.getPlayer().hasPermission("group.patreon") || !event.getPlayer().hasPermission("group.contentcreator")) {
             return;
         }
         DatabasePlayer databasePlayer = event.getDatabasePlayer();
@@ -87,7 +87,7 @@ public class PatreonReward extends AbstractReward implements Listener {
     }
 
     public static void givePatreonFutureMessage(DatabasePlayer databasePlayer, Month month, Year year) {
-        databasePlayer.addFutureMessage(new FutureMessage(
+        databasePlayer.addFutureMessage(FutureMessage.create(
                 Arrays.asList(
                         Component.text("------------------------------------------------", NamedTextColor.LIGHT_PURPLE),
                         Component.text("You received your ", NamedTextColor.GREEN)

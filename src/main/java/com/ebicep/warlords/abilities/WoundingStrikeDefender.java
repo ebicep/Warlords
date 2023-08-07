@@ -125,7 +125,7 @@ public class WoundingStrikeDefender extends AbstractStrike {
 
     private void damageReductionOnCrit(WarlordsEntity we, WarlordsEntity nearPlayer) {
         Set<WarlordsEntity> teammates = PlayerFilter
-                .entitiesAround(nearPlayer, 6, 6, 6)
+                .entitiesAround(nearPlayer, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(we)
                 .stream()
                 .collect(Collectors.toSet());

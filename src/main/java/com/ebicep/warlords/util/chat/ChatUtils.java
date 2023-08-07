@@ -10,7 +10,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import java.util.List;
 public class ChatUtils {
 
     public static final Component SPACER = Component.text(" - ", NamedTextColor.GRAY);
-    private static final int CENTER_PX = 164;
+    private static final int CENTER_PX = 150;
 
     public static void sendTitleToGamePlayers(Game game, Component title, Component subtitle) {
         sendTitleToGamePlayers(game, Title.title(
@@ -89,49 +88,6 @@ public class ChatUtils {
         }
     }
 
-    public static void sendCenteredMessage(Player player, String message) {
-        if (message == null || message.isEmpty()) {
-            player.sendMessage("");
-            return;
-        }
-        if (message.contains("\n")) {
-            String[] messages = message.split("\n");
-            for (String s : messages) {
-                sendCenteredMessage(player, s);
-            }
-            return;
-        }
-        message = ChatColor.translateAlternateColorCodes('&', message);
-
-        int messagePxSize = 0;
-        boolean previousCode = false;
-        boolean isBold = false;
-
-        for (char c : message.toCharArray()) {
-            if (c == '§') {
-                previousCode = true;
-            } else if (previousCode) {
-                previousCode = false;
-                isBold = c == 'l' || c == 'L';
-            } else {
-                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
-                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
-                messagePxSize++;
-            }
-        }
-
-        int halvedMessageSize = messagePxSize / 2;
-        int toCompensate = CENTER_PX - halvedMessageSize;
-        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
-        int compensated = 0;
-        StringBuilder sb = new StringBuilder();
-        while (compensated < toCompensate) {
-            sb.append(" ");
-            compensated += spaceLength;
-        }
-        player.sendMessage(sb + message);
-    }
-
     public static void sendCenteredMessage(Player player, Component component) {
         if (component == null) {
             return;
@@ -157,7 +113,7 @@ public class ChatUtils {
             sendCenteredMessage(player, toSend);
             return;
         }
-        String message = LegacyComponentSerializer.legacyAmpersand().serialize(component);
+        String message = LegacyComponentSerializer.legacySection().serialize(component);
         int messagePxSize = 0;
         boolean previousCode = false;
         boolean isBold = false;

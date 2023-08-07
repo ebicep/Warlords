@@ -13,9 +13,13 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
     public MysticalBarrierBranch(AbilityTree abilityTree, MysticalBarrier ability) {
         super(abilityTree, ability);
 
+        if (abilityTree.getWarlordsPlayer().isInPve()) {
+            ability.setRuneTimerIncrease(0.5f);
+        }
+
         treeA.add(new Upgrade(
                 "Zeal - Tier I",
-                "5% Cooldown reduction",
+                "-5% Cooldown reduction",
                 5000,
                 () -> {
                     ability.setCooldown(cooldown * 0.95f);
@@ -23,7 +27,7 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier II",
-                "10% Cooldown reduction",
+                "-10% Cooldown reduction",
                 10000,
                 () -> {
                     ability.setCooldown(cooldown * 0.9f);
@@ -31,7 +35,7 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier III",
-                "15% Cooldown reduction",
+                "-15% Cooldown reduction",
                 15000,
                 () -> {
                     ability.setCooldown(cooldown * 0.85f);
@@ -39,7 +43,7 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
         ));
         treeA.add(new Upgrade(
                 "Zeal - Tier IV",
-                "20% Cooldown reduction",
+                "-20% Cooldown reduction",
                 20000,
                 () -> {
                     ability.setCooldown(cooldown * 0.8f);

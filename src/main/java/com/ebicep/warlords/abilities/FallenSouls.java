@@ -207,14 +207,13 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                 .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
                 .forEachOrdered(soulbinding -> {
+                    boolean masterUpgrade = soulbinding.isPveMasterUpgrade();
                     wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
 
                     for (AbstractAbility ability : wp.getAbilities()) {
-                        ability.subtractCurrentCooldown(1.5F);
+                        ability.subtractCurrentCooldown(pveMasterUpgrade ? 1.75f : 1.5f);
                     }
                     wp.updateItems();
-
-                    boolean masterUpgrade = soulbinding.isPveMasterUpgrade();
 
                     for (WarlordsEntity teammate : PlayerFilter
                             .entitiesAround(wp.getLocation(), 8, 8, 8)
@@ -227,7 +226,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
                         float pveCheck = teammate.isInPve() ? 0.5f : 1;
                         if (masterUpgrade) {
-                            pveCheck += 0.15f;
+                            pveCheck += 0.25f;
                         }
                         for (AbstractAbility ability : teammate.getAbilities()) {
                             ability.subtractCurrentCooldown(pveCheck);

@@ -73,7 +73,6 @@ public abstract class AbstractAbility implements AbilityIcon {
      */
     public abstract boolean onActivate(@Nonnull WarlordsEntity wp, Player player);
 
-    //TODO
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return null;
     }
@@ -159,14 +158,24 @@ public abstract class AbstractAbility implements AbilityIcon {
         return secondaryAbilities;
     }
 
-    public void addSecondaryAbility(Runnable runnable, boolean infiniteUses, Predicate<SecondaryAbility> shouldRemove) {
-        // delay to prevent insta cast
+    /**
+     * @param ticksDelay how many ticks before it allows you to activate the ability
+     * @param runnable secondary ability runnable
+     * @param infiniteUses should the ability have infinite uses
+     * @param shouldRemove remove condition
+     */
+    public void addSecondaryAbility(
+            int ticksDelay,
+            Runnable runnable,
+            boolean infiniteUses,
+            Predicate<SecondaryAbility> shouldRemove
+    ) {
         new BukkitRunnable() {
             @Override
             public void run() {
                 secondaryAbilities.add(new SecondaryAbility(runnable, infiniteUses, shouldRemove));
             }
-        }.runTaskLater(Warlords.getInstance(), 1);
+        }.runTaskLater(Warlords.getInstance(), ticksDelay);
     }
 
     public void runSecondAbilities() {

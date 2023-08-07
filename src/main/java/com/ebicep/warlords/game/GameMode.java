@@ -33,7 +33,6 @@ import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.TriFunction;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -153,7 +152,7 @@ public enum GameMode {
             DatabaseGameTDM::new,
             GamesCollections.TDM,
             16,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -174,11 +173,7 @@ public enum GameMode {
                     Component.text("GO!", NamedTextColor.GREEN),
                     Component.text("First team to reach 1000 points wins!", NamedTextColor.YELLOW)
             ));
-            options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
-                    .name(Component.text("Pre-game Menu ", NamedTextColor.AQUA))
-                    .lore(WordWrap.wrap(Component.text("Allows you to change your class, select a weapon, and edit your settings.", NamedTextColor.GRAY), 150))
-                    .get(), (g, p) -> openMainMenu(p)));
-
+            options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
@@ -256,7 +251,7 @@ public enum GameMode {
             DatabaseGamePvEWaveDefense::new,
             GamesCollections.PVE,
             1,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -292,7 +287,7 @@ public enum GameMode {
             DatabaseGamePvEOnslaught::new,
             GamesCollections.PVE,
             1,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -366,7 +361,7 @@ public enum GameMode {
         }
     },
     TREASURE_HUNT(
-            "Anomaly Heist",
+            "Cryptic Conquest",
             "PVE",
             null,//new ItemStack(Material.SKULL_ITEM, 1, (short) 2),
             null,
@@ -562,6 +557,7 @@ public enum GameMode {
             ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
             return new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                     .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                    .noLore()
                     .get();
         }));
         options.add(new PreGameItemOption(4, new ItemBuilder(Material.NETHER_STAR)
@@ -611,13 +607,14 @@ public enum GameMode {
         for (SpecType value : SpecType.VALUES) {
             ItemBuilder itemBuilder = new ItemBuilder(value.itemStack)
                     .name(Component.text(value.name, value.textColor));
-            TextComponent.Builder lore = Component.text("Total: ", NamedTextColor.GREEN)
-                                                  .append(Component.text((int) game.getPlayers().keySet().stream()
-                                                                                   .map(PlayerSettings::getPlayerSettings)
-                                                                                   .map(PlayerSettings::getSelectedSpec)
-                                                                                   .filter(c -> c.specType == value)
-                                                                                   .count(), NamedTextColor.GOLD))
-                                                  .append(Component.empty()).toBuilder();
+            List<Component> lore = new ArrayList<>();
+            lore.add(Component.text("Total: ", NamedTextColor.GREEN)
+                              .append(Component.text((int) game.getPlayers().keySet().stream()
+                                                               .map(PlayerSettings::getPlayerSettings)
+                                                               .map(PlayerSettings::getSelectedSpec)
+                                                               .filter(c -> c.specType == value)
+                                                               .count(), NamedTextColor.GOLD)));
+            lore.add(Component.empty());
             Arrays.stream(Specializations.VALUES)
                   .filter(classes -> classes.specType == value)
                   .forEach(classes -> {
@@ -626,11 +623,10 @@ public enum GameMode {
                                                     .map(PlayerSettings::getSelectedSpec)
                                                     .filter(c -> c == classes)
                                                     .count();
-                      lore.append(Component.text(classes.name + " : "))
-                          .append(Component.text(playersOnSpec, NamedTextColor.YELLOW))
-                          .append(Component.empty());
+                      lore.add(Component.text(classes.name + " : ").append(Component.text(playersOnSpec, NamedTextColor.YELLOW)));
+                      lore.add(Component.empty());
                   });
-            itemBuilder.lore(lore.build());
+            itemBuilder.lore(lore);
             menu.setItem(
                     x,
                     1,

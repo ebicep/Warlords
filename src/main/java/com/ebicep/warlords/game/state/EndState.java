@@ -14,8 +14,6 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltarosLairOption;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -103,7 +101,7 @@ public class EndState implements State, TimerDebugAble {
                 Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD),
                 true
         );
-        sendGlobalMessage(game, Component.text("  Warlords 2.0", NamedTextColor.WHITE, TextDecoration.BOLD), true);
+        sendGlobalMessage(game, Component.text("Warlords 2.0", NamedTextColor.WHITE, TextDecoration.BOLD), true);
         sendGlobalMessage(game, Component.empty(), false);
         if (teamBlueWins) {
             if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
@@ -223,11 +221,7 @@ public class EndState implements State, TimerDebugAble {
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
 
-            //TODO MERGE ERROR
-            if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) &&
-                    options.stream().noneMatch(BoltaroBonanzaOption.class::isInstance) &&
-                    options.stream().noneMatch(BoltarosLairOption.class::isInstance)
-            ) {
+            if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE) && options.stream().noneMatch(option -> option instanceof EventGameEndOption)) {
                 if (winEvent == null || winEvent.getDeclaredWinner() == null) {
                     player.playSound(player.getLocation(), "defeat", 500, 1);
                     player.showTitle(Title.title(
@@ -324,16 +318,6 @@ public class EndState implements State, TimerDebugAble {
     @Override
     public int getTicksElapsed() {
         return 0;
-    }
-
-    private void sendGlobalMessage(Game game, String message, boolean centered) {
-        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
-            if (centered) {
-                ChatUtils.sendCenteredMessage(p, message);
-            } else {
-                p.sendMessage(message);
-            }
-        });
     }
 
     private void sendGlobalMessage(Game game, Component message, boolean centered) {
@@ -539,7 +523,7 @@ public class EndState implements State, TimerDebugAble {
             ExperienceManager.giveLevelUpMessage(player, experienceOnSpec - experienceEarnedSpec, experienceOnSpec);
             ChatUtils.sendCenteredMessage(player,
                     Component.text("+", NamedTextColor.DARK_GRAY)
-                             .append(Component.text(NumberFormat.addCommaAndRound(experienceUniversal), NamedTextColor.DARK_AQUA))
+                             .append(Component.text(NumberFormat.addCommaAndRound(experienceEarnedUniversal), NamedTextColor.DARK_AQUA))
                              .append(Component.text(" Universal Experience", NamedTextColor.GOLD))
                              .hoverEvent(HoverEvent.showText(universalExpSummary.build()))
             );
@@ -636,8 +620,8 @@ public class EndState implements State, TimerDebugAble {
                 gotAnyDrops = true;
                 ChatUtils.sendCenteredMessage(player,
                         Component.text("+", NamedTextColor.GRAY)
-                                 .append(Component.text(NumberFormat.addCommaAndRound(illusionShardGain), NamedTextColor.GREEN))
-                                 .append(Component.text(" " + Currencies.ILLUSION_SHARD.getColoredName() + (illusionShardGain == 1 ? "" : "s")))
+                                 .append(Component.text(NumberFormat.addCommaAndRound(illusionShardGain) + " ", NamedTextColor.GREEN))
+                                 .append(Currencies.ILLUSION_SHARD.getColoredName().append(Component.text(illusionShardGain == 1 ? "" : "s")))
                 );
             }
             List<AbstractWeapon> weaponsFound = playerPveRewards.getWeaponsFound();
@@ -690,8 +674,8 @@ public class EndState implements State, TimerDebugAble {
                 gotAnyDrops = true;
                 ChatUtils.sendCenteredMessage(player,
                         Component.text("+", NamedTextColor.GRAY)
-                                 .append(Component.text(NumberFormat.addCommaAndRound(fragmentGain), NamedTextColor.GREEN))
-                                 .append(Component.text(" " + Currencies.LEGEND_FRAGMENTS.getColoredName() + (fragmentGain == 1 ? "" : "s")))
+                                 .append(Component.text(NumberFormat.addCommaAndRound(fragmentGain) + " ", NamedTextColor.GREEN))
+                                 .append(Currencies.LEGEND_FRAGMENTS.getColoredName().append(Component.text(fragmentGain == 1 ? "" : "s")))
                 );
             }
             HashMap<MobDrops, Long> mobDropsGained = playerPveRewards.getMobDropsGained();

@@ -56,8 +56,8 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                .append(Component.text("seconds and inflict "))
                                .append(Component.text("3", NamedTextColor.BLUE))
                                .append(Component.text(" stacks of Poisonous Hex on "))
-                               .append(Component.text("2", NamedTextColor.YELLOW))
-                               .append(Component.text(" nearby enemies in a "))
+                               .append(Component.text("2", NamedTextColor.RED))
+                               .append(Component.text(" nearby enemies in an "))
                                .append(Component.text(format(poisonRadius), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks radius."))
                                .append(Component.text("\n\nNot reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts "))
@@ -108,9 +108,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                 if (ticksElapsed % 3 == 0) {
                                     Location location = wp.getLocation();
                                     location.add(0, 1.5, 0);
-                                    EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
-                                    EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
-                                    EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3F, 0.3F, 0.3F, 0);
+                                    EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15, 0.3, 0.15, 0.01);
+                                    EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3, 0.3, 0.3, 0.0001);
+                                    EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3, 0.3, 0.3, 0);
                                 }
                             })
                     );
@@ -138,22 +138,24 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                             Particle.CHERRY_LEAVES,
                             wp.getLocation(),
                             2,
-                            0.15F,
-                            0.3F,
-                            0.15F,
+                            0.15,
+                            0.3,
+                            0.15,
                             0
                     );
                 })
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * (100 - damageAbsorption) / 100f;
+                float afterValue = currentDamageValue * convertToDivisionDecimal(damageAbsorption);
                 totalAbsorbed.addAndGet(currentDamageValue - afterValue);
                 return afterValue;
             }
         };
         wp.getCooldownManager().addCooldown(protectiveLayerCooldown);
-        addSecondaryAbility(() -> {
+        addSecondaryAbility(
+                5,
+                () -> {
                     wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
                     wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);

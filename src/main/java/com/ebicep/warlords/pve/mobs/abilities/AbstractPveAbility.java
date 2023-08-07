@@ -38,7 +38,7 @@ public abstract class AbstractPveAbility extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         if (timesUsed > 1) { // used more than once means cached pveOption is null
-            return false;
+            return onPveActivate(wp, pveOption);
         }
         if (pveOption != null) {
             return onPveActivate(wp, pveOption);

@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
@@ -29,16 +30,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Void extends AbstractSkeleton implements BossMob {
 
+    AtomicInteger damageToDeal = new AtomicInteger(0);
+    private final int stormRadius = 10;
+    private final int earthQuakeRadius = 10;
     private boolean flamePhaseTrigger = false;
     private boolean flamePhaseTriggerTwo = false;
     private boolean timedDamageTrigger = false;
     private boolean timedDamageTriggerTwo = false;
     private boolean preventArmageddon = false;
     private boolean boltaroPhaseTrigger = false;
-    private final int stormRadius = 10;
-    private final int earthQuakeRadius = 10;
-
-    AtomicInteger damageToDeal = new AtomicInteger(0);
 
     public Void(Location spawnLocation) {
         super(
@@ -63,6 +63,13 @@ public class Void extends AbstractSkeleton implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+
+        if (option.getDifficulty() == DifficultyIndex.EXTREME) {
+            float newHealth = 100000;
+            warlordsNPC.setMaxBaseHealth(newHealth);
+            warlordsNPC.setHealth(newHealth);
+            warlordsNPC.setMaxHealth(newHealth);
+        }
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Damage Check",
@@ -99,11 +106,16 @@ public class Void extends AbstractSkeleton implements BossMob {
             immolation(option, loc);
         }
 
+        long spawnAmount = 2 * playerCount;
+        DifficultyIndex difficulty = option.getDifficulty();
+        if (difficulty == DifficultyIndex.EXTREME) {
+            spawnAmount--;
+        }
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !timedDamageTrigger) {
             timedDamageTrigger = true;
             preventArmageddon = true;
-            timedDamage(option, playerCount, 15000, 11);
-            for (int i = 0; i < (2 * playerCount); i++) {
+            timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 13000 : 15000, 11);
+            for (int i = 0; i < spawnAmount; i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }
         }
@@ -117,8 +129,8 @@ public class Void extends AbstractSkeleton implements BossMob {
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !timedDamageTriggerTwo) {
             timedDamageTriggerTwo = true;
             preventArmageddon = true;
-            timedDamage(option, playerCount, 25000, 16);
-            for (int i = 0; i < (2 * playerCount); i++) {
+            timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 21000 : 25000, 16);
+            for (int i = 0; i < spawnAmount; i++) {
                 option.spawnNewMob(new IronGolem(loc));
             }
         }
@@ -178,7 +190,7 @@ public class Void extends AbstractSkeleton implements BossMob {
         }
 
         if (ticksElapsed % 400 == 0) {
-            for (int i = 0; i < (2 * playerCount); i++) {
+            for (int i = 0; i < spawnAmount; i++) {
                 option.spawnNewMob(new TormentedSoul(warlordsNPC.getLocation()));
             }
         }
@@ -433,4 +445,5 @@ public class Void extends AbstractSkeleton implements BossMob {
             }
         }.runTaskTimer(40, 0);
     }
+
 }

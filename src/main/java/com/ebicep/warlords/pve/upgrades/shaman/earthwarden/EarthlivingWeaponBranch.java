@@ -53,34 +53,34 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWe
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+2% Proc chance",
+                "+4% Proc chance",
                 5000,
                 () -> {
-                    ability.setProcChance(ability.getProcChance() + 2);
+                    ability.setProcChance(ability.getProcChance() + 4);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "+4% Proc chance",
+                "+8% Proc chance",
                 10000,
                 () -> {
-                    ability.setProcChance(ability.getProcChance() + 2);
+                    ability.setProcChance(ability.getProcChance() + 4);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+6% Proc chance",
+                "+12% Proc chance",
                 15000,
                 () -> {
-                    ability.setProcChance(ability.getProcChance() + 2);
+                    ability.setProcChance(ability.getProcChance() + 4);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+8% Proc chance\n+1 Earthliving Weapon hit",
+                "+16% Proc chance\n+1 Earthliving Weapon hit",
                 20000,
                 () -> {
-                    ability.setProcChance(ability.getProcChance() + 2);
+                    ability.setProcChance(ability.getProcChance() + 4);
                     ability.setMaxHits(maxHits + 1);
                 }
         ));

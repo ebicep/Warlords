@@ -35,7 +35,7 @@ import java.util.List;
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     private int hexTickDurationIncrease = 40;
-    private int additionalDamageReduction = 12;
+    private int additionalDamageReduction = 10;
     private int tickDuration = 240;
 
     public Sanctuary() {
@@ -64,7 +64,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         wp.subtractEnergy(energyCost, false);
 
         Location loc = wp.getLocation();
-        Utils.playGlobalSound(loc, Sound.ENTITY_ELDER_GUARDIAN_CURSE, 0.5f, 0.9f);
+        Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 1.8f);
         Utils.playGlobalSound(loc, "arcanist.sanctuary.activation", 2, 0.55f);
 
         EffectUtils.playCircularShieldAnimation(loc, Particle.END_ROD, 5, 0.8, 2);

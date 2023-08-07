@@ -242,6 +242,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             }
             updateItems();
             resetPlayerAddons();
+            ArmorManager.resetArmor(player, this);
 
             if (closeInventory) {
                 player.closeInventory();

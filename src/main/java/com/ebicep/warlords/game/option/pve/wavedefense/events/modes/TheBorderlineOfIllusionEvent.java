@@ -1,7 +1,8 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.events.modes;
 
+import com.ebicep.warlords.events.EventFlags;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
-import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropMobDropEvent;
+import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.EventGameEndOption;
@@ -32,7 +33,8 @@ public class TheBorderlineOfIllusionEvent implements Option, EventGameEndOption 
             }
 
             @EventHandler
-            public void onWeaponDrop(WarlordsDropMobDropEvent event) {
+            public void onWeaponDrop(WarlordsDropWeaponEvent event) {
+                event.getEventFlags().remove(EventFlags.GUILD);
                 event.addModifier(weaponDropBonus);
             }
         });

@@ -10,6 +10,7 @@ import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.PartyPlayerType;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -105,15 +106,17 @@ public class PartyCommand extends BaseCommand {
             return;
         }
         if (party.getInvites().containsKey(targetUUID)) {
-            Party.sendPartyMessage(player, Component.text("That player has already been invited! (" + party.getInvites().get(targetUUID) + ")", NamedTextColor.RED));
+            Party.sendPartyMessage(player,
+                    Component.text("That player has already been invited! (" + party.getInvites().get(targetUUID) + ")", NamedTextColor.RED)
+            );
             return;
         }
         party.invite(targetUUID);
         party.sendMessageToAllPartyPlayers(
                 Component.text().color(NamedTextColor.YELLOW)
-                         .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                         .append(Permissions.getPrefixWithColor(player, true))
                          .append(Component.text(" invited "))
-                         .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                         .append(Permissions.getPrefixWithColor(target, true))
                          .append(Component.text(" to the party!"))
                          .append(Component.newline())
                          .append(Component.text("They have"))
@@ -124,19 +127,16 @@ public class PartyCommand extends BaseCommand {
         ChatUtils.sendCenteredMessage(target, Component.text("------------------------------------------", NamedTextColor.BLUE, TextDecoration.BOLD));
         ChatUtils.sendCenteredMessage(target,
                 Component.text().color(NamedTextColor.YELLOW)
-                         .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                         .append(Permissions.getPrefixWithColor(player, true))
                          .append(Component.text(" has invited you to join "))
                          .append(party.getPartyLeader()
                                       .getUUID()
                                       .equals(playerUUID) ?
                                  Component.text("their party!") :
-                                 Component.text(party.getLeaderName(), NamedTextColor.AQUA).append(Component.text("'s party!")))
-                         .append(Component.text(target.getName(), NamedTextColor.AQUA))
-                         .append(Component.text(" to the party!"))
-                         .append(Component.newline())
-                         .append(Component.text("They have"))
-                         .append(Component.text(" 60 ", NamedTextColor.RED))
-                         .append(Component.text("seconds to accept!"))
+                                 Component.textOfChildren(
+                                         Permissions.getPrefixWithColor(player, true),
+                                         Component.text("'s party!")
+                                 ))
                          .build()
         );
         ChatUtils.sendCenteredMessage(target,

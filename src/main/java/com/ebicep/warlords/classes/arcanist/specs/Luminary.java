@@ -15,8 +15,8 @@ public class Luminary extends AbstractArcanist {
                 0,
                 new MercifulHex(),
                 new RayOfLight(),
-                new CrystalOfHealing(),
-                new BeaconOfShadow(),
+                new EnergySeerLuminary(),
+                new SanctifiedBeacon(),
                 new DivineBlessing()
         );
     }

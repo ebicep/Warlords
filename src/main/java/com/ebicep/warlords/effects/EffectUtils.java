@@ -47,7 +47,7 @@ public class EffectUtils {
 
                 loc.add(x, y, z);
                 Particle.DustOptions data = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                loc.getWorld().spawnParticle(Particle.REDSTONE, loc, 1, 0, 0, 0, 0, data, true);
+                displayParticle(Particle.REDSTONE, loc, 1, data);
                 loc.subtract(x, y, z);
             }
         }
@@ -67,9 +67,8 @@ public class EffectUtils {
             for (double a = 0; a < Math.PI * 2; a += Math.PI / 10) {
                 double x = cos(a) * radius;
                 double z = Math.sin(a) * radius;
-
                 loc.add(x, y, z);
-                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                displayParticle(effect, loc, particleCount);
                 loc.subtract(x, y, z);
             }
         }
@@ -95,7 +94,7 @@ public class EffectUtils {
                 double z = Math.sin(angle) * ratio * helixRadius;
                 loc.add(x, 0, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                loc.getWorld().spawnParticle(Particle.REDSTONE, loc, 1, 0, 0, 0, 0, dustOptions, true);
+                displayParticle(Particle.REDSTONE, loc, 1, dustOptions);
                 loc.subtract(x, 0, z);
             }
         }
@@ -118,7 +117,7 @@ public class EffectUtils {
                 double x = cos(angle) * ratio * helixRadius;
                 double z = Math.sin(angle) * ratio * helixRadius;
                 loc.add(x, 0, z);
-                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                displayParticle(effect, loc, particleCount);
                 loc.subtract(x, 0, z);
             }
         }
@@ -140,7 +139,7 @@ public class EffectUtils {
                 particleLoc.setY(loc.getY() + i / 5D);
                 particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                loc.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 1, 0, 0, 0, 0, dustOptions, true);
+                displayParticle(Particle.REDSTONE, particleLoc, 1, dustOptions);
             }
         }
     }
@@ -154,7 +153,7 @@ public class EffectUtils {
                 particleLoc.setY(loc.getY() + i / 5D);
                 particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                loc.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 1, 0, 0, 0, 0, dustOptions, true);
+                displayParticle(Particle.REDSTONE, particleLoc, 1, dustOptions);
             }
         }
     }
@@ -174,7 +173,7 @@ public class EffectUtils {
                 particleLoc.setX(loc.getX() + Math.sin(angle) * cylinderRadius);
                 particleLoc.setY(loc.getY() + i / 5D);
                 particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
-                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                displayParticle(effect, loc, particleCount);
             }
         }
     }
@@ -200,7 +199,7 @@ public class EffectUtils {
                 v.setY(starRadius + height);
                 EffectUtils.rotateAroundAxisY(v, xRotation);
                 loc.add(v);
-                loc.getWorld().spawnParticle(effect, loc, 1, 0, 0, 0, 0, null, true);
+                displayParticle(effect, loc, 1);
                 loc.subtract(v);
             }
         }
@@ -289,7 +288,7 @@ public class EffectUtils {
         for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
             for (int i1 = 0; i1 < amount; i1++) {
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                lineLocation.getWorld().spawnParticle(Particle.REDSTONE, lineLocation, amount, 0, 0, 0, 0, dustOptions, true);
+                displayParticle(Particle.REDSTONE, lineLocation, amount, dustOptions);
             }
             lineLocation.add(lineLocation.getDirection().multiply(.5));
         }
@@ -298,17 +297,16 @@ public class EffectUtils {
     public static void playRandomHitEffect(Location loc, int red, int green, int blue, int amount) {
         for (int i = 0; i < amount; i++) {
             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-            loc.getWorld()
-               .spawnParticle(Particle.REDSTONE,
-                       loc.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
-                       amount,
-                       0,
-                       0,
-                       0,
-                       0,
-                       dustOptions,
-                       true
-               );
+            displayParticle(
+                    Particle.REDSTONE,
+                    loc.clone().add(
+                            (Math.random() * 2) - 1,
+                            1.2 + (Math.random() * 2) - 1,
+                            (Math.random() * 2) - 1
+                    ),
+                    amount,
+                    dustOptions
+            );
         }
     }
 
@@ -419,7 +417,7 @@ public class EffectUtils {
                     y = yLimit;
                 }
                 loc.add(x, y ,z);
-                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                displayParticle(effect, loc, particleCount);
                 loc.subtract(x, y, z);
 
                 if (t > Math.PI * amountOfSwirls) {
@@ -429,7 +427,13 @@ public class EffectUtils {
         }.runTaskTimer(0, delayBetweenParticles);
     }
 
-    public static void playCircularShieldAnimation(Location location, Particle particle, int amountOfCircles, double circleRadius, double distance) {
+    public static void playCircularShieldAnimation(
+            Location location,
+            Particle particle,
+            int amountOfCircles,
+            double circleRadius,
+            double distance
+    ) {
         Location loc = location.clone();
         loc.setPitch(0);
         loc.setYaw(0);
@@ -442,12 +446,13 @@ public class EffectUtils {
                 double angle = c / 20D * Math.PI * 2;
                 displayParticle(
                         particle,
-                        matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0
+                        matrix.translateVector(
+                                loc.getWorld(),
+                                distance,
+                                Math.sin(angle) * circleRadius,
+                                Math.cos(angle) * circleRadius
+                        ),
+                        1
                 );
             }
         }
@@ -480,32 +485,19 @@ public class EffectUtils {
             matrix.updateFromLocation(loc);
             for (int c = 0; c < 20; c++) {
                 double angle = c / 20D * Math.PI * 2;
-                loc.getWorld().spawnParticle(
+                displayParticle(
                         particle,
                         matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * circleRadius, Math.cos(angle) * circleRadius),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        null,
-                        true
+                        1
                 );
             }
 
             for (int c = 0; c < 10; c++) {
                 double angle = c / 10D * Math.PI * 2;
-
-                loc.getWorld().spawnParticle(
+                displayParticle(
                         innerParticle,
                         matrix.translateVector(loc.getWorld(), distance, Math.sin(angle) * innerCricleRadius, Math.cos(angle) * innerCricleRadius),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        null,
-                        true
+                        1
                 );
             }
         }
@@ -526,12 +518,33 @@ public class EffectUtils {
         }
     }
 
+    /**
+     * @param particle which particle to display
+     * @param loc location of the particle
+     * @param count particle count
+     */
     public static void displayParticle(
             Particle particle,
             Location loc,
             int count
     ) {
         loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
+    }
+
+    /**
+     *
+     * @param particle which particle to display
+     * @param loc location of the particle
+     * @param count particle count
+     * @param data optional extra data for the particle (e.g. DustOptions)
+     */
+    public static <T> void displayParticle(
+            Particle particle,
+            Location loc,
+            int count,
+            T data
+    ) {
+        loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, data, true);
     }
 
     /**
@@ -555,6 +568,16 @@ public class EffectUtils {
         loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
     }
 
+    /**
+     * @param particle which particle to display
+     * @param loc location of the particle
+     * @param count particle count
+     * @param offsetX particle X axis offset
+     * @param offsetY particle Y axis offset
+     * @param offsetZ particle Z axis offset
+     * @param speed speed of the particle animation
+     * @param data optional extra data for the particle (e.g. DustOptions)
+     */
     public static <T> void displayParticle(
             Particle particle,
             Location loc,
@@ -566,6 +589,19 @@ public class EffectUtils {
             T data
     ) {
         loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, data, true);
+    }
+
+    /**
+     * @param loc at what location should the firework be played at,
+     * @param fe which effects should the firework have.
+     */
+    public static void playFirework(Location loc, FireworkEffect fe) {
+        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+        FireworkMeta fireworkMeta = firework.getFireworkMeta();
+        fireworkMeta.addEffect(fe);
+        fireworkMeta.setPower(1);
+        firework.setFireworkMeta(fireworkMeta);
+        firework.detonate();
     }
 
     /**

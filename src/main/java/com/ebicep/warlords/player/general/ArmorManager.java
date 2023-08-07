@@ -189,26 +189,27 @@ public class ArmorManager {
                 "Simple Rogue Helmet",
                 Classes.ROGUE,
                 new ItemStack(Material.OAK_LOG),
-                new ItemStack(Material.OAK_WOOD)
+                new ItemStack(Material.OAK_PLANKS)
         ),
         GREATER_ROGUE_HELMET(
                 "Greater Rogue Helmet",
                 Classes.ROGUE,
                 new ItemStack(Material.SPRUCE_LOG),
-                new ItemStack(Material.SPRUCE_WOOD)
+                new ItemStack(Material.SPRUCE_PLANKS)
         ),
         MASTERWORK_ROGUE_HELMET(
                 "Masterwork Rogue Helmet",
                 Classes.ROGUE,
                 new ItemStack(Material.BIRCH_LOG),
-                new ItemStack(Material.BIRCH_WOOD)
+                new ItemStack(Material.BIRCH_PLANKS)
         ),
         LEGENDARY_ROGUE_HELMET(
                 "Legendary Rogue Helmet",
                 Classes.ROGUE,
                 new ItemStack(Material.JUNGLE_LOG),
-                new ItemStack(Material.JUNGLE_WOOD)
+                new ItemStack(Material.JUNGLE_PLANKS)
         ),
+
         SIMPLE_ARCANIST_HELMET(
                 "Simple Arcanist Helmet",
                 Classes.ARCANIST,
@@ -218,20 +219,20 @@ public class ArmorManager {
         GREATER_ARCANIST_HELMET(
                 "Greater Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.SPRUCE_LOG),
-                new ItemStack(Material.SPRUCE_WOOD)
+                new ItemStack(Material.STRIPPED_CHERRY_LOG),
+                new ItemStack(Material.BLACKSTONE_STAIRS)
         ),
         MASTERWORK_ARCANIST_HELMET(
                 "Masterwork Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.BIRCH_LOG),
-                new ItemStack(Material.BIRCH_WOOD)
+                new ItemStack(Material.CHERRY_PLANKS),
+                new ItemStack(Material.BLACKSTONE_SLAB)
         ),
         LEGENDARY_ARCANIST_HELMET(
                 "Legendary Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.JUNGLE_LOG),
-                new ItemStack(Material.JUNGLE_WOOD)
+                new ItemStack(Material.CHERRY_STAIRS),
+                new ItemStack(Material.BLACKSTONE_WALL)
         ),
 
         ;

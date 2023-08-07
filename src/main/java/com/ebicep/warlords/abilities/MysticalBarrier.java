@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon, Duration {
 
-    private float runeTimerIncrease = 0.5f;
+    private float runeTimerIncrease = 0.25f;
     private int tickDuration = 100;
     private float meleeDamageReduction = 50;
     private int shieldBase = 400;
@@ -37,7 +37,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private int reactivateTickDuration = 100;
 
     public MysticalBarrier() {
-        super("Mystical Barrier", 0, 0, 30, 20, 0, 0);
+        super("Mystical Barrier", 0, 0, 28, 20, 0, 0);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds for every instance of damage they deal to you for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nReactivate the ability to grant yourself a shield equal to"))
+                               .append(Component.text(" seconds.\n\nReactivate the ability to grant the nearest ally a shield equal to"))
                                .append(Component.text(shieldBase, NamedTextColor.YELLOW))
                                .append(Component.text(" + "))
                                .append(Component.text(shieldIncrease, NamedTextColor.YELLOW))
@@ -56,7 +56,10 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                .append(Component.text(shieldMaxHealth, NamedTextColor.YELLOW))
                                .append(Component.text(" health, that lasts "))
                                .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nNot reactivating the ability will instead grant the nearest ally the shield for the same duration."));
+                               .append(Component.text(" seconds, as well as "))
+                               .append(Component.text("3", NamedTextColor.BLUE)
+                               .append(Component.text(" stacks of Fortifying Hex."))
+                               .append(Component.text("\n\nNot reactivating the ability will instead grant you the shield for the same duration.")));
     }
 
     @Override
@@ -77,33 +80,15 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    PlayerFilter.playingGame(wp.getGame())
-                                .teammatesOfExcludingSelf(wp)
-                                .closestFirst(wp)
-                                .limit(1)
-                                .forEach(ally -> {
-                                    EffectUtils.playParticleLinkAnimation(wp.getLocation(), ally.getLocation(), 0, 180, 180, 2);
-                                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
-                                    int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
-                                    giveShield(ally, shieldHealth);
-                                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                            .append(Component.text(" Your Mystical Barrier is now protecting ", NamedTextColor.GRAY))
-                                            .append(Component.text(ally.getName(), NamedTextColor.YELLOW))
-                                            .append(Component.text("!", NamedTextColor.GRAY))
-                                    );
-
-                                    ally.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                                            .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                                            .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
-                                            .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
-                                            .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                            .append(Component.text(" seconds!", NamedTextColor.GRAY))
-                                    );
-
-                                    for (int i = 0; i < 3; i++) {
-                                        FortifyingHex.giveFortifyingHex(wp, ally);
-                                    }
-                                });
+                    if (!wp.isAlive()) {
+                        return;
+                    }
+                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
+                    int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
+                    giveShield(wp, shieldHealth);
+                    for (int i = 0; i < 3; i++) {
+                        FortifyingHex.giveFortifyingHex(wp, wp);
+                    }
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -135,17 +120,37 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         };
         wp.getCooldownManager().addCooldown(mysticalBarrierCooldown);
 
-        addSecondaryAbility(() -> {
-                    if (!wp.isAlive()) {
-                        return;
-                    }
-                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
-                    wp.getCooldownManager().removeCooldownNoForce(mysticalBarrierCooldown);
-                    int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
-                    giveShield(wp, shieldHealth);
-                    for (int i = 0; i < 3; i++) {
-                        FortifyingHex.giveFortifyingHex(wp, wp);
-                    }
+        addSecondaryAbility(
+                5,
+                () -> {
+                    wp.getCooldownManager().removeCooldown(mysticalBarrierCooldown);
+                    PlayerFilter.playingGame(wp.getGame())
+                                .aliveTeammatesOfExcludingSelf(wp)
+                                .closestFirst(wp)
+                                .limit(1)
+                                .forEach(ally -> {
+                                EffectUtils.playParticleLinkAnimation(wp.getLocation(), ally.getLocation(), 0, 180, 180, 2);
+                                Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
+                                int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
+                                giveShield(ally, shieldHealth);
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" Your Mystical Barrier is now protecting ", NamedTextColor.GRAY))
+                                        .append(Component.text(ally.getName(), NamedTextColor.YELLOW))
+                                        .append(Component.text("!", NamedTextColor.GRAY))
+                                );
+
+                                ally.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                                        .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                        .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
+                                        .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
+                                        .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                        .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                                );
+
+                                for (int i = 0; i < 3; i++) {
+                                    FortifyingHex.giveFortifyingHex(wp, ally);
+                                }
+                            });
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(mysticalBarrierCooldown)

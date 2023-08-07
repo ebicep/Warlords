@@ -137,7 +137,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                             100,
                             EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
                     );
-                    return currentDamageValue * .25f;
+                    return currentDamageValue * .1f;
                 } else {
                     return currentDamageValue * getCalculatedVindicateDamageReduction();
                 }

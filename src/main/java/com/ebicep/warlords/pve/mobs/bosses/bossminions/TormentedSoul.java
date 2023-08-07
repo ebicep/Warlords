@@ -45,7 +45,7 @@ public class TormentedSoul extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         DifficultyIndex difficulty = option.getDifficulty();
-        reduceCooldown = difficulty == DifficultyIndex.EXTREME ? 0.6f : difficulty == DifficultyIndex.HARD ? 0.4f : 0.2f;
+        reduceCooldown = difficulty == DifficultyIndex.EXTREME ? 0.5f : difficulty == DifficultyIndex.HARD ? 0.4f : 0.2f;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class TormentedSoul extends AbstractZombie implements BossMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 200, 200, 200, 1);
-        Utils.playGlobalSound(self.getLocation(), Sound.AMBIENT_CAVE, 2, 2);
+        Utils.playGlobalSound(self.getLocation(), Sound.AMBIENT_CAVE, 0.35f, 2);
         if (!event.getAbility().isEmpty()) {
             attacker.getSpec().increaseAllCooldownTimersBy(reduceCooldown);
         }

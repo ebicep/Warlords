@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -97,7 +96,7 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
                 we.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.WEAPON, 20);
             }
 
-            FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
+            EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder()
                                                                               .withColor(Color.BLACK)
                                                                               .with(FireworkEffect.Type.BALL_LARGE)
                                                                               .build());

@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.mobflags.Unswappable;
 import com.ebicep.warlords.pve.mobs.player.Decoy;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -73,6 +74,10 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        if (wp.getCarriedFlag() != null) {
+            wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
+            return false;
+        }
         for (WarlordsEntity swapTarget : PlayerFilter
                 .entitiesAround(wp.getLocation(), radius, radius / 2f, radius)
                 .aliveEnemiesOf(wp)
@@ -81,8 +86,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
         ) {
             if (swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(Component.text(" You cannot Soul Switch with a player holding the flag!", NamedTextColor.RED));
-            } else if (wp.getCarriedFlag() != null) {
-                wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
+            } else if (swapTarget instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof Unswappable) {
+                wp.sendMessage(Component.text(" You cannot Soul Switch with that mob!", NamedTextColor.RED));
             } else {
                 wp.subtractEnergy(energyCost, false);
                 Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
@@ -167,7 +172,10 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
                                                             20 * 5
                                                     ) {
                                                         @Override
-                                                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                        public float modifyDamageBeforeInterveneFromAttacker(
+                                                                WarlordsDamageHealingEvent event,
+                                                                float currentDamageValue
+                                                        ) {
                                                             return currentDamageValue * .5f;
                                                         }
                                                     });
@@ -215,7 +223,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
                 return true;
             }
         }
-
         return false;
     }
 

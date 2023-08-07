@@ -101,9 +101,11 @@ public class IllusionVendorTrait extends WarlordsTrait {
                         pveStats.getIllusionVendorRewardsPurchased().merge(mapName, 1L, Long::sum);
                         weeklyRewardsPurchased.merge(mapName, 1L, Long::sum);
 
-                        player.sendMessage(ChatColor.GREEN + "Purchased " + rewardSpendable.getCostColoredName(rewardAmount) +
-                                ChatColor.GREEN + " for " + Currencies.ILLUSION_SHARD.getCostColoredName(finalRewardPrice) +
-                                ChatColor.GREEN + "!");
+                        player.sendMessage(Component.text("Purchased ", NamedTextColor.GREEN)
+                                                    .append(rewardSpendable.getCostColoredName(rewardAmount))
+                                                    .append(Component.text(" for "))
+                                                    .append(Currencies.ILLUSION_SHARD.getCostColoredName(finalRewardPrice))
+                                                    .append(Component.text("!")));
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
                         openIllusionVendor(player, databasePlayer, databasePlayerWeekly);
 
