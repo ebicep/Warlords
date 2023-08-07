@@ -82,7 +82,7 @@ public class AvengersStrike extends AbstractStrike {
                     multiplier = 1.4f;
                 }
 
-                if (((WarlordsNPC) nearPlayer).getMobTier() == MobTier.ELITE) {
+                if (((WarlordsNPC) nearPlayer).getMobTier() == MobTier.ILLUSION) {
                     healthDamage = nearPlayer.getMaxHealth() * 0.005f;
                 }
             }

@@ -22,7 +22,7 @@ public class RangeOnlySkeleton extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Celestial Bow Wielder",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.BOW_HEAD),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),

@@ -18,7 +18,7 @@ public class ElitePigZombie extends AbstractPigZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Shaman",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SAMURAI),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),

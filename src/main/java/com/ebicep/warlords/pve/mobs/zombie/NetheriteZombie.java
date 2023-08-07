@@ -28,8 +28,8 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
     public NetheriteZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Exiled Void Lancer",
-                MobTier.ELITE,
+                "Lancer",
+                MobTier.VOID,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.NETHERITE_HELMET),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),

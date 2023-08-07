@@ -52,7 +52,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
             @EventHandler
             public void onItemDrop(WarlordsDropItemEvent event) {
                 AbstractMob<?> deadMob = event.getDeadMob();
-                if (deadMob.getMobTier() != MobTier.ELITE) {
+                if (deadMob.getMobTier() != MobTier.ILLUSION) {
                     return;
                 }
                 event.addModifier(.1);

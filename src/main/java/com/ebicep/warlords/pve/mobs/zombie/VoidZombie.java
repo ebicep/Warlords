@@ -30,7 +30,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Void Singularity",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),

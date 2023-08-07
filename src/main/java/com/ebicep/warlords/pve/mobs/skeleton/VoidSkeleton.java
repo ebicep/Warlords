@@ -24,7 +24,7 @@ public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Void Mesmer",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),

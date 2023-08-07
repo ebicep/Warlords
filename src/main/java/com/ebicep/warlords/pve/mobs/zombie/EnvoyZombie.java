@@ -17,8 +17,8 @@ public class EnvoyZombie extends AbstractZombie implements EliteMob {
     public EnvoyZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Envoy Vanguard",
-                MobTier.ELITE,
+                "Vanguard",
+                MobTier.ENVOY,
                 new Utils.SimpleEntityEquipment(
                         ArmorManager.Helmets.LEGENDARY_PALADIN_HELMET.itemRed,
                         new ItemStack(Material.DIAMOND_CHESTPLATE),

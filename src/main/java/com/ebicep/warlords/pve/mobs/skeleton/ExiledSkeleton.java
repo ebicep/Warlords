@@ -35,7 +35,7 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Exiled Sorcerer",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.WHITE_SHEKEL),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),

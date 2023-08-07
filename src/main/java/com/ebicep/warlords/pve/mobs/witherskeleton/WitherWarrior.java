@@ -18,7 +18,7 @@ public class WitherWarrior extends AbstractWitherSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Celestial Opus",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.CELESTIAL_GOLDOR),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 40, 40, 40),

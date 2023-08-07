@@ -27,7 +27,7 @@ public class WanderWalker extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Void Raider",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SCULK_MONSTER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 204, 204),

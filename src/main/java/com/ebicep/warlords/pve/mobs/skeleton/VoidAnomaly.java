@@ -19,7 +19,7 @@ public class VoidAnomaly extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Void Anomaly",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SEEK_DOORS),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 64, 64, 64),

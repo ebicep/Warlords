@@ -17,7 +17,7 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Warlock",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.ORANGE_CARPET),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),

@@ -13,7 +13,7 @@ public class BabyMagmaCube extends AbstractMagmaCube implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Illuminati",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 null,
                 3200,
                 0.35f,

@@ -22,7 +22,7 @@ public class EnvoyBerserkZombie extends AbstractBerserkZombie {
         super(
                 spawnLocation,
                 "Envoy Berserker",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         ArmorManager.Helmets.LEGENDARY_WARRIOR_HELMET.itemRed,
                         new ItemStack(Material.DIAMOND_CHESTPLATE),

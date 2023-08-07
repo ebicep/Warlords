@@ -17,8 +17,8 @@ public class ExiledZombie extends AbstractZombie implements EliteMob {
     public ExiledZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Exiled Scrupulous",
-                MobTier.ELITE,
+                "Scrupulous",
+                MobTier.EXILED,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 10, 50, 130),

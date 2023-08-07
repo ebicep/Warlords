@@ -21,7 +21,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Illumination",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 null,
                 4000,
                 0.5f,

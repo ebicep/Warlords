@@ -18,8 +18,8 @@ public class SlimeZombie extends AbstractZombie implements EliteMob {
     public SlimeZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Illusion Slime Guard",
-                MobTier.ELITE,
+                "Slime Guard",
+                MobTier.OVERGROWN,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SLIME_BLOCK),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 106, 255, 106),

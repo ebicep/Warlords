@@ -19,7 +19,7 @@ public class ForgottenPyromancer extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Forgotten Pyromancer",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.WITHER_SOUL),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 29, 49, 64),

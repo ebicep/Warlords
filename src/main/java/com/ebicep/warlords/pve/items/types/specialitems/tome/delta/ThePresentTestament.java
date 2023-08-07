@@ -57,7 +57,7 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
                     return;
                 }
                 if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-                    if (warlordsNPC.getMobTier() == MobTier.ELITE) {
+                    if (warlordsNPC.getMobTier() == MobTier.ILLUSION) {
                         event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
                     }
                 }

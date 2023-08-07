@@ -28,7 +28,7 @@ public class Witch extends AbstractWitch implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Deacon",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 null,
                 3500,
                 0.05f,

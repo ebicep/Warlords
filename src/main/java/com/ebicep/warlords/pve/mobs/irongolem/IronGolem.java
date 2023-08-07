@@ -20,7 +20,7 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Apprentice",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 null,
                 5000,
                 0.4f,

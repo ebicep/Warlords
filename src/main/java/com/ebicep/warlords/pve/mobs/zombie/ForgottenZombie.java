@@ -21,8 +21,8 @@ public class ForgottenZombie extends AbstractZombie implements EliteMob {
     public ForgottenZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Forgotten Nightmare",
-                MobTier.ELITE,
+                "Nightmare",
+                MobTier.FORGOTTEN,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SHADOW_DEMON),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 70, 50, 20),

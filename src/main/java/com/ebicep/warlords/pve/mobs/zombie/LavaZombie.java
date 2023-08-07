@@ -17,8 +17,8 @@ public class LavaZombie extends AbstractZombie implements EliteMob {
     public LavaZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Exiled Fire Splitter",
-                MobTier.ELITE,
+                "Fire Splitter",
+                MobTier.EXILED,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.LAVA_MONSTER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 252, 170, 53),

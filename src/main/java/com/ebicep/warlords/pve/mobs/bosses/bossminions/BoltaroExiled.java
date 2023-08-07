@@ -20,7 +20,7 @@ public class BoltaroExiled extends AbstractZombie implements EliteMob {
     public BoltaroExiled(Location spawnLocation) {
         super(spawnLocation,
                 "Exiled Apostate",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.RED_EYE),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),

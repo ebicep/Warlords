@@ -18,7 +18,7 @@ public class WanderKnights extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Wander Knights",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.FANCY_CUBE),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 105, 147, 158),

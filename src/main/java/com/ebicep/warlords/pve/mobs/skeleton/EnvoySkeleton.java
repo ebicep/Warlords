@@ -18,7 +18,7 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Envoy Entropy",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.PINK_CARPET),
                         new ItemStack(Material.DIAMOND_CHESTPLATE),

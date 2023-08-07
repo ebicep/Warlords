@@ -15,8 +15,8 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
     public EliteZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Illusion Swordsman",
-                MobTier.ELITE,
+                "Swordsman",
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         new ItemStack(Material.WHITE_CARPET),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),

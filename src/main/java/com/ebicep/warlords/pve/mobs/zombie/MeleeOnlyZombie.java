@@ -21,7 +21,7 @@ public class MeleeOnlyZombie extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Celestial Sword Wielder",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SWORD_HEAD),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),

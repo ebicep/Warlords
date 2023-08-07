@@ -18,7 +18,7 @@ public class ExtremeZealot extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Extreme Zealot",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_2),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 56, 71, 74),

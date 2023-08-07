@@ -28,7 +28,7 @@ public class VoidPigZombie extends AbstractPigZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Void Particle",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.HOODED_KNIGHT),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),

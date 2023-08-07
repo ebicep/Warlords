@@ -18,7 +18,7 @@ public class EnvoyPigZombie extends AbstractPigZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Envoy Alleviator",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SAMURAI),
                         new ItemStack(Material.DIAMOND_HELMET),

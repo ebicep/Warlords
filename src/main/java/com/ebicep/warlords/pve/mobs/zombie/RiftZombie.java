@@ -24,8 +24,8 @@ public class RiftZombie extends AbstractZombie implements EliteMob {
     public RiftZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Exiled Rift Walker",
-                MobTier.ELITE,
+                "Rift Walker",
+                MobTier.EXILED,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.PURPLE_RIFT),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 229, 69, 176),

@@ -17,8 +17,8 @@ public class OvergrownZombie extends AbstractZombie implements EliteMob {
     public OvergrownZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Forgotten Lancer",
-                MobTier.ELITE,
+                "Lancer",
+                MobTier.OVERGROWN,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.GREEN_LANCER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 130, 20),

@@ -17,8 +17,8 @@ public class GhostZombie extends AbstractZombie implements EliteMob {
     public GhostZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Illusion Lament",
-                MobTier.ELITE,
+                "Lament",
+                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.BLUE_GHOST),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 69, 176),

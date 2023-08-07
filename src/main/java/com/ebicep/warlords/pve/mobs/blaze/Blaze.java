@@ -28,7 +28,7 @@ public class Blaze extends AbstractBlaze implements EliteMob {
         super(
                 spawnLocation,
                 "Illusion Kindle",
-                MobTier.ELITE,
+                MobTier.ILLUSION,
                 null,
                 4000,
                 0,

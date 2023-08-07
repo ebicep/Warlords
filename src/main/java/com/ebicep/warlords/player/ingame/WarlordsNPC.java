@@ -154,8 +154,9 @@ public final class WarlordsNPC extends WarlordsEntity {
         this.mob = mob;
         if (mob != null && mob.getMobTier() != null) {
             mobNamePrefix = Component.textOfChildren(
+                    Component.text("[", NamedTextColor.GRAY),
                     mob.getMobTier().getSymbol(),
-                    Component.text(" - ", NamedTextColor.GRAY)
+                    Component.text("] ", NamedTextColor.GRAY)
             );
         }
         this.spec = playerClass;
