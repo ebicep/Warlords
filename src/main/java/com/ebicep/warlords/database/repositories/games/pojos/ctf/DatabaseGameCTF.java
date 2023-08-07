@@ -221,7 +221,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
         HashMap<DatabaseGamePlayerCTF, ChatColor> playerColor = new HashMap<>();
         for (Map.Entry<Team, List<DatabaseGamePlayerCTF>> teamListEntry : players.entrySet()) {
             for (DatabaseGamePlayerCTF gamePlayerCTF : teamListEntry.getValue()) {
-                //playerColor.put(gamePlayerCTF, teamListEntry.getKey().teamColor); TODO
+                playerColor.put(gamePlayerCTF, teamListEntry.getKey().oldTeamColor);
             }
         }
 
