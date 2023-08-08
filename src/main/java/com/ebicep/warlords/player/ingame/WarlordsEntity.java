@@ -468,7 +468,8 @@ public abstract class WarlordsEntity {
         // Flag carrier multiplier.
         double flagMultiplier = getFlagDamageMultiplier();
         if (flagMultiplier != 1) {
-            debugMessage.append(Component.newline()).append(Component.text("Flag Damage Multiplier:", NamedTextColor.AQUA));
+            debugMessage.append(Component.newline())
+                        .append(Component.text("Flag Damage Multiplier: " + NumberFormat.formatOptionalHundredths(flagMultiplier), NamedTextColor.AQUA));
             damageValue *= flagMultiplier;
             appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
         }
