@@ -384,6 +384,10 @@ public class PlayingState implements State, TimerDebugAble {
                 playerTeam = scoreboard.registerNewTeam(name);
                 playerTeam.addEntry(name);
             }
+            playerTeam.setCanSeeFriendlyInvisibles(true);
+            if (warlordsPlayer != null) {
+                playerTeam.addEntity(warlordsPlayer.getEntity());
+            }
             playerTeam.color(team.teamColor());
             //tab name
             //prefix
