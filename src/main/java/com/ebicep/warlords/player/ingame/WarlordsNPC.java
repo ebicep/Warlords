@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -20,9 +21,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -60,9 +59,12 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     private float minMeleeDamage;
     private float maxMeleeDamage;
+    private float damageResistance;
     private AbstractMob<?> mob;
     private int stunTicks;
     private Component mobNamePrefix = Component.empty();
+    private ArmorStand healthBar;
+    private ItemDisplay aspect;
 
     public WarlordsNPC(
             String name,
@@ -95,6 +97,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         this.walkSpeed = walkSpeed;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
+        this.damageResistance = damageResistance;
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
@@ -128,6 +131,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         this.maxMeleeDamage = maxMeleeDamage;
         this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
         this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
+        this.damageResistance = damageResistance;
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
@@ -162,6 +166,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         this.spec = playerClass;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
+        this.damageResistance = damageResistance;
         this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
         this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
         updateEntity();
@@ -222,20 +227,57 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateHealth() {
         if (!isDead()) {
-            getEntity().customName(Component.empty()
-                                            .append(mobNamePrefix)
-                                            .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
-                                                    NamedTextColor.RED,
-                                                    TextDecoration.BOLD
-                                            )));
+            entity.customName(Component.empty()
+                    .append(mobNamePrefix)
+                    .append(Component.text("- "))
+                    .append(Component.text(name, NamedTextColor.GRAY, TextDecoration.BOLD))
+                    .append(Component.text(" - "))
+                    .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD))
+            );
+
+            healthBar.customName(Component.text(
+                    NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
+                    NamedTextColor.RED,
+                    TextDecoration.BOLD)
+            );
+            healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
+            //aspect.teleport(entity.getLocation().clone().add(0, 2.75, 0));
         }
     }
 
     @Override
     public void updateEntity() {
+        healthBar = Utils.spawnArmorStand(getLocation(), armorStand -> {
+            armorStand.setGravity(true);
+            armorStand.setMarker(true);
+            armorStand.customName(Component.text(
+                    NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
+                    NamedTextColor.RED,
+                    TextDecoration.BOLD)
+            );
+            armorStand.setCustomNameVisible(true);
+        });
+
+//        aspect = (ItemDisplay) getWorld().spawnEntity(entity.getLocation().clone().add(0, 2.75, 0), EntityType.ITEM_DISPLAY);
+//        aspect.setItemStack(new ItemStack(Material.SCULK_SENSOR));
+//        aspect.setBillboard(Display.Billboard.FIXED);
+//        aspect.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(2f), new AxisAngle4f()));
+//        aspect.setGravity(false);
+//        aspect.teleport(entity.getLocation().clone().add(0, 2.75, 0));
+
+        healthBar.customName(Component.text(
+                NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
+                NamedTextColor.RED,
+                TextDecoration.BOLD)
+        );
+        healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
+
         entity.customName(Component.empty()
-                                   .append(mobNamePrefix)
-                                   .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED, TextDecoration.BOLD))
+                .append(mobNamePrefix)
+                .append(Component.text("- "))
+                .append(Component.text(name, NamedTextColor.GRAY, TextDecoration.BOLD))
+                .append(Component.text(" - "))
+                .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD))
         );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
@@ -244,7 +286,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             attribute.setBaseValue(100);
         } else {
             entity.registerAttribute(Attribute.GENERIC_FOLLOW_RANGE);
-            Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE)).setBaseValue(80);
+            Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE)).setBaseValue(100);
         }
     }
 
@@ -320,5 +362,21 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public AbstractMob<?> getMob() {
         return mob;
+    }
+
+    public ArmorStand getHealthBar() {
+        return healthBar;
+    }
+
+    public void setHealthBar(ArmorStand healthBar) {
+        this.healthBar = healthBar;
+    }
+
+    public float getDamageResistancePrefix() {
+        return damageResistance;
+    }
+
+    public void setDamageResistancePrefix(float damageResistance) {
+        this.damageResistance = Math.max(0, damageResistance);
     }
 }

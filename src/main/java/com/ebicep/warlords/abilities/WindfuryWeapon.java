@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -137,6 +138,9 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
 
                                 if (pveMasterUpgrade) {
                                     victim.setDamageResistance(victim.getSpec().getDamageResistance() - 2);
+                                    if (victim instanceof WarlordsNPC npc) {
+                                        npc.setDamageResistancePrefix((int) (npc.getDamageResistancePrefix() - 2));
+                                    }
                                 }
 
                                 counter++;
