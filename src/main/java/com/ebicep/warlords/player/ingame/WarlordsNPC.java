@@ -262,10 +262,10 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public void setStunTicks(int stunTicks, boolean decrement) {
         AtomicReference<Boolean> noAI = new AtomicReference<>();
-        CustomEntity<?> customEntity = mob.getEntity();
-        if (customEntity == null) {
+        if (mob == null) {
             return;
         }
+        CustomEntity<?> customEntity = mob.getEntity();
         if (stunTicks > 0) {
             if (this.stunTicks <= 0) {
                 customEntity.setStunned(true);
