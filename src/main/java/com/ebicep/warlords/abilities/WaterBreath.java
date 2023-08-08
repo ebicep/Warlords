@@ -155,33 +155,37 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
                 .entitiesAroundRectangle(playerLoc, hitbox - 2.5, hitbox, hitbox - 2.5)
                 .excluding(wp)
         ) {
+            if (breathTarget.isDead()) {
+                continue;
+            }
             Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
-            if (viewDirection.dot(direction) > .68) {
-                if (wp.isTeammateAlive(breathTarget)) {
-                    playersHealed++;
-                    debuffsRemoved += breathTarget.getCooldownManager().removeDebuffCooldowns();
-                    breathTarget.getSpeed().removeSlownessModifiers();
-                    breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                    breathTarget.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
-                    breathTarget.getCooldownManager().addRegularCooldown(
-                            "Overheal",
-                            "OVERHEAL",
-                            Overheal.class,
-                            Overheal.OVERHEAL_MARKER,
-                            wp,
-                            CooldownTypes.BUFF,
-                            cooldownManager -> {
-                            },
-                            Overheal.OVERHEAL_DURATION * 20
-                    );
-                    if (pveMasterUpgrade) {
-                        regenOnHit(wp, breathTarget);
-                    }
-                } else {
-                    final Location loc = breathTarget.getLocation();
-                    final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
-                    breathTarget.setVelocity(name, v, false);
+            if (!(viewDirection.dot(direction) > .68)) {
+                continue;
+            }
+            if (wp.isTeammateAlive(breathTarget)) {
+                playersHealed++;
+                debuffsRemoved += breathTarget.getCooldownManager().removeDebuffCooldowns();
+                breathTarget.getSpeed().removeSlownessModifiers();
+                breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                breathTarget.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
+                breathTarget.getCooldownManager().addRegularCooldown(
+                        "Overheal",
+                        "OVERHEAL",
+                        Overheal.class,
+                        Overheal.OVERHEAL_MARKER,
+                        wp,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                        },
+                        Overheal.OVERHEAL_DURATION * 20
+                );
+                if (pveMasterUpgrade) {
+                    regenOnHit(wp, breathTarget);
                 }
+            } else {
+                final Location loc = breathTarget.getLocation();
+                final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
+                breathTarget.setVelocity(name, v, false);
             }
         }
         int totalDebuffsRemoved = debuffsRemoved - previousDebuffsRemoved;
