@@ -1902,7 +1902,7 @@ public enum GameMap {
                     .onPerWaveClear(5, 1000)
             );
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(15, 10 * SECOND, null)
+                    .add(1, new SimpleWave(10, 10 * SECOND, null)
                             // basic
                             .add(0.8, Mobs.BASIC_ZOMBIE)
                             .add(0.1, Mobs.GHOST_ZOMBIE)
@@ -1933,7 +1933,7 @@ public enum GameMap {
                             // forgotten
                             .add(0, Mobs.FORGOTTEN_ZOMBIE)
                     )
-                    .add(5, new SimpleWave(15, 10 * SECOND, null)
+                    .add(5, new SimpleWave(10, 10 * SECOND, null)
                                     //basic
                                     .add(0.8, Mobs.BASIC_ZOMBIE)
                                     .add(0.05, Mobs.GHOST_ZOMBIE)
@@ -1967,7 +1967,7 @@ public enum GameMap {
                     .add(10, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
                             .add(Mobs.BOLTARO)
                     )
-                    .add(11, new SimpleWave(20, 10 * SECOND, null)
+                    .add(11, new SimpleWave(10, 10 * SECOND, null)
                                     //basic
                                     .add(0.6, Mobs.BASIC_ZOMBIE)
                                     .add(0.15, Mobs.GHOST_ZOMBIE)

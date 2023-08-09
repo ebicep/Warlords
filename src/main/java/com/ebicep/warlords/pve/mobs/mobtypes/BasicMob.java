@@ -21,6 +21,4 @@ public interface BasicMob extends Mob {
     default int epicWeaponDropChance() {
         return 1;
     }
-
-
 }
