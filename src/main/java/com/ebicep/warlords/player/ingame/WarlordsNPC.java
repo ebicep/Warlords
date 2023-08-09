@@ -227,21 +227,20 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateHealth() {
         if (!isDead()) {
-            entity.customName(Component.empty()
+            healthBar.customName(Component.empty()
                     .append(mobNamePrefix)
                     .append(Component.text("- "))
                     .append(Component.text(name, NamedTextColor.GRAY, TextDecoration.BOLD))
                     .append(Component.text(" - "))
                     .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD))
             );
+            healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
 
-            healthBar.customName(Component.text(
+            entity.customName(Component.text(
                     NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
                     NamedTextColor.RED,
                     TextDecoration.BOLD)
             );
-            healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
-            //aspect.teleport(entity.getLocation().clone().add(0, 2.75, 0));
         }
     }
 
@@ -258,29 +257,23 @@ public final class WarlordsNPC extends WarlordsEntity {
             armorStand.setCustomNameVisible(true);
         });
 
-//        aspect = (ItemDisplay) getWorld().spawnEntity(entity.getLocation().clone().add(0, 2.75, 0), EntityType.ITEM_DISPLAY);
-//        aspect.setItemStack(new ItemStack(Material.SCULK_SENSOR));
-//        aspect.setBillboard(Display.Billboard.FIXED);
-//        aspect.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(2f), new AxisAngle4f()));
-//        aspect.setGravity(false);
-//        aspect.teleport(entity.getLocation().clone().add(0, 2.75, 0));
-
-        healthBar.customName(Component.text(
-                NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
-                NamedTextColor.RED,
-                TextDecoration.BOLD)
-        );
-        healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
-
-        entity.customName(Component.empty()
+        healthBar.customName(Component.empty()
                 .append(mobNamePrefix)
                 .append(Component.text("- "))
                 .append(Component.text(name, NamedTextColor.GRAY, TextDecoration.BOLD))
                 .append(Component.text(" - "))
                 .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD))
         );
+        healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
+
+        entity.customName(Component.text(
+                NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
+                NamedTextColor.RED,
+                TextDecoration.BOLD)
+        );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+
         AttributeInstance attribute = entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
         if (attribute != null) {
             attribute.setBaseValue(100);
