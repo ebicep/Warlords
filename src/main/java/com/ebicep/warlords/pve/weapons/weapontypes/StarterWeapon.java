@@ -5,7 +5,8 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.weapons.AbstractTierOneWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,12 +43,12 @@ public class StarterWeapon extends AbstractTierOneWeapon {
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.GRAY;
+    public NamedTextColor getTextColor() {
+        return NamedTextColor.GRAY;
     }
 
     @Override
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return Collections.emptyList();
     }
 
@@ -63,11 +64,14 @@ public class StarterWeapon extends AbstractTierOneWeapon {
     }
 
     @Override
-    public List<String> getBaseStats() {
+    public List<Component> getBaseStats() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(getMeleeDamageMax()),
-                "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus())
+                Component.text("Damage: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(
+                                 getMeleeDamageMax()), NamedTextColor.RED)),
+                Component.empty(),
+                Component.text("Health: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getHealthBonus()), NamedTextColor.GREEN))
         );
     }
 

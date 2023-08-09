@@ -5,7 +5,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Query;
@@ -19,46 +18,50 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service("playerService")
 public class PlayerServiceImpl implements PlayerService {
 
-    @Autowired
+    final
     PlayerRepository playerRepository;
+
+    public PlayerServiceImpl(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
+    }
 
     @Override
     public DatabasePlayer create(DatabasePlayer player, PlayersCollections collection) {
         DatabasePlayer p = playerRepository.create(player, collection);
-        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Created: - " + p + " in " + collection);
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Created: - " + p + " in " + collection);
         return p;
     }
 
     @Override
     public DatabasePlayer update(DatabasePlayer player) {
         DatabasePlayer p = playerRepository.save(player);
-        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Updated: - " + p);
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Updated: - " + p);
         return p;
     }
 
     @Override
     public DatabasePlayer update(DatabasePlayer player, PlayersCollections collection) {
         DatabasePlayer p = playerRepository.save(player, collection);
-        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Updated: - " + player + " in " + collection);
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Updated: - " + player + " in " + collection);
         return p;
     }
 
     @Override
     public void updateMany(Query query, UpdateDefinition update, Class<?> clazz, PlayersCollections collection) {
         playerRepository.updateMany(query, update, clazz, collection);
-        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("UpdatedMany (" + query + ") - (" + update + ") in " + collection.collectionName);
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("UpdatedMany (" + query + ") - (" + update + ") in " + collection.collectionName);
     }
 
     @Override
     public void delete(DatabasePlayer player) {
         playerRepository.delete(player);
-        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Deleted: - " + player);
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Deleted: - " + player);
     }
 
     @Override
     public void delete(DatabasePlayer player, PlayersCollections collection) {
         playerRepository.delete(player, collection);
-        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Deleted: - " + player + " in " + collection);
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Deleted: - " + player + " in " + collection);
     }
 
     @Override

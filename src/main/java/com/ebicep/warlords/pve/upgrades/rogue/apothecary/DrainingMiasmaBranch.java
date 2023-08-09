@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
-import com.ebicep.warlords.abilties.DrainingMiasma;
+import com.ebicep.warlords.abilities.DrainingMiasma;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -99,7 +99,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.25f);
                     ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.25f);
 
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

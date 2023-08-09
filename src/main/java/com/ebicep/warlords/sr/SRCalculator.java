@@ -21,8 +21,8 @@ public class SRCalculator {
         TOTAL_VALUES.clear();
         PLAYERS_SR.clear();
         numberOfActualPlayers = 20;
-        ChatUtils.MessageTypes.WARLORDS.sendMessage("Recalculating player SR PUBS");
-        Collection<DatabasePlayer> players = DatabaseManager.CACHED_PLAYERS.getOrDefault(PlayersCollections.SEASON_7, new ConcurrentHashMap<>()).values();
+        ChatUtils.MessageType.WARLORDS.sendMessage("Recalculating player SR PUBS");
+        Collection<DatabasePlayer> players = DatabaseManager.CACHED_PLAYERS.getOrDefault(PlayersCollections.SEASON_8, new ConcurrentHashMap<>()).values();
         numberOfActualPlayers = (int) players
                 .stream()
                 .filter(databasePlayer -> databasePlayer.getPubStats().getPlays() > 5)
@@ -37,8 +37,8 @@ public class SRCalculator {
 //                    SRCalculator.playersSR.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(databasePlayerIntegerEntry -> {
 //                        System.out.println(databasePlayerIntegerEntry.getKey().getName() + " - " + databasePlayerIntegerEntry.getValue());
 //                    });
-        ChatUtils.MessageTypes.WARLORDS.sendMessage("Number of actual players = " + numberOfActualPlayers);
-        ChatUtils.MessageTypes.WARLORDS.sendMessage("Recalculated player SR PUBS");
+        ChatUtils.MessageType.WARLORDS.sendMessage("Number of actual players = " + numberOfActualPlayers);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Recalculated player SR PUBS");
     }
 
     public static int getSR(DatabasePlayer databasePlayer, Function<DatabasePlayer, AbstractDatabaseStatInformation> getStatInformation) {
@@ -70,7 +70,7 @@ public class SRCalculator {
         if (TOTAL_VALUES.containsKey(function)) {
             return TOTAL_VALUES.get(function);
         }
-        double total = DatabaseManager.CACHED_PLAYERS.getOrDefault(PlayersCollections.SEASON_7, new ConcurrentHashMap<>()).values()
+        double total = DatabaseManager.CACHED_PLAYERS.getOrDefault(PlayersCollections.SEASON_8, new ConcurrentHashMap<>()).values()
                                                      .stream()
                                                      .mapToDouble(function::apply)
                                                      .sum();

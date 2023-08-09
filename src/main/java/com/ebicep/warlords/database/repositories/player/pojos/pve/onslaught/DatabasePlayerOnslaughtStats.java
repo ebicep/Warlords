@@ -29,8 +29,7 @@ public class DatabasePlayerOnslaughtStats extends DatabasePlayerPvEOnslaughtDiff
             PlayersCollections playersCollection
     ) {
         super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-        if (gamePlayer instanceof DatabaseGamePlayerPvEOnslaught) {
-            DatabaseGamePlayerPvEOnslaught onslaughtGamePlayer = (DatabaseGamePlayerPvEOnslaught) gamePlayer;
+        if (gamePlayer instanceof DatabaseGamePlayerPvEOnslaught onslaughtGamePlayer) {
 
             Map<Spendable, Long> syntheticPouch = onslaughtGamePlayer.getSyntheticPouch();
             Map<Spendable, Long> aspirantPouch = onslaughtGamePlayer.getAspirantPouch();

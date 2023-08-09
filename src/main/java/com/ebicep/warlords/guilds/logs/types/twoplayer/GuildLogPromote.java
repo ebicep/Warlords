@@ -1,5 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.twoplayer;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.UUID;
 
 public class GuildLogPromote extends AbstractGuildLogChangeLevel {
@@ -10,8 +12,8 @@ public class GuildLogPromote extends AbstractGuildLogChangeLevel {
     }
 
     @Override
-    public String getAction() {
-        return "promoted";
+    public Component getAction() {
+        return Component.text("promoted");
     }
 
 }

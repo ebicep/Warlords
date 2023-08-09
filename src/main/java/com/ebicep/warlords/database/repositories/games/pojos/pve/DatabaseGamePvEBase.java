@@ -12,10 +12,12 @@ import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.StringUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.HologramLines;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -39,8 +41,7 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
         super(game, counted);
         //this.difficulty =
         for (Option option : game.getOptions()) {
-            if (option instanceof PveOption) {
-                PveOption pveOption = (PveOption) option;
+            if (option instanceof PveOption pveOption) {
                 this.difficulty = pveOption.getDifficulty();
             }
         }
@@ -65,7 +66,7 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
     public void appendLastGameStats(Hologram hologram) {
         HologramLines hologramLines = hologram.getLines();
         hologramLines.appendText(ChatColor.GRAY + date);
-        hologramLines.appendText(ChatColor.GREEN + map.getMapName() + " - " + Utils.formatTimeLeft(timeElapsed / 20));
+        hologramLines.appendText(ChatColor.GREEN + map.getMapName() + " - " + StringUtils.formatTimeLeft(timeElapsed / 20));
     }
 
     @Override
@@ -105,10 +106,11 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
             playerPvE.getMobDeaths().forEach((s, aLong) -> mobDeathsMap.merge(s, aLong, Long::sum));
         }
 
-        mobKillsMap.forEach((mob, aLong) -> mobKills.getLines()
-                                                    .appendText(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
-        mobDeathsMap.forEach((mob, aLong) -> mobDeaths.getLines()
-                                                      .appendText(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+        //TODO
+//        mobKillsMap.forEach((mob, aLong) -> mobKills.getLines()
+//                                                    .appendText(Component.text(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+//        mobDeathsMap.forEach((mob, aLong) -> mobDeaths.getLines()
+//                                                      .appendText(Component.text(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
     }
 
     @Override
@@ -123,11 +125,14 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
     }
 
     @Override
-    public List<String> getExtraLore() {
+    public List<Component> getExtraLore() {
         return Arrays.asList(
-                ChatColor.GRAY + "Time Elapsed: " + ChatColor.YELLOW + Utils.formatTimeLeft(timeElapsed),
-                ChatColor.GRAY + "Total Mobs Killed: " + ChatColor.YELLOW + totalMobsKilled,
-                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + getBasePlayers().size()
+                Component.text("Time Elapsed: ", NamedTextColor.GRAY)
+                         .append(Component.text(StringUtils.formatTimeLeft(timeElapsed), NamedTextColor.GREEN)),
+                Component.text("Total Mobs Killed: ", NamedTextColor.GRAY)
+                         .append(Component.text(totalMobsKilled, NamedTextColor.YELLOW)),
+                Component.text("Players: ", NamedTextColor.GRAY)
+                         .append(Component.text(getBasePlayers().size(), NamedTextColor.YELLOW))
         );
     }
 

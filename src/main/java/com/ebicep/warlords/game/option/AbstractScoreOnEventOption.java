@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +49,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         this.game = game;
     }
     
@@ -69,13 +70,12 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         }
 
         @Override
-        public void register(Game game) {
+        public void register(@Nonnull Game game) {
             super.register(game);
             game.registerEvents(new Listener() {
                 @EventHandler
                 public void onEvent(WarlordsFlagUpdatedEvent event) {
-                    if (event.getNew() instanceof WaitingFlagLocation) {
-                        WaitingFlagLocation waitingFlagLocation = (WaitingFlagLocation) event.getNew();
+                    if (event.getNew() instanceof WaitingFlagLocation waitingFlagLocation) {
                         WarlordsEntity scorer = waitingFlagLocation.getScorer();
                         if (scorer != null) {
                             giveScore(event, scorer.getTeam(), scoreIncrease);
@@ -99,13 +99,12 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         }
 
         @Override
-        public void register(Game game) {
+        public void register(@Nonnull Game game) {
             super.register(game);
             game.registerEvents(new Listener() {
                 @EventHandler
                 public void onEvent(WarlordsFlagUpdatedEvent event) {
-                    if (event.getNew() instanceof SpawnFlagLocation) {
-                        SpawnFlagLocation spawnFlagLocation = (SpawnFlagLocation) event.getNew();
+                    if (event.getNew() instanceof SpawnFlagLocation spawnFlagLocation) {
                         WarlordsEntity scorer = spawnFlagLocation.getFlagReturner();
                         if (scorer != null) {
                             giveScore(event, scorer.getTeam(), scoreIncrease);
@@ -128,13 +127,12 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         }
 
         @Override
-        public void register(Game game) {
+        public void register(@Nonnull Game game) {
             super.register(game);
             game.registerEvents(new Listener() {
                 @EventHandler
                 public void onEvent(WarlordsFlagUpdatedEvent event) {
-                    if (event.getOld() instanceof PlayerFlagLocation && event.getNew() instanceof PlayerFlagLocation) {
-                        PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) event.getNew();
+                    if (event.getOld() instanceof PlayerFlagLocation && event.getNew() instanceof PlayerFlagLocation playerFlagLocation) {
                         WarlordsEntity scorer = playerFlagLocation.getPlayer();
                         giveScore(event, scorer.getTeam(), scoreIncrease);
                     }
@@ -155,14 +153,14 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         }
 
         @Override
-        public void register(Game game) {
+        public void register(@Nonnull Game game) {
             super.register(game);
             game.registerEvents(new Listener() {
                 @EventHandler
                 public void onEvent(WarlordsDeathEvent event) {
                     Collection<Team> teams = TeamMarker.getTeams(event.getGame());
                     List<Team> toReward = new ArrayList<>(teams.size() - 1);
-                    for(Team team : teams) {
+                    for (Team team : teams) {
                         if (event.getKiller() != null && event.getKiller().getTeam() != event.getWarlordsEntity().getTeam() && event.getKiller().getTeam() != team) {
                             continue;
                         }
@@ -192,7 +190,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         }
 
         @Override
-        public void register(Game game) {
+        public void register(@Nonnull Game game) {
             super.register(game);
             game.registerEvents(new Listener() {
                 @EventHandler
@@ -218,13 +216,12 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         }
 
         @Override
-        public void register(Game game) {
+        public void register(@Nonnull Game game) {
             super.register(game);
             game.registerGameMarker(PointPredicterMarker.class, team -> {
                 double predictedScoreIncrease = 0;
                 for (Option option : game.getOptions()) {
-                    if (option instanceof InterceptionPointOption) {
-                        InterceptionPointOption intersectionPointOption = (InterceptionPointOption) option;
+                    if (option instanceof InterceptionPointOption intersectionPointOption) {
                         if (intersectionPointOption.getTeamOwning() == team) {
                             predictedScoreIncrease += scoreIncrease * 60;
                         }
@@ -235,19 +232,18 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         }
 
         @Override
-        public void start(Game game) {
+        public void start(@Nonnull Game game) {
             super.register(game);
             new GameRunnable(game) {
-				@Override
-				public void run() {
-					for (Option option : game.getOptions()) {
-						if (option instanceof InterceptionPointOption) {
-							InterceptionPointOption intersectionPointOption = (InterceptionPointOption) option;
-							if (intersectionPointOption.getTeamOwning() != null) {
-								giveScore(intersectionPointOption, intersectionPointOption.getTeamOwning(), scoreIncrease);
-							}
-						}
-					}
+                @Override
+                public void run() {
+                    for (Option option : game.getOptions()) {
+                        if (option instanceof InterceptionPointOption intersectionPointOption) {
+                            if (intersectionPointOption.getTeamOwning() != null) {
+                                giveScore(intersectionPointOption, intersectionPointOption.getTeamOwning(), scoreIncrease);
+                            }
+                        }
+                    }
 				}
 			}.runTaskTimer(20, 20);
         }

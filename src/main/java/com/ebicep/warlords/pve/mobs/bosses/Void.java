@@ -1,9 +1,8 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -16,15 +15,15 @@ import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -70,17 +69,6 @@ public class Void extends AbstractSkeleton implements BossMob {
             warlordsNPC.setMaxBaseHealth(newHealth);
             warlordsNPC.setHealth(newHealth);
             warlordsNPC.setMaxHealth(newHealth);
-        }
-
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.DARK_GRAY + getWarlordsNPC().getName(),
-                        ChatColor.BLACK + "?????",
-                        20, 30, 20
-                );
-            }
         }
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -155,10 +143,10 @@ public class Void extends AbstractSkeleton implements BossMob {
         }
 
         if (ticksElapsed % 160 == 0) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(warlordsNPC)
@@ -170,8 +158,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                         900,
                         1200,
                         0,
-                        100,
-                        false
+                        100
                 );
             }
         }
@@ -232,33 +219,36 @@ public class Void extends AbstractSkeleton implements BossMob {
                                                                        .build());
     }
 
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_GRAY;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("?????", NamedTextColor.BLACK);
+    }
+
     private void immolation(PveOption option, Location loc) {
         warlordsNPC.addSpeedModifier(warlordsNPC, "Armageddon Slowness", -99, 250);
         for (int i = 0; i < 3; i++) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.6f);
         }
 
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
-                ChatColor.RED + "PREPARE TO DIE",
-                ChatColor.LIGHT_PURPLE + "Augmented Immolation Spell",
+                Component.text("PREPARE TO DIE", NamedTextColor.RED),
+                Component.text("Augmented Immolation Spell", NamedTextColor.LIGHT_PURPLE),
                 20,
                 60,
                 20
         );
 
-        float damage;
-        switch (option.getDifficulty()) {
-            case EASY:
-                damage = 100;
-                break;
-            case NORMAL:
-                damage = 200;
-                break;
-            default:
-                damage = 250;
-                break;
-        }
+        float damage = switch (option.getDifficulty()) {
+            case EASY -> 100;
+            case NORMAL -> 200;
+            default -> 300;
+        };
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
 
@@ -271,9 +261,9 @@ public class Void extends AbstractSkeleton implements BossMob {
 
                 counter++;
                 double radius = (4 * counter);
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.1f);
+                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.1f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.2f);
-                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.SMOKE_LARGE, 1, counter);
+                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, Particle.SMOKE_LARGE, 1, counter);
                 for (WarlordsEntity flameTarget : PlayerFilter
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
@@ -284,8 +274,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                             damage,
                             damage,
                             0,
-                            100,
-                            false
+                            100
                     );
 
                     warlordsNPC.addHealingInstance(
@@ -294,9 +283,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                             damage * 0.5f,
                             damage * 0.5f,
                             0,
-                            100,
-                            false,
-                            false
+                            100
                     );
                 }
 
@@ -309,21 +296,53 @@ public class Void extends AbstractSkeleton implements BossMob {
         }.runTaskTimer(40, 4);
     }
 
+    private void shockwave(Location loc, double radius, int tickDelay, long playerCount) {
+        new GameRunnable(warlordsNPC.getGame()) {
+            @Override
+            public void run() {
+                if (warlordsNPC.isDead() || preventArmageddon) {
+                    this.cancel();
+                    return;
+                }
+
+                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 0.4f);
+                Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
+                for (WarlordsEntity we : PlayerFilter
+                        .entitiesAround(loc, radius, radius, radius)
+                        .aliveEnemiesOf(warlordsNPC)
+                ) {
+                    if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
+                        we.addDamageInstance(warlordsNPC,
+                                "Augmented Armageddon",
+                                (550 * playerCount),
+                                (700 * playerCount),
+                                0,
+                                100
+                        );
+                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
+                    }
+                }
+            }
+        }.runTaskLater(tickDelay);
+    }
+
     private void timedDamage(PveOption option, long playerCount, int damageValue, int timeToDealDamage) {
         damageToDeal.set((int) (damageValue * playerCount));
 
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
-                "",
-                ChatColor.RED + "Keep attacking Void to stop the draining!",
-                10, 35, 0
+                Component.empty(),
+                Component.text("Keep attacking Void to stop the draining!", NamedTextColor.RED),
+                10,
+                35,
+                0
         );
         for (WarlordsEntity we : PlayerFilter
                 .playingGame(warlordsNPC.getGame())
                 .aliveEnemiesOf(warlordsNPC)
         ) {
             Utils.addKnockback(name, warlordsNPC.getLocation(), we, -4, 0.3);
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.3f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, 0.3f);
         }
 
         AtomicInteger countdown = new AtomicInteger(timeToDealDamage);
@@ -350,8 +369,8 @@ public class Void extends AbstractSkeleton implements BossMob {
 
                 if (counter++ % 20 == 0) {
                     countdown.getAndDecrement();
-                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
-                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
                     for (WarlordsEntity we : PlayerFilter
                             .entitiesAround(warlordsNPC, 100, 100, 100)
                             .aliveEnemiesOf(warlordsNPC)
@@ -371,8 +390,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                                 700,
                                 700,
                                 -1,
-                                100,
-                                true
+                                100
                         );
                     }
                 }
@@ -394,15 +412,14 @@ public class Void extends AbstractSkeleton implements BossMob {
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
-                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
+                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Death Ray",
                                 we.getMaxHealth() * 0.9f,
                                 we.getMaxHealth() * 0.9f,
                                 -1,
-                                100,
-                                true
+                                100
                         );
 
                         warlordsNPC.addHealingInstance(
@@ -411,9 +428,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                                 we.getMaxHealth() * 2,
                                 we.getMaxHealth() * 2,
                                 -1,
-                                100,
-                                false,
-                                false
+                                100
                         );
                     }
 
@@ -421,48 +436,14 @@ public class Void extends AbstractSkeleton implements BossMob {
                     this.cancel();
                 }
 
-                for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                    if (we.getEntity() instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) we.getEntity(),
-                                ChatColor.YELLOW.toString() + countdown.get(),
-                                ChatColor.RED.toString() + damageToDeal.get(),
-                                0, 4, 0
-                        );
-                    }
-                }
+                ChatUtils.sendTitleToGamePlayers(
+                        getWarlordsNPC().getGame(),
+                        Component.text(countdown.get(), NamedTextColor.YELLOW),
+                        Component.text(damageToDeal.get(), NamedTextColor.RED),
+                        0, 4, 0
+                );
             }
         }.runTaskTimer(40, 0);
     }
 
-    private void shockwave(Location loc, double radius, int tickDelay, long playerCount) {
-        new GameRunnable(warlordsNPC.getGame()) {
-            @Override
-            public void run() {
-                if (warlordsNPC.isDead() || preventArmageddon) {
-                    this.cancel();
-                    return;
-                }
-
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 10, 0.4f);
-                Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
-                for (WarlordsEntity we : PlayerFilter
-                        .entitiesAround(loc, radius, radius, radius)
-                        .aliveEnemiesOf(warlordsNPC)
-                ) {
-                    if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC,
-                                "Augmented Armageddon",
-                                (550 * playerCount),
-                                (700 * playerCount),
-                                0,
-                                100,
-                                false
-                        );
-                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
-                    }
-                }
-            }
-        }.runTaskLater(tickDelay);
-    }
 }

@@ -1,7 +1,8 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.tag;
 
 import com.ebicep.warlords.guilds.logs.types.oneplayer.AbstractGuildLogOnePlayer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ public class GuildLogTagCreateName extends AbstractGuildLogOnePlayer {
     }
 
     @Override
-    public String getAction() {
-        return "created guild tag name " + ChatColor.GREEN + name;
+    public Component getAction() {
+        return Component.text("created guild tag name ").append(Component.text(name, NamedTextColor.GREEN));
     }
 }

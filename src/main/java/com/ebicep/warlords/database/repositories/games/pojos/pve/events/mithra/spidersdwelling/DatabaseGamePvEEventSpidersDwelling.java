@@ -14,6 +14,8 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.SpidersDwellingOption;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -96,9 +98,9 @@ public class DatabaseGamePvEEventSpidersDwelling extends DatabaseGamePvEEvent im
     }
 
     @Override
-    public List<String> getExtraLore() {
-        List<String> extraLore = super.getExtraLore();
-        extraLore.add(ChatColor.GRAY + "Waves Cleared: " + ChatColor.YELLOW + wavesCleared);
+    public List<Component> getExtraLore() {
+        List<Component> extraLore = super.getExtraLore();
+        extraLore.add(Component.text("Waves Cleared: ", NamedTextColor.GRAY).append(Component.text(wavesCleared)));
         return extraLore;
     }
 

@@ -11,6 +11,9 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.springframework.data.annotation.Transient;
 
@@ -94,7 +97,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                         return currentHealValue * healBoost;
                     }
                 });
-                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
             }
 
         }.runTaskTimer(200, 20);
@@ -102,12 +105,15 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
 
 
     @Override
-    public String getPassiveEffect() {
+    public TextComponent getPassiveEffect() {
         float outgoingHealingBoost = HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel();
         float cooldown = COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel();
-        return "When your health falls below 30%, incoming healing increases by 50% and outgoing healing increases by " +
-                formatTitleUpgrade(outgoingHealingBoost, "%") +
-                " for 10s. Can be triggered once every " + formatTitleUpgrade(cooldown, "s") + ".";
+        return Component.text("When your health falls below 30%, incoming healing increases by 50% and outgoing healing increases by ", NamedTextColor.GRAY)
+                        .append(Component.text("Deal "))
+                        .append(formatTitleUpgrade(outgoingHealingBoost, "%"))
+                        .append(Component.text(" for 10s. Can be triggered once every "))
+                        .append(formatTitleUpgrade(cooldown, "s"))
+                        .append(Component.text("."));
     }
 
     @Override
@@ -156,7 +162,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(new Pair<>(
                         formatTitleUpgrade(HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")

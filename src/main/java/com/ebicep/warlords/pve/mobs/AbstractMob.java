@@ -1,9 +1,11 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
-import com.ebicep.warlords.abilties.Fireball;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.events.player.ingame.pve.drops.*;
@@ -20,15 +22,21 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.mobs.mobtypes.Mob;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.google.common.util.concurrent.AtomicDouble;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -45,7 +53,7 @@ import java.util.function.UnaryOperator;
 public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     protected final T entity;
-    protected final EntityInsentient entityInsentient;
+    protected final net.minecraft.world.entity.Mob mob;
     protected final LivingEntity livingEntity;
     protected final Location spawnLocation;
     protected final String name;
@@ -56,9 +64,13 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final int damageResistance;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
+    protected BossBar bossBar = BossBar.bossBar(Component.empty(), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+    protected boolean showBossBar;
 
     protected WarlordsNPC warlordsNPC;
     protected PveOption pveOption;
+
+    protected AbstractPlayerClass playerClass;
 
     public AbstractMob(
             T entity,
@@ -85,45 +97,118 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
         entity.spawn(spawnLocation);
 
-        this.entityInsentient = entity.get();
-        this.entityInsentient.persistent = true;
+        this.mob = entity.get();
+        this.mob.persist = true;
 
-        this.livingEntity = (LivingEntity) entityInsentient.getBukkitEntity();
+        this.livingEntity = (LivingEntity) mob.getBukkitEntity();
+
         updateEquipment();
+
+        if (getDescription() != null) {
+            bossBar.name(Component.text(name, getColor()));
+        }
     }
 
     public void updateEquipment() {
         EntityEquipment equipment = livingEntity.getEquipment();
+        if (equipment == null) {
+            return;
+        }
         if (ee != null) {
             equipment.setBoots(ee.getBoots());
             equipment.setLeggings(ee.getLeggings());
             equipment.setChestplate(ee.getChestplate());
             equipment.setHelmet(ee.getHelmet());
-            equipment.setItemInHand(ee.getItemInHand());
+            equipment.setItemInMainHand(ee.getItemInMainHand());
         } else {
             equipment.setHelmet(new ItemStack(Material.BARRIER));
         }
     }
 
+    public Component getDescription() {
+        return null;
+    }
+
+    public NamedTextColor getColor() {
+        return NamedTextColor.WHITE;
+    }
+
+    public AbstractMob(
+            T entity,
+            Location spawnLocation,
+            String name,
+            MobTier mobTier,
+            EntityEquipment ee,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            AbstractAbility... abilities
+    ) {
+        this.entity = entity;
+        this.spawnLocation = spawnLocation;
+        this.name = name;
+        this.mobTier = mobTier;
+        this.ee = ee;
+        this.maxHealth = maxHealth;
+        this.walkSpeed = walkSpeed;
+        this.damageResistance = damageResistance;
+        this.minMeleeDamage = minMeleeDamage;
+        this.maxMeleeDamage = maxMeleeDamage;
+        this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
+
+        entity.spawn(spawnLocation);
+
+        this.mob = entity.get();
+        this.mob.persist = true;
+
+        this.livingEntity = (LivingEntity) mob.getBukkitEntity();
+
+        updateEquipment();
+
+        if (getDescription() != null) {
+            bossBar.name(Component.text(name, getColor()));
+        }
+    }
+
     public WarlordsNPC toNPC(Game game, Team team, UUID uuid, Consumer<WarlordsNPC> modifyStats) {
-        this.warlordsNPC = new WarlordsNPC(
-                uuid,
-                name,
-                Weapons.ABBADON,
-                livingEntity,
-                game,
-                team,
-                Specializations.PYROMANCER,
-                maxHealth,
-                walkSpeed,
-                damageResistance,
-                minMeleeDamage,
-                maxMeleeDamage,
-                this
-        );
-        AbstractAbility weapon = warlordsNPC.getSpec().getWeapon();
-        if (weapon instanceof Fireball) {
-            ((Fireball) weapon).setMaxDistance(150);
+        if (playerClass != null) {
+            this.warlordsNPC = new WarlordsNPC(
+                    name,
+                    Weapons.ABBADON,
+                    livingEntity,
+                    game,
+                    team,
+                    Specializations.PYROMANCER,
+                    maxHealth,
+                    walkSpeed,
+                    damageResistance,
+                    minMeleeDamage,
+                    maxMeleeDamage,
+                    this,
+                    playerClass
+            );
+        } else {
+            this.warlordsNPC = new WarlordsNPC(
+                    name,
+                    Weapons.ABBADON,
+                    livingEntity,
+                    game,
+                    team,
+                    Specializations.PYROMANCER,
+                    maxHealth,
+                    walkSpeed,
+                    damageResistance,
+                    minMeleeDamage,
+                    maxMeleeDamage,
+                    this
+            );
+        }
+        for (AbstractAbility ability : warlordsNPC.getAbilities()) {
+            if (ability instanceof Fireball fireball) {
+                fireball.setMaxDistance(150);
+            }
         }
 
         modifyStats.accept(warlordsNPC);
@@ -134,6 +219,22 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void onSpawn(PveOption option) {
         this.pveOption = option;
+        Component description = getDescription();
+        if (description != null) {
+            ChatUtils.sendTitleToGamePlayers(
+                    option.getGame(),
+                    getColoredName(),
+                    description,
+                    20, 30, 20
+            );
+        }
+        if (!bossBar.name().equals(Component.empty())) {
+            showBossBar = true;
+        }
+    }
+
+    public Component getColoredName() {
+        return Component.text(name, getColor());
     }
 
     public AbstractMob<T> prependOperation(UnaryOperator<WarlordsNPC> mapper) {
@@ -143,11 +244,38 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public abstract void whileAlive(int ticksElapsed, PveOption option);
 
+    public void activateAbilities() {
+        if (!(warlordsNPC.getSpec() instanceof MobPlayerClass)) {
+            return;
+        }
+        warlordsNPC.getAbilities().forEach(ability -> {
+            if (ability.getCooldown() != 0 && ability.getCurrentCooldown() != 0) {
+                return;
+            }
+            if (warlordsNPC.getEnergy() < ability.getEnergyCost() * warlordsNPC.getEnergyModifier()) {
+                return;
+            }
+            WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(warlordsNPC, null, ability);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+            boolean shouldApplyCooldown = ability.onActivate(warlordsNPC, null);
+            if (shouldApplyCooldown) {
+                ability.addTimesUsed();
+                if (!warlordsNPC.isDisableCooldowns()) {
+                    ability.setCurrentCooldown((float) (ability.getCooldown() * warlordsNPC.getCooldownModifier()));
+                }
+            }
+        });
+    }
+
     public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event);
 
     public abstract void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event);
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        bossBar(option.getGame(), false);
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
@@ -158,6 +286,17 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         dropMobDrop(killer);
         dropItem(killer);
         dropBlessing(killer);
+    }
+
+    public void bossBar(Game game, boolean show) {
+        game.onlinePlayers().forEach(playerTeamEntry -> {
+            Player player = playerTeamEntry.getKey();
+            if (show) {
+                player.showBossBar(getBossBar());
+            } else {
+                player.hideBossBar(getBossBar());
+            }
+        });
     }
 
     public void dropWeapon(WarlordsEntity killer) {
@@ -182,7 +321,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            .filter(wp -> wp.getEntity() instanceof Player)
                            .forEach(warlordsPlayer -> {
                                mobDrops.forEach((drop, difficultyIndexDoubleHashMap) -> {
-                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d) * game.getGameMode().getDropModifier());
+                                   AtomicDouble dropRate = new AtomicDouble(difficultyIndexDoubleHashMap.getOrDefault(difficultyIndex, -1d) * game.getGameMode()
+                                                                                                                                                  .getDropModifier());
                                    AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropMobDropEvent(warlordsPlayer,
                                            this,
                                            dropRate,
@@ -199,30 +339,32 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                            WarlordsPlayer lastStealer = stolenBy.get(stolenBy.size() - 1);
                                            Bukkit.getPluginManager().callEvent(new WarlordsGiveStolenMobDropEvent(lastStealer, drop));
 
-                                           StringBuilder stolenMessage = new StringBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
-                                                   ChatColor.GRAY + " obtained a " +
-                                                   drop.chatColor + drop.name +
-                                                   ChatColor.GRAY + " but it was stolen by " +
-                                                   Permissions.getPrefixWithColor((Player) firstStealer.getEntity()) + firstStealer.getName() +
-                                                   ChatColor.GRAY + "!");
+                                           TextComponent.Builder stolenMessage = Component
+                                                   .text().color(NamedTextColor.GRAY)
+                                                   .append(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true))
+                                                   .append(Component.text(" obtained a "))
+                                                   .append(Component.text(drop.name, drop.textColor))
+                                                   .append(Component.text(" but it was stolen by "))
+                                                   .append(Permissions.getPrefixWithColor((Player) firstStealer.getEntity(), true))
+                                                   .append(Component.text("!"));
                                            for (int i = 1; i < stolenBy.size() - 1; i++) {
-                                               String previousStealer = Permissions.getPrefixWithColor((Player) stolenBy.get(i - 1).getEntity()) + stolenBy.get(i - 1).getName();
-                                               String nextStealer = Permissions.getPrefixWithColor((Player) stolenBy.get(i).getEntity()) + stolenBy.get(i).getName();
-                                               stolenMessage.append(" But then ")
-                                                            .append(nextStealer)
-                                                            .append(ChatColor.GRAY).append(" stole it from ")
-                                                            .append(previousStealer)
-                                                            .append(ChatColor.GRAY).append("!");
+                                               stolenMessage.append(Component.text(" But then "))
+                                                            .append(Permissions.getPrefixWithColor((Player) stolenBy.get(i).getEntity(), true))
+                                                            .append(Component.text(" stole it from "))
+                                                            .append(Permissions.getPrefixWithColor((Player) stolenBy.get(i - 1).getEntity(), true))
+                                                            .append(Component.text("!"));
                                            }
-                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(stolenMessage.toString()));
-                                           lastStealer.playSound(lastStealer.getLocation(), Sound.LEVEL_UP, 500, 1.5f);
+                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(stolenMessage.build()));
+                                           lastStealer.playSound(lastStealer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 1.5f);
                                        } else {
-                                           String obtainMessage = Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
-                                                   ChatColor.GRAY + " obtained a " +
-                                                   drop.chatColor + drop.name +
-                                                   ChatColor.GRAY + "!";
-                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(obtainMessage));
-                                           warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                           TextComponent.Builder obtainMessage = Component
+                                                   .text().color(NamedTextColor.GRAY)
+                                                   .append(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true))
+                                                   .append(Component.text(" obtained a "))
+                                                   .append(Component.text(drop.name, drop.textColor))
+                                                   .append(Component.text("!"));
+                                           game.forEachOnlinePlayer((player, team) -> player.sendMessage(obtainMessage.build()));
+                                           warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
                                        }
                                    }
                                });
@@ -250,12 +392,15 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                        Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(warlordsPlayer, item));
                                        game.forEachOnlinePlayer((player, team) -> {
                                            AbstractItem.sendItemMessage(player,
-                                                   new ComponentBuilder(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() + ChatColor.GRAY + " got lucky and found ")
-                                                           .appendHoverItem(item.getItemName(), item.generateItemStack())
-                                                           .append(ChatColor.GRAY + "!")
+                                                   Component.text().color(NamedTextColor.GRAY)
+                                                            .append(Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true))
+                                                            .append(Component.text(" got lucky and found "))
+                                                            .append(item.getHoverComponent())
+                                                            .append(Component.text("!"))
+                                                            .build()
                                            );
                                        });
-                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                       warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
                                        break;
                                    }
                                }
@@ -275,13 +420,17 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                    Bukkit.getPluginManager().callEvent(new WarlordsGiveBlessingFoundEvent(warlordsPlayer));
                                    game.forEachOnlinePlayer((player, team) -> {
                                        AbstractItem.sendItemMessage(player,
-                                               Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity()) + warlordsPlayer.getName() +
-                                                       ChatColor.GRAY + " got lucky and received an Unknown Blessing!"
+                                               Permissions.getPrefixWithColor((Player) warlordsPlayer.getEntity(), true)
+                                                          .append(Component.text(" got lucky and received an Unknown Blessing!", NamedTextColor.GRAY))
                                        );
                                    });
-                                   warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.LEVEL_UP, 500, 2);
+                                   warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
                                }
                            });
+    }
+
+    public BossBar getBossBar() {
+        return bossBar.progress(Math.max(0, Math.min(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth(), 1)));
     }
 
     private void dropWeapon(WarlordsEntity killer, int bound) {
@@ -292,27 +441,27 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
             killer.getGame().forEachOnlinePlayer((player, team) -> {
-                player.spigot()
-                      .sendMessage(new ComponentBuilder(Permissions.getPrefixWithColor((Player) killer.getEntity()) + killer.getName() + ChatColor.GRAY + " got lucky and found ")
-                              .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                              .append(ChatColor.GRAY + "!")
-                              .create()
-                      );
+                player.sendMessage(Component.text().color(NamedTextColor.GRAY)
+                                            .append(Permissions.getPrefixWithColor((Player) killer.getEntity(), true))
+                                            .append(Component.text(" got lucky and found "))
+                                            .append(weapon.getHoverComponent(false))
+                                            .append(Component.text("!"))
+                );
             });
-            killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 500, 2);
+            killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }
     }
 
-    public EntityLiving getTarget() {
+    public net.minecraft.world.entity.LivingEntity getTarget() {
         return this.entity.getTarget();
     }
 
     public void setTarget(WarlordsEntity target) {
-        this.entity.setTarget((EntityLiving) ((CraftEntity) target.getEntity()).getHandle());
+        this.entity.setTarget((net.minecraft.world.entity.LivingEntity) ((CraftEntity) target.getEntity()).getHandle());
     }
 
     public void setTarget(LivingEntity target) {
-        this.entity.setTarget((((EntityLiving) ((CraftEntity) target).getHandle())));
+        this.entity.setTarget((((net.minecraft.world.entity.LivingEntity) ((CraftEntity) target).getHandle())));
     }
 
     public void removeTarget() {
@@ -323,8 +472,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return entity;
     }
 
-    public EntityInsentient getEntityInsentient() {
-        return entityInsentient;
+    public net.minecraft.world.entity.Mob getMob() {
+        return mob;
     }
 
     public LivingEntity getLivingEntity() {
@@ -345,5 +494,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public EntityEquipment getEe() {
         return ee;
+    }
+
+    public boolean isShowBossBar() {
+        return bossBar != null && showBossBar && !warlordsNPC.isDead();
     }
 }

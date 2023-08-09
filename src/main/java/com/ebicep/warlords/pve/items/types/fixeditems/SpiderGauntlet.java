@@ -52,8 +52,7 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 WarlordsEntity victim = event.getWarlordsEntity();
                 WarlordsEntity attacker = event.getAttacker();
-                if (victim instanceof WarlordsNPC && Objects.equals(attacker, warlordsPlayer)) {
-                    WarlordsNPC warlordsNPC = (WarlordsNPC) victim;
+                if (victim instanceof WarlordsNPC warlordsNPC && Objects.equals(attacker, warlordsPlayer)) {
                     AbstractMob<?> mob = warlordsNPC.getMob();
                     if (mob instanceof Spider || mob instanceof EventEggSac) {
                         return currentDamageValue * 1.3f;

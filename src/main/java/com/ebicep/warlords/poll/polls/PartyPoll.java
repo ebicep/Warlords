@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class PartyPoll extends AbstractPoll<PartyPoll> {
 
@@ -23,9 +22,9 @@ public class PartyPoll extends AbstractPoll<PartyPoll> {
     @Override
     public List<UUID> getUUIDsAllowedToVote() {
         return party.getAllPartyPeoplePlayerOnline().stream()
-                .map(Player::getUniqueId)
-                .filter(uniqueId -> !excludedPlayers.contains(uniqueId))
-                .collect(Collectors.toList());
+                    .map(Player::getUniqueId)
+                    .filter(uniqueId -> !excludedPlayers.contains(uniqueId))
+                    .toList();
     }
 
     @Override

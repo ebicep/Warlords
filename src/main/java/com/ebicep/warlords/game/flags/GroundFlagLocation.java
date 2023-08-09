@@ -5,6 +5,8 @@
  */
 package com.ebicep.warlords.game.flags;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -26,6 +28,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         this(playerFlagLocation.getLocation(), playerFlagLocation.getPlayer().isDead() ? playerFlagLocation.getPickUpTicks() + 600 : playerFlagLocation.getPickUpTicks());
     }
 
+    @Nonnull
     @Override
     public Location getLocation() {
         return location;
@@ -44,19 +47,20 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
     }
 
     @Override
-    public FlagLocation update(FlagInfo info) {
+    public FlagLocation update(@Nonnull FlagInfo info) {
         this.despawnTimer--;
         this.damageTimer++;
         return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }
 
+    @Nonnull
     @Override
-    public List<String> getDebugInformation() {
+    public List<TextComponent> getDebugInformation() {
         return Arrays.asList(
-                "Type: " + this.getClass().getSimpleName(),
-                "Despawn ticks: " + getDespawnTimer(),
-                "Despawn seconds: " + getDespawnTimerSeconds(),
-                "damageTimer: " + getDamageTimer()
+                Component.text("Type: " + this.getClass().getSimpleName()),
+                Component.text("Despawn ticks: " + getDespawnTimer()),
+                Component.text("Despawn seconds: " + getDespawnTimerSeconds()),
+                Component.text("damageTimer: " + getDamageTimer())
         );
     }
 

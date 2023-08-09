@@ -1,6 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.upgrades;
 
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradesTemporary;
+import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
 
@@ -11,8 +12,8 @@ public class GuildLogUpgradeTemporary extends AbstractGuildLogUpgrade<GuildUpgra
     }
 
     @Override
-    public String getAction() {
-        return "purchased";
+    public Component getAction() {
+        return Component.text("purchased");
     }
 
 }

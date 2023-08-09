@@ -9,13 +9,18 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RemoveEntities {
 
     public static void doRemove(Game game) {
         // TODO support multiple games in the same world by adding a bounding box to every map
-        List<Entity> collect = game.getLocations().getWorld().getEntities().stream().filter(entity -> !(entity instanceof Player)).collect(Collectors.toList());
+        List<Entity> collect = game
+                .getLocations()
+                .getWorld()
+                .getEntities()
+                .stream()
+                .filter(entity -> !(entity instanceof Player))
+                .toList();
         collect.forEach(Entity::remove);
     }
 
@@ -23,16 +28,23 @@ public class RemoveEntities {
      * Checks any world for orphan horses, and kill them
      */
     public static void removeHorsesInGame() {
-        Bukkit.getWorlds().forEach(world -> {
-            new ArrayList<>(world.getEntities()).stream().filter(entity -> (entity instanceof Horse && entity.getPassenger() == null)).forEach(Entity::remove);
-        });
+        Bukkit.getWorlds()
+              .forEach(world -> new ArrayList<>(world.getEntities())
+                      .stream()
+                      .filter(entity -> (entity instanceof Horse && entity.getPassengers().isEmpty()))
+                      .forEach(Entity::remove)
+              );
     }
 
     public static void removeArmorStands(int worldSkips) {
         Bukkit.getWorlds()
               .stream()
               .skip(worldSkips)
-              .forEach(world -> new ArrayList<>(world.getEntities()).stream().filter(entity -> (entity instanceof ArmorStand)).forEach(Entity::remove));
+              .forEach(world -> new ArrayList<>(world.getEntities())
+                      .stream()
+                      .filter(entity -> (entity instanceof ArmorStand))
+                      .forEach(Entity::remove)
+              );
     }
 }
 

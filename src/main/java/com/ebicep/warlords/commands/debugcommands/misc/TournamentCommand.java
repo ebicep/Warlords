@@ -13,7 +13,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.general.TournamentStats;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CommandAlias("tournament")
 @CommandPermission("group.administrator")
@@ -30,7 +29,7 @@ public class TournamentCommand extends BaseCommand {
                         o2.getTournamentStats().getCurrentTournamentStats().getWins(),
                         o1.getTournamentStats().getCurrentTournamentStats().getWins()
                 ))
-                .collect(Collectors.toList());
+                .toList();
         StringBuilder sb = new StringBuilder();
         // POS. NAME - W/L - K/A/D
         // 1. sumSmash - 5/2 - 150/10/20

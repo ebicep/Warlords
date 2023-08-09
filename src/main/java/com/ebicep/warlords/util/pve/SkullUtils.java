@@ -1,60 +1,37 @@
 package com.ebicep.warlords.util.pve;
 
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.NBTTagList;
-import net.minecraft.server.v1_8_R3.NBTTagString;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import com.ebicep.warlords.Warlords;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+
+import java.util.UUID;
 
 public class SkullUtils {
 
     public static ItemStack getSkullFrom(SkullID skullID) {
-        return getSkullFrom(skullID.getId(), skullID.getTextureId());
+        return getSkullFrom(skullID.getTextureId());
     }
 
-    public static ItemStack getSkullFrom(String id, String textureId) {
-        net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(
-                new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal())
-        );
-
-        NBTTagCompound compound = nmsStack.getTag();
-        if (compound == null) {
-            compound = new NBTTagCompound();
-            nmsStack.setTag(compound);
-            compound = nmsStack.getTag();
-        }
-
-        NBTTagCompound skullOwner = new NBTTagCompound();
-        skullOwner.set("Id", new NBTTagString(id));
-        NBTTagCompound properties = new NBTTagCompound();
-        NBTTagList textures = new NBTTagList();
-        NBTTagCompound value = new NBTTagCompound();
-        value.set("Value", new NBTTagString(textureId));
-        textures.add(value);
-        properties.set("textures", textures);
-        skullOwner.set("Properties", properties);
-
-        compound.set("SkullOwner", skullOwner);
-        nmsStack.setTag(compound);
-
-        return CraftItemStack.asBukkitCopy(nmsStack);
-    }
-
-    public static ItemStack getPlayerSkull(String playerName) {
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-        SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-        skullMeta.setOwner(playerName);
-        playerSkull.setItemMeta(skullMeta);
-        return playerSkull;
-    }
-
-    public static ItemStack getMobSkull(SkullType type) {
-        ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) type.ordinal());
+    public static ItemStack getSkullFrom(String base64) {
+        ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+
+        PlayerProfile playerProfile = Warlords.getInstance().getServer().createProfile(new UUID(
+                base64.substring(base64.length() - 20).hashCode(),
+                base64.substring(base64.length() - 10).hashCode()
+        ));
+        playerProfile.setProperty(new ProfileProperty(
+                "textures",
+                base64
+        ));
+
+        skullMeta.setPlayerProfile(playerProfile);
         skull.setItemMeta(skullMeta);
         return skull;
     }
+
+
 }

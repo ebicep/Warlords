@@ -1,9 +1,9 @@
 package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.TeamBasedEffect;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.function.DoubleUnaryOperator;
@@ -24,15 +24,19 @@ public class LineEffect extends AbstractEffectPlayer<CircleEffect> {
 
     private Location target;
 
-    public LineEffect(Location target, ParticleEffect own, ParticleEffect other) {
+    public LineEffect(Location target, Particle own, Particle other) {
         this(target, new TeamBasedEffect(own, other));
     }
 
-    public LineEffect(Location target, ParticleEffect effect) {
+    public LineEffect(Location target, Particle effect) {
         this(target, new TeamBasedEffect(effect));
     }
 
-    public LineEffect(Location target, TeamBasedEffect effect) {
+    public LineEffect(Location target, Particle effect, Object data) {
+        this(target, new TeamBasedEffect(effect, data));
+    }
+
+    public LineEffect(Location target, @Nonnull TeamBasedEffect effect) {
         this.target = target;
         this.effect = effect;
     }
@@ -86,12 +90,12 @@ public class LineEffect extends AbstractEffectPlayer<CircleEffect> {
         this.needsUpdate = false;
     }
 
-    public LineEffect effect(@Nonnull ParticleEffect effect) {
+    public LineEffect effect(@Nonnull Particle effect) {
         this.effect = new TeamBasedEffect(effect);
         return this;
     }
 
-    public LineEffect effect(@Nonnull ParticleEffect ownTeam, @Nonnull ParticleEffect enemyTeam) {
+    public LineEffect effect(@Nonnull Particle ownTeam, @Nonnull Particle enemyTeam) {
         this.effect = new TeamBasedEffect(ownTeam, enemyTeam);
         return this;
     }

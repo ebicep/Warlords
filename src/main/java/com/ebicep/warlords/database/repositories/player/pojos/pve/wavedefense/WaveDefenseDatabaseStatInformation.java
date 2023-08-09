@@ -40,16 +40,13 @@ public class WaveDefenseDatabaseStatInformation extends PvEDatabaseStatInformati
             PlayersCollections playersCollection
     ) {
         assert gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense;
-        if (databaseGame instanceof WavesCleared) {
-            WavesCleared wavesCleared = (WavesCleared) databaseGame;
+        if (databaseGame instanceof WavesCleared wavesCleared) {
             if (multiplier > 0) {
                 this.highestWaveCleared = Math.max(wavesCleared.getWavesCleared(), this.highestWaveCleared);
             } else if (this.highestWaveCleared == wavesCleared.getWavesCleared()) {
                 this.highestWaveCleared = 0;
             }
-            if (databaseGame instanceof TimeElapsed && databaseGame instanceof Difficulty) {
-                TimeElapsed timeElapsed = (TimeElapsed) databaseGame;
-                Difficulty difficulty = (Difficulty) databaseGame;
+            if (databaseGame instanceof TimeElapsed timeElapsed && databaseGame instanceof Difficulty difficulty) {
                 if (multiplier > 0) {
                     if (wavesCleared.getWavesCleared() == difficulty.getDifficulty().getMaxWaves() &&
                             (this.fastestGameFinished == 0 || timeElapsed.getTimeElapsed() < fastestGameFinished)
@@ -61,8 +58,7 @@ public class WaveDefenseDatabaseStatInformation extends PvEDatabaseStatInformati
                 }
             }
         }
-        if (gamePlayer instanceof MostDamageInWave) {
-            MostDamageInWave mostDamageInWave = (MostDamageInWave) gamePlayer;
+        if (gamePlayer instanceof MostDamageInWave mostDamageInWave) {
             if (multiplier > 0) {
                 this.mostDamageInWave = Math.max(this.mostDamageInWave, mostDamageInWave.getMostDamageInWave());
             } else if (this.mostDamageInWave == mostDamageInWave.getMostDamageInWave()) {
@@ -70,8 +66,7 @@ public class WaveDefenseDatabaseStatInformation extends PvEDatabaseStatInformati
             }
         }
 
-        if (databaseGame instanceof WavesCleared) {
-            WavesCleared wavesCleared = (WavesCleared) databaseGame;
+        if (databaseGame instanceof WavesCleared wavesCleared) {
             this.totalWavesCleared += wavesCleared.getWavesCleared() * multiplier;
         }
     }

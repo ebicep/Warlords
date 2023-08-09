@@ -4,6 +4,8 @@ import com.ebicep.warlords.events.game.AbstractWarlordsGameEvent;
 import com.ebicep.warlords.game.Game;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 public class WarlordsGameWaveEditEvent extends AbstractWarlordsGameEvent {
     private static final HandlerList handlers = new HandlerList();
     private final int waveCleared;
@@ -17,6 +19,7 @@ public class WarlordsGameWaveEditEvent extends AbstractWarlordsGameEvent {
         return waveCleared;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

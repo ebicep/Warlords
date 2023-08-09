@@ -1,13 +1,15 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -42,15 +44,16 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Increase movement speed by 50%, decrease energy consumption of all abilities by " +
-                formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()) + ", and gain " +
-                formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(), "%") +
-                " knockback resistance. Can be triggered every 30 seconds.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Increase movement speed by 50%, decrease energy consumption of all abilities by ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(", and gain "))
+                        .append(formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" knockback resistance. Can be triggered every 30 seconds."));
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(new Pair<>(
                         formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()),
                         formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevelUpgraded())
@@ -123,10 +126,13 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
         @Override
         public void updateDescription(Player player) {
-            description = "Increase movement speed by " + ChatColor.YELLOW + "40% " + ChatColor.GRAY +
-                    ", decrease energy consumption of all abilities by " +
-                    ChatColor.YELLOW + DECIMAL_FORMAT_TITLE.format(abilityEnergyDecrease) + ChatColor.GRAY + ", and gain " +
-                    ChatColor.YELLOW + DECIMAL_FORMAT_TITLE.format(knockbackResistance) + "% " + ChatColor.GRAY + "knockback resistance.";
+            description = Component.text("Increase movement speed by ")
+                                   .append(Component.text("40%", NamedTextColor.YELLOW))
+                                   .append(Component.text(", decrease energy consumption of all abilities by "))
+                                   .append(Component.text(DECIMAL_FORMAT_TITLE.format(abilityEnergyDecrease), NamedTextColor.YELLOW))
+                                   .append(Component.text(" and gain "))
+                                   .append(Component.text(DECIMAL_FORMAT_TITLE.format(knockbackResistance) + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text(" knockback resistance.", NamedTextColor.GRAY));
         }
 
         @Override

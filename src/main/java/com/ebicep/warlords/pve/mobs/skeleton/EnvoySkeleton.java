@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
+import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -19,8 +20,8 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
                 "Envoy Entropy",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.CARPET, 1, (short) 6),
-                        new ItemStack(Material.DIAMOND_HELMET),
+                        new ItemStack(Material.PINK_CARPET),
+                        new ItemStack(Material.DIAMOND_CHESTPLATE),
                         new ItemStack(Material.DIAMOND_LEGGINGS),
                         new ItemStack(Material.DIAMOND_BOOTS),
                         Weapons.VOID_TWIG.getItem()
@@ -29,7 +30,8 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
                 0.05f,
                 10,
                 0,
-                0
+                0,
+                new Fireball(5.5f)
         );
     }
 
@@ -57,10 +59,10 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.PURPLE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.SKELETON_DEATH, 2, 0.4f);
+                                                                       .withColor(Color.PURPLE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
     }
 }

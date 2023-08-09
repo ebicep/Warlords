@@ -48,8 +48,8 @@ public class MasterworksFairTrait extends WarlordsTrait {
                             .asyncFirst(() -> DatabaseManager.masterworksFairService.findFirstByOrderByStartDateDesc())
                             .asyncLast(masterworksFair -> {
                                 if (masterworksFair == null) {
-                                    ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Could not find masterworks fair in database");
-                                    ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Creating new masterworks fair.");
+                                    ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Could not find masterworks fair in database");
+                                    ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Creating new masterworks fair.");
                                     MasterworksFairManager.createFair();
                                 } else {
                                     checkForReset(masterworksFair);
@@ -62,7 +62,7 @@ public class MasterworksFairTrait extends WarlordsTrait {
                 //checking for reset
                 long secondsBetween = ChronoUnit.SECONDS.between(currentFair.getStartDate(), Instant.now());
                 if (secondsBetween > 0 && secondsBetween > Timing.WEEKLY.secondDuration) {
-                    ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
+                    ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
                     resetFair(currentFair);
                 }
             }
@@ -73,12 +73,12 @@ public class MasterworksFairTrait extends WarlordsTrait {
     public void checkForReset(MasterworksFair masterworksFair) {
         //check if week past
         long minutesBetween = ChronoUnit.MINUTES.between(masterworksFair.getStartDate(), Instant.now());
-        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair Reset Time Minute: " + minutesBetween + " > " + Timing.WEEKLY.minuteDuration);
+        ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Masterworks Fair Reset Time Minute: " + minutesBetween + " > " + Timing.WEEKLY.minuteDuration);
         if (masterworksFair.isEnded()) {
-            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair Ended");
+            ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Masterworks Fair Ended");
             MasterworksFairManager.createFair();
         } else if (minutesBetween > 0 && minutesBetween > Timing.WEEKLY.minuteDuration) {
-            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
+            ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
             resetFair(masterworksFair);
         } else {
             initializeFair(masterworksFair);

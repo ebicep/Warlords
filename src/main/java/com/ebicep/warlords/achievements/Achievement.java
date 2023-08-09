@@ -3,17 +3,18 @@ package com.ebicep.warlords.achievements;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
 import java.util.function.Function;
 
 public interface Achievement {
-
-    String getName();
-
-    String getDescription();
 
     GameMode getGameMode();
 
@@ -23,21 +24,45 @@ public interface Achievement {
 
     Difficulty getDifficulty();
 
-    void sendAchievementUnlockMessage(Player player);
+    default void sendAchievementUnlockMessage(Player player) {
+        TextComponent component = Component.text(">>  Achievement Unlocked: ", NamedTextColor.GREEN)
+                                           .append(Component.text(getName(), NamedTextColor.GOLD)
+                                                            .hoverEvent(HoverEvent.showText(WordWrap.wrapWithNewline(Component.text(getDescription(), NamedTextColor.GREEN), 200))))
+                                           .append(Component.text("  <<", NamedTextColor.GREEN));
+        ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
+    }
 
-    void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsPlayer);
+    String getName();
+
+    String getDescription();
+
+    default void sendAchievementUnlockMessageToOthers(WarlordsEntity warlordsEntity) {
+        TextComponent component = Component.text(">> ", NamedTextColor.GREEN)
+                                           .append(Component.text(warlordsEntity.getName(), NamedTextColor.AQUA))
+                                           .append(Component.text(" unlocked: ", NamedTextColor.GREEN))
+                                           .append(Component.text(getName(), NamedTextColor.GOLD)
+                                                            .hoverEvent(HoverEvent.showText(WordWrap.wrapWithNewline(Component.text(getDescription(), NamedTextColor.GREEN), 200))))
+                                           .append(Component.text("  <<", NamedTextColor.GREEN));
+        warlordsEntity.getGame().warlordsPlayers()
+                      //.filter(wp -> wp.getTeam() == warlordsEntity.getTeam())
+                      .filter(wp -> wp != warlordsEntity)
+                      .filter(wp -> wp.getEntity() instanceof Player)
+                      .map(wp -> (Player) wp.getEntity())
+                      .forEachOrdered(player -> ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true));
+
+    }
 
     enum Difficulty {
         EASY("Easy",
-                ChatColor.GREEN,
+                NamedTextColor.GREEN,
                 integer -> (int) Math.round(Math.pow(integer, 1 / 4.0))
         ),
         MEDIUM("Medium",
-                ChatColor.GOLD,
+                NamedTextColor.GOLD,
                 integer -> (int) Math.round(Math.pow(integer, 1 / 3.5))
         ),
         HARD("Hard",
-                ChatColor.RED,
+                NamedTextColor.RED,
                 integer -> (int) Math.round(Math.pow(integer, 1 / 3))
         ),
 
@@ -45,17 +70,17 @@ public interface Achievement {
 
         public static final Difficulty[] VALUES = values();
         public final String name;
-        public final ChatColor chatColor;
+        public final NamedTextColor textColor;
         public final Function<Integer, Integer> weightFunction;
 
-        Difficulty(String name, ChatColor chatColor, Function<Integer, Integer> weightFunction) {
+        Difficulty(String name, NamedTextColor textColor, Function<Integer, Integer> weightFunction) {
             this.name = name;
-            this.chatColor = chatColor;
+            this.textColor = textColor;
             this.weightFunction = weightFunction;
         }
 
-        public String getColoredName() {
-            return chatColor + name;
+        public Component getColoredName() {
+            return Component.text(name, textColor);
         }
     }
 

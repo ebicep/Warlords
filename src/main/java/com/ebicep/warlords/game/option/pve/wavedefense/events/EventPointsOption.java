@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.events;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -11,13 +13,16 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
+import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -71,16 +76,21 @@ public class EventPointsOption implements Option, Listener {
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(CurrencyOnEventOption.SCOREBOARD_PRIORITY + 1, "currency") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(player != null ?
-                                                 "Points: " + ChatColor.YELLOW + "✪ " + NumberFormat.addCommas(points.getOrDefault(player.getUuid(), 0)) :
-                                                 new HashSet<>(points.values()).size() <= 1 ? "Points: " + ChatColor.YELLOW + "✪ " + NumberFormat.addCommas(points
-                                                         .values()
-                                                         .stream()
-                                                         .findFirst()
-                                                         .orElse(0)) :
-                                                 ""
-                );
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                String playerPoints = null;
+                if (player != null) {
+                    playerPoints = NumberFormat.addCommas(points.getOrDefault(player.getUuid(), 0));
+                }
+                if (new HashSet<>(points.values()).size() <= 1) {
+                    playerPoints = NumberFormat.addCommas(points.values()
+                                                                .stream()
+                                                                .findFirst()
+                                                                .orElse(0));
+                }
+                if (playerPoints != null) {
+                    return Collections.singletonList(Component.text("Points: ").append(Component.text("✪ " + playerPoints, NamedTextColor.YELLOW)));
+                }
+                return Collections.singletonList(Component.empty());
             }
         });
     }
@@ -113,7 +123,10 @@ public class EventPointsOption implements Option, Listener {
 
     public void addTo(WarlordsPlayer warlordsPlayer, int amount) {
         points.merge(warlordsPlayer.getUuid(), amount, Integer::sum);
-        warlordsPlayer.sendMessage(ChatColor.YELLOW + "+" + amount + " ✪ Points");
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid(), warlordsPlayer.getEntity() instanceof Player);
+        if (databasePlayer.getChatEventPointsMode() == Settings.ChatSettings.ChatEventPoints.ALL) {
+            warlordsPlayer.sendMessage(Component.text("+" + amount + " ✪ Points", NamedTextColor.YELLOW));
+        }
     }
 
     @EventHandler
@@ -154,9 +167,12 @@ public class EventPointsOption implements Option, Listener {
 
     public void addToAll(int points) {
         this.points.replaceAll((uuid, integer) -> {
-            WarlordsEntity player = Warlords.getPlayer(uuid);
-            if (player != null) {
-                player.sendMessage(ChatColor.YELLOW + "+" + points + " ✪ Points");
+            WarlordsEntity warlordsPlayer = Warlords.getPlayer(uuid);
+            if (warlordsPlayer != null) {
+                DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid(), warlordsPlayer.getEntity() instanceof Player);
+                if (databasePlayer.getChatEventPointsMode() == Settings.ChatSettings.ChatEventPoints.ALL) {
+                    warlordsPlayer.sendMessage(Component.text("+" + points + " ✪ Points", NamedTextColor.YELLOW));
+                }
             }
             return integer + points;
         });

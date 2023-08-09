@@ -11,7 +11,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseSta
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefenseDifficultyStats {
@@ -45,24 +46,19 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
         if (difficultyStats != null) {
             difficultyStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
-            ChatChannels.sendDebugMessage((CommandIssuer) null, ChatColor.RED + "Error: Difficulty stats is null", true);
+            ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Error: Difficulty stats is null", NamedTextColor.GREEN));
         }
     }
 
     public PvEDatabaseStatInformation getDifficultyStats(DifficultyIndex difficultyIndex) {
-        switch (difficultyIndex) {
-            case EASY:
-                return getEasyStats();
-            case NORMAL:
-                return getNormalStats();
-            case HARD:
-                return getHardStats();
-            case EXTREME:
-                return getExtremeStats();
-            case ENDLESS:
-                return getEndlessStats();
-        }
-        return null;
+        return switch (difficultyIndex) {
+            case EASY -> getEasyStats();
+            case NORMAL -> getNormalStats();
+            case HARD -> getHardStats();
+            case EXTREME -> getExtremeStats();
+            case ENDLESS -> getEndlessStats();
+            default -> null;
+        };
     }
 
 

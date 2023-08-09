@@ -1,6 +1,6 @@
 package com.ebicep.warlords.events.player.ingame;
 
-import com.ebicep.warlords.abilties.UndyingArmy;
+import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.HandlerList;
 
@@ -25,6 +25,7 @@ public class WarlordsUndyingArmyPopEvent extends AbstractWarlordsEntityEvent {
         return undyingArmy;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

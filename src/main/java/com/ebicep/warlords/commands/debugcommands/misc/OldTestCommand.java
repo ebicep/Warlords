@@ -1,33 +1,37 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.kyori.adventure.text.Component;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class OldTestCommand implements CommandExecutor {
 
     private static double getWeight(float itemScore, ItemTier tier) {
         ItemTier.WeightRange weightRange = tier.weightRange;
         if (itemScore <= 10) {
-            return weightRange.getMax();
+            return weightRange.max();
         }
         if (45 <= itemScore && itemScore <= 55) {
-            return weightRange.getNormal();
+            return weightRange.normal();
         }
         if (itemScore >= 90) {
-            return weightRange.getMin();
+            return weightRange.min();
         }
-        int weight = weightRange.getMax();
-        double midWeight = weightRange.getNormal();
+        int weight = weightRange.max();
+        double midWeight = weightRange.normal();
         // 10-mid
         double bottomToMidIncrement = getBottomToMidIncrement(weightRange, midWeight);
         // 10-mid
@@ -61,13 +65,13 @@ public class OldTestCommand implements CommandExecutor {
     private static double getBottomToMidIncrement(ItemTier.WeightRange weightRange, double midWeight) {
 //        System.out.println("35 / (" + midWeight + " - " + weightRange.getMin() + " - 1)");
 //        System.out.println("35 / " + (midWeight - weightRange.getMin() - 1));
-        return 35d / (midWeight - weightRange.getMin() - 1);
+        return 35d / (midWeight - weightRange.min() - 1);
     }
 
     private static double getMidToTopIncrement(ItemTier.WeightRange weightRange, double midWeight) {
 //        System.out.println("35 / (" + weightRange.getMax() + " - " + midWeight + " - 1)");
 //        System.out.println("35 / " + (weightRange.getMax() - midWeight - 1));
-        return 35d / (weightRange.getMax() - midWeight - 1);
+        return 35d / (weightRange.max() - midWeight - 1);
     }
 
     private static void extracted(String collection) {
@@ -82,28 +86,26 @@ public class OldTestCommand implements CommandExecutor {
 
         UpdateResult result = usersCollection.updateMany(filter, update);
         long modifiedCount = result.getModifiedCount();
-        System.out.println("Modified " + modifiedCount + " documents in " + collection);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Modified " + modifiedCount + " documents in " + collection);
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
-        if (commandSender instanceof Player) {
-            Player player = (Player) commandSender;
+        if (commandSender instanceof Player player) {
 
             if (!player.isOp()) {
                 return true;
             }
         }
 
-        if (commandSender instanceof Player) {
+        if (commandSender instanceof Player player) {
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {
 //                for (Currencies value : Currencies.VALUES) {
 //                    System.out.println(value.name + ": " + databasePlayer.getPveStats().getCurrencyValue(value));
 //                }
 //            });
-            Player player = (Player) commandSender;
-//            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+            //            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
 //                System.out.println("reformatting : " + databasePlayer.getName());
 //                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
 //                DatabasePlayerWaveDefenseStats waveDefenseStats = pveStats.getWaveDefenseStats();
@@ -126,7 +128,86 @@ public class OldTestCommand implements CommandExecutor {
 //                        .execute();
 //            });
 
+
+//            TextComponent component = Component.text(">>  Achievement Unlocked: ", NamedTextColor.GREEN)
+//                                               .append(Component.text(ChallengeAchievements.RETRIBUTION_OF_THE_DEAD.name, NamedTextColor.GOLD)
+//                                                                .hoverEvent(HoverEvent.showText(WordWrap.wrapWithNewline(Component.text(ChallengeAchievements.RETRIBUTION_OF_THE_DEAD.description, NamedTextColor.GREEN), 200))))
+//                                               .append(Component.text("  <<"));
+//            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
+
+//            Component component = Component.text("TEST", NamedTextColor.GREEN)
+//                                           .append(Component.newline())
+//                                           .append(Component.text("TEST2")
+//                                                            .append(Component.newline())
+//                                                            .append(Component.text("TEST3"))
+//                                                            .append(Component.text("H", NamedTextColor.RED)))
+//
+//                                           .append(Component.text("TEST4"))
+//                                           .append(Component.newline())
+//                                           .append(Component.text("TEST5"));
+//
+//            ChatUtils.sendMessageToPlayer(player, component, NamedTextColor.GREEN, true);
+            // System.out.println(LegacyComponentSerializer.legacyAmpersand().serialize(component));
+
+
+//            Location eyeLocation = player.getEyeLocation();
+//            eyeLocation.setPitch(0);
+//            for (int i = 0; i < 90; i++) {
+//                Location from = new LocationBuilder(eyeLocation)
+//                        .addY(2)
+//                        .yaw(i * 4)
+//                        .forward(5);
+//                AbstractChain.spawnChain(from, player.getLocation(), new ItemStack(Material.SPRUCE_FENCE_GATE));
+//            }
+//
+//            EffectUtils.displayParticle(
+//                    Particle.SPELL_WITCH,
+//                    player.getLocation().subtract(0, 3, 0),
+//                    1000,
+//                    10,
+//                    0,
+//                    10,
+//                    0
+//            );
+
+            player.playerListName(Component.text("TEST"));
+            new BukkitRunnable() {
+
+
+                @Override
+                public void run() {
+                    player.playerListName(null);
+                }
+            }.runTaskLater(Warlords.getInstance(), 60);
+
+//            ArmorStand stand = Utils.spawnArmorStand(player.getLocation(), armorStand -> {
+//                armorStand.getEquipment().setHelmet(new ItemStack(Material.SPRUCE_FENCE_GATE));
+//                armorStand.setMarker(true);
+//                Warlords.getInstance().getLogger().info(armorStand.isVisualFire() + " - " + armorStand.getFireTicks());
+//            });
+//
+//            new BukkitRunnable() {
+//
+//                int counter = 0;
+//
+//                @Override
+//                public void run() {
+//                    counter++;
+//                    stand.setRotation(counter, 0);
+//                    if (counter == 100) {
+//                        stand.remove();
+//                        cancel();
+//                    }
+//                }
+//            }.runTaskTimer(Warlords.getInstance(), 0, 0);
+
+
+//            for (int i = 0; i < 10_000; i++) {
+//                player.sendMessage(NumberFormat.addCommaAndRound(i));
+//            }
+
         }
+
 //
 //        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
 //            int wins = databasePlayer.getPveStats().getWins();
@@ -177,7 +258,7 @@ public class OldTestCommand implements CommandExecutor {
 
 //        extracted("Games_Information");
 //        extracted("Games_Information_PvE");
-        System.out.println("DONE");
+        ChatUtils.MessageType.WARLORDS.sendMessage("DONE");
 
 
 //        for (Mobs value : Mobs.values()) {
@@ -274,7 +355,7 @@ public class OldTestCommand implements CommandExecutor {
 
 
 //        Quests quest = Quests.DAILY_300_KA;
-//        ChatUtils.sendCenteredMessageWithEvents(player, new ComponentBuilder()
+//        ChatUtils.sendCenteredMessageWithEvents(player, Component.text()
 //                .appendHoverText(ChatColor.GREEN + quest.name, quest.getHoverText())
 //                .create()
 //        );

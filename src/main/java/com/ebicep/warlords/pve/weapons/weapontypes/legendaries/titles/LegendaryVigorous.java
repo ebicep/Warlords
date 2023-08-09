@@ -1,13 +1,15 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Transient;
 
@@ -37,22 +39,10 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()) +
-                " energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds.";
-    }
-
-    @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
-        return Collections.singletonList(new Pair<>(
-                formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()),
-                formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevelUpgraded())
-        ));
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 170;
+    public TextComponent getPassiveEffect() {
+        return Component.text("", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(" energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds."));
     }
 
     @Override
@@ -76,16 +66,6 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getCritChanceValue() {
-        return 20;
-    }
-
-    @Override
-    protected float getCritMultiplierValue() {
-        return 180;
-    }
-
-    @Override
     protected float getHealthBonusValue() {
         return 600;
     }
@@ -100,6 +80,29 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         return 2;
     }
 
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 170;
+    }
+
+    @Override
+    protected float getCritChanceValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getCritMultiplierValue() {
+        return 180;
+    }
+
+    @Override
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return Collections.singletonList(new Pair<>(
+                formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()),
+                formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevelUpgraded())
+        ));
+    }
+
     static class LegendaryVigorousAbility extends AbstractAbility {
 
         private final float energyPerSecond;
@@ -111,7 +114,10 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
         @Override
         public void updateDescription(Player player) {
-            description = ChatColor.YELLOW + "+" + DECIMAL_FORMAT_TITLE.format(energyPerSecond) + ChatColor.GRAY + " energy per second for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.";
+            description = Component.text("+" + DECIMAL_FORMAT_TITLE.format(energyPerSecond), NamedTextColor.YELLOW)
+                                   .append(Component.text(" energy per second for "))
+                                   .append(Component.text("10", NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds."));
         }
 
         @Override

@@ -10,10 +10,12 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
@@ -100,7 +102,7 @@ public class WinAfterTimeoutOption implements Option {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         new TimerSkipAbleMarker() {
             @Override
             public int getDelay() {
@@ -116,7 +118,7 @@ public class WinAfterTimeoutOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(scoreboardPriority, scoreboardGroup) {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 final EnumSet<Team> teams = TeamMarker.getTeams(game);
 
                 Team winner = null;
@@ -124,9 +126,9 @@ public class WinAfterTimeoutOption implements Option {
                     List<PointPredicterMarker> predictionMarkers = game
                             .getMarkers(PointPredicterMarker.class);
                     int scoreNeededToEndGame = game.getOptions()
-                            .stream()
-                            .filter(e -> e instanceof WinByPointsOption)
-                            .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
+                                                   .stream()
+                                                   .filter(e -> e instanceof WinByPointsOption)
+                                                   .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
                             .sorted()
                             .findFirst()
                             .orElse(Integer.MAX_VALUE);
@@ -171,21 +173,21 @@ public class WinAfterTimeoutOption implements Option {
                     }
                 }
 
-                StringBuilder message = new StringBuilder(64);
+                TextComponent.Builder message = Component.text();
                 if (winner != null) {
-                    message.append(winner.coloredPrefix()).append(ChatColor.GOLD).append(" Wins in: ");
+                    message.append(winner.coloredPrefix())
+                           .append(Component.text(" Wins in: ", NamedTextColor.GOLD));
                 } else {
-                    message.append(ChatColor.WHITE).append("Time Left: ");
+                    message.append(Component.text("Time Left: ", NamedTextColor.WHITE));
                 }
-                message.append(ChatColor.GREEN);
-                Utils.formatTimeLeft(message, timeRemaining);
-                return Collections.singletonList(message.toString());
+                message.append(Component.text(StringUtils.formatTimeLeft(timeRemaining), NamedTextColor.GREEN));
+                return Collections.singletonList(message.build());
             }
         });
     }
 
     @Override
-    public void start(Game game) {
+    public void start(@Nonnull Game game) {
         this.runTaskTimer = new GameRunnable(game) {
             @Override
             public void run() {
@@ -220,7 +222,7 @@ public class WinAfterTimeoutOption implements Option {
                 }
                 scoreboard.markChanged();
             }
-        }.runTaskTimer(1 * SECOND, 1 * SECOND);
+        }.runTaskTimer(SECOND, SECOND);
     }
 
     @Override
@@ -233,8 +235,7 @@ public class WinAfterTimeoutOption implements Option {
     
     public static OptionalInt getTimeRemaining(@Nonnull Game game) {
         for (Option option : game.getOptions()) {
-            if (option instanceof WinAfterTimeoutOption) {
-                WinAfterTimeoutOption drawAfterTimeoutOption = (WinAfterTimeoutOption) option;
+            if (option instanceof WinAfterTimeoutOption drawAfterTimeoutOption) {
                 return OptionalInt.of(drawAfterTimeoutOption.getTimeRemaining());
             }
         }

@@ -29,6 +29,7 @@ public class WarlordsAddVelocityEvent extends AbstractWarlordsEntityEvent implem
         return vector;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

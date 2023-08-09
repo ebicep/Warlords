@@ -5,7 +5,8 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 @CommandAlias("class")
@@ -17,7 +18,7 @@ public class ClassCommand extends BaseCommand {
     public void changeClass(@Conditions("outsideGame") Player player, Specializations spec) {
         PlayerSettings settings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         settings.setSelectedSpec(spec);
-        player.sendMessage(ChatColor.BLUE + "Your selected spec: §7" + spec);
+        player.sendMessage(Component.text("Your selected spec: §7" + spec, NamedTextColor.BLUE));
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             databasePlayer.setLastSpec(spec);
 

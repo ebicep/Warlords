@@ -3,12 +3,15 @@ package com.ebicep.warlords.pve.items.types;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.RandomCollection;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.annotation.Transient;
@@ -21,18 +24,18 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class AbstractItem {
 
     public static void sendItemMessage(Player player, String message) {
-        player.sendMessage(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > " + message);
+        player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(Component.text(message)));
     }
 
-    public static void sendItemMessage(Player player, ComponentBuilder message) {
-        player.spigot().sendMessage(message.prependAndCreate(new ComponentBuilder(ChatColor.RED + "Items" + ChatColor.DARK_GRAY + " > ").create()));
+    public static void sendItemMessage(Player player, Component message) {
+        player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(message));
     }
 
     private static double getAverageValue(double min, double max, double current) {
         return (current - min) / (max - min);
     }
 
-    public static String getModifierCalculatedLore(
+    public static List<Component> getModifierCalculatedLore(
             ItemModifier[] blessings,
             ItemModifier[] curses,
             float modifierCalculated,
@@ -40,10 +43,12 @@ public abstract class AbstractItem {
     ) {
         if (modifierCalculated > 0) {
             ItemModifier blessing = blessings[0];
-            return WordWrap.wrapWithNewline(!inverted ? blessing.getDescriptionCalculated(modifierCalculated) : blessing.getDescriptionCalculatedInverted(modifierCalculated), 150);
+            return WordWrap.wrap(!inverted ? blessing.getDescriptionCalculated(modifierCalculated) : blessing.getDescriptionCalculatedInverted(
+                    modifierCalculated), 150);
         } else {
             ItemModifier curse = curses[0];
-            return WordWrap.wrapWithNewline(!inverted ? curse.getDescriptionCalculated(modifierCalculated) : curse.getDescriptionCalculatedInverted(modifierCalculated), 150);
+            return WordWrap.wrap(!inverted ? curse.getDescriptionCalculated(modifierCalculated) : curse.getDescriptionCalculatedInverted(
+                    modifierCalculated), 150);
         }
     }
 
@@ -77,6 +82,8 @@ public abstract class AbstractItem {
         }
     }
 
+    public abstract AbstractItem clone();
+
     private static double getRandomValueNormalDistribution() {
         double mean = 0.5;
         double stdDev = 0.15;
@@ -101,12 +108,8 @@ public abstract class AbstractItem {
                 .add(1 - this.tier.blessedChance - this.tier.cursedChance, 0)
                 .next();
         switch (result) {
-            case 1:
-                this.modifier = Math.min(this.modifier + (tier == null ? ItemModifier.GENERATE_BLESSING.next() : tier), 5);
-                break;
-            case -1:
-                this.modifier = Math.max(this.modifier - (tier == null ? ItemModifier.GENERATE_CURSE.next() : tier), -5);
-                break;
+            case 1 -> this.modifier = Math.min(this.modifier + (tier == null ? ItemModifier.GENERATE_BLESSING.next() : tier), 5);
+            case -1 -> this.modifier = Math.max(this.modifier - (tier == null ? ItemModifier.GENERATE_CURSE.next() : tier), -5);
         }
     }
 
@@ -114,10 +117,17 @@ public abstract class AbstractItem {
         return generateItemBuilder().get();
     }
 
+    public Component getHoverComponent() {
+        return getItemName().hoverEvent(generateItemStack());
+    }
+
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
-        addStatPoolAndBlessing(itemBuilder);
-        addItemScoreAndWeight(itemBuilder);
+        addStatPoolAndBlessing(itemBuilder, null);
+        addItemScoreAndWeight(itemBuilder, false);
+        if (isFavorite()) {
+            itemBuilder.addLore(Component.empty(), Component.text("FAVORITE", NamedTextColor.LIGHT_PURPLE));
+        }
         return itemBuilder;
     }
 
@@ -125,8 +135,11 @@ public abstract class AbstractItem {
         return new ItemBuilder(getItemStack())
                 .name(getItemName())
                 .lore(
-                        ChatColor.GRAY + "Tier: " + tier.getColoredName(),
-                        ""
+                        Component.textOfChildren(
+                                Component.text("Tier: ", NamedTextColor.GRAY),
+                                tier.getColoredName()
+                        ),
+                        Component.empty()
                 );
     }
 
@@ -134,34 +147,41 @@ public abstract class AbstractItem {
         return getType().skull;
     }
 
-    protected void addStatPoolAndBlessing(ItemBuilder itemBuilder) {
-        itemBuilder.addLore(getStatPoolLore());
+    protected void addStatPoolAndBlessing(ItemBuilder itemBuilder, BasicStatPool obfuscatedStat) {
+        itemBuilder.addLore(getStatPoolLore(obfuscatedStat));
         if (modifier != 0) {
+            itemBuilder.addLore(Component.empty());
+            itemBuilder.addLore(getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false));
+        }
+    }
+
+    protected void addItemScoreAndWeight(ItemBuilder itemBuilder, boolean obfuscated) {
+        Component itemScoreString = getItemScoreString(obfuscated);
+        itemBuilder.addLore(Component.empty());
+        if (itemScoreString != null) {
             itemBuilder.addLore(
-                    "",
-                    getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false)
+                    itemScoreString,
+                    Component.empty(),
+                    getWeightString(obfuscated)
             );
-        }
-    }
-
-    protected void addItemScoreAndWeight(ItemBuilder itemBuilder) {
-        String itemScoreString = getItemScoreString();
-        itemBuilder.addLore(
-                (itemScoreString != null ? "\n" + itemScoreString + "\n\n" : "\n") +
-                        getWeightString()
-        );
-    }
-
-    public String getItemName() {
-        String name = "";
-        ItemModifier itemModifier = getItemModifier();
-        if (itemModifier != null) {
-            name += (modifier > 0 ? ChatColor.GREEN : ChatColor.RED) + itemModifier.getName() + " ";
         } else {
-            name += ChatColor.GRAY + "Normal ";
+            itemBuilder.addLore(getWeightString(obfuscated));
         }
-        name += getType().name;
-        return name;
+    }
+
+    public Component getItemName() {
+        ItemModifier itemModifier = getItemModifier();
+        TextComponent.Builder name = Component.text()
+                                              .color(itemModifier != null ?
+                                                     modifier > 0 ? NamedTextColor.GREEN : NamedTextColor.RED :
+                                                     NamedTextColor.GRAY);
+        if (itemModifier != null) {
+            name.append(Component.text(itemModifier.getName() + " "));
+        } else {
+            name.append(Component.text("Normal "));
+        }
+        name.append(Component.text(getType().name));
+        return name.build();
     }
 
     public ItemModifier getItemModifier() {
@@ -178,8 +198,8 @@ public abstract class AbstractItem {
         }
     }
 
-    public List<String> getStatPoolLore() {
-        return BasicStatPool.getStatPoolLore(getStatPool(), false);
+    public List<Component> getStatPoolLore(BasicStatPool obfuscatedStat) {
+        return BasicStatPool.getStatPoolLore(getStatPool(), false, obfuscatedStat);
     }
 
     public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -197,12 +217,16 @@ public abstract class AbstractItem {
         return modifier * getItemModifier().getIncreasePerTier();
     }
 
-    protected String getItemScoreString() {
-        return ChatColor.GRAY + "Score: " + ChatColor.YELLOW + NumberFormat.formatOptionalHundredths(getItemScore()) + ChatColor.GRAY + "/" + ChatColor.GREEN + "100";
+    protected Component getItemScoreString(boolean obfuscated) {
+        return Component.text("Score: ", NamedTextColor.GRAY)
+                        .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getItemScore()), NamedTextColor.YELLOW))
+                        .append(Component.text("/"))
+                        .append(Component.text("100"));
     }
 
-    private String getWeightString() {
-        return ChatColor.GRAY + "Weight: " + ChatColor.GOLD + ChatColor.BOLD + NumberFormat.formatOptionalHundredths(getWeight());
+    private Component getWeightString(boolean obfuscated) {
+        return Component.text("Weight: ", NamedTextColor.GRAY)
+                        .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getWeight()), NamedTextColor.GOLD, TextDecoration.BOLD));
     }
 
     public HashMap<BasicStatPool, Integer> getStatPool() {
@@ -213,8 +237,8 @@ public abstract class AbstractItem {
                 double tieredDistribution = distribution + tier.statDistributionModifier;
                 // clamp to [0, 1]
                 tieredDistribution = Math.max(0, Math.min(1, tieredDistribution));
-                int max = statRange.getMax() * stat.getDecimalPlace().value;
-                int min = statRange.getMin() * stat.getDecimalPlace().value;
+                int max = statRange.max() * stat.getDecimalPlace().value;
+                int min = statRange.min() * stat.getDecimalPlace().value;
                 int value = (int) ((max - min) * tieredDistribution + min);
                 // floor value
                 value = value / stat.getDecimalPlace().value * stat.getDecimalPlace().value;
@@ -235,9 +259,9 @@ public abstract class AbstractItem {
     public int getWeight() {
         float itemScore = getWeightScore();
         ItemTier.WeightRange weightRange = tier.weightRange;
-        int min = weightRange.getMin();
-        int normal = weightRange.getNormal();
-        int max = weightRange.getMax();
+        int min = weightRange.min();
+        int normal = weightRange.normal();
+        int max = weightRange.max();
 
         if (itemScore <= 10) {
             return max;

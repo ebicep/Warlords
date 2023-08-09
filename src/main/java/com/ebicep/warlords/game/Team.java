@@ -1,5 +1,8 @@
 package com.ebicep.warlords.game;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -10,8 +13,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public enum Team {
-    BLUE("Blue", "BLU", ChatColor.BLUE, Color.fromRGB(51, 76, 178), new ItemStack(Material.WOOL, 1, (short) 11)),
-    RED("Red", "RED", ChatColor.RED, Color.fromRGB(153, 51, 51), new ItemStack(Material.WOOL, 1, (short) 14)),
+    BLUE("Blue", "BLU", NamedTextColor.BLUE, ChatColor.BLUE, Color.fromRGB(51, 76, 178), new ItemStack(Material.BLUE_WOOL)),
+    RED("Red", "RED", NamedTextColor.RED, ChatColor.RED, Color.fromRGB(153, 51, 51), new ItemStack(Material.RED_WOOL)),
 
     ;
     private static final Team[] inverseMapping;
@@ -22,25 +25,28 @@ public enum Team {
     }
 
     public final String name;
-    public final ChatColor teamColor;
+    public final NamedTextColor teamColor;
+    @Deprecated
+    public final ChatColor oldTeamColor;
     public final String chatTag;
-    public final String chatTagColored;
-    public final String chatTagBoldColored;
+    public final Component chatTagColored;
+    public final Component chatTagBoldColored;
     public final Color armorColor;
     public final ItemStack item;
 
-    Team(String name, String chatTag, ChatColor teamColor, Color armorColor, ItemStack item) {
+    Team(String name, String chatTag, NamedTextColor teamColor, ChatColor oldTeamColor, Color armorColor, ItemStack item) {
         this.name = name;
         this.teamColor = teamColor;
         this.chatTag = chatTag;
-        this.chatTagColored = teamColor + chatTag;
-        this.chatTagBoldColored = teamColor.toString() + ChatColor.BOLD + chatTag;
+        this.oldTeamColor = oldTeamColor;
+        this.chatTagColored = Component.text(chatTag, teamColor);
+        this.chatTagBoldColored = Component.text(chatTag, teamColor, TextDecoration.BOLD);
         this.armorColor = armorColor;
         this.item = item;
     }
 
     @Nonnull
-    public ChatColor teamColor() {
+    public NamedTextColor teamColor() {
         return teamColor;
     }
 
@@ -60,19 +66,21 @@ public enum Team {
 
     /**
      * Returns the prefix as ChatColor.XXX + "XXX"
+     *
      * @return ChatColor.XXX + "XXX"
      */
     @Nonnull
-    public String coloredPrefix() {
+    public Component coloredPrefix() {
         return chatTagColored;
     }
 
     /**
      * Returns the prefix as ChatColor.XXX + ChatColor.BOLD + "XXX"
+     *
      * @return ChatColor.XXX + ChatColor.BOLD + "XXX"
      */
     @Nonnull
-    public String boldColoredPrefix() {
+    public Component boldColoredPrefix() {
         return chatTagBoldColored;
     }
 

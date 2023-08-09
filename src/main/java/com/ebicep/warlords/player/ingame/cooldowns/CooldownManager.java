@@ -1,14 +1,19 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
-import com.ebicep.warlords.abilties.Soulbinding;
-import com.ebicep.warlords.abilties.UndyingArmy;
-import com.ebicep.warlords.abilties.WoundingStrikeBerserker;
-import com.ebicep.warlords.abilties.WoundingStrikeDefender;
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.Soulbinding;
+import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.WoundingStrikeDefender;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.state.PlayingState;
+import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
@@ -21,7 +26,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class CooldownManager {
 
@@ -67,11 +71,32 @@ public class CooldownManager {
                     if (abstractCooldowns.contains(abstractCooldown)) {
                         abstractCooldowns.remove(i);
                         i--;
+
+                        updatePlayerNames(abstractCooldown);
                     }
                 }
             }
         }
+    }
 
+    public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {
+        if (abstractCooldown.changesPlayerName()) {
+            updatePlayerNames();
+        }
+    }
+
+    public void updatePlayerNames() {
+        Game game = warlordsEntity.getGame();
+        game.getState(PlayingState.class)
+            .ifPresent(playingState -> {
+                game.forEachOnlinePlayer((player, team) -> {
+                    WarlordsEntity wp = Warlords.getPlayer(player);
+                    if (wp == null) {
+                        return;
+                    }
+                    playingState.updateNames(CustomScoreboard.getPlayerScoreboard(player), wp);
+                });
+            });
     }
 
     public List<AbstractCooldown<?>> getCooldownsDistinct() {
@@ -111,14 +136,13 @@ public class CooldownManager {
     public List<AbstractCooldown<?>> getBuffCooldowns() {
         return abstractCooldowns.stream()
                                 .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.BUFF)
-                                .collect(Collectors.toList());
+                                .toList();
     }
 
     public void removeBuffCooldowns() {
         new ArrayList<>(abstractCooldowns).forEach(cd -> {
             if (abstractCooldowns.contains(cd) && cd.getCooldownType() == CooldownTypes.BUFF) {
-                cd.getOnRemoveForce().accept(this);
-                abstractCooldowns.remove(cd);
+                removeCooldown(cd);
             }
         });
     }
@@ -126,32 +150,58 @@ public class CooldownManager {
     public List<AbstractCooldown<?>> getDebuffCooldowns() {
         return abstractCooldowns.stream()
                                 .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
-                                .collect(Collectors.toList());
+                                .toList();
     }
 
     public int removeDebuffCooldowns() {
         List<AbstractCooldown<?>> toRemove = abstractCooldowns.stream()
                                                               .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
-                                                              .collect(Collectors.toList());
+                                                              .toList();
         toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
         abstractCooldowns.removeAll(toRemove);
+        toRemove.forEach(this::updatePlayerNames);
         return toRemove.size();
     }
 
     public List<AbstractCooldown<?>> getAbilityCooldowns() {
         return abstractCooldowns.stream()
                                 .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY)
-                                .collect(Collectors.toList());
+                                .toList();
     }
 
     public void removeAbilityCooldowns() {
+        List<AbstractCooldown<?>> removed = new ArrayList<>();
         abstractCooldowns.removeIf(cd -> {
             if (cd != null && cd.getCooldownType() == CooldownTypes.ABILITY) {
                 cd.getOnRemoveForce().accept(this);
+                removed.add(cd);
                 return true;
             }
             return false;
         });
+        removed.forEach(this::updatePlayerNames);
+    }
+
+    public <T extends AbstractCooldown<T>> void limitCooldowns(Class<T> cooldownClass, Class<?> filterCooldownClass, int limit) {
+        List<T> matchingCooldowns = new CooldownFilter<>(this, cooldownClass)
+                .filterCooldownClass(filterCooldownClass)
+                .stream()
+                .toList();
+        if (matchingCooldowns.size() >= limit) {
+            removeCooldown(matchingCooldowns.get(0));
+        }
+    }
+
+    public void removeCooldown(AbstractCooldown<?> abstractCooldown) {
+        removeCooldown(abstractCooldown, false);
+    }
+
+    public void removeCooldown(AbstractCooldown<?> abstractCooldown, boolean noForce) {
+        if (!noForce) {
+            abstractCooldown.getOnRemoveForce().accept(this);
+        }
+        abstractCooldowns.remove(abstractCooldown);
+        updatePlayerNames(abstractCooldown);
     }
 
     public final <T> void addRegularCooldown(
@@ -243,6 +293,9 @@ public class CooldownManager {
         Bukkit.getPluginManager().callEvent(new WarlordsAddCooldownEvent(warlordsEntity, abstractCooldown));
         this.totalCooldowns++;
         abstractCooldowns.add(abstractCooldown);
+        if (abstractCooldown.changesPlayerName()) {
+            updatePlayerNames();
+        }
     }
 
     public boolean hasCooldownFromName(String name) {
@@ -347,24 +400,8 @@ public class CooldownManager {
         ));
     }
 
-    public void removeCooldown(AbstractCooldown<?> abstractCooldown) {
-        abstractCooldown.getOnRemoveForce().accept(this);
-        abstractCooldowns.remove(abstractCooldown);
-    }
-
     public void removeCooldownNoForce(AbstractCooldown<?> abstractCooldown) {
         abstractCooldowns.remove(abstractCooldown);
-    }
-
-    public void removeCooldown(Class<?> cooldownClass, boolean noForce) {
-        new ArrayList<>(abstractCooldowns).forEach(cd -> {
-            if (abstractCooldowns.contains(cd) && Objects.equals(cd.getCooldownClass(), cooldownClass)) {
-                if (!noForce) {
-                    cd.getOnRemoveForce().accept(this);
-                }
-                abstractCooldowns.remove(cd);
-            }
-        });
     }
 
     public void removeCooldownByObject(Object cooldownObject) {
@@ -379,8 +416,7 @@ public class CooldownManager {
     public void removeCooldownByName(String cooldownName) {
         new ArrayList<>(abstractCooldowns).forEach(cd -> {
             if (abstractCooldowns.contains(cd) && Objects.equals(cd.getName(), cooldownName)) {
-                cd.getOnRemoveForce().accept(this);
-                abstractCooldowns.remove(cd);
+                removeCooldown(cd);
             }
         });
     }
@@ -389,27 +425,27 @@ public class CooldownManager {
         try {
             new ArrayList<>(abstractCooldowns).forEach(cd -> {
                 if (abstractCooldowns.contains(cd)) {
-                    cd.getOnRemoveForce().accept(this);
-                    abstractCooldowns.remove(cd);
+                    removeCooldown(cd);
                 }
             });
 
             abstractCooldowns.clear();
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
         }
     }
 
     public void clearCooldowns() {
         List<AbstractCooldown<?>> cooldownsToRemove = abstractCooldowns.stream()
                                                                        .filter(AbstractCooldown::isRemoveOnDeath)
-                                                                       .collect(Collectors.toList());
+                                                                       .toList();
 
         cooldownsToRemove.forEach(abstractCooldown -> {
             abstractCooldown.getOnRemove().accept(this);
             abstractCooldown.getOnRemoveForce().accept(this);
         });
         abstractCooldowns.removeAll(cooldownsToRemove);
+        cooldownsToRemove.forEach(this::updatePlayerNames);
     }
 
     public List<AbstractCooldown<?>> getCooldowns() {
@@ -421,10 +457,21 @@ public class CooldownManager {
         removeCooldown(WoundingStrikeDefender.class, true);
     }
 
+    public void removeCooldown(Class<?> cooldownClass, boolean noForce) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (cd.getCooldownClass() == null) {
+                return;
+            }
+            if (abstractCooldowns.contains(cd) && (Objects.equals(cd.getCooldownClass(), cooldownClass) || cooldownClass.isAssignableFrom(cd.getCooldownClass()))) {
+                removeCooldown(cd, noForce);
+            }
+        });
+    }
+
     public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
         for (Soulbinding soulbinding : new CooldownFilter<>(this, PersistentCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                .collect(Collectors.toList())
+                .toList()
         ) {
             if (soulbinding.hasBoundPlayer(warlordsPlayer)) {
                 return true;
@@ -437,7 +484,7 @@ public class CooldownManager {
         int counter = 0;
         for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                .collect(Collectors.toList())
+                .toList()
         ) {
             if (soulbinding.hasBoundPlayerLink(warlordsPlayer)) {
                 this.warlordsEntity.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkProcs);
@@ -491,7 +538,7 @@ public class CooldownManager {
     public boolean checkUndyingArmy(boolean popped, UndyingArmy exclude) {
         for (UndyingArmy undyingArmy : new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
-                .collect(Collectors.toList())
+                .toList()
         ) {
             if (Objects.equals(undyingArmy, exclude)) {
                 continue;

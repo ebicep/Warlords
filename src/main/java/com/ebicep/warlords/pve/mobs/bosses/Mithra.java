@@ -1,8 +1,9 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -12,14 +13,15 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.spider.Spider;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class Mithra extends AbstractZombie implements BossMob {
@@ -43,23 +45,24 @@ public class Mithra extends AbstractZombie implements BossMob {
                 0.28f,
                 20,
                 1200,
-                1600
+                1600,
+                new FlameBurst(1000)
         );
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.LIGHT_PURPLE;
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.LIGHT_PURPLE + "Mithra",
-                        ChatColor.WHITE + "The Envoy Queen of Illusion",
-                        20, 30, 20
-                );
-            }
-        }
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new Spider(spawnLocation));
@@ -73,7 +76,7 @@ public class Mithra extends AbstractZombie implements BossMob {
         int hitRadius = 15;
 
         if (ticksElapsed % 150 == 0) {
-            EffectUtils.playSphereAnimation(loc, hitRadius, ParticleEffect.FLAME, 1);
+            EffectUtils.playSphereAnimation(loc, hitRadius, Particle.FLAME, 1);
             for (WarlordsEntity knockTarget : PlayerFilter
                     .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
                     .aliveEnemiesOf(warlordsNPC)
@@ -87,8 +90,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         400 * playerCount,
                         500 * playerCount,
                         0,
-                        100,
-                        false
+                        100
                 );
             }
         }
@@ -157,7 +159,12 @@ public class Mithra extends AbstractZombie implements BossMob {
                 }
 
                 counter++;
-                warlordsNPC.getSpec().getRed().onActivate(warlordsNPC, null);
+                for (AbstractAbility ability : warlordsNPC.getAbilities()) {
+                    if (ability instanceof FlameBurst) {
+                        ability.setCurrentCooldown(0);
+                        warlordsNPC.addEnergy(warlordsNPC, "Flame Burst Barrage", ability.getEnergyCost());
+                    }
+                }
 
                 if (counter == amountOfShots) {
                     this.cancel();
@@ -169,36 +176,22 @@ public class Mithra extends AbstractZombie implements BossMob {
     private void immolation(PveOption option, Location loc) {
         warlordsNPC.addSpeedModifier(warlordsNPC, "Mithra Slowness", -99, 250);
         for (int i = 0; i < 3; i++) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.6f);
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.6f);
         }
 
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.RED + "PREPARE TO DIE",
-                        ChatColor.LIGHT_PURPLE + "Immolation Spell",
-                        20, 60, 20
-                );
-            }
-        }
+        ChatUtils.sendTitleToGamePlayers(
+                getWarlordsNPC().getGame(),
+                Component.text("PREPARE TO DIE", NamedTextColor.RED),
+                Component.text("Immolation Spell", NamedTextColor.LIGHT_PURPLE),
+                20, 60, 20
+        );
 
-        float damage;
-        switch (option.getDifficulty()) {
-            case ENDLESS:
-            case HARD:
-                damage = 200;
-                break;
-            case EXTREME:
-                damage = 250;
-                break;
-            case EASY:
-                damage = 50;
-                break;
-            default:
-                damage = 100;
-                break;
-        }
+        float damage = switch (option.getDifficulty()) {
+            case ENDLESS, HARD -> 200;
+            case EXTREME -> 250;
+            case EASY -> 50;
+            default -> 100;
+        };
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
 
@@ -211,9 +204,9 @@ public class Mithra extends AbstractZombie implements BossMob {
 
                 counter++;
                 double radius = (2 * counter);
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 500, 0.8f);
+                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.8f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.6f);
-                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, ParticleEffect.FLAME, 2, counter);
+                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, Particle.FLAME, 2, counter);
                 for (WarlordsEntity flameTarget : PlayerFilter
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
@@ -225,8 +218,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                             damage,
                             damage,
                             0,
-                            100,
-                            false
+                            100
                     );
 
                     warlordsNPC.addHealingInstance(
@@ -235,9 +227,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                             damage * 0.5f,
                             damage * 0.5f,
                             0,
-                            100,
-                            false,
-                            false
+                            100
                     );
                 }
 

@@ -1,43 +1,48 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractSpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmerAcolyte;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Narmer extends AbstractZombie implements BossMob {
 
-    private final int earthQuakeRadius = 12;
     private final int executeRadius = 80;
-    private final List<WarlordsEntity> acolytes = new ArrayList<>();
     private int timesMegaEarthQuakeActivated = 0;
+    private final List<WarlordsEntity> acolytes = new ArrayList<>();
     private Listener listener;
-    private int ticksUntilNewAcolyte = 0;
     private int acolyteDeathTickWindow = 0;
 
     public Narmer(Location spawnLocation) {
@@ -55,32 +60,35 @@ public class Narmer extends AbstractZombie implements BossMob {
                 0.16f,
                 20,
                 1600,
-                2000
+                2000,
+                new FlameBurst(15),
+                new GroundShred()
         );
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.GOLD + getWarlordsNPC().getName(),
-                        ChatColor.YELLOW + "Unifier of Worlds",
-                        20, 30, 20
-                );
+
+        DifficultyIndex difficulty = option.getDifficulty();
+
+        if (difficulty == DifficultyIndex.ENDLESS) {
+            for (AbstractAbility ability : warlordsNPC.getAbilities()) {
+                if (ability instanceof GroundShred) {
+                    ability.setCooldown(ability.getCooldown() / 2);
+                }
             }
         }
 
-        DifficultyIndex difficulty = option.getDifficulty();
+        SpawnNarmerAcolyteAbility spawnNarmerAcolyteAbility = new SpawnNarmerAcolyteAbility(this);
+        this.warlordsNPC.getAbilities().add(spawnNarmerAcolyteAbility);
+
         float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
+
         for (int i = 0; i < (multiplier * option.playerCount()); i++) {
-            NarmerAcolyte acolyte = new NarmerAcolyte(warlordsNPC.getLocation());
-            option.spawnNewMob(acolyte);
-            acolyte.getWarlordsNPC().teleport(warlordsNPC.getLocation());
-            acolytes.add(acolyte.getWarlordsNPC());
+            spawnNarmerAcolyteAbility.spawnMob(warlordsNPC);
         }
+
 
         for (int i = 0; i < 8; i++) {
             option.spawnNewMob(new BasicZombie(warlordsNPC.getLocation()));
@@ -96,9 +104,9 @@ public class Narmer extends AbstractZombie implements BossMob {
                         warlordsNPC.setHealth(warlordsNPC.getHealth());
                         Location loc = warlordsNPC.getLocation();
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
-                            Utils.playGlobalSound(loc, Sound.BLAZE_HIT, 2, 0.2f);
+                            Utils.playGlobalSound(loc, Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
                             Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.4f, 0.5f);
-                            we.sendMessage(ChatColor.RED + "Narmer cannot take more damage while his acolytes are still alive!");
+                            we.sendMessage(Component.text("Narmer cannot take more damage while his acolytes are still alive!", NamedTextColor.RED));
                         });
                         event.setCancelled(true);
                     }
@@ -107,42 +115,33 @@ public class Narmer extends AbstractZombie implements BossMob {
 
             @EventHandler
             private void onAllyDeath(WarlordsDeathEvent event) {
-                WarlordsEntity eventPlayer = event.getWarlordsEntity();
+                WarlordsEntity dead = event.getWarlordsEntity();
                 Location location = warlordsNPC.getLocation();
 
-                if (eventPlayer.isTeammate(warlordsNPC)) {
+                if (dead.isTeammate(warlordsNPC)) {
                     warlordsNPC.setHealth(warlordsNPC.getHealth() * 1.15f);
                 }
 
-                if (acolytes.contains(eventPlayer)) {
-                    acolytes.remove(eventPlayer);
-                    Utils.playGlobalSound(location, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
+                if (acolytes.contains(dead)) {
+                    acolytes.remove(dead);
+                    Utils.playGlobalSound(location, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
                     EffectUtils.playHelixAnimation(
                             location.add(0, 0.15, 0),
                             12,
-                            ParticleEffect.SPELL,
+                            Particle.SPELL,
                             3,
                             60
                     );
 
-                    float multiplier;
-                    switch (difficulty) {
-                        case EASY:
-                            multiplier = 2;
-                            break;
-                        case HARD:
-                            multiplier = 16;
-                            break;
-                        case EXTREME:
-                            multiplier = 32;
-                            break;
-                        default:
-                            multiplier = 8;
-                            break;
-                    }
+                    float multiplier = switch (difficulty) {
+                        case EASY -> 2;
+                        case HARD -> 16;
+                        case EXTREME -> 32;
+                        default -> 8;
+                    };
                     if (acolyteDeathTickWindow > 0) {
-                        Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
-                        Utils.playGlobalSound(location, Sound.WITHER_DEATH, 500, 0.2f);
+                        Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
+                        Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
                         EffectUtils.strikeLightning(location, false, 12);
                         List<WarlordsEntity> warlordsEntities = PlayerFilter
                                 .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
@@ -155,10 +154,11 @@ public class Narmer extends AbstractZombie implements BossMob {
                                     965 * multiplier,
                                     1138 * multiplier,
                                     0,
-                                    100,
-                                    false
+                                    100
                             );
-                            enemy.sendMessage(ChatColor.RED + "HINT: Killing Acolytes too quickly might result in an unfavourable outcome.");
+                            enemy.sendMessage(Component.text("HINT: Killing Acolytes too quickly might result in an unfavourable outcome.",
+                                    NamedTextColor.RED
+                            ));
                         }
                         for (WarlordsEntity warlordsEntity : warlordsEntities) {
                             ChallengeAchievements.checkForAchievement(warlordsEntity, ChallengeAchievements.FISSURED_END);
@@ -177,8 +177,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                                     965,
                                     1138,
                                     0,
-                                    100,
-                                    false
+                                    100
                             );
                         }
                     }
@@ -187,7 +186,12 @@ public class Narmer extends AbstractZombie implements BossMob {
                         acolyteDeathTickWindow = difficulty == DifficultyIndex.EXTREME ? 100 : difficulty == DifficultyIndex.HARD ? 60 : 20;
                     }
 
-                    ticksUntilNewAcolyte = 300;
+                    List<WarlordsEntity> selfAcolytes = spawnNarmerAcolyteAbility.getSelfAcolytes();
+                    if (selfAcolytes.contains(dead)) {
+                        spawnNarmerAcolyteAbility.setCurrentCooldown(spawnNarmerAcolyteAbility.getCooldown());
+                        selfAcolytes.remove(dead);
+                    }
+
                 }
             }
         };
@@ -197,69 +201,24 @@ public class Narmer extends AbstractZombie implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         Location loc = warlordsNPC.getLocation();
-        long playerCount = option.getGame().warlordsPlayers().count();
-        DifficultyIndex difficulty = option.getDifficulty();
-        float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
-
-        if (acolytes.size() < multiplier * playerCount && ticksUntilNewAcolyte <= 0) {
-            NarmerAcolyte acolyte = new NarmerAcolyte(loc);
-            option.spawnNewMob(acolyte);
-            acolytes.add(acolyte.getWarlordsNPC());
-            ticksUntilNewAcolyte = 300;
-        }
-
-        if (ticksUntilNewAcolyte > 0) {
-            ticksUntilNewAcolyte--;
-        }
 
         if (acolyteDeathTickWindow > 0) {
             acolyteDeathTickWindow--;
 
-            for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                if (we.getEntity() instanceof Player) {
-                    PacketUtils.sendTitle(
-                            (Player) we.getEntity(),
-                            ChatColor.RED + "Death Wish",
-                            ChatColor.YELLOW.toString() + acolyteDeathTickWindow / 10f,
-                            0, acolyteDeathTickWindow, 0
-                    );
-                }
-            }
+            ChatUtils.sendTitleToGamePlayers(
+                    getWarlordsNPC().getGame(),
+                    Component.text("Death Wish", NamedTextColor.RED),
+                    Component.text(acolyteDeathTickWindow / 10f, NamedTextColor.YELLOW),
+                    0, acolyteDeathTickWindow, 0
+            );
         }
 
         if (ticksElapsed % 15 == 0) {
             for (WarlordsEntity acolyte : acolytes) {
-                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), ParticleEffect.DRIP_LAVA);
+                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), Particle.DRIP_LAVA);
             }
         }
 
-        int tickDelay = difficulty == DifficultyIndex.EXTREME ? 80 : 160;
-        if (ticksElapsed % tickDelay == 0) {
-            Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 2, 0.4f);
-            EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, ParticleEffect.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, ParticleEffect.FIREWORKS_SPARK, 2, 40);
-            for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                Utils.addKnockback(name, loc, enemy, -2.5, 0.25);
-                enemy.addDamageInstance(
-                        warlordsNPC,
-                        "Ground Shred",
-                        750,
-                        900,
-                        0,
-                        100,
-                        false
-                );
-            }
-        }
-
-        if (ticksElapsed % 300 == 0) {
-            //Bukkit.broadcastMessage("projectile");
-            warlordsNPC.getRedAbility().onActivate(warlordsNPC, null);
-        }
     }
 
     @Override
@@ -275,7 +234,7 @@ public class Narmer extends AbstractZombie implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, ParticleEffect.FIREWORKS_SPARK, 3, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORKS_SPARK, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)
                                                                        .with(FireworkEffect.Type.STAR)
@@ -291,4 +250,93 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
     }
 
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Unifier of Worlds", NamedTextColor.YELLOW);
+    }
+
+    public List<WarlordsEntity> getAcolytes() {
+        return acolytes;
+    }
+
+    private static class SpawnNarmerAcolyteAbility extends AbstractSpawnMobAbility {
+
+        private final Narmer narmer;
+        private final List<WarlordsEntity> selfAcolytes = new ArrayList<>(); // spawned acolytes using this ability
+
+        public SpawnNarmerAcolyteAbility(Narmer narmer) {
+            super("Narmer Acolyte", 15);
+            this.narmer = narmer;
+            this.pveOption = narmer.pveOption;
+        }
+
+        @Override
+        public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
+            return new NarmerAcolyte(wp.getLocation());
+        }
+
+        @Override
+        public int getSpawnAmount() {
+            long playerCount = pveOption.getGame().warlordsPlayers().count();
+            DifficultyIndex difficulty = pveOption.getDifficulty();
+            float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
+            return narmer.getAcolytes().size() < multiplier * playerCount ? 1 : 0;
+        }
+
+        @Override
+        public void onMobSpawn(WarlordsNPC warlordsNPC) {
+            narmer.getAcolytes().add(warlordsNPC);
+            selfAcolytes.add(warlordsNPC);
+        }
+
+        public List<WarlordsEntity> getSelfAcolytes() {
+            return selfAcolytes;
+        }
+    }
+
+    private static class GroundShred extends AbstractPveAbility {
+
+        private final int earthQuakeRadius = 12;
+
+        public GroundShred() {
+            super(
+                    "Ground Shred",
+                    750,
+                    900,
+                    8,
+                    100
+            );
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+
+            Location loc = wp.getLocation();
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
+            EffectUtils.strikeLightning(loc, false);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(wp, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
+                    .aliveEnemiesOf(wp)
+            ) {
+                Utils.addKnockback(name, loc, enemy, -2.5, 0.25);
+                enemy.addDamageInstance(
+                        wp,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier
+                );
+            }
+            return true;
+        }
+    }
 }

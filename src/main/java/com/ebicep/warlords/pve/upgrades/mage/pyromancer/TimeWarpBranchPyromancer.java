@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 
-import com.ebicep.warlords.abilties.TimeWarpPyromancer;
+import com.ebicep.warlords.abilities.TimeWarpPyromancer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -81,12 +81,12 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
         masterUpgrade = new Upgrade(
                 "Dimensional Leap",
                 "Time Warp - Master Upgrade",
-                "Time Warp can now be re-activated to teleport you back early. Additionally, gain 1% crit chance and crit" +
-                        " multiplier for each block travelled while Time Warp is active and double the duration of Time Warp.",
+                "Time Warp can now be re-activated to teleport you back early. Additionally, gain 1% Crit Chance and Crit" +
+                        " Multiplier for each block travelled while Time Warp is active and double the duration of Time Warp.",
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

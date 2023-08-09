@@ -23,6 +23,7 @@ public class DatabasePlayerPvEEventBoltaroLairDifficultyStats extends PvEEventBo
     private DatabasePaladinPvEEventBoltaroLair paladin = new DatabasePaladinPvEEventBoltaroLair();
     private DatabaseShamanPvEEventBoltaroLair shaman = new DatabaseShamanPvEEventBoltaroLair();
     private DatabaseRoguePvEEventBoltaroLair rogue = new DatabaseRoguePvEEventBoltaroLair();
+    private DatabaseArcanistPvEEventBoltaroLair arcanist = new DatabaseArcanistPvEEventBoltaroLair();
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEEventBoltaroLairPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
         put(1, new DatabasePlayerPvEEventBoltaroLairPlayerCountStats());
@@ -61,63 +62,45 @@ public class DatabasePlayerPvEEventBoltaroLairDifficultyStats extends PvEEventBo
         if (countStats != null) {
             countStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
-            ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
 
     }
 
     @Override
     public DatabaseBasePvEEventBoltaroLair getSpec(Specializations specializations) {
-        switch (specializations) {
-            case PYROMANCER:
-                return mage.getPyromancer();
-            case CRYOMANCER:
-                return mage.getCryomancer();
-            case AQUAMANCER:
-                return mage.getAquamancer();
-            case BERSERKER:
-                return warrior.getBerserker();
-            case DEFENDER:
-                return warrior.getDefender();
-            case REVENANT:
-                return warrior.getRevenant();
-            case AVENGER:
-                return paladin.getAvenger();
-            case CRUSADER:
-                return paladin.getCrusader();
-            case PROTECTOR:
-                return paladin.getProtector();
-            case THUNDERLORD:
-                return shaman.getThunderlord();
-            case SPIRITGUARD:
-                return shaman.getSpiritguard();
-            case EARTHWARDEN:
-                return shaman.getEarthwarden();
-            case ASSASSIN:
-                return rogue.getAssassin();
-            case VINDICATOR:
-                return rogue.getVindicator();
-            case APOTHECARY:
-                return rogue.getApothecary();
-        }
-        return null;
+        return switch (specializations) {
+            case PYROMANCER -> mage.getPyromancer();
+            case CRYOMANCER -> mage.getCryomancer();
+            case AQUAMANCER -> mage.getAquamancer();
+            case BERSERKER -> warrior.getBerserker();
+            case DEFENDER -> warrior.getDefender();
+            case REVENANT -> warrior.getRevenant();
+            case AVENGER -> paladin.getAvenger();
+            case CRUSADER -> paladin.getCrusader();
+            case PROTECTOR -> paladin.getProtector();
+            case THUNDERLORD -> shaman.getThunderlord();
+            case SPIRITGUARD -> shaman.getSpiritguard();
+            case EARTHWARDEN -> shaman.getEarthwarden();
+            case ASSASSIN -> rogue.getAssassin();
+            case VINDICATOR -> rogue.getVindicator();
+            case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case LUMINARY -> arcanist.getLuminary();
+        };
     }
 
     @Override
     public DatabaseBasePvEEventBoltaroLair getClass(Classes classes) {
-        switch (classes) {
-            case MAGE:
-                return mage;
-            case WARRIOR:
-                return warrior;
-            case PALADIN:
-                return paladin;
-            case SHAMAN:
-                return shaman;
-            case ROGUE:
-                return rogue;
-        }
-        return null;
+        return switch (classes) {
+            case MAGE -> mage;
+            case WARRIOR -> warrior;
+            case PALADIN -> paladin;
+            case SHAMAN -> shaman;
+            case ROGUE -> rogue;
+            case ARCANIST -> arcanist;
+        };
     }
 
     @Override

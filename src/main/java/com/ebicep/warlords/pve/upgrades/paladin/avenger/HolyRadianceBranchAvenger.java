@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
-import com.ebicep.warlords.abilties.HolyRadianceAvenger;
+import com.ebicep.warlords.abilities.HolyRadianceAvenger;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -91,7 +91,7 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
                 "Avenger's Mark is now AoE. Additionally, marked targets take 40% more damage from Avenger's Strike and receive strike priority.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

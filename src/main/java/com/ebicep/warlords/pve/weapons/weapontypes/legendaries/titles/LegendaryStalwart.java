@@ -10,7 +10,9 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.springframework.data.annotation.Transient;
 
@@ -46,17 +48,21 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "For every " + formatTitleUpgrade(getEveryHpPercent(), "%") +
-                " of HP under " + formatTitleUpgrade(getUnderHpCheck(), "%") +
-                ", gain an additional 7.5% damage reduction. Maximum 80% Damage Reduction." +
-                "\n\nIf your health is currently higher than 80% and you will die from the next source of damage, your " +
-                "health will be set to 5% of your max health and gain 99% damage reduction for 5 seconds. " +
-                "Can be triggered every 30 seconds.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("For every ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(getEveryHpPercent(), "%"))
+                        .append(Component.text(" of HP under "))
+                        .append(formatTitleUpgrade(getUnderHpCheck(), "%"))
+                        .append(Component.text(", gain an additional 7.5% damage reduction. Maximum 80% Damage Reduction."))
+                        .append(Component.newline())
+                        .append(Component.newline())
+                        .append(Component.text("If your health is currently higher than 80% and you will die from the next source of damage, your " +
+                                "health will be set to 5% of your max health and gain 99% damage reduction for 5 seconds. " +
+                                "Can be triggered every 30 seconds."));
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
                         formatTitleUpgrade(EVERY_HP_PERCENT - EVERY_HP_PERCENT_DECREASE_PER_UPGRADE * getTitleLevel(), "%"),
@@ -135,8 +141,8 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                                 return currentDamageValue * .01f;
                             }
                         });
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                        player.sendMessage(ChatColor.GREEN + "Triggered Stalwart! +99% damage reduction for 5s.");
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
+                        player.sendMessage(Component.text("Triggered Stalwart! +99% damage reduction for 5s.", NamedTextColor.GREEN));
                         return 0;
                     }
                 }

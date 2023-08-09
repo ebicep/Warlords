@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
-import com.ebicep.warlords.abilties.HealingTotem;
+import com.ebicep.warlords.abilities.HealingTotem;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -85,15 +85,15 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
         masterUpgrade = new Upgrade(
                 "Healing Obelisk",
                 "Healing Totem - Master Upgrade",
-                "Double the duration of Healing Totem but reduce the incremental healing by 15%.\n\nAll enemies within" +
-                        " the radius of Healing Totem are perpetually slowed and crippled, reducing their movement" +
-                        " speed and damage dealt by 50%. Additionally, reduce their passive damage" +
-                        " resistance by 5% for each second they are in range of your Healing Totem.",
+                """
+                        Double the duration of Healing Totem but reduce the incremental healing by 15%.
+
+                        All enemies within the radius of Healing Totem are perpetually slowed and crippled, reducing their movement speed and damage dealt by 50%. Additionally, reduce their passive damage resistance by 5% for each second they are in range of your Healing Totem.""",
                 50000,
                 () -> {
                     ability.setHealingIncrement(20);
                     ability.setTickDuration(ability.getTickDuration() * 2);
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

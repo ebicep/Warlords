@@ -1,9 +1,8 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -14,7 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
+import com.ebicep.warlords.pve.mobs.witherskeleton.AbstractWitherSkeleton;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -22,11 +21,13 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 
 import java.util.Collections;
 
-public class Torment extends AbstractSkeleton implements BossMob {
+public class Torment extends AbstractWitherSkeleton implements BossMob {
 
     public Torment(Location spawnLocation) {
         super(
@@ -51,11 +52,10 @@ public class Torment extends AbstractSkeleton implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        this.entity.setSkeletonType(1);
         ChatUtils.sendTitleToGamePlayers(
                 warlordsNPC.getGame(),
-                ChatColor.RED + "Torment",
-                ChatColor.WHITE + "Corrupted Soul"
+                Component.text("Torment", NamedTextColor.RED),
+                Component.text("Corrupted Soul", NamedTextColor.WHITE)
         );
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -86,6 +86,7 @@ public class Torment extends AbstractSkeleton implements BossMob {
         if (ticksElapsed % 600 == 0) {
             new GameRunnable(warlordsNPC.getGame()) {
                 int counter = 0;
+
                 @Override
                 public void run() {
                     if (warlordsNPC.isDead()) {
@@ -112,8 +113,9 @@ public class Torment extends AbstractSkeleton implements BossMob {
             ) {
                 ChatUtils.sendTitleToGamePlayers(
                         warlordsNPC.getGame(),
-                        "",
-                        ChatColor.GOLD + we.getName() + ChatColor.RED + " has been marked by Torment!"
+                        Component.empty(),
+                        Component.text(we.getName(), NamedTextColor.GOLD)
+                                 .append(Component.text(" has been marked by Torment!", NamedTextColor.RED))
                 );
                 Utils.addKnockback(name, warlordsNPC.getLocation(), we, 2, 0.35);
                 we.getCooldownManager().removeCooldown(DamageCheck.class, false);
@@ -129,8 +131,8 @@ public class Torment extends AbstractSkeleton implements BossMob {
                         15 * 20,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
                             if (ticksLeft % 10 == 0) {
-                                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), ParticleEffect.DRIP_LAVA);
-                                EffectUtils.playSphereAnimation(we.getLocation(), 3, ParticleEffect.FLAME, 1);
+                                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), Particle.DRIP_LAVA);
+                                EffectUtils.playSphereAnimation(we.getLocation(), 3, Particle.FLAME, 1);
                             }
 
                             if (ticksLeft % 5 == 0) {
@@ -144,13 +146,11 @@ public class Torment extends AbstractSkeleton implements BossMob {
                                             1000,
                                             1000,
                                             -1,
-                                            100,
-                                            true
+                                            100
                                     );
                                 }
                             }
-                        }
-                )));
+                        })));
             }
         }
     }
@@ -165,11 +165,21 @@ public class Torment extends AbstractSkeleton implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(self.getLocation(), Sound.ENDERDRAGON_HIT, 2, 0.2f);
+        Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 2, 0.2f);
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Corrupted Soul", NamedTextColor.WHITE);
     }
 }

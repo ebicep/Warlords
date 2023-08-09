@@ -192,7 +192,7 @@ public class ItemsManager {
             Integer tier = entry.getKey();
             Integer amount = entry.getValue();
             if (tier < 0 || tier >= TIER_ACHIEVEMENT_WEIGHTS.length) {
-                ChatChannels.sendDebugMessage((CommandIssuer) null, "Invalid tier for tiered achievement weight: " + tier, true);
+                ChatChannels.sendDebugMessage((CommandIssuer) null, "Invalid tier for tiered achievement weight: " + tier);
                 continue;
             }
             double weightOfTier = unlockedTieredAchievements.getOrDefault(tier, 0) / (double) amount;
@@ -234,15 +234,9 @@ public class ItemsManager {
             }
             int position = statsLeaderboard.getSortedPlayers(PlayersCollections.WEEKLY).indexOf(databasePlayer);
             switch (position) {
-                case 0:
-                    weight += 5;
-                    break;
-                case 1:
-                    weight += 3;
-                    break;
-                case 2:
-                    weight += 1;
-                    break;
+                case 0 -> weight += 5;
+                case 1 -> weight += 3;
+                case 2 -> weight += 1;
             }
         }
 

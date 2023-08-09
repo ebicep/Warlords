@@ -1,50 +1,44 @@
 package com.ebicep.warlords.util.bukkit;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.Potion;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ItemBuilder {
 
-    public static final ItemStack RED_ABILITY = new ItemStack(Material.INK_SACK, 1, (byte) 1);
-    public static final ItemStack PURPLE_ABILITY = new ItemStack(Material.GLOWSTONE_DUST);
-    public static final ItemStack BLUE_ABILITY = new ItemStack(Material.INK_SACK, 1, (byte) 10);
-    public static final ItemStack ORANGE_ABILITY = new ItemStack(Material.INK_SACK, 1, (byte) 14);
     @Nonnull
     private final ItemStack item;
     @Nullable
     private ItemMeta meta = null;
 
-    public ItemBuilder(@Nonnull Material type) {
-        item = new ItemStack(type);
-    }
-
     public ItemBuilder(@Nonnull Material type, int amount) {
         item = new ItemStack(type, amount);
+        hideAllFlags();
     }
 
-    public ItemBuilder(@Nonnull Material type, int amount, short damage) {
-        item = new ItemStack(type, amount, damage);
-    }
-
-    public ItemBuilder(@Nonnull ItemStack stack) throws IllegalArgumentException {
-        item = new ItemStack(stack);
-    }
-
-    public ItemBuilder(@Nonnull Potion potion, int amount, boolean splash) {
-        potion.setSplash(splash);
-        item = potion.toItemStack(amount);
+    private void hideAllFlags() {
+        if (item.getType() == Material.AIR) {
+            return;
+        }
+        meta().addItemFlags(
+                ItemFlag.HIDE_ENCHANTS,
+                ItemFlag.HIDE_ATTRIBUTES,
+                ItemFlag.HIDE_UNBREAKABLE,
+                ItemFlag.HIDE_DESTROYS,
+                ItemFlag.HIDE_ITEM_SPECIFICS,
+                ItemFlag.HIDE_DYE,
+                ItemFlag.HIDE_ARMOR_TRIM
+        );
     }
 
     protected ItemMeta meta() {
@@ -57,8 +51,26 @@ public class ItemBuilder {
         return meta;
     }
 
-    public ItemBuilder name(@Nonnull String name) {
-        meta().setDisplayName(name);
+    public ItemBuilder(@Nonnull ItemStack stack) throws IllegalArgumentException {
+        item = new ItemStack(stack);
+        hideAllFlags();
+    }
+
+    public ItemBuilder(@Nonnull Material material, @Nonnull PotionType potionType) {
+        this(material);
+        PotionMeta potionMeta = (PotionMeta) meta();
+        potionMeta.setBasePotionData(new PotionData(potionType));
+        item.setItemMeta(potionMeta);
+        hideAllFlags();
+    }
+
+    public ItemBuilder(@Nonnull Material type) {
+        item = new ItemStack(type);
+        hideAllFlags();
+    }
+
+    public ItemBuilder name(Component component) {
+        meta().displayName(ComponentUtils.componentBase().append(component));
         return this;
     }
 
@@ -67,76 +79,69 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder flags(ItemFlag... ifs) {
-        meta().addItemFlags(ifs);
+    public ItemBuilder removeFlags(ItemFlag... ifs) {
+        meta().removeItemFlags(ifs);
         return this;
     }
 
-    public ItemBuilder lore(String... lore) {
-        return lore(Arrays.asList(lore));
-    }
-
-    public ItemBuilder lore(Collection<String> lore) {
-        for (String row : lore) {
-            if (row == null || row.contains("\n")) {
-                // Fix for \n and null
-                List<String> newLore = new ArrayList<>(Math.max(lore.size() * 2, 16));
-                for (String loreRow : lore) {
-                    if (loreRow != null) {
-                        if (loreRow.contains("\n")) {
-                            String chatColor = "";
-                            for (String split : loreRow.split("\n")) {
-                                String combined = !split.isEmpty() && split.charAt(0) == ChatColor.COLOR_CHAR ? split : chatColor + split;
-                                newLore.add(combined);
-                                chatColor = ChatColor.getLastColors(combined);
-                            }
-                        } else {
-                            newLore.add(loreRow);
-                        }
-                    }
-                }
-                meta().setLore(newLore);
-                return this;
-            }
-        }
-        meta().setLore(lore instanceof List<?> ? (List<String>) lore : new ArrayList<>(lore));
+    public ItemBuilder noLore() {
+        meta().lore(null);
         return this;
     }
 
-    public ItemBuilder addLore(String... lore) {
-        return addLore(Arrays.asList(lore));
+    public ItemBuilder lore(Component... lore) {
+        lore(Arrays.asList(lore));
+        return this;
     }
 
-    public ItemBuilder addLore(Collection<String> lore) {
-        if (meta().getLore() == null) {
-            return lore(lore);
+    public ItemBuilder lore(Collection<Component> lore) {
+        meta().lore(new ArrayList<>());
+        addLore(lore);
+        return this;
+    }
+
+    public ItemBuilder addLore(Collection<Component> lore) {
+        List<Component> components = meta().lore();
+        if (components == null) {
+            components = new ArrayList<>();
         }
-        for (String row : lore) {
-            if (row == null || row.contains("\n")) {
-                // Fix for \n and null
-                List<String> newLore = new ArrayList<>(Math.max(lore.size() * 2, 16));
-                newLore.addAll(meta().getLore());
-                for (String loreRow : lore) {
-                    if (loreRow != null) {
-                        if (loreRow.contains("\n")) {
-                            String chatColor = "";
-                            for (String split : loreRow.split("\n")) {
-                                String combined = !split.isEmpty() && split.charAt(0) == ChatColor.COLOR_CHAR ? split : chatColor + split;
-                                newLore.add(combined);
-                                chatColor = ChatColor.getLastColors(combined);
-                            }
-                        } else {
-                            newLore.add(loreRow);
-                        }
-                    }
-                }
-                meta().setLore(newLore);
-                return this;
-            }
+        for (Component component : lore) {
+            components.add(ComponentUtils.componentBase().append(component));
         }
-        List<String> newLore = new ArrayList<>(meta().getLore());
-        newLore.addAll(lore);
-        meta().setLore(newLore);
+        meta().lore(components);
+        return this;
+    }
+
+    public ItemBuilder addLore(Component lore) {
+        addLore(Collections.singletonList(lore));
+        return this;
+    }
+
+    public ItemBuilder addLore(Component... lore) {
+        addLore(Arrays.asList(lore));
+        return this;
+    }
+
+    public ItemBuilder prependLore(Component lore) {
+        prependLore(Collections.singletonList(lore));
+        return this;
+    }
+
+    public ItemBuilder prependLore(Collection<Component> lore) {
+        List<Component> components = new ArrayList<>();
+        for (Component component : lore) {
+            components.add(ComponentUtils.componentBase().append(component));
+        }
+        List<Component> previousLore = meta().lore();
+        if (previousLore != null) {
+            components.addAll(previousLore);
+        }
+        meta().lore(components);
+        return this;
+    }
+
+    public ItemBuilder prependLore(Component... lore) {
+        prependLore(Arrays.asList(lore));
         return this;
     }
 
@@ -150,7 +155,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder unbreakable(boolean unbreakable) {
-        meta().spigot().setUnbreakable(true);
+        meta().setUnbreakable(unbreakable);
         return this;
     }
 

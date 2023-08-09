@@ -9,6 +9,9 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.UUID;
 public class LegendaryReliquary extends AbstractLegendaryWeapon {
 
     public static final int INCOMING_DAMAGE_INCREASE = 50;
-//    public static final int INCOMING_DAMAGE_INCREASE_PER_UPGRADE = 1;
+    //    public static final int INCOMING_DAMAGE_INCREASE_PER_UPGRADE = 1;
     public static final int OUTGOING_DAMAGE_INCREASE = 30;
     public static final float OUTGOING_DAMAGE_INCREASE_PER_UPGRADE = 2.5f;
 
@@ -71,10 +74,12 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Incoming damage increased by " + INCOMING_DAMAGE_INCREASE + "%.\n" +
-                "Outgoing damage increased by " +
-                formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Incoming damage increased by " + INCOMING_DAMAGE_INCREASE + "%.", NamedTextColor.GRAY)
+                        .append(Component.newline())
+                        .append(Component.text("Outgoing damage increased by "))
+                        .append(formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text("."));
     }
 
     @Override
@@ -128,7 +133,7 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return List.of(
                 new Pair<>(
                         formatTitleUpgrade(OUTGOING_DAMAGE_INCREASE + OUTGOING_DAMAGE_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),

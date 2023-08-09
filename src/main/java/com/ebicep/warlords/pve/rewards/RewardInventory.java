@@ -4,13 +4,12 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -20,19 +19,13 @@ import java.util.stream.Stream;
 
 public class RewardInventory {
 
-    public static void sendRewardMessage(UUID uuid, ComponentBuilder components) {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer != null && offlinePlayer.isOnline()) {
-            BaseComponent[] baseComponents = new ComponentBuilder(ChatColor.GOLD + "Reward" + ChatColor.DARK_GRAY + " > ")
-                    .create();
-            offlinePlayer.getPlayer().spigot().sendMessage(components.prependAndCreate(baseComponents));
-        }
-    }
-
-    public static void sendRewardMessage(UUID uuid, String message) {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer != null && offlinePlayer.isOnline()) {
-            offlinePlayer.getPlayer().sendMessage(ChatColor.GOLD + "Reward" + ChatColor.DARK_GRAY + " > " + message);
+    public static void sendRewardMessage(UUID uuid, Component component) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            player.sendMessage(Component.text("Reward", NamedTextColor.GOLD)
+                                        .append(Component.text(" > ", NamedTextColor.DARK_GRAY))
+                                        .append(component)
+            );
         }
     }
 
@@ -50,7 +43,7 @@ public class RewardInventory {
                     .filter(reward -> reward.getTimeClaimed() == null)
                     .collect(Collectors.toList());
             if (rewards.isEmpty()) {
-                player.sendMessage(ChatColor.RED + "You have no rewards to claim!");
+                player.sendMessage(Component.text("You have no rewards to claim!", NamedTextColor.RED));
                 return;
             }
 
@@ -67,10 +60,10 @@ public class RewardInventory {
 
                                 sendRewardMessage(
                                         player.getUniqueId(),
-                                        new ComponentBuilder(ChatColor.GREEN + "Claimed: ")
-                                                .appendHoverItem(reward.getNameColor() + reward.getFrom() + " Reward",
-                                                        reward.getItemWithoutClaim()
-                                                )
+                                        Component.text("Claimed: ", NamedTextColor.GREEN)
+                                                 .append(Component.text(reward.getFrom() + " Reward", reward.getNameColor())
+                                                                  .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
+                                                 .hoverEvent(HoverEvent.showText(Component.text(reward.getFrom() + " Reward", reward.getNameColor())))
                                 );
 
                                 if (rewards.size() > 1) {
@@ -87,19 +80,17 @@ public class RewardInventory {
             }
 
             menu.setItem(3, 5,
-                    new ItemBuilder(Material.GOLD_BLOCK)
-                            .name(ChatColor.GREEN + "Click to claim all rewards!")
-                            .get(),
+                    Menu.CLAIM_ALL,
                     (m, e) -> {
                         for (AbstractReward reward : rewards) {
                             reward.giveToPlayer(databasePlayer);
 
                             sendRewardMessage(
                                     player.getUniqueId(),
-                                    new ComponentBuilder(ChatColor.GREEN + "Claimed: ")
-                                            .appendHoverItem(reward.getNameColor() + reward.getFrom() + " Reward",
-                                                    reward.getItemWithoutClaim()
-                                            )
+                                    Component.text("Claimed: ", NamedTextColor.GREEN)
+                                             .append(Component.text(reward.getFrom() + " Reward", reward.getNameColor())
+                                                              .hoverEvent(reward.getItemWithoutClaim().asHoverEvent()))
+                                             .hoverEvent(HoverEvent.showText(Component.text(reward.getFrom() + " Reward", reward.getNameColor())))
                             );
                         }
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -110,8 +101,8 @@ public class RewardInventory {
             if (page - 1 > 0) {
                 menu.setItem(0, 5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
-                                .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> {
                             openRewardInventory(player, page - 1);
@@ -121,8 +112,8 @@ public class RewardInventory {
             if (rewards.size() > (page * 45)) {
                 menu.setItem(8, 5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
-                                .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> {
                             openRewardInventory(player, page + 1);

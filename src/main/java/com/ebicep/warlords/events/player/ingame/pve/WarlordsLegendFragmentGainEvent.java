@@ -34,6 +34,7 @@ public class WarlordsLegendFragmentGainEvent extends AbstractWarlordsEntityEvent
         return per5;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

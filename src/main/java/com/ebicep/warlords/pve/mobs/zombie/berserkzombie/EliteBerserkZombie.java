@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
-import com.ebicep.warlords.abilties.Berserk;
-import com.ebicep.warlords.effects.ParticleEffect;
+import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
@@ -11,6 +10,7 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
 
 public class EliteBerserkZombie extends AbstractBerserkZombie {
@@ -31,17 +31,16 @@ public class EliteBerserkZombie extends AbstractBerserkZombie {
                 0.494f, //30% more than basic zombie
                 10,
                 300,
-                500
+                500,
+                new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.setMinDamageHeal(woundingStrike.getMinDamageHeal() * 1.25f);
-        woundingStrike.setMaxDamageHeal(woundingStrike.getMaxDamageHeal() * 1.25f);
+        woundingStrike.multiplyMinMax(1.25f);
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        super.onSpawn(option);
-        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<Berserk>(
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Berserk",
                 "BERS",
                 Berserk.class,
@@ -53,14 +52,16 @@ public class EliteBerserkZombie extends AbstractBerserkZombie {
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
-                        ParticleEffect.VILLAGER_ANGRY.display(
-                                0,
-                                0,
-                                0,
-                                0.1f,
-                                1,
+                        warlordsNPC.getWorld().spawnParticle(
+                                Particle.VILLAGER_ANGRY,
                                 warlordsNPC.getLocation().add(0, 1.75, 0),
-                                500
+                                1,
+                                0,
+                                0,
+                                0,
+                                0.1,
+                                null,
+                                true
                         );
                     }
                 }

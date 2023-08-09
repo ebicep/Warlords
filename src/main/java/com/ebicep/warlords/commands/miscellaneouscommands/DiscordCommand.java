@@ -10,9 +10,10 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -29,16 +30,16 @@ public class DiscordCommand extends BaseCommand {
     @Description("Links your discord account to your minecraft account")
     public void link(Player player) {
         if (playerLinkKeys.containsKey(player.getUniqueId())) {
-            player.sendMessage(ChatColor.RED + "There is already an active key for your account, wait until it expires to link again.");
+            player.sendMessage(Component.text("There is already an active key for your account, wait until it expires to link again.", NamedTextColor.RED));
             return;
         }
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer == null) {
-            player.sendMessage(ChatColor.RED + "Contact an Administrator.");
+            player.sendMessage(Component.text("Contact an Administrator.", NamedTextColor.RED));
             return;
         }
         if (databasePlayer.getDiscordID() != null) {
-            player.sendMessage(ChatColor.RED + "Your account is already linked! (/discord unlink) to unlink your account.");
+            player.sendMessage(Component.text("Your account is already linked! (/discord unlink) to unlink your account.", NamedTextColor.RED));
             return;
         }
         //random 5 digit key
@@ -47,7 +48,10 @@ public class DiscordCommand extends BaseCommand {
             key = getRandomNumber(10000, 100000);
         }
         playerLinkKeys.put(player.getUniqueId(), key);
-        player.sendMessage(ChatColor.GRAY + "Your discord link key is " + ChatColor.GREEN + key + ChatColor.GRAY + ". Direct message (Balancer Bot) this key to link your account. This key will expire in 1 minute.");
+        player.sendMessage(Component.text("Your discord link key is ", NamedTextColor.GRAY)
+                                    .append(Component.text(key, NamedTextColor.GREEN))
+                                    .append(Component.text(". Direct message (Balancer Bot) this key to link your account. This key will expire in 1 minute."))
+        );
         Warlords.newChain().delay(1, TimeUnit.MINUTES).sync(() -> playerLinkKeys.remove(player.getUniqueId())).execute();
 
         BotManager.sendDebugMessage(
@@ -68,12 +72,12 @@ public class DiscordCommand extends BaseCommand {
     public void unlink(Player player) {
         DatabaseManager.updatePlayer(player, databasePlayer -> {
             if (databasePlayer.getDiscordID() == null) {
-                player.sendMessage(ChatColor.RED + "Your account has not been linked! (/discord link) to link your account.");
+                player.sendMessage(Component.text("Your account has not been linked! (/discord link) to link your account.", NamedTextColor.RED));
                 return;
             }
             Long oldID = databasePlayer.getDiscordID();
             databasePlayer.setDiscordID(null);
-            player.sendMessage(ChatColor.GRAY + "Your account has been unlinked. You will need to relink it /discord link");
+            player.sendMessage(Component.text("Your account has been unlinked. You will need to relink it /discord link", NamedTextColor.GRAY));
 
             BotManager.sendDebugMessage(
                     new EmbedBuilder()
@@ -90,18 +94,18 @@ public class DiscordCommand extends BaseCommand {
     public void info(Player player) {
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         if (databasePlayer == null) {
-            player.sendMessage(ChatColor.RED + "Contact an Administrator.");
+            player.sendMessage(Component.text("Contact an Administrator.", NamedTextColor.RED));
             return;
         }
         if (databasePlayer.getDiscordID() == null) {
-            player.sendMessage(ChatColor.RED + "Your account has not been linked! (/discord link) to link your account.");
+            player.sendMessage(Component.text("Your account has not been linked! (/discord link) to link your account.", NamedTextColor.RED));
         } else {
             Warlords.newChain()
                     .async(() -> BotManager.jda.retrieveUserById(databasePlayer.getDiscordID()).queue(user -> {
                         if (user == null) {
-                            player.sendMessage(ChatColor.GREEN + "Your account is linked to (" + databasePlayer.getDiscordID() + ").");
+                            player.sendMessage(Component.text("Your account is linked to (" + databasePlayer.getDiscordID() + ").", NamedTextColor.GREEN));
                         } else {
-                            player.sendMessage(ChatColor.GREEN + "Your account is linked to " + user.getAsTag() + " (" + databasePlayer.getDiscordID() + ").");
+                            player.sendMessage(Component.text("Your account is linked to " + user.getAsTag() + " (" + databasePlayer.getDiscordID() + ").", NamedTextColor.GREEN));
                         }
                     }))
                     .execute();

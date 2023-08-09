@@ -11,6 +11,9 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -77,11 +80,12 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Increased ranged abilities crit chance by " +
-                formatTitleUpgrade(CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%") +
-                " and EPH increased by " +
-                formatTitleUpgrade(EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel(), "%") + ".";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Increased ranged abilities Crit Chance by ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" and EPH increased by "))
+                        .append(formatTitleUpgrade(EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text("."));
     }
 
     @Override
@@ -130,7 +134,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
                         formatTitleUpgrade(CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),

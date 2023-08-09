@@ -2,6 +2,7 @@ package com.ebicep.warlords.guilds.logs.types.oneplayer.upgrades;
 
 import com.ebicep.warlords.guilds.logs.types.oneplayer.AbstractGuildLogOnePlayer;
 import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
+import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
 
@@ -17,8 +18,8 @@ public abstract class AbstractGuildLogUpgrade<T extends Enum<T> & GuildUpgrade> 
     }
 
     @Override
-    public String append() {
-        return upgrade.getName() + " Tier " + tier;
+    public Component append() {
+        return Component.text(upgrade.getName() + " Tier " + tier);
     }
 
     public T getUpgrade() {

@@ -28,6 +28,10 @@ import com.ebicep.warlords.util.java.Pair;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -81,7 +85,7 @@ public class StatsLeaderboardManager {
 
         if (enabled) {
             loaded = false;
-            ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Adding Holograms");
+            ChatUtils.MessageType.LEADERBOARDS.sendMessage("Adding Holograms");
 
             //caching all sorted players
             AtomicInteger loadedBoards = new AtomicInteger();
@@ -96,14 +100,14 @@ public class StatsLeaderboardManager {
                             );
                             for (DatabasePlayer databasePlayer : databasePlayers) {
                                 if (databasePlayer.getUuid() == null) {
-                                    ChatUtils.MessageTypes.LEADERBOARDS.sendErrorMessage(databasePlayer.getId() + " - " + databasePlayer.getName() + " has a null UUID");
+                                    ChatUtils.MessageType.LEADERBOARDS.sendErrorMessage(databasePlayer.getId() + " - " + databasePlayer.getName() + " has a null UUID");
                                     continue;
                                 }
                                 if (databasePlayer.getName() == null) {
                                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(databasePlayer.getUuid());
-                                    if (offlinePlayer != null && offlinePlayer.getName() != null) {
+                                    if (offlinePlayer.getName() != null) {
                                         databasePlayer.setName(offlinePlayer.getName());
-                                        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Updated Name: " + databasePlayer.getName() + " - " + value);
+                                        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Updated Name: " + databasePlayer.getName() + " - " + value);
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer, value);
                                     }
                                 }
@@ -117,10 +121,13 @@ public class StatsLeaderboardManager {
                                 if (value == PlayersCollections.LIFETIME && (lessThan20Plays || notLoggedInPast10Days) && noCurrentEventPlays) {
                                     continue;
                                 }
-                                if (value == PlayersCollections.SEASON_7 && lessThan20Plays) {
+                                if (value == PlayersCollections.SEASON_8 && lessThan20Plays) {
                                     continue;
                                 }
-                                concurrentHashMap.putIfAbsent(databasePlayer.getUuid(), databasePlayer);
+                                DatabasePlayer cachedPlayer = concurrentHashMap.get(databasePlayer.getUuid());
+                                if (cachedPlayer == null || !cachedPlayer.getId().equals(databasePlayer.getId())) {
+                                    concurrentHashMap.put(databasePlayer.getUuid(), databasePlayer);
+                                }
                             }
                             resetLeaderboards(value, true);
                             loadedBoards.getAndIncrement();
@@ -137,13 +144,13 @@ public class StatsLeaderboardManager {
                     if (loadedBoards.get() == PlayersCollections.ACTIVE_COLLECTIONS.size()) {
                         loaded = true;
 
-                        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded leaderboards in " + ((System.nanoTime() - startTime) / 1000000) + "ms");
+                        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Loaded leaderboards in " + ((System.nanoTime() - startTime) / 1000000) + "ms");
 
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
                             CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
                         });
-                        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
+                        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
 
                         if (init) {
                             DatabaseTiming.checkLeaderboardResets();
@@ -153,7 +160,7 @@ public class StatsLeaderboardManager {
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???
-                        ChatUtils.MessageTypes.LEADERBOARDS.sendErrorMessage("Holograms did not load within 5 minutes");
+                        ChatUtils.MessageType.LEADERBOARDS.sendErrorMessage("Holograms did not load within 5 minutes");
                         this.cancel();
                     }
                 }
@@ -179,7 +186,7 @@ public class StatsLeaderboardManager {
         }
 
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections));
-        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name +
+        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name +
                 "(" + DatabaseManager.CACHED_PLAYERS.get(playersCollections).values().size() + ") leaderboards");
         if (playersCollections == PlayersCollections.LIFETIME) {
             DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
@@ -377,16 +384,21 @@ public class StatsLeaderboardManager {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
                         Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
-                        String guildTag = "";
+                        Component guildTag = Component.empty();
                         if (guildPlayerPair != null) {
                             GuildTag tag = guildPlayerPair.getA().getTag();
                             if (tag != null) {
-                                guildTag = " " + tag.getTag(true);
+                                guildTag = tag.getTag(true);
                             }
                         }
-                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
-                                Permissions.getColor(databasePlayer) + ChatColor.BOLD + databasePlayer.getName() + guildTag + ChatColor.GRAY + ChatColor.BOLD + " - " +
-                                ChatColor.YELLOW + ChatColor.BOLD + statsLeaderboard.getStringFunction().apply(databasePlayer));
+                        hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
+                                Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                         .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                                         .append(Component.space())
+                                         .append(guildTag)
+                                         .append(Component.text(" - ", NamedTextColor.GRAY))
+                                         .append(Component.text(statsLeaderboard.getStringFunction().apply(databasePlayer)))
+                        ));
                         break;
                     }
                 }
@@ -410,16 +422,21 @@ public class StatsLeaderboardManager {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId())) {
                         Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
-                        String guildTag = "";
+                        Component guildTag = Component.empty();
                         if (guildPlayerPair != null) {
                             GuildTag tag = guildPlayerPair.getA().getTag();
                             if (tag != null) {
-                                guildTag = " " + tag.getTag(true);
+                                guildTag = tag.getTag(true);
                             }
                         }
-                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " +
-                                Permissions.getColor(databasePlayer) + ChatColor.BOLD + databasePlayer.getName() + guildTag + ChatColor.GRAY + ChatColor.BOLD + " - " +
-                                ChatColor.YELLOW + ChatColor.BOLD + eventLeaderboard.getStringFunction().apply(databasePlayer, eventLeaderboard.getEventTime()));
+                        hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
+                                Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                         .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                                         .append(Component.space())
+                                         .append(guildTag)
+                                         .append(Component.text(" - ", NamedTextColor.GRAY))
+                                         .append(Component.text(eventLeaderboard.getStringFunction().apply(databasePlayer, eventLeaderboard.getEventTime())))
+                        ));
                         break;
                     }
                 }
@@ -474,35 +491,23 @@ public class StatsLeaderboardManager {
         }
 
         public static GameType getAfter(GameType gameType) {
-            switch (gameType) {
-                case ALL:
-                    return CTF;
-                case CTF:
-                    return PVE;
-                case PVE:
-                    return WAVE_DEFENSE;
-                case WAVE_DEFENSE:
-                    return ONSLAUGHT;
-                case ONSLAUGHT:
-                    return ALL;
-            }
-            return ALL;
+            return switch (gameType) {
+                case ALL -> CTF;
+                case CTF -> PVE;
+                case PVE -> WAVE_DEFENSE;
+                case WAVE_DEFENSE -> ONSLAUGHT;
+                case ONSLAUGHT -> ALL;
+            };
         }
 
         public static GameType getBefore(GameType gameType) {
-            switch (gameType) {
-                case ALL:
-                    return ONSLAUGHT;
-                case CTF:
-                    return ALL;
-                case PVE:
-                    return CTF;
-                case WAVE_DEFENSE:
-                    return PVE;
-                case ONSLAUGHT:
-                    return WAVE_DEFENSE;
-            }
-            return ALL;
+            return switch (gameType) {
+                case ALL -> ONSLAUGHT;
+                case CTF -> ALL;
+                case PVE -> CTF;
+                case WAVE_DEFENSE -> PVE;
+                case ONSLAUGHT -> WAVE_DEFENSE;
+            };
         }
 
         public final String name;

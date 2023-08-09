@@ -1,48 +1,64 @@
 package com.ebicep.warlords.player.general;
 
-import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.function.Consumer;
 
 public enum SkillBoosts {
     FIREBALL("Fireball",
-            "§7Increases the damage you deal with Fireball by 20%",
-            "§aIncreases the damage you deal with Fireball by §c20%",
+            Component.text("Increase the damage of Fireball by 10% and increase the direct hit damage bonus by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Fireball by ", NamedTextColor.GREEN)
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(" and increase the direct hit damage bonus by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             Fireball.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Fireball) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                if (abstractAbility instanceof Fireball fireball) {
+                    abstractAbility.multiplyMinMax(1.1f);
+                    fireball.setDirectHitMultiplier(fireball.getDirectHitMultiplier() + 20);
                 }
             }
     ),
     FLAME_BURST("Flame Burst",
-            "§7Increases the damage you deal with Flame Burst by 25% and reduce the energy cost by 40",
-            "§aIncreases the damage you deal with Flame Burst by §c25% §aand reduce the energy cost by §c40",
+            Component.text("Increase the damage of Flame Burst by 25% and reduce the energy cost by 40.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Flame Burst by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the energy cost by ", NamedTextColor.GREEN))
+                     .append(Component.text("40", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             FlameBurst.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FlameBurst) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                    abstractAbility.multiplyMinMax(1.25f);
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 40);
                 }
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
-            "§7Increase the amount of health you restore with Time Warp by 10% and reduce the cooldown by 50%.",
-            "§aIncrease the amount of health you restore with Time Warp by §c10% §aand reduce the cooldown by §c50%.",
+            Component.text("Increase the healing of Time Warp by 10% and reduce the cooldown by 50%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Time Warp by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("50%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             TimeWarpPyromancer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof TimeWarpPyromancer) {
-                    ((TimeWarpPyromancer) abstractAbility).setWarpHealPercentage(40);
+                if (abstractAbility instanceof TimeWarpPyromancer timeWarp) {
+                    timeWarp.setWarpHealPercentage(40);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
                 }
             }
     ),
     ARCANE_SHIELD_PYROMANCER("Arcane Shield",
-            "§7Remove the energy cost of Arcane Shield and reduce the cooldown by 30%",
-            "§aRemove the energy cost of Arcane Shield §aand reduce the cooldown by §c30%",
+            Component.text("Remove the energy cost of Arcane Shield and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Remove the energy cost of Arcane Shield and reduce the cooldown by ", NamedTextColor.GREEN)
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
@@ -52,42 +68,52 @@ public enum SkillBoosts {
             }
     ),
     INFERNO("Inferno",
-            "§7Increase the Crit Multiplier bonus of Inferno by 60%",
-            "§aIncrease the Crit Multiplier bonus of Inferno by §c60%",
+            Component.text("Increase the Crit Multiplier bonus of Inferno by 60%.", NamedTextColor.GRAY),
+            Component.text("Increase the Crit Multiplier bonus of Inferno by ", NamedTextColor.GREEN)
+                     .append(Component.text("60%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             Inferno.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Inferno) {
-                    ((Inferno) abstractAbility).setCritMultiplierIncrease(((Inferno) abstractAbility).getCritMultiplierIncrease() + 60);
+                if (abstractAbility instanceof Inferno inferno) {
+                    inferno.setCritMultiplierIncrease(inferno.getCritMultiplierIncrease() + 60);
                 }
             }
     ),
     FROST_BOLT("Frostbolt",
-            "§7Increases the damage you deal with Frostbolt by 20% and increase the slowness by 5%",
-            "§aIncreases the damage you deal with Frostbolt by §c20% §aand increase the slowness by §c5%",
+            Component.text("Increase the damage of Frostbolt by 20% and increase the slowness by 5%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Frostbolt by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the slowness by ", NamedTextColor.GREEN))
+                     .append(Component.text("5%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             FrostBolt.class,
             abstractAbility -> {
-                if (abstractAbility instanceof FrostBolt) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
-                    ((FrostBolt) abstractAbility).setSlowness(((FrostBolt) abstractAbility).getSlowness() + 5);
+                if (abstractAbility instanceof FrostBolt frostBolt) {
+                    abstractAbility.multiplyMinMax(1.2f);
+                    frostBolt.setSlowness(frostBolt.getSlowness() + 5);
                 }
             }
     ),
     FREEZING_BREATH("Freezing Breath",
-            "§7Increase the damage you deal with Freezing Breath by 20% and reduce the cooldown by 20%",
-            "§aIncrease the damage you deal with Freezing Breath §aby §c20% §aand reduce the cooldown §aby §c20%",
+            Component.text("Increase the damage of Freezing Breath by 20% and reduce the cooldown by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Freezing Breath by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             FreezingBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FreezingBreath) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.multiplyMinMax(1.2f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Reduce the cooldown of Time Warp §7by 40%",
-            "§aReduce the cooldown of Time Warp §aby §c40%",
+            Component.text("Reduce the cooldown of Time Warp by 40%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Time Warp by ", NamedTextColor.GREEN)
+                     .append(Component.text("40%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             TimeWarpCryomancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpCryomancer) {
@@ -96,8 +122,10 @@ public enum SkillBoosts {
             }
     ),
     ARCANE_SHIELD_CRYOMANCER("Arcane Shield",
-            "§7Reduce the cooldown of Arcane Shield §7by 30%",
-            "§aReduce the cooldown of Arcane Shield §aby §c30%",
+            Component.text("Reduce the cooldown of Arcane Shield by 30%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Arcane Shield by ", NamedTextColor.GREEN)
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
@@ -106,52 +134,64 @@ public enum SkillBoosts {
             }
     ),
     ICE_BARRIER("Ice Barrier",
-            "§7Increase the amount damage you reduce with Ice Barrier by §75% §7and increase the duration by 2 seconds",
-            "§aIncrease the amount damage you reduce with Ice Barrier by §c5% §aand increase the duration by §c2 §aseconds",
+            Component.text("Increase the damage reduction of Ice Barrier by 5% and increase the duration by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the damage reduction of Ice Barrier by ", NamedTextColor.GREEN)
+                     .append(Component.text("5% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             IceBarrier.class,
             abstractAbility -> {
-                if (abstractAbility instanceof IceBarrier) {
-                    ((IceBarrier) abstractAbility).setDamageReductionPercent(55);
-                    ((IceBarrier) abstractAbility).setTickDuration(((IceBarrier) abstractAbility).getTickDuration() + 40);
+                if (abstractAbility instanceof IceBarrier iceBarrier) {
+                    iceBarrier.setDamageReductionPercent(55);
+                    iceBarrier.setTickDuration(iceBarrier.getTickDuration() + 40);
                 }
             }
     ),
     WATER_BOLT("Water Bolt",
-            "§7Increases the amount of health you restore with Water Bolt by 20%",
-            "§aIncreases the amount of health you restore with Water Bolt by §c20%",
+            Component.text("Increase the healing of Water Bolt by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Water Bolt by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             WaterBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBolt) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.multiplyMinMax(1.2f);
                 }
             }
     ),
     WATER_BREATH("Water Breath",
-            "§7Increases the amount of health you restore with Water Breath by 15% and reduce the energy cost by 30",
-            "§aIncreases the amount of health you restore with Water Breath by §c15% §aand reduce the energy cost by §c30",
+            Component.text("Increase the healing of Water Breath by 15% and reduce the energy cost by 30.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Water Breath by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the energy cost by ", NamedTextColor.GREEN))
+                     .append(Component.text("30", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             WaterBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBreath) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
+                    abstractAbility.multiplyMinMax(1.15f);
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 30);
                 }
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            "§7Reduce the cooldown of Time Warp §7by 50%",
-            "§aReduce the cooldown of Time Warp §aby §c50%",
+            Component.text("Increase the duration of Time Warp by 3 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Time Warp by ", NamedTextColor.GREEN)
+                     .append(Component.text("3", NamedTextColor.RED))
+                     .append(Component.text(" seconds.", NamedTextColor.GREEN)),
             TimeWarpAquamancer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof TimeWarpAquamancer) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
+                if (abstractAbility instanceof TimeWarpAquamancer timeWarpAquamancer) {
+                    timeWarpAquamancer.setTickDuration(timeWarpAquamancer.getTickDuration() + 60);
                 }
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
-            "§7Remove the energy cost of Arcane Shield and reduce the cooldown by 30%",
-            "§aRemove the energy cost of Arcane Shield §aand reduce the cooldown by §c30%",
+            Component.text("Remove the energy cost of Arcane Shield and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Remove the energy cost of Arcane Shield and reduce the cooldown by ", NamedTextColor.GREEN)
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
@@ -161,157 +201,208 @@ public enum SkillBoosts {
             }
     ),
     HEALING_RAIN("Healing Rain",
-            "§7Increases the duration of §7Healing Rain by 4 seconds and §7reduce the cooldown by 20%",
-            "§aIncreases the duration of §aHealing Rain by §c4 §aseconds and §areduce the cooldown by §c20%",
+            Component.text("Increase the duration of Healing Rain by 4 seconds and reduce the cooldown by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Healing Rain by ", NamedTextColor.GREEN)
+                     .append(Component.text("4 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             HealingRain.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HealingRain) {
-                    ((HealingRain) abstractAbility).setTickDuration(((HealingRain) abstractAbility).getTickDuration() + 80);
+                if (abstractAbility instanceof HealingRain healingRain) {
+                    healingRain.setTickDuration(healingRain.getTickDuration() + 80);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
     WOUNDING_STRIKE_BERSERKER("Wounding Strike",
-            "§7Increase the damage you §7deal with Wounding Strike §7by 10% and reduce the energy cost by 10",
-            "§aIncrease the damage you §adeal with Wounding Strike §aby §c10% §aand reduce the energy cost by §c10",
+            Component.text("Increase the damage of Wounding Strike by 10% and reduce the energy cost by 10.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Wounding Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the energy cost by ", NamedTextColor.GREEN))
+                     .append(Component.text("10", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             WoundingStrikeBerserker.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeBerserker) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                    abstractAbility.multiplyMinMax(1.1f);
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 10);
                 }
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you §7deal with Seismic Wave by §715% and reduce the cooldown §7by 25%",
-            "§aIncrease the damage you §adeal with Seismic Wave by §c15% §aand reduce the cooldown §aby §c25%",
+            Component.text("Increase the damage of Seismic Wave by 15% and reduce the cooldown by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Seismic Wave by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             SeismicWave.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SeismicWave) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
+                    abstractAbility.multiplyMinMax(1.15f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
-            "§7Increase the damage you §7deal with Ground Slam by §735% §7and reduce the cooldown by §710%",
-            "§aIncrease the damage you §adeal with Ground Slam by §c35% §aand reduce the cooldown by §c10%",
+            Component.text("Increase the damage of Ground Slam by 35% and reduce the cooldown by 10%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Ground Slam by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             GroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlam) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.35f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.35f);
+                    abstractAbility.multiplyMinMax(1.35f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }
     ),
     BLOOD_LUST("Blood Lust",
-            "§7Reduce the cooldown of Blood Lust by 30% and increase damage converted to healing by 5%",
-            "§aReduce the cooldown of Blood Lust §aby §c30% §aand increase damage converted to healing by §c5%",
+            Component.text("Reduce the cooldown of Blood Lust by 30% and increase damage converted to healing by 5%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Blood Lust by ", NamedTextColor.GREEN)
+                     .append(Component.text("30% ", NamedTextColor.RED))
+                     .append(Component.text("and increase damage converted to healing by ", NamedTextColor.GREEN))
+                     .append(Component.text("5%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             BloodLust.class,
             abstractAbility -> {
-                if (abstractAbility instanceof BloodLust) {
-                    ((BloodLust) abstractAbility).setDamageConvertPercent(70);
+                if (abstractAbility instanceof BloodLust bloodLust) {
+                    bloodLust.setDamageConvertPercent(70);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
     BERSERK("Berserk",
-            "§7Increase the damage bonus of Berserk §7by 15% and increase the speed §7by 10%",
-            "§aIncrease the damage bonus of Berserk §aby §c15% §aand increase the speed §aby §c10%",
+            Component.text("Increase the damage bonus of Berserk by 15% and increase the speed by 10%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage bonus of Berserk by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             Berserk.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Berserk) {
-                    ((Berserk) abstractAbility).setDamageIncrease(((Berserk) abstractAbility).getDamageIncrease() + 15);
-                    ((Berserk) abstractAbility).setSpeedBuff(((Berserk) abstractAbility).getSpeedBuff() + 10);
+                if (abstractAbility instanceof Berserk berserk) {
+                    berserk.setDamageIncrease(berserk.getDamageIncrease() + 15);
+                    berserk.setSpeedBuff(berserk.getSpeedBuff() + 10);
                 }
             }
     ),
     WOUNDING_STRIKE_DEFENDER("Wounding Strike",
-            "§7Increase the damage you §7deal with Wounding Strike §7by 10% and increase wounding by 25%",
-            "§aIncrease the damage you §adeal with Wounding Strike §aby §c10% §aand increase wounding by §c25%",
+            Component.text("Increase the damage of Wounding Strike by 10% and increase wounding by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Wounding Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and increase wounding by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             WoundingStrikeDefender.class,
             abstractAbility -> {
-                if (abstractAbility instanceof WoundingStrikeDefender) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                    ((WoundingStrikeDefender) abstractAbility).setWounding(((WoundingStrikeDefender) abstractAbility).getWounding() + 25);
+                if (abstractAbility instanceof WoundingStrikeDefender strike) {
+                    abstractAbility.multiplyMinMax(1.1f);
+                    strike.setWounding(strike.getWounding() + 25);
                 }
             }
     ),
     SEISMIC_WAVE_DEFENDER("Seismic Wave",
-            "§7Increase the amount knockback you §7deal with Seismic Wave by §735% and reduce the cooldown §7by 25%",
-            "§aIncrease the amount knockback you §adeal with Seismic Wave by §c35% §aand reduce the cooldown §aby §c25%",
+            Component.text("Increase the knockback of Seismic Wave by 35% and reduce the cooldown by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the knockback of Seismic Wave by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             SeismicWave.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SeismicWave) {
-                    ((SeismicWave) abstractAbility).setVelocity(1.8f);
+                if (abstractAbility instanceof SeismicWave seismicWave) {
+                    seismicWave.setVelocity(1.8f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
     GROUND_SLAM_DEFENDER("Ground Slam",
-            "§7Increase the amount of knockback you deal with Ground Slam by 10% and reduce the cooldown by 20%",
-            "§aIncrease the amount of knockback you deal with Ground Slam by §c10% §aand reduce the cooldown by §c20%",
+            Component.text("Increase the knockback of Ground Slam by 10% and reduce the cooldown by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the knockback of Ground Slam by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             GroundSlam.class,
             abstractAbility -> {
-                if (abstractAbility instanceof GroundSlam) {
-                    ((GroundSlam) abstractAbility).setVelocity(1.35f);
+                if (abstractAbility instanceof GroundSlam groundSlam) {
+                    groundSlam.setVelocity(1.35f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
             }
     ),
     INTERVENE("Intervene",
-            "§7Increase the cast and break radius §7of Intervene by 5 blocks and increase §7the max amount of damage you can §7absorb by 400",
-            "§aIncrease the cast and break radius §aof Intervene by §c5 §ablocks and increase §athe max amount of damage you can §aabsorb by §c400",
+            Component.text("Increase the cast and break range of Intervene by 5 blocks and increase the max amount of damage absorbed by 400.", NamedTextColor.GRAY),
+            Component.text("Increase the cast and break range of Intervene by ", NamedTextColor.GREEN)
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("blocks and increase the max amount of damage absorbed by ", NamedTextColor.GREEN))
+                     .append(Component.text("400", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             Intervene.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Intervene) {
-                    ((Intervene) abstractAbility).setMaxDamagePrevented(4000);
-                    ((Intervene) abstractAbility).setRadius(15);
-                    ((Intervene) abstractAbility).setBreakRadius(20);
+                if (abstractAbility instanceof Intervene intervene) {
+                    intervene.setMaxDamagePrevented(4000);
+                    intervene.setRadius(15);
+                    intervene.setBreakRadius(20);
                 }
             }
     ),
     LAST_STAND("Last Stand",
-            "§7Increase the amount damage you §7reduce with Last Stand by §75% §7and reduce the cooldown by 10%",
-            "§aIncrease the amount damage you §areduce with Last Stand by §c5% §aand reduce the cooldown by §c10%",
+            Component.text("Increase the damage reduction of Last Stand by 5% and reduce the cooldown by 10%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage reduction of Last Stand by ", NamedTextColor.GREEN)
+                     .append(Component.text("5% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             LastStand.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LastStand) {
-                    ((LastStand) abstractAbility).setSelfDamageReductionPercent(55);
-                    ((LastStand) abstractAbility).setTeammateDamageReductionPercent(45);
+                if (abstractAbility instanceof LastStand lastStand) {
+                    lastStand.setSelfDamageReductionPercent(55);
+                    lastStand.setTeammateDamageReductionPercent(45);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }
     ),
     CRIPPLING_STRIKE("Crippling Strike",
-            "§7Increase the damage you §7reduce with Crippling Strike §7by 10% and increase the additional reduction per strike by 5%",
-            "§aIncrease the damage you §areduce with Crippling Strike §aby §c10% §aand increase the additional reduction per strike by §c5%",
+            Component.text("Increase crippling by 10% and increase the additional reduction per strike by 5%.", NamedTextColor.GRAY),
+            Component.text("Increase crippling by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the additional reduction per strike by ", NamedTextColor.GREEN))
+                     .append(Component.text("5%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             CripplingStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof CripplingStrike) {
-                    ((CripplingStrike) abstractAbility).setCripple(((CripplingStrike) abstractAbility).getCripple() + 10);
-                    ((CripplingStrike) abstractAbility).setCripplePerStrike(((CripplingStrike) abstractAbility).getCripplePerStrike() + 5);
+                if (abstractAbility instanceof CripplingStrike cripplingStrike) {
+                    cripplingStrike.setCripple(cripplingStrike.getCripple() + 10);
+                    cripplingStrike.setCripplePerStrike(cripplingStrike.getCripplePerStrike() + 5);
                 }
             }
     ),
     RECKLESS_CHARGE("Reckless Charge",
-            "§7Increase the immobilize duration §7of your Reckless Charge by §70.3 seconds and reduce the §7cooldown by 30%",
-            "§aIncrease the immobilize duration §aof your Reckless Charge by §c0.3 §aseconds and reduce the §acooldown by §c30%",
+            Component.text("Increase the immobilize duration of Reckless Charge by 0.3 seconds and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the immobilize duration of Reckless Charge by ", NamedTextColor.GREEN)
+                     .append(Component.text("0.3 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             RecklessCharge.class,
             abstractAbility -> {
-                if (abstractAbility instanceof RecklessCharge) {
-                    ((RecklessCharge) abstractAbility).setStunTimeInTicks(16);
+                if (abstractAbility instanceof RecklessCharge recklessCharge) {
+                    recklessCharge.setStunTimeInTicks(16);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
     GROUND_SLAM_REVENANT("Ground Slam",
-            "§7Reduce the cooldown of Ground Slam §7by 40%",
-            "§aReduce the cooldown of Ground Slam §aby §c40%",
+            Component.text("Reduce the cooldown of Ground Slam by 40%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Ground Slam by ", NamedTextColor.GREEN)
+                     .append(Component.text("40%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             GroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlam) {
@@ -320,238 +411,300 @@ public enum SkillBoosts {
             }
     ),
     ORBS_OF_LIFE("Orbs of Life",
-            "§7Increases the amount of §7health you restore with §7Orbs of Life by 20%",
-            "§aIncreases the amount of §ahealth you restore with §aOrbs of Life by §c20%",
+            Component.text("Increase the healing of Orbs of Life by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Orbs of Life by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             OrbsOfLife.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrbsOfLife) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.multiplyMinMax(1.2f);
                 }
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Reduce the damage of Undying Army after dying by 5% and increase the duration by 5 seconds",
-            "§aReduce the damage of Undying Army after dying by §c5% §aand increase the duration by §c5 §aseconds",
+            Component.text("Reduce the damage of Undying Army after dying by 5% and increase the duration by 5 seconds.", NamedTextColor.GRAY),
+            Component.text("Reduce the damage of Undying Army after dying by ", NamedTextColor.GREEN)
+                     .append(Component.text("5% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             UndyingArmy.class,
             abstractAbility -> {
-                if (abstractAbility instanceof UndyingArmy) {
-                    UndyingArmy undyingArmy = (UndyingArmy) abstractAbility;
+                if (abstractAbility instanceof UndyingArmy undyingArmy) {
                     undyingArmy.setTickDuration(undyingArmy.getTickDuration() + 100);
                     undyingArmy.setMaxHealthDamage(undyingArmy.getMaxHealthDamage() - 5);
                 }
             }
     ),
     AVENGER_STRIKE("Avenger's Strike",
-            "§7Increase the damage you §7deal with Avenger's Strike §7by 15% and increase the energy you steal by 5",
-            "§aIncrease the damage you §adeal with Avenger's Strike §aby §c15% §aand increase the energy you steal by §c5",
+            Component.text("Increase the damage of Avenger's Strike by 15% and increase the energy steal by 5.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Avenger's Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the energy steal by ", NamedTextColor.GREEN))
+                     .append(Component.text("5", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             AvengersStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AvengersStrike) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
-                    ((AvengersStrike) abstractAbility).setEnergySteal(((AvengersStrike) abstractAbility).getEnergySteal() + 5);
+                if (abstractAbility instanceof AvengersStrike avengersStrike) {
+                    abstractAbility.multiplyMinMax(1.15f);
+                    avengersStrike.setEnergySteal(avengersStrike.getEnergySteal() + 5);
                 }
             }
     ),
     CONSECRATE_AVENGER("Consecrate",
-            "§7Remove the energy cost of Consecrate and increase the damage by 35%",
-            "§aRemove the energy cost of Consecrate and increase the damage by §c35%",
+            Component.text("Increase the damage of Consecrate by 35% and remove the energy cost.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Consecrate by ", NamedTextColor.GREEN)
+                     .append(Component.text("35%", NamedTextColor.RED))
+                     .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.35f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.35f);
+                    abstractAbility.multiplyMinMax(1.35f);
                 }
             }
     ),
     LIGHT_INFUSION_AVENGER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion §7by 25% and increase the energy you restore by 40",
-            "§aReduce the cooldown of Light Infusion §aby §c25% §aand increase the energy §ayou restore by §c40",
+            Component.text("Increase the energy restored by Light Infusion by 40 and reduce the cooldown by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the energy restored by Light Infusion by ", NamedTextColor.GREEN)
+                     .append(Component.text("40 ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             LightInfusionAvenger.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightInfusionAvenger) {
+                if (abstractAbility instanceof LightInfusionAvenger lightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                    ((LightInfusionAvenger) abstractAbility).setEnergyGiven(((LightInfusionAvenger) abstractAbility).getEnergyGiven() + 40);
+                    lightInfusion.setEnergyGiven(lightInfusion.getEnergyGiven() + 40);
                 }
             }
     ),
     HOLY_RADIANCE_AVENGER("Holy Radiance",
-            "§7Reduce the cooldown of Holy Radiance §7by 20% and double the energy drain of Avenger's Mark",
-            "§aReduce the cooldown of Holy Radiance §aby §c20% §aand double the energy drain of Avenger's Mark",
+            Component.text("Reduce the cooldown of Holy Radiance by 20% and increase the energy drain of Avenger's Mark by 100%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Holy Radiance by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the energy drain of Avenger's Mark by ", NamedTextColor.GREEN))
+                     .append(Component.text("100%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             HolyRadianceAvenger.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HolyRadianceAvenger) {
+                if (abstractAbility instanceof HolyRadianceAvenger holyRadiance) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
-                    ((HolyRadianceAvenger) abstractAbility).setEnergyDrainPerSecond(((HolyRadianceAvenger) abstractAbility).getEnergyDrainPerSecond() * 2);
+                    holyRadiance.setEnergyDrainPerSecond(holyRadiance.getEnergyDrainPerSecond() * 2);
                 }
             }
     ),
     AVENGERS_WRATH("Avenger's Wrath",
-            "§7Increase the energy per second of Avenger's Wrath by 10 and increase the duration by 5 seconds",
-            "§aIncrease the energy per second of Avenger's Wrath by §c10 §aand increase the duration §aby §c5 §aseconds",
+            Component.text("Increase the energy per second of Avenger's Wrath by 10 and increase the duration by 5 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the energy per second of Avenger's Wrath by ", NamedTextColor.GREEN)
+                     .append(Component.text("10 ", NamedTextColor.RED))
+                     .append(Component.text("and increase the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             AvengersWrath.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AvengersWrath) {
-                    ((AvengersWrath) abstractAbility).setTickDuration(((AvengersWrath) abstractAbility).getTickDuration() + 100);
-                    ((AvengersWrath) abstractAbility).setEnergyPerSecond(((AvengersWrath) abstractAbility).getEnergyPerSecond() + 10);
+                if (abstractAbility instanceof AvengersWrath avengersWrath) {
+                    avengersWrath.setTickDuration(avengersWrath.getTickDuration() + 100);
+                    avengersWrath.setEnergyPerSecond(avengersWrath.getEnergyPerSecond() + 10);
                 }
             }
     ),
     CRUSADER_STRIKE("Crusader's Strike",
-            "§7Increase the damage you §7deal with Crusader's Strike §7by 20%",
-            "§aIncrease the damage you §adeal with Crusader's Strike §aby §c20%",
+            Component.text("Increase the damage of Crusader's Strike by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Crusader's Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             CrusadersStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CrusadersStrike) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.multiplyMinMax(1.2f);
                 }
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Remove the energy cost of Consecrate and increase the damage §7by 35%",
-            "§aRemove the energy cost of Consecrate and increase the damage §aby §c35%",
+            Component.text("Increase the damage of Consecrate by 35% and remove the energy cost.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Consecrate by ", NamedTextColor.GREEN)
+                     .append(Component.text("35%", NamedTextColor.RED))
+                     .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.35f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.35f);
+                    abstractAbility.multiplyMinMax(1.35f);
                 }
             }
     ),
     LIGHT_INFUSION_CRUSADER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion §7by 35% and increase the speed §7duration by 3 seconds",
-            "§aReduce the cooldown of Light Infusion §aby §c35% §aand increase the speed §aduration by §c3 §aseconds",
+            Component.text("Reduce the cooldown of Light Infusion by 35% and increase the speed duration by 3 seconds.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Light Infusion by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("3 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             LightInfusionCrusader.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightInfusionCrusader) {
+                if (abstractAbility instanceof LightInfusionCrusader lightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    LightInfusionCrusader lightInfusion = (LightInfusionCrusader) abstractAbility;
                     lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }
     ),
     HOLY_RADIANCE_CRUSADER("Holy Radiance",
-            "§7Reduce the cooldown of Holy Radiance §7by 25%, increase the duration §7of Crusader's Mark by 4 seconds and speed bonus by 15%",
-            "§aReduce the cooldown of Holy Radiance §aby §c25%§a, increase the duration §aof Crusader's Mark by §c4 §aseconds and speed bonus by §c15%",
+            Component.text("Reduce the cooldown of Holy Radiance by 25%, increase the duration of Crusader's Mark by 4 seconds and increase the speed by 15%.",
+                    NamedTextColor.GRAY
+            ),
+            Component.text("Reduce the cooldown of Holy Radiance by ", NamedTextColor.GREEN)
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(", increase the duration of Crusader's Mark by ", NamedTextColor.GREEN))
+                     .append(Component.text("4 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and speed bonus by ", NamedTextColor.GREEN))
+                     .append(Component.text("15%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             HolyRadianceCrusader.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HolyRadianceCrusader) {
+                if (abstractAbility instanceof HolyRadianceCrusader holyRadiance) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                    ((HolyRadianceCrusader) abstractAbility).setMarkDuration(12);
-                    ((HolyRadianceCrusader) abstractAbility).setMarkSpeed(((HolyRadianceCrusader) abstractAbility).getMarkSpeed() + 15);
+                    holyRadiance.setMarkDuration(12);
+                    holyRadiance.setMarkSpeed(holyRadiance.getMarkSpeed() + 15);
                 }
             }
     ),
     INSPIRING_PRESENCE("Inspiring Presence",
-            "§7Reduce the cooldown of Inspiring §7Presence by 25% and increase the speed by 10%",
-            "§aReduce the cooldown of Inspiring §aPresence by §c25% §aand increase the speed by §c10%",
+            Component.text("Reduce the cooldown of Inspiring Presence by 25% and increase the speed by 10%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Inspiring Presence by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             InspiringPresence.class,
             abstractAbility -> {
-                if (abstractAbility instanceof InspiringPresence) {
+                if (abstractAbility instanceof InspiringPresence inspiringPresence) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
-                    ((InspiringPresence) abstractAbility).setSpeedBuff(((InspiringPresence) abstractAbility).getSpeedBuff() + 10);
+                    inspiringPresence.setSpeedBuff(inspiringPresence.getSpeedBuff() + 10);
                 }
             }
     ),
     PROTECTOR_STRIKE("Protector's Strike",
-            "§7Increase the amount of damage §7you convert into healing for allies with §7Protector's Strike by 10% and heal 1 more ally.",
-            "§aIncrease the amount of damage §ayou convert into healing for allies with §aProtector's Strike by §c10% §aand heal §c1 §amore ally.",
+            Component.text("Increase the damage converted to healing for allies of Protector's Strike by 10% and increase the number of allies healed by 1.", NamedTextColor.GRAY),
+            Component.text("Increase the damage converted to healing for allies of Protector's Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the number of allies healed by ", NamedTextColor.GREEN))
+                     .append(Component.text("1", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             ProtectorsStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ProtectorsStrike) {
-                    ((ProtectorsStrike) abstractAbility).setMinConvert(((ProtectorsStrike) abstractAbility).getMinConvert() + 10);
-                    ((ProtectorsStrike) abstractAbility).setMaxConvert(((ProtectorsStrike) abstractAbility).getMaxConvert() + 10);
-                    ((ProtectorsStrike) abstractAbility).setMaxAllies(((ProtectorsStrike) abstractAbility).getMaxAllies() + 1);
+                if (abstractAbility instanceof ProtectorsStrike protectorsStrike) {
+                    protectorsStrike.setMinConvert(protectorsStrike.getMinConvert() + 10);
+                    protectorsStrike.setMaxConvert(protectorsStrike.getMaxConvert() + 10);
+                    protectorsStrike.setMaxAllies(protectorsStrike.getMaxAllies() + 1);
                 }
             }
     ),
     CONSECRATE_PROTECTOR("Consecrate",
-            "§7Increases the range of §7Consecrate by 2 blocks and §7reduce the cooldown §7by 30%",
-            "§aIncreases the range of §aConsecrate by §c2 §ablocks and §areduce the cooldown §aby §c30%",
+            Component.text("Increase the range of Consecrate by 2 blocks and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the range of Consecrate by ", NamedTextColor.GREEN)
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("blocks and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             Consecrate.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Consecrate) {
-                    ((Consecrate) abstractAbility).setRadius(((Consecrate) abstractAbility).getRadius() + 2);
+                if (abstractAbility instanceof Consecrate consecrate) {
+                    consecrate.setRadius(consecrate.getRadius() + 2);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
     LIGHT_INFUSION_PROTECTOR("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion §7by 35% and increase the speed §7duration by 3 seconds",
-            "§aReduce the cooldown of Light Infusion §aby §c35% §aand increase the speed §aduration by §c3 §aseconds",
+            Component.text("Reduce the cooldown of Light Infusion by 35% and increase the speed duration by 3 seconds.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Light Infusion by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("3 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             LightInfusionProtector.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightInfusionProtector) {
+                if (abstractAbility instanceof LightInfusionProtector lightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
-                    LightInfusionProtector lightInfusion = (LightInfusionProtector) abstractAbility;
                     lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }
     ),
     HOLY_RADIANCE_PROTECTOR("Holy Radiance",
-            "§7Increases the amount of §7health you restore with §7Holy Radiance by 20%",
-            "§aIncreases the amount of §ahealth you restore with §aHoly Radiance by §c20%",
+            Component.text("Increase the healing of Holy Radiance by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Holy Radiance by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             HolyRadianceProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceProtector) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.multiplyMinMax(1.2f);
                 }
             }
     ),
     HAMMER_OF_LIGHT("Hammer of Light",
-            "§7Increases the amount of §7health you restore with §7Hammer of Light by 25% and reduce the cooldown by 25%",
-            "§aIncreases the amount of §ahealth you restore with §aHammer of Light by §c25% §aand reduce the cooldown by §c25%",
+            Component.text("Increase the healing of Hammer of Light by 25% and reduce the cooldown by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Hammer of Light by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             HammerOfLight.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HammerOfLight) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                    abstractAbility.multiplyMinMax(1.25f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
     LIGHTNING_BOLT("Lightning Bolt",
-            "§7Increase the damage you §7deal with Lightning Bolt by §720%",
-            "§aIncrease the damage you §adeal with Lightning Bolt by §c20%",
+            Component.text("Increase the damage of Lightning Bolt by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Lightning Bolt by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%.", NamedTextColor.RED)),
             LightningBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightningBolt) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.multiplyMinMax(1.2f);
                 }
             }
     ),
     CHAIN_LIGHTNING("Chain Lightning",
-            "§7Increase the damage you §7deal with Chain Lightning §7by 20% and reduce the cooldown by 15%",
-            "§aIncrease the damage you §adeal with Chain Lightning §aby §c20% §aand reduce the cooldown by §c15%",
+            Component.text("Increase the damage of Chain Lightning by 20% and reduce the cooldown by 15%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Chain Lightning by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("15%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             ChainLightning.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainLightning) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                    abstractAbility.multiplyMinMax(1.25f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
                 }
             }
     ),
     WINDFURY_WEAPON("Windfury Weapon",
-            "§7Increase the damage you §7deal with Windfury Weapon §7by 30% and increase the proc §7chance by 10%",
-            "§aIncrease the damage you §adeal with Windfury Weapon §aby §c30% §aand increase the proc §achance by §c10%",
-            Windfury.class,
+            Component.text("Increase the damage of Windfury Weapon by 30% and increase the proc chance by 10%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Windfury Weapon by ", NamedTextColor.GREEN)
+                     .append(Component.text("30% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the proc ", NamedTextColor.RED))
+                     .append(Component.text("chance by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            WindfuryWeapon.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Windfury) {
-                    ((Windfury) abstractAbility).setProcChance(45);
-                    ((Windfury) abstractAbility).setWeaponDamage(((Windfury) abstractAbility).getWeaponDamage() + 30);
+                if (abstractAbility instanceof WindfuryWeapon windfuryWeapon) {
+                    windfuryWeapon.setProcChance(45);
+                    windfuryWeapon.setWeaponDamage(windfuryWeapon.getWeaponDamage() + 30);
                 }
             }
     ),
     LIGHTNING_ROD("Lightning Rod",
-            "§7Reduce the cooldown of Lightning Rod §7by 40%",
-            "§aReduce the cooldown of Lightning Rod §aby §c40%",
+            Component.text("Reduce the cooldown of Lightning Rod by 40%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Lightning Rod by ", NamedTextColor.GREEN)
+                     .append(Component.text("40%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             LightningRod.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightningRod) {
@@ -560,198 +713,243 @@ public enum SkillBoosts {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            "§7Increase the damage you §7deal with Capacitor Totem §7by 30% and reduce the cooldown §7by 15%",
-            "§aIncrease the damage you §adeal with Capacitor Totem §aby §c30% §aand reduce the cooldown §aby §c15%",
+            Component.text("Increase the damage of Capacitor Totem by 30% and reduce the cooldown by 15%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Capacitor Totem by ", NamedTextColor.GREEN)
+                     .append(Component.text("30% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("15%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.3f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.3f);
+                    abstractAbility.multiplyMinMax(1.3f);
                 }
             }
     ),
     FALLEN_SOULS("Fallen Souls",
-            "§7Increase the damage you §7deal with Fallen Souls by §720%",
-            "§aIncrease the damage you §adeal with Fallen Souls by §c20%",
+            Component.text("Increase the damage of Fallen Souls by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Fallen Souls by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             FallenSouls.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FallenSouls) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.multiplyMinMax(1.2f);
                 }
             }
     ),
     SPIRIT_LINK("Spirit Link",
-            "§7Increase the damage you deal with Spirit Link by 25% and increase the speed duration by 0.5 seconds",
-            "§aIncrease the damage you §adeal with Spirit Link by §c25% §aand increase the speed duration by §c0.5 §aseconds",
+            Component.text("Increase the damage of Spirit Link by 25% and increase the speed duration by 0.5 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Spirit Link by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("0.5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             SpiritLink.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SpiritLink) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
-                    ((SpiritLink) abstractAbility).setSpeedDuration(((SpiritLink) abstractAbility).getSpeedDuration() + 0.5);
+                if (abstractAbility instanceof SpiritLink spiritLink) {
+                    abstractAbility.multiplyMinMax(1.25f);
+                    spiritLink.setSpeedDuration(spiritLink.getSpeedDuration() + 0.5);
                 }
             }
     ),
     SOULBINDING_WEAPON("Soulbinding Weapon",
-            "§7Increase the duration of §7binds by 2 seconds.",
-            "§aIncrease the duration of §abinds by §c2 §aseconds.",
+            Component.text("Increase the duration of binds by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of binds by ", NamedTextColor.GREEN)
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             Soulbinding.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Soulbinding) {
-                    ((Soulbinding) abstractAbility).setBindDuration(4);
+                if (abstractAbility instanceof Soulbinding soulbinding) {
+                    soulbinding.setBindDuration(soulbinding.getBindDuration() + 40);
                 }
             }
     ),
     REPENTANCE("Repentance",
-            "§7Increase the damage you convert by 5% and reduce the cooldown by 10%",
-            "§aIncrease the damage you §aconvert by §c5% §aand reduce the §acooldown by §c10%",
+            Component.text("Increase the damage converted by 5% and reduce the cooldown by 10%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage converted by ", NamedTextColor.GREEN)
+                     .append(Component.text("5% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             Repentance.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Repentance) {
-                    ((Repentance) abstractAbility).setDamageConvertPercent(15);
+                if (abstractAbility instanceof Repentance repentance) {
+                    repentance.setDamageConvertPercent(15);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
             }
     ),
     DEATHS_DEBT("Death's Debt",
-            "§7Increase the range of Death's Debt §7by 5 blocks and reduce the §7amount of delayed damage you take §7by 40%",
-            "§aIncrease the range of Death's Debt §aby §c5 §ablocks and reduce the §aamount of delayed damage you take §aby §c40%",
+            Component.text("Increase the range of Death's Debt by 5 blocks and reduce the delayed damage inflicted by 40%.", NamedTextColor.GRAY),
+            Component.text("Increase the range of Death's Debt by", NamedTextColor.GREEN)
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("blocks and reduce the delayed damage inflicted by ", NamedTextColor.GREEN))
+                     .append(Component.text("40%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             DeathsDebt.class,
             abstractAbility -> {
-                if (abstractAbility instanceof DeathsDebt) {
-                    ((DeathsDebt) abstractAbility).setRespiteRadius(15);
-                    ((DeathsDebt) abstractAbility).setDebtRadius(13);
-                    ((DeathsDebt) abstractAbility).setSelfDamageInPercentPerSecond(.1f);
+                if (abstractAbility instanceof DeathsDebt deathsDebt) {
+                    deathsDebt.setRespiteRadius(15);
+                    deathsDebt.setDebtRadius(13);
+                    deathsDebt.setSelfDamageInPercentPerSecond(.1f);
                 }
             }
     ),
     EARTHEN_SPIKE("Earthen Spike",
-            "§7Increase the damage you §7deal with Earthen Spike by §715% and increase the speed by 30%",
-            "§aIncrease the damage you §adeal with Earthen Spike by §c15% §aand increase the speed by §c30%",
+            Component.text("Increase the damage of Earthen Spike by 15% and increase the speed by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Earthen Spike by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the speed by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             EarthenSpike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EarthenSpike) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
-                    ((EarthenSpike) abstractAbility).setSpeed(((EarthenSpike) abstractAbility).getSpeed() * 1.3f);
+                if (abstractAbility instanceof EarthenSpike earthenSpike) {
+                    abstractAbility.multiplyMinMax(1.15f);
+                    earthenSpike.setSpeed(earthenSpike.getSpeed() * 1.3f);
                 }
             }
     ),
     BOULDER("Boulder",
-            "§7Increase the damage you §7deal with Boulder by 25%",
-            "§aIncrease the damage you §adeal with Boulder by §c25%",
+            Component.text("Increase the damage of Boulder by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Boulder by ", NamedTextColor.RED)
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             Boulder.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Boulder) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                    abstractAbility.multiplyMinMax(1.25f);
                 }
             }
     ),
     EARTHLIVING_WEAPON("Earthliving Weapon",
-            "§7Increase the proc chance by of Earthliving Weapon§7 by 20%",
-            "§aIncrease the proc chance by of Earthliving Weapon by §c20%",
-            Earthliving.class,
+            Component.text("Increase the proc chance by of Earthliving Weapon by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the proc chance by of Earthliving Weapon by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            EarthlivingWeapon.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Earthliving) {
-                    ((Earthliving) abstractAbility).setProcChance(60);
+                if (abstractAbility instanceof EarthlivingWeapon earthlivingWeapon) {
+                    earthlivingWeapon.setProcChance(60);
                 }
             }
     ),
     CHAIN_HEAL("Chain Heal",
-            "§7Increases the amount of health you restore with Chain Heal by 30%",
-            "§aIncreases the amount of health you restore with Chain Heal by §c30%",
+            Component.text("Increase the healing of Chain Heal by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Chain Heal by ", NamedTextColor.GREEN)
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             ChainHeal.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainHeal) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.3f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.3f);
+                    abstractAbility.multiplyMinMax(1.3f);
                 }
             }
     ),
     HEALING_TOTEM("Healing Totem",
-            "§7Increase the amount of health you restore with Healing Totem by 25% and reduce the cooldown by 25%",
-            "§aIncrease the amount of health you restore with Healing Totem by §c25% §aand reduce the cooldown by §c25%",
+            Component.text("Increase the healing of Healing Totem by 25% and reduce the cooldown by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Healing Totem by ", NamedTextColor.GREEN)
+                     .append(Component.text("25% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             HealingTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingTotem) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                    abstractAbility.multiplyMinMax(1.25f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
     JUDGEMENT_STRIKE("Judgement Strike",
-            "§7Increase the amount of damage you §7deal with Judgement Strike §7by 20%",
-            "§aIncrease the amount of damage you §adeal with Judgement Strike §aby §c20%",
+            Component.text("Increase the damage of Judgement Strike by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Judgement Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             JudgementStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof JudgementStrike) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.multiplyMinMax(1.2f);
                 }
             }
     ),
     INCENDIARY_CURSE("Incendiary Curse",
-            "§7Reduce the cooldown of Incendiary Curse by 35% and increase the blind duration by 0.5 seconds.",
-            "§aReduce the cooldown of Incendiary Curse by §c35% §aand increase the blind duration by §c0.5 §aseconds.",
+            Component.text("Reduce the cooldown of Incendiary Curse by 35% and increase the blind duration by 0.5 seconds.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Incendiary Curse by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the blind duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("0.5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             IncendiaryCurse.class,
             abstractAbility -> {
-                if (abstractAbility instanceof IncendiaryCurse) {
-                    ((IncendiaryCurse) abstractAbility).setBlindDurationInTicks(50);
+                if (abstractAbility instanceof IncendiaryCurse incendiaryCurse) {
+                    incendiaryCurse.setBlindDurationInTicks(50);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                 }
             }
     ),
     BLINDING_ASSAULT("Shadow Step",
-            "§7Reduce the cooldown by Shadow Step by 40% and become temporarily immune to fall damage after leaping.",
-            "§aReduce the cooldown by Shadow Step by §c40% §aand become temporarily immune to fall damage after leaping.",
+            Component.text("Reduce the cooldown of Shadow Step by 40% and grant temporary fall damage immunity.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Shadow Step by ", NamedTextColor.GREEN)
+                     .append(Component.text("40% ", NamedTextColor.RED))
+                     .append(Component.text("and grant temporary fall damage immunity.", NamedTextColor.GREEN)),
             ShadowStep.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ShadowStep) {
-                    ((ShadowStep) abstractAbility).setFallDamageNegation(1000);
+                if (abstractAbility instanceof ShadowStep shadowStep) {
+                    shadowStep.setFallDamageNegation(1000);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 }
             }
     ),
     SOUL_SWITCH("Soul Switch",
-            "§7Reduce the cooldown by Soul Switch by 50% and increase the range by 2 blocks.",
-            "§aReduce the cooldown by Soul Switch by §c50% §aand increase the range by §c2 §ablocks",
+            Component.text("Reduce the cooldown by Soul Switch by 50% and increase the range by 2 blocks.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown by Soul Switch by ", NamedTextColor.GREEN)
+                     .append(Component.text("50% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the range by ", NamedTextColor.GREEN))
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("blocks.", NamedTextColor.GREEN)),
             SoulSwitch.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SoulSwitch) {
-                    ((SoulSwitch) abstractAbility).setRadius(15);
+                if (abstractAbility instanceof SoulSwitch soulSwitch) {
+                    soulSwitch.setRadius(15);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
                 }
             }
     ),
-    ORDER_OF_EVISCERATE("Order Of Eviscerate",
-            "§7Increase the duration of Order Of Eviscerate by 4 seconds and reduce the cooldown by 30%.",
-            "§aIncrease the duration of Order Of Eviscerate by §c4 §aseconds and reduce the cooldown by §c30%.",
+    ORDER_OF_EVISCERATE("Order of Eviscerate",
+            Component.text("Increase the duration of Order of Eviscerate by 4 seconds and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the duration of Order of Eviscerate by ", NamedTextColor.GREEN)
+                     .append(Component.text("4 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             OrderOfEviscerate.class,
             abstractAbility -> {
-                if (abstractAbility instanceof OrderOfEviscerate) {
-                    ((OrderOfEviscerate) abstractAbility).setTickDuration(((OrderOfEviscerate) abstractAbility).getTickDuration() + 80);
+                if (abstractAbility instanceof OrderOfEviscerate orderOfEviscerate) {
+                    orderOfEviscerate.setTickDuration(orderOfEviscerate.getTickDuration() + 80);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
     RIGHTEOUS_STRIKE("Righteous Strike",
-            "§7Increase the amount of damage you §7deal with Righteous Strike §7by 20%",
-            "§aIncrease the amount of damage you §adeal with Righteous Strike §aby §c20%",
+            Component.text("Increase the damage of Righteous Strike by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Righteous Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             RighteousStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RighteousStrike) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                    abstractAbility.multiplyMinMax(1.2f);
                 }
             }
     ),
     SOUL_SHACKLE("Soul Shackle",
-            "§7Reduce the cooldown of Soul Shackle by 20%",
-            "§aReduce the cooldown of Soul Shackle by §c20%",
+            Component.text("Reduce the cooldown of Soul Shackle by 20%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Soul Shackle by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
@@ -759,96 +957,334 @@ public enum SkillBoosts {
                 }
             }
     ),
-    HEART_TO_HEART("Heart To Heart",
-            "§7Reduce the cooldown of Heart ot Heart by 30% and increase the amount of health you restore by 300",
-            "§aReduce the cooldown of Heart ot Heart by §c30% §aand increase the amount of health you restore by §c300",
+    HEART_TO_HEART("Heart to Heart",
+            Component.text("Increase the healing of Heart to Heart by 300 and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Heart to Heart by ", NamedTextColor.GREEN)
+                     .append(Component.text("300 ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             HeartToHeart.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HeartToHeart) {
-                    ((HeartToHeart) abstractAbility).setHealthRestore(((HeartToHeart) abstractAbility).getHealthRestore() + 300);
+                if (abstractAbility instanceof HeartToHeart heartToHeart) {
+                    heartToHeart.setHealthRestore(heartToHeart.getHealthRestore() + 300);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
     PRISM_GUARD("Prism Guard",
-            "§7Increase the damage reduction of Prism Guard by 15% and increase the amount of health you restore by 300",
-            "§aIncrease the damage reduction of Prism Guard by §c15% §aand increase the amount of health you restore by §c300",
+            Component.text("Increase the projectile damage reduction of Prism Guard by 15% and increase the healing by 300.", NamedTextColor.GRAY),
+            Component.text("Increase the projectile damage reduction of Prism Guard by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the healing by ", NamedTextColor.GREEN))
+                     .append(Component.text("300", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             PrismGuard.class,
             abstractAbility -> {
-                if (abstractAbility instanceof PrismGuard) {
-                    ((PrismGuard) abstractAbility).setProjectileDamageReduction(75);
-                    ((PrismGuard) abstractAbility).setBubbleHealing(((PrismGuard) abstractAbility).getBubbleHealing() + 300);
+                if (abstractAbility instanceof PrismGuard prismGuard) {
+                    prismGuard.setProjectileDamageReduction(75);
+                    prismGuard.setBubbleHealing(prismGuard.getBubbleHealing() + 300);
                 }
             }
     ),
     VINDICATE("Vindicate",
-            "§7Increase the damage reduction of Vindicate by 10% and reduce the cooldown by 25%",
-            "§aIncrease the damage reduction of Vindicate by §c10% §aand reduce the cooldown by §c25%",
+            Component.text("Increase the damage reduction of Vindicate by 10% and reduce the cooldown by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage reduction of Vindicate by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             Vindicate.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Vindicate) {
-                    ((Vindicate) abstractAbility).setVindicateDamageReduction(40);
+                if (abstractAbility instanceof Vindicate vindicate) {
+                    vindicate.setVindicateDamageReduction(40);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 }
             }
     ),
     IMPALING_STRIKE("Impaling Strike",
-            "§7Increase the amount of damage you §7deal with Impaling Strike §7by 10% and increase the leech duration by 5 seconds.",
-            "§aIncrease the amount of damage you §adeal with Impaling Strike §aby §c10% §aand increase the leech duration by §c5 §aseconds.",
+            Component.text("Increase the damage of Impaling Strike by 10% and increase the leech duration by 5 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Impaling Strike by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the leech duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
             ImpalingStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ImpalingStrike) {
-                    ((ImpalingStrike) abstractAbility).setLeechDuration(10);
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                if (abstractAbility instanceof ImpalingStrike impalingStrike) {
+                    impalingStrike.setLeechDuration(10);
+                    abstractAbility.multiplyMinMax(1.1f);
                 }
             }
     ),
     SOOTHING_PUDDLE("Soothing Elixir",
-            "§7Increase the amount of health you §7restore with Soothing Elixir §7by 25%",
-            "§aIncrease the amount of health you §arestore with Soothing Elixir §aby §c25%",
+            Component.text("Increase the healing of Soothing Elixir by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Soothing Elixir by ", NamedTextColor.GREEN)
+                     .append(Component.text("25%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             SoothingElixir.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoothingElixir) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                    abstractAbility.multiplyMinMax(1.25f);
                 }
             }
     ),
     VITALITY_LIQUOR("Vitality Liquor",
-            "§7Increase the amount of health you §7restore with Vitality Liquor §7by 15% and reduce the cooldown by 30%",
-            "§aIncrease the amount of health you §arestore with Vitality Liquor §aby §c15% §aand reduce the cooldown by §c30%",
+            Component.text("Increase the healing of Vitality Liquor by 15% and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Vitality Liquor by ", NamedTextColor.GREEN)
+                     .append(Component.text("15% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             VitalityLiquor.class,
             abstractAbility -> {
-                if (abstractAbility instanceof VitalityLiquor) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
-                    ((VitalityLiquor) abstractAbility).setMinWaveHealing(((VitalityLiquor) abstractAbility).getMinWaveHealing() * 1.15f);
-                    ((VitalityLiquor) abstractAbility).setMaxWaveHealing(((VitalityLiquor) abstractAbility).getMaxWaveHealing() * 1.15f);
+                if (abstractAbility instanceof VitalityLiquor vitalityLiquor) {
+                    abstractAbility.multiplyMinMax(1.15f);
+                    vitalityLiquor.setMinWaveHealing(vitalityLiquor.getMinWaveHealing() * 1.15f);
+                    vitalityLiquor.setMaxWaveHealing(vitalityLiquor.getMaxWaveHealing() * 1.15f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }
             }
     ),
     REMEDIC_CHAINS("Remedic Chains",
-            "§7Increase the amount of health you restore with Remedic Chains by 10% and increase the link break radius by 10 blocks.",
-            "§aIncrease the amount of health you restore with Remedic Chains by §c10% §aand increase the link break radius by §c10 §ablocks.",
+            Component.text("Increase the healing of Remedic Chains by 10% and increase the link break range by 10 blocks.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Remedic Chains by ", NamedTextColor.GREEN)
+                     .append(Component.text("10% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the link break range by ", NamedTextColor.GREEN))
+                     .append(Component.text("10 ", NamedTextColor.RED))
+                     .append(Component.text("blocks.", NamedTextColor.GREEN)),
             RemedicChains.class,
             abstractAbility -> {
-                if (abstractAbility instanceof RemedicChains) {
-                    abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                    abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                    ((RemedicChains) abstractAbility).setLinkBreakRadius(25);
+                if (abstractAbility instanceof RemedicChains remedicChains) {
+                    abstractAbility.multiplyMinMax(1.1f);
+                    remedicChains.setLinkBreakRadius(25);
                 }
             }
     ),
     DRAINING_MIASMA("Draining Miasma",
-            "§7Increase the leech duration of Draining Miasma by 5 seconds and reduce the cooldown by 30%",
-            "§aIncrease the leech duration of Draining Miasma by §c5 §aseconds and reduce the cooldown by §c30%",
+            Component.text("Increase the leech duration of Draining Miasma by 5 seconds and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the leech duration of Draining Miasma by ", NamedTextColor.GREEN)
+                     .append(Component.text("5 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             DrainingMiasma.class,
             abstractAbility -> {
-                if (abstractAbility instanceof DrainingMiasma) {
-                    ((DrainingMiasma) abstractAbility).setLeechDuration(10);
+                if (abstractAbility instanceof DrainingMiasma drainingMiasma) {
+                    drainingMiasma.setLeechDuration(10);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                }
+            }
+    ),
+    POISONOUS_HEX("Poisonous Hex",
+            Component.text("Increase the damage over time inflicted by Poisonous Hex by 35% and the duration by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the damage over time inflicted by Poisonous Hex by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
+            PoisonousHex.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof PoisonousHex poisonousHex) {
+                    poisonousHex.setDotMinDamage(poisonousHex.getDotMinDamage() * 1.35f);
+                    poisonousHex.setDotMaxDamage(poisonousHex.getDotMaxDamage() * 1.35f);
+                    poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 20);
+                }
+            }
+    ),
+    SOULFIRE_BEAM("Soulfire Beam",
+            Component.text("Increase the damage of Soulfire Beam by 20% and reduce the cooldown by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Soulfire Beam by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            SoulfireBeam.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof SoulfireBeam soulfireBeam) {
+                    soulfireBeam.multiplyMinMax(1.2f);
+                    soulfireBeam.setCooldown(soulfireBeam.getCooldown() * .8f);
+                }
+            }
+    ),
+    ENERGY_SEER_CONJURER("Energy Seer",
+            Component.text("Increase the energy restored by Energy Seer by 40 and increase the damage bonus by 10%.", NamedTextColor.GRAY),
+            Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
+                     .append(Component.text("40 ", NamedTextColor.RED))
+                     .append(Component.text("and increase the damage bonus by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            EnergySeerConjurer.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof EnergySeerConjurer energySeerConjurer) {
+                    energySeerConjurer.setEnergyRestore(energySeerConjurer.getEnergyRestore() + 40);
+                    energySeerConjurer.setDamageIncrease(energySeerConjurer.getDamageIncrease() + 10);
+                }
+            }
+    ),
+    CONTAGIOUS_FACADE("Contagious Facade",
+            Component.text("Increased the damage reduction of Contagious Facade by 10%.", NamedTextColor.GRAY),
+            Component.text("Increased the damage reduction of Contagious Facade by ", NamedTextColor.GREEN)
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            ContagiousFacade.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof ContagiousFacade contagiousFacade) {
+                    contagiousFacade.setDamageAbsorption(contagiousFacade.getDamageAbsorption() + 10);
+                }
+            }
+    ),
+    ASTRAL_PLAGUE("Astral Plague",
+            Component.text("Reduce the cooldown of Astral Plague by 20%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Astral Plague by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            AstralPlague.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof AstralPlague astralPlague) {
+                    astralPlague.setCooldown(astralPlague.getCooldown() * .8f);
+                }
+            }
+    ),
+    FORTIFYING_HEX("Fortifying Hex",
+            Component.text("Increase the damage of Fortifying Hex by 15% and increase the duration by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the damage of Fortifying Hex by ", NamedTextColor.GREEN)
+                     .append(Component.text("15%", NamedTextColor.RED))
+                     .append(Component.text("and the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
+            FortifyingHex.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof FortifyingHex fortifyingHex) {
+                    fortifyingHex.multiplyMinMax(1.15f);
+                    fortifyingHex.setTickDuration(fortifyingHex.getTickDuration() + 40);
+                }
+            }
+    ),
+    GUARDIAN_BEAM("Guardian Beam",
+            Component.text("Increase the health of the shield granted by Guardian Beam by 5% and reduce the cooldown by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the health of the shield granted by Guardian Beam by ", NamedTextColor.GREEN)
+                     .append(Component.text("5% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            GuardianBeam.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof GuardianBeam guardianBeam) {
+                    guardianBeam.setShieldPercent(guardianBeam.getShieldPercent() + 5);
+                    guardianBeam.setCooldown(guardianBeam.getCooldown() * .8f);
+                }
+            }
+    ),
+    ENERGY_SEER_SENTINEL("Energy Seer",
+            Component.text("Increase the energy restored by Energy Seer by 40 and increase the damage reduction by 10%.\n", NamedTextColor.GRAY),
+            Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
+                     .append(Component.text("40 ", NamedTextColor.RED))
+                     .append(Component.text("and increase the damage reduction by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            EnergySeerSentinel.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof EnergySeerSentinel energySeerSentinel) {
+                    energySeerSentinel.setEnergyRestore(energySeerSentinel.getEnergyRestore() + 40);
+                    energySeerSentinel.setDamageResistance(energySeerSentinel.getDamageResistance() + 10);
+                }
+            }
+    ),
+    MYSTICAL_BARRIER("Mystical Barrier",
+            Component.text("Increase the rune timer increase inflicted by Mystical Barrier by 0.25 seconds and increase the maximum shield health by 400.", NamedTextColor.GRAY),
+            Component.text("Increase the rune timer increase inflicted by Mystical Barrier by ", NamedTextColor.GREEN)
+                     .append(Component.text("0.25 ", NamedTextColor.RED))
+                     .append(Component.text("seconds and increase the maximum shield health by", NamedTextColor.GREEN))
+                     .append(Component.text("400", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            MysticalBarrier.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof MysticalBarrier mysticalBarrier) {
+                    mysticalBarrier.setRuneTimerIncrease(mysticalBarrier.getRuneTimerIncrease() + 0.25f);
+                    mysticalBarrier.setShieldMaxHealth(mysticalBarrier.getShieldMaxHealth() + 400);
+                }
+            }
+    ),
+    SANCTUARY("Sanctuary",
+            Component.text("Reduce the cooldown of Sanctuary by 20%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Sanctuary by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            Sanctuary.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof Sanctuary sanctuary) {
+                    sanctuary.setCooldown(sanctuary.getCooldown() * .8f);
+                }
+            }
+    ),
+    MERCIFUL_HEX("Merciful Hex",
+            Component.text("Increase the healing over time healed by Merciful Hex by 35% and increase the duration by 2 seconds.", NamedTextColor.GRAY),
+            Component.text("Increase the healing over time healed by Merciful Hex by ", NamedTextColor.GREEN)
+                     .append(Component.text("35% ", NamedTextColor.RED))
+                     .append(Component.text("and increase the duration by ", NamedTextColor.GREEN))
+                     .append(Component.text("2 ", NamedTextColor.RED))
+                     .append(Component.text("seconds.", NamedTextColor.GREEN)),
+            MercifulHex.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof MercifulHex mercifulHex) {
+                    mercifulHex.setDotMinHeal(mercifulHex.getDotMinHeal() * 1.35f);
+                    mercifulHex.setDotMaxHeal(mercifulHex.getDotMaxHeal() * 1.35f);
+                    mercifulHex.setTickDuration(mercifulHex.getTickDuration() + 20);
+                }
+            }
+    ),
+    RAY_OF_LIGHT("Ray of Light",
+            Component.text("Increase the healing of Ray of Light by 20% and reduce the cooldown by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Ray of Light by ", NamedTextColor.GREEN)
+                     .append(Component.text("20% ", NamedTextColor.RED))
+                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            RayOfLight.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof RayOfLight rayOfLight) {
+                    rayOfLight.multiplyMinMax(1.2f);
+                    rayOfLight.setCooldown(rayOfLight.getCooldown() * .8f);
+                }
+            }
+    ),
+    ENERGY_SEER_LUMINARY("Energy Seer",
+            Component.text("Increase the energy restored by Energy Seer by 40 and increase the healing modifier by 10%.\n", NamedTextColor.GRAY),
+            Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
+                    .append(Component.text("40 ", NamedTextColor.RED))
+                    .append(Component.text("and increase the healing modifier by ", NamedTextColor.GREEN))
+                    .append(Component.text("10%", NamedTextColor.RED))
+                    .append(Component.text(".", NamedTextColor.GREEN)),
+            EnergySeerLuminary.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof EnergySeerLuminary energySeerLuminary) {
+                    energySeerLuminary.setEnergyRestore(energySeerLuminary.getEnergyRestore() + 40);
+                    energySeerLuminary.setHealingIncrease(energySeerLuminary.getHealingIncrease() + 10);
+                }
+            }
+    ),
+    SANCTIFIED_BEACON("Sanctified Beacon",
+            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by ", NamedTextColor.GREEN)
+                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            SanctifiedBeacon.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof SanctifiedBeacon sanctifiedBeacon) {
+                    sanctifiedBeacon.setCritMultiplierReducedTo(sanctifiedBeacon.getCritMultiplierReducedTo() - 30);
+                }
+            }
+    ),
+    DIVINE_BLESSING("Divine Blessing",
+            Component.text("Reduce the cooldown of Divine Blessing by 20%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Divine Blessing by ", NamedTextColor.GREEN)
+                     .append(Component.text("20%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
+            DivineBlessing.class,
+            abstractAbility -> {
+                if (abstractAbility instanceof DivineBlessing divineBlessing) {
+                    divineBlessing.setCooldown(divineBlessing.getCooldown() * .8f);
                 }
             }
     ),
@@ -857,12 +1293,12 @@ public enum SkillBoosts {
 
     public static final SkillBoosts[] VALUES = values();
     public final String name;
-    public final String description;
-    public final String selectedDescription;
+    public final TextComponent description;
+    public final TextComponent selectedDescription;
     public final Class<?> ability;
     public final Consumer<AbstractAbility> applyBoost;
 
-    SkillBoosts(String name, String description, String selectedDescription, Class<?> ability, Consumer<AbstractAbility> applyBoost) {
+    SkillBoosts(String name, TextComponent description, TextComponent selectedDescription, Class<?> ability, Consumer<AbstractAbility> applyBoost) {
         this.name = name;
         this.description = description;
         this.selectedDescription = selectedDescription;

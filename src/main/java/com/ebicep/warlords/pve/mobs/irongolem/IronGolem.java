@@ -43,7 +43,7 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(receiver.getLocation(), Sound.ITEM_BREAK, 1, 0.5f);
+        Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 0.5f);
         receiver.setVelocity(name, new Vector(0, 0.5, 0), false);
     }
 
@@ -56,10 +56,10 @@ public class IronGolem extends AbstractIronGolem implements EliteMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.PURPLE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.IRONGOLEM_DEATH, 2, 0.4f);
+                                                                       .withColor(Color.PURPLE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_IRON_GOLEM_DEATH, 2, 0.4f);
     }
 }

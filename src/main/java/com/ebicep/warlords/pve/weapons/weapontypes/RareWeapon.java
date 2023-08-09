@@ -7,8 +7,9 @@ import com.ebicep.warlords.pve.weapons.AbstractTierTwoWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
-import com.ebicep.warlords.util.java.Utils;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.java.JavaUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,24 +49,24 @@ public class RareWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.BLUE;
+    public NamedTextColor getTextColor() {
+        return NamedTextColor.BLUE;
     }
 
     @Override
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return Arrays.asList(
-                "",
+                Component.empty(),
                 getWeaponScoreString()
         );
     }
 
     @Override
     public void generateStats() {
-        this.meleeDamage = Utils.generateRandomValueBetweenInclusive(MELEE_DAMAGE_MIN, MELEE_DAMAGE_MAX - getMeleeDamageRange());
-        this.critChance = Utils.generateRandomValueBetweenInclusive(CRIT_CHANCE_MIN, CRIT_CHANCE_MAX);
-        this.critMultiplier = Utils.generateRandomValueBetweenInclusive(CRIT_MULTIPLIER_MIN, CRIT_MULTIPLIER_MAX);
-        this.healthBonus = Utils.generateRandomValueBetweenInclusive(HEALTH_BONUS_MIN, HEALTH_BONUS_MAX);
+        this.meleeDamage = JavaUtils.generateRandomValueBetweenInclusive(MELEE_DAMAGE_MIN, MELEE_DAMAGE_MAX - getMeleeDamageRange());
+        this.critChance = JavaUtils.generateRandomValueBetweenInclusive(CRIT_CHANCE_MIN, CRIT_CHANCE_MAX);
+        this.critMultiplier = JavaUtils.generateRandomValueBetweenInclusive(CRIT_MULTIPLIER_MIN, CRIT_MULTIPLIER_MAX);
+        this.healthBonus = JavaUtils.generateRandomValueBetweenInclusive(HEALTH_BONUS_MIN, HEALTH_BONUS_MAX);
     }
 
     @Override

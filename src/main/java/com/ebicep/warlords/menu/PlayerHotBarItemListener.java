@@ -13,8 +13,10 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,49 +36,49 @@ import static com.ebicep.warlords.menu.debugmenu.DebugMenuGameOptions.StartMenu.
 public class PlayerHotBarItemListener implements Listener {
 
     public static final ItemStack DEBUG_MENU = new ItemBuilder(Material.EMERALD)
-            .name("§aDebug Menu")
+            .name(Component.text("Debug Menu", NamedTextColor.GREEN))
             .get();
     public static final ItemStack PVP_MENU = new ItemBuilder(Material.DIAMOND)
-            .name("§aPvP Menu")
+            .name(Component.text("PvP Menu", NamedTextColor.GREEN))
             .lore(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvP.", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to view!"
+                    Component.text("View all information pertaining to PvP.", NamedTextColor.GRAY),
+                    Component.empty(),
+                    Component.text("Click to view!", NamedTextColor.YELLOW)
             )
             .get();
     public static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT)
-            .name("§aPvE Menu")
+            .name(Component.text("PvE Menu", NamedTextColor.GREEN))
             .lore(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View all information pertaining to PvE.", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to view!"
+                    Component.text("View all information pertaining to PvE.", NamedTextColor.GRAY),
+                    Component.empty(),
+                    Component.text("Click to view!", NamedTextColor.YELLOW)
             )
             .get();
     public static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER)
-            .name("§aStart Menu")
+            .name(Component.text("Start Menu", NamedTextColor.GREEN))
             .get();
-    public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.EYE_OF_ENDER)
-            .name("§aSpectate")
+    public static final ItemStack SPECTATE_MENU = new ItemBuilder(Material.ENDER_EYE)
+            .name(Component.text("Spectate", NamedTextColor.GREEN))
             .lore(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Spectate ongoing games.", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to open!"
+                    Component.text("Spectate ongoing games.", NamedTextColor.GRAY),
+                    Component.empty(),
+                    Component.text("Click to open!", NamedTextColor.YELLOW)
             )
             .get();
     public static final ItemStack SELECTION_MENU = new ItemBuilder(Material.NETHER_STAR)
-            .name("§aWarlords Menu")
-            .lore(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View your specializations, settings, PvP/PvE stats, and more!", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to open!"
+            .name(Component.text("Warlords Menu", NamedTextColor.GREEN))
+            .lore(WordWrap.wrap(Component.text("View your specializations, settings, PvP/PvE stats, and more!", NamedTextColor.GRAY), 160))
+            .addLore(
+                    Component.empty(),
+                    Component.text("Click to open!", NamedTextColor.YELLOW)
             )
             .get();
     public static final ItemStack SETTINGS_MENU = new ItemBuilder(Material.BEDROCK)
-            .name("§aSettings Menu")
+            .name(Component.text("Settings Menu", NamedTextColor.GREEN))
             .lore(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "View all your in game settings.", 160),
-                    "",
-                    ChatColor.YELLOW + "Click to view!"
+                    Component.text("View all your in game settings.", NamedTextColor.GRAY),
+                    Component.empty(),
+                    Component.text("Click to view!", NamedTextColor.YELLOW)
             )
             .get();
     private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
@@ -91,7 +93,7 @@ public class PlayerHotBarItemListener implements Listener {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (e.getPlayer().getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
+                            if (PlainTextComponentSerializer.plainText().serialize(e.getPlayer().getOpenInventory().title()).equals("Team Builder")) {
                                 p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
                             } else {
                                 this.cancel();
@@ -131,16 +133,21 @@ public class PlayerHotBarItemListener implements Listener {
                 List<RegularGamesMenu.RegularGamePlayer> playerList = partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers();
                 if (!playerList.isEmpty()) {
                     playerList.stream()
-                            .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
-                            .findFirst()
-                            .ifPresent(regularGamePlayer -> setItem(player, 0, new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder").get()));
+                              .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
+                              .findFirst()
+                              .ifPresent(regularGamePlayer -> setItem(player,
+                                      0,
+                                      new ItemBuilder(regularGamePlayer.getTeam().item).name(Component.text("Team Builder", NamedTextColor.GREEN)).get()
+                              ));
                 }
             }
         }
+        ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
         setItem(player,
                 1,
-                new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
-                        .name("§aWeapon Skin Preview")
+                new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
+                        .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                        .noLore()
                         .get()
         );
 
@@ -165,6 +172,9 @@ public class PlayerHotBarItemListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
         if (!e.getPlayer().getWorld().getName().equals("MainLobby")) {
+            return;
+        }
+        if (Warlords.getPlayer(e.getPlayer()) != null) {
             return;
         }
         if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) {

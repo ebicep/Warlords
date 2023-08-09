@@ -5,13 +5,14 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
-import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -26,6 +27,7 @@ public class AdminCommand extends BaseCommand {
     public static final Set<DatabasePlayerPvE> BYPASSED_PLAYER_CURRENCIES = new HashSet<>();
     public static boolean DISABLE_RESTART_CHECK = false;
     public static boolean DISABLE_SPECTATOR_MESSAGES = false;
+    public static boolean NEW_SWIMMING = false;
 
     @Subcommand("bypasscurrencies")
     @Description("Bypasses player pve currency costs - Prevents any from being added")
@@ -33,38 +35,26 @@ public class AdminCommand extends BaseCommand {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             if (BYPASSED_PLAYER_CURRENCIES.contains(databasePlayer.getPveStats())) {
                 BYPASSED_PLAYER_CURRENCIES.remove(databasePlayer.getPveStats());
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Disabled Bypassing Currencies", true);
+                ChatChannels.sendDebugMessage(player, Component.text("Disabled Bypassing Currencies", NamedTextColor.GREEN));
             } else {
                 BYPASSED_PLAYER_CURRENCIES.add(databasePlayer.getPveStats());
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Enabled Bypassing Currencies", true);
+                ChatChannels.sendDebugMessage(player, Component.text("Enabled Bypassing Currencies", NamedTextColor.GREEN));
             }
         });
-    }
-
-    @Subcommand("horsedebug")
-    public void horse(Player player, @Flags("other") Player target) {
-        if (CustomHorse.record.contains(target.getUniqueId())) {
-            CustomHorse.record.remove(target.getUniqueId());
-            ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Removed " + target.getName(), true);
-        } else {
-            CustomHorse.record.add(target.getUniqueId());
-            ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Added " + target.getName(), true);
-        }
-
     }
 
     @Subcommand("disablegames")
     @Description("Prevents games from being started")
     public void disableGames(CommandIssuer issuer) {
         GameManager.gameStartingDisabled = !GameManager.gameStartingDisabled;
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Disabled Games = " + GameManager.gameStartingDisabled, true);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Disabled Games = " + GameManager.gameStartingDisabled, NamedTextColor.GREEN));
     }
 
     @Subcommand("disablerestartcheck")
     @Description("Removes restart check that prevents games from being started")
     public void disableRestartCheck(CommandIssuer issuer) {
         DISABLE_RESTART_CHECK = !DISABLE_RESTART_CHECK;
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Restart Check = " + DISABLE_RESTART_CHECK, true);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Restart Check = " + DISABLE_RESTART_CHECK, NamedTextColor.GREEN));
     }
 
     @Subcommand("removenearbyentities")
@@ -79,28 +69,50 @@ public class AdminCommand extends BaseCommand {
     @Description("Bans a specialization from being used")
     public void banSpec(Player player, Specializations spec) {
         spec.setBanned(true);
-        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Banned " + spec.name, true);
+        ChatChannels.sendDebugMessage(player, Component.text("Banned " + spec.name, NamedTextColor.GREEN));
     }
 
     @Subcommand("unbanspec")
     @Description("Unbans a specialization from being used")
     public void unbanSpec(Player player, Specializations spec) {
         spec.setBanned(false);
-        ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Unbanned " + spec.name, true);
+        ChatChannels.sendDebugMessage(player, Component.text("Unbanned " + spec.name, NamedTextColor.GREEN));
     }
 
     @Subcommand("disablespectatormessages")
     @Description("Disables spectator messages")
     public void disableSpectatorMessages(CommandIssuer issuer) {
         DISABLE_SPECTATOR_MESSAGES = !DISABLE_SPECTATOR_MESSAGES;
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Disable Spectator Messages = " + DISABLE_SPECTATOR_MESSAGES, true);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Disable Spectator Messages = " + DISABLE_SPECTATOR_MESSAGES, NamedTextColor.GREEN));
+    }
+
+    @Subcommand("togglemessages")
+    @Description("Toggles MessageType messages")
+    public void togglePlayerServiceMessages(CommandIssuer issuer, ChatUtils.MessageType messageType) {
+        messageType.setEnabled(!messageType.isEnabled());
+        ChatChannels.sendDebugMessage(issuer,
+                Component.text((messageType.isEnabled() ? "Enabled" : "Disabled") + " PlayerService messages.", messageType.isEnabled() ? NamedTextColor.GREEN : NamedTextColor.RED)
+        );
     }
 
     @Subcommand("removehorse")
     public void removeHorse(Player player, @Flags("other") Player target) {
-        ChatChannels.sendDebugMessage(player, ChatColor.AQUA + target.getName() + ChatColor.GREEN + " - Mount = " + target.getVehicle(), true);
-        ChatChannels.sendDebugMessage(player, ChatColor.AQUA + target.getName() + ChatColor.GREEN + " - Leave Mount = " + target.leaveVehicle(), true);
-        ChatChannels.sendDebugMessage(player, ChatColor.AQUA + target.getName() + ChatColor.GREEN + " - Mount = " + target.getVehicle(), true);
+        ChatChannels.sendDebugMessage(player,
+                Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Mount = " + target.getVehicle(), NamedTextColor.GREEN))
+        );
+        ChatChannels.sendDebugMessage(player,
+                Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Leave Mount = " + target.leaveVehicle(), NamedTextColor.GREEN))
+        );
+        ChatChannels.sendDebugMessage(player,
+                Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" - Mount = " + target.getVehicle(), NamedTextColor.GREEN))
+        );
+    }
+
+    @Subcommand("toggleswimming")
+    @Description("Toggles swimming")
+    public void toggleSwimming(CommandIssuer issuer) {
+        NEW_SWIMMING = !NEW_SWIMMING;
+        ChatChannels.sendDebugMessage(issuer, Component.text("New Swimming = " + NEW_SWIMMING, NamedTextColor.GREEN));
     }
 
     @HelpCommand

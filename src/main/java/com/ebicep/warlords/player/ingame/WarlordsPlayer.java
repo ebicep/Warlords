@@ -1,10 +1,10 @@
 package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.ArcaneShield;
-import com.ebicep.warlords.abilties.Soulbinding;
-import com.ebicep.warlords.abilties.UndyingArmy;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.Soulbinding;
+import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -21,12 +21,12 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -45,70 +45,43 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
-
-public final class WarlordsPlayer extends WarlordsEntity implements Listener {
+public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public static final Set<UUID> STUNNED_PLAYERS = new HashSet<>();
 
-    public void stun() {
-        STUNNED_PLAYERS.add(uuid);
-    }
+    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
+        return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
+            zombie.setAdult();
+            zombie.setCustomNameVisible(true);
 
-    public void unstun() {
-        STUNNED_PLAYERS.remove(uuid);
-    }
-
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        if (STUNNED_PLAYERS.contains(e.getPlayer().getUniqueId())) {
-            if (
-                    (e.getFrom().getX() != e.getTo().getX() ||
-                            e.getFrom().getZ() != e.getTo().getZ()) &&
-                            !(e instanceof PlayerTeleportEvent)
-            ) {
-                e.getPlayer().teleport(e.getFrom());
+            EntityEquipment zombieEquipment = zombie.getEquipment();
+            if (inv != null) {
+                zombieEquipment.setBoots(inv.getBoots());
+                zombieEquipment.setLeggings(inv.getLeggings());
+                zombieEquipment.setChestplate(inv.getChestplate());
+                zombieEquipment.setHelmet(inv.getHelmet());
+                zombieEquipment.setItemInMainHand(inv.getItemInMainHand());
+            } else {
+                zombieEquipment.setHelmet(new ItemStack(Material.DIAMOND_HELMET));
             }
-        }
+            //prevents zombie from moving
+            zombie.setAI(false);
+        });
     }
 
-//    @Override
+    protected final AbilityTree abilityTree = new AbilityTree(this);
+    protected CosmeticSettings cosmeticSettings;
+
+    //    @Override
 //    public void setWasSneaking(boolean wasSneaking) {
 //        super.setWasSneaking(wasSneaking);
 //        if(wasSneaking) {
 //            ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Player sneak " + name + " - " + specClass);
 //        }
 //    }
-
-    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
-        jimmy.setBaby(false);
-        jimmy.setCustomNameVisible(true);
-
-        if (inv != null) {
-            jimmy.getEquipment().setBoots(inv.getBoots());
-            jimmy.getEquipment().setLeggings(inv.getLeggings());
-            jimmy.getEquipment().setChestplate(inv.getChestplate());
-            jimmy.getEquipment().setHelmet(inv.getHelmet());
-            jimmy.getEquipment().setItemInHand(inv.getItemInHand());
-        } else {
-            jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-        }
-        //prevents jimmy from moving
-        net.minecraft.server.v1_8_R3.Entity nmsEn = ((CraftEntity) jimmy).getHandle();
-        NBTTagCompound compound = new NBTTagCompound();
-        nmsEn.c(compound);
-        compound.setByte("NoAI", (byte) 1);
-        nmsEn.f(compound);
-        return jimmy;
-    }
-
-    private final AbilityTree abilityTree = new AbilityTree(this);
-    private CosmeticSettings cosmeticSettings;
-    private SkillBoosts skillBoost;
-    private AbstractWeapon weapon;
+    protected SkillBoosts skillBoost;
+    protected AbstractWeapon weapon;
 
     public WarlordsPlayer() {
         super();
@@ -123,6 +96,12 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
                 settings.getArmorSet(settings.getSelectedSpec())
         );
         resetAbilityTree();
+    }
+
+    public void resetAbilityTree() {
+        this.abilityTree.getUpgradeBranches().clear();
+        this.spec.setUpgradeBranches(this);
+        DatabaseManager.getPlayer(uuid, this.abilityTree::resetAutoUpgradeProfile);
     }
 
     public WarlordsPlayer(
@@ -177,22 +156,45 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         }
     }
 
+    public void stun() {
+        STUNNED_PLAYERS.add(uuid);
+    }
+
+    public void unstun() {
+        STUNNED_PLAYERS.remove(uuid);
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        if (STUNNED_PLAYERS.contains(e.getPlayer().getUniqueId())) {
+            if (
+                    (e.getFrom().getX() != e.getTo().getX() ||
+                            e.getFrom().getZ() != e.getTo().getZ()) &&
+                            !(e instanceof PlayerTeleportEvent)
+            ) {
+                e.getPlayer().teleport(e.getFrom());
+            }
+        }
+    }
+
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = spawnSimpleJimmy(loc, inv);
-        jimmy.setCustomName(this.getSpec()
-                .getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + Math.round(
-                this.getHealth()) + "❤"); // TODO add level and class into the name of this jimmy
+        jimmy.customName(Component.empty()
+                                  .append(getSpec().getClassNameShortWithBrackets())
+                                  .append(Component.text(" "))
+                                  .append(this.getColoredName())
+                                  .append(Component.text(" " + Math.round(this.getHealth()) + "❤", NamedTextColor.RED))); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
-                .setValue(0);
-        ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE)
-                .setValue(0);
+        AttributeInstance attribute = jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+        if (attribute != null) {
+            attribute.setBaseValue(0);
+        }
+        attribute = jimmy.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+        if (attribute != null) {
+            attribute.setBaseValue(0);
+        }
         //prevents jimmy from moving
-        net.minecraft.server.v1_8_R3.Entity nmsEn = ((CraftEntity) jimmy).getHandle();
-        NBTTagCompound compound = new NBTTagCompound();
-        nmsEn.c(compound);
-        compound.setByte("NoAI", (byte) 1);
-        nmsEn.f(compound);
+        jimmy.setAI(false);
         if (isDead()) {
             jimmy.remove();
         }
@@ -227,23 +229,8 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     @Override
-    public void updateHealth() {
-        if (getEntity() instanceof Zombie) {
-            if (isDead()) {
-                getEntity().setCustomName("");
-            } else {
-                String oldName = getEntity().getCustomName();
-                String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + Math.round(
-                        getHealth()) + "❤";
-                getEntity().setCustomName(newName);
-            }
-        }
-    }
-
-    @Override
     public void updateInventory(boolean closeInventory) {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
 
             player.getInventory().clear();
 
@@ -255,6 +242,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
             }
             updateItems();
             resetPlayerAddons();
+            ArmorManager.resetArmor(player, this);
 
             if (closeInventory) {
                 player.closeInventory();
@@ -283,8 +271,7 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     public void resetPlayerAddons() {
-        if (getEntity() instanceof Player) {
-            Player player = (Player) getEntity();
+        if (getEntity() instanceof Player player) {
             PlayerInventory playerInventory = player.getInventory();
 
             //Soulbinding weapon enchant
@@ -306,17 +293,11 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
                 playerInventory.remove(UndyingArmy.BONE);
             }
 
-            //Arcane shield absorption hearts
-            List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
-                    .collect(Collectors.toList());
-            if (!arcaneShields.isEmpty()) {
-                ArcaneShield arcaneShield = arcaneShields.get(0);
-                ((CraftPlayer) player).getHandle()
-                        .setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (getMaxHealth() * .5) * 20));
-            } else {
-                ((CraftPlayer) player).getHandle().setAbsorptionHearts(0);
-            }
+            double totalShieldHealth = new CooldownFilter<>(this, RegularCooldown.class)
+                    .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                    .mapToDouble(Shield::getShieldHealth)
+                    .sum();
+            ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
         }
     }
 
@@ -326,10 +307,11 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
         if (applied) {
             if (potionEffect.getType() == PotionEffectType.INVISIBILITY) {
                 PlayerFilterGeneric.playingGameWarlordsNPCs(game)
-                        .stream()
-                        .map(WarlordsNPC::getMob)
-                        .filter(abstractMob -> abstractMob != null && abstractMob.getTarget() != null && abstractMob.getTarget().getUniqueID().equals(uuid))
-                        .forEach(AbstractMob::removeTarget);
+                                   .stream()
+                                   .map(WarlordsNPC::getMob)
+                                   .filter(Objects::nonNull)
+                                   .filter(abstractMob -> abstractMob.getTarget() != null && abstractMob.getTarget().getUUID().equals(uuid))
+                                   .forEach(AbstractMob::removeTarget);
             }
         }
         return applied;
@@ -341,9 +323,40 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     @Override
+    public void runEveryTick() {
+        super.runEveryTick();
+        int regenTickTimer = getRegenTickTimer();
+        setRegenTickTimer(regenTickTimer - 1);
+        if (regenTickTimer == 0) {
+            getHitBy().clear();
+        }
+        //negative regen tick timer means the player is regenning, cant check per second because not fine enough
+        if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
+            int healthToAdd = (int) (getMaxHealth() / 55.3);
+            setHealth(Math.max(getHealth(), Math.min(getHealth() + healthToAdd, getMaxHealth())));
+        }
+    }
+
+    @Override
+    public void updateHealth() {
+        if (getEntity() instanceof Zombie) {
+            if (isDead()) {
+                getEntity().customName(Component.text(""));
+            } else {
+                getEntity().customName(Component.textOfChildren(
+                        Component.text("[", NamedTextColor.DARK_GRAY)
+                                 .append(Component.text(getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                 .append(Component.text("] ")),
+                        getColoredName(),
+                        Component.text(" " + Math.round(getHealth()) + "❤", NamedTextColor.RED)
+                ));
+            }
+        }
+    }
+
+    @Override
     public void updateEntity() {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             player.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
             player.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
             player.setWalkSpeed(walkSpeed);
@@ -388,27 +401,13 @@ public final class WarlordsPlayer extends WarlordsEntity implements Listener {
             } else {
                 return weapon.getSelectedWeaponSkin().getItem();
             }
-        } else if (ability == spec.getRed()) {
-            return RED_ABILITY;
-        } else if (ability == spec.getPurple()) {
-            return PURPLE_ABILITY;
-        } else if (ability == spec.getBlue()) {
-            return BLUE_ABILITY;
-        } else if (ability == spec.getOrange()) {
-            return ORANGE_ABILITY;
+        } else {
+            return ability.getAbilityIcon();
         }
-        return null;
     }
-
 
     public AbilityTree getAbilityTree() {
         return abilityTree;
-    }
-
-    public void resetAbilityTree() {
-        this.abilityTree.getUpgradeBranches().clear();
-        this.spec.setUpgradeBranches(this);
-        DatabaseManager.getPlayer(uuid, this.abilityTree::resetAutoUpgradeProfile);
     }
 
     public AbstractWeapon getWeapon() {

@@ -7,12 +7,12 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.tag.GuildLogTagNameColor;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
-import org.bukkit.ChatColor;
+import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 
 import java.util.Objects;
 
@@ -29,16 +29,17 @@ public class GuildTagMenu {
         int column = 1;
         for (Colors color : GuildTag.COLORS) {
             ItemBuilder itemBuilder = new ItemBuilder(color.wool)
-                    .name(color.chatColor + "[" + guildTag.getColoredName() + color.chatColor + "]");
-            if (Objects.equals(color.chatColor.toString(), guildTag.getBracketColor())) {
+                    .name(Component.text("[", color.textColor)
+                                   .append(guildTag.getColoredName())
+                                   .append(Component.text("]")));
+            if (Objects.equals(color.textColor.toString(), guildTag.getBracketColor())) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
             menu.setItem(column, row,
                     itemBuilder.get(),
                     (m, e) -> {
-                        guild.log(new GuildLogTagBracketColor(player.getUniqueId(), guildTag.getBracketColor(), color.chatColor.toString()));
-                        guildTag.setBracketColor(color.chatColor.toString());
+                        guild.log(new GuildLogTagBracketColor(player.getUniqueId(), guildTag.getBracketColor(), color.textColor.toString()));
+                        guildTag.setBracketColor(color.textColor);
                         guild.queueUpdate();
                         openGuildTagMenu(guild, player);
                     }
@@ -50,16 +51,17 @@ public class GuildTagMenu {
         }
 
         menu.setItem(4, 2,
-                new ItemBuilder(Material.SIGN)
-                        .name(ChatColor.GREEN + "Change Tag Name")
+                new ItemBuilder(Material.OAK_SIGN)
+                        .name(Component.text("Change Tag Name", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
-                    SignGUI.open(player, new String[]{"", "Enter Tag Name", "Max 6", "Characters"},
-                            (p, lines) -> {
+                    new SignGUI()
+                            .lines("", "Enter Tag Name", "Max 6", "Characters")
+                            .onFinish((p, lines) -> {
                                 String newTagName = lines[0];
                                 player.performCommand("guild tag " + newTagName);
-                            }
-                    );
+                                return null;
+                            }).open(player);
                 }
         );
 
@@ -67,16 +69,17 @@ public class GuildTagMenu {
         column = 1;
         for (Colors color : GuildTag.COLORS) {
             ItemBuilder itemBuilder = new ItemBuilder(color.wool)
-                    .name(guildTag.getBracketColor() + "[" + color.chatColor + guildTag.getName() + guildTag.getBracketColor() + "]");
-            if (Objects.equals(color.chatColor.toString(), guildTag.getNameColor())) {
+                    .name(Component.text("[", guildTag.getBracketTextColor())
+                                   .append(Component.text(guildTag.getName(), color.textColor))
+                                   .append(Component.text("]")));
+            if (Objects.equals(color.textColor.toString(), guildTag.getNameColor())) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
             menu.setItem(column, row,
                     itemBuilder.get(),
                     (m, e) -> {
-                        guild.log(new GuildLogTagNameColor(player.getUniqueId(), guildTag.getNameColor(), color.chatColor.toString()));
-                        guildTag.setNameColor(color.chatColor.toString());
+                        guild.log(new GuildLogTagNameColor(player.getUniqueId(), guildTag.getNameColor(), color.textColor.toString()));
+                        guildTag.setNameColor(color.textColor);
                         guild.queueUpdate();
                         openGuildTagMenu(guild, player);
                     }

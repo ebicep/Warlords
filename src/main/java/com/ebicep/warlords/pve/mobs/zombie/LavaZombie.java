@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -44,13 +43,13 @@ public class LavaZombie extends AbstractZombie implements EliteMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 40 == 0) {
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.FIRE, 2, 0.5f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_FIRE_AMBIENT, 2, 0.5f);
         }
     }
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.addKnockback(name, attacker.getLocation(), receiver, 1, 0.15);
+
     }
 
     @Override
@@ -61,11 +60,15 @@ public class LavaZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.ORANGE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.ZOMBIE_DEATH, 2, 0.4f);
+        EffectUtils.playFirework(
+                deathLocation,
+                FireworkEffect.builder()
+                   .withColor(Color.ORANGE)
+                   .with(FireworkEffect.Type.BURST)
+                   .withTrail()
+                   .build(),
+                1
+        );
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
 }

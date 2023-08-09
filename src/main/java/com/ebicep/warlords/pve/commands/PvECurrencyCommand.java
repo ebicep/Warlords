@@ -8,14 +8,14 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
 
 @CommandAlias("pvecurrency")
 @CommandPermission("group.administrator")
-@Conditions("database:player")
 public class PvECurrencyCommand extends BaseCommand {
 
     @Subcommand("add")
@@ -25,9 +25,8 @@ public class PvECurrencyCommand extends BaseCommand {
             databasePlayer.getPveStats().addCurrency(currency, amount);
         });
         ChatChannels.playerSendMessage(player,
-                ChatColor.GREEN + "Gave yourself " + ChatColor.YELLOW + amount + " " + ChatColor.LIGHT_PURPLE + currency.name + (amount != 1 ? "s" : ""),
                 ChatChannels.DEBUG,
-                true
+                Component.text("Gave yourself ", NamedTextColor.GREEN).append(currency.getCostColoredName(amount))
         );
     }
 

@@ -1,7 +1,8 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.roles;
 
 import com.ebicep.warlords.guilds.logs.types.oneplayer.AbstractGuildLogOnePlayer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.UUID;
 
@@ -15,7 +16,16 @@ public abstract class AbstractGuildLogRole extends AbstractGuildLogOnePlayer {
     }
 
     @Override
-    public String getLog() {
-        return ChatColor.GRAY + prepend() + " " + getSenderName() + " " + ChatColor.YELLOW + getAction() + " " + ChatColor.GREEN + role + " " + ChatColor.GRAY + append();
+    public Component getLog() {
+        return Component.empty().color(NamedTextColor.GRAY)
+                        .append(prepend())
+                        .append(Component.space())
+                        .append(getSenderName())
+                        .append(Component.space())
+                        .append(Component.empty().color(NamedTextColor.YELLOW).append(getAction()))
+                        .append(Component.space())
+                        .append(Component.text(role, NamedTextColor.GREEN))
+                        .append(Component.space())
+                        .append(append());
     }
 }

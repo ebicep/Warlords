@@ -60,7 +60,7 @@ public interface LobbyLocationMarker extends LocationMarker {
                     }
                 },
                 (a, b) -> a.getA() == null ? b : a,
-                (a) -> a.getA()
+                Pair::getA
         ), Objects::nonNull);
     }
     
@@ -72,8 +72,8 @@ public interface LobbyLocationMarker extends LocationMarker {
         }
         return location;
     }
-    
-    public default Option asOption() {
+
+    default Option asOption() {
         return new MarkerOption(this);
     }
 }

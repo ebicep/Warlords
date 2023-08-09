@@ -1,20 +1,20 @@
 package com.ebicep.warlords.game.option.pvp;
 
-import co.aikar.commands.CommandIssuer;
-import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,35 +28,14 @@ import java.util.UUID;
 
 public class HorseOption implements Option, Listener {
 
-    public static final ItemStack HORSE_ITEM = new ItemBuilder(Material.GOLD_BARDING)
-            .name(ChatColor.GREEN + "Mount " + ChatColor.GRAY + "- §eRight-Click!")
-            .lore(ChatColor.GRAY + "Cooldown: §b15 seconds",
-                    "",
-                    ChatColor.GRAY + "Call your steed to assists you in battle"
+    public static final ItemStack HORSE_ITEM = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
+            .name(Component.text("Mount ", NamedTextColor.GREEN).append(Component.text("- Right-Click!", NamedTextColor.GRAY)))
+            .lore(Component.text("Cooldown: ", NamedTextColor.GRAY)
+                           .append(Component.text("15 seconds", NamedTextColor.AQUA)),
+                    Component.empty(),
+                    Component.text("Call your steed to assists you in battle", NamedTextColor.GRAY)
             )
             .get();
-
-    public static CustomHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
-        if (!(warlordsEntity instanceof WarlordsPlayer)) {
-            return null;
-        }
-        for (Option option : warlordsEntity.getGame().getOptions()) {
-            if (option instanceof HorseOption) {
-                HashMap<UUID, CustomHorse> horses = ((HorseOption) option).getPlayerHorses();
-                CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(),
-                        k -> new CustomHorse(((CraftWorld) warlordsEntity.getWorld()).getHandle(), warlordsEntity)
-                );
-                customHorse.spawn();
-                return customHorse;
-            }
-        }
-        return null;
-    }
-
-    public HashMap<UUID, CustomHorse> getPlayerHorses() {
-        return playerHorses;
-    }
-
     private final HashMap<UUID, CustomHorse> playerHorses = new HashMap<>();
 
     @Override
@@ -82,7 +61,7 @@ public class HorseOption implements Option, Listener {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
-            playerHorses.put(player.getUuid(), new CustomHorse(((CraftWorld) player.getWorld()).getHandle(), player));
+            playerHorses.put(player.getUuid(), new CustomHorse(player));
         }
     }
 
@@ -90,7 +69,7 @@ public class HorseOption implements Option, Listener {
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         if (warlordsPlayer.getHorseCooldown() > 0) {
             player.getInventory()
-                  .setItem(7, new ItemStack(Material.IRON_BARDING, (int) warlordsPlayer.getHorseCooldown() + 1));
+                  .setItem(7, new ItemStack(Material.IRON_HORSE_ARMOR, (int) warlordsPlayer.getHorseCooldown() + 1));
         } else {
             player.getInventory().setItem(7, HORSE_ITEM);
         }
@@ -104,39 +83,93 @@ public class HorseOption implements Option, Listener {
         WarlordsEntity wp = Warlords.getPlayer(player);
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
-            ItemStack itemHeld = player.getItemInHand();
+            ItemStack itemHeld = player.getEquipment().getItemInMainHand();
             int heldItemSlot = player.getInventory().getHeldItemSlot();
             if (wp == null || !wp.isAlive() || wp.getGame().isFrozen()) {
                 return;
             }
-            if (itemHeld.getType() != Material.GOLD_BARDING) {
+            if (itemHeld.getType() != Material.GOLDEN_HORSE_ARMOR) {
                 return;
             }
             if (heldItemSlot != 7 || player.getVehicle() != null || !(wp.getHorseCooldown() <= 0)) {
                 return;
             }
-            if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
-                player.sendMessage(ChatColor.RED + "You can't mount here!");
+            if (!LocationUtils.isMountableZone(location) || LocationUtils.blocksInFrontOfLocation(location)) {
+                player.sendMessage(Component.text("You can't mount here!", NamedTextColor.RED));
                 return;
             }
-            double distance = Utils.getDistance(player, .25);
+            double distance = LocationUtils.getDistance(player, .25);
             if (distance >= 2) {
-                player.sendMessage(ChatColor.RED + "You can't mount in the air!");
+                player.sendMessage(Component.text("You can't mount in the air!", NamedTextColor.RED));
             } else if (wp.getCarriedFlag() != null) {
-                player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
+                player.sendMessage(Component.text("You can't mount while holding the flag!", NamedTextColor.RED));
             } else {
                 player.playSound(player.getLocation(), "mountup", 1, 1);
-                if (CustomHorse.record.contains(player.getUniqueId())) {
-                    ChatChannels.sendDebugMessage((CommandIssuer) null, player.getUniqueId() + " - " + player.getName() + " - " + playerHorses.get(player.getUniqueId()), false);
-                }
                 CustomHorse customHorse = activateHorseForPlayer(wp);
-                if (CustomHorse.record.contains(player.getUniqueId())) {
-                    ChatChannels.sendDebugMessage((CommandIssuer) null, player.getUniqueId() + " - " + player.getName() + " - " + customHorse, false);
-                }
                 if (!wp.isDisableCooldowns()) {
                     wp.setHorseCooldown((float) (customHorse.getCooldown() * wp.getCooldownModifier()));
                 }
             }
+        }
+    }
+
+    public static CustomHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
+        if (!(warlordsEntity instanceof WarlordsPlayer)) {
+            return null;
+        }
+        for (Option option : warlordsEntity.getGame().getOptions()) {
+            if (option instanceof HorseOption) {
+                HashMap<UUID, CustomHorse> horses = ((HorseOption) option).getPlayerHorses();
+                CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new CustomHorse(warlordsEntity));
+                customHorse.spawn();
+                return customHorse;
+            }
+        }
+        return null;
+    }
+
+    public HashMap<UUID, CustomHorse> getPlayerHorses() {
+        return playerHorses;
+    }
+
+    public static class CustomHorse {
+
+        private final WarlordsEntity warlordsEntityOwner;
+        private final int cooldown = 15;
+        private final float speed = .3f;
+
+        public CustomHorse(WarlordsEntity warlordsEntityOwner) {
+            this.warlordsEntityOwner = warlordsEntityOwner;
+        }
+
+        public void spawn() {
+            if (!(warlordsEntityOwner.getEntity() instanceof Player player)) {
+                return;
+            }
+            Horse h = player.getWorld().spawn(player.getLocation(), Horse.class, false, horse -> {
+                horse.setTamed(true);
+                horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                horse.setOwner(player);
+                horse.setJumpStrength(0);
+                horse.setColor(Horse.Color.BROWN);
+                horse.setStyle(Horse.Style.NONE);
+                horse.setAdult();
+                AttributeInstance attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+                if (attribute == null) {
+                    horse.registerAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+                    attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+                }
+                attribute.setBaseValue(speed);
+            });
+            h.addPassenger(player); // not sure if including this in function above will cause issues
+        }
+
+        public WarlordsEntity getWarlordsOwner() {
+            return warlordsEntityOwner;
+        }
+
+        public int getCooldown() {
+            return cooldown;
         }
     }
 }

@@ -57,8 +57,7 @@ public class LilithsClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
                     return;
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-                if (warlordsEntity instanceof WarlordsNPC) {
-                    WarlordsNPC warlordsNPC = (WarlordsNPC) warlordsEntity;
+                if (warlordsEntity instanceof WarlordsNPC warlordsNPC) {
                     if (warlordsNPC.getMobTier() == MobTier.BOSS) {
                         return;
                     }
@@ -67,8 +66,8 @@ public class LilithsClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
                     }
                     event.setMin(warlordsEntity.getHealth() + 1);
                     event.setMax(warlordsEntity.getHealth() + 1);
-                    event.setIgnoreReduction(true);
                     event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
+                    event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
                 }
             }
 

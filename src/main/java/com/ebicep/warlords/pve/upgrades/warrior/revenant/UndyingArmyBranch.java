@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.revenant;
 
-import com.ebicep.warlords.abilties.UndyingArmy;
+import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -90,7 +90,7 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
                 () -> {
                     ability.setRadius(ability.getRadius() * 2);
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

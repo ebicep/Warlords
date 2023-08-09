@@ -70,17 +70,14 @@ public class GuildExperienceUtils {
         }
 
         if (experienceGainOption.getGuildExpPer() != 0) {
-            if (pveOption instanceof WaveDefenseOption) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+            if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
                 expSummary.put("Waves Cleared", experienceGainOption.getGuildExpPer() * waveDefenseOption.getWavesCleared());
-            } else if (pveOption instanceof OnslaughtOption) {
-                OnslaughtOption onslaughtOption = (OnslaughtOption) pveOption;
+            } else if (pveOption instanceof OnslaughtOption onslaughtOption) {
                 expSummary.put("Minutes Elapsed", experienceGainOption.getGuildExpPer() * onslaughtOption.getTicksElapsed() / 20 / 60);
             }
         }
         if (experienceGainOption.getGuildExpGameWinBonus() != 0) {
-            if (pveOption instanceof WaveDefenseOption) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) pveOption;
+            if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
                 int maxWaves = waveDefenseOption.getDifficulty().getMaxWaves();
                 int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), maxWaves);
                 if (experienceGainOption.getGuildExpGameWinBonus() != 0 && wavesCleared == maxWaves) {

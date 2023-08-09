@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Spendable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,7 +10,7 @@ public enum MobDrops implements Spendable {
 
     ZENITH_STAR(
             "Zenith Star",
-            ChatColor.WHITE,
+            NamedTextColor.WHITE,
             new ItemStack(Material.NETHER_STAR)
     ),
 
@@ -19,12 +19,12 @@ public enum MobDrops implements Spendable {
     public static final MobDrops[] VALUES = values();
 
     public final String name;
-    public final ChatColor chatColor;
+    public final NamedTextColor textColor;
     public final ItemStack item;
 
-    MobDrops(String name, ChatColor chatColor, ItemStack item) {
+    MobDrops(String name, NamedTextColor textColor, ItemStack item) {
         this.name = name;
-        this.chatColor = chatColor;
+        this.textColor = textColor;
         this.item = item;
     }
 
@@ -34,8 +34,8 @@ public enum MobDrops implements Spendable {
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return chatColor;
+    public NamedTextColor getTextColor() {
+        return textColor;
     }
 
     @Override

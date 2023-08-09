@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WarlordsGiveRespawnEvent extends AbstractWarlordsEntityEvent {
@@ -23,6 +24,7 @@ public class WarlordsGiveRespawnEvent extends AbstractWarlordsEntityEvent {
         return respawnTimer;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

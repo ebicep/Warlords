@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 
-import com.ebicep.warlords.abilties.FrostBolt;
+import com.ebicep.warlords.abilities.FrostBolt;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -96,7 +96,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
                 "Directly-hit enemies shatter after 1.5 seconds, dealing 409 - 554 damage to all nearby enemies and slow them by 50% for 2 seconds.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

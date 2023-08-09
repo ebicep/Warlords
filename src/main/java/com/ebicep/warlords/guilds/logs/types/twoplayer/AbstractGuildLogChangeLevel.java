@@ -1,6 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.twoplayer;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.UUID;
@@ -23,8 +24,13 @@ public abstract class AbstractGuildLogChangeLevel extends AbstractGuildLogTwoPla
     }
 
     @Override
-    public String append() {
-        return "from " + ChatColor.GREEN + before + "(" + oldLevel + ")" + ChatColor.GRAY + " to " + ChatColor.GREEN + after + "(" + newLevel + ")";
+    public Component append() {
+        return Component.textOfChildren(
+                Component.text("from "),
+                Component.text(before + "(" + oldLevel + ")", NamedTextColor.GREEN),
+                Component.text(" to ", NamedTextColor.GRAY),
+                Component.text(after + "(" + newLevel + ")", NamedTextColor.GREEN)
+        );
     }
 
 }

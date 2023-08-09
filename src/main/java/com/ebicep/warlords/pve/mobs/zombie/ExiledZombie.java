@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -59,11 +58,11 @@ public class ExiledZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+        EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)
                                                                        .with(FireworkEffect.Type.BURST)
                                                                        .withTrail()
                                                                        .build());
-        Utils.playGlobalSound(deathLocation, Sound.ZOMBIE_DEATH, 2, 0.4f);
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
 }

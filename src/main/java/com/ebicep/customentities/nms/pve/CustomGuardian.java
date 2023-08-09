@@ -1,14 +1,18 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityGuardian;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.Guardian;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 
-public class CustomGuardian extends EntityGuardian implements CustomEntity<CustomGuardian> {
+import javax.annotation.Nonnull;
 
-    public CustomGuardian(World world) {
-        super(world);
+public class CustomGuardian extends Guardian implements CustomEntity<CustomGuardian> {
+
+    public CustomGuardian(ServerLevel serverLevel) {
+        super(EntityType.GUARDIAN, serverLevel);
     }
 
 
@@ -24,15 +28,22 @@ public class CustomGuardian extends EntityGuardian implements CustomEntity<Custo
     private boolean stunned;
 
     @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     @Override
     public void setStunned(boolean stunned) {
         this.stunned = stunned;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
+    public DisguiseType getDisguiseType() {
+        return DisguiseType.GUARDIAN;
     }
 }

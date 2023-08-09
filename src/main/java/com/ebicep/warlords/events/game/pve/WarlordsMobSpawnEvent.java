@@ -5,6 +5,8 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 public class WarlordsMobSpawnEvent extends AbstractWarlordsGameEvent {
     private static final HandlerList handlers = new HandlerList();
     private final AbstractMob<?> mob;
@@ -18,6 +20,7 @@ public class WarlordsMobSpawnEvent extends AbstractWarlordsGameEvent {
         return mob;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

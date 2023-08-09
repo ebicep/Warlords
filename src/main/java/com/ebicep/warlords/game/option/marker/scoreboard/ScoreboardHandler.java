@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.marker.scoreboard;
 
 import com.ebicep.warlords.game.option.marker.GameMarker;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import net.kyori.adventure.text.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +27,7 @@ public interface ScoreboardHandler extends GameMarker {
      * @return The new scoreboard lines
      */
     @Nonnull
-    List<String> computeLines(@Nullable WarlordsPlayer player);
+    List<Component> computeLines(@Nullable WarlordsPlayer player);
 
     /**
      * Registers an onchange handler for the scoreboard, scoreboard should call

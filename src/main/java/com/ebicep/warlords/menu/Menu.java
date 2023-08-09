@@ -2,8 +2,9 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -28,21 +30,27 @@ public class Menu extends AbstractMenuBase {
     public static final BiConsumer<Menu, InventoryClickEvent> ACTION_DO_NOTHING = (m, e) -> {
     };
     public static final ItemStack MENU_CLOSE = new ItemBuilder(Material.BARRIER)
-            .name(ChatColor.RED + "Close")
+            .name(Component.text("Close", NamedTextColor.RED))
             .get();
     public static final ItemStack MENU_BACK = new ItemBuilder(Material.ARROW)
-            .name(ChatColor.GREEN + "Back")
+            .name(Component.text("Back", NamedTextColor.GREEN))
             .get();
-    public static final ItemStack GRAY_EMPTY_PANE = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-            .name(" ")
+    public static final ItemStack GRAY_EMPTY_PANE = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
+            .name(Component.text(" "))
+            .get();
+
+    public static final List<Component> GO_BACK = Collections.singletonList(Component.text("Go Back", NamedTextColor.GRAY));
+    public static final Component DENY = Component.text("Deny", NamedTextColor.RED);
+    public static ItemStack CLAIM_ALL = new ItemBuilder(Material.GOLD_BLOCK)
+            .name(Component.text("Click to claim all rewards!", NamedTextColor.GREEN))
             .get();
 
     public static void openConfirmationMenu(
             Player player,
             String title,
             int rows,
-            List<String> confirmLore,
-            List<String> cancelLore,
+            List<Component> confirmLore,
+            List<Component> cancelLore,
             BiConsumer<Menu, InventoryClickEvent> onConfirm,
             BiConsumer<Menu, InventoryClickEvent> onCancel,
             Consumer<Menu> editMenu
@@ -51,9 +59,9 @@ public class Menu extends AbstractMenuBase {
                 player,
                 title,
                 rows,
-                ChatColor.GREEN + "Confirm",
+                Component.text("Confirm", NamedTextColor.GREEN),
                 confirmLore,
-                ChatColor.RED + "Deny",
+                Component.text("Deny", NamedTextColor.RED),
                 cancelLore,
                 onConfirm,
                 onCancel,
@@ -65,10 +73,10 @@ public class Menu extends AbstractMenuBase {
             Player player,
             String title,
             int rows,
-            String confirmName,
-            List<String> confirmLore,
-            String cancelName,
-            List<String> cancelLore,
+            Component confirmName,
+            List<Component> confirmLore,
+            Component cancelName,
+            List<Component> cancelLore,
             BiConsumer<Menu, InventoryClickEvent> onConfirm,
             BiConsumer<Menu, InventoryClickEvent> onCancel,
             Consumer<Menu> editMenu
@@ -76,7 +84,7 @@ public class Menu extends AbstractMenuBase {
         Menu menu = new Menu(title, 9 * rows);
 
         menu.setItem(2, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
+                new ItemBuilder(Material.GREEN_CONCRETE)
                         .name(confirmName)
                         .lore(confirmLore)
                         .get(),
@@ -84,7 +92,7 @@ public class Menu extends AbstractMenuBase {
         );
 
         menu.setItem(6, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
+                new ItemBuilder(Material.RED_CONCRETE)
                         .name(cancelName)
                         .lore(cancelLore)
                         .get(),

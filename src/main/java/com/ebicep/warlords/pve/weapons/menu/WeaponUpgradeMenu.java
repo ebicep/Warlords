@@ -6,9 +6,9 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -40,9 +40,9 @@ public class WeaponUpgradeMenu {
         );
 
         menu.setItem(6, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
-                        .name(ChatColor.RED + "Deny")
-                        .lore(ChatColor.GRAY + "Go back.")
+                new ItemBuilder(Material.RED_CONCRETE)
+                        .name(Menu.DENY)
+                        .lore(WeaponManagerMenu.GO_BACK)
                         .get(),
                 (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );
@@ -62,12 +62,10 @@ public class WeaponUpgradeMenu {
             weapon.upgrade();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.spigot().sendMessage(
-                    new ComponentBuilder(ChatColor.GRAY + "Upgraded Weapon: ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .create()
+            player.sendMessage(Component.text("Upgraded Weapon: ", NamedTextColor.GRAY)
+                                        .append(weapon.getHoverComponent(false))
             );
-            player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }
 
     }

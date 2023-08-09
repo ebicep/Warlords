@@ -63,6 +63,6 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL)
                                                                        .withTrail()
                                                                        .build());
-        Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_DEATH, 2, 0.5f);
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ENDERMAN_DEATH, 2, 0.5f);
     }
 }

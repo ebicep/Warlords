@@ -52,18 +52,10 @@ public class TournamentStats {
             this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             switch (gameMode) {
-                case CAPTURE_THE_FLAG:
-                    this.ctfStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-                    break;
-                case TEAM_DEATHMATCH:
-                    this.tdmStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-                    break;
-                case INTERCEPTION:
-                    this.interceptionStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-                    break;
-                case DUEL:
-                    this.duelStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-                    break;
+                case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+                case TEAM_DEATHMATCH -> this.tdmStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+                case INTERCEPTION -> this.interceptionStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+                case DUEL -> this.duelStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             }
         }
 

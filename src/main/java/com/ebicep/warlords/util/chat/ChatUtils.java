@@ -1,69 +1,60 @@
 package com.ebicep.warlords.util.chat;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChatUtils {
 
-    public static final TextComponent SPACER = new TextComponent(ChatColor.GRAY + " - ");
+    public static final Component SPACER = Component.text(" - ", NamedTextColor.GRAY);
+    private static final int CENTER_PX = 150;
 
-    private static final int CENTER_PX = 164;
-
-    public static String addStrikeThrough(String message) {
-        for (ChatColor color : ChatColor.values()) {
-            message = message.replace(color.toString(), color.toString() + ChatColor.STRIKETHROUGH);
-        }
-        return message;
-    }
-
-    public static void sendTitleToGamePlayers(Game game, String title, String subtitle) {
-        for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        title,
-                        subtitle,
-                        20, 30, 20
-                );
-            }
-        }
+    public static void sendTitleToGamePlayers(Game game, Component title, Component subtitle) {
+        sendTitleToGamePlayers(game, Title.title(
+                title,
+                subtitle,
+                Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
+        ));
     }
 
     public static void sendTitleToGamePlayers(
             Game game,
-            String title,
-            String subtitle,
+            Title title
+    ) {
+        game.onlinePlayers().forEach(playerTeamEntry -> {
+            playerTeamEntry.getKey().showTitle(title);
+        });
+    }
+
+    public static void sendTitleToGamePlayers(
+            Game game,
+            Component title,
+            Component subtitle,
             int fadeIn,
             int stay,
             int fadeOut
     ) {
-        for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
+        sendTitleToGamePlayers(game,
+                Title.title(
                         title,
                         subtitle,
-                        fadeIn, stay, fadeOut
-                );
-            }
-        }
+                        Title.Times.times(Ticks.duration(fadeIn), Ticks.duration(stay), Ticks.duration(fadeOut))
+                )
+        );
     }
 
-    public static void sendMessage(Player player, boolean centered, String message) {
+    public static void sendMessage(Player player, boolean centered, Component message) {
         if (centered) {
             sendCenteredMessage(player, message);
         } else {
@@ -71,131 +62,61 @@ public class ChatUtils {
         }
     }
 
-    public static void sendMessageToPlayer(WarlordsPlayer player, String message, ChatColor borderColor, boolean centered) {
+    public static void sendMessageToPlayer(WarlordsPlayer player, Component message, NamedTextColor borderColor, boolean centered) {
         if (player.getEntity() instanceof Player) {
             sendMessageToPlayer((Player) player.getEntity(), message, borderColor, centered);
         }
     }
 
-    public static void sendMessageToPlayer(Player player, String message, ChatColor borderColor, boolean centered) {
+    public static void sendMessageToPlayer(Player player, Component message, NamedTextColor borderColor, boolean centered) {
         if (centered) {
             if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+                sendCenteredMessage(player, Component.text("------------------------------------------", borderColor, TextDecoration.BOLD));
             }
-            String[] messages = message.split("\n");
-            for (String s : messages) {
-                sendCenteredMessage(player, s);
-            }
+            sendCenteredMessage(player, message);
             if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+                sendCenteredMessage(player, Component.text("------------------------------------------", borderColor, TextDecoration.BOLD));
             }
         } else {
             if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+                player.sendMessage(Component.text("------------------------------------------", borderColor, TextDecoration.BOLD));
             }
             player.sendMessage(message);
             if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
+                player.sendMessage(Component.text("------------------------------------------", borderColor, TextDecoration.BOLD));
             }
         }
     }
 
-    public static void sendMessageToPlayer(Player player, List<TextComponent> textComponents, ChatColor borderColor, boolean centered) {
-        if (centered) {
-            if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            sendCenteredMessageWithEvents(player, textComponents);
-            if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-        } else {
-            if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            sendCenteredMessageWithEvents(player, textComponents);
-            if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-        }
-    }
-
-    public static void sendMessageToPlayer(Player player, BaseComponent[] textComponents, ChatColor borderColor, boolean centered) {
-        if (centered) {
-            if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            sendCenteredMessageWithEvents(player, textComponents);
-            if (borderColor != null) {
-                sendCenteredMessage(player, borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-        } else {
-            if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-            sendCenteredMessageWithEvents(player, textComponents);
-            if (borderColor != null) {
-                player.sendMessage(borderColor.toString() + ChatColor.BOLD + "------------------------------------------");
-            }
-        }
-    }
-
-    public static void sendCenteredMessage(Player player, String message) {
-        if (message == null || message.isEmpty()) {
-            player.sendMessage("");
+    public static void sendCenteredMessage(Player player, Component component) {
+        if (component == null) {
             return;
         }
-        if (message.contains("\n")) {
-            String[] messages = message.split("\n");
-            for (String s : messages) {
-                sendCenteredMessage(player, s);
+        if (component.children().contains(Component.newline())) {
+            Style parentStyle = component.style();
+            List<Component> children = new ArrayList<>(component.children());
+            children.add(0, component.children(new ArrayList<>()));
+            Component toSend = Component.empty().style(parentStyle);
+            for (int i = 0; i < children.size(); i++) {
+                Component child = children.get(i);
+                if (child.equals(Component.newline())) {
+                    sendCenteredMessage(player, toSend);
+                    if (i == children.size() - 1) {
+                        break;
+                    }
+                    toSend = children.get(i + 1).applyFallbackStyle(parentStyle);
+                    i++;
+                } else {
+                    toSend = toSend.append(child);
+                }
             }
+            sendCenteredMessage(player, toSend);
             return;
         }
-        message = ChatColor.translateAlternateColorCodes('&', message);
-
+        String message = LegacyComponentSerializer.legacySection().serialize(component);
         int messagePxSize = 0;
         boolean previousCode = false;
         boolean isBold = false;
-
-        for (char c : message.toCharArray()) {
-            if (c == '§') {
-                previousCode = true;
-            } else if (previousCode) {
-                previousCode = false;
-                isBold = c == 'l' || c == 'L';
-            } else {
-                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
-                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
-                messagePxSize++;
-            }
-        }
-
-        int halvedMessageSize = messagePxSize / 2;
-        int toCompensate = CENTER_PX - halvedMessageSize;
-        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
-        int compensated = 0;
-        StringBuilder sb = new StringBuilder();
-        while (compensated < toCompensate) {
-            sb.append(" ");
-            compensated += spaceLength;
-        }
-        player.sendMessage(sb + message);
-    }
-
-    public static void sendCenteredMessageWithEvents(Player player, List<TextComponent> textComponents) {
-        if (textComponents == null || textComponents.isEmpty()) {
-            return;
-        }
-        String message = "";
-        for (TextComponent textComponent : textComponents) {
-            message += textComponent.getText();
-        }
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        int messagePxSize = 0;
-        boolean previousCode = false;
-        boolean isBold = false;
-
         for (char c : message.toCharArray()) {
             if (c == '§') {
                 previousCode = true;
@@ -217,109 +138,67 @@ public class ChatUtils {
             sb.append(" ");
             compensated += spaceLength;
         }
-        ComponentBuilder componentBuilder = new ComponentBuilder(sb.toString());
-        for (TextComponent textComponent : textComponents) {
-            componentBuilder.append(textComponent.getText());
-            componentBuilder.event(textComponent.getHoverEvent());
-            componentBuilder.event(textComponent.getClickEvent());
-        }
-        player.spigot().sendMessage(componentBuilder.create());
+        player.sendMessage(Component.text(sb.toString()).append(component));
     }
 
-    public static void sendCenteredMessageWithEvents(Player player, BaseComponent[] baseComponents) {
-        if (baseComponents == null || baseComponents.length == 0) {
-            return;
-        }
-        String message = "";
-        for (BaseComponent baseComponent : baseComponents) {
-            if (baseComponent instanceof TextComponent) {
-                message += ((TextComponent) baseComponent).getText();
+    public enum MessageType {
+
+        WARLORDS("Warlords", NamedTextColor.GREEN, true) {
+            @Override
+            public void sendMessage(String message) {
+                if (isEnabled()) {
+                    Warlords.getInstance().getComponentLogger().info(Component.text(message, textColor));
+                }
             }
-        }
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        int messagePxSize = 0;
-        boolean previousCode = false;
-        boolean isBold = false;
 
-        for (char c : message.toCharArray()) {
-            if (c == '§') {
-                previousCode = true;
-            } else if (previousCode) {
-                previousCode = false;
-                isBold = c == 'l' || c == 'L';
-            } else {
-                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
-                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
-                messagePxSize++;
+            @Override
+            public void sendErrorMessage(String message) {
+                Warlords.getInstance().getComponentLogger().error(Component.text(message, NamedTextColor.RED));
             }
-        }
-        int halvedMessageSize = messagePxSize / 2;
-        int toCompensate = CENTER_PX - halvedMessageSize;
-        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
-        int compensated = 0;
-        StringBuilder sb = new StringBuilder();
-        while (compensated < toCompensate) {
-            sb.append(" ");
-            compensated += spaceLength;
-        }
-        BaseComponent[] newComponents = new BaseComponent[baseComponents.length + 1];
-        newComponents[0] = new TextComponent(sb.toString());
-        for (int i = 0; i < baseComponents.length; i++) {
-            newComponents[i + 1] = baseComponents[i];
-        }
-        player.spigot().sendMessage(newComponents);
-    }
+        },
+        PLAYER_SERVICE("PlayerService", NamedTextColor.AQUA, false),
+        GAME_SERVICE("GameService", NamedTextColor.YELLOW, true),
+        GUILD_SERVICE("GuildService", NamedTextColor.GOLD, true),
+        LEADERBOARDS("Leaderboards", NamedTextColor.BLUE, true),
+        TIMINGS("Timings", NamedTextColor.DARK_GRAY, true),
+        MASTERWORKS_FAIR("MasterworksFair", NamedTextColor.DARK_GREEN, true),
+        GAME_EVENTS("Events", NamedTextColor.DARK_RED, true),
+        WEEKLY_BLESSINGS("ItemsWeeklyBlessings", NamedTextColor.DARK_RED, true),
+        ILLUSION_VENDOR("IllusionVendor", NamedTextColor.GOLD, true),
 
-    /**
-     * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string
-     * for sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
-     *
-     * @param itemStack the item to convert
-     * @return the Json string representation of the item
-     */
-    public static String convertItemStackToJsonRegular(ItemStack itemStack) {
-        // First we convert the item stack into an NMS itemstack
-        net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        net.minecraft.server.v1_8_R3.NBTTagCompound compound = new NBTTagCompound();
-        nmsItemStack.save(compound);
-        return compound.toString();
-    }
+        GAME_DEBUG("GameDebug", NamedTextColor.LIGHT_PURPLE, true),
 
-    public enum MessageTypes {
-
-        WARLORDS("Warlords", ChatColor.GREEN),
-        PLAYER_SERVICE("PlayerService", ChatColor.AQUA),
-        GAME_SERVICE("GameService", ChatColor.YELLOW),
-        GUILD_SERVICE("GuildService", ChatColor.GOLD),
-        LEADERBOARDS("Leaderboards", ChatColor.BLUE),
-        TIMINGS("Timings", ChatColor.DARK_GRAY),
-        MASTERWORKS_FAIR("MasterworksFair", ChatColor.DARK_GREEN),
-        GAME_EVENTS("Events", ChatColor.DARK_RED),
-        WEEKLY_BLESSINGS("ItemsWeeklyBlessings", ChatColor.DARK_RED),
-        ILLUSION_VENDOR("IllusionVendor", ChatColor.GOLD),
-
-        GAME_DEBUG("GameDebug", ChatColor.LIGHT_PURPLE),
-
-        DISCORD_BOT("DiscordBot", ChatColor.DARK_AQUA),
+        DISCORD_BOT("DiscordBot", NamedTextColor.DARK_AQUA, true),
 
         ;
 
         public final String name;
-        public final ChatColor chatColor;
+        public final NamedTextColor textColor;
+        private boolean enabled;
 
-        MessageTypes(String name, ChatColor chatColor) {
+        MessageType(String name, NamedTextColor textColor, boolean enabled) {
             this.name = name;
-            this.chatColor = chatColor;
+            this.textColor = textColor;
+            this.enabled = enabled;
         }
 
         public void sendMessage(String message) {
-            Bukkit.getServer().getConsoleSender().sendMessage(chatColor + "[" + name + "] " + message);
+            if (enabled) {
+                Warlords.getInstance().getComponentLogger().info(Component.text("[" + name + "] " + message, textColor));
+            }
         }
 
         public void sendErrorMessage(String message) {
-            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "[" + name + "] " + message);
+            Warlords.getInstance().getComponentLogger().error(Component.text("[" + name + "] " + message, NamedTextColor.RED));
         }
 
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
     }
 
 }

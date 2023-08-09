@@ -2,11 +2,11 @@ package com.ebicep.warlords.guilds.logs.types.general;
 
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class GuildLogGameEventReward extends AbstractGuildLog {
 
@@ -27,17 +27,25 @@ public class GuildLogGameEventReward extends AbstractGuildLog {
     }
 
     @Override
-    public String getAction() {
-        return "awarded";
+    public Component getAction() {
+        return Component.text("awarded");
     }
 
     @Override
-    public String getLog() { //Fighter's Glory #1 awarded - 50000 coins, 50000 experience
-        return ChatColor.RED + " " + event.name + " Event #" + placement + " " + ChatColor.YELLOW + getAction() +
-                ChatColor.DARK_GRAY + " - " + rewards.entrySet()
-                                                     .stream()
-                                                     .map(entry -> ChatColor.GREEN.toString() + entry.getValue() + " " + ChatColor.GOLD + entry.getKey())
-                                                     .collect(Collectors.joining(", "));
+    public Component getLog() { //Fighter's Glory #1 awarded - 50000 coins, 50000 experience
+        return Component.textOfChildren(
+                Component.text(" " + event.name + " Event #" + placement + " ", NamedTextColor.RED),
+                Component.empty().color(NamedTextColor.YELLOW).append(getAction()),
+                Component.text(" - ", NamedTextColor.DARK_GRAY),
+                rewards.entrySet()
+                       .stream()
+                       .map(entry -> Component.textOfChildren(
+                               Component.text(entry.getValue(), NamedTextColor.GREEN),
+                               Component.text(" " + entry.getKey(), NamedTextColor.GOLD)
+                       ))
+                       .collect(Component.toComponent(Component.text(", ")))
+        );
+
     }
 
 }

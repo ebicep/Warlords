@@ -13,7 +13,8 @@ import com.ebicep.warlords.guilds.logs.types.general.GuildLogGameEventReward;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Document(collection = "Game_Events")
 public class DatabaseGameEvent {
@@ -35,12 +35,13 @@ public class DatabaseGameEvent {
     public static DatabaseGameEvent currentGameEvent = null;
 
     public static void sendGameEventMessage(Player player, String message) {
-        player.sendMessage(ChatColor.GOLD + "Game Events" + ChatColor.DARK_GRAY + " > " + message);
+        player.sendMessage(Component.text("Game Events", NamedTextColor.GOLD)
+                                    .append(Component.text(" > " + message, NamedTextColor.DARK_GRAY)));
     }
 
     public static void startGameEvent() {
         long start = System.nanoTime();
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Scanning for game events...");
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Scanning for game events...");
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.gameEventsService.findAll())
                 .syncLast(gameEvents -> {
@@ -53,12 +54,12 @@ public class DatabaseGameEvent {
                         if (gameEvent.getEndDate().isBefore(now)) {
                             PREVIOUS_GAME_EVENTS.put(gameEvent.getEvent(), gameEvent);
                         } else if (gameEvent.getEndDate().isAfter(now)) {
-                            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Found active game event: " + gameEvent.getEvent().name + " in " + (System.nanoTime() - start) / 1000000 + "ms");
-                            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Start: " + gameEvent.getStartDate());
-                            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("End: " + gameEvent.getEndDate());
+                            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Found active game event: " + gameEvent.getEvent().name + " in " + (System.nanoTime() - start) / 1000000 + "ms");
+                            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Start: " + gameEvent.getStartDate());
+                            ChatUtils.MessageType.GAME_EVENTS.sendMessage("End: " + gameEvent.getEndDate());
                             currentGameEvent = gameEvent;
                             if (!gameEvent.getStarted()) {
-                                ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("New Event Detected, clearing player currencies...");
+                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("New Event Detected, clearing player currencies...");
                                 Currencies currency = gameEvent.getEvent().currency;
                                 for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
                                     Long currencyValue = databasePlayer.getPveStats().getCurrencyValue(currency);
@@ -81,13 +82,13 @@ public class DatabaseGameEvent {
                                 .stream()
                                 .min((o1, o2) -> o2.getEndDate().compareTo(o1.getEndDate()))
                                 .get();
-                        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Days from last game event: " + gameEvent.getEndDate()
-                                                                                                                .until(Instant.now(), ChronoUnit.DAYS));
+                        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Days from last game event: " + gameEvent.getEndDate()
+                                                                                                               .until(Instant.now(), ChronoUnit.DAYS));
                         if (gameEvent.getEndDate().isAfter(Instant.now().minus(7, ChronoUnit.DAYS))) {
                             currentGameEvent = gameEvent;
                             currentGameEvent.start();
                         } else {
-                            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Last game event was over 7 days ago, not starting");
+                            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Last game event was over 7 days ago, not starting");
                         }
                     }
                     EventsLeaderboardManager.create();
@@ -126,7 +127,7 @@ public class DatabaseGameEvent {
         if (!gaveRewards) {
             getEvent().initialize();
         }
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Creating new Game Event NPC...");
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Creating new Game Event NPC...");
         getEvent().createNPC();
     }
 
@@ -156,9 +157,9 @@ public class DatabaseGameEvent {
                         event.eventsStatsFunction.apply(o2.getPveStats().getEventStats()).get(getStartDateSecond()).getEventPointsCumulative(),
                         event.eventsStatsFunction.apply(o1.getPveStats().getEventStats()).get(getStartDateSecond()).getEventPointsCumulative()
                 ))
-                .collect(Collectors.toList());
-        ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Giving rewards for " + event.name + " (" + getStartDateSecond() + ") (" + databasePlayers.size() + " players)");
-        HashMap<DatabasePlayer, List<String>> playerMessages = new HashMap<>();
+                .toList();
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Giving rewards for " + event.name + " (" + getStartDateSecond() + ") (" + databasePlayers.size() + " players)");
+        HashMap<DatabasePlayer, List<Component>> playerMessages = new HashMap<>();
         for (int i = 0; i < databasePlayers.size(); i++) {
             int position = i + 1;
             DatabasePlayer databasePlayer = databasePlayers.get(i);
@@ -166,16 +167,19 @@ public class DatabaseGameEvent {
                           .getGameEventRewards()
                           .add(new GameEventReward(event.getRewards(position), event.name + " Event", getStartDateSecond()));
 
-            List<String> messages = new ArrayList<>();
-            messages.add(ChatColor.GOLD + "------------------------------------------------");
-            messages.add(ChatColor.RED + event.name + " Event has Ended!");
-            messages.add("");
-            messages.add(ChatColor.YELLOW + "#" + position + ". " +
-                    ChatColor.AQUA + databasePlayer.getName() +
-                    ChatColor.GRAY + " - " +
-                    ChatColor.YELLOW + NumberFormat.addCommas(event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
-                                                                                       .get(getStartDateSecond())
-                                                                                       .getEventPointsCumulative()) + " Points");
+            List<Component> messages = new ArrayList<>();
+            messages.add(Component.text("------------------------------------------------", NamedTextColor.GOLD));
+            messages.add(Component.text(event.name + " Event has Ended!", NamedTextColor.RED));
+            messages.add(Component.empty());
+            messages.add(Component.textOfChildren(
+                            Component.text("#" + position + ". ", NamedTextColor.YELLOW),
+                            Component.text(databasePlayer.getName(), NamedTextColor.AQUA),
+                            Component.text(" - ", NamedTextColor.GRAY),
+                            Component.text(NumberFormat.addCommas(event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
+                                                                                           .get(getStartDateSecond())
+                                                                                           .getEventPointsCumulative()) + " Points", NamedTextColor.YELLOW)
+                    )
+            );
             playerMessages.put(databasePlayer, messages);
         }
         //guild rewards
@@ -186,7 +190,7 @@ public class DatabaseGameEvent {
                         o2.getEventPoints(event, getStartDateSecond()),
                         o1.getEventPoints(event, getStartDateSecond())
                 ))
-                .collect(Collectors.toList());
+                .toList();
         for (int i = 0; i < guilds.size(); i++) {
             int position = i + 1;
             Guild guild = guilds.get(i);
@@ -198,10 +202,14 @@ public class DatabaseGameEvent {
             for (GuildPlayer player : guild.getPlayers()) {
                 for (DatabasePlayer databasePlayer : playerMessages.keySet()) {
                     if (databasePlayer.getUuid().equals(player.getUUID())) {
-                        playerMessages.get(databasePlayer).add(ChatColor.YELLOW + "#" + position + ". " +
-                                ChatColor.GOLD + guild.getName() +
-                                ChatColor.GRAY + " - " +
-                                ChatColor.YELLOW + NumberFormat.addCommas(guild.getEventPoints(event, getStartDateSecond())) + " Points");
+                        playerMessages.get(databasePlayer).add(
+                                Component.textOfChildren(
+                                        Component.text("#" + position + ". ", NamedTextColor.YELLOW),
+                                        Component.text(guild.getName(), NamedTextColor.AQUA),
+                                        Component.text(" - ", NamedTextColor.GRAY),
+                                        Component.text(NumberFormat.addCommas(guild.getEventPoints(event, getStartDateSecond())) + " Points", NamedTextColor.GOLD)
+                                )
+                        );
                         break;
                     }
                 }
@@ -211,11 +219,11 @@ public class DatabaseGameEvent {
         }
         //player reward message
         playerMessages.forEach((databasePlayer, messages) -> {
-            messages.add("");
-            messages.add(ChatColor.GREEN + "Claim your rewards through your");
-            messages.add(ChatColor.GREEN + "Reward Inventory!");
-            messages.add(ChatColor.GOLD + "------------------------------------------------");
-            databasePlayer.addFutureMessage(new FutureMessage(messages, true));
+            messages.add(Component.empty());
+            messages.add(Component.text("Claim your rewards through your", NamedTextColor.GREEN));
+            messages.add(Component.text("Reward Inventory!", NamedTextColor.GREEN));
+            messages.add(Component.text("------------------------------------------------", NamedTextColor.GREEN));
+            databasePlayer.addFutureMessage(FutureMessage.create(messages, true));
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         });
     }

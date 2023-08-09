@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
-import com.ebicep.warlords.abilties.IncendiaryCurse;
+import com.ebicep.warlords.abilities.IncendiaryCurse;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -95,7 +95,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 "All enemies hit become disoriented. Increase the damage they take by 50% for 5 seconds.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

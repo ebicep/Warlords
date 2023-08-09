@@ -4,11 +4,11 @@ import com.ebicep.customentities.npc.traits.MasterworksFairTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import net.md_5.bungee.api.chat.BaseComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -35,13 +35,15 @@ public class MasterworksFairManager {
 
     public static void resetFair(MasterworksFair masterworksFair, boolean throughRewardsInventory, int minutesTillStart) {
         if (masterworksFair == null) {
-            ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Supplied fair is null. Cannot reset fair.");
+            ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Supplied fair is null. Cannot reset fair.");
             return;
         }
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            sendMasterworksFairMessage(onlinePlayer, ChatColor.GREEN + "Masterworks Fair #" + masterworksFair.getFairNumber() + " has just ended!");
+            sendMasterworksFairMessage(onlinePlayer,
+                    Component.text("Masterworks Fair #" + masterworksFair.getFairNumber() + " has just ended!", NamedTextColor.GREEN)
+            );
         }
-        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Resetting fair");
+        ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Resetting fair");
         masterworksFair.setEnded(true);
         //give out rewards
         currentFair = null;
@@ -54,20 +56,17 @@ public class MasterworksFairManager {
         MasterworksFairTrait.PAUSED.set(false);
 
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            if (onlinePlayer.getOpenInventory().getTopInventory().getName().equals("Masterworks Fair")) {
+            if (PlainTextComponentSerializer.plainText().serialize(onlinePlayer.getOpenInventory().title()).equals("Masterworks Fair")) {
                 onlinePlayer.closeInventory();
             }
         }
     }
 
-    public static void sendMasterworksFairMessage(Player player, String message) {
-        player.sendMessage(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > " + message);
-    }
-
-    public static void sendMasterworksFairMessage(Player player, ComponentBuilder components) {
-        BaseComponent[] baseComponents = new ComponentBuilder(ChatColor.GOLD + "Masterworks Fair" + ChatColor.DARK_GRAY + " > ")
-                .create();
-        player.spigot().sendMessage(components.prependAndCreate(baseComponents));
+    public static void sendMasterworksFairMessage(Player player, Component component) {
+        player.sendMessage(Component.text("Masterworks Fair", NamedTextColor.GOLD)
+                                    .append(Component.text(" > ", NamedTextColor.DARK_GRAY))
+                                    .append(component)
+        );
     }
 
     public static void createFair() {
@@ -77,7 +76,7 @@ public class MasterworksFairManager {
     }
 
     public static void initializeFair(MasterworksFair masterworksFair) {
-        ChatUtils.MessageTypes.MASTERWORKS_FAIR.sendMessage("Initialize masterworks fair: " + masterworksFair.getStartDate());
+        ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Initialize masterworks fair: " + masterworksFair.getStartDate());
         currentFair = masterworksFair;
         MasterworksFairTrait.PAUSED.set(false);
         //runnable that updates fair every 30 seconds if there has been a change
@@ -109,8 +108,9 @@ public class MasterworksFairManager {
                     masterworksFair.setFairNumber(size);
                     DatabaseManager.masterworksFairService.update(masterworksFair);
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                        sendMasterworksFairMessage(onlinePlayer, ChatColor.GREEN + "Masterworks Fair #" + size + " has just started!" +
-                                (size % 10 == 0 ? ChatColor.RED + " 10x REWARDS!" : ""));
+                        sendMasterworksFairMessage(onlinePlayer, Component.text("Masterworks Fair #" + size + " has just started!", NamedTextColor.GREEN)
+                                                                          .append(Component.text((size % 10 == 0 ? " 10x REWARDS!" : ""), NamedTextColor.RED))
+                        );
                     }
                 })
                 .execute();

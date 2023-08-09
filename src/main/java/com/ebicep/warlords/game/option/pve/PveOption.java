@@ -1,10 +1,16 @@
 package com.ebicep.warlords.game.option.pve;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.WeaponOption;
+import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -16,9 +22,18 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.world.entity.monster.Zombie;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,12 +41,58 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public interface PveOption {
+public interface PveOption extends Option {
+
+    @Nullable
+    default Location getRandomSpawnLocation(WarlordsEntity entity) {
+        List<Location> candidates = new ArrayList<>();
+        double priority = Double.NEGATIVE_INFINITY;
+        for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+            if (entity == null) {
+                return marker.getLocation();
+            }
+            if (candidates.isEmpty()) {
+                candidates.add(marker.getLocation());
+                priority = marker.getPriority(entity);
+            } else {
+                double newPriority = marker.getPriority(entity);
+                if (newPriority >= priority) {
+                    if (newPriority > priority) {
+                        candidates.clear();
+                        priority = newPriority;
+                    }
+                    candidates.add(marker.getLocation());
+                }
+            }
+        }
+        if (!candidates.isEmpty()) {
+            return candidates.get((int) (Math.random() * candidates.size()));
+        }
+        return null;
+    }
+
+    Game getGame();
+
+    default void mobTick() {
+        for (AbstractMob<?> mob : new ArrayList<>(getMobs())) {
+            mob.whileAlive(getTicksElapsed() - getMobsMap().get(mob), this);
+            mob.activateAbilities();
+            if (mob.isShowBossBar()) {
+                mob.bossBar(getGame(), true);
+            }
+        }
+    }
+
+    Set<AbstractMob<?>> getMobs();
+
+    int getTicksElapsed();
+
+    ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
 
     int playerCount();
 
@@ -41,10 +102,6 @@ public interface PveOption {
                 .filter(mob -> mob.getWarlordsNPC().getTeam() == Team.RED)
                 .count();
     }
-
-    Set<AbstractMob<?>> getMobs();
-
-    int getTicksElapsed();
 
     default int getWaveCounter() {
         return 1;
@@ -82,7 +139,7 @@ public interface PveOption {
                 if (event.isDamageInstance()) {
                     if (attacker instanceof WarlordsNPC) {
                         AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
-                        if (getMobsMap().containsKey(mob)) {
+                        if (getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
                             mob.onAttack(attacker, receiver, event);
                         }
                     }
@@ -99,10 +156,9 @@ public interface PveOption {
             @EventHandler
             public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
                 WarlordsEntity player = event.getWarlordsEntity();
-                if (!(player instanceof WarlordsPlayer)) {
+                if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
                     return;
                 }
-                WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
                 AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
                 if (abilityTree == null) {
                     return;
@@ -123,51 +179,48 @@ public interface PveOption {
                     if (player.getCurrency() < upgrade.getCurrencyCost() && upgradeBranch.getFreeUpgrades() <= 0) {
                         return;
                     }
-                    if (upgradeType == AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER) {
-                        upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, true);
-                    } else {
-                        upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, entry.getUpgradeIndex(), true);
+                    switch (upgradeType) {
+                        case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, entry.getUpgradeIndex(), true);
+                        case MASTER -> upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, upgradeBranch.getMasterUpgrade(), true);
+                        case MASTER2 -> upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, upgradeBranch.getMasterUpgrade2(), true);
                     }
                 }
             }
 
             @EventHandler
             public void onMobTarget(EntityTargetLivingEntityEvent event) {
-                Entity entity = ((CraftEntity) event.getEntity()).getHandle();
-                if (!(entity instanceof EntityLiving)) {
+                if (!(event.getEntity() instanceof LivingEntity entityLiving)) {
                     return;
                 }
-                EntityLiving entityLiving = (EntityLiving) entity;
-                if (getMobsMap().keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getEntity(), entityLiving))) {
+                if (getMobsMap().keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getLivingEntity(), entityLiving))) {
                     return;
                 }
-                if (entityLiving instanceof EntityInsentient) {
-                    Game game = getGame();
+                if (entityLiving instanceof Mob) {
                     LivingEntity newTarget = event.getTarget();
-                    EntityLiving oldTarget = ((EntityInsentient) entityLiving).getGoalTarget();
-                    if (entityLiving.hasEffect(MobEffectList.BLINDNESS) && newTarget != null) {
+                    LivingEntity oldTarget = ((Mob) entityLiving).getTarget();
+                    if (entityLiving.hasPotionEffect(PotionEffectType.BLINDNESS) && newTarget != null) {
                         event.setCancelled(true);
                         return;
                     }
                     if (newTarget == null) {
-                        if (oldTarget instanceof EntityPlayer) {
+                        if (oldTarget instanceof Player) {
                             //setting target to player zombie
-                            game.warlordsPlayers()
-                                .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueID()))
-                                .findFirst()
-                                .ifPresent(warlordsPlayer -> {
-                                    if (!(warlordsPlayer.getEntity() instanceof Player)) {
-                                        event.setTarget(warlordsPlayer.getEntity());
-                                    }
-                                });
+                            getGame().warlordsPlayers()
+                                     .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueId()))
+                                     .findFirst()
+                                     .ifPresent(warlordsPlayer -> {
+                                         if (!(warlordsPlayer.getEntity() instanceof Player)) {
+                                             event.setTarget(warlordsPlayer.getEntity());
+                                         }
+                                     });
                         }
                     } else {
-                        if (oldTarget instanceof EntityZombie) {
+                        if (oldTarget instanceof Zombie) {
                             //makes sure player that rejoins is still the target
-                            game.warlordsPlayers()
-                                .filter(warlordsPlayer -> ((CraftEntity) warlordsPlayer.getEntity()).getHandle().equals(oldTarget))
-                                .findFirst()
-                                .ifPresent(warlordsPlayer -> event.setCancelled(true));
+                            getGame().warlordsPlayers()
+                                     .filter(warlordsPlayer -> warlordsPlayer.getEntity().equals(oldTarget))
+                                     .findFirst()
+                                     .ifPresent(warlordsPlayer -> event.setCancelled(true));
                         }
                         if (newTarget.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                             event.setCancelled(true);
@@ -213,14 +266,94 @@ public interface PveOption {
 
     PveRewards<?> getRewards();
 
-    ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
-
-    Game getGame();
-
     private void addMobDrop(WarlordsEntity event, MobDrops event1) {
         getRewards().getPlayerRewards(event.getUuid())
                     .getMobDropsGained()
                     .merge(event1, 1L, Long::sum);
+    }
+
+    @Override
+    default void onGameEnding(@Nonnull Game game) {
+        getMobs().forEach(mob -> mob.bossBar(game, false));
+    }
+
+    @Override
+    default void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
+            for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
+                ability.setInPve(true);
+            }
+            if (player.getEntity() instanceof Player) {
+                getGame().setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
+                player.setTeam(Team.BLUE);
+                player.updateArmor();
+            }
+            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
+                //weapons
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                Optional<AbstractWeapon> optionalWeapon = pveStats
+                        .getWeaponInventory()
+                        .stream()
+                        .filter(AbstractWeapon::isBound)
+                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
+                        .findFirst();
+                optionalWeapon.ifPresent(abstractWeapon -> {
+                    warlordsPlayer.getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
+                    warlordsPlayer.setWeapon(abstractWeapon);
+                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
+                    player.updateEntity();
+                    player.getSpec().updateCustomStats();
+                });
+            });
+        }
+    }
+
+    @Override
+    default void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        AbstractWeapon weapon = warlordsPlayer.getWeapon();
+        if (weapon == null) {
+            WeaponOption.showWeaponStats(warlordsPlayer, player);
+        } else {
+            WeaponOption.showPvEWeapon(warlordsPlayer, player);
+        }
+
+        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(Component.text("Upgrade Talisman", NamedTextColor.GREEN)).get());
+        if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
+            ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
+        }
+    }
+
+    @Override
+    default void onSpecChange(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            ((WarlordsPlayer) player).resetAbilityTree();
+        }
+    }
+
+    @Override
+    default void onPlayerQuit(Player player) {
+        getMobs().forEach(mob -> player.hideBossBar(mob.getBossBar()));
+    }
+
+    default List<Component> healthScoreboard(Game game) {
+        List<Component> list = new ArrayList<>();
+        for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
+            float healthRatio = we.getHealth() / we.getMaxHealth();
+            NamedTextColor healthColor;
+            if (healthRatio >= .5) {
+                healthColor = NamedTextColor.GREEN;
+            } else if (healthRatio >= .25) {
+                healthColor = NamedTextColor.YELLOW;
+            } else {
+                healthColor = NamedTextColor.RED;
+            }
+
+            list.add(Component.text(we.getName() + ": ")
+                              .append(Component.text(we.isDead() ? "DEAD" : "❤ " + Math.round(we.getHealth()), we.isDead() ? NamedTextColor.DARK_RED : healthColor))
+                              .append(Component.text(" / "))
+                              .append(Component.text("⚔ " + we.getMinuteStats().total().getKills(), NamedTextColor.RED)));
+        }
+        return list;
     }
 
 }

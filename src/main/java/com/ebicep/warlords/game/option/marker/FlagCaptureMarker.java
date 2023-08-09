@@ -6,9 +6,10 @@ import org.bukkit.Location;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.EnumSet;
 
-import static com.ebicep.warlords.util.warlords.Utils.isInCircleRadiusFast;
+import static com.ebicep.warlords.util.bukkit.LocationUtils.isInCircleRadiusFast;
 
 /**
  * Marks a flag capture zone, for the gamemodes who have captureable flags
@@ -43,7 +44,7 @@ public interface FlagCaptureMarker extends GameMarker {
 
     static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Team... forTeams) {
         EnumSet<Team> asSet = EnumSet.noneOf(Team.class);
-        for (Team team : forTeams) asSet.add(team);
+        Collections.addAll(asSet, forTeams);
         return aroundLocation(loc, radius, asSet);
     }
 
@@ -63,7 +64,7 @@ public interface FlagCaptureMarker extends GameMarker {
 
     static FlagCaptureMarker zonedCapture(@Nonnull Location a, @Nonnull Location b, @Nonnull Team... forTeams) {
         EnumSet<Team> asSet = EnumSet.noneOf(Team.class);
-        for (Team team : forTeams) asSet.add(team);
+        Collections.addAll(asSet, forTeams);
         return zonedCapture(a, b, asSet);
     }
 

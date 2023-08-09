@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.MarkerOption;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.FlagCaptureMarker;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -22,13 +23,13 @@ public class FlagCapturePointOption extends MarkerOption {
     public FlagCapturePointOption(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Team... forTeams) {
         super(
                 FlagCaptureMarker.aroundLocation(loc, radius, forTeams),
-                DebugLocationMarker.create(Material.CARPET, 0, FlagCapturePointOption.class,
-                        "Capture zone",
+                DebugLocationMarker.create(Material.BLACK_CARPET, 0, FlagCapturePointOption.class,
+                        Component.text("Capture zone"),
                         loc,
                         () -> Arrays.asList(
-                                "Ignoring teams: " + Arrays.toString(forTeams),
-                                "Shape: POINT",
-                                "Radius: " + radius
+                                Component.text("Ignoring teams: " + Arrays.toString(forTeams)),
+                                Component.text("Shape: POINT"),
+                                Component.text("Radius: " + radius)
                         )
                 )
         );
@@ -37,8 +38,8 @@ public class FlagCapturePointOption extends MarkerOption {
     public FlagCapturePointOption(@Nonnull Location a, @Nonnull Location b, @Nonnull Team... forTeams) {
         super(
                 FlagCaptureMarker.zonedCapture(a, b, forTeams),
-                DebugLocationMarker.create(Material.CARPET, 0, FlagCapturePointOption.class,
-                        "Capture zone",
+                DebugLocationMarker.create(Material.BLACK_CARPET, 0, FlagCapturePointOption.class,
+                        Component.text("Capture zone"),
                         new Location(
                                 a.getWorld(),
                                 (a.getX() + b.getX()) / 2,
@@ -46,10 +47,10 @@ public class FlagCapturePointOption extends MarkerOption {
                                 (a.getZ() + b.getZ()) / 2
                         ),
                         () -> Arrays.asList(
-                                "Ignoring teams: " + Arrays.toString(forTeams),
-                                "Shape: RECTANGLE",
-                                "A: " + a.getX() + ", " + a.getY() + ", " + a.getZ(),
-                                "B: " + b.getX() + ", " + b.getY() + ", " + b.getZ()
+                                Component.text("Ignoring teams: " + Arrays.toString(forTeams)),
+                                Component.text("Shape: RECTANGLE"),
+                                Component.text("A: " + a.getX() + ", " + a.getY() + ", " + a.getZ()),
+                                Component.text("B: " + b.getX() + ", " + b.getY() + ", " + b.getZ())
                         )
                 )
         );

@@ -1,15 +1,19 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityEnderman;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.EnderMan;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 
-public class CustomEnderman extends EntityEnderman implements CustomEntity<CustomEnderman> {
+import javax.annotation.Nonnull;
 
-    public CustomEnderman(World world) {
-        super(world);
-        resetAI(world);
+public class CustomEnderman extends EnderMan implements CustomEntity<CustomEnderman> {
+
+    public CustomEnderman(ServerLevel serverLevel) {
+        super(EntityType.ENDERMAN, serverLevel);
+        resetAI();
         giveBaseAI();
     }
 
@@ -25,15 +29,22 @@ public class CustomEnderman extends EntityEnderman implements CustomEntity<Custo
     private boolean stunned;
 
     @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     @Override
     public void setStunned(boolean stunned) {
         this.stunned = stunned;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
+    public DisguiseType getDisguiseType() {
+        return DisguiseType.ENDERMAN;
     }
 }

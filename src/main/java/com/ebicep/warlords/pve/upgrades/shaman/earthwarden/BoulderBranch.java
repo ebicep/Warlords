@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
-import com.ebicep.warlords.abilties.Boulder;
+import com.ebicep.warlords.abilities.Boulder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -92,7 +92,7 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                 "Boulder throws upwards, deals 4x times the damage and increased hit range at the cost of higher energy cost, cooldown and reduced knockback.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                     ability.setBoulderSpeed(ability.getBoulderSpeed() * 0.25f);
                     ability.setCooldown(ability.getCooldown() * 2);
                     ability.setEnergyCost(ability.getEnergyCost() * 1.5f);

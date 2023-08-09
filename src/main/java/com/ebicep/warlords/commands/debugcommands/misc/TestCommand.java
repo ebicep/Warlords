@@ -6,12 +6,14 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -21,12 +23,12 @@ import java.util.Comparator;
 public class TestCommand extends BaseCommand {
 
     public static void doTest(CommandIssuer issuer) {
-        System.out.println("--------------");
+        ChatUtils.MessageType.WARLORDS.sendMessage("--------------");
         long start = System.nanoTime();
-        System.out.println(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()));
-        System.out.println("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
+        ChatUtils.MessageType.WARLORDS.sendMessage(DatabaseManager.playerService.findByUUID(issuer.getUniqueId()).toString());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Time: " + (System.nanoTime() - start) / 1000000 + "ms");
         printCache();
-        System.out.println("--------------");
+        ChatUtils.MessageType.WARLORDS.sendMessage("--------------");
     }
 
     public static void printCache() {
@@ -45,9 +47,9 @@ public class TestCommand extends BaseCommand {
     public void test(CommandIssuer issuer) {
         //doTest(issuer);
         Warlords.getPlayers().forEach((uuid, warlordsEntity) -> {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN.toString() + uuid + " - " + warlordsEntity.getName(), false);
+            ChatChannels.sendDebugMessage(issuer, Component.text(uuid + " - " + warlordsEntity.getName(), NamedTextColor.GREEN));
         });
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Test executed", false);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Test executed", NamedTextColor.GREEN));
     }
 
     @CommandAlias("testguild")
@@ -69,7 +71,7 @@ public class TestCommand extends BaseCommand {
 
          */
 
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Guild Test executed", true);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Guild Test executed", NamedTextColor.GREEN));
     }
 
     @CommandAlias("testdatabase")
@@ -291,7 +293,7 @@ public class TestCommand extends BaseCommand {
 //                                    .stream()
 //                                    .filter(masterworksFairEntry -> masterworksFairEntry.getFairNumber() == 2)
 //                                    .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-//                                    .collect(Collectors.toList());
+//                                    .toList();
 //                            if (entries.size() > 1) {
 //                                pveStats.getMasterworksFairEntries().remove(entries.get(1));
 //                                System.out.println("Removed duplicate for " + databasePlayer.getName());
@@ -374,7 +376,7 @@ public class TestCommand extends BaseCommand {
 //                        }).execute();
 
 
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Database Test executed", true);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Database Test executed", NamedTextColor.GREEN));
     }
 
     @CommandAlias("testgame")
@@ -383,7 +385,7 @@ public class TestCommand extends BaseCommand {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             ability.updateDescription((Player) warlordsPlayer.getEntity());
         }
-        ChatChannels.sendDebugMessage(warlordsPlayer, ChatColor.GREEN + "In Game Test executed", true);
+        ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("In Game Test executed", NamedTextColor.GREEN));
     }
 
     @CommandAlias("testplayer")
@@ -394,9 +396,9 @@ public class TestCommand extends BaseCommand {
 //        System.out.println(scoreboard.getTeams());
 //        //scoreboard.getTeam("sumSmash").unregister();
 //        Team team = scoreboard.registerNewTeam("sumSmash");
-//        team.setPrefix("1");
+//        team.prefix(Component.text("1");
 //        team.addEntry("sumSmash");
-//        team.setSuffix("2");
+//        team.suffix(Component.text("2");
 //        Instant now = Instant.now();
 //        System.out.println(now);
 //        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
@@ -707,7 +709,7 @@ public class TestCommand extends BaseCommand {
 //        boolean s5 = false;
 //        List<DatabaseGame> gameList = DatabaseManager.gameService.findAll().stream()
 //                .filter(databaseGame -> databaseGame.isCounted() && databaseGame.isPrivate())
-//                .collect(Collectors.toList());
+//                .toList();
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.TEMP2);
 //        for (DatabaseGame databaseGame : gameList) {
 //            if(databaseGame.getDate().startsWith("12/17") && !s5) {

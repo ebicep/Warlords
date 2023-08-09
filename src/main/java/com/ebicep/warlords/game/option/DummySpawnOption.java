@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.EndState;
@@ -8,23 +9,25 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.annotation.Nonnull;
-import java.util.UUID;
+import java.util.Objects;
 
 public class DummySpawnOption implements Option {
 
     private final Location loc;
     private final Team team;
     private final String name;
+    private WarlordsNPC testDummy;
 
     public DummySpawnOption(Location loc, Team team) {
         this(loc, team, team == Team.RED ? "TestDummy1" : "TestDummy2");
@@ -37,18 +40,36 @@ public class DummySpawnOption implements Option {
     }
 
     @Override
+    public void register(@Nonnull Game game) {
+        game.registerEvents(new Listener() {
+            @EventHandler
+            public void onDummyDeath(WarlordsDeathEvent event) {
+                WarlordsEntity dead = event.getWarlordsEntity();
+                if (Objects.equals(dead, testDummy)) {
+                    new GameRunnable(game) {
+
+                        @Override
+                        public void run() {
+                            testDummy.respawn();
+                        }
+                    }.runTaskLater(2);
+                }
+            }
+        });
+    }
+
+    @Override
     public void start(@Nonnull Game game) {
         // Delay spawn by 5 seconds to avoid Null reference in PlayingState
         new GameRunnable(game) {
             @Override
             public void run() {
                 if (getGame().getState() instanceof EndState) {
-                    System.out.print(ChatColor.RED + "[DEBUG] CAUGHT INVALID DUMMY SPAWN - game was ended before initial spawn.");
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("[DEBUG] CAUGHT INVALID DUMMY SPAWN - game was ended before initial spawn.");
                     return;
                 }
 
-                WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
-                        UUID.randomUUID(),
+                testDummy = game.addNPC(new WarlordsNPC(
                         name,
                         Weapons.ABBADON,
                         WarlordsNPC.spawnZombieNoAI(loc, null),
@@ -56,8 +77,9 @@ public class DummySpawnOption implements Option {
                         team,
                         Specializations.PYROMANCER
                 ));
+                testDummy.getEntity().setRemoveWhenFarAway(false);
                 //SKULL
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal());
+                ItemStack playerSkull = new ItemStack(Material.ZOMBIE_HEAD);
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
                 playerSkull.setItemMeta(skullMeta);
                 HeadUtils.PLAYER_HEADS.put(testDummy.getUuid(), CraftItemStack.asNMSCopy(playerSkull));

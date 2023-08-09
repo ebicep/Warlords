@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pvp;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.option.TeleportOnEventOption;
@@ -21,10 +22,9 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
             wp.getCooldownManager().removeDebuffCooldowns();
 
             wp.setEnergy(wp.getSpec().getMaxEnergy());
-            wp.setRedCurrentCooldown(0);
-            wp.setPurpleCurrentCooldown(0);
-            wp.setBlueCurrentCooldown(0);
-            wp.setOrangeCurrentCooldown(0);
+            for (AbstractAbility ability : wp.getSpec().getAbilities()) {
+                ability.setCurrentCooldown(0);
+            }
             wp.setHorseCooldown(0);
             wp.updateInventory(true);
         }

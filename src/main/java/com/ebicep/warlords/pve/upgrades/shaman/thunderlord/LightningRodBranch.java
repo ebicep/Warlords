@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
-import com.ebicep.warlords.abilties.LightningRod;
+import com.ebicep.warlords.abilities.LightningRod;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -90,7 +90,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                 "Lightning Rod increases speed and damage dealt by 40% for 12 seconds after initial cast.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

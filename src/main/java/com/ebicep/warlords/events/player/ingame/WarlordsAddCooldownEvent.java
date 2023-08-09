@@ -22,6 +22,7 @@ public class WarlordsAddCooldownEvent extends AbstractWarlordsEntityEvent {
         return abstractCooldown;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

@@ -69,7 +69,7 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL)
                                                                        .withTrail()
                                                                        .build());
-        Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_DEATH, 2, 0.5f);
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ENDERMAN_DEATH, 2, 0.5f);
 
         int nextSplit = split + 1;
         option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), nextSplit));

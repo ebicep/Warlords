@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.*;
@@ -18,11 +18,13 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.StarPieceBonus;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -53,7 +55,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         Specializations selectedSpec = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
         List<SkillBoosts> skillBoosts = selectedSpec.skillBoosts;
         this.specialization = selectedSpec;
-        this.selectedSkillBoost = skillBoosts.get(Utils.generateRandomValueBetweenInclusive(0, skillBoosts.size() - 1));
+        this.selectedSkillBoost = skillBoosts.get(JavaUtils.generateRandomValueBetweenInclusive(0, skillBoosts.size() - 1));
         this.unlockedSkillBoosts.add(selectedSkillBoost);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.LEGENDARY);
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);
@@ -89,16 +91,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return titles;
     }
 
-    public List<String> getCostLore() {
-        Set<Map.Entry<Currencies, Long>> cost = getCost().entrySet();
-
-        List<String> loreCost = new ArrayList<>();
-        loreCost.add("");
-        loreCost.add(ChatColor.AQUA + "Title Cost: ");
-        for (Map.Entry<Currencies, Long> currenciesLongEntry : cost) {
-            loreCost.add(ChatColor.GRAY + " - " + currenciesLongEntry.getKey().getCostColoredName(currenciesLongEntry.getValue()));
-        }
-        return loreCost;
+    public List<Component> getCostLore() {
+        return PvEUtils.getCostLore(getCost(), "Title Cost", true);
     }
 
     public LinkedHashMap<Currencies, Long> getCost() {
@@ -114,44 +108,77 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     @Override
-    public List<String> getUpgradeLore() {
+    public List<Component> getUpgradeLore() {
         float minDamageUpgradeDiff = getMeleeDamageMinValue() < 0 ? 0 : getMeleeDamageMinValue() * getUpgradeMultiplier() - getMeleeDamageMinValue();
-        List<String> upgradeLore = new ArrayList<>(Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED +
-                        formatOptionalTenths(getMeleeDamageMin()) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(getMeleeDamageMax()) +
-                        ChatColor.DARK_GREEN + " > " + ChatColor.RED +
-                        formatOptionalTenths(getMeleeDamageMin() * (getMeleeDamageMin() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())) +
-                        ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(getMeleeDamageMax() + minDamageUpgradeDiff),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + formatOptionalTenths(getCritChance()) + "%" + ChatColor.DARK_GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(getCritChance()) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + formatOptionalTenths(getCritMultiplier()) + "%" + ChatColor.DARK_GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(getCritMultiplier()) + "%",
-                "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                        format(getHealthBonus() * (getHealthBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())),
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%" + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                        format(getSpeedBonus() * (getSpeedBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())) + "%"
+        List<Component> upgradeLore = new ArrayList<>(Arrays.asList(
+                Component.text("Damage: ", NamedTextColor.GRAY)
+                         .append(Component.text(formatOptionalTenths(getMeleeDamageMin()), NamedTextColor.RED))
+                         .append(Component.text(" - "))
+                         .append(Component.text(formatOptionalTenths(getMeleeDamageMax()), NamedTextColor.RED))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(formatOptionalTenths(getMeleeDamageMin() * (getMeleeDamageMin() > 0 ?
+                                                                                            getUpgradeMultiplier() :
+                                                                                            getUpgradeMultiplierNegative())), NamedTextColor.RED
+                         ))
+                         .append(Component.text(" - "))
+                         .append(Component.text(formatOptionalTenths(getMeleeDamageMax() + minDamageUpgradeDiff), NamedTextColor.RED)),
+                Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                         .append(Component.text(formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)),
+                Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                         .append(Component.text(formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)),
+                Component.empty(),
+                Component.text("Health: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(getHealthBonus()), NamedTextColor.GREEN))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(format(getHealthBonus() * (getHealthBonus() > 0 ?
+                                                                           getUpgradeMultiplier() :
+                                                                           getUpgradeMultiplierNegative())), NamedTextColor.GREEN)),
+                Component.text("Speed: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(getSpeedBonus()) + "%", NamedTextColor.GREEN))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(format(getSpeedBonus() * getUpgradeMultiplier()) + "%", NamedTextColor.GREEN))
         ));
         if (getEnergyPerSecondBonus() != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(getEnergyPerSecondBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                    format(getEnergyPerSecondBonus() * (getEnergyPerSecondBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
+            upgradeLore.add(Component.text("Energy per Second: ", NamedTextColor.GRAY)
+                                     .append(Component.text(format(getEnergyPerSecondBonus()), NamedTextColor.GREEN))
+                                     .append(GREEN_ARROW)
+                                     .append(Component.text(format(getEnergyPerSecondBonus() * (getEnergyPerSecondBonus() > 0 ?
+                                                                                                getUpgradeMultiplier() :
+                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
         }
         if (getEnergyPerHitBonus() != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(getEnergyPerHitBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                    format(getEnergyPerHitBonus() * (getEnergyPerHitBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
+            upgradeLore.add(Component.text("Energy per Hit: ", NamedTextColor.GRAY)
+                                     .append(Component.text(format(getEnergyPerHitBonus()), NamedTextColor.GREEN))
+                                     .append(GREEN_ARROW)
+                                     .append(Component.text(format(getEnergyPerHitBonus() * (getEnergyPerHitBonus() > 0 ?
+                                                                                             getUpgradeMultiplier() :
+                                                                                             getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
         }
+
         upgradeLore.addAll(Arrays.asList(
-                "",
-                ChatColor.GREEN + "Skill Boost (" + selectedSkillBoost.name + "):",
-                ChatColor.GRAY + WordWrap.wrapWithNewline("1 Free Ability Upgrade", 175)
+                Component.empty(),
+                Component.text("Skill Boost (" + selectedSkillBoost.name + "):", NamedTextColor.GREEN),
+                Component.text("1 Free Ability Upgrade", NamedTextColor.GRAY)
         ));
         if (getSkillCritChanceBonus() != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + format(getSkillCritChanceBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                    format(getSkillCritChanceBonus() * (getSkillCritChanceBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
+            upgradeLore.add(Component.text("Skill Crit Chance: ", NamedTextColor.GRAY)
+                                     .append(Component.text(format(getSkillCritChanceBonus()), NamedTextColor.GREEN))
+                                     .append(GREEN_ARROW)
+                                     .append(Component.text(format(getSkillCritChanceBonus() * (getSkillCritChanceBonus() > 0 ?
+                                                                                                getUpgradeMultiplier() :
+                                                                                                getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
         }
         if (getSkillCritMultiplierBonus() != 0) {
-            upgradeLore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(getSkillCritMultiplierBonus()) + ChatColor.DARK_GREEN + " > " + ChatColor.GREEN +
-                    format(getSkillCritMultiplierBonus() * (getSkillCritMultiplierBonus() > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative())));
+            upgradeLore.add(Component.text("Skill Crit Multiplier: ", NamedTextColor.GRAY)
+                                     .append(Component.text(format(getSkillCritMultiplierBonus()), NamedTextColor.GREEN))
+                                     .append(GREEN_ARROW)
+                                     .append(Component.text(format(getSkillCritMultiplierBonus() * (getSkillCritMultiplierBonus() > 0 ?
+                                                                                                    getUpgradeMultiplier() :
+                                                                                                    getUpgradeMultiplierNegative())), NamedTextColor.GREEN)));
         }
 
         return upgradeLore;
@@ -171,26 +198,26 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public LinkedHashMap<Currencies, Long> getUpgradeCost(int tier) {
         LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
         switch (tier) {
-            case 1:
+            case 1 -> {
                 cost.put(Currencies.COIN, 100000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
-                break;
-            case 2:
+            }
+            case 2 -> {
                 cost.put(Currencies.COIN, 250000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 20000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 10000L);
-                break;
-            case 3:
+            }
+            case 3 -> {
                 cost.put(Currencies.COIN, 500000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 30000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 15000L);
-                break;
-            case 4:
+            }
+            case 4 -> {
                 cost.put(Currencies.COIN, 1000000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 40000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 20000L);
-                break;
+            }
         }
         return cost;
     }
@@ -283,7 +310,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 @Override
                 public void run() {
                     if (ability.getCurrentCooldown() > 0) {
-                        ability.subtractCooldown(.05f);
+                        ability.subtractCurrentCooldown(.05f);
                         if (player.getEntity() instanceof Player) {
                             updateAbilityItem(player, (Player) player.getEntity());
                         }
@@ -299,17 +326,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                     updateItemCounter(player);
                 }
             }.runTaskTimer(20, 10);
-        }
-    }
-
-    protected void updateItemCounter(WarlordsPlayer player) {
-        int cooldown = ((PassiveCounter) AbstractLegendaryWeapon.this).getCounter();
-        int amount = cooldown > 0 ? cooldown : 1;
-        if (player.getEntity() instanceof Player) {
-            ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
-            if (item != null && item.getAmount() != amount) {
-                item.setAmount(amount);
-            }
         }
     }
 
@@ -369,75 +385,93 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     @Override
-    public String getName() {
+    public Component getName() {
         if (getTitleName().isEmpty()) {
             return super.getName();
         } else {
-            return ChatColor.GOLD + getTitleName() + " " + super.getName();
+            return Component.text(getTitleName() + " ", NamedTextColor.GOLD)
+                            .append(super.getName());
         }
     }
 
     @Override
-    public List<String> getBaseStats() {
+    public List<Component> getBaseStats() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(
-                        getMeleeDamageMax()) + getStarPieceBonusString(WeaponStats.MELEE_DAMAGE),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritChance()) + "%" + getStarPieceBonusString(
-                        WeaponStats.CRIT_CHANCE),
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%" + getStarPieceBonusString(
-                        WeaponStats.CRIT_MULTIPLIER),
-                "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus()) + getStarPieceBonusString(WeaponStats.HEALTH_BONUS)
+                Component.text("Damage: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getMeleeDamageMin()), NamedTextColor.RED))
+                         .append(Component.text(" - "))
+                         .append(Component.text(NumberFormat.formatOptionalHundredths(getMeleeDamageMax()), NamedTextColor.RED))
+                         .append(getStarPieceBonusString(WeaponStats.MELEE_DAMAGE)),
+                Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()), NamedTextColor.RED))
+                         .append(Component.text("%", NamedTextColor.RED))
+                         .append(getStarPieceBonusString(WeaponStats.CRIT_CHANCE)),
+                Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()), NamedTextColor.RED))
+                         .append(Component.text("%", NamedTextColor.RED))
+                         .append(getStarPieceBonusString(WeaponStats.CRIT_MULTIPLIER)),
+                Component.empty(),
+                Component.text("Health: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(getHealthBonus()), NamedTextColor.GREEN))
+                         .append(getStarPieceBonusString(WeaponStats.HEALTH_BONUS))
         );
     }
 
     @Override
-    public List<String> getLore() {
-        List<String> lore = new ArrayList<>();
+    public List<Component> getLore() {
+        List<Component> lore = new ArrayList<>();
         if (getSpeedBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%" + getStarPieceBonusString(WeaponStats.SPEED_BONUS));
+            lore.add(Component.text("Speed: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getSpeedBonus()) + "%", NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.SPEED_BONUS)));
         }
         if (getEnergyPerSecondBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Energy per Second: " + ChatColor.GREEN + format(getEnergyPerSecondBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_SECOND_BONUS));
+            lore.add(Component.text("Energy per Second: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getEnergyPerSecondBonus()), NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.ENERGY_PER_SECOND_BONUS)));
         }
         if (getEnergyPerHitBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Energy per Hit: " + ChatColor.GREEN + format(getEnergyPerHitBonus()) + getStarPieceBonusString(WeaponStats.ENERGY_PER_HIT_BONUS));
+            lore.add(Component.text("Energy per Hit: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getEnergyPerHitBonus()), NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.ENERGY_PER_HIT_BONUS)));
         }
         lore.addAll(Arrays.asList(
-                "",
-                ChatColor.GREEN + "Skill Boost (" + selectedSkillBoost.name + "):",
-                ChatColor.GRAY + WordWrap.wrapWithNewline("1 Free Ability Upgrade", 175)
+                Component.empty(),
+                Component.text("Skill Boost (" + selectedSkillBoost.name + "):", NamedTextColor.GREEN)
         ));
+        lore.addAll(WordWrap.wrap(Component.text("1 Free Ability Upgrade", NamedTextColor.GRAY), 175));
         if (getSkillCritChanceBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Skill Crit Chance: " + ChatColor.GREEN + format(getSkillCritChanceBonus()) + "%" + getStarPieceBonusString(WeaponStats.SKILL_CRIT_CHANCE_BONUS));
+            lore.add(Component.text("Skill Crit Chance: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getSkillCritChanceBonus()) + "%", NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.SKILL_CRIT_CHANCE_BONUS)));
         }
         if (getSkillCritMultiplierBonus() != 0) {
-            lore.add(ChatColor.GRAY + "Skill Crit Multiplier: " + ChatColor.GREEN + format(getSkillCritMultiplierBonus()) + "%" + getStarPieceBonusString(
-                    WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS));
+            lore.add(Component.text("Skill Crit Multiplier: ", NamedTextColor.GRAY)
+                              .append(Component.text(format(getSkillCritMultiplierBonus()) + "%", NamedTextColor.GREEN))
+                              .append(getStarPieceBonusString(WeaponStats.SKILL_CRIT_MULTIPLIER_BONUS)));
         }
-        String passiveEffect = getPassiveEffect();
-        if (!passiveEffect.isEmpty()) {
+        TextComponent passiveEffect = getPassiveEffect();
+        if (passiveEffect != null) {
             lore.addAll(Arrays.asList(
-                    "",
-                    ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
-                    ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175)
+                    Component.empty(),
+                    Component.text("Passive Effect (" + getTitleName() + "):", NamedTextColor.GREEN)
             ));
+            lore.addAll(WordWrap.wrap(passiveEffect, 175));
         }
-
         return lore;
     }
 
     @Override
-    public List<String> getLoreAddons() {
-        List<String> loreAddons = new ArrayList<>();
-        loreAddons.add(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]");
+    public List<Component> getLoreAddons() {
+        List<Component> loreAddons = new ArrayList<>();
+        loreAddons.add(Component.text("Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]", NamedTextColor.LIGHT_PURPLE));
         if (getPassiveEffect() != null) {
-            loreAddons.add(ChatColor.LIGHT_PURPLE + "Title Level [" + getTitleLevel() + "/4]");
+            loreAddons.add(Component.text("Title Level [" + getTitleLevel() + "/4]", NamedTextColor.LIGHT_PURPLE));
         }
         return loreAddons;
     }
 
-    public abstract String getPassiveEffect();
+    public abstract TextComponent getPassiveEffect();
 
     public int getTitleLevel() {
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel();
@@ -448,8 +482,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.GOLD;
+    public NamedTextColor getTextColor() {
+        return NamedTextColor.GOLD;
     }
 
     public String getTitleName() {
@@ -458,6 +492,17 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public LegendaryTitles getTitle() {
         return LegendaryTitles.NONE;
+    }
+
+    protected void updateItemCounter(WarlordsPlayer player) {
+        int cooldown = ((PassiveCounter) AbstractLegendaryWeapon.this).getCounter();
+        int amount = cooldown > 0 ? cooldown : 1;
+        if (player.getEntity() instanceof Player) {
+            ItemStack item = ((Player) player.getEntity()).getInventory().getItem(0);
+            if (item != null && item.getAmount() != amount) {
+                item.setAmount(amount);
+            }
+        }
     }
 
     public void upgradeTitleLevel() {
@@ -493,12 +538,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     public void updateAbilityItem(WarlordsPlayer warlordsPlayer, Player player) {
         if (getAbility() != null) {
-            warlordsPlayer.updateItem(player, 8, getAbility(), ABILITY_ITEM);
+            warlordsPlayer.updateCustomItem(player, 8, getAbility(), ABILITY_ITEM);
         }
     }
 
-    public String getStarPieceBonusString(WeaponStats weaponStats) {
-        return getStarPieceStat() == weaponStats ? getStarPieceBonusString() : "";
+    public Component getStarPieceBonusString(WeaponStats weaponStats) {
+        return getStarPieceStat() == weaponStats ? getStarPieceBonusString() : Component.empty();
     }
 
     @Override
@@ -578,39 +623,56 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     public ItemStack getUpgradedTitleItem() {
-        String passiveEffect = getPassiveEffect();
-        if (passiveEffect.isEmpty()) {
+        Component passiveEffect = getPassiveEffect();
+        if (passiveEffect == null) {
             return null;
         }
-        for (Pair<String, String> stringStringPair : getPassiveEffectUpgrade()) {
-            passiveEffect = passiveEffect.replaceAll(stringStringPair.getA(), stringStringPair.getA() + ChatColor.DARK_GREEN + " > " + stringStringPair.getB());
+        TextComponent.Builder passiveEffectUpgraded = Component.text().style(passiveEffect.style());
+        List<Component> children = new ArrayList<>(passiveEffect.children());
+        children.add(0, passiveEffect.children(new ArrayList<>()));
+        for (Component child : children) {
+            passiveEffectUpgraded.append(child);
+            for (Pair<Component, Component> upgradedComponents : getPassiveEffectUpgrade()) {
+                Component oldComponent = upgradedComponents.getA();
+                Component newComponent = upgradedComponents.getB();
+                if (child.equals(oldComponent)) {
+                    passiveEffectUpgraded.append(Component.text(" > ", NamedTextColor.GREEN))
+                                         .append(newComponent);
+                    break;
+                }
+            }
         }
-        List<String> upgradeLore = new ArrayList<>(Arrays.asList(
-                ChatColor.GREEN + "Passive Effect (" + getTitleName() + "):",
-                ChatColor.GRAY + WordWrap.wrapWithNewline(passiveEffect, 175),
-                ""
-        ));
-        upgradeLore.add(ChatColor.LIGHT_PURPLE + "Title Level [" + getTitleLevel() + "/4]" + ChatColor.GREEN + " > " + ChatColor.LIGHT_PURPLE + "[" + getTitleLevelUpgraded() + "/4]");
+        List<Component> upgradeLore = new ArrayList<>();
+        upgradeLore.add(Component.text("Passive Effect (" + getTitleName() + "):", NamedTextColor.GREEN));
+        upgradeLore.addAll(WordWrap.wrap(passiveEffectUpgraded.build(), 175));
+        upgradeLore.add(Component.empty());
+        upgradeLore.add(Component.text("Title Level [" + getTitleLevel() + "/4]", NamedTextColor.LIGHT_PURPLE)
+                                 .append(Component.text(" > ", NamedTextColor.GREEN))
+                                 .append(Component.text("[" + getTitleLevelUpgraded() + "/4]"))
+        );
         upgradeLore.addAll(getTitleUpgradeCostLore());
-        return new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
-                .name(ChatColor.GREEN + "Confirm")
+        return new ItemBuilder(Material.GREEN_CONCRETE)
+                .name(Component.text("Confirm", NamedTextColor.GREEN))
                 .lore(upgradeLore)
                 .get();
 
     }
 
-    public abstract List<Pair<String, String>> getPassiveEffectUpgrade();
+    public abstract List<Pair<Component, Component>> getPassiveEffectUpgrade();
 
     public int getTitleLevelUpgraded() {
         return this.titles.computeIfAbsent(getTitle(), t -> new LegendaryWeaponTitleInfo()).getUpgradeLevel() + 1;
     }
 
-    public List<String> getTitleUpgradeCostLore() {
+    public List<Component> getTitleUpgradeCostLore() {
         LinkedHashMap<Spendable, Long> upgradeCost = getTitleUpgradeCost(getTitleLevelUpgraded());
         if (upgradeCost == null) {
-            return Collections.singletonList(ChatColor.RED + "Unavailable!");
+            return Collections.singletonList(Component.text("Unavailable!", NamedTextColor.RED));
         } else if (upgradeCost.isEmpty()) {
-            return Collections.singletonList("\n" + ChatColor.LIGHT_PURPLE + "Max Level!");
+            return Arrays.asList(
+                    Component.empty(),
+                    Component.text("Max Level!", NamedTextColor.LIGHT_PURPLE)
+            );
         } else {
             return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost", true);
         }
@@ -619,32 +681,32 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     public LinkedHashMap<Spendable, Long> getTitleUpgradeCost(int tier) {
         LinkedHashMap<Spendable, Long> cost = new LinkedHashMap<>();
         switch (tier) {
-            case 1:
+            case 1 -> {
                 cost.put(Currencies.COIN, 500_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 2500L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 1000L);
                 cost.put(MobDrops.ZENITH_STAR, 2L);
-                break;
-            case 2:
+            }
+            case 2 -> {
                 cost.put(Currencies.COIN, 1_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 5000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 2000L);
                 cost.put(MobDrops.ZENITH_STAR, 4L);
-                break;
-            case 3:
+            }
+            case 3 -> {
                 cost.put(Currencies.COIN, 2_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 7500L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 4000L);
                 cost.put(MobDrops.ZENITH_STAR, 6L);
                 cost.put(Currencies.LIMIT_BREAKER, 1L);
-                break;
-            case 4:
+            }
+            case 4 -> {
                 cost.put(Currencies.COIN, 4_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 8000L);
                 cost.put(MobDrops.ZENITH_STAR, 8L);
                 cost.put(Currencies.LIMIT_BREAKER, 2L);
-                break;
+            }
         }
         return cost;
     }

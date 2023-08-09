@@ -11,10 +11,12 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.StringUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.HologramLines;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -53,7 +55,7 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
     public void appendLastGameStats(Hologram hologram) {
         HologramLines hologramLines = hologram.getLines();
         hologramLines.appendText(ChatColor.GRAY + date);
-        hologramLines.appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed / 20));
+        hologramLines.appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + StringUtils.formatTimeLeft(timeElapsed / 20));
     }
 
     @Override
@@ -93,10 +95,11 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
             playerPvE.getMobDeaths().forEach((s, aLong) -> mobDeathsMap.merge(s, aLong, Long::sum));
         }
 
-        mobKillsMap.forEach((mob, aLong) -> mobKills.getLines()
-                                                    .appendText(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
-        mobDeathsMap.forEach((mob, aLong) -> mobDeaths.getLines()
-                                                      .appendText(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+        //TODO
+//        mobKillsMap.forEach((mob, aLong) -> mobKills.getLines()
+//                                                    .appendText(Component.text(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+//        mobDeathsMap.forEach((mob, aLong) -> mobDeaths.getLines()
+//                                                      .appendText(Component.text(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
     }
 
     @Override
@@ -112,10 +115,12 @@ public abstract class DatabaseGamePvEEvent extends DatabaseGameBase implements T
     }
 
     @Override
-    public List<String> getExtraLore() {
+    public List<Component> getExtraLore() {
         return Arrays.asList(
-                ChatColor.GRAY + "Time Elapsed: " + ChatColor.GREEN + Utils.formatTimeLeft(timeElapsed),
-                ChatColor.GRAY + "Players: " + ChatColor.YELLOW + getPlayers().size()
+                Component.text("Time Elapsed: ", NamedTextColor.GRAY)
+                         .append(Component.text(StringUtils.formatTimeLeft(timeElapsed), NamedTextColor.GREEN)),
+                Component.text("Players: ", NamedTextColor.GRAY)
+                         .append(Component.text(getPlayers().size(), NamedTextColor.YELLOW))
         );
     }
 

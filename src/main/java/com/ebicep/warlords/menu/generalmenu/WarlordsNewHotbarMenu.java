@@ -4,7 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -13,7 +13,6 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
-import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
 import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
@@ -25,10 +24,15 @@ import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -40,9 +44,34 @@ import static com.ebicep.warlords.player.general.ArmorManager.ARMOR_DESCRIPTION;
 import static com.ebicep.warlords.player.general.ArmorManager.HELMET_DESCRIPTION;
 import static com.ebicep.warlords.player.general.ExperienceManager.getLevelString;
 import static com.ebicep.warlords.player.general.Specializations.APOTHECARY;
-import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
 
 public class WarlordsNewHotbarMenu {
+
+    private static void claimLevelReward(
+            Player player,
+            DatabasePlayer databasePlayer,
+            DatabaseSpecialization databasePlayerSpec,
+            LinkedHashMap<Spendable, Long> rewardForLevel,
+            int prestigeCheck,
+            int levelCheck,
+            Specializations spec
+    ) {
+        // precaution
+        if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+            return;
+        }
+        rewardForLevel.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
+        databasePlayerSpec.addLevelUpReward(new LevelUpReward(rewardForLevel, levelCheck, prestigeCheck));
+        player.sendMessage(Component.text("You claimed the reward for level " + levelCheck + "!", NamedTextColor.GREEN)
+                                    .hoverEvent(HoverEvent.showText(Component.textOfChildren(
+                                            Component.text("Specialization: ", NamedTextColor.GRAY),
+                                            Component.text(spec.name, NamedTextColor.GOLD),
+                                            Component.newline(),
+                                            Component.text("Prestige: ", NamedTextColor.GRAY),
+                                            Component.text(prestigeCheck, NamedTextColor.GOLD)
+                                    ))));
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+    }
 
     public static class SelectionMenu {
 
@@ -52,6 +81,7 @@ public class WarlordsNewHotbarMenu {
             DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
                 Menu menu = new Menu("Warlords Menu", 9 * 6);
 
+                boolean hasRewardsForAny = false;
                 Classes[] classes = Classes.VALUES;
                 for (int i = 0, classesLength = classes.length; i < classesLength; i++) {
                     Classes value = classes[i];
@@ -60,18 +90,23 @@ public class WarlordsNewHotbarMenu {
                     int classLevel = (int) ExperienceManager.calculateLevelFromExp(classExperience);
 
                     ItemBuilder itemBuilder = new ItemBuilder(value.item)
-                            .name(ChatColor.GOLD + value.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + classLevel + ChatColor.DARK_GRAY + "]")
-                            .lore(
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + value.description, 150),
-                                    "",
-                                    ChatColor.GOLD + "Class Stats:",
-                                    ExperienceManager.getProgressString(classExperience, classLevel + 1),
-                                    "",
-                                    ChatColor.GOLD + "Spec Stats:"
+                            .name(Component.text(value.name, NamedTextColor.GOLD)
+                                           .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                           .append(Component.text("Lv" + classLevel, NamedTextColor.GRAY))
+                                           .append(Component.text("]", NamedTextColor.DARK_GRAY)))
+                            .lore(WordWrap.wrap(Component.text(value.description, NamedTextColor.GRAY), 150))
+                            .addLore(
+                                    Component.empty(),
+                                    Component.text("Class Stats:", NamedTextColor.GOLD)
+                            )
+                            .addLore(
+                                    ExperienceManager.getProgressString(classExperience, classLevel + 1))
+                            .addLore(
+                                    Component.empty(),
+                                    Component.text("Spec Stats:", NamedTextColor.GOLD)
                             );
 
 
-                    List<String> specLore = new ArrayList<>();
                     boolean hasRewards = false;
                     for (Specializations spec : value.subclasses) {
                         DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
@@ -79,26 +114,20 @@ public class WarlordsNewHotbarMenu {
                         int level = ExperienceManager.getLevelFromExp(databasePlayerSpec.getExperience());
                         long experience = databasePlayerSpec.getExperience();
 
-                        specLore.add((databasePlayer.getLastSpec() == spec ? ChatColor.GREEN : ChatColor.GRAY) + spec.name +
-                                ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + getLevelString(level) + ChatColor.DARK_GRAY + "] " +
-                                ExperienceManager.getPrestigeLevelString(prestige));
-                        specLore.add(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige));
-                        specLore.add("");
+                        itemBuilder.addLore(Component.text(spec.name, (databasePlayer.getLastSpec() == spec ? NamedTextColor.GREEN : NamedTextColor.GRAY))
+                                                     .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                                     .append(Component.text("Lv" + getLevelString(level), NamedTextColor.GRAY))
+                                                     .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                                     .append(ExperienceManager.getPrestigeLevelString(prestige)));
+                        itemBuilder.addLore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige));
+                        itemBuilder.addLore(Component.empty());
 
                         for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
-                            if (prestigeCheck == prestige) {
-                                for (int levelCheck = 1; levelCheck <= level; levelCheck++) {
-                                    if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
-                                        hasRewards = true;
-                                        break;
-                                    }
-                                }
-                            } else {
-                                for (int levelCheck = 1; levelCheck <= 100; levelCheck++) {
-                                    if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
-                                        hasRewards = true;
-                                        break;
-                                    }
+                            int maxLevel = prestigeCheck == prestige ? level : 100;
+                            for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
+                                if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                                    hasRewards = true;
+                                    break;
                                 }
                             }
                             if (hasRewards) {
@@ -107,19 +136,14 @@ public class WarlordsNewHotbarMenu {
                         }
                     }
 
-                    itemBuilder.addLore(specLore);
-                    itemBuilder.addLore(
-                            WordWrap.wrapWithNewline(ChatColor.YELLOW + "Click here to select a " + value.name + ChatColor.YELLOW + " specialization or claim rewards",
-                                    170
-                            )
-                    );
+                    itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + value.name + " specialization or claim rewards", NamedTextColor.YELLOW), 170));
                     if (hasRewards) {
-                        itemBuilder.addLore("", ChatColor.GREEN + "You have unclaimed rewards!");
+                        itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
                         itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                        itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                        hasRewardsForAny = true;
                     }
                     menu.setItem(
-                            9 / 2 - classes.length / 2 + i * 2 - 2,
+                            i + 1 + (i >= 3 ? 1 : 0),
                             1,
                             itemBuilder.get(),
                             (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, value)
@@ -130,6 +154,34 @@ public class WarlordsNewHotbarMenu {
                 menu.setItem(4, 3, PlayerHotBarItemListener.SETTINGS_MENU, (m, e) -> SettingsMenu.openSettingsMenu(player));
                 menu.setItem(6, 3, PlayerHotBarItemListener.PVE_MENU, (m, e) -> PvEMenu.openPvEMenu(player));
                 menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+                if (hasRewardsForAny) {
+                    menu.setItem(5, 5, CLAIM_ALL, (m, e) -> {
+                        for (Classes value : classes) {
+                            for (Specializations spec : value.subclasses) {
+                                DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
+                                int prestige = databasePlayerSpec.getPrestige();
+                                int level = ExperienceManager.getLevelFromExp(databasePlayerSpec.getExperience());
+                                for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
+                                    int maxLevel = prestigeCheck == prestige ? level : 100;
+                                    for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
+                                        if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                                            continue;
+                                        }
+                                        claimLevelReward(player,
+                                                databasePlayer,
+                                                databasePlayerSpec,
+                                                LevelUpReward.getRewardForLevel(levelCheck),
+                                                prestigeCheck,
+                                                levelCheck,
+                                                spec
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                        openWarlordsMenu(player);
+                    });
+                }
                 menu.openForPlayer(player);
             });
         }
@@ -137,9 +189,10 @@ public class WarlordsNewHotbarMenu {
         public static void openLevelingRewardsMenuForClass(Player player, DatabasePlayer databasePlayer, Classes classes) {
             Menu menu = new Menu(classes.name, 9 * 4);
 
-            List<Specializations> values = classes.subclasses;
-            for (int i = 0; i < values.size(); i++) {
-                Specializations spec = values.get(i);
+            boolean hasRewardsForAny = false;
+            List<Specializations> specs = classes.subclasses;
+            for (int i = 0; i < specs.size(); i++) {
+                Specializations spec = specs.get(i);
                 DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
                 int prestige = databasePlayerSpec.getPrestige();
                 int level = ExperienceManager.getLevelFromExp(databasePlayerSpec.getExperience());
@@ -147,19 +200,11 @@ public class WarlordsNewHotbarMenu {
 
                 boolean hasRewards = false;
                 for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
-                    if (prestigeCheck == prestige) {
-                        for (int levelCheck = 1; levelCheck <= level; levelCheck++) {
-                            if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestige)) {
-                                hasRewards = true;
-                                break;
-                            }
-                        }
-                    } else {
-                        for (int levelCheck = 1; levelCheck <= 100; levelCheck++) {
-                            if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
-                                hasRewards = true;
-                                break;
-                            }
+                    int maxLevel = prestigeCheck == prestige ? level : 100;
+                    for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
+                        if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                            hasRewards = true;
+                            break;
                         }
                     }
                     if (hasRewards) {
@@ -168,31 +213,39 @@ public class WarlordsNewHotbarMenu {
                 }
 
                 ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
-                        .name(ChatColor.GOLD + spec.name + " " + ChatColor.DARK_GRAY + "[" +
-                                ChatColor.GRAY + "Lv" + getLevelString(level) + ChatColor.DARK_GRAY + "] " +
-                                ExperienceManager.getPrestigeLevelString(prestige)
+                        .name(Component.text(spec.name, NamedTextColor.GOLD)
+                                       .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                       .append(Component.text("Lv" + getLevelString(level), NamedTextColor.GRAY))
+                                       .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                       .append(ExperienceManager.getPrestigeLevelString(prestige))
                         )
-                        .lore(
-                                ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige),
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" +
-                                        ChatColor.GREEN + " to select this specialization.",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GREEN + " to claim rewards."
+                        .lore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, prestige))
+                        .addLore(
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to select this specialization.", NamedTextColor.GREEN)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to claim rewards.", NamedTextColor.GREEN)
+                                )
                         );
                 if (hasRewards) {
-                    itemBuilder.addLore("", ChatColor.GREEN + "You have unclaimed rewards!");
+                    itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                    hasRewardsForAny = true;
                 }
                 menu.setItem(
-                        9 / 2 - values.size() / 2 + i * 2 - 1,
+                        9 / 2 - specs.size() / 2 + i * 2 - 1,
                         1,
                         itemBuilder
                                 .get(),
                         (m, e) -> {
                             if (e.isLeftClick()) {
-                                player.sendMessage(ChatColor.GREEN + "You have changed your specialization to: §b" + spec.name);
-                                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                                player.sendMessage(Component.text("You have changed your specialization to: ", NamedTextColor.GREEN)
+                                                            .append(Component.text(spec.name, NamedTextColor.AQUA)));
+                                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                                 PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
                                 playerSettings.setSelectedSpec(spec);
                                 if (!player.getWorld().getName().equals("MainLobby")) {
@@ -200,11 +253,13 @@ public class WarlordsNewHotbarMenu {
                                 }
 
                                 AbstractPlayerClass apc = spec.create.get();
-                                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings
+                                ItemStack weaponSkin = playerSettings
                                         .getWeaponSkins()
-                                        .getOrDefault(spec, Weapons.FELFLAME_BLADE)
-                                        .getItem()))
-                                        .name("§aWeapon Skin Preview")
+                                        .getOrDefault(spec, Weapons.STEEL_SWORD)
+                                        .getItem();
+                                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
+                                        .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                                        .noLore()
                                         .get()
                                 );
                                 openLevelingRewardsMenuForClass(player, databasePlayer, classes);
@@ -224,6 +279,32 @@ public class WarlordsNewHotbarMenu {
 
             menu.setItem(3, 3, MENU_BACK, (m, e) -> openWarlordsMenu(player));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+            if (hasRewardsForAny) {
+                menu.setItem(5, 3, CLAIM_ALL, (m, e) -> {
+                    for (Specializations spec : specs) {
+                        DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
+                        int prestige = databasePlayerSpec.getPrestige();
+                        int level = ExperienceManager.getLevelFromExp(databasePlayerSpec.getExperience());
+                        for (int prestigeCheck = 0; prestigeCheck < prestige + 1; prestigeCheck++) {
+                            int maxLevel = prestigeCheck == prestige ? level : 100;
+                            for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
+                                if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                                    continue;
+                                }
+                                claimLevelReward(player,
+                                        databasePlayer,
+                                        databasePlayerSpec,
+                                        LevelUpReward.getRewardForLevel(levelCheck),
+                                        prestigeCheck,
+                                        levelCheck,
+                                        spec
+                                );
+                            }
+                        }
+                    }
+                    openLevelingRewardsMenuForClass(player, databasePlayer, classes);
+                });
+            }
             menu.openForPlayer(player);
         }
 
@@ -236,7 +317,7 @@ public class WarlordsNewHotbarMenu {
         ) {
             Menu menu = new Menu(spec.name, 9 * 6);
 
-            DatabaseSpecialization databaseSpecialization = databasePlayer.getSpec(spec);
+            DatabaseSpecialization databasePlayerSpec = databasePlayer.getSpec(spec);
             int currentPrestige = databasePlayer.getSpec(spec).getPrestige();
             int level = ExperienceManager.getLevelFromExp(databasePlayer.getSpec(spec).getExperience());
             long experience = databasePlayer.getSpec(spec).getExperience();
@@ -245,8 +326,12 @@ public class WarlordsNewHotbarMenu {
                     4,
                     0,
                     new ItemBuilder(spec.specType.itemStack)
-                            .name(ChatColor.GOLD + spec.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + getLevelString(
-                                    level) + ChatColor.DARK_GRAY + "] " + ExperienceManager.getPrestigeLevelString(currentPrestige))
+                            .name(Component.text(spec.name, NamedTextColor.GOLD)
+                                           .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                           .append(Component.text("Lv" + getLevelString(level), NamedTextColor.GRAY))
+                                           .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                           .append(ExperienceManager.getPrestigeLevelString(currentPrestige))
+                            )
                             .lore(ExperienceManager.getProgressStringWithPrestige(experience, level + 1, currentPrestige))
                             .get(),
                     (m, e) -> {
@@ -267,62 +352,87 @@ public class WarlordsNewHotbarMenu {
 
                 int menuLevel = i + ((page - 1) * LEVELS_PER_PAGE);
                 LinkedHashMap<Spendable, Long> rewardForLevel = LevelUpReward.getRewardForLevel(menuLevel);
-                List<String> lore = rewardForLevel.entrySet()
-                                                  .stream()
-                                                  .map(currenciesLongEntry -> {
-                                                      Spendable spendable = currenciesLongEntry.getKey();
-                                                      Long value = currenciesLongEntry.getValue();
-                                                      return spendable.getChatColor()
-                                                                      .toString() + value + " " + spendable.getName() + (spendable != Currencies.FAIRY_ESSENCE && value != 1 ? "s" : "");
-                                                  }).collect(Collectors.toList());
-                lore.add(0, "");
-                lore.add("");
+                List<Component> lore = rewardForLevel.entrySet()
+                                                     .stream()
+                                                     .map(currenciesLongEntry -> {
+                                                         Spendable spendable = currenciesLongEntry.getKey();
+                                                         Long value = currenciesLongEntry.getValue();
+                                                         return spendable.getCostColoredName(value);
+                                                     }).collect(Collectors.toList());
+                lore.add(0, Component.empty());
+                lore.add(Component.empty());
                 AtomicBoolean claimed = new AtomicBoolean(false);
                 boolean currentPrestigeSelected = selectedPrestige != currentPrestige;
                 if (menuLevel <= level || currentPrestigeSelected) {
-                    claimed.set(databaseSpecialization.hasLevelUpReward(menuLevel, selectedPrestige));
+                    claimed.set(databasePlayerSpec.hasLevelUpReward(menuLevel, selectedPrestige));
                     if (claimed.get()) {
-                        lore.add(ChatColor.GREEN + "Claimed!");
+                        lore.add(Component.text("Claimed!", NamedTextColor.GREEN));
                     } else {
-                        lore.add(ChatColor.YELLOW + "Click to claim!");
+                        lore.add(Component.text("Click to claim!", NamedTextColor.YELLOW));
                     }
                 } else {
-                    lore.add(ChatColor.RED + "You can't claim this yet!");
+                    lore.add(Component.text("You can't claim this yet!", NamedTextColor.RED));
                 }
                 menu.setItem(
                         column,
                         row,
-                        new ItemBuilder(Material.STAINED_GLASS_PANE,
-                                1,
-                                menuLevel <= level || currentPrestigeSelected ? claimed.get() ? (short) 5 : (short) 4 : (short) 15
-                        )
-                                .name((menuLevel <= level ? ChatColor.GREEN : ChatColor.RED) + "Level Reward " + menuLevel)
+                        new ItemBuilder(menuLevel <= level || currentPrestigeSelected ?
+                                        claimed.get() ?
+                                        Material.LIME_STAINED_GLASS_PANE :
+                                        Material.YELLOW_STAINED_GLASS_PANE :
+                                        Material.BLACK_STAINED_GLASS_PANE)
+                                .name(Component.text("Level Reward " + menuLevel, menuLevel <= level ? NamedTextColor.GREEN : NamedTextColor.RED))
                                 .lore(lore)
                                 .get(),
                         (m, e) -> {
                             if (menuLevel <= level || currentPrestigeSelected) {
                                 if (claimed.get()) {
-                                    player.sendMessage(ChatColor.RED + "You already claimed this reward!");
+                                    player.sendMessage(Component.text("You already claimed this reward!", NamedTextColor.RED));
                                 } else {
-                                    rewardForLevel.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount));
-                                    databaseSpecialization.addLevelUpReward(new LevelUpReward(rewardForLevel, menuLevel, selectedPrestige));
-                                    player.sendMessage(ChatColor.GREEN + "You claimed the reward for level " + menuLevel + "!");
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    claimLevelReward(player, databasePlayer, databasePlayerSpec, rewardForLevel, selectedPrestige, menuLevel, spec);
                                     openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
                                 }
                             } else {
-                                player.sendMessage(ChatColor.RED + "You can't claim this reward yet!");
+                                player.sendMessage(Component.text("You can't claim this reward yet!", NamedTextColor.RED));
                             }
                         }
                 );
             }
 
+
+            if (page - 1 > 0) {
+                menu.setItem(
+                        0,
+                        3,
+                        new ItemBuilder(Material.ARROW)
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
+                                .get(),
+                        (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page - 1, selectedPrestige)
+                );
+            }
+            if (page + 1 < 5) {
+                menu.setItem(
+                        8,
+                        3,
+                        new ItemBuilder(Material.ARROW)
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
+                                .get(),
+                        (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page + 1, selectedPrestige)
+                );
+
+            }
+
+
+            menu.setItem(3, 5, MENU_BACK, (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, Specializations.getClass(spec)));
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             if (currentPrestige != 0) {
                 ItemBuilder itemBuilder = new ItemBuilder(Material.HOPPER)
-                        .name(ChatColor.GREEN + "Click to Cycle Between Prestige Rewards");
-                List<String> lore = new ArrayList<>();
+                        .name(Component.text("Click to Cycle Between Prestige Rewards", NamedTextColor.GREEN));
+                List<Component> lore = new ArrayList<>();
                 for (int i = 0; i <= currentPrestige; i++) {
-                    lore.add((i == selectedPrestige ? ChatColor.AQUA : ChatColor.GRAY) + "Prestige " + i);
+                    lore.add(Component.text("Prestige " + i, i == selectedPrestige ? NamedTextColor.AQUA : NamedTextColor.GRAY));
                 }
                 itemBuilder.lore(lore);
                 menu.setItem(5, 5,
@@ -336,34 +446,40 @@ public class WarlordsNewHotbarMenu {
                         }
                 );
             }
-
-            if (page - 1 > 0) {
-                menu.setItem(
-                        0,
-                        3,
-                        new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
-                                .lore(ChatColor.YELLOW + "Page " + (page - 1))
-                                .get(),
-                        (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page - 1, selectedPrestige)
-                );
+            boolean hasRewards = false;
+            for (int prestigeCheck = 0; prestigeCheck < currentPrestige + 1; prestigeCheck++) {
+                int maxLevel = prestigeCheck == currentPrestige ? level : 100;
+                for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
+                    if (!databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                        hasRewards = true;
+                        break;
+                    }
+                }
+                if (hasRewards) {
+                    break;
+                }
             }
-            if (page + 1 < 5) {
-                menu.setItem(
-                        8,
-                        3,
-                        new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
-                                .lore(ChatColor.YELLOW + "Page " + (page + 1))
-                                .get(),
-                        (m, e) -> openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page + 1, selectedPrestige)
-                );
-
+            if (hasRewards) {
+                menu.setItem(6, 5, CLAIM_ALL, (m, e) -> {
+                    for (int prestigeCheck = 0; prestigeCheck < currentPrestige + 1; prestigeCheck++) {
+                        int maxLevel = prestigeCheck == currentPrestige ? level : 100;
+                        for (int levelCheck = 1; levelCheck <= maxLevel; levelCheck++) {
+                            if (databasePlayerSpec.hasLevelUpReward(levelCheck, prestigeCheck)) {
+                                continue;
+                            }
+                            claimLevelReward(player,
+                                    databasePlayer,
+                                    databasePlayerSpec,
+                                    LevelUpReward.getRewardForLevel(levelCheck),
+                                    prestigeCheck,
+                                    levelCheck,
+                                    spec
+                            );
+                        }
+                    }
+                    openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
+                });
             }
-
-
-            menu.setItem(3, 5, MENU_BACK, (m, e) -> openLevelingRewardsMenuForClass(player, databasePlayer, Specializations.getClass(spec)));
-            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
     }
@@ -371,36 +487,47 @@ public class WarlordsNewHotbarMenu {
     public static class PvPMenu {
 
         public static final ItemStack MENU_SKINS = new ItemBuilder(Material.PAINTING)
-                .name(ChatColor.GREEN + "Weapon Skin Selector")
-                .lore("§7Change the cosmetic appearance\n§7of your weapon to better suit\n§7your tastes.", "", "§eClick to change weapon skin!")
+                .name(Component.text("Weapon Skin Selector", NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(Component.text("Change the cosmetic appearance of your weapon to better suit your tastes.", NamedTextColor.GRAY), 160))
+                .addLore(
+                        Component.empty(),
+                        Component.text("Click to change weapon skin!", NamedTextColor.YELLOW)
+                )
                 .get();
         public static final ItemStack MENU_ARMOR_SETS = new ItemBuilder(Material.DIAMOND_HELMET)
-                .name(ChatColor.AQUA + "Armor Sets " + ChatColor.GRAY + "& " + ChatColor.AQUA + "Helmets " + ChatColor.GOLD + "(Cosmetic)")
+                .name(Component.text("Armor Sets ", NamedTextColor.AQUA)
+                               .append(Component.text("& ", NamedTextColor.GRAY))
+                               .append(Component.text("Helmets "))
+                               .append(Component.text("(Cosmetic)", NamedTextColor.GOLD))
+                )
                 .lore(
-                        "§7Equip your favorite armor\n§7sets or class helmets",
-                        "",
-                        ChatColor.YELLOW + "Click to equip!"
+                        Component.text("Equip your favorite armor", NamedTextColor.GRAY),
+                        Component.text("sets or class helmets", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click to equip!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
-                .name(ChatColor.AQUA + "Weapon Skill Boost")
-                .lore("§7Choose which of your skills you\n§7want your equipped weapon to boost.",
-                        "",
-                        "§cWARNING: §7This does not apply to PvE.",
-                        "",
-                        "§eClick to change skill boost!"
+                .name(Component.text("Weapon Skill Boost", NamedTextColor.AQUA))
+                .lore(
+                        Component.text("Choose which of your skills you", NamedTextColor.GRAY),
+                        Component.text("want your equipped weapon to boost.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("WARNING:", NamedTextColor.RED).append(Component.text(" This does not apply to PvE.", NamedTextColor.GRAY)),
+                        Component.empty(),
+                        Component.text("Click to change skill boost!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack MENU_BACK_PVP = new ItemBuilder(Material.ARROW)
-                .name(ChatColor.GREEN + "Back")
-                .lore(ChatColor.GRAY + "To PvP Menu")
+                .name(Component.text("Back", NamedTextColor.GREEN))
+                .lore(Component.text("To PvP Menu", NamedTextColor.GRAY))
                 .get();
         public static final ItemStack MENU_ABILITY_DESCRIPTION = new ItemBuilder(Material.BOOK)
-                .name(ChatColor.GREEN + "Class Information")
-                .lore(
-                        "§7Preview of your ability \ndescriptions and specialization \nstats.",
-                        "",
-                        ChatColor.YELLOW + "Click to preview!"
+                .name(Component.text("Class Information", NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(Component.text("Preview of your ability descriptions and specialization stats.", NamedTextColor.GRAY), 160))
+                .addLore(
+                        Component.empty(),
+                        Component.text("Click to preview!", NamedTextColor.YELLOW)
                 )
                 .get();
 
@@ -431,20 +558,19 @@ public class WarlordsNewHotbarMenu {
                 if (weapon.isUnlocked) {
 
                     builder = new ItemBuilder(weapon.getItem())
-                            .name(ChatColor.GREEN + weapon.getName())
-                            .flags(ItemFlag.HIDE_ENCHANTS);
-                    List<String> lore = new ArrayList<>();
+                            .name(Component.text(weapon.getName(), NamedTextColor.GREEN));
+                    List<Component> lore = new ArrayList<>();
 
                     if (weapon == selectedWeapon) {
-                        lore.add(ChatColor.GREEN + "Currently selected!");
+                        lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
                         builder.enchant(Enchantment.OXYGEN, 1);
                     } else {
-                        lore.add(ChatColor.YELLOW + "Click to select!");
+                        lore.add(Component.text("Click to select", NamedTextColor.YELLOW));
                     }
 
                     builder.lore(lore);
                 } else {
-                    builder = new ItemBuilder(Material.BARRIER).name(ChatColor.RED + "Locked Weapon Skin");
+                    builder = new ItemBuilder(Material.BARRIER).name(Component.text("Locked Weapon Skin", NamedTextColor.RED));
                 }
 
                 menu.setItem(
@@ -453,19 +579,21 @@ public class WarlordsNewHotbarMenu {
                         builder.get(),
                         (m, e) -> {
                             if (weapon.isUnlocked) {
-                                player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedSpec.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.getName() + "!");
+                                player.sendMessage(Component.text("You have changed your ", NamedTextColor.GREEN)
+                                                            .append(Component.text(selectedSpec.name, NamedTextColor.AQUA))
+                                                            .append(Component.text("'s weapon skin to: §b" + weapon.getName() + "!")));
                                 playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                                 openWeaponMenu(player, pageNumber);
                                 AbstractPlayerClass apc = selectedSpec.create.get();
-                                player.getInventory().setItem(1, new ItemBuilder(apc
-                                        .getWeapon()
-                                        .getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()))
-                                        .name("§aWeapon Skin Preview")
+                                ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
+                                player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
+                                        .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
+                                        .noLore()
                                         .get()
                                 );
                                 DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setWeapon(weapon));
                             } else {
-                                player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
+                                player.sendMessage(Component.text("This weapon skin has not been unlocked yet!", NamedTextColor.RED));
                             }
                         }
                 );
@@ -476,8 +604,8 @@ public class WarlordsNewHotbarMenu {
                         0,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
-                                .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (pageNumber - 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openWeaponMenu(player, pageNumber - 1)
                 );
@@ -487,8 +615,8 @@ public class WarlordsNewHotbarMenu {
                         8,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
-                                .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (pageNumber + 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openWeaponMenu(player, pageNumber + 1)
                 );
@@ -505,49 +633,47 @@ public class WarlordsNewHotbarMenu {
             Specializations selectedSpec = playerSettings.getSelectedSpec();
             AbstractPlayerClass apc = selectedSpec.create.get();
 
-            ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack);
-            icon.name(ChatColor.GREEN + selectedSpec.name);
-            icon.lore(
-                    selectedSpec.description,
-                    "",
-                    "§6Specialization Stats:",
-                    "",
-                    "§7Health: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxHealth()),
-                    "§7Energy: §a" + NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()) + " §7/ §a+" + NumberFormat.formatOptionalHundredths(
-                            apc.getEnergyPerSec()) + " §7per sec §7/ §a+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()) + " §7per hit",
-                    "",
-                    selectedSpec == APOTHECARY ? "§7Speed: §e10%" : null,
-                    apc.getDamageResistance() == 0 ? "§7Damage Reduction: §cNone" : "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"
+            ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack)
+                    .name(Component.text(selectedSpec.name, NamedTextColor.GREEN))
+                    .lore(WordWrap.wrap(selectedSpec.getDescription(), 200));
+            icon.addLore(
+                    Component.empty(),
+                    Component.text("Specialization Stats:", NamedTextColor.GOLD),
+                    Component.empty(),
+                    Component.text("Health: ", NamedTextColor.GRAY).append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
+                    Component.empty(),
+                    Component.text("Energy: ", NamedTextColor.GRAY)
+                             .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))
+                             .append(Component.text(" / "))
+                             .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.GREEN))
+                             .append(Component.text(" per sec / "))
+                             .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
+                             .append(Component.text(" per hit"))
+            );
+            if (selectedSpec == APOTHECARY) {
+                icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY).append(Component.text("10%", NamedTextColor.YELLOW)));
+            }
+            boolean noDamageResistance = apc.getDamageResistance() == 0;
+            icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
+                                  .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
+                                          noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
+                                  ))
             );
 
-            SkillBoosts selectedBoost = playerSettings.getSkillBoostForClass();
-            if (selectedBoost != null) {
-                for (AbstractAbility ability : apc.getAbilities()) {
-                    if (ability.getClass() == selectedBoost.ability) {
-                        ability.boostSkill(selectedBoost, apc);
-                        break;
-                    }
-                }
-            }
 
-            apc.getWeapon().updateDescription(player);
-            apc.getRed().updateDescription(player);
-            apc.getPurple().updateDescription(player);
-            apc.getBlue().updateDescription(player);
-            apc.getOrange().updateDescription(player);
+            // not including skill boost - these display base stats
+            List<AbstractAbility> abilities = apc.getAbilities();
+
+            abilities.forEach(ability -> ability.updateDescription(player));
 
             menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
-            menu.setItem(2,
-                    apc.getWeapon()
-                       .getItem(playerSettings.getWeaponSkins()
-                                              .getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE)
-                                              .getItem()),
-                    ACTION_DO_NOTHING
-            );
-            menu.setItem(3, apc.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
-            menu.setItem(4, apc.getPurple().getItem(PURPLE_ABILITY), ACTION_DO_NOTHING);
-            menu.setItem(5, apc.getBlue().getItem(BLUE_ABILITY), ACTION_DO_NOTHING);
-            menu.setItem(6, apc.getOrange().getItem(ORANGE_ABILITY), ACTION_DO_NOTHING);
+            ItemStack weaponSkin = playerSettings.getWeaponSkins()
+                                                 .getOrDefault(selectedSpec, Weapons.STEEL_SWORD)
+                                                 .getItem();
+            for (int i = 0; i < abilities.size() && i < 5; i++) {
+                AbstractAbility ability = abilities.get(i);
+                menu.setItem(i + 2, ability.getItem(i == 0 ? weaponSkin : ability.getAbilityIcon()), ACTION_DO_NOTHING);
+            }
             menu.setItem(8, MENU_BACK_PVP, (m, e) -> openPvPMenu(player));
 
             menu.openForPlayer(player);
@@ -567,21 +693,21 @@ public class WarlordsNewHotbarMenu {
             for (int i = (pageNumber - 1) * 8; i < pageNumber * 8 && i < helmets.length; i++) {
                 ArmorManager.Helmets helmet = helmets[i];
                 ItemBuilder builder = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
-                        .name(onBlueTeam ? ChatColor.BLUE + helmet.name : ChatColor.RED + helmet.name)
-                        .lore(HELMET_DESCRIPTION, "")
-                        .flags(ItemFlag.HIDE_ENCHANTS);
+                        .name(Component.text(helmet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+                        .lore(HELMET_DESCRIPTION)
+                        .addLore(Component.empty());
                 if (selectedHelmet.contains(helmet)) {
-                    builder.addLore(ChatColor.GREEN + ">>> ACTIVE <<<");
+                    builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.OXYGEN, 1);
                 } else {
-                    builder.addLore(ChatColor.YELLOW + "> Click to activate! <");
+                    builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
                 }
                 menu.setItem(
                         (i - (pageNumber - 1) * 8) + 1,
                         2,
                         builder.get(),
                         (m, e) -> {
-                            player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + helmet.name);
+                            player.sendMessage(Component.text("Selected: ", NamedTextColor.YELLOW).append(Component.text(helmet.name, NamedTextColor.GREEN)));
                             playerSettings.setHelmet(helmet.classes, helmet);
                             ArmorManager.resetArmor(player);
                             openArmorMenu(player, pageNumber);
@@ -590,27 +716,27 @@ public class WarlordsNewHotbarMenu {
             }
             int xPosition = 1;
             for (int i = (pageNumber - 1) * 6; i < pageNumber * 6; i++) {
-                if (pageNumber == 3 && i == 15) {
+                if (pageNumber == 3 && i == Specializations.VALUES.length) {
                     break;
                 }
                 ArmorManager.ArmorSets armorSet = ArmorManager.ArmorSets.VALUES[(i % 3) * 3];
                 Classes classes = Classes.VALUES[i / 3];
                 ItemBuilder builder = new ItemBuilder(i % 3 == 0 ? ArmorManager.ArmorSets.applyColor(armorSet.itemBlue, onBlueTeam) : armorSet.itemBlue)
-                        .name(onBlueTeam ? ChatColor.BLUE + armorSet.name : ChatColor.RED + armorSet.name)
-                        .lore(ARMOR_DESCRIPTION, "")
-                        .flags(ItemFlag.HIDE_ENCHANTS);
+                        .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+                        .lore(ARMOR_DESCRIPTION)
+                        .addLore(Component.empty());
                 if (playerSettings.getArmorSet(classes) == armorSet) {
-                    builder.addLore(ChatColor.GREEN + ">>> ACTIVE <<<");
+                    builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.OXYGEN, 1);
                 } else {
-                    builder.addLore(ChatColor.YELLOW + "> Click to activate! <");
+                    builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
                 }
                 menu.setItem(
                         xPosition,
                         3,
                         builder.get(),
                         (m, e) -> {
-                            player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + armorSet.name);
+                            player.sendMessage(Component.text("Selected: ", NamedTextColor.YELLOW).append(Component.text(armorSet.name, NamedTextColor.GREEN)));
                             playerSettings.setArmor(classes, armorSet);
                             openArmorMenu(player, pageNumber);
                         }
@@ -627,8 +753,8 @@ public class WarlordsNewHotbarMenu {
                         8,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
-                                .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (pageNumber + 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber + 1)
                 );
@@ -637,8 +763,8 @@ public class WarlordsNewHotbarMenu {
                         8,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Next Page")
-                                .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                                .name(Component.text("Next Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (pageNumber + 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber + 1)
                 );
@@ -646,8 +772,8 @@ public class WarlordsNewHotbarMenu {
                         0,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
-                                .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (pageNumber - 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber - 1)
                 );
@@ -656,8 +782,8 @@ public class WarlordsNewHotbarMenu {
                         0,
                         5,
                         new ItemBuilder(Material.ARROW)
-                                .name(ChatColor.GREEN + "Previous Page")
-                                .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                                .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                                .lore(Component.text("Page " + (pageNumber - 1), NamedTextColor.YELLOW))
                                 .get(),
                         (m, e) -> openArmorMenu(player, pageNumber - 1)
                 );
@@ -674,19 +800,18 @@ public class WarlordsNewHotbarMenu {
             for (int i = 0; i < values.size(); i++) {
                 SkillBoosts skillBoost = values.get(i);
                 ItemBuilder builder = new ItemBuilder(selectedSpec.specType.itemStack)
-                        .name(skillBoost == selectedBoost ? ChatColor.GREEN + skillBoost.name + " (" + selectedSpec.name + ")" : ChatColor.RED + skillBoost.name + " (" + selectedSpec.name + ")")
-                        .flags(ItemFlag.HIDE_ENCHANTS);
-                List<String> lore = new ArrayList<>();
-                lore.add(WordWrap.wrapWithNewline(skillBoost == selectedBoost ? skillBoost.selectedDescription
-                        .replace("§c", ChatColor.RED.toString())
-                        .replace("§a", ChatColor.GREEN.toString()) : skillBoost.description, 130)
-                );
-                lore.add("");
+                        .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")",
+                                skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED
+                        ));
+                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description,
+                        130
+                ));
+                lore.add(Component.empty());
                 if (skillBoost == selectedBoost) {
-                    lore.add(ChatColor.GREEN + "Currently selected!");
+                    lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
                     builder.enchant(Enchantment.OXYGEN, 1);
                 } else {
-                    lore.add(ChatColor.YELLOW + "Click to select!");
+                    lore.add(Component.text("Click to select!", NamedTextColor.YELLOW));
                 }
                 builder.lore(lore);
                 menu.setItem(
@@ -694,7 +819,7 @@ public class WarlordsNewHotbarMenu {
                         3,
                         builder.get(),
                         (m, e) -> {
-                            player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + skillBoost.name + "!");
+                            player.sendMessage(Component.text("You have changed your weapon boost to: ", NamedTextColor.GREEN).append(Component.text(skillBoost.name + "!")));
                             PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
                             openSkillBoostMenu(player, selectedSpec);
 
@@ -709,44 +834,36 @@ public class WarlordsNewHotbarMenu {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
             AbstractPlayerClass apc = selectedSpec.create.get();
             AbstractPlayerClass apc2 = selectedSpec.create.get();
-            if (apc2.getWeapon().getClass() == selectedBoost.ability) {
-                apc2.getWeapon().boostSkill(selectedBoost, apc2);
-                apc.getWeapon().updateDescription(player);
-                apc2.getWeapon().updateDescription(player);
+            List<AbstractAbility> abilities = apc.getAbilities();
+            List<AbstractAbility> abilities2 = apc2.getAbilities();
+            for (int i = 0; i < abilities.size(); i++) {
+                AbstractAbility ability = abilities.get(i);
+                AbstractAbility ability2 = abilities2.get(i);
+                if (ability.getClass() != selectedBoost.ability) {
+                    continue;
+                }
+                ItemStack icon;
+                if (ability == apc.getWeapon()) {
+                    icon = new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem()))
+                            .noLore()
+                            .get();
+                } else {
+                    icon = ability.getAbilityIcon();
+                }
+                ability2.boostSkill(selectedBoost, apc2);
+                ability.updateDescription(player);
+                ability2.updateDescription(player);
                 menu.setItem(3,
                         1,
-                        apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()),
+                        ability.getItem(icon),
                         ACTION_DO_NOTHING
                 );
                 menu.setItem(5,
                         1,
-                        apc2.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.FELFLAME_BLADE).getItem()),
+                        ability2.getItem(icon),
                         ACTION_DO_NOTHING
                 );
-            } else if (apc2.getRed().getClass() == selectedBoost.ability) {
-                apc2.getRed().boostSkill(selectedBoost, apc2);
-                apc.getRed().updateDescription(player);
-                apc2.getRed().updateDescription(player);
-                menu.setItem(3, 1, apc.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
-                menu.setItem(5, 1, apc2.getRed().getItem(RED_ABILITY), ACTION_DO_NOTHING);
-            } else if (apc2.getPurple().getClass() == selectedBoost.ability) {
-                apc2.getPurple().boostSkill(selectedBoost, apc2);
-                apc.getPurple().updateDescription(player);
-                apc2.getPurple().updateDescription(player);
-                menu.setItem(3, 1, apc.getPurple().getItem(PURPLE_ABILITY), ACTION_DO_NOTHING);
-                menu.setItem(5, 1, apc2.getPurple().getItem(PURPLE_ABILITY), ACTION_DO_NOTHING);
-            } else if (apc2.getBlue().getClass() == selectedBoost.ability) {
-                apc2.getBlue().boostSkill(selectedBoost, apc2);
-                apc.getBlue().updateDescription(player);
-                apc2.getBlue().updateDescription(player);
-                menu.setItem(3, 1, apc.getBlue().getItem(BLUE_ABILITY), ACTION_DO_NOTHING);
-                menu.setItem(5, 1, apc2.getBlue().getItem(BLUE_ABILITY), ACTION_DO_NOTHING);
-            } else if (apc2.getOrange().getClass() == selectedBoost.ability) {
-                apc2.getOrange().boostSkill(selectedBoost, apc2);
-                apc.getOrange().updateDescription(player);
-                apc2.getOrange().updateDescription(player);
-                menu.setItem(3, 1, apc.getOrange().getItem(ORANGE_ABILITY), ACTION_DO_NOTHING);
-                menu.setItem(5, 1, apc2.getOrange().getItem(ORANGE_ABILITY), ACTION_DO_NOTHING);
+                break;
             }
             menu.setItem(4, 5, MENU_BACK_PVP, (m, e) -> openPvPMenu(player));
             menu.openForPlayer(player);
@@ -758,39 +875,39 @@ public class WarlordsNewHotbarMenu {
     public static class PvEMenu {
 
         public static final ItemStack MENU_BACK_PVE = new ItemBuilder(Material.ARROW)
-                .name(ChatColor.GREEN + "Back")
-                .lore(ChatColor.GRAY + "To PvE Menu")
+                .name(Component.text("Back", NamedTextColor.GREEN))
+                .lore(Component.text("To PvE Menu", NamedTextColor.GRAY))
                 .get();
         public static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD)
-                .name("§aWeapons")
-                .lore(
-                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and modify all your weapons, also accessible through The Weaponsmith.", 160),
-                        "",
-                        ChatColor.YELLOW + "Click to view!"
+                .name(Component.text("Weapons", NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(Component.text("View and modify all your weapons, also accessible through The Weaponsmith.", NamedTextColor.GRAY), 160))
+                .addLore(
+                        Component.empty(),
+                        Component.text("Click to view!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack ITEMS_MENU = new ItemBuilder(Material.ITEM_FRAME)
-                .name("§aItems")
+                .name(Component.text("Items", NamedTextColor.GREEN))
                 .lore(
-                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and equip all your Items.", 160),
-                        "",
-                        ChatColor.YELLOW + "Click to view!"
+                        Component.text("View and equip all your Items.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click to view!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST)
-                .name("§aReward Inventory")
+                .name(Component.text("Reward Inventory", NamedTextColor.GREEN))
                 .lore(
-                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View and claim all your rewards.", 160),
-                        "",
-                        ChatColor.YELLOW + "Click to view!"
+                        Component.text("View and claim all your rewards.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click to view!", NamedTextColor.YELLOW)
                 )
                 .get();
         public static final ItemStack ABILITY_TREE_MENU = new ItemBuilder(Material.GOLD_NUGGET)
-                .name(ChatColor.GREEN + "Upgrade Talisman")
+                .name(Component.text("Upgrade Talisman", NamedTextColor.GREEN))
                 .lore(
-                        WordWrap.wrapWithNewline(ChatColor.GRAY + "View your ability upgrades.", 160),
-                        "",
-                        ChatColor.YELLOW + "Click to view!"
+                        Component.text("View your ability upgrades.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click to view!", NamedTextColor.YELLOW)
                 )
                 .get();
 
@@ -817,13 +934,13 @@ public class WarlordsNewHotbarMenu {
                     }
                 });
                 menu.setItem(2, 1,
-                        new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal())
-                                .name("§aMob Drops")
+                        new ItemBuilder(Material.ZOMBIE_HEAD)
+                                .name(Component.text("Mob Drops", NamedTextColor.GREEN))
                                 .lore(Arrays.stream(MobDrops.VALUES)
                                             .map(drop -> drop.getCostColoredName(databasePlayer.getPveStats()
                                                                                                .getMobDrops()
                                                                                                .getOrDefault(drop, 0L)))
-                                            .collect(Collectors.joining("\n")))
+                                            .collect(Collectors.toList()))
                                 .get(),
                         (m, e) -> {}
                 );
@@ -844,16 +961,20 @@ public class WarlordsNewHotbarMenu {
     public static class SettingsMenu extends BaseCommand {
 
         public static final ItemStack MENU_SETTINGS = new ItemBuilder(Material.NETHER_STAR)
-                .name(ChatColor.AQUA + "Settings")
-                .lore("§7Allows you to toggle different settings\n§7options.", "", "§eClick to edit your settings.")
+                .name(Component.text("Settings", NamedTextColor.AQUA))
+                .lore(WordWrap.wrap(Component.text("Allows you to toggle different settings options.", NamedTextColor.GRAY), 150))
+                .addLore(
+                        Component.empty(),
+                        Component.text("Click to edit your settings.", NamedTextColor.GRAY)
+                )
                 .get();
         public static final ItemStack MENU_SETTINGS_PARTICLE_QUALITY = new ItemBuilder(Material.NETHER_STAR)
-                .name(ChatColor.GREEN + "Particle Quality")
-                .lore("§7Allows you to control, or\n§7disable, particles and the\n§7amount of them.")
+                .name(Component.text("Particle Quality", NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(Component.text("Allows you to control, or disable, particles and the amount of them.", NamedTextColor.GRAY), 150))
                 .get();
         public static final ItemStack MENU_SETTINGS_CHAT_SETTINGS = new ItemBuilder(Material.PAPER)
-                .name(ChatColor.GREEN + "Chat Settings")
-                .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Configure which chat messages you see in-game", 150))
+                .name(Component.text("Chat Settings", NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(Component.text("Configure which chat messages you see in-game", NamedTextColor.GRAY), 150))
                 .get();
 
         @Default
@@ -912,11 +1033,13 @@ public class WarlordsNewHotbarMenu {
                         i + 3,
                         1,
                         new ItemBuilder(particleQuality.item)
-                                .lore(particleQuality.description,
-                                        "",
-                                        selectedParticleQuality == particleQuality ? ChatColor.GREEN + "SELECTED" : ChatColor.YELLOW + "Click to select!"
+                                .lore(WordWrap.wrap(particleQuality.description, 160))
+                                .addLore(
+                                        Component.empty(),
+                                        selectedParticleQuality == particleQuality ? Component.text("SELECTED", NamedTextColor.GREEN) : Component.text("Click to select",
+                                                NamedTextColor.YELLOW
+                                        )
                                 )
-                                .flags(ItemFlag.HIDE_ENCHANTS)
                                 .get(),
                         (m, e) -> {
                             Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());

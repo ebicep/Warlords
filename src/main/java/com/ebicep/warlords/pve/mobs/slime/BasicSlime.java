@@ -1,9 +1,8 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
 import com.ebicep.customentities.nms.pve.CustomSlime;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -13,18 +12,19 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BasicMob;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 
 public class BasicSlime extends AbstractSlime implements BasicMob {
 
-    private final double hitRadius = 2.5;
+    private static final double hitRadius = 2.5;
     private final double shimmerRadius = 3;
 
     public BasicSlime(Location spawnLocation) {
@@ -37,7 +37,8 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                 0.5f,
                 20,
                 0,
-                0
+                0,
+                new Shimmer()
         );
     }
 
@@ -54,18 +55,9 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     hitRadius,
-                    new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(0.75),
-                    new DoubleLineEffect(ParticleEffect.SPELL)
+                    new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(0.75),
+                    new DoubleLineEffect(Particle.SPELL)
             ).playEffects();
-        }
-
-        if (ticksElapsed % 6 == 0) {
-            for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(warlordsNPC, hitRadius, hitRadius, hitRadius)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                enemy.addDamageInstance(warlordsNPC, "Shimmer", 400, 400, 0, 100, false);
-            }
         }
     }
 
@@ -100,8 +92,29 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                         if (ticksElapsed % 10 == 0) {
                             Location location = enemy.getLocation();
                             location.add(0, 1.5, 0);
-                            ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
-                            ParticleEffect.SLIME.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
+                            location.getWorld().spawnParticle(
+                                    Particle.SMOKE_NORMAL,
+                                    location,
+                                    1,
+                                    0.3F,
+                                    0.3F,
+                                    0.3F,
+                                    0.02F,
+                                    null,
+                                    true
+                            );
+                            location.getWorld().spawnParticle(
+                                    Particle.SLIME,
+                                    location,
+                                    1,
+                                    0.3F,
+                                    0.3F,
+                                    0.3F,
+                                    0.5F,
+                                    null,
+                                    true
+                            );
+
                         }
 
                         if (ticksLeft % 20 == 0) {
@@ -112,21 +125,53 @@ public class BasicSlime extends AbstractSlime implements BasicMob {
                                     healthDamage,
                                     healthDamage,
                                     0,
-                                    100,
-                                    false
+                                    100
                             );
                         }
                     })
             );
         }
 
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.GREEN)
-                .with(FireworkEffect.Type.BALL_LARGE)
-                .withTrail()
-                .build());
+        EffectUtils.playFirework(
+                deathLocation,
+                FireworkEffect.builder()
+                   .withColor(Color.GREEN)
+                   .with(FireworkEffect.Type.BALL_LARGE)
+                   .withTrail()
+                   .build(),
+                1);
         EffectUtils.playHelixAnimation(deathLocation, shimmerRadius, 0, 255, 0);
-        Utils.playGlobalSound(deathLocation, Sound.SLIME_WALK, 2, 0.5f);
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_SLIME_JUMP, 2, 0.5f);
+    }
+
+    private static class Shimmer extends AbstractAbility {
+
+        public Shimmer() {
+            super("Shimmer", 0.3f, 50);
+        }
+
+        @Override
+        public void updateDescription(Player player) {
+
+        }
+
+        @Override
+        public List<Pair<String, String>> getAbilityInfo() {
+            return null;
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(wp, hitRadius, hitRadius, hitRadius)
+                    .aliveEnemiesOf(wp)
+            ) {
+                enemy.addDamageInstance(wp, "Shimmer", 400, 400, 0, 100);
+            }
+            return true;
+        }
     }
 
 }

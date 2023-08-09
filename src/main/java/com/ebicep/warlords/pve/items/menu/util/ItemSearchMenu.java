@@ -10,18 +10,20 @@ import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.TriConsumer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -91,7 +93,7 @@ public class ItemSearchMenu extends Menu {
                                                  .stream()
                                                  .map(ItemLoadout::getItems)
                                                  .flatMap(Collection::stream)
-                                                 .collect(Collectors.toList());
+                                                 .toList();
         int page = menuSettings.getPage();
         List<AbstractItem> itemInventory = new ArrayList<>(menuSettings.getSortedItemInventory());
         int x = 0;
@@ -101,14 +103,11 @@ public class ItemSearchMenu extends Menu {
             if (itemNumber < itemInventory.size()) {
                 AbstractItem item = itemInventory.get(itemNumber);
                 ItemBuilder itemBuilder = item.generateItemBuilder();
-                if (item.isFavorite()) {
-                    itemBuilder.addLore("", ChatColor.LIGHT_PURPLE + "FAVORITE");
-                }
                 if (equippedItems.contains(item.getUUID())) {
                     if (!item.isFavorite()) {
-                        itemBuilder.addLore("");
+                        itemBuilder.addLore(Component.empty());
                     }
-                    itemBuilder.addLore(ChatColor.AQUA + "EQUIPPED");
+                    itemBuilder.addLore(Component.text("EQUIPPED", NamedTextColor.AQUA));
                 }
                 itemBuilder = editItem.apply(itemBuilder);
                 setItem(x, y,
@@ -126,8 +125,8 @@ public class ItemSearchMenu extends Menu {
 
     private void addMobDrops() {
         setItem(2, 5,
-                new ItemBuilder(Material.SKULL_ITEM, 1, (short) SkullType.ZOMBIE.ordinal())
-                        .name("§aYour Drops")
+                new ItemBuilder(Material.ZOMBIE_HEAD)
+                        .name(Component.text("Your Drops", NamedTextColor.GREEN))
                         .lore(
                                 MobDrops.ZENITH_STAR.getCostColoredName(MobDrops.ZENITH_STAR.getFromPlayer(databasePlayer)),
                                 Currencies.CELESTIAL_BRONZE.getCostColoredName(Currencies.CELESTIAL_BRONZE.getFromPlayer(databasePlayer)),
@@ -141,8 +140,8 @@ public class ItemSearchMenu extends Menu {
     private void addResetSetting() {
         setItem(3, 5,
                 new ItemBuilder(Material.MILK_BUCKET)
-                        .name(ChatColor.GREEN + "Reset Settings")
-                        .lore(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
+                        .name(Component.text("Reset Settings", NamedTextColor.GREEN))
+                        .lore(Component.text("Reset the filter, sort, and order of weapons", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> {
                     menuSettings.reset();
@@ -154,30 +153,34 @@ public class ItemSearchMenu extends Menu {
 
     private void addFilterBySetting() {
         PlayerItemMenuSettings.PlayerItemMenuFilterSettings filterSettings = menuSettings.getFilterSettings();
-        List<String> filterLore = new ArrayList<>();
+        List<Component> filterLore = new ArrayList<>();
+        TextComponent grayDash = Component.text("- ", NamedTextColor.GRAY);
         if (filterSettings.getTypeFilter() != ItemType.NONE) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + filterSettings.getTypeFilter().name);
+            filterLore.add(grayDash.append(Component.text(filterSettings.getTypeFilter().name, NamedTextColor.GRAY)));
         }
         if (filterSettings.getTierFilter() != ItemTier.NONE) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + filterSettings.getTierFilter().name);
+            filterLore.add(grayDash.append(Component.text(filterSettings.getTierFilter().name, NamedTextColor.GRAY)));
         }
         if (filterSettings.getModifierFilter() != ModifierFilter.NONE) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + filterSettings.getModifierFilter().name);
+            filterLore.add(grayDash.append(Component.text(filterSettings.getModifierFilter().name, NamedTextColor.GRAY)));
         }
         if (filterSettings.getAddonFilter()) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + "Selected Class Bonus");
+            filterLore.add(grayDash.append(Component.text("Selected Class Bonus", NamedTextColor.GRAY)));
         }
         if (filterSettings.getFavoriteFilter()) {
-            filterLore.add(ChatColor.GRAY + "- " + ChatColor.AQUA + "Only Favorites");
+            filterLore.add(grayDash.append(Component.text("Only Favorites", NamedTextColor.GRAY)));
         }
         if (filterLore.isEmpty()) {
-            filterLore.add(ChatColor.GRAY + "No filters selected");
+            filterLore.add(Component.text("No filters selected", NamedTextColor.GRAY));
         }
-        filterLore.add("");
-        filterLore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GRAY + " to change");
+        filterLore.add(Component.empty());
+        filterLore.add(Component.textOfChildren(
+                Component.text("CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                Component.text(" to change", NamedTextColor.GRAY)
+        ));
         setItem(5, 5,
                 new ItemBuilder(Material.HOPPER)
-                        .name(ChatColor.GREEN + "Filter Settings")
+                        .name(Component.text("Filter Settings", NamedTextColor.GREEN))
                         .lore(filterLore)
                         .get(),
                 (m, e) -> {
@@ -189,11 +192,11 @@ public class ItemSearchMenu extends Menu {
     private void addSortBySetting() {
         SortOptions sortedBy = menuSettings.getSortOption();
         setItem(6, 5,
-                new ItemBuilder(Material.REDSTONE_COMPARATOR)
-                        .name(ChatColor.GREEN + "Sort By")
+                new ItemBuilder(Material.COMPARATOR)
+                        .name(Component.text("Sort By", NamedTextColor.GREEN))
                         .lore(Arrays.stream(SortOptions.VALUES)
-                                    .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                    .collect(Collectors.joining("\n"))
+                                    .map(value -> Component.text(value.name, (sortedBy == value ? NamedTextColor.AQUA : NamedTextColor.GRAY)))
+                                    .collect(Collectors.toList())
                         )
                         .get(),
                 (m, e) -> {
@@ -206,10 +209,10 @@ public class ItemSearchMenu extends Menu {
     private void addSortOrderSetting() {
         setItem(7, 5,
                 new ItemBuilder(Material.LEVER)
-                        .name(ChatColor.GREEN + "Sort Order")
-                        .lore(menuSettings.isAscending() ?
-                              ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :
-                              ChatColor.GRAY + "Ascending\n" + ChatColor.AQUA + "Descending"
+                        .name(Component.text("Sort Order", NamedTextColor.GREEN))
+                        .lore(
+                                Component.text("Ascending", menuSettings.isAscending() ? NamedTextColor.AQUA : NamedTextColor.GRAY),
+                                Component.text("Descending", menuSettings.isAscending() ? NamedTextColor.GRAY : NamedTextColor.AQUA)
                         )
                         .get(),
                 (m, e) -> {
@@ -225,8 +228,8 @@ public class ItemSearchMenu extends Menu {
         if (page - 1 > 0) {
             setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page - 1);
@@ -237,8 +240,8 @@ public class ItemSearchMenu extends Menu {
         if (itemInventory.size() > (page * 45)) {
             setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page + 1);
@@ -283,12 +286,11 @@ public class ItemSearchMenu extends Menu {
         BLESSED("Blessed",
                 new ItemBuilder(Material.PAPER)
                         .enchant(Enchantment.OXYGEN, 1)
-                        .flags(ItemFlag.HIDE_ENCHANTS)
                         .get(),
                 item -> item.getModifier() > 0
         ),
         CURSED("Cursed",
-                new ItemStack(Material.EMPTY_MAP),
+                new ItemStack(Material.MAP),
                 item -> item.getModifier() < 0
         ),
 
@@ -315,7 +317,7 @@ public class ItemSearchMenu extends Menu {
         private int page = 1;
         private List<AbstractItem> itemInventory = new ArrayList<>();
         private List<AbstractItem> sortedItemInventory = new ArrayList<>();
-        private PlayerItemMenuFilterSettings filterSettings = new PlayerItemMenuFilterSettings();
+        private PlayerItemMenuFilterSettings filterSettings;
         private SortOptions sortOption = SortOptions.DATE;
         private boolean ascending = true; //ascending = smallest -> largest/recent
 
@@ -344,6 +346,7 @@ public class ItemSearchMenu extends Menu {
 
         public void reset() {
             this.page = 1;
+            this.filterSettings.statPoolFilter = EnumSet.noneOf(BasicStatPool.class);
             this.filterSettings.tierFilter = ItemTier.NONE;
             this.filterSettings.typeFilter = ItemType.NONE;
             this.filterSettings.modifierFilter = ModifierFilter.NONE;
@@ -355,6 +358,16 @@ public class ItemSearchMenu extends Menu {
 
         public void sort() {
             sortedItemInventory = new ArrayList<>(itemInventory);
+            if (!filterSettings.statPoolFilter.isEmpty()) {
+                sortedItemInventory.removeIf(item -> {
+                    for (BasicStatPool statPool : filterSettings.statPoolFilter) {
+                        if (!item.getStatPool().containsKey(statPool)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
             if (filterSettings.tierFilter != ItemTier.NONE) {
                 sortedItemInventory.removeIf(item -> item.getTier() != filterSettings.tierFilter);
             }
@@ -409,16 +422,18 @@ public class ItemSearchMenu extends Menu {
         }
 
         public static class PlayerItemMenuFilterSettings {
-            public ItemTier tierFilter;
-            public ItemType typeFilter;
-            public ModifierFilter modifierFilter;
+            public EnumSet<BasicStatPool> statPoolFilter = EnumSet.noneOf(BasicStatPool.class);
+            public ItemTier tierFilter = ItemTier.NONE;
+            public ItemType typeFilter = ItemType.NONE;
+            public ModifierFilter modifierFilter = ModifierFilter.NONE;
             public boolean addonFilter = false; // false = none, true = class
             private boolean favoriteFilter = false;
 
             public PlayerItemMenuFilterSettings() {
-                this.tierFilter = ItemTier.NONE;
-                this.typeFilter = ItemType.NONE;
-                this.modifierFilter = ModifierFilter.NONE;
+            }
+
+            public EnumSet<BasicStatPool> getStatPoolFilter() {
+                return statPoolFilter;
             }
 
             public ItemTier getTierFilter() {

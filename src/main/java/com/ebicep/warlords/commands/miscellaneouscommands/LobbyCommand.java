@@ -8,7 +8,8 @@ import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 @CommandAlias("lobby|l|hub")
@@ -21,9 +22,9 @@ public class LobbyCommand extends BaseCommand {
         Team playerTeam = game.getPlayerTeam(player.getUniqueId());
         if (playerTeam != null && !game.acceptsPeople()) {
             player.sendMessage(
-                    ChatColor.RED + "This command is only enabled in public games. Did you mean to end your private game? Use the command: " +
-                            ChatColor.GOLD + "/endprivategame" +
-                            ChatColor.RED + "."
+                    Component.text("This command is only enabled in public games. Did you mean to end your private game? Use the command: ", NamedTextColor.RED)
+                             .append(Component.text("/endprivategame", NamedTextColor.GOLD))
+                             .append(Component.text("."))
             );
         } else {
             game.removePlayer(player.getUniqueId());

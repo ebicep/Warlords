@@ -2,7 +2,9 @@ package com.ebicep.warlords.guilds;
 
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.util.bukkit.Colors;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class GuildTag {
@@ -18,9 +20,9 @@ public class GuildTag {
 
     private String name = "";
     @Field("name_color")
-    private String nameColor = ChatColor.GRAY.toString();
+    private String nameColor = NamedTextColor.GRAY.toString();
     @Field("bracket_color")
-    private String bracketColor = ChatColor.GRAY.toString();
+    private String bracketColor = NamedTextColor.GRAY.toString();
 
     public GuildTag() {
     }
@@ -35,11 +37,19 @@ public class GuildTag {
         this.bracketColor = bracketColor;
     }
 
-    public String getTag(boolean bold) {
-        if (bold) {
-            return bracketColor + ChatColor.BOLD + "[" + nameColor + ChatColor.BOLD + name + bracketColor + ChatColor.BOLD + "]";
-        }
-        return bracketColor + "[" + nameColor + name + bracketColor + "]";
+    public Component getTag(boolean bold) {
+        return Component.text("[", getBracketTextColor())
+                        .decoration(TextDecoration.BOLD, bold)
+                        .append(Component.text(name, getNameTextColor()))
+                        .append(Component.text("]"));
+    }
+
+    public NamedTextColor getBracketTextColor() {
+        return NamedTextColor.NAMES.value(bracketColor);
+    }
+
+    public NamedTextColor getNameTextColor() {
+        return NamedTextColor.NAMES.value(nameColor);
     }
 
     public void setInfo(String name, String nameColor, String bracketColor) {
@@ -49,8 +59,8 @@ public class GuildTag {
         CustomScoreboard.updateLobbyPlayerNames();
     }
 
-    public String getColoredName() {
-        return nameColor + name;
+    public Component getColoredName() {
+        return Component.text(name, getNameTextColor());
     }
 
     public String getName() {
@@ -66,25 +76,17 @@ public class GuildTag {
         return nameColor;
     }
 
-    public void setNameColor(String nameColor) {
-        this.nameColor = nameColor;
+    public void setNameColor(NamedTextColor nameColor) {
+        this.nameColor = nameColor.toString();
         CustomScoreboard.updateLobbyPlayerNames();
-    }
-
-    public void setNameColor(ChatColor nameColor) {
-        setNameColor(nameColor.toString());
     }
 
     public String getBracketColor() {
         return bracketColor;
     }
 
-    public void setBracketColor(String bracketColor) {
-        this.bracketColor = bracketColor;
+    public void setBracketColor(NamedTextColor bracketColor) {
+        this.bracketColor = bracketColor.toString();
         CustomScoreboard.updateLobbyPlayerNames();
-    }
-
-    public void setBracketColor(ChatColor bracketColor) {
-        setBracketColor(bracketColor.toString());
     }
 }

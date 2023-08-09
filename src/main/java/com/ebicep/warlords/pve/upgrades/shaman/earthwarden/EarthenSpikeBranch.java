@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
-import com.ebicep.warlords.abilties.EarthenSpike;
+import com.ebicep.warlords.abilities.EarthenSpike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -93,7 +93,7 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 50000,
                 () -> {
                     ability.setSpikeHitbox(ability.getSpikeHitbox() + 1.5);
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

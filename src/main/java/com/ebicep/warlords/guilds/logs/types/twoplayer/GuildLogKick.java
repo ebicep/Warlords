@@ -1,5 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.twoplayer;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.UUID;
 
 public class GuildLogKick extends AbstractGuildLogTwoPlayer {
@@ -9,7 +11,7 @@ public class GuildLogKick extends AbstractGuildLogTwoPlayer {
     }
 
     @Override
-    public String getAction() {
-        return "kicked";
+    public Component getAction() {
+        return Component.text("kicked");
     }
 }

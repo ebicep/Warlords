@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 
-import com.ebicep.warlords.abilties.FlameBurst;
+import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -74,7 +74,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+2 Blocks hit radius\n+15% Crit multiplier",
+                "+2 Blocks hit radius\n+15% Crit Multiplier",
                 20000,
                 () -> {
                     ability.setHitbox(hitbox + 2);
@@ -85,7 +85,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
         masterUpgrade = new Upgrade(
                 "Flame Awakening",
                 "Flame Burst - Master Upgrade",
-                "Flame Burst deals significantly more damage and ramps up crit chance, crit multiplier and damage very quickly per blocks traveled at the cost " +
+                "Flame Burst deals significantly more damage and ramps up Crit Chance, Crit Multiplier and damage very quickly per blocks traveled at the cost " +
                         "of heavily reduced projectile speed.",
                 50000,
                 () -> {
@@ -94,7 +94,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                     ability.setMinDamageHeal(minDamage * 2);
                     ability.setMaxDamageHeal(maxDamage * 2);
                     ability.setHitbox(ability.getHitbox() + 5);
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

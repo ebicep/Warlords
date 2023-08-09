@@ -1,10 +1,9 @@
 package com.ebicep.warlords.pve.mobs.magmacube;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.LastStand;
+import com.ebicep.warlords.abilities.LastStand;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,10 +13,7 @@ import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.EliteMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 
 public class MagmaCube extends AbstractMagmaCube implements EliteMob {
 
@@ -46,7 +42,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
         Location loc = warlordsNPC.getLocation();
         warlordsNPC.getCooldownManager().removeCooldown(LastStand.class, false);
         if (ticksElapsed % 60 == 0) {
-            EffectUtils.playSphereAnimation(loc, 9, ParticleEffect.SPELL, 1);
+            EffectUtils.playSphereAnimation(loc, 9, Particle.SPELL, 1);
             Utils.playGlobalSound(loc, "warrior.laststand.activation", 2, 0.6f);
             for (WarlordsEntity ally : PlayerFilter
                     .entitiesAround(warlordsNPC, 9, 9, 9)
@@ -54,7 +50,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
             ) {
                 if (!ally.getEntity().getCustomName().equals("Illusion Illumination")) {
                     ally.getCooldownManager().removeCooldown(LastStand.class, false);
-                    ally.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
+                    ally.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name,
                             "",
                             LastStand.class,
@@ -94,7 +90,7 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
                     .entitiesAround(we, 5, 5, 5)
                     .aliveEnemiesOf(we)
             ) {
-                enemy.addDamageInstance(we, "Blight", 900, 1200, 0, 100, false);
+                enemy.addDamageInstance(we, "Blight", 900, 1200, 0, 100);
             }
         }
 
@@ -104,6 +100,6 @@ public class MagmaCube extends AbstractMagmaCube implements EliteMob {
                 .withTrail()
                 .build());
         EffectUtils.playHelixAnimation(deathLocation, 6, 255, 40, 40);
-        Utils.playGlobalSound(deathLocation, Sound.ENDERMAN_SCREAM, 1, 2);
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ENDERMAN_SCREAM, 1, 2);
     }
 }

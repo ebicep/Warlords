@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.weapons.menu;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
@@ -10,15 +11,15 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeaponTitleInfo;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
-import org.bukkit.ChatColor;
+import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -32,8 +33,8 @@ public class WeaponTitleMenu {
 
         for (int i = 0; i < 9 * 5; i++) {
             menu.addItem(
-                    new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7)
-                            .name(" ")
+                    new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
+                            .name(Component.text(" "))
                             .get(),
                     (m, e) -> {
                     }
@@ -57,19 +58,24 @@ public class WeaponTitleMenu {
                 ItemBuilder itemBuilder = new ItemBuilder(titledWeapon.generateItemStack(false));
 
                 Set<Map.Entry<Currencies, Long>> cost = titledWeapon.getCost().entrySet();
-                List<String> loreCost = titledWeapon.getCostLore();
+                List<Component> loreCost = titledWeapon.getCostLore();
 
                 boolean equals = Objects.equals(weapon.getTitle(), title);
                 boolean titleIsLocked = !unlockedTitles.containsKey(title);
                 if (equals) {
-                    itemBuilder.addLore("", ChatColor.GREEN + "Selected");
+                    itemBuilder.addLore(
+                            Component.empty(),
+                            Component.text("Selected", NamedTextColor.GREEN)
+                    );
                     itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                    itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
                 } else {
                     if (titleIsLocked) {
                         itemBuilder.addLore(loreCost);
                     } else {
-                        itemBuilder.addLore("", ChatColor.GREEN + "Click to Select");
+                        itemBuilder.addLore(
+                                Component.empty(),
+                                Component.text("Click to Select", NamedTextColor.GREEN)
+                        );
                     }
                 }
                 for (int k = 0; k < 3; k++) {
@@ -87,8 +93,8 @@ public class WeaponTitleMenu {
                         menu.setItem(
                                 k + i * 3,
                                 j + 1,
-                                new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) title.color)
-                                        .name(" ")
+                                new ItemBuilder(title.glassPane)
+                                        .name(Component.text(" "))
                                         .get(),
                                 (m, e) -> {
                                 }
@@ -99,7 +105,7 @@ public class WeaponTitleMenu {
                         itemBuilder.get(),
                         (m, e) -> {
                             if (equals) {
-                                player.sendMessage(ChatColor.RED + "You already have this title on your weapon!");
+                                player.sendMessage(Component.text("You already have this title on your weapon!", NamedTextColor.RED));
                                 return;
                             }
                             if (titleIsLocked) {
@@ -108,17 +114,26 @@ public class WeaponTitleMenu {
                                     Currencies currency = currenciesLongEntry.getKey();
                                     Long currencyCost = currenciesLongEntry.getValue();
                                     if (pveStats.getCurrencyValue(currency) < currencyCost) {
-                                        player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(currencyCost) + ChatColor.RED + " to apply this title!");
+                                        player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                    .append(currency.getCostColoredName(currencyCost))
+                                                                    .append(Component.text(" to apply this title!"))
+                                        );
                                         return;
                                     }
                                 }
                             }
-                            List<String> confirmLore = new ArrayList<>();
+                            List<Component> confirmLore = new ArrayList<>();
                             String titleName = titledWeapon.getTitleName();
                             if (titleName.isEmpty()) {
-                                confirmLore.add(ChatColor.GRAY + "Remove " + ChatColor.GREEN + weapon.getTitleName() + ChatColor.GRAY + " title");
+                                confirmLore.add(Component.text("Remove ", NamedTextColor.GRAY)
+                                                         .append(Component.text(weapon.getTitleName(), NamedTextColor.GREEN))
+                                                         .append(Component.text(" title"))
+                                );
                             } else {
-                                confirmLore.add(ChatColor.GRAY + "Apply " + ChatColor.GREEN + titleName + ChatColor.GRAY + " title");
+                                confirmLore.add(Component.text("Apply ", NamedTextColor.GRAY)
+                                                         .append(Component.text(titleName, NamedTextColor.GREEN))
+                                                         .append(Component.text(" title"))
+                                );
                             }
                             if (titleIsLocked) {
                                 confirmLore.addAll(loreCost);
@@ -128,7 +143,7 @@ public class WeaponTitleMenu {
                                     "Apply Title",
                                     3,
                                     confirmLore,
-                                    Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                    Menu.GO_BACK,
                                     (m2, e2) -> {
                                         AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
                                         openWeaponTitleMenu(player, databasePlayer, newTitledWeapon, titles, page);
@@ -146,8 +161,8 @@ public class WeaponTitleMenu {
         if (page - 1 > 0) {
             menu.setItem(0, 4,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page - 1)
             );
@@ -155,8 +170,8 @@ public class WeaponTitleMenu {
         if (titles.length > (page * 3)) {
             menu.setItem(8, 4,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page + 1)
             );
@@ -164,31 +179,48 @@ public class WeaponTitleMenu {
 
         menu.setItem(4, 4, MENU_BACK, (m, e) -> openWeaponEditor(player, databasePlayer, weapon));
         menu.setItem(5, 4,
-                new ItemBuilder(Material.SIGN)
-                        .name(ChatColor.GREEN + "Search Title")
+                new ItemBuilder(Material.OAK_SIGN)
+                        .name(Component.text("Search Title", NamedTextColor.GREEN))
                         .get(),
                 (m, e) ->
-                        SignGUI.open(player, new String[]{"", "^ Search Query ^", "Returns titles", "containing query"}, (p, lines) -> {
-                            String titleName = lines[0];
-                            if (titleName.isEmpty()) {
-                                player.sendMessage(ChatColor.RED + "Query cannot be empty!");
-                                openWeaponEditor(player, databasePlayer, weapon);
-                                return;
-                            }
-                            titleName = titleName.toLowerCase();
-                            String finalTitleName = titleName;
-                            LegendaryTitles[] legendaryTitles = Arrays.stream(LegendaryTitles.VALUES)
-                                                                      .filter(title -> title.name.toLowerCase().contains(finalTitleName))
-                                                                      .toArray(LegendaryTitles[]::new);
-                            if (legendaryTitles.length == 0) {
-                                player.sendMessage(ChatColor.RED + "No titles with that name found!");
-                                openWeaponEditor(player, databasePlayer, weapon);
-                                return;
-                            }
-                            openWeaponTitleMenu(player, databasePlayer, weapon, legendaryTitles, 1);
-                        })
+                        new SignGUI()
+                                .lines("", "^ Search Query ^", "Returns titles", "containing query")
+                                .onFinish((p, lines) -> {
+                                    String titleName = lines[0];
+                                    if (titleName.isEmpty()) {
+                                        player.sendMessage(Component.text("Query cannot be empty!", NamedTextColor.RED));
+                                        openWeaponEditorAfterTick(player, databasePlayer, weapon);
+                                        return null;
+                                    }
+                                    titleName = titleName.toLowerCase();
+                                    String finalTitleName = titleName;
+                                    LegendaryTitles[] legendaryTitles = Arrays.stream(LegendaryTitles.VALUES)
+                                                                              .filter(title -> title.name.toLowerCase().contains(finalTitleName))
+                                                                              .toArray(LegendaryTitles[]::new);
+                                    if (legendaryTitles.length == 0) {
+                                        player.sendMessage(Component.text("No titles with that name found!", NamedTextColor.RED));
+                                        openWeaponEditorAfterTick(player, databasePlayer, weapon);
+                                    } else {
+                                        new BukkitRunnable() {
+                                            @Override
+                                            public void run() {
+                                                openWeaponTitleMenu(player, databasePlayer, weapon, legendaryTitles, 1);
+                                            }
+                                        }.runTaskLater(Warlords.getInstance(), 1);
+                                    }
+                                    return null;
+                                }).open(player)
         );
         menu.openForPlayer(player);
+    }
+
+    private static void openWeaponEditorAfterTick(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openWeaponEditor(player, databasePlayer, weapon);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     public static AbstractLegendaryWeapon titleWeapon(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles title) {
@@ -203,16 +235,14 @@ public class WeaponTitleMenu {
         weaponInventory.add(titledWeapon);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-        player.spigot().sendMessage(
-                new ComponentBuilder(ChatColor.GRAY + "Titled Weapon: ")
-                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                        .append(ChatColor.GRAY + " and it became ")
-                        .appendHoverItem(titledWeapon.getName(), titledWeapon.generateItemStack(false))
-                        .append(ChatColor.GRAY + "!")
-                        .create()
+        player.sendMessage(Component.text("Titled Weapon: ", NamedTextColor.GRAY)
+                                    .append(weapon.getHoverComponent(false))
+                                    .append(Component.text(" and it became "))
+                                    .append(titledWeapon.getHoverComponent(false))
+                                    .append(Component.text("!"))
         );
 
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
 
         return titledWeapon;
     }
@@ -243,9 +273,9 @@ public class WeaponTitleMenu {
         );
 
         menu.setItem(6, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
-                        .name(ChatColor.RED + "Deny")
-                        .lore(ChatColor.GRAY + "Go back.")
+                new ItemBuilder(Material.RED_CONCRETE)
+                        .name(Menu.DENY)
+                        .lore(WeaponManagerMenu.GO_BACK)
                         .get(),
                 (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );
@@ -266,12 +296,10 @@ public class WeaponTitleMenu {
             weapon.upgradeTitleLevel();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.spigot().sendMessage(
-                    new ComponentBuilder(ChatColor.GRAY + "Upgraded Weapon Title: ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .create()
+            player.sendMessage(Component.text("Upgraded Weapon Title: ")
+                                        .append(weapon.getHoverComponent(false))
             );
-            player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }
     }
 

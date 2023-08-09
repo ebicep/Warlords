@@ -1,9 +1,9 @@
 package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.TeamBasedEffect;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.function.DoubleUnaryOperator;
@@ -22,15 +22,15 @@ public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
     private double pendingParticles;
     private double yOffset;
 
-    public AreaEffect(double yOffset, ParticleEffect own, ParticleEffect other) {
+    public AreaEffect(double yOffset, Particle own, Particle other) {
         this(yOffset, new TeamBasedEffect(own, other));
     }
 
-    public AreaEffect(double yOffset, ParticleEffect effect) {
+    public AreaEffect(double yOffset, Particle effect) {
         this(yOffset, new TeamBasedEffect(effect));
     }
 
-    public AreaEffect(double yOffset, TeamBasedEffect effect) {
+    public AreaEffect(double yOffset, @Nonnull TeamBasedEffect effect) {
         this.yOffset = yOffset;
         this.effect = effect;
     }
@@ -66,12 +66,12 @@ public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
         needsUpdate = false;
     }
 
-    public AreaEffect effect(@Nonnull ParticleEffect effect) {
+    public AreaEffect effect(@Nonnull Particle effect) {
         this.effect = new TeamBasedEffect(effect);
         return this;
     }
 
-    public AreaEffect effect(@Nonnull ParticleEffect ownTeam, @Nonnull ParticleEffect enemyTeam) {
+    public AreaEffect effect(@Nonnull Particle ownTeam, @Nonnull Particle enemyTeam) {
         this.effect = new TeamBasedEffect(ownTeam, enemyTeam);
         return this;
     }

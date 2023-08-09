@@ -11,7 +11,8 @@ import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
@@ -30,17 +31,13 @@ public enum GameAddon {
         @Override
         public void modifyGame(@Nonnull Game game) {
             switch (game.getGameMode()) {
-                case CAPTURE_THE_FLAG:
-                case INTERCEPTION:
-                case TEAM_DEATHMATCH:
-                case DEBUG:
-                case SIMULATION_TRIAL:
+                case CAPTURE_THE_FLAG, INTERCEPTION, TEAM_DEATHMATCH, DEBUG, SIMULATION_TRIAL -> {
                     game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
-                            .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
-                            .lore(ChatColor.YELLOW + "Click to select your team!")
+                            .name(Component.text("Team Selector ", NamedTextColor.GREEN).append(Component.text("(Right-Click)", NamedTextColor.GRAY)))
+                            .lore(Component.text("Click to select your team!", NamedTextColor.YELLOW))
                             .get(), (g, p) -> openTeamMenu(p)));
                     game.getOptions().add(new AFKDetectionOption());
-                    break;
+                }
             }
             game.setMinPlayers(1);
             game.setAcceptsPlayers(false);
@@ -51,8 +48,7 @@ public enum GameAddon {
             if (newState instanceof ClosedState) {
                 return;
             }
-            if (newState instanceof PreLobbyState) {
-                PreLobbyState preLobbyState = (PreLobbyState) newState;
+            if (newState instanceof PreLobbyState preLobbyState) {
                 preLobbyState.setMaxTimer(30 * 20);
                 preLobbyState.resetTimer();
                 game.setAcceptsPlayers(false);
@@ -88,7 +84,7 @@ public enum GameAddon {
         @Override
         public boolean canCreateGame(@Nonnull GameManager.GameHolder holder) {
             // At the moment, only 1 game can be an imposter game at the same time
-            return !Warlords.getGameManager().getGames().stream().anyMatch(e -> e.getGame() != null && e.getGame().getAddons().contains(this));
+            return Warlords.getGameManager().getGames().stream().noneMatch(e -> e.getGame() != null && e.getGame().getAddons().contains(this));
         }
     },
     COOLDOWN_MODE(

@@ -1,5 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.roles;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.UUID;
 
 public class GuildLogRoleDelete extends AbstractGuildLogRole {
@@ -9,7 +11,7 @@ public class GuildLogRoleDelete extends AbstractGuildLogRole {
     }
 
     @Override
-    public String getAction() {
-        return "deleted";
+    public Component getAction() {
+        return Component.text("deleted");
     }
 }

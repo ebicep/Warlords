@@ -3,9 +3,11 @@ package com.ebicep.warlords.pve.events.supplydrop;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -44,7 +46,7 @@ public enum SupplyDropRewards {
             WeaponsPvE.COMMON
     ) {
         @Override
-        public String getDropMessage() {
+        public Component getDropMessage() {
             return getStarPieceDropMessage();
         }
     },
@@ -54,7 +56,7 @@ public enum SupplyDropRewards {
             WeaponsPvE.RARE
     ) {
         @Override
-        public String getDropMessage() {
+        public Component getDropMessage() {
             return getStarPieceDropMessage();
         }
     },
@@ -64,7 +66,7 @@ public enum SupplyDropRewards {
             WeaponsPvE.EPIC
     ) {
         @Override
-        public String getDropMessage() {
+        public Component getDropMessage() {
             return getStarPieceDropMessage();
         }
     },
@@ -140,16 +142,20 @@ public enum SupplyDropRewards {
         return RANDOM_COLLECTION.next();
     }
 
-    public String getDropMessage() {
-        return ChatColor.GRAY + "You received " + getChatColor() + name + ChatColor.GRAY + " from the supply drop.";
+    public Component getDropMessage() {
+        return Component.text("You received ", NamedTextColor.GRAY)
+                        .append(Component.text(name, getTextColor()))
+                        .append(Component.text(" from the supply drop."));
     }
 
-    public ChatColor getChatColor() {
-        return rarity.chatColor;
+    public NamedTextColor getTextColor() {
+        return rarity.textColor;
     }
 
-    protected String getStarPieceDropMessage() {
-        return ChatColor.GRAY + "A " + getChatColor() + getType() + " Star Piece " + ChatColor.GRAY + "has been bestowed upon you.";
+    protected Component getStarPieceDropMessage() {
+        return Component.text("A ", NamedTextColor.GRAY)
+                        .append(Component.text(getType() + " Star Piece ", getTextColor()))
+                        .append(Component.text("has been bestowed upon you."));
     }
 
     public String getType() {
@@ -157,12 +163,11 @@ public enum SupplyDropRewards {
     }
 
     public void givePlayerRewardTitle(Player player) {
-        PacketUtils.sendTitle(
-                player.getUniqueId(),
-                getChatColor() + getType().toUpperCase() + "!",
-                ChatColor.GOLD + name,
-                0, 40, 0
-        );
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 1.2f);
+        player.showTitle(Title.title(
+                Component.text(getType().toUpperCase() + "!", getTextColor()),
+                Component.text(name, NamedTextColor.GOLD),
+                Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+        ));
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.2f);
     }
 }

@@ -8,9 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
-import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -30,15 +28,17 @@ import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,9 +50,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-public class OnslaughtOption implements Option, PveOption {
+public class OnslaughtOption implements PveOption {
 
     private final Team team;
     private final WaveList mobSet;
@@ -80,8 +79,7 @@ public class OnslaughtOption implements Option, PveOption {
         this.game = game;
         this.onslaughtRewards = new OnslaughtRewards(this);
         for (Option o : game.getOptions()) {
-            if (o instanceof BoundingBoxOption) {
-                BoundingBoxOption boundingBoxOption = (BoundingBoxOption) o;
+            if (o instanceof BoundingBoxOption boundingBoxOption) {
                 lastLocation = boundingBoxOption.getCenter();
             }
         }
@@ -130,21 +128,21 @@ public class OnslaughtOption implements Option, PveOption {
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList("Difficulty: " + currentMobSet.getMessage());
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return Collections.singletonList(Component.text("Difficulty: ").append(currentMobSet.getMessage()));
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return Collections.singletonList(integrityScoreboard());
             }
         });
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return healthScoreboard(game);
             }
         });
@@ -154,7 +152,7 @@ public class OnslaughtOption implements Option, PveOption {
     public void start(@Nonnull Game game) {
         if (DatabaseManager.guildService != null) {
             HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
-            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).collect(Collectors.toList());
+            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).toList();
             for (Guild guild : GuildManager.GUILDS) {
                 for (UUID uuid : uuids) {
                     Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(uuid);
@@ -163,10 +161,8 @@ public class OnslaughtOption implements Option, PveOption {
                     }
                 }
             }
-            System.out.println(guilds);
             guilds.forEach((guild, validUUIDs) -> {
                 for (AbstractGuildUpgrade<?> upgrade : guild.getUpgrades()) {
-                    System.out.println("Upgrading " + upgrade.getUpgrade().getName() + " for " + validUUIDs.size() + " players");
                     upgrade.getUpgrade().onGame(game, validUUIDs, upgrade.getTier());
                 }
             });
@@ -174,6 +170,7 @@ public class OnslaughtOption implements Option, PveOption {
 
         new GameRunnable(game) {
             int counter = 0;
+
             @Override
             public void run() {
                 ticksElapsed.getAndIncrement();
@@ -187,29 +184,32 @@ public class OnslaughtOption implements Option, PveOption {
                     this.cancel();
                 }
 
-                for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
-                    mob.whileAlive(mobs.get(mob) - ticksElapsed.get(), OnslaughtOption.this);
-                }
+                mobTick();
 
-                if (ticksElapsed.get() % 36000 == 0) {
+                if (ticksElapsed.get() % 18000 == 0) {
                     game.warlordsPlayers().forEach(wp -> {
-                        wp.playSound(wp.getLocation(), Sound.ENDERDRAGON_GROWL, 2, 0.1f);
+                        wp.playSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.1f);
                         addRewardToPlayerPouch(
                                 wp.getUuid(),
                                 OnslaughtRewards.ASPIRANT_POUCH_LOOT_POOL,
                                 playerAspirantPouch,
-                                ChatColor.RED + "Aspirant Pouch"
+                                Component.text("Aspirant Pouch", NamedTextColor.RED)
                         );
+                        if (wp.getAbilityTree().getMaxMasterUpgrades() == 5) {
+                            return;
+                        }
+                        wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                        wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
                     });
                 } else if (ticksElapsed.get() % 6000 == 0) {
                     integrityDecayIncrease += 0.1f;
                     game.warlordsPlayers().forEach(wp -> {
-                        wp.playSound(wp.getLocation(), Sound.LEVEL_UP, 2, 0.1f);
+                        wp.playSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 0.1f);
                         addRewardToPlayerPouch(
                                 wp.getUuid(),
                                 OnslaughtRewards.SYNTHETIC_POUCH_LOOT_POOL,
                                 playerSyntheticPouch,
-                                ChatColor.AQUA + "Synthetic Pouch"
+                                Component.text("Synthetic Pouch", NamedTextColor.AQUA)
                         );
                     });
                 }
@@ -250,111 +250,44 @@ public class OnslaughtOption implements Option, PveOption {
             }
 
             private Location getSpawnLocation(WarlordsEntity entity) {
-                List<Location> candidates = new ArrayList<>();
-                double priority = Double.NEGATIVE_INFINITY;
-                for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
-                    if (entity == null) {
-                        return marker.getLocation();
-                    }
-                    if (candidates.isEmpty()) {
-                        candidates.add(marker.getLocation());
-                        priority = marker.getPriority(entity);
-                    } else {
-                        double newPriority = marker.getPriority(entity);
-                        if (newPriority >= priority) {
-                            if (newPriority > priority) {
-                                candidates.clear();
-                                priority = newPriority;
-                            }
-                            candidates.add(marker.getLocation());
-                        }
-                    }
-                }
-                if (!candidates.isEmpty()) {
-                    return candidates.get((int) (Math.random() * candidates.size()));
-                }
-                return lastLocation;
+                Location randomSpawnLocation = getRandomSpawnLocation(entity);
+                return randomSpawnLocation != null ? randomSpawnLocation : lastLocation;
             }
 
         }.runTaskTimer(10 * GameRunnable.SECOND, 6);
     }
 
-    @Override
-    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            if (player.getEntity() instanceof Player) {
-                game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
-                player.setTeam(Team.BLUE);
-                player.updateArmor();
-            }
-
-            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
-                Optional<AbstractWeapon> optionalWeapon = databasePlayer
-                        .getPveStats()
-                        .getWeaponInventory()
-                        .stream()
-                        .filter(AbstractWeapon::isBound)
-                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
-                        .findFirst();
-                optionalWeapon.ifPresent(abstractWeapon -> {
-                    WarlordsPlayer wp = (WarlordsPlayer) player;
-
-                    ((WarlordsPlayer) player).getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
-                    wp.setWeapon(abstractWeapon);
-                    abstractWeapon.applyToWarlordsPlayer(wp, this);
-                    player.updateEntity();
-                    player.getSpec().updateCustomStats();
-                });
-            });
-        }
-    }
-
-    @Override
-    public void updateInventory(@Nonnull WarlordsPlayer wp, Player player) {
-        AbstractWeapon weapon = wp.getWeapon();
-        if (weapon == null) {
-            WeaponOption.showWeaponStats(wp, player);
-        } else {
-            WeaponOption.showPvEWeapon(wp, player);
-        }
-
-        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
-        if (wp.getWeapon() instanceof AbstractLegendaryWeapon) {
-            ((AbstractLegendaryWeapon) wp.getWeapon()).updateAbilityItem(wp, player);
-        }
-    }
-
-    @Override
-    public void onSpecChange(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            ((WarlordsPlayer) player).resetAbilityTree();
-        }
-    }
-
     public float getIntegrityDecay(int playerCount) {
         switch (playerCount) {
-            case 1:
+            case 1 -> {
                 return 0.4f;
-            case 2:
+            }
+            case 2 -> {
                 return 0.7f;
-            case 3:
+            }
+            case 3 -> {
                 return 1;
-            case 4:
+            }
+            case 4 -> {
                 return 1.5f;
-            case 5:
+            }
+            case 5 -> {
                 return 2;
-            case 6:
+            }
+            case 6 -> {
                 return 2.5f;
+            }
+            default -> {
+                return playerCount * 0.5f;
+            }
         }
-
-        return 1.5f;
     }
 
     private void addRewardToPlayerPouch(
             UUID uuid,
             RandomCollection<Pair<Spendable, Long>> pouchLootPool,
             HashMap<UUID, HashMap<Spendable, Long>> playerPouch,
-            String pouchName
+            Component pouchName
     ) {
         Pair<Spendable, Long> reward = pouchLootPool.next();
         if (reward != null) {
@@ -362,73 +295,32 @@ public class OnslaughtOption implements Option, PveOption {
             Long amount = reward.getB();
             playerPouch.computeIfAbsent(uuid, k -> new HashMap<>())
                        .merge(spendable, amount, Long::sum);
-            String rewardString = spendable.getChatColor() + "+" + spendable.getCostColoredName(amount);
+            Component rewardString = Component.text("+", spendable.getTextColor()).append(spendable.getCostColoredName(amount));
             RewardInventory.sendRewardMessage(uuid,
-                    pouchName + ": " + rewardString
+                    pouchName.append(Component.text(":")).append(rewardString)
             );
-            ChatUtils.sendTitleToGamePlayers(
-                    game,
-                    pouchName + ":",
-                    rewardString
-            );
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.showTitle(Title.title(
+                        pouchName.append(Component.text(":")),
+                        rewardString,
+                        Title.Times.times(Ticks.duration(20), Ticks.duration(30), Ticks.duration(20))
+
+                ));
+            }
         }
     }
 
     public int getSpawnLimit(int playerCount) {
-        switch (playerCount) {
-            case 1:
-                return 7;
-            case 2:
-                return 11;
-            case 3:
-                return 15;
-            case 4:
-                return 20;
-            case 5:
-                return 25;
-            case 6:
-                return 30;
-        }
-
-        return spawnLimit;
-    }
-
-    @Override
-    public int playerCount() {
-        return (int) game.warlordsPlayers().count();
-    }
-
-    @Override
-    public Set<AbstractMob<?>> getMobs() {
-        return mobs.keySet();
-    }
-
-    @Override
-    public int getTicksElapsed() {
-        return ticksElapsed.get();
-    }
-
-    @Override
-    public void spawnNewMob(AbstractMob<?> mob, Team team) {
-        mob.toNPC(game, team, UUID.randomUUID(), this::modifyStats);
-        game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
-    }
-
-    @Override
-    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
-        return mobs;
-    }
-
-    @Override
-    public PveRewards<?> getRewards() {
-        return onslaughtRewards;
-    }
-
-    @Override
-    public Game getGame() {
-        return game;
+        return switch (playerCount) {
+            case 1 -> 7;
+            case 2 -> 11;
+            case 3 -> 15;
+            case 4 -> 20;
+            case 5 -> 25;
+            case 6 -> 30;
+            default -> spawnLimit;
+        };
     }
 
     private void modifyStats(WarlordsNPC warlordsNPC) {
@@ -464,50 +356,64 @@ public class OnslaughtOption implements Option, PveOption {
         warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
     }
 
-    private String integrityScoreboard() {
-        ChatColor color;
+    private Component integrityScoreboard() {
+        NamedTextColor color;
         if (integrityCounter >= 50) {
-            color = ChatColor.AQUA;
+            color = NamedTextColor.AQUA;
         } else if (integrityCounter >= 25) {
-            color = ChatColor.GOLD;
+            color = NamedTextColor.GOLD;
         } else {
-            color = ChatColor.RED;
+            color = NamedTextColor.RED;
         }
 
-        return "Soul Energy: " + color + (Math.round(integrityCounter) + "%");
+        return Component.text("Soul Energy: ")
+                        .append(Component.text(Math.round(integrityCounter) + "%", color));
     }
 
-    private List<String> healthScoreboard(Game game) {
-        List<String> list = new ArrayList<>();
-        for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
-            float healthRatio = we.getHealth() / we.getMaxHealth();
-            ChatColor healthColor;
-            String name = we.getName();
-            String newName;
+    @Override
+    public Set<AbstractMob<?>> getMobs() {
+        return mobs.keySet();
+    }
 
-            if (healthRatio >= .5) {
-                healthColor = ChatColor.GREEN;
-            } else if (healthRatio >= .25) {
-                healthColor = ChatColor.YELLOW;
-            } else {
-                healthColor = ChatColor.RED;
-            }
+    @Override
+    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+        return mobs;
+    }
 
-            if (name.length() >= 8) {
-                newName = name.substring(0, 8);
-            } else {
-                newName = name;
-            }
+    @Override
+    public int getTicksElapsed() {
+        return ticksElapsed.get();
+    }
 
-            list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor +
-                    "❤ " + (int) we.getHealth()) +
-                    ChatColor.RESET + " / " +
-                    ChatColor.RED + "⚔ " + we.getMinuteStats()
-                                             .total()
-                                             .getKills());
-        }
+    @Override
+    public Game getGame() {
+        return game;
+    }
 
-        return list;
+    @Override
+    public int playerCount() {
+        return (int) game.warlordsPlayers().count();
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob) {
+        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(mob.getWarlordsNPC());
+        mobs.put(mob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+        mob.toNPC(game, team, UUID.randomUUID(), this::modifyStats);
+        game.addNPC(mob.getWarlordsNPC());
+        mobs.put(mob, ticksElapsed.get());
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
+    public PveRewards<?> getRewards() {
+        return onslaughtRewards;
     }
 
     public void setSpawnLimit(int spawnLimit) {

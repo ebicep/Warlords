@@ -151,8 +151,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
                     );
                     weaponInventory.addAll(weaponsToKeep);
                     for (AbstractWeapon weapon : weaponsToSalvage) {
-                        if (weapon instanceof Salvageable) {
-                            Salvageable salvageable = (Salvageable) weapon;
+                        if (weapon instanceof Salvageable salvageable) {
                             AtomicInteger randomSalvageAmount = new AtomicInteger(salvageable.getSalvageAmount());
                             Bukkit.getPluginManager().callEvent(new PreWeaponSalvageEvent(randomSalvageAmount));
                             addCurrency(Currencies.SYNTHETIC_SHARD, randomSalvageAmount.get() / 2);
@@ -174,15 +173,15 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
                                 !fair.getRarePlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID())) &&
                                 !fair.getEpicPlayerEntries().removeIf(entry -> entry.getWeapon().getUUID().equals(weapon.getUUID()))
                         ) {
-                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Subtracted currency", true);
+                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Subtracted currency");
                             subtractCurrency(Currencies.SYNTHETIC_SHARD,
                                     (((Salvageable) weapon).getMaxSalvageAmount() + ((Salvageable) weapon).getMinSalvageAmount()) / 2
                             );
                         } else {
-                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from fair", true);
+                            ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from fair");
                         }
                     } else {
-                        ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory", true);
+                        ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory");
                     }
                 }
 
@@ -264,7 +263,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         long epochSecond = gameEvent.getStartDateSecond();
         EventMode eventMode = eventsStats.get(epochSecond);
         if (eventMode == null) {
-            ChatUtils.MessageTypes.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + event.name + "(" + epochSecond + ")");
+            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + event.name + "(" + epochSecond + ")");
             return;
         }
         //event

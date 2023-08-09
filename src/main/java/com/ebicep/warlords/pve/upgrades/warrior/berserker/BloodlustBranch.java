@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
-import com.ebicep.warlords.abilties.BloodLust;
+import com.ebicep.warlords.abilities.BloodLust;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -86,7 +86,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() + 100);
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

@@ -3,6 +3,8 @@ package com.ebicep.warlords.events.game;
 import com.ebicep.warlords.game.Game;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 public class WarlordsGameUpdatedEvent extends AbstractWarlordsGameEvent {
 
     private static final HandlerList handlers = new HandlerList();
@@ -17,6 +19,7 @@ public class WarlordsGameUpdatedEvent extends AbstractWarlordsGameEvent {
         return key;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

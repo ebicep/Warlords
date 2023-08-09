@@ -2,7 +2,8 @@ package com.ebicep.warlords.pve.weapons;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Arrays;
@@ -31,14 +32,18 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon {
     }
 
     @Override
-    public List<String> getBaseStats() {
+    public List<Component> getBaseStats() {
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " +
-                        NumberFormat.formatOptionalHundredths(getMeleeDamageMax()),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritChance()) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%",
-                "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(getHealthBonus())
+                Component.text("Damage: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getMeleeDamageMin()) + " - " + NumberFormat.formatOptionalHundredths(
+                                 getMeleeDamageMax()), NamedTextColor.RED)),
+                Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)),
+                Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)),
+                Component.empty(),
+                Component.text("Health: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(getHealthBonus()), NamedTextColor.GREEN))
         );
     }
 
@@ -67,4 +72,11 @@ public abstract class AbstractTierTwoWeapon extends AbstractTierOneWeapon {
         return healthBonus;
     }
 
+    public void setCritChance(float critChance) {
+        this.critChance = critChance;
+    }
+
+    public void setCritMultiplier(float critMultiplier) {
+        this.critMultiplier = critMultiplier;
+    }
 }

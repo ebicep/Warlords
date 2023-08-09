@@ -8,7 +8,8 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Flags;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -19,8 +20,10 @@ public class SudoCommand extends BaseCommand {
     @Default
     public void sudo(CommandIssuer issuer, @Flags("other") Player player, String toSay) {
         ChatChannels.sendDebugMessage(issuer,
-                ChatColor.GREEN + "Sudo say " + ChatColor.AQUA + player.getName() + ChatColor.GRAY + " - " + ChatColor.RESET + toSay,
-                false
+                Component.text("Sudo say ", NamedTextColor.GREEN)
+                         .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                         .append(Component.text(" - ", NamedTextColor.GRAY))
+                         .append(Component.text(toSay, NamedTextColor.WHITE))
         );
         new BukkitRunnable() {
             @Override

@@ -1,14 +1,23 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.WordWrap;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -17,12 +26,20 @@ public class Settings {
     public enum HotkeyMode {
 
         NEW_MODE(new ItemBuilder(Material.REDSTONE)
-                .name(ChatColor.GREEN + "Hotkey Mode")
-                .lore(ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "NEW", "", ChatColor.YELLOW + "Click here to enable Classic mode.")
+                .name(Component.text("Hotkey Mode", NamedTextColor.GREEN))
+                .lore(
+                        Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("NEW", NamedTextColor.AQUA)),
+                        Component.empty(),
+                        Component.text("Click here to enable Classic mode.", NamedTextColor.YELLOW)
+                )
                 .get()),
-        CLASSIC_MODE(new ItemBuilder(Material.SNOW_BALL)
-                .name(ChatColor.GREEN + "Hotkey Mode")
-                .lore(ChatColor.YELLOW + "Currently selected " + ChatColor.AQUA + "Classic", "", ChatColor.YELLOW + "Click here to enable NEW mode.")
+        CLASSIC_MODE(new ItemBuilder(Material.SNOWBALL)
+                .name(Component.text("Hotkey Mode", NamedTextColor.GREEN))
+                .lore(
+                        Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("Classic", NamedTextColor.YELLOW)),
+                        Component.empty(),
+                        Component.text("Click here to enable NEW mode.", NamedTextColor.YELLOW)
+                )
                 .get()),
 
         ;
@@ -37,26 +54,26 @@ public class Settings {
 
     public enum ParticleQuality {
 
-        LOW(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 1).name(ChatColor.GOLD + "Low Quality").get(),
-                ChatColor.GRAY + "Heavily reduces the amount of\n" + ChatColor.GRAY + "particles you will see.",
+        LOW(new ItemBuilder(Material.ORANGE_STAINED_GLASS_PANE).name(Component.text("Low Quality", NamedTextColor.GOLD)).get(),
+                Component.text("Heavily reduces the amount of particles you will see.", NamedTextColor.GRAY),
                 2
         ),
-        MEDIUM(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 4).name(ChatColor.YELLOW + "Medium Quality").get(),
-                ChatColor.GRAY + "Reduces the amount of particles\n" + ChatColor.GRAY + "seem.",
+        MEDIUM(new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).name(Component.text("Medium Quality", NamedTextColor.YELLOW)).get(),
+                Component.text("Reduces the amount of particles seem.", NamedTextColor.GRAY),
                 4
         ),
-        HIGH(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 5).name(ChatColor.GREEN + "High Quality").get(),
-                ChatColor.GRAY + "Shows all particles for the best\n" + ChatColor.GRAY + "experience.",
+        HIGH(new ItemBuilder(Material.LIME_STAINED_GLASS_PANE).name(Component.text("High Quality", NamedTextColor.GREEN)).get(),
+                Component.text("Shows all particles for the best experience.", NamedTextColor.GRAY),
                 100000
         ),
 
         ;
 
         public final ItemStack item;
-        public final String description;
+        public final TextComponent description;
         public final int particleReduction;
 
-        ParticleQuality(ItemStack item, String description, int particleReduction) {
+        ParticleQuality(ItemStack item, TextComponent description, int particleReduction) {
             this.item = item;
             this.description = description;
             this.particleReduction = particleReduction;
@@ -67,22 +84,24 @@ public class Settings {
     public enum FlagMessageMode {
 
         RELATIVE(new ItemBuilder(Material.COMPASS)
-                .name(ChatColor.GREEN + "Flag Message Mode")
+                .name(Component.text("Flag Message Mode", NamedTextColor.GREEN))
                 .lore(
-                        ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "Relative",
-                        ChatColor.GRAY + "Prints out flag messages with 'YOUR/ENEMY'",
-                        "",
-                        ChatColor.YELLOW + "Click here to enable Absolute mode."
+                        Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("Relative", NamedTextColor.AQUA)),
+                        Component.empty(),
+                        Component.text("Prints out flag messages with 'YOUR/ENEMY'", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click here to enable Absolute mode.", NamedTextColor.YELLOW)
                 )
                 .get()
         ),
-        ABSOLUTE(new ItemBuilder(Material.WOOL)
-                .name(ChatColor.GREEN + "Flag Message Mode")
+        ABSOLUTE(new ItemBuilder(Material.WHITE_WOOL)
+                .name(Component.text("Flag Message Mode", NamedTextColor.GREEN))
                 .lore(
-                        ChatColor.AQUA + "Currently selected " + ChatColor.YELLOW + "Absolute",
-                        ChatColor.GRAY + "Prints out flag messages with team names",
-                        "",
-                        ChatColor.YELLOW + "Click here to enable Relative mode."
+                        Component.text("Currently selected ", NamedTextColor.GRAY).append(Component.text("Absolute", NamedTextColor.YELLOW)),
+                        Component.empty(),
+                        Component.text("Prints out flag messages with team names", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("Click here to enable Relative mode.", NamedTextColor.YELLOW)
                 )
                 .get()
         ),
@@ -98,142 +117,312 @@ public class Settings {
 
     public static class ChatSettings {
 
+        private static final List<ChatMenuSetting<?>> MENU_SETTINGS = new ArrayList<>() {{
+            add(new ChatMenuSetting<>(
+                    ChatDamage.VALUES,
+                    new ItemStack(Material.NETHER_WART),
+                    "Damage Messages",
+                    "Damage received and damage dealt",
+                    DatabasePlayer::getChatDamageMode,
+                    databasePlayer -> databasePlayer.setChatDamageMode(databasePlayer.getChatDamageMode().next())
+            ));
+            add(new ChatMenuSetting<>(
+                    ChatHealing.VALUES,
+                    new ItemStack(Material.CYAN_DYE),
+                    "Healing Messages",
+                    "Healing received and healing dealt",
+                    DatabasePlayer::getChatHealingMode,
+                    databasePlayer -> databasePlayer.setChatHealingMode(databasePlayer.getChatHealingMode().next())
+            ));
+            add(new ChatMenuSetting<>(
+                    ChatEnergy.VALUES,
+                    new ItemStack(Material.SUGAR_CANE),
+                    "Energy Messages",
+                    "Energy received and energy dealt",
+                    DatabasePlayer::getChatEnergyMode,
+                    databasePlayer -> databasePlayer.setChatEnergyMode(databasePlayer.getChatEnergyMode().next())
+            ));
+            add(new ChatMenuSetting<>(
+                    ChatKills.VALUES,
+                    new ItemStack(Material.BONE),
+                    "Kill/Assist Messages",
+                    "Kill and Assist messages",
+                    DatabasePlayer::getChatKillsMode,
+                    databasePlayer -> databasePlayer.setChatKillsMode(databasePlayer.getChatKillsMode().next())
+            ));
+            add(new ChatMenuSetting<>(
+                    ChatInsignia.VALUES,
+                    new ItemStack(Material.GOLD_NUGGET),
+                    "Insignia Messages",
+                    "Insignia gain messages",
+                    DatabasePlayer::getChatInsigniaMode,
+                    databasePlayer -> databasePlayer.setChatInsigniaMode(databasePlayer.getChatInsigniaMode().next())
+            ));
+            add(new ChatMenuSetting<>(
+                    ChatEventPoints.VALUES,
+                    new ItemStack(Material.GOLD_INGOT),
+                    "Event Point Messages",
+                    "Event Point messages",
+                    DatabasePlayer::getChatEventPointsMode,
+                    databasePlayer -> databasePlayer.setChatEventPointsMode(databasePlayer.getChatEventPointsMode().next())
+            ));
+            add(new ChatMenuSetting<>(
+                    ChatUpgrade.VALUES,
+                    new ItemStack(Material.BOOK),
+                    "Upgrade Messages",
+                    "Upgrade messages",
+                    DatabasePlayer::getChatUpgradeMode,
+                    databasePlayer -> databasePlayer.setChatUpgradeMode(databasePlayer.getChatUpgradeMode().next())
+            ));
+        }};
+
         public static void openChatSettingsMenu(Player player) {
-            PlayerSettings settings = PlayerSettings.getPlayerSettings(player);
+            DatabaseManager.getPlayer(player, databasePlayer -> {
+                Menu menu = new Menu("Chat Settings", 9 * 4);
 
-            Menu menu = new Menu("Chat Settings", 9 * 4);
+                for (int i = 0; i < MENU_SETTINGS.size(); i++) {
+                    ChatMenuSetting<?> menuSetting = MENU_SETTINGS.get(i);
+                    ChatSetting<?> selectedSetting = menuSetting.getCurrentSetting.apply(databasePlayer);
+                    menu.setItem(i % 7 + 1, i / 7 + 1,
+                            new ItemBuilder(menuSetting.itemStack)
+                                    .name(Component.text(menuSetting.name, NamedTextColor.GREEN))
+                                    .lore(Component.text(menuSetting.description, NamedTextColor.GRAY))
+                                    .addLore(Component.empty())
+                                    .addLore(
+                                            Arrays.stream(menuSetting.settings)
+                                                  .map(chatSetting -> Component.text("🠒 " + chatSetting.getName(),
+                                                          chatSetting == selectedSetting ? NamedTextColor.AQUA : NamedTextColor.GRAY
+                                                  ))
+                                                  .collect(Collectors.toList())
+                                    )
+                                    .addLore(
+                                            Component.empty(),
+                                            Component.text("Click to change", NamedTextColor.YELLOW)
+                                    )
+                                    .get(),
+                            (m, e) -> {
+                                DatabaseManager.updatePlayer(player, menuSetting.updateDatabasePlayerSettings);
+                                openChatSettingsMenu(player);
+                            }
+                    );
+                }
 
-            menu.setItem(1, 1,
-                    new ItemBuilder(Material.NETHER_STALK)
-                            .name(ChatColor.GREEN + "Damage Messages")
-                            .lore(
-                                    ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatDamageMode().name,
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Damage received and damage dealt", 150),
-                                    "",
-                                    ChatColor.YELLOW + "Click to change"
-                            )
-                            .get(),
-                    (m, e) -> {
-                        settings.setChatDamageMode(settings.getChatDamageMode().next());
-                        DatabaseManager.updatePlayer(player, databasePlayer -> databasePlayer.setChatDamageMode(settings.getChatDamageMode()));
-                        openChatSettingsMenu(player);
-                    }
-            );
-            menu.setItem(2, 1,
-                    new ItemBuilder(Material.INK_SACK, 1, (short) 6)
-                            .name(ChatColor.GREEN + "Damage Messages")
-                            .lore(
-                                    ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatHealingMode().name,
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Healing received and healing given", 150),
-                                    "",
-                                    ChatColor.YELLOW + "Click to change"
-                            )
-                            .get(),
-                    (m, e) -> {
-                        settings.setChatHealingMode(settings.getChatHealingMode().next());
-                        DatabaseManager.updatePlayer(player, databasePlayer -> databasePlayer.setChatHealingMode(settings.getChatHealingMode()));
-                        openChatSettingsMenu(player);
-                    }
-            );
-            menu.setItem(3, 1,
-                    new ItemBuilder(Material.SUGAR_CANE)
-                            .name(ChatColor.GREEN + "Energy Messages")
-                            .lore(
-                                    ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatEnergyMode().name,
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Energy received and energy given", 150),
-                                    "",
-                                    ChatColor.YELLOW + "Click to change"
-                            )
-                            .get(),
-                    (m, e) -> {
-                        settings.setChatEnergyMode(settings.getChatEnergyMode().next());
-                        DatabaseManager.updatePlayer(player, databasePlayer -> databasePlayer.setChatEnergyMode(settings.getChatEnergyMode()));
-                        openChatSettingsMenu(player);
-                    }
-            );
-            menu.setItem(4, 1,
-                    new ItemBuilder(Material.BONE)
-                            .name(ChatColor.GREEN + "Kill Messages")
-                            .lore(
-                                    ChatColor.AQUA + "Currently Selected " + ChatColor.YELLOW + settings.getChatKillsMode().name,
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Kill messages", 150),
-                                    "",
-                                    ChatColor.YELLOW + "Click to change"
-                            )
-                            .get(),
-                    (m, e) -> {
-                        settings.setChatKillsMode(settings.getChatKillsMode().next());
-                        DatabaseManager.updatePlayer(player, databasePlayer -> databasePlayer.setChatKillsMode(settings.getChatKillsMode()));
-                        openChatSettingsMenu(player);
-                    }
-            );
-
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(player));
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
+                menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(player));
+                menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.openForPlayer(player);
+            });
         }
 
-        public enum ChatDamage {
+        public enum ChatDamage implements ChatSetting<ChatDamage> {
             ALL("All"),
             CRITS_ONLY("Crits Only"),
             NONE("None");
 
+            public static final ChatDamage[] VALUES = values();
             public final String name;
 
             ChatDamage(String name) {
                 this.name = name;
             }
 
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
             public ChatDamage next() {
-                return values()[(ordinal() + 1) % values().length];
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatDamage[] getValues() {
+                return VALUES;
             }
         }
 
-        public enum ChatHealing {
+        public enum ChatHealing implements ChatSetting<ChatHealing> {
             ALL("All"),
             CRITS_ONLY("Crits Only"),
             NONE("None");
 
+            public static final ChatHealing[] VALUES = values();
             public final String name;
 
             ChatHealing(String name) {
                 this.name = name;
             }
 
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
             public ChatHealing next() {
-                return values()[(ordinal() + 1) % values().length];
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatHealing[] getValues() {
+                return VALUES;
             }
         }
 
-        public enum ChatEnergy {
+        public enum ChatEnergy implements ChatSetting<ChatEnergy> {
             ALL("All"),
             OFF("Off");
 
+            public static final ChatEnergy[] VALUES = values();
             public final String name;
 
             ChatEnergy(String name) {
                 this.name = name;
             }
 
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
             public ChatEnergy next() {
-                return values()[(ordinal() + 1) % values().length];
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatEnergy[] getValues() {
+                return VALUES;
             }
         }
 
-        public enum ChatKills {
+        public enum ChatKills implements ChatSetting<ChatKills> {
             ALL("All"),
+            ONLY_ASSISTS("Only Assists"),
+            NO_ASSISTS("No Assists"),
             OFF("Off");
 
+            public static final ChatKills[] VALUES = values();
             public final String name;
 
             ChatKills(String name) {
                 this.name = name;
             }
 
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
             public ChatKills next() {
-                return values()[(ordinal() + 1) % values().length];
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatKills[] getValues() {
+                return VALUES;
             }
         }
+
+        public enum ChatInsignia implements ChatSetting<ChatInsignia> {
+            ALL("All"),
+            OFF("Off");
+
+            public static final ChatInsignia[] VALUES = values();
+            public final String name;
+
+            ChatInsignia(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public ChatInsignia next() {
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatInsignia[] getValues() {
+                return VALUES;
+            }
+        }
+
+        public enum ChatEventPoints implements ChatSetting<ChatEventPoints> {
+            ALL("All"),
+            OFF("Off");
+
+            public static final ChatEventPoints[] VALUES = values();
+            public final String name;
+
+            ChatEventPoints(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public ChatEventPoints next() {
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatEventPoints[] getValues() {
+                return VALUES;
+            }
+        }
+
+        public enum ChatUpgrade implements ChatSetting<ChatUpgrade> {
+            ALL("All"),
+            OFF("Off");
+
+            public static final ChatUpgrade[] VALUES = values();
+            public final String name;
+
+            ChatUpgrade(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public ChatUpgrade next() {
+                return VALUES[(ordinal() + 1) % VALUES.length];
+            }
+
+            @Override
+            public ChatUpgrade[] getValues() {
+                return VALUES;
+            }
+        }
+
+        interface ChatSetting<T> {
+
+            String getName();
+
+            T next();
+
+            T[] getValues();
+        }
+
+        private record ChatMenuSetting<T extends ChatSetting<T>>(
+                T[] settings,
+                ItemStack itemStack,
+                String name,
+                String description,
+                Function<DatabasePlayer, T> getCurrentSetting,
+                Consumer<DatabasePlayer> updateDatabasePlayerSettings
+        ) {}
 
 
     }

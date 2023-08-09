@@ -6,7 +6,10 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.*;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -50,39 +53,40 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
     }
 
     @Override
-    public default int getCompassTargetPriority(WarlordsEntity player) {
+    default int getCompassTargetPriority(WarlordsEntity player) {
         return player.getTeam() == getTeam() ? 20 : 0;
     }
 
     @Override
-    default String getToolbarName(WarlordsEntity player) {
+    default Component getToolbarName(WarlordsEntity player) {
         FlagLocation flag = getFlag();
         Team team = getTeam();
         Team playerTeam = player.getTeam();
-        StringBuilder builder = new StringBuilder();
-        if (flag.getLocation().getWorld() != player.getLocation().getWorld()) return "";
+        TextComponent.Builder builder = Component.text()
+                                                 .color(team.teamColor())
+                                                 .decorate(TextDecoration.BOLD);
+        if (flag.getLocation().getWorld() != player.getLocation().getWorld()) {
+            return Component.empty();
+        }
         double flagDistance = Math.round(flag.getLocation().distance(player.getLocation()) * 10) / 10.0;
-        builder.append(team.teamColor()).append(ChatColor.BOLD);
         if (playerTeam != team) {
-            builder.append("ENEMY ");
+            builder.append(Component.text("ENEMY "));
         } else {
-            builder.append("YOUR ");
+            builder.append(Component.text("YOUR "));
         }
         if (flag instanceof PlayerFlagLocation || flag instanceof GroundFlagLocation) {
-            if (flag instanceof GroundFlagLocation && playerTeam != team) {
-                builder.append("ENEMY "); // This is directly copied from the older code, but seems wrong...
-            }
-            builder.append("Flag ");
+            builder.append(Component.text("Flag "));
             if (flag instanceof PlayerFlagLocation) {
-                builder.append(ChatColor.WHITE).append("is stolen ");
-            } else if (flag instanceof GroundFlagLocation) {
-                builder.append(ChatColor.GOLD).append("is dropped ");
+                builder.append(Component.text("is stolen ", NamedTextColor.WHITE));
+            } else {
+                builder.append(Component.text("is dropped ", NamedTextColor.GOLD));
             }
-            builder.append(ChatColor.RED).append(flagDistance).append("m ").append(ChatColor.WHITE).append("away!");
+            builder.append(Component.text(flagDistance + "m ", NamedTextColor.RED))
+                   .append(Component.text("away!", NamedTextColor.WHITE));
         } else {
-            builder.append(ChatColor.GREEN).append("Flag is safe");
+            builder.append(Component.text("Flag is safe", NamedTextColor.GREEN));
         }
-        return builder.toString();
+        return builder.build();
     }
     
     static List<FlagLocation> update(Game game, Function<FlagInfo, FlagLocation> updater) {
@@ -156,11 +160,9 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
 
             @Override
             public String toString() {
-                StringBuilder sb = new StringBuilder();
-                sb.append("FlagHolder.create{");
-                sb.append(info.get());
-                sb.append('}');
-                return sb.toString();
+                return "FlagHolder.create{" +
+                        info.get() +
+                        '}';
             }
             
         };

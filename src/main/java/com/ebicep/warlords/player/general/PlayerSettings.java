@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -11,6 +12,7 @@ import java.util.*;
 import static com.ebicep.warlords.player.general.ArmorManager.Helmets.*;
 import static com.ebicep.warlords.player.general.Weapons.FELFLAME_BLADE;
 
+@Deprecated // since use databaseplayer since its locally cached, two caches makes no sense
 public class PlayerSettings {
 
     public static final HashMap<UUID, PlayerSettings> PLAYER_SETTINGS = new HashMap<>();
@@ -40,16 +42,13 @@ public class PlayerSettings {
     private ArmorManager.Helmets paladinHelmet = SIMPLE_PALADIN_HELMET;
     private ArmorManager.Helmets shamanHelmet = SIMPLE_SHAMAN_HELMET;
     private ArmorManager.Helmets rogueHelmet = SIMPLE_ROGUE_HELMET;
+    private ArmorManager.Helmets arcanistHelmet = SIMPLE_ARCANIST_HELMET;
     private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
     private ArmorManager.ArmorSets rogueArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
-
-    private Settings.ChatSettings.ChatDamage chatDamageMode = Settings.ChatSettings.ChatDamage.ALL;
-    private Settings.ChatSettings.ChatHealing chatHealingMode = Settings.ChatSettings.ChatHealing.ALL;
-    private Settings.ChatSettings.ChatEnergy chatEnergyMode = Settings.ChatSettings.ChatEnergy.ALL;
-    private Settings.ChatSettings.ChatKills chatKillsMode = Settings.ChatSettings.ChatKills.ALL;
+    private ArmorManager.ArmorSets arcanistArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;
 
     public PlayerSettings(UUID uuid) {
         this.uuid = uuid;
@@ -120,7 +119,7 @@ public class PlayerSettings {
     @Nonnull
     public Specializations getSelectedSpec() {
         if (selectedSpec == null) {
-            System.out.println("ERROR: SELECTED SPEC IS NULL");
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("ERROR: SELECTED SPEC IS NULL");
             return Specializations.PYROMANCER;
         }
         return selectedSpec;
@@ -175,6 +174,7 @@ public class PlayerSettings {
         armorSets.add(paladinHelmet);
         armorSets.add(shamanHelmet);
         armorSets.add(rogueHelmet);
+        armorSets.add(arcanistHelmet);
         return armorSets;
     }
 
@@ -194,6 +194,7 @@ public class PlayerSettings {
         armorSets.add(paladinArmor);
         armorSets.add(shamanArmor);
         armorSets.add(rogueArmor);
+        armorSets.add(arcanistArmor);
         return armorSets;
     }
 
@@ -203,75 +204,26 @@ public class PlayerSettings {
 
     public void setHelmet(Classes classes, ArmorManager.Helmets helmet) {
         switch (classes) {
-            case MAGE:
-                this.mageHelmet = helmet;
-                break;
-            case WARRIOR:
-                this.warriorHelmet = helmet;
-                break;
-            case PALADIN:
-                this.paladinHelmet = helmet;
-                break;
-            case SHAMAN:
-                this.shamanHelmet = helmet;
-                break;
-            case ROGUE:
-                this.rogueHelmet = helmet;
-                break;
+            case MAGE -> this.mageHelmet = helmet;
+            case WARRIOR -> this.warriorHelmet = helmet;
+            case PALADIN -> this.paladinHelmet = helmet;
+            case SHAMAN -> this.shamanHelmet = helmet;
+            case ROGUE -> this.rogueHelmet = helmet;
+            case ARCANIST -> this.arcanistHelmet = helmet;
         }
         DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setHelmet(helmet));
     }
 
     public void setArmor(Classes classes, ArmorManager.ArmorSets armor) {
         switch (classes) {
-            case MAGE:
-                this.mageArmor = armor;
-                break;
-            case WARRIOR:
-                this.warriorArmor = armor;
-                break;
-            case PALADIN:
-                this.paladinArmor = armor;
-                break;
-            case SHAMAN:
-                this.shamanArmor = armor;
-                break;
-            case ROGUE:
-                this.rogueArmor = armor;
-                break;
+            case MAGE -> this.mageArmor = armor;
+            case WARRIOR -> this.warriorArmor = armor;
+            case PALADIN -> this.paladinArmor = armor;
+            case SHAMAN -> this.shamanArmor = armor;
+            case ROGUE -> this.rogueArmor = armor;
+            case ARCANIST -> this.arcanistArmor = armor;
         }
         DatabaseManager.updatePlayer(uuid, databasePlayer -> databasePlayer.getClass(classes).setArmor(armor));
     }
 
-    public Settings.ChatSettings.ChatDamage getChatDamageMode() {
-        return chatDamageMode;
-    }
-
-    public void setChatDamageMode(Settings.ChatSettings.ChatDamage chatDamageMode) {
-        this.chatDamageMode = chatDamageMode;
-    }
-
-    public Settings.ChatSettings.ChatHealing getChatHealingMode() {
-        return chatHealingMode;
-    }
-
-    public void setChatHealingMode(Settings.ChatSettings.ChatHealing chatHealingMode) {
-        this.chatHealingMode = chatHealingMode;
-    }
-
-    public Settings.ChatSettings.ChatEnergy getChatEnergyMode() {
-        return chatEnergyMode;
-    }
-
-    public void setChatEnergyMode(Settings.ChatSettings.ChatEnergy chatEnergyMode) {
-        this.chatEnergyMode = chatEnergyMode;
-    }
-
-    public Settings.ChatSettings.ChatKills getChatKillsMode() {
-        return chatKillsMode;
-    }
-
-    public void setChatKillsMode(Settings.ChatSettings.ChatKills chatKillsMode) {
-        this.chatKillsMode = chatKillsMode;
-    }
 }

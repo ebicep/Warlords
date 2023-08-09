@@ -7,6 +7,4 @@ public enum DatabaseGamePlayerResult {
     DRAW(),
     NONE(),
 
-    ;
-
 }

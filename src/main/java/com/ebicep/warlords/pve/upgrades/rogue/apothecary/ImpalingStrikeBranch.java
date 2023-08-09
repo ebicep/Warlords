@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
-import com.ebicep.warlords.abilties.ImpalingStrike;
+import com.ebicep.warlords.abilities.ImpalingStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -106,7 +106,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                 "-20 Additional energy cost\n\nYour Impaling Strikes deals triple the damage to enemies afflicted by LEECH",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                     ability.setEnergyCost(ability.getEnergyCost() - 20);
                 }
         );

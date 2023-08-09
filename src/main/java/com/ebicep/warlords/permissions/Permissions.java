@@ -6,10 +6,11 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -20,12 +21,12 @@ import static com.ebicep.warlords.util.chat.ChatChannels.DEBUG;
 
 public enum Permissions {
 
-    ADMIN("ADMIN", ChatColor.DARK_AQUA, "group.administrator"),
-    COORDINATOR("HGS", ChatColor.GOLD, "group.coordinator"),
-    CONTENT_CREATOR("CT", ChatColor.LIGHT_PURPLE, "group.contentcreator"),
-    GAME_STARTER("GS", ChatColor.YELLOW, "group.gamestarter"),
-    GAME_TESTER("P", ChatColor.GREEN, "group.patreon"),
-    DEFAULT("", ChatColor.AQUA, "group.default"),
+    ADMIN("ADMIN", NamedTextColor.DARK_AQUA, "group.administrator"),
+    COORDINATOR("HGS", NamedTextColor.GOLD, "group.coordinator"),
+    CONTENT_CREATOR("CT", NamedTextColor.LIGHT_PURPLE, "group.contentcreator"),
+    GAME_STARTER("GS", NamedTextColor.YELLOW, "group.gamestarter"),
+    GAME_TESTER("P", NamedTextColor.GREEN, "group.patreon"),
+    DEFAULT("", NamedTextColor.AQUA, "group.default"),
 
     ;
 
@@ -46,22 +47,34 @@ public enum Permissions {
                 .execute();
     }
 
-    public static String getPrefixWithColor(Player player) {
+    public static Component getPrefixWithColor(Player player, boolean includeName) {
+        String name = includeName ? player.getName() : "";
         for (Permissions value : VALUES) {
             if (player.hasPermission(value.permission)) {
-                return value == DEFAULT ? value.prefixColor.toString() : value.prefixColor + "[" + value.prefix + "] ";
+                return value == DEFAULT ?
+                       Component.text(name, NamedTextColor.AQUA) :
+                       Component.text("[" + value.prefix + "] " + name, value.prefixColor);
             }
         }
-        return ChatColor.AQUA.toString();
+        return Component.text(name, NamedTextColor.AQUA);
     }
 
-    public static String getColor(DatabasePlayer databasePlayer) {
+    public static NamedTextColor getColor(Player player) {
         for (Permissions value : VALUES) {
-            if (databasePlayer.hasPermission(value.permission)) {
-                return value.prefixColor.toString();
+            if (player.hasPermission(value.permission)) {
+                return value.prefixColor;
             }
         }
-        return ChatColor.AQUA.toString();
+        return NamedTextColor.AQUA;
+    }
+
+    public static NamedTextColor getColor(DatabasePlayer databasePlayer) {
+        for (Permissions value : VALUES) {
+            if (databasePlayer.hasPermission(value.permission)) {
+                return value.prefixColor;
+            }
+        }
+        return NamedTextColor.AQUA;
     }
 
     public static boolean isAdmin(Player player) {
@@ -88,23 +101,17 @@ public enum Permissions {
         return player.hasPermission(DEFAULT.permission);
     }
 
-    public static void sendMessageToDebug(Player player, String message) {
-        if (player.hasPermission("warlords.database.messagefeed")) {
-            player.sendMessage(message);
-        }
-    }
-
-    public static void sendMessageToDebug(WarlordsEntity player, String message) {
+    public static void sendMessageToDebug(WarlordsEntity player, Component message) {
         if (player.getEntity().hasPermission("warlords.database.messagefeed")) {
-            player.getEntity().sendMessage(DEBUG.getColoredName() + CHAT_ARROW + message);
+            player.getEntity().sendMessage(DEBUG.getColoredName().append(CHAT_ARROW).append(message));
         }
     }
 
     public final String prefix;
-    public final ChatColor prefixColor;
+    public final NamedTextColor prefixColor;
     public final String permission;
 
-    Permissions(String prefix, ChatColor prefixColor, String permission) {
+    Permissions(String prefix, NamedTextColor prefixColor, String permission) {
         this.prefix = prefix;
         this.prefixColor = prefixColor;
         this.permission = permission;

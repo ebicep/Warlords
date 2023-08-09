@@ -2,7 +2,8 @@ package com.ebicep.warlords.guilds.logs.types.oneplayer.roles.permissions;
 
 import com.ebicep.warlords.guilds.GuildPermissions;
 import com.ebicep.warlords.guilds.logs.types.oneplayer.roles.AbstractGuildLogRole;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.UUID;
 
@@ -16,7 +17,18 @@ public abstract class AbstractGuildLogRolePermission extends AbstractGuildLogRol
     }
 
     @Override
-    public String getLog() {
-        return ChatColor.GRAY + prepend() + " " + getSenderName() + " " + ChatColor.YELLOW + getAction() + " " + ChatColor.RED + permission.name() + ChatColor.GRAY + " permission to " + ChatColor.GREEN + role + " " + ChatColor.GRAY + append();
+    public Component getLog() {
+        return Component.empty().color(NamedTextColor.GRAY)
+                        .append(prepend())
+                        .append(Component.space())
+                        .append(getSenderName())
+                        .append(Component.space())
+                        .append(Component.empty().color(NamedTextColor.YELLOW).append(getAction()))
+                        .append(Component.space())
+                        .append(Component.text(permission.name(), NamedTextColor.RED))
+                        .append(Component.text(" permission to ", NamedTextColor.GRAY))
+                        .append(Component.text(role, NamedTextColor.GREEN))
+                        .append(Component.space())
+                        .append(append());
     }
 }

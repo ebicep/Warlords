@@ -6,8 +6,13 @@ import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractSpecialItem extends AbstractItem implements BonusStats, BonusLore {
@@ -24,28 +29,44 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
     }
 
     @Override
+    public AbstractItem clone() {
+        return null; // TODO if needed
+    }
+
+    @Override
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
-        addStatPoolAndBlessing(itemBuilder);
-        itemBuilder.addLore(
-                "",
-                getBonusLore()
-        );
-        addItemScoreAndWeight(itemBuilder);
-        itemBuilder.addLore(
-                "",
-                WordWrap.wrapWithNewline(ChatColor.DARK_GRAY.toString() + ChatColor.ITALIC + getDescription(), 160)
-        );
+        addStatPoolAndBlessing(itemBuilder, null);
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLore(getBonusLore());
+        addItemScoreAndWeight(itemBuilder, false);
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 160));
+        return itemBuilder;
+    }
+
+    public ItemStack generateItemStackWithObfuscatedStat(BasicStatPool stat) {
+        return generateItemBuilderWithObfuscatedStat(stat).get();
+    }
+
+    public ItemBuilder generateItemBuilderWithObfuscatedStat(BasicStatPool stat) {
+        ItemBuilder itemBuilder = getBaseItemBuilder();
+        addStatPoolAndBlessing(itemBuilder, stat);
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLore(getBonusLore());
+        addItemScoreAndWeight(itemBuilder, true);
+        itemBuilder.addLore(Component.empty());
+        itemBuilder.addLore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 160));
         return itemBuilder;
     }
 
     @Override
-    public String getItemName() {
+    public Component getItemName() {
         ItemModifier itemModifier = getItemModifier();
         if (itemModifier != null) {
-            return (modifier > 0 ? ChatColor.GREEN : ChatColor.RED) + getName();
+            return Component.text(getName(), modifier > 0 ? NamedTextColor.GREEN : NamedTextColor.RED);
         }
-        return ChatColor.GRAY + getName();
+        return Component.text(getName(), NamedTextColor.GRAY);
     }
 
     public abstract String getName();
@@ -55,8 +76,10 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
     public abstract String getDescription();
 
     @Override
-    public String getBonusLore() {
-        return ChatColor.GREEN + "Bonus" + (this instanceof ItemAddonClassBonus ? " (" + ((ItemAddonClassBonus) this).getClasses().name + "):" : ":") + "\n" +
-                WordWrap.wrapWithNewline(ChatColor.GRAY + getBonus(), 160);
+    public List<Component> getBonusLore() {
+        List<Component> bonusLore = new ArrayList<>();
+        bonusLore.add(Component.text("Bonus" + (this instanceof ItemAddonClassBonus ? " (" + ((ItemAddonClassBonus) this).getClasses().name + "):" : ":"), NamedTextColor.GREEN));
+        bonusLore.addAll(WordWrap.wrap(Component.text(getBonus(), NamedTextColor.GRAY), 160));
+        return bonusLore;
     }
 }

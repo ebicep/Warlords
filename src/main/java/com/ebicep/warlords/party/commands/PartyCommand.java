@@ -10,15 +10,17 @@ import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.PartyPlayerType;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
@@ -34,9 +36,13 @@ public class PartyCommand extends BaseCommand {
     public void listAll(CommandIssuer issuer) {
         List<Party> parties = PartyManager.PARTIES;
         if (parties.isEmpty()) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "There are no parties!", true);
+            ChatChannels.sendDebugMessage(issuer, Component.text("There are no parties!", NamedTextColor.GOLD));
         } else {
-            parties.forEach(party -> issuer.sendMessage(party.getPartyList()));
+            if (issuer.getIssuer() instanceof Player player) {
+                parties.forEach(party -> player.sendMessage(party.getPartyList()));
+            } else {
+                parties.forEach(party -> ChatChannels.sendDebugMessage(issuer, party.getPartyList()));
+            }
         }
     }
 
@@ -76,7 +82,7 @@ public class PartyCommand extends BaseCommand {
         UUID playerUUID = player.getUniqueId();
         UUID targetUUID = target.getUniqueId();
         if (playerUUID.equals(targetUUID)) {
-            Party.sendPartyMessage(player, ChatColor.RED + "You can't invite yourself to a party!");
+            Party.sendPartyMessage(player, Component.text("You can't invite yourself to a party!", NamedTextColor.RED));
             return;
         }
 
@@ -92,49 +98,71 @@ public class PartyCommand extends BaseCommand {
                 party.getPartyModerators().stream()
                      .noneMatch(partyPlayer -> partyPlayer.getUUID().equals(playerUUID))
         ) {
-            Party.sendPartyMessage(player, ChatColor.RED + "All invite is disabled!");
+            Party.sendPartyMessage(player, Component.text("All invite is disabled!", NamedTextColor.RED));
             return;
         }
         if (PartyManager.inSameParty(playerUUID, targetUUID)) {
-            Party.sendPartyMessage(player, ChatColor.RED + "That player is already in the party!");
+            Party.sendPartyMessage(player, Component.text("That player is already in the party!", NamedTextColor.RED));
             return;
         }
         if (party.getInvites().containsKey(targetUUID)) {
-            Party.sendPartyMessage(player, ChatColor.RED + "That player has already been invited! (" + party.getInvites().get(targetUUID) + ")");
+            Party.sendPartyMessage(player,
+                    Component.text("That player has already been invited! (" + party.getInvites().get(targetUUID) + ")", NamedTextColor.RED)
+            );
             return;
         }
         party.invite(targetUUID);
         party.sendMessageToAllPartyPlayers(
-                ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " invited " + ChatColor.AQUA + target.getName() + ChatColor.YELLOW + " to the party!\n" +
-                        ChatColor.YELLOW + "They have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept!",
-                ChatColor.BLUE,
-                true
+                Component.text().color(NamedTextColor.YELLOW)
+                         .append(Permissions.getPrefixWithColor(player, true))
+                         .append(Component.text(" invited "))
+                         .append(Permissions.getPrefixWithColor(target, true))
+                         .append(Component.text(" to the party!"))
+                         .append(Component.newline())
+                         .append(Component.text("They have"))
+                         .append(Component.text(" 60 ", NamedTextColor.RED))
+                         .append(Component.text("seconds to accept!"))
+                         .build()
         );
-        ChatUtils.sendCenteredMessage(target, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+        ChatUtils.sendCenteredMessage(target, Component.text("------------------------------------------", NamedTextColor.BLUE, TextDecoration.BOLD));
         ChatUtils.sendCenteredMessage(target,
-                ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has invited you to join " + (party.getPartyLeader()
-                                                                                                           .getUUID()
-                                                                                                           .equals(playerUUID) ? "their party!" : ChatColor.AQUA + party.getLeaderName() + ChatColor.YELLOW + "'s party!")
+                Component.text().color(NamedTextColor.YELLOW)
+                         .append(Permissions.getPrefixWithColor(player, true))
+                         .append(Component.text(" has invited you to join "))
+                         .append(party.getPartyLeader()
+                                      .getUUID()
+                                      .equals(playerUUID) ?
+                                 Component.text("their party!") :
+                                 Component.textOfChildren(
+                                         Permissions.getPrefixWithColor(player, true),
+                                         Component.text("'s party!")
+                                 ))
+                         .build()
         );
-        TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept. " + ChatColor.GOLD + "Click here to join!");
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click to join the party!").create()));
-        message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party join " + party.getLeaderName()));
-        ChatUtils.sendCenteredMessageWithEvents(target, Collections.singletonList(message));
-        ChatUtils.sendCenteredMessage(target, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+        ChatUtils.sendCenteredMessage(target,
+                Component.text().color(NamedTextColor.YELLOW)
+                         .append(Component.text("You have"))
+                         .append(Component.text(" 60 ", NamedTextColor.RED))
+                         .append(Component.text("seconds to accept. "))
+                         .append(Component.text("Click here to join!", NamedTextColor.GOLD)
+                                          .hoverEvent(HoverEvent.showText(Component.text("Click to join the party!", NamedTextColor.GREEN)))
+                                          .clickEvent(ClickEvent.runCommand("/party join " + party.getLeaderName())))
+                         .build()
+        );
+        ChatUtils.sendCenteredMessage(target, Component.text("------------------------------------------", NamedTextColor.BLUE, TextDecoration.BOLD));
     }
 
     @Subcommand("join")
-    @CommandCompletion("@partyleaders")
     @Description("Joins a party")
-    public void join(@Conditions("party:false") Player player, @Values("@partyleaders") String partyLeaderName) {
-        Optional<Party> optionalParty = PartyManager.getPartyFromLeaderName(partyLeaderName);
-        if (!optionalParty.isPresent()) {
-            Party.sendPartyMessage(player, ChatColor.RED + "That player does not have a party!");
+    public void join(@Conditions("party:false") Player player, @Flags("other") Player partyLeader) {
+        Optional<Party> optionalParty = PartyManager.getPartyFromLeaderName(partyLeader.getName());
+        if (optionalParty.isEmpty()) {
+            Party.sendPartyMessage(player, Component.text("That player does not have a party!", NamedTextColor.RED));
             return;
         }
         Party party = optionalParty.get();
         if (!party.isOpen() && !party.getInvites().containsKey(player.getUniqueId())) {
-            Party.sendPartyMessage(player, ChatColor.RED + "Invite expired or party is closed!");
+            Party.sendPartyMessage(player, Component.text("Invite expired or party is closed!", NamedTextColor.RED));
             return;
         }
         party.join(player.getUniqueId());
@@ -149,7 +177,7 @@ public class PartyCommand extends BaseCommand {
     public void leave(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper) {
         Party party = partyPlayerWrapper.getParty();
         party.leave(player.getUniqueId());
-        Party.sendPartyMessage(player, ChatColor.GREEN + "You left the party");
+        Party.sendPartyMessage(player, Component.text("You left the party", NamedTextColor.GREEN));
     }
 
     @Subcommand("disband")
@@ -159,7 +187,7 @@ public class PartyCommand extends BaseCommand {
         if (party.getPartyLeader().getUUID().equals(player.getUniqueId())) {
             party.disband();
         } else {
-            Party.sendPartyMessage(player, ChatColor.RED + "You are not the party leader!");
+            Party.sendPartyMessage(player, Component.text("You are not the party leader!", NamedTextColor.RED));
         }
     }
 
@@ -196,16 +224,16 @@ public class PartyCommand extends BaseCommand {
     ) {
         Party party = partyPlayerWrapper.getParty();
         if (partyPlayerWrapper.getPartyPlayer().getPartyPlayerType() == PartyPlayerType.MEMBER) {
-            Party.sendPartyMessage(player, ChatColor.RED + "Insufficient Permissions!");
+            Party.sendPartyMessage(player, Component.text("Insufficient Permissions!", NamedTextColor.RED));
             return;
         }
         if (!party.getPolls().isEmpty()) {
-            Party.sendPartyMessage(player, ChatColor.RED + "There is already an ongoing poll!");
+            Party.sendPartyMessage(player, Component.text("There is already an ongoing poll!", NamedTextColor.RED));
             return;
         }
 
         if (pollInfo.length <= 2) {
-            Party.sendPartyMessage(player, ChatColor.RED + "You must have a question and more than 1 answer!");
+            Party.sendPartyMessage(player, Component.text("You must have a question and more than 1 answer!", NamedTextColor.RED));
             return;
         }
         List<String> pollOptions = new ArrayList<>(Arrays.asList(pollInfo));
@@ -239,21 +267,14 @@ public class PartyCommand extends BaseCommand {
     @Subcommand("outside")
     @Description("Prints the players outside your party")
     public void outside(@Conditions("party:true") Player player, PartyPlayerWrapper partyPlayerWrapper) {
-        StringBuilder outside = new StringBuilder(ChatColor.YELLOW + "Players Outside Party: ");
-        int numberOfPlayersOutside = 0;
         List<PartyPlayer> partyPlayers = partyPlayerWrapper.getParty().getPartyPlayers();
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (partyPlayers.stream().noneMatch(partyPlayer -> partyPlayer.getUUID().equals(p.getUniqueId()))) {
-                numberOfPlayersOutside++;
-                outside.append(ChatColor.GREEN).append(p.getName()).append(ChatColor.GRAY).append(", ");
-            }
-        }
-        outside.setLength(outside.length() - 2);
-        if (numberOfPlayersOutside == 0) {
-            player.sendMessage(ChatColor.YELLOW + "There are no players outside of the party");
-        } else {
-            player.sendMessage(outside.toString());
-        }
+        TextComponent.Builder outside = Component.text("Players Outside Party: ", NamedTextColor.YELLOW).toBuilder();
+        outside.append(Bukkit.getOnlinePlayers()
+                             .stream()
+                             .filter(p -> partyPlayers.stream().noneMatch(partyPlayer -> partyPlayer.getUUID().equals(p.getUniqueId())))
+                             .map(p -> Component.text(p.getName(), NamedTextColor.GREEN))
+                             .collect(Component.toComponent(Component.text(", ", NamedTextColor.GRAY))));
+        player.sendMessage(outside.build());
     }
 
     @Subcommand("leader")
@@ -286,11 +307,11 @@ public class PartyCommand extends BaseCommand {
         }
         Player playerToForceInvite = Bukkit.getPlayer(target);
         if (playerToForceInvite == null) {
-            Party.sendPartyMessage(player, ChatColor.RED + "Cannot find a player with that name!");
+            Party.sendPartyMessage(player, Component.text("Cannot find a player with that name!", NamedTextColor.RED));
             return;
         }
         if (PartyManager.inSameParty(player.getUniqueId(), playerToForceInvite.getUniqueId())) {
-            Party.sendPartyMessage(player, ChatColor.RED + "That player is already in the party!");
+            Party.sendPartyMessage(player, Component.text("That player is already in the party!", NamedTextColor.RED));
             return;
         }
         party.join(playerToForceInvite.getUniqueId());
@@ -302,9 +323,9 @@ public class PartyCommand extends BaseCommand {
         Party party = partyPlayerWrapper.getParty();
         party.setAllInvite(!party.isAllInvite());
         if (party.isAllInvite()) {
-            party.sendMessageToAllPartyPlayers(ChatColor.GREEN + "All invite is now ON!", ChatColor.BLUE, true);
+            party.sendMessageToAllPartyPlayers(Component.text("All invite is now ON!", NamedTextColor.GREEN));
         } else {
-            party.sendMessageToAllPartyPlayers(ChatColor.RED + "All invite is now OFF!", ChatColor.BLUE, true);
+            party.sendMessageToAllPartyPlayers(Component.text("All invite is now OFF!", NamedTextColor.RED));
         }
 
     }

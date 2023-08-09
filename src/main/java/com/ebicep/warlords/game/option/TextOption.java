@@ -2,10 +2,13 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -22,25 +25,26 @@ public class TextOption implements Option, TimerSkipAbleMarker {
     @Nonnull
     private Type type;
     @Nonnull
-    private List<String> text;
+    private List<Component> text;
     private int delay;
     private Game game;
 
-    public TextOption(@Nonnull Type type, @Nonnull List<String> text) {
+    public TextOption(@Nonnull Type type, @Nonnull List<Component> text) {
         this(type, text, DEFAULT_DELAY);
     }
-    public TextOption(@Nonnull Type type, @Nonnull List<String> text, int delay) {
+
+    public TextOption(@Nonnull Type type, @Nonnull List<Component> text, int delay) {
         this.type = Objects.requireNonNull(type, "type");
         this.text = Objects.requireNonNull(text, "text");
         this.delay = delay;
     }
 
     @Nonnull
-    public List<String> getText() {
+    public List<Component> getText() {
         return text;
     }
 
-    public void setText(@Nonnull List<String> text) {
+    public void setText(@Nonnull List<Component> text) {
         this.text = Objects.requireNonNull(text, "text");
     }
 
@@ -52,15 +56,27 @@ public class TextOption implements Option, TimerSkipAbleMarker {
     public void setType(@Nonnull Type type) {
         this.type = Objects.requireNonNull(type, "type");
     }
-    
-    public void sendText() {
-        this.type.sendText(game, text);
+
+    @Override
+    public int getDelay() {
+        return delay * 20;
+    }
+
+    @Override
+    public void skipTimer(int delayInTicks) {
+        delay -= delayInTicks / 20;
+    }
+
+    @Override
+    public void register(@Nonnull Game game) {
+        this.game = game;
+        game.registerGameMarker(TimerSkipAbleMarker.class, this);
     }
 
     @Override
     public void start(@Nonnull Game game) {
         Option.super.start(game);
-        if(delay <= 0) {
+        if (delay <= 0) {
             sendText();
         } else {
             new GameRunnable(game) {
@@ -76,63 +92,54 @@ public class TextOption implements Option, TimerSkipAbleMarker {
         }
     }
 
-    @Override
-    public int getDelay() {
-        return delay * 20;
+    public void sendText() {
+        this.type.sendText(game, text);
     }
 
-    @Override
-    public void skipTimer(int delayInTicks) {
-        delay -= delayInTicks / 20;
-    }
-
-    @Override
-    public void register(Game game) {
-        this.game = game;
-        game.registerGameMarker(TimerSkipAbleMarker.class, this);
-    }
-    
-    
 
     public enum Type {
         CHAT_CENTERED() {
             @Override
-            public void sendText(@Nonnull Game game, @Nonnull List<String> messages) {
+            public void sendText(@Nonnull Game game, @Nonnull List<Component> messages) {
                 game.forEachOnlinePlayer((p, t) -> {
-                    ChatUtils.sendMessage(p, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
-                    for (String line : messages) {
+                    ChatUtils.sendMessage(p, false, Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD));
+                    for (Component line : messages) {
                         ChatUtils.sendMessage(p, true, line);
                     }
-                    ChatUtils.sendMessage(p, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                    ChatUtils.sendMessage(p, false, Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD));
                 });
             }
         },
         CHAT() {
             @Override
-            public void sendText(@Nonnull Game game, @Nonnull List<String> messages) {
+            public void sendText(@Nonnull Game game, @Nonnull List<Component> messages) {
                 game.forEachOnlinePlayer((p, t) -> {
-                    ChatUtils.sendMessage(p, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
-                    for (String line : messages) {
+                    ChatUtils.sendMessage(p, false, Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD));
+                    for (Component line : messages) {
                         ChatUtils.sendMessage(p, false, line);
                     }
-                    ChatUtils.sendMessage(p, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                    ChatUtils.sendMessage(p, false, Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", NamedTextColor.GREEN, TextDecoration.BOLD));
                 });
             }
         },
         TITLE() {
             @Override
-            public void sendText(@Nonnull Game game, @Nonnull List<String> messages) {
-                Iterator<String> itr = messages.iterator();
+            public void sendText(@Nonnull Game game, @Nonnull List<Component> messages) {
+                Iterator<Component> itr = messages.iterator();
                 if (!itr.hasNext()) {
                     return;
                 }
                 new GameRunnable(game) {
                     @Override
                     public void run() {
-                        String title = itr.next();
-                        String subtitle = itr.hasNext() ? itr.next() : "";
+                        Component title = itr.next();
+                        Component subtitle = itr.hasNext() ? itr.next() : Component.empty();
                         game.forEachOnlinePlayer((p, t) -> {
-                            PacketUtils.sendTitle(p, title, subtitle, 0, 40, 20);
+                            p.showTitle(Title.title(
+                                    title,
+                                    subtitle,
+                                    Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(20))
+                            ));
                         });
                         if (!itr.hasNext()) {
                             cancel();
@@ -142,21 +149,21 @@ public class TextOption implements Option, TimerSkipAbleMarker {
             }
         };
 
-        public abstract void sendText(@Nonnull Game game, @Nonnull List<String> messages);
+        public abstract void sendText(@Nonnull Game game, @Nonnull List<Component> messages);
 
-        public TextOption create(@Nonnull List<String> text) {
+        public TextOption create(@Nonnull List<Component> text) {
             return new TextOption(this, text);
         }
 
-        public TextOption create(String ... text) {
+        public TextOption create(Component... text) {
             return new TextOption(this, Arrays.asList(text));
         }
 
-        public TextOption create(int delay, @Nonnull List<String> text) {
+        public TextOption create(int delay, @Nonnull List<Component> text) {
             return new TextOption(this, text, delay);
         }
 
-        public TextOption create(int delay, String ... text) {
+        public TextOption create(int delay, Component... text) {
             return new TextOption(this, Arrays.asList(text), delay);
         }
 

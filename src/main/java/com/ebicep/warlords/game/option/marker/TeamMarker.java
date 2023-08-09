@@ -22,23 +22,24 @@ public interface TeamMarker extends GameMarker {
     static EnumSet<Team> getTeams(Game game) {
         EnumSet<Team> teams;
         boolean mayModify;
-        
+
         List<TeamMarker> markers = game.getMarkers(TeamMarker.class);
-        switch(markers.size()) {
-            case 0:
+        switch (markers.size()) {
+            case 0 -> {
                 teams = EnumSet.noneOf(Team.class);
                 mayModify = true;
-                break;
-            case 1:
+            }
+            case 1 -> {
                 teams = markers.get(0).getTeams();
                 mayModify = false;
-                break;
-            default:
+            }
+            default -> {
                 teams = EnumSet.noneOf(Team.class);
                 mayModify = true;
                 for (TeamMarker marker : markers) {
                     teams.addAll(marker.getTeams());
                 }
+            }
         }
         if (teams.isEmpty()) {
             if(!mayModify) {
@@ -48,8 +49,8 @@ public interface TeamMarker extends GameMarker {
         }
         return teams;
     }
-    
-    public default Option asOption() {
+
+    default Option asOption() {
         return new MarkerOption(this);
     }
 }

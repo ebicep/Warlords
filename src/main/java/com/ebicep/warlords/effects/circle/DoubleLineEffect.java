@@ -1,9 +1,9 @@
 package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.TeamBasedEffect;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.function.DoubleUnaryOperator;
@@ -22,15 +22,15 @@ public class DoubleLineEffect extends AbstractEffectPlayer<CircleEffect> {
     private double period = 0.2;
     private double pendingPeriod = 0;
 
-    public DoubleLineEffect(ParticleEffect own, ParticleEffect other) {
+    public DoubleLineEffect(Particle own, Particle other) {
         this(new TeamBasedEffect(own, other));
     }
 
-    public DoubleLineEffect(ParticleEffect effect) {
+    public DoubleLineEffect(Particle effect) {
         this(new TeamBasedEffect(effect));
     }
 
-    public DoubleLineEffect(TeamBasedEffect effect) {
+    public DoubleLineEffect(@Nonnull TeamBasedEffect effect) {
         this.effect = effect;
     }
 
@@ -82,12 +82,12 @@ public class DoubleLineEffect extends AbstractEffectPlayer<CircleEffect> {
         this.needsUpdate = false;
     }
 
-    public DoubleLineEffect effect(@Nonnull ParticleEffect effect) {
+    public DoubleLineEffect effect(@Nonnull Particle effect) {
         this.effect = new TeamBasedEffect(effect);
         return this;
     }
 
-    public DoubleLineEffect effect(@Nonnull ParticleEffect ownTeam, @Nonnull ParticleEffect enemyTeam) {
+    public DoubleLineEffect effect(@Nonnull Particle ownTeam, @Nonnull Particle enemyTeam) {
         this.effect = new TeamBasedEffect(ownTeam, enemyTeam);
         return this;
     }

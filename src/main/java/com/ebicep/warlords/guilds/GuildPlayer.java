@@ -2,8 +2,9 @@ package com.ebicep.warlords.guilds;
 
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -54,19 +55,16 @@ public class GuildPlayer {
 
     public String getName() {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer != null) {
-            return offlinePlayer.getName();
-        }
-        return "UNKNOWN";
+        return offlinePlayer.getName() == null ? "?" : offlinePlayer.getName();
     }
 
-    public String getListName() {
+    public Component getListName() {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         String name = offlinePlayer.getName();
         if (offlinePlayer.isOnline()) {
-            return ChatColor.AQUA + name + ChatColor.GREEN + " ● ";
+            return Component.text(name != null ? name : "?", NamedTextColor.AQUA).append(Component.text(" ● ", NamedTextColor.GREEN));
         }
-        return ChatColor.AQUA + name + ChatColor.RED + " ● ";
+        return Component.text(name != null ? name : "?", NamedTextColor.GRAY).append(Component.text(" ● ", NamedTextColor.RED));
     }
 
 

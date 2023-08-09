@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.vindicator;
 
-import com.ebicep.warlords.abilties.RighteousStrike;
+import com.ebicep.warlords.abilities.RighteousStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -14,8 +14,8 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
     public RighteousStrikeBranch(AbilityTree abilityTree, RighteousStrike ability) {
         super(abilityTree, ability);
         if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.35f);
+            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.35f);
         }
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
@@ -98,7 +98,7 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
                         " when struck, additional targets will be silenced for 4 seconds instead.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

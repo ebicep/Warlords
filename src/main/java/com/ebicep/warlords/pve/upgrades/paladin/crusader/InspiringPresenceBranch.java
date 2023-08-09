@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 
-import com.ebicep.warlords.abilties.InspiringPresence;
+import com.ebicep.warlords.abilities.InspiringPresence;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -86,12 +86,14 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
         masterUpgrade = new Upgrade(
                 "Transcendent Presence",
                 "Inspiring Presence - Master Upgrade",
-                "-20% Cooldown reduction\n\nReduce the cooldown on all caster's and nearby allies' abilities by 10 seconds (excluding Inspiring Presence.)" +
-                        " Additionally, allies gain 10% cooldown reduction for the duration of Inspiring Presence",
+                """
+                        -20% Cooldown reduction
+
+                        Reduce the cooldown on all caster's and nearby allies' abilities by 15 seconds (excluding Inspiring Presence.) Additionally, allies gain 20% cooldown reduction for the duration of Inspiring Presence""",
                 50000,
                 () -> {
                     ability.setCooldown(ability.getCooldown() * 0.8f);
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

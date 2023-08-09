@@ -14,15 +14,17 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.Utils;
+import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,7 +48,7 @@ public class GamesCommand extends BaseCommand {
                     i % 7 + 1,
                     i / 7 + 1,
                     new ItemBuilder(Material.BOOK)
-                            .name(ChatColor.GREEN + game.getDate())
+                            .name(Component.text(game.getDate(), NamedTextColor.GREEN))
                             .lore(game.getLore())
                             .get(),
                     (m, e) -> openGameEditorMenu(player, game)
@@ -54,14 +56,14 @@ public class GamesCommand extends BaseCommand {
         }
 
         menu.setItem(2, 5,
-                new ItemBuilder(Material.WORKBENCH)
-                        .name(ChatColor.GREEN + "Set Hologram Visibility")
+                new ItemBuilder(Material.CRAFTING_TABLE)
+                        .name(Component.text("Set Hologram Visibility", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility)
         );
         menu.setItem(3, 5,
-                new ItemBuilder(Material.WORKBENCH)
-                        .name(ChatColor.GREEN + "Reload Holograms")
+                new ItemBuilder(Material.CRAFTING_TABLE)
+                        .name(Component.text("Reload Holograms", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> player.performCommand("games reload")
         );
@@ -74,7 +76,7 @@ public class GamesCommand extends BaseCommand {
 
         menu.setItem(4, 0,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + game.getDate())
+                        .name(Component.text(game.getDate(), NamedTextColor.GREEN))
                         .lore(game.getLore())
                         .get(),
                 (m, e) -> {
@@ -83,16 +85,16 @@ public class GamesCommand extends BaseCommand {
 
         menu.setItem(1, 2,
                 new ItemBuilder(Material.WATER_BUCKET)
-                        .name(ChatColor.GREEN + "Add Game")
+                        .name(Component.text("Add Game", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
                     Menu.openConfirmationMenu(player,
                             "Confirm Add Game",
                             3,
-                            Collections.singletonList(ChatColor.GRAY + "Add Game"),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Collections.singletonList(Component.text("Add Game", NamedTextColor.GRAY)),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
-                                player.sendMessage(ChatColor.GREEN + "Adding Game: " + ChatColor.YELLOW + game.getDate());
+                                player.sendMessage(Component.text("Adding Game: ", NamedTextColor.GREEN).append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
                                 DatabaseGameBase.addGameToDatabase(game, player);
                                 openGameEditorMenu(player, game);
                             },
@@ -105,16 +107,17 @@ public class GamesCommand extends BaseCommand {
         );
         menu.setItem(2, 2,
                 new ItemBuilder(Material.LAVA_BUCKET)
-                        .name(ChatColor.GREEN + "Remove Game")
+                        .name(Component.text("Remove Game", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
                     Menu.openConfirmationMenu(player,
                             "Confirm Remove Game",
                             3,
-                            Collections.singletonList(ChatColor.GRAY + "Remove Game"),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Collections.singletonList(Component.text("Remove Game", NamedTextColor.GRAY)),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
-                                player.sendMessage(ChatColor.GREEN + "Removing Game: " + ChatColor.YELLOW + game.getDate());
+                                player.sendMessage(Component.text("Removing Game: ", NamedTextColor.GREEN)
+                                                            .append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
                                 DatabaseGameBase.removeGameFromDatabase(game, player);
                                 openGameEditorMenu(player, game);
                             },
@@ -127,61 +130,79 @@ public class GamesCommand extends BaseCommand {
         );
         menu.setItem(3, 2,
                 new ItemBuilder(Material.ANVIL)
-                        .name(ChatColor.GREEN + "Edit Addons")
+                        .name(Component.text("Edit Addons", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> openGameAddonEditorMenu(player, game, new ArrayList<>(game.getGameAddons()))
         );
         if (game instanceof DatabaseGameCTF) {
             menu.setItem(4, 2,
                     new ItemBuilder(Team.BLUE.item)
-                            .name(ChatColor.GREEN + "Edit Blue Score")
+                            .name(Component.text("Edit Blue Score", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
-                        SignGUI.open(player, new String[]{"", "0 <= X <= 1000", "Current Blue", "Score: " + ((DatabaseGameCTF) game).getBluePoints()},
-                                (p, lines) -> {
+                        new SignGUI()
+                                .lines("", "0 <= X <= 1000", "Current Blue", "Score: " + ((DatabaseGameCTF) game).getBluePoints())
+                                .onFinish((p, lines) -> {
                                     String score = lines[0];
                                     try {
                                         int newScore = Integer.parseInt(score);
                                         if (newScore < 0 || newScore > 1000) {
-                                            p.sendMessage(ChatColor.RED + "Score must be between 0 and 1000");
-                                            return;
+                                            p.sendMessage(Component.text("Score must be between 0 and 1000", NamedTextColor.RED));
+                                            return lines;
                                         }
-                                        player.sendMessage(ChatColor.GREEN + "Setting Score: " + ChatColor.YELLOW + game.getDate());
-                                        p.sendMessage(ChatColor.GREEN + "Old Blue: " + ChatColor.BLUE + ((DatabaseGameCTF) game).getBluePoints());
-                                        p.sendMessage(ChatColor.GREEN + "New Blue: " + ChatColor.BLUE + newScore);
+                                        player.sendMessage(Component.text("Setting Score: ", NamedTextColor.GREEN)
+                                                                    .append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
+                                        p.sendMessage(Component.text("Old Blue: ", NamedTextColor.GREEN)
+                                                               .append(Component.text(((DatabaseGameCTF) game).getBluePoints(), NamedTextColor.BLUE)));
+                                        p.sendMessage(Component.text("New Blue: ", NamedTextColor.GREEN)
+                                                               .append(Component.text(newScore, NamedTextColor.BLUE)));
                                         ((DatabaseGameCTF) game).setBluePoints(newScore);
                                     } catch (Exception e1) {
-                                        p.sendMessage(ChatColor.RED + "Invalid Score");
+                                        p.sendMessage(Component.text("Invalid Score", NamedTextColor.GREEN));
                                     }
-                                    openGameEditorMenu(player, game);
-                                }
-                        );
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            openGameEditorMenu(player, game);
+                                        }
+                                    }.runTaskLater(Warlords.getInstance(), 1);
+                                    return null;
+                                }).open(player);
                     }
             );
             menu.setItem(5, 2,
                     new ItemBuilder(Team.RED.item)
-                            .name(ChatColor.GREEN + "Edit Red Score")
+                            .name(Component.text("Edit Red Score", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
-                        SignGUI.open(player, new String[]{"", "0 <= X <= 1000", "Current Red", "Score: " + ((DatabaseGameCTF) game).getRedPoints()},
-                                (p, lines) -> {
+                        new SignGUI()
+                                .lines("", "0 <= X <= 1000", "Current Red", "Score: " + ((DatabaseGameCTF) game).getRedPoints())
+                                .onFinish((p, lines) -> {
                                     String score = lines[0];
                                     try {
                                         int newScore = Integer.parseInt(score);
                                         if (newScore < 0 || newScore > 1000) {
-                                            p.sendMessage(ChatColor.RED + "Score must be between 0 and 1000");
-                                            return;
+                                            p.sendMessage(Component.text("Score must be between 0 and 1000", NamedTextColor.RED));
+                                            return null;
                                         }
-                                        player.sendMessage(ChatColor.GREEN + "Setting Score: " + ChatColor.YELLOW + game.getDate());
-                                        p.sendMessage(ChatColor.GREEN + "Old Red: " + ChatColor.RED + ((DatabaseGameCTF) game).getRedPoints());
-                                        p.sendMessage(ChatColor.GREEN + "New Red: " + ChatColor.RED + newScore);
+                                        player.sendMessage(Component.text("Setting Score: ", NamedTextColor.GREEN)
+                                                                    .append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
+                                        p.sendMessage(Component.text("Old Red: ", NamedTextColor.GREEN)
+                                                               .append(Component.text(((DatabaseGameCTF) game).getRedPoints(), NamedTextColor.RED)));
+                                        p.sendMessage(Component.text("New Red: ", NamedTextColor.GREEN)
+                                                               .append(Component.text(newScore, NamedTextColor.RED)));
                                         ((DatabaseGameCTF) game).setRedPoints(newScore);
                                     } catch (Exception e1) {
-                                        p.sendMessage(ChatColor.RED + "Invalid Score");
+                                        p.sendMessage(Component.text("Invalid Score", NamedTextColor.RED));
                                     }
-                                    openGameEditorMenu(player, game);
-                                }
-                        );
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            openGameEditorMenu(player, game);
+                                        }
+                                    }.runTaskLater(Warlords.getInstance(), 1);
+                                    return null;
+                                }).open(player);
                     }
             );
         }
@@ -196,7 +217,7 @@ public class GamesCommand extends BaseCommand {
 
         menu.setItem(4, 0,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + game.getDate())
+                        .name(Component.text(game.getDate(), NamedTextColor.GREEN))
                         .lore(game.getLore())
                         .get(),
                 (m, e) -> {
@@ -208,11 +229,11 @@ public class GamesCommand extends BaseCommand {
 
             boolean isASelectedAddon = addons.contains(gameAddon);
             ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i + 5))
-                    .name(ChatColor.GREEN + gameAddon.getName())
-                    .lore(ChatColor.GOLD + WordWrap.wrapWithNewline(gameAddon.getDescription(), 150));
+                    .name(Component.text(gameAddon.getName(), NamedTextColor.GREEN))
+                    .lore(WordWrap.wrap(Component.text(gameAddon.getDescription(), NamedTextColor.GOLD), 150));
             if (isASelectedAddon) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
-                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+                ;
             }
 
             menu.setItem(i % 7 + 1, 1 + i / 7,
@@ -231,19 +252,27 @@ public class GamesCommand extends BaseCommand {
         menu.setItem(3, 5, Menu.MENU_BACK, (m, e) -> openGameEditorMenu(player, game));
         menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.setItem(5, 5,
-                new ItemBuilder(Material.WOOL, 1, (short) 5)
-                        .name(ChatColor.GREEN + "Set")
+                new ItemBuilder(Material.LIME_WOOL)
+                        .name(Component.text("Set", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
                     Menu.openConfirmationMenu(player,
                             "Confirm Set Addons",
                             3,
-                            addons.stream().map(gameAddon -> ChatColor.GOLD + gameAddon.getName()).collect(Collectors.toList()),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            addons.stream().map(gameAddon -> Component.text(gameAddon.getName(), NamedTextColor.GOLD)).collect(Collectors.toList()),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
-                                player.sendMessage(ChatColor.GREEN + "Setting Addons: " + ChatColor.YELLOW + game.getDate());
-                                player.sendMessage(ChatColor.GREEN + "Old Addons: " + ChatColor.GOLD + game.getGameAddons().stream().map(GameAddon::getName).collect(Collectors.joining(", ")));
-                                player.sendMessage(ChatColor.GREEN + "New Addons: " + ChatColor.GOLD + addons.stream().map(GameAddon::getName).collect(Collectors.joining(", ")));
+                                player.sendMessage(Component.text("Setting Addons: ", NamedTextColor.GREEN)
+                                                            .append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
+                                player.sendMessage(Component.text("Old Addons: ", NamedTextColor.GREEN)
+                                                            .append(Component.text(game.getGameAddons()
+                                                                                       .stream()
+                                                                                       .map(GameAddon::getName)
+                                                                                       .collect(Collectors.joining(", ")), NamedTextColor.YELLOW)));
+                                player.sendMessage(Component.text("New Addons: ", NamedTextColor.GREEN)
+                                                            .append(Component.text(addons.stream()
+                                                                                         .map(GameAddon::getName)
+                                                                                         .collect(Collectors.joining(", ")), NamedTextColor.YELLOW)));
                                 game.setGameAddons(addons);
                                 DatabaseManager.updateGameAsync(game);
                                 openGameEditorMenu(player, game);
@@ -266,7 +295,7 @@ public class GamesCommand extends BaseCommand {
     @Subcommand("reload")
     @Description("Reloads game holograms")
     public void reload(CommandIssuer issuer) {
-        sendDebugMessage(issuer, ChatColor.GREEN + "Reloading Game Holograms", true);
+        sendDebugMessage(issuer, Component.text("Reloading Game Holograms", NamedTextColor.GREEN));
         previousGames.forEach(DatabaseGameBase::deleteHolograms);
         previousGames.forEach(DatabaseGameBase::createHolograms);
         Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
@@ -275,26 +304,30 @@ public class GamesCommand extends BaseCommand {
     @Subcommand("list")
     @Description("Prints list of games")
     public void list(CommandIssuer issuer) {
-        StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Previous Games - \n");
+        TextComponent.Builder list = Component.empty().color(NamedTextColor.YELLOW)
+                                              .append(Component.text("Previous Games - ", NamedTextColor.GREEN))
+                                              .append(Component.newline())
+                                              .toBuilder();
         for (int i = 0; i < previousGames.size(); i++) {
-            stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(previousGames.get(i).getGameLabel()).append("\n");
+            list.append(Component.text(i + ". " + previousGames.get(i).getGameLabel()))
+                .append(Component.newline());
         }
-        sendDebugMessage(issuer, stringBuilder.toString(), true);
+        sendDebugMessage(issuer, list.build());
     }
 
     @Subcommand("edit")
     @Conditions("database:game")
     @Description("Opens game editor from date")
     public void edit(Player player, String date) {
-        sendDebugMessage(player, ChatColor.GREEN + "Locating game with date " + date, true);
+        sendDebugMessage(player, Component.text("Locating game with date " + date, NamedTextColor.GREEN));
 
         Warlords.newChain()
                 .asyncFirst(() -> DatabaseManager.gameService.findByDate(date))
                 .syncLast(databaseGameBase -> {
                     if (databaseGameBase == null) {
-                        sendDebugMessage(player, ChatColor.RED + "Game not found", true);
+                        sendDebugMessage(player, Component.text("Game not found", NamedTextColor.RED));
                     } else {
-                        sendDebugMessage(player, ChatColor.GREEN + "Game found", true);
+                        sendDebugMessage(player, Component.text("Game found", NamedTextColor.GREEN));
                         openGameEditorMenu(player, databaseGameBase);
                     }
 
@@ -306,7 +339,7 @@ public class GamesCommand extends BaseCommand {
     @Description("Adds game to database")
     public void add(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Adding game " + databaseGame.getDate(), true);
+        sendDebugMessage(issuer, Component.text("Adding game " + databaseGame.getDate(), NamedTextColor.GREEN));
         DatabaseGameBase.addGameToDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
     }
 
@@ -315,21 +348,21 @@ public class GamesCommand extends BaseCommand {
     @Description("Removes game from database")
     public void remove(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Removing game " + databaseGame.getDate(), true);
+        sendDebugMessage(issuer, Component.text("Removing game " + databaseGame.getDate(), NamedTextColor.GREEN));
         DatabaseGameBase.removeGameFromDatabase(databaseGame, issuer.isPlayer() ? issuer.getIssuer() : null);
     }
 
     @Subcommand("getnames")
     public void getNames(CommandIssuer issuer) {
         for (String playerName : PLAYER_NAMES) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.AQUA + playerName, false);
+            ChatChannels.sendDebugMessage(issuer, Component.text(playerName, NamedTextColor.AQUA));
         }
     }
 
     @Subcommand("setcounted")
     public void setCounted(CommandIssuer issuer, @Conditions("limits:previousGames") Integer gameNumber, boolean counted) {
         DatabaseGameBase databaseGame = previousGames.get(gameNumber);
-        sendDebugMessage(issuer, ChatColor.GREEN + "Setting game " + databaseGame.getDate() + " to counted: " + counted, true);
+        sendDebugMessage(issuer, Component.text("Setting game " + databaseGame.getDate() + " to counted: " + counted, NamedTextColor.GREEN));
         databaseGame.setCounted(counted);
         DatabaseManager.updateGameAsync(databaseGame);
     }

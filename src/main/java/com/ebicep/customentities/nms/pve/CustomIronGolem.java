@@ -1,26 +1,37 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityIronGolem;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.IronGolem;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 
-public class CustomIronGolem extends EntityIronGolem implements CustomEntity<CustomIronGolem> {
+import javax.annotation.Nonnull;
 
-    public CustomIronGolem(World world) {
-        super(world);
-        resetAI(world);
-        giveBaseAI(1.0, 0.6, 100);
-    }
+public class CustomIronGolem extends IronGolem implements CustomEntity<CustomIronGolem> {
+
+    private boolean stunned;
 
     public CustomIronGolem(org.bukkit.World world) {
         this(((CraftWorld) world).getHandle());
     }
 
 
+    public CustomIronGolem(ServerLevel serverLevel) {
+        super(EntityType.IRON_GOLEM, serverLevel);
+        resetAI();
+        giveBaseAI(1.0, 0.6, 100);
+    }
+
     @Override
     public CustomIronGolem get() {
         return this;
+    }
+
+    @Override
+    public void setStunned(boolean stunned) {
+        this.stunned = stunned;
     }
 
     /**
@@ -29,22 +40,21 @@ public class CustomIronGolem extends EntityIronGolem implements CustomEntity<Cus
      * @param entity The entity to check against
      */
     @Override
-    protected void s(Entity entity) {
-
-    }
-
-    private boolean stunned;
-
-    @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    protected void doPush(@Nonnull Entity entity) {
     }
 
     @Override
-    public void setStunned(boolean stunned) {
-        this.stunned = stunned;
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
+    public DisguiseType getDisguiseType() {
+        return DisguiseType.IRON_GOLEM;
     }
 }

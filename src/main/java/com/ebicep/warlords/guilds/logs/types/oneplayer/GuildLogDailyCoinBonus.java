@@ -1,6 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.UUID;
@@ -16,12 +17,15 @@ public class GuildLogDailyCoinBonus extends AbstractGuildLogOnePlayer {
     }
 
     @Override
-    public String getAction() {
-        return "awarded";
+    public Component getAction() {
+        return Component.text("awarded");
     }
 
     @Override
-    public String append() {
-        return ChatColor.GREEN.toString() + coinsGained + ChatColor.GRAY + " player coins from daily bonus";
+    public Component append() {
+        return Component.textOfChildren(
+                Component.text(coinsGained, NamedTextColor.GREEN),
+                Component.text(" player coins from daily bonus")
+        );
     }
 }

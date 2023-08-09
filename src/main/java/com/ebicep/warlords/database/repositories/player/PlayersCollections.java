@@ -23,12 +23,18 @@ public enum PlayersCollections {
             return gameTime.getMonth() == now.getMonth() && gameTime.getYear() == now.getYear();
         }
     },
-    SEASON_7("Season 7", "Players_Information_Season_7") {
+    SEASON_8("Season 8", "Players_Information_Season_8") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {
             return ACTIVE_COLLECTIONS.contains(this);
         }
     },
+//    SEASON_7("Season 7", "Players_Information_Season_7") {
+//        @Override
+//        public boolean shouldUpdate(Instant dateOfGame) {
+//            return ACTIVE_COLLECTIONS.contains(this);
+//        }
+//    },
 //        SEASON_6("Season 6", "Players_Information_Season_6") {
 //        @Override
 //        public boolean shouldUpdate(Instant dateOfGame) {
@@ -85,46 +91,34 @@ public enum PlayersCollections {
     ;
 
     public static final PlayersCollections[] VALUES = values();
-    public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_7, WEEKLY, DAILY);
+    public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_8, WEEKLY, DAILY);
 
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {
-        switch (playersCollections) {
-            case LIFETIME:
-                return MONTHLY;
-            case MONTHLY:
-                return SEASON_7;
-            case SEASON_7:
-                return WEEKLY;
+        return switch (playersCollections) {
+            case LIFETIME -> MONTHLY;
+            case MONTHLY -> SEASON_8;
+            case SEASON_8 -> WEEKLY;
 //            case SEASON_5:
 //                return SEASON_4;
 //            case SEASON_4:
 //                return WEEKLY;
-            case WEEKLY:
-                return DAILY;
-            case DAILY:
-                return LIFETIME;
-        }
-        return LIFETIME;
+            case WEEKLY -> DAILY;
+            case DAILY -> LIFETIME;
+        };
     }
 
     public static PlayersCollections getBeforeCollection(PlayersCollections playersCollections) {
-        switch (playersCollections) {
-            case LIFETIME:
-                return DAILY;
-            case MONTHLY:
-                return LIFETIME;
-            case SEASON_7:
-                return MONTHLY;
+        return switch (playersCollections) {
+            case LIFETIME -> DAILY;
+            case MONTHLY -> LIFETIME;
+            case SEASON_8 -> MONTHLY;
 //            case SEASON_5:
 //                return SEASON_6;
 //            case SEASON_4:
 //                return SEASON_5;
-            case WEEKLY:
-                return SEASON_7;
-            case DAILY:
-                return WEEKLY;
-        }
-        return LIFETIME;
+            case WEEKLY -> SEASON_8;
+            case DAILY -> WEEKLY;
+        };
     }
 
     public final String name;

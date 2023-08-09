@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.pve;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.Duration;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.player.ingame.pve.drops.AbstractWarlordsDropRewardEvent;
@@ -15,8 +15,10 @@ import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.bukkit.ComponentUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,7 +47,7 @@ public class ItemOption implements Option {
                 if (itemPlayerConfig == null) {
                     return;
                 }
-                event.addModifier(itemPlayerConfig.getDropRateModifier());
+                event.addModifier(itemPlayerConfig.dropRateModifier());
             }
 
         });
@@ -53,7 +55,7 @@ public class ItemOption implements Option {
 
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (!(player instanceof WarlordsPlayer)) {
+        if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
             return;
         }
         Game game = player.getGame();
@@ -66,7 +68,6 @@ public class ItemOption implements Option {
         if (pveOption == null) {
             return;
         }
-        WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
         DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             //items
@@ -85,7 +86,7 @@ public class ItemOption implements Option {
             if (loadouts.isEmpty()) {
                 if (nonEmptyLoadouts > 0 && player.getEntity() instanceof Player) {
                     AbstractItem.sendItemMessage((Player) player.getEntity(),
-                            ChatColor.RED + "No item loadout applied. Make sure your loadout is not overweight or unbinded."
+                            Component.text("No item loadout applied. Make sure your loadout is not overweight or unbinded.", NamedTextColor.RED)
                     );
                 }
                 return;
@@ -113,29 +114,15 @@ public class ItemOption implements Option {
             loadout.applyToWarlordsPlayer(itemsManager, warlordsPlayer, pveOption);
             if (player.getEntity() instanceof Player) {
                 AbstractItem.sendItemMessage((Player) player.getEntity(),
-                        new ComponentBuilder(ChatColor.GREEN + "Applied Item Loadout: ")
-                                .appendHoverText(ChatColor.GOLD + loadout.getName(), String.join("\n", ItemMenuUtil.getTotalBonusLore(applied, false)))
+                        Component.text("Applied Item Loadout: ", NamedTextColor.GREEN)
+                                 .append(Component.text(loadout.getName(), NamedTextColor.GOLD)
+                                                  .hoverEvent(HoverEvent.showText(ComponentUtils.flattenComponentWithNewLine(ItemMenuUtil.getTotalBonusLore(applied, false)))))
                 );
             }
         });
     }
 
-    static class ItemPlayerConfig {
+    record ItemPlayerConfig(ItemLoadout loadout, double dropRateModifier) {
 
-        private final ItemLoadout loadout;
-        private final double dropRateModifier;
-
-        public ItemPlayerConfig(ItemLoadout loadout, double dropRateModifier) {
-            this.loadout = loadout;
-            this.dropRateModifier = dropRateModifier;
-        }
-
-        public ItemLoadout getLoadout() {
-            return loadout;
-        }
-
-        public double getDropRateModifier() {
-            return dropRateModifier;
-        }
     }
 }

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
 
-import com.ebicep.warlords.abilties.Soulbinding;
+import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -8,7 +8,7 @@ import com.ebicep.warlords.pve.upgrades.Upgrade;
 public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> {
 
     float cooldown = ability.getCooldown();
-    float bindDuration = ability.getBindDuration();
+    int bindDuration = ability.getBindDuration();
 
     public SoulbindingWeaponBranch(AbilityTree abilityTree, Soulbinding ability) {
         super(abilityTree, ability);
@@ -51,7 +51,7 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                 "+0.5s Bind duration",
                 5000,
                 () -> {
-                    ability.setBindDuration(bindDuration + 0.5f);
+                    ability.setBindDuration(bindDuration + 10);
                 }
         ));
         treeB.add(new Upgrade(
@@ -59,7 +59,7 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                 "+1s Bind duration",
                 10000,
                 () -> {
-                    ability.setBindDuration(bindDuration + 1);
+                    ability.setBindDuration(bindDuration + 20);
                 }
         ));
         treeB.add(new Upgrade(
@@ -67,7 +67,7 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                 "+1.5s Bind duration",
                 15000,
                 () -> {
-                    ability.setBindDuration(bindDuration + 1.5f);
+                    ability.setBindDuration(bindDuration + 30);
                 }
         ));
         treeB.add(new Upgrade(
@@ -75,17 +75,17 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                 "+2s Bind duration",
                 20000,
                 () -> {
-                    ability.setBindDuration(bindDuration + 2);
+                    ability.setBindDuration(bindDuration + 40);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Curse Binding",
                 "Soulbinding Weapon - Master Upgrade",
-                "Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase the allied ability\ncooldown reduction by 0.15s",
+                "Gain 1 energy for each soulbound target hit by Fallen Souls and Spirit Link, increase your own and the allied ability\ncooldown reduction by 0.25s",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+                    ability.setSelfCooldownReduction(ability.getSelfCooldownReduction() + 0.25f);
                 }
         );
     }

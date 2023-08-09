@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GameEventsRepository extends MongoRepository<DatabaseGameEvent, String> {
 
-    @Query("{title:'?0'}")
+    @Query("{'title':'?0'}")
     DatabaseGameEvent findByTitle(String title);
 
 }

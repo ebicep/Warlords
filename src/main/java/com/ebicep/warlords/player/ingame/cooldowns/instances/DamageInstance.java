@@ -31,7 +31,7 @@ public interface DamageInstance extends Instance {
     }
 
     /**
-     * If attacker has abilities that increase their crit chance (inferno)
+     * If attacker has abilities that increase their crit chance (inferno), numbers should be in the tens place
      */
     default float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
         return currentCritChance;
@@ -42,9 +42,13 @@ public interface DamageInstance extends Instance {
     }
 
     /**
-     * If attacker has abilities that increase their crit multiplier (inferno)
+     * If attacker has abilities that increase their crit multiplier (inferno), numbers should be in the tens place
      */
     default float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+        return currentCritMultiplier;
+    }
+
+    default float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
         return currentCritMultiplier;
     }
 

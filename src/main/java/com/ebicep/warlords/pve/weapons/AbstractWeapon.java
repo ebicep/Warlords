@@ -7,9 +7,10 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
  */
 public abstract class AbstractWeapon {
 
+    public static final TextComponent GREEN_ARROW = Component.text(" > ", NamedTextColor.DARK_GREEN);
     protected static final DecimalFormat DECIMAL_FORMAT_TITLE = new DecimalFormat("#.##");
 
     static {
@@ -36,16 +38,16 @@ public abstract class AbstractWeapon {
         return NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(value);
     }
 
-    protected static String formatTitleUpgrade(double value, String append) {
-        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value) + append + ChatColor.GRAY;
+    protected static Component formatTitleUpgrade(double value, String append) {
+        return Component.text(DECIMAL_FORMAT_TITLE.format(value) + append, NamedTextColor.GREEN);
     }
 
-    protected static String formatTitleUpgrade(String prepend, double value) {
-        return ChatColor.GREEN + prepend + DECIMAL_FORMAT_TITLE.format(value) + ChatColor.GRAY;
+    protected static Component formatTitleUpgrade(String prepend, double value) {
+        return Component.text(prepend + DECIMAL_FORMAT_TITLE.format(value), NamedTextColor.GREEN);
     }
 
-    protected static String formatTitleUpgrade(double value) {
-        return ChatColor.GREEN + DECIMAL_FORMAT_TITLE.format(value) + ChatColor.GRAY;
+    protected static Component formatTitleUpgrade(double value) {
+        return Component.text(DECIMAL_FORMAT_TITLE.format(value), NamedTextColor.GREEN);
     }
 
     protected UUID uuid = UUID.randomUUID();
@@ -97,18 +99,17 @@ public abstract class AbstractWeapon {
     public ItemStack generateItemStack(boolean enchantIfBound) {
         ItemBuilder itemBuilder = new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(getName())
-                .unbreakable()
-                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
-        List<String> lore = new ArrayList<>();
+                .unbreakable();
+        List<Component> lore = new ArrayList<>();
         lore.addAll(getBaseStats());
         lore.addAll(getLore());
-        List<String> loreAddons = getLoreAddons();
+        List<Component> loreAddons = getLoreAddons();
         if (!loreAddons.isEmpty() || isBound) {
-            lore.add("");
+            lore.add(Component.empty());
         }
         lore.addAll(loreAddons);
         if (isBound) {
-            lore.add(ChatColor.AQUA + "BOUND");
+            lore.add(Component.text("BOUND", NamedTextColor.AQUA));
             if (enchantIfBound) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
             }
@@ -118,36 +119,39 @@ public abstract class AbstractWeapon {
                 .get();
     }
 
-    public String getName() {
-        return getChatColor() + selectedWeaponSkin.getName() + " of the " + specialization.name;
+    public Component getHoverComponent(boolean enchantIfBound) {
+        return getName().hoverEvent(generateItemStack(enchantIfBound));
     }
 
-    public abstract List<String> getBaseStats();
+    public Component getName() {
+        return Component.text(selectedWeaponSkin.getName() + " of the " + specialization.name, getTextColor());
+    }
 
-    public abstract List<String> getLore();
+    public abstract List<Component> getBaseStats();
 
-    public List<String> getLoreAddons() {
+    public abstract List<Component> getLore();
+
+    public List<Component> getLoreAddons() {
         return new ArrayList<>();
     }
 
-    public abstract ChatColor getChatColor();
+    public abstract NamedTextColor getTextColor();
 
-    public ItemBuilder generateItemStackInLore(String name) {
-        List<String> lore = new ArrayList<>();
+    public ItemBuilder generateItemStackInLore(Component name) {
+        List<Component> lore = new ArrayList<>();
         lore.add(getName());
-        lore.add("");
+        lore.add(Component.empty());
         lore.addAll(getBaseStats());
         lore.addAll(getLore());
-        lore.add("");
+        lore.add(Component.empty());
         lore.addAll(getLoreAddons());
         if (isBound) {
-            lore.add(ChatColor.AQUA + "BOUND");
+            lore.add(Component.text("BOUND", NamedTextColor.AQUA));
         }
         return new ItemBuilder(selectedWeaponSkin.getItem())
                 .name(name)
                 .lore(lore)
-                .unbreakable()
-                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ENCHANTS);
+                .unbreakable();
     }
 
     public UUID getUUID() {

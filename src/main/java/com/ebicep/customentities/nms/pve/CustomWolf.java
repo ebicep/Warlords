@@ -1,15 +1,22 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntityWolf;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.player.Player;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 
-public class CustomWolf extends EntityWolf implements CustomEntity<CustomWolf> {
+import javax.annotation.Nonnull;
 
-    public CustomWolf(World world) {
-        super(world);
-        resetAI(world);
+public class CustomWolf extends Wolf implements CustomEntity<CustomWolf> {
+
+    public CustomWolf(ServerLevel serverLevel) {
+        super(EntityType.WOLF, serverLevel);
+        resetAI();
         giveBaseAI();
     }
 
@@ -17,23 +24,11 @@ public class CustomWolf extends EntityWolf implements CustomEntity<CustomWolf> {
         this(((CraftWorld) world).getHandle());
     }
 
-//    @Override
-//    public boolean a(EntityHuman entityhuman) {
-//        System.out.println("aaaaaaaaaaaaaaaaaa");
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean d(ItemStack itemstack) {
-//        System.out.println("dddddddddddddddddd");
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean a(ItemStack itemstack) {
-//        System.out.println("31212312312");
-//        return false;
-//    }
+    @Nonnull
+    @Override
+    public InteractionResult mobInteract(@Nonnull Player player, @Nonnull InteractionHand hand) {
+        return InteractionResult.PASS;
+    }
 
     @Override
     public CustomWolf get() {
@@ -43,15 +38,22 @@ public class CustomWolf extends EntityWolf implements CustomEntity<CustomWolf> {
     private boolean stunned;
 
     @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     @Override
     public void setStunned(boolean stunned) {
         this.stunned = stunned;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
+    public DisguiseType getDisguiseType() {
+        return DisguiseType.WOLF;
     }
 }

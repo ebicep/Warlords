@@ -9,6 +9,9 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -68,10 +71,12 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Deal " + formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") +
-                " more damage to enemies whose current health is less than " +
-                formatTitleUpgrade(LESS_THAN_HP_CHECK + LESS_THAN_HP_CHECK_PER_UPGRADE * getTitleLevel(), "%") + " of your max health.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Deal", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" more damage to enemies whose current health is less than "))
+                        .append(formatTitleUpgrade(LESS_THAN_HP_CHECK + LESS_THAN_HP_CHECK_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" of your max health."));
     }
 
     @Override
@@ -120,7 +125,7 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(new Pair<>(
                         formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
                         formatTitleUpgrade(DAMAGE_BOOST + DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")

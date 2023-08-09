@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.events;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
@@ -14,7 +15,8 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -34,12 +36,17 @@ public class SafeZoneOption implements Option {
     private final Material safeMaterial = Material.BEDROCK;
     private final int yLevel = 20;//0;
     private final int safeDuration = 15;
-    private final int maxEnterableTimes = 3;
+    private final int maxEnterableTimes;
     private final HashMap<WarlordsPlayer, Integer> timesEntered = new HashMap<>();
 
     public SafeZoneOption() {
-
+        this.maxEnterableTimes = 3;
     }
+
+    public SafeZoneOption(int maxEnterableTimes) {
+        this.maxEnterableTimes = maxEnterableTimes;
+    }
+
 
     @Override
     public void start(@Nonnull Game game) {
@@ -50,7 +57,7 @@ public class SafeZoneOption implements Option {
                                                           .findFirst()
                                                           .orElse(null);
         if (winAfterTimeoutOption == null) {
-            System.out.println("WinAfterTimeoutOption not found");
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("WinAfterTimeoutOption not found");
             return;
         }
 
@@ -71,16 +78,16 @@ public class SafeZoneOption implements Option {
                         }
                         if (timesEntered.getOrDefault(warlordsPlayer, 0) >= maxEnterableTimes) {
                             ChatUtils.sendMessageToPlayer(warlordsPlayer,
-                                    ChatColor.RED + "You have already received the safe zone effect the maximum amount of times!",
-                                    ChatColor.GRAY,
+                                    Component.text("You have already received the safe zone effect the maximum amount of times!", NamedTextColor.RED),
+                                    NamedTextColor.GRAY,
                                     true
                             );
                             return;
                         }
                         if (winAfterTimeoutOption.getTimeRemaining() <= 60) {
                             ChatUtils.sendMessageToPlayer(warlordsPlayer,
-                                    ChatColor.RED + "You cannot receive safe zone effect if there is 60 seconds or less remaining!",
-                                    ChatColor.GRAY,
+                                    Component.text("You cannot receive safe zone effect if there is 60 seconds or less remaining!", NamedTextColor.RED),
+                                    NamedTextColor.GRAY,
                                     true
                             );
                             return;
@@ -107,7 +114,7 @@ public class SafeZoneOption implements Option {
             public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
                 WarlordsEntity player = event.getWarlordsEntity();
                 if (player.getCooldownManager().hasCooldownFromActionBarName("SAFE")) {
-                    player.sendMessage(ChatColor.RED + "You cannot use abilities while under the safe effect!");
+                    player.sendMessage(Component.text("You cannot use abilities while under the safe effect!", NamedTextColor.RED));
                     event.setCancelled(true);
                 }
             }
@@ -131,7 +138,8 @@ public class SafeZoneOption implements Option {
 
     public void giveSafeZoneEffect(@Nonnull WarlordsEntity wp) {
         wp.getCooldownManager().removeCooldownByName("Safe Zone");
-        RegularCooldown<SafeZoneOption> safeZoneCooldown = new RegularCooldown<>("Safe Zone",
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Safe Zone",
                 "SAFE",
                 SafeZoneOption.class,
                 null,
@@ -147,10 +155,11 @@ public class SafeZoneOption implements Option {
                     if (wpEntity instanceof Player) {
                         PlayerFilter.playingGame(wp.getGame())
                                     .enemiesOf(wp)
-                                    .stream().map(WarlordsEntity::getEntity)
+                                    .stream()
+                                    .map(WarlordsEntity::getEntity)
                                     .filter(Player.class::isInstance)
                                     .map(Player.class::cast)
-                                    .forEach(enemyPlayer -> enemyPlayer.showPlayer((Player) wpEntity));
+                                    .forEach(enemyPlayer -> enemyPlayer.showPlayer(Warlords.getInstance(), (Player) wpEntity));
                     }
                 },
                 safeDuration * 20,
@@ -163,31 +172,32 @@ public class SafeZoneOption implements Option {
                             ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
                             PlayerFilter.playingGame(wp.getGame())
                                         .enemiesOf(wp)
-                                        .stream().map(WarlordsEntity::getEntity)
+                                        .stream()
+                                        .map(WarlordsEntity::getEntity)
                                         .filter(Player.class::isInstance)
                                         .map(Player.class::cast)
-                                        .forEach(enemyPlayer -> enemyPlayer.hidePlayer((Player) wpEntity));
+                                        .forEach(enemyPlayer -> enemyPlayer.hidePlayer(Warlords.getInstance(), (Player) wpEntity));
                         }
                     }
                 })
-        );
-        wp.getCooldownManager().addCooldown(safeZoneCooldown);
+        ));
     }
 
     public void sendEnterMessage(WarlordsPlayer warlordsPlayer) {
         ChatUtils.sendMessageToPlayer(warlordsPlayer,
-                ChatColor.GREEN + "You have entered the safe zone. " +
-                        ChatColor.RED + (maxEnterableTimes - timesEntered.getOrDefault(warlordsPlayer, 0)) + " entries left.",
-                ChatColor.GRAY,
+                Component.text("You have entered the safe zone. ", NamedTextColor.GREEN)
+                         .append(Component.text((maxEnterableTimes - timesEntered.getOrDefault(warlordsPlayer, 0)) + " entries left.", NamedTextColor.RED)),
+                NamedTextColor.GRAY,
                 true
         );
     }
 
     public void sendExitMessage(WarlordsPlayer warlordsPlayer) {
         ChatUtils.sendMessageToPlayer(warlordsPlayer,
-                ChatColor.RED + "You have exited the safe zone.\n" +
-                        ChatColor.RED + "Your safe effect has been removed.",
-                ChatColor.GRAY,
+                Component.text("You have exited the safe zone.", NamedTextColor.RED)
+                         .append(Component.newline())
+                         .append(Component.text("Your safe effect has been removed.")),
+                NamedTextColor.GRAY,
                 true
         );
     }

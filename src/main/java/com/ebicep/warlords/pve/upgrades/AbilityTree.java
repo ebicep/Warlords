@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.upgrades;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
@@ -9,13 +10,17 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyMode;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
 import com.ebicep.warlords.util.chat.DefaultFontInfo;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
@@ -39,10 +44,9 @@ public class AbilityTree {
     }
 
     public void openAbilityTree() {
-        if (!(warlordsPlayer.getEntity() instanceof Player)) {
+        if (!(warlordsPlayer.getEntity() instanceof Player player)) {
             return;
         }
-        Player player = (Player) warlordsPlayer.getEntity();
 
         Menu menu = new Menu("Upgrades", 9 * 5);
 
@@ -52,18 +56,20 @@ public class AbilityTree {
                     i + 2,
                     2,
                     new ItemBuilder(upgradeBranch.getItemStack())
-                            .name(ChatColor.GOLD + upgradeBranch.getItemName())
+                            .name(Component.text(upgradeBranch.getItemName(), NamedTextColor.GOLD))
                             .lore(
-                                    ChatColor.GRAY + "Upgrades Remaining: " + ChatColor.GREEN + upgradeBranch.getMaxUpgrades(),
-                                    ChatColor.GRAY + "Free Upgrades Available: " + ChatColor.GREEN + upgradeBranch.getFreeUpgrades(),
-                                    "",
-                                    getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeA()),
-                                    "",
-                                    getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeB()),
-                                    "",
-                                    getMasterUpgradeTreeInfo(upgradeBranch, upgradeBranch.getMasterUpgrade()),
-                                    "",
-                                    ChatColor.GRAY + ">> Click to open ability upgrade tree. <<"
+                                    Component.text("Upgrades Remaining: ", NamedTextColor.GRAY).append(Component.text(upgradeBranch.getMaxUpgrades(), NamedTextColor.GREEN)),
+                                    Component.text("Free Upgrades Available: ", NamedTextColor.GRAY).append(Component.text(upgradeBranch.getFreeUpgrades(), NamedTextColor.GREEN)),
+                                    Component.empty()
+                            )
+                            .addLore(getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeA()))
+                            .addLore(Component.empty())
+                            .addLore(getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeB()))
+                            .addLore(Component.empty())
+                            .addLore(getMasterUpgradeTreeInfo(upgradeBranch, upgradeBranch.getMasterUpgrade()))
+                            .addLore(
+                                    Component.empty(),
+                                    Component.text(">> Click to open ability upgrade tree. <<", NamedTextColor.GRAY)
                             )
                             .get(),
                     (m, e) -> upgradeBranch.openUpgradeBranchMenu()
@@ -71,14 +77,16 @@ public class AbilityTree {
         }
         menu.setItem(4, 0,
                 new ItemBuilder(Material.GOLD_INGOT)
-                        .name(ChatColor.GRAY + "Insignia: " + ChatColor.GOLD + "❂ " + NumberFormat.addCommas(warlordsPlayer.getCurrency()))
+                        .name(Component.text("Insignia: ", NamedTextColor.GRAY)
+                                       .append(Component.text("❂ " + NumberFormat.addCommas(warlordsPlayer.getCurrency()), NamedTextColor.GOLD))
+                        )
                         .lore(
-                                ChatColor.GRAY + "Master Upgrades Remaining: " + ChatColor.GOLD + maxMasterUpgrades,
-                                "",
-                                ChatColor.RED + "■ " + "Upgrade is locked",
-                                ChatColor.GREEN + "■ " + "Upgrade is unlocked",
-                                ChatColor.YELLOW + "■ " + "You have enough insignia to upgrade",
-                                ChatColor.GRAY + "■ " + "You don't meet the requirements to upgrade"
+                                Component.text("Master Upgrades Remaining: ", NamedTextColor.GRAY).append(Component.text(maxMasterUpgrades, NamedTextColor.GOLD)),
+                                Component.empty(),
+                                Component.text("■ Upgrade is locked", NamedTextColor.RED),
+                                Component.text("■ Upgrade is unlocked", NamedTextColor.GREEN),
+                                Component.text("■ You have enough insignia to upgrade", NamedTextColor.YELLOW),
+                                Component.text("■ You don't meet the requirements to upgrade", NamedTextColor.GRAY)
                         )
                         .get(),
                 ACTION_DO_NOTHING
@@ -91,16 +99,17 @@ public class AbilityTree {
                     .getAutoUpgradeProfiles()
                     .computeIfAbsent(warlordsPlayer.getSpecClass(), k -> new ArrayList<>());
             getAutoUpgradeProfile();
-            List<String> lore = new ArrayList<>();
+            List<Component> lore = new ArrayList<>();
             for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
                 AutoUpgradeProfile l = autoUpgradeProfiles.get(i);
                 DifficultyMode difficulty = l.getDifficultyMode();
-                lore.add((l.equals(autoUpgradeProfile) ? ChatColor.AQUA : ChatColor.GRAY).toString() + (i + 1) + ". " + l.getName() +
-                        " (" + difficulty.getShortName() + ")");
+                lore.add(Component.text((i + 1) + ". " + l.getName() + " (" + difficulty.getShortName() + ")",
+                        l.equals(autoUpgradeProfile) ? NamedTextColor.AQUA : NamedTextColor.GRAY
+                ));
             }
             menu.setItem(1, 4,
                     new ItemBuilder(Material.BOOK)
-                            .name(ChatColor.GREEN + "Change Profile")
+                            .name(Component.text("Change Profile", NamedTextColor.GREEN))
                             .lore(lore)
                             .get(),
                     (m, e) -> {
@@ -111,67 +120,73 @@ public class AbilityTree {
                     }
             );
             menu.setItem(2, 4,
-                    new ItemBuilder(Material.BOOK_AND_QUILL)
-                            .name(ChatColor.GREEN + "Create Profile")
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new profile to customize your experience.", 150))
+                    new ItemBuilder(Material.WRITABLE_BOOK)
+                            .name(Component.text("Create Profile", NamedTextColor.GREEN))
+                            .lore(WordWrap.wrap(Component.text("Create a new profile to customize your experience.", NamedTextColor.GRAY), 150))
                             .get(),
                     (m, e) -> {
-                        if (autoUpgradeProfiles.size() >= 4) {
-                            warlordsPlayer.sendMessage(ChatColor.RED + "You can only have up to 4 profiles per spec!");
+                        if (autoUpgradeProfiles.size() >= 8) {
+                            warlordsPlayer.sendMessage(Component.text("You can only have up to 8 profiles per spec!", NamedTextColor.RED));
                         } else {
-                            SignGUI.open(player, new String[]{"", "Enter", "Profile Name", ""}, (p, lines) -> {
-                                String name = lines[0];
-                                if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                    warlordsPlayer.sendMessage(ChatColor.RED + "Invalid name!");
-                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
-                                    return;
-                                }
-                                if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                    warlordsPlayer.sendMessage(ChatColor.RED + "You already have a profile with that name!");
-                                    warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
-                                    return;
-                                }
-                                AutoUpgradeProfile newProfile = new AutoUpgradeProfile(name);
-                                autoUpgradeProfiles.add(newProfile);
-                                autoUpgradeProfile = newProfile;
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                openAbilityTree();
-                            });
+                            new SignGUI()
+                                    .lines("", "Enter", "Profile Name", "")
+                                    .onFinish((p, lines) -> {
+                                        String name = lines[0];
+                                        if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                            warlordsPlayer.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                            return null;
+                                        }
+                                        if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
+                                            warlordsPlayer.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
+                                            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                            return null;
+                                        }
+                                        AutoUpgradeProfile newProfile = new AutoUpgradeProfile(name);
+                                        autoUpgradeProfiles.add(newProfile);
+                                        autoUpgradeProfile = newProfile;
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        openAbilityTreeAfterTick();
+                                        return null;
+                                    }).open(player);
                         }
                     }
             );
             menu.setItem(3, 4,
                     new ItemBuilder(Material.NAME_TAG)
-                            .name(ChatColor.GREEN + "Rename Profile")
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current profile.", 150))
+                            .name(Component.text("Rename Profile", NamedTextColor.GREEN))
+                            .lore(WordWrap.wrap(Component.text("Rename the current profile.", NamedTextColor.GRAY), 150))
                             .get(),
                     (m, e) -> {
-                        SignGUI.open(player, new String[]{"", "Enter", "Profile Name", ""}, (p, lines) -> {
-                            String name = lines[0];
-                            if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                player.sendMessage(ChatColor.RED + "Invalid name!");
-                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
-                                return;
-                            }
-                            if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                                player.sendMessage(ChatColor.RED + "You already have a profile with that name!");
-                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
-                                return;
-                            }
-                            autoUpgradeProfile.setName(name);
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            openAbilityTree();
-                        });
+                        new SignGUI()
+                                .lines("", "Enter", "Profile Name", "")
+                                .onFinish((p, lines) -> {
+                                    String name = lines[0];
+                                    if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                        player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                        return null;
+                                    }
+                                    if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                                        player.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
+                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                        return null;
+                                    }
+                                    autoUpgradeProfile.setName(name);
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    openAbilityTreeAfterTick();
+                                    return null;
+                                }).open(player);
                     }
             );
             menu.setItem(5, 4,
                     new ItemBuilder(Material.LAVA_BUCKET)
-                            .name(ChatColor.RED + "Delete Profile")
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current profile.", 150))
+                            .name(Component.text("Delete Profile", NamedTextColor.RED))
+                            .lore(WordWrap.wrap(Component.text("Delete the current profile.", NamedTextColor.GRAY), 150))
                             .get(),
                     (m, e) -> {
                         if (autoUpgradeProfiles.size() == 1) {
-                            player.sendMessage(ChatColor.RED + "You must have at least one profile!");
+                            player.sendMessage(Component.text("You must have at least one profile!", NamedTextColor.RED));
                             return;
                         }
                         Menu.openConfirmationMenu(
@@ -179,11 +194,17 @@ public class AbilityTree {
                                 "Delete Profile",
                                 3,
                                 Arrays.asList(
-                                        ChatColor.GRAY + "Delete Profile: " + ChatColor.GOLD + autoUpgradeProfile.getName(),
-                                        "",
-                                        ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This cannot be undone!"
+                                        Component.textOfChildren(
+                                                Component.text("Delete Profile: ", NamedTextColor.GRAY),
+                                                Component.text(autoUpgradeProfile.getName(), NamedTextColor.GOLD)
+                                        ),
+                                        Component.empty(),
+                                        Component.textOfChildren(
+                                                Component.text("WARNING: ", NamedTextColor.RED),
+                                                Component.text("This cannot be undone!", NamedTextColor.GRAY)
+                                        )
                                 ),
-                                Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                Menu.GO_BACK,
                                 (m2, e2) -> {
                                     autoUpgradeProfiles.remove(autoUpgradeProfile);
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -197,18 +218,18 @@ public class AbilityTree {
             );
             lore.clear();
             for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
-                lore.add("" + (autoUpgradeProfiles.get(i)
-                                                  .equals(autoUpgradeProfile) ? ChatColor.AQUA : ChatColor.GRAY) + (i + 1) + ". " + autoUpgradeProfiles.get(i)
-                                                                                                                                                       .getName());
+                lore.add(Component.text((i + 1) + ". " + autoUpgradeProfiles.get(i).getName(),
+                        autoUpgradeProfiles.get(i).equals(autoUpgradeProfile) ? NamedTextColor.AQUA : NamedTextColor.GRAY
+                ));
             }
             menu.setItem(6, 4,
                     new ItemBuilder(Material.TRIPWIRE_HOOK)
-                            .name(ChatColor.GREEN + "Change Profile Priority")
+                            .name(Component.text("Change Profile Priority", NamedTextColor.GREEN))
                             .lore(lore)
+                            .addLore(Component.empty())
                             .addLore(
-                                    "",
-                                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Change the priority of the current profile, for when you have " +
-                                                    "multiple profile with the same filters.",
+                                    WordWrap.wrap(Component.text("Change the priority of the current profile, for when you have " +
+                                                    "multiple profile with the same filters.", NamedTextColor.GRAY),
                                             170
                                     )
                             )
@@ -230,11 +251,11 @@ public class AbilityTree {
             lore.clear();
             DifficultyMode[] difficultyModes = DifficultyMode.VALUES;
             for (DifficultyMode value : difficultyModes) {
-                lore.add((autoUpgradeProfile.getDifficultyMode() == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name);
+                lore.add(Component.text(value.name, autoUpgradeProfile.getDifficultyMode() == value ? NamedTextColor.AQUA : NamedTextColor.GRAY));
             }
             menu.setItem(7, 4,
-                    new ItemBuilder(Material.REDSTONE_COMPARATOR)
-                            .name(ChatColor.GREEN + "Bind to Mode")
+                    new ItemBuilder(Material.COMPARATOR)
+                            .name(Component.text("Bind to Mode", NamedTextColor.GREEN))
                             .lore(lore)
                             .get(),
                     (m, e) -> {
@@ -246,20 +267,26 @@ public class AbilityTree {
         }, () -> {
             autoUpgradeProfile = new AutoUpgradeProfile();
         });
+        if (autoUpgradeProfile == null) {
+            autoUpgradeProfile = new AutoUpgradeProfile();
+        }
         menu.setItem(
                 0,
                 4,
                 new ItemBuilder(Material.BOOKSHELF)
-                        .name(ChatColor.GREEN + "Auto Upgrade Queue")
+                        .name(Component.text("Auto Upgrade Queue", NamedTextColor.GREEN))
                         .lore(autoUpgradeProfile.getAutoUpgradeEntries().isEmpty() ?
-                              Collections.singletonList(WordWrap.wrapWithNewline(
-                                      ChatColor.GRAY + "You have no upgrades queued. " +
-                                              ChatColor.YELLOW + ChatColor.BOLD + "RIGHT-CLICK " +
-                                              ChatColor.GRAY + "upgrades to add/remove them.", 130)
-                              ) : autoUpgradeProfile.getLore(this)
+                              WordWrap.wrap(Component.text("You have no upgrades queued. ", NamedTextColor.GRAY)
+                                                     .append(Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD))
+                                                     .append(Component.text("upgrades to add/remove them.")), 130) :
+                              autoUpgradeProfile.getLore(this)
                         )
-                        .addLore("",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" + ChatColor.GRAY + " to clear the queue."
+                        .addLore(
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" to clear the queue.", NamedTextColor.GRAY)
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -273,9 +300,18 @@ public class AbilityTree {
         menu.openForPlayer(player);
     }
 
-    public String getUpgradeTreeInfo(AbstractUpgradeBranch<?> upgradeBranch, List<Upgrade> upgrades) {
+    private void openAbilityTreeAfterTick() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openAbilityTree();
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
+    }
+
+    public List<Component> getUpgradeTreeInfo(AbstractUpgradeBranch<?> upgradeBranch, List<Upgrade> upgrades) {
         if (upgrades.isEmpty()) {
-            return "No upgrades available.";
+            return Collections.singletonList(Component.text("No upgrades available."));
         }
         String upgradeName = upgrades.get(0).getName();
         Upgrade lastUpgraded = null;
@@ -286,29 +322,31 @@ public class AbilityTree {
                 break;
             }
         }
-        StringBuilder output = new StringBuilder((lastUpgraded == null ? ChatColor.RED : ChatColor.GOLD) + upgradeName.substring(0,
-                upgradeName.indexOf(" - ")
-        ) + " ");
+        List<Component> output = new ArrayList<>();
+        TextComponent.Builder toAdd = Component.text();
+        toAdd.append(Component.text(upgradeName.substring(0, upgradeName.indexOf(" - ")) + " ", lastUpgraded == null ? NamedTextColor.RED : NamedTextColor.GOLD));
         int currency = getWarlordsPlayer().getCurrency();
         int maxUpgrades = upgradeBranch.getMaxUpgrades();
         for (Upgrade upgrade : upgrades) {
             if (upgrade.isUnlocked()) {
-                output.append(ChatColor.GREEN);
+                toAdd.append(Component.text("■", NamedTextColor.GREEN));
             } else {
                 if (maxUpgrades <= 0) {
-                    output.append(ChatColor.RED);
+                    toAdd.append(Component.text("■", NamedTextColor.RED));
                 } else if (currency >= upgrade.getCurrencyCost()) {
                     currency -= upgrade.getCurrencyCost();
-                    output.append(ChatColor.YELLOW);
+                    toAdd.append(Component.text("■", NamedTextColor.YELLOW));
                 } else {
-                    output.append(ChatColor.GRAY);
+                    toAdd.append(Component.text("■", NamedTextColor.GRAY));
                 }
                 maxUpgrades--;
             }
-            output.append("■");
         }
+        output.add(toAdd.build());
         if (lastUpgraded != null) {
-            output.append(("\n" + lastUpgraded.getDescription()).replaceAll("\n", "\n " + ChatColor.GREEN));
+            for (Component component : lastUpgraded.getDescription(NamedTextColor.GREEN)) {
+                output.add(Component.text(" ").append(component));
+            }
         }
         /*
 //        output.append("\n");
@@ -341,30 +379,36 @@ public class AbilityTree {
             }
         }
          */
-        return output.toString();
+        return output;
     }
 
-    public String getMasterUpgradeTreeInfo(AbstractUpgradeBranch<?> upgradeBranch, Upgrade upgrade) {
+    public List<Component> getMasterUpgradeTreeInfo(AbstractUpgradeBranch<?> upgradeBranch, Upgrade upgrade) {
         if (upgrade == null) {
-            return "No upgrades";
+            return Collections.singletonList(Component.text("No upgrades"));
         }
-        StringBuilder output = new StringBuilder((upgrade.isUnlocked() ? ChatColor.GOLD : ChatColor.RED).toString() + ChatColor.BOLD + upgrade.getName() + " ");
+        List<Component> output = new ArrayList<>();
+        TextComponent.Builder toAdd = Component.text();
+        toAdd.append(Component.text(upgrade.getName() + " ", upgrade.isUnlocked() ? NamedTextColor.GOLD : NamedTextColor.RED, TextDecoration.BOLD));
         if (upgrade.isUnlocked()) {
-            output.append(ChatColor.GREEN);
+            toAdd.append(Component.text("■", NamedTextColor.GREEN));
         } else {
             if (maxMasterUpgrades <= 0) {
-                output.append(ChatColor.RED);
+                toAdd.append(Component.text("■", NamedTextColor.RED));
             } else if (upgradeBranch.getMaxUpgrades() == 0 && getWarlordsPlayer().getCurrency() >= upgrade.getCurrencyCost()) {
-                output.append(ChatColor.YELLOW);
+                toAdd.append(Component.text("■", NamedTextColor.YELLOW));
+
             } else {
-                output.append(ChatColor.GRAY);
+                toAdd.append(Component.text("■", NamedTextColor.GRAY));
+
             }
         }
-        output.append("■");
+        output.add(toAdd.build());
         if (upgrade.isUnlocked()) {
-            output.append(("\n" + upgrade.getDescription()).replaceAll("\n", "\n " + ChatColor.GREEN));
+            for (Component component : upgrade.getDescription(NamedTextColor.GREEN)) {
+                output.add(Component.text(" ").append(component));
+            }
         }
-        return output.toString();
+        return output;
     }
 
     public WarlordsPlayer getWarlordsPlayer() {

@@ -1,7 +1,5 @@
 package com.ebicep.warlords.pve.mobs.mobtypes;
 
-import com.ebicep.warlords.pve.mobs.Mob;
-
 public interface BossMob extends Mob {
 
     @Override
@@ -23,5 +21,4 @@ public interface BossMob extends Mob {
     default int epicWeaponDropChance() {
         return 5;
     }
-
 }

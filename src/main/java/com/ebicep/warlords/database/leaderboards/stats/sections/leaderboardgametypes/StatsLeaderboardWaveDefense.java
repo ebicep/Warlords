@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLea
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameTyp
         ));
         statsLeaderboards.add(new StatsLeaderboard("Fastest Win", UPPER_CENTER_1,
                 databasePlayer -> -statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished(),
-                databasePlayer -> Utils.formatTimeLeft(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished() / 20),
+                databasePlayer -> StringUtils.formatTimeLeft(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished() / 20),
                 databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished() == 0
         ));
         statsLeaderboards.add(new StatsLeaderboard("Highest Wave Cleared", UPPER_CENTER_2,

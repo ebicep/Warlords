@@ -27,6 +27,8 @@ import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
 import me.filoghost.holographicdisplays.api.hologram.line.ClickableHologramLine;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -50,9 +52,9 @@ public abstract class DatabaseGameBase {
     public static final Location TOP_DAMAGE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2540.5, 58, 785.5);
     public static final Location TOP_HEALING_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2546.5, 58, 785.5);
     public static final Location TOP_ABSORBED_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2552.5, 58, 785.5);
-    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2530.5, 59.5, 781.5);
-    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2572.5, 58, 778.5);
-    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2579.5, 58, 774.5);
+    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2534.5, 58.5, 791.5);
+    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2529.5, 60, 779.5);
+    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2532.5, 60, 783.5);
     public static final Location GAME_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2543.5, 53.5, 769.5);
     public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
     protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
@@ -75,14 +77,13 @@ public abstract class DatabaseGameBase {
                 //checking for inflated stats
                 if (highestDamage > 750000 || highestHealing > 750000) {
                     updatePlayerStats = false;
-                    ChatUtils.MessageTypes.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
+                    ChatUtils.MessageType.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Game exceeds 750k damage / healing");
                 }
             } else {
                 for (Option option : game.getOptions()) {
-                    if (option instanceof WaveDefenseOption) {
-                        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                    if (option instanceof WaveDefenseOption waveDefenseOption) {
                         if (waveDefenseOption.getDifficulty() != DifficultyIndex.EVENT && waveDefenseOption.getWavesCleared() == 0) {
-                            System.out.println("NOT UPDATING PLAYER STATS - Wave Defense game cleared 0 waves");
+                            ChatUtils.MessageType.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Wave Defense game cleared 0 waves");
                             updatePlayerStats = false;
                             break;
                         }
@@ -92,11 +93,7 @@ public abstract class DatabaseGameBase {
             //check for private + untracked gamemodes
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
                 switch (game.getGameMode()) {
-                    case DUEL:
-                    case DEBUG:
-                    case SIMULATION_TRIAL:
-                        updatePlayerStats = false;
-                        break;
+                    case DUEL, DEBUG, SIMULATION_TRIAL -> updatePlayerStats = false;
                 }
             }
 
@@ -106,19 +103,15 @@ public abstract class DatabaseGameBase {
                     break;
                 }
                 switch (addon) {
-                    case CUSTOM_GAME:
-                    case IMPOSTER_MODE:
-                    case COOLDOWN_MODE:
-                    case TRIPLE_HEALTH:
-                    case INTERCHANGE_MODE:
-                        ChatUtils.MessageTypes.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Some addon detected");
+                    case CUSTOM_GAME, IMPOSTER_MODE, COOLDOWN_MODE, TRIPLE_HEALTH, INTERCHANGE_MODE -> {
+                        ChatUtils.MessageType.WARLORDS.sendMessage("NOT UPDATING PLAYER STATS - Some addon detected");
                         updatePlayerStats = false;
-                        break;
+                    }
                 }
             }
 
             if (updatePlayerStats) {
-                ChatUtils.MessageTypes.WARLORDS.sendMessage("UPDATING PLAYER STATS " + game.getGameId());
+                ChatUtils.MessageType.WARLORDS.sendMessage("UPDATING PLAYER STATS " + game.getGameId());
 
                 if (!game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
                     //CHALLENGE ACHIEVEMENTS
@@ -128,7 +121,7 @@ public abstract class DatabaseGameBase {
                         ));
                     if (!GameMode.isPvE(game.getGameMode())) {
                         Warlords.newChain()
-                                .async(() -> System.out.println(DatabaseGameCTF.getWarlordsPlusEndGameStats(game)))
+                                .async(() -> ChatUtils.MessageType.WARLORDS.sendMessage(DatabaseGameCTF.getWarlordsPlusEndGameStats(game)))
                                 .execute();
                     }
                 }
@@ -136,7 +129,7 @@ public abstract class DatabaseGameBase {
 
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
             if (createDatabaseGame == null) {
-                ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
+                ChatUtils.MessageType.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
                 return false;
             }
             DatabaseGameBase databaseGame = createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
@@ -166,18 +159,17 @@ public abstract class DatabaseGameBase {
 
             //sending message if player information remained the same
             ChatChannels.sendDebugMessage((CommandIssuer) null,
-                    ChatColor.GREEN + (updatePlayerStats ?
-                                       "This game was added to the database and player information was updated" :
-                                       "This game was added to the database but player information remained the same"),
-                    true
+                    Component.text((updatePlayerStats ?
+                                    "This game was added to the database and player information was updated" :
+                                    "This game was added to the database but player information remained the same"), NamedTextColor.GREEN)
             );
         } catch (Exception e) {
-            e.printStackTrace();
-            ChatUtils.MessageTypes.GAME_SERVICE.sendErrorMessage("Error adding game to database");
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Error adding game to database");
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e.getMessage());
 
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
             if (createDatabaseGame == null) {
-                ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
+                ChatUtils.MessageType.GAME_SERVICE.sendMessage("Cannot add game to database - the collection has not been configured");
                 return false;
             }
             DatabaseGameBase databaseGame = createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
@@ -198,12 +190,12 @@ public abstract class DatabaseGameBase {
             //game in the database
             if (DatabaseManager.gameService.exists(databaseGame, collection)) {
                 if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Game Found", true);
+                    sendDebugMessage(player, Component.text("Game Found", NamedTextColor.GREEN));
                 }
                 //if not counted then update player stats then set counted to true, else do nothing
                 if (!databaseGame.isCounted()) {
                     if (player != null) {
-                        sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
+                        sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
                     }
                     databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
                     databaseGame.setCounted(true);
@@ -211,17 +203,17 @@ public abstract class DatabaseGameBase {
                 }
             } else {
                 if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Game Not Found", true);
+                    sendDebugMessage(player, Component.text("Game Not Found", NamedTextColor.GREEN));
                 }
                 //game not in database then add game and update player stats if counted
                 if (databaseGame.isCounted()) {
                     if (player != null) {
-                        sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
+                        sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
                     }
                     databaseGame.updatePlayerStatsFromGame(databaseGame, 1);
                 }
                 if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Creating Game", true);
+                    sendDebugMessage(player, Component.text("Creating Game", NamedTextColor.GREEN));
                 }
                 //only add game if comps
                 //if (databaseGame.isPrivate) {
@@ -241,7 +233,7 @@ public abstract class DatabaseGameBase {
             Warlords.newChain()
                     .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
                     .execute();
-            e.printStackTrace();
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e.getMessage());
         }
     }
 
@@ -255,7 +247,7 @@ public abstract class DatabaseGameBase {
             //if counted then remove player stats then set counted to false, else do nothing
             if (databaseGame.isCounted()) {
                 if (player != null) {
-                    sendDebugMessage(player, ChatColor.GREEN + "Updating Player Stats", true);
+                    sendDebugMessage(player, Component.text("Updating Player Stats", NamedTextColor.GREEN));
                 }
                 databaseGame.updatePlayerStatsFromGame(databaseGame, -1);
                 databaseGame.setCounted(false);
@@ -263,7 +255,7 @@ public abstract class DatabaseGameBase {
             }
         } else { //else game not in database then do nothing
             if (player != null) {
-                sendDebugMessage(player, ChatColor.GREEN + "Game Not Found", true);
+                sendDebugMessage(player, Component.text("Game Not Found", NamedTextColor.GREEN));
             }
         }
     }
@@ -487,14 +479,6 @@ public abstract class DatabaseGameBase {
         holograms.add(topDHPPerMinute);
         topDHPPerMinute.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
 
-        Hologram topDamageOnCarrier = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
-        holograms.add(topDamageOnCarrier);
-        topDamageOnCarrier.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage On Carrier");
-
-        Hologram topHealingOnCarrier = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
-        holograms.add(topHealingOnCarrier);
-        topHealingOnCarrier.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing On Carrier");
-
         //last game stats
         appendLastGameStats(lastGameStats);
 
@@ -503,13 +487,13 @@ public abstract class DatabaseGameBase {
         for (DatabaseGamePlayerBase allPlayer : allPlayers) {
             Team team = getTeam(allPlayer);
             if (team != null) {
-                playerColor.put(allPlayer, team.teamColor);
+                playerColor.put(allPlayer, team.oldTeamColor);
             }
         }
 
         List<String> players = new ArrayList<>();
 
-        for (String s : Utils.specsOrdered) {
+        for (String s : Utils.SPECS_ORDERED) {
             StringBuilder playerSpecs = new StringBuilder(ChatColor.AQUA + s).append(": ");
             final boolean[] add = {false};
             allPlayers.stream()
@@ -597,15 +581,15 @@ public abstract class DatabaseGameBase {
         });
     }
 
-    public List<String> getLore() {
-        List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Map: " + ChatColor.YELLOW + getMap().getMapName());
-        lore.add(ChatColor.GRAY + "Mode: " + ChatColor.AQUA + getGameMode().getName());
-        lore.add(ChatColor.GRAY + "Addons: " + ChatColor.GOLD + getGameAddons().stream()
-                                                                               .map(GameAddon::getName)
-                                                                               .collect(Collectors.joining(", ")));
-        lore.add(ChatColor.GRAY + "Counted: " + ChatColor.GREEN + counted);
-        lore.add("");
+    public List<Component> getLore() {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Map: ", NamedTextColor.GRAY).append(Component.text(getMap().getMapName(), NamedTextColor.YELLOW)));
+        lore.add(Component.text("Mode: ", NamedTextColor.GRAY).append(Component.text(getGameMode().getName(), NamedTextColor.AQUA)));
+        lore.add(Component.text("Addons: ", NamedTextColor.GRAY).append(Component.text(getGameAddons().stream()
+                                                                                                      .map(GameAddon::getName)
+                                                                                                      .collect(Collectors.joining(", ")), NamedTextColor.GOLD)));
+        lore.add(Component.text("Counted: ", NamedTextColor.GRAY).append(Component.text(counted, NamedTextColor.GREEN)));
+        lore.add(Component.empty());
         lore.addAll(getExtraLore());
         return lore;
     }
@@ -622,7 +606,7 @@ public abstract class DatabaseGameBase {
         return gameAddons;
     }
 
-    public abstract List<String> getExtraLore();
+    public abstract List<Component> getExtraLore();
 
     public void setGameAddons(List<GameAddon> gameAddons) {
         this.gameAddons = gameAddons;

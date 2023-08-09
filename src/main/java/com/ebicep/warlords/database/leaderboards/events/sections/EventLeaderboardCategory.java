@@ -36,7 +36,7 @@
 //                                     .flatMap(statsLeaderboard -> statsLeaderboard.getSortedTimedHolograms().values().stream())
 //                                     .flatMap(Collection::stream)
 //                                     .flatMap(Collection::stream)
-//                                     .collect(Collectors.toList());
+//                                     .toList();
 //    }
 //
 //    public List<EventLeaderboard> getEventLeaderboards() {

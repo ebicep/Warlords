@@ -9,11 +9,15 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.HologramLines;
 import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -22,7 +26,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class StatsLeaderboard {
 
@@ -122,6 +125,10 @@ public class StatsLeaderboard {
     }
 
     private void createLeaderboard(PlayersCollections collection, String categoryName, String subTitle) {
+        if (location.getWorld() == null) {
+            ChatUtils.MessageType.LEADERBOARDS.sendErrorMessage("Leaderboard " + title + " has invalid location - " + location);
+            return;
+        }
         //skip hologram creation for hidden leaderboards
         if (hidden) {
             return;
@@ -146,16 +153,21 @@ public class StatsLeaderboard {
         for (int i = page * PLAYERS_PER_PAGE; i < (page + 1) * PLAYERS_PER_PAGE && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
-            String guildTag = "";
+            Component guildTag = Component.empty();
             if (guildPlayerPair != null) {
                 GuildTag tag = guildPlayerPair.getA().getTag();
                 if (tag != null) {
-                    guildTag = " " + tag.getTag(false);
+                    guildTag = tag.getTag(false);
                 }
             }
-            hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " +
-                    Permissions.getColor(databasePlayer) + databasePlayer.getName() + guildTag +
-                    ChatColor.GRAY + " - " + ChatColor.YELLOW + stringFunction.apply(databasePlayer));
+            hologramLines.appendText(LegacyComponentSerializer.legacySection().serialize(
+                    Component.text((i + 1) + ". ", NamedTextColor.YELLOW)
+                             .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                             .append(Component.space())
+                             .append(guildTag)
+                             .append(Component.text(" - ", NamedTextColor.GRAY))
+                             .append(Component.text(stringFunction.apply(databasePlayer)))
+            ));
         }
         hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
 
@@ -188,7 +200,7 @@ public class StatsLeaderboard {
         boolean filter = sortedWeekly.get(0).getPlays() >= 10;
         List<DatabasePlayer> databasePlayers;
         if (filter) {
-            databasePlayers = sortedWeekly.stream().filter(databasePlayer -> databasePlayer.getPlays() > 3).collect(Collectors.toList());
+            databasePlayers = sortedWeekly.stream().filter(databasePlayer -> databasePlayer.getPlays() > 3).toList();
         } else {
             databasePlayers = new ArrayList<>(sortedWeekly);
         }

@@ -51,8 +51,7 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         gamePlayerPvEBase.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
         gamePlayerPvEBase.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
 
-        if (gamePlayer instanceof MostDamageInRound) {
-            MostDamageInRound mostDamageInRound = (MostDamageInRound) gamePlayer;
+        if (gamePlayer instanceof MostDamageInRound mostDamageInRound) {
             if (multiplier > 0) {
                 this.mostDamageInRound = Math.max(this.mostDamageInRound, mostDamageInRound.getMostDamageInRound());
             } else if (this.mostDamageInRound == mostDamageInRound.getMostDamageInRound()) {
@@ -60,8 +59,7 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
             }
         }
 
-        if (databaseGame instanceof TimeElapsed) {
-            TimeElapsed timeElapsed = (TimeElapsed) databaseGame;
+        if (databaseGame instanceof TimeElapsed timeElapsed) {
             this.totalTimePlayed += (long) timeElapsed.getTimeElapsed() * multiplier;
         }
     }

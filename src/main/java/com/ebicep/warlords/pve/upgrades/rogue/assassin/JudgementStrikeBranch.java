@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
-import com.ebicep.warlords.abilties.JudgementStrike;
+import com.ebicep.warlords.abilities.JudgementStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -96,7 +96,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "If the enemy hit by Judgement Strike drops below 30% max health they get executed. (Excluding boss mobs.)",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

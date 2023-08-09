@@ -7,7 +7,8 @@ import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Settings;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 @CommandAlias("flagmessagemode")
@@ -19,9 +20,14 @@ public class FlagMessageModeCommand extends BaseCommand {
         PlayerSettings settings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         settings.setFlagMessageMode(settings.getFlagMessageMode() == Settings.FlagMessageMode.ABSOLUTE ? Settings.FlagMessageMode.RELATIVE : Settings.FlagMessageMode.ABSOLUTE);
         if (settings.getFlagMessageMode() == Settings.FlagMessageMode.ABSOLUTE) {
-            player.sendMessage(ChatColor.GREEN + "Flag Message Mode " + ChatColor.YELLOW + "ABSOLUTE " + ChatColor.GREEN + "enabled.");
+            player.sendMessage(Component.text("Flag Message Mode ", NamedTextColor.GREEN)
+                                        .append(Component.text("ABSOLUTE ", NamedTextColor.YELLOW))
+                                        .append(Component.text("enabled."))
+            );
         } else {
-            player.sendMessage(ChatColor.GREEN + "Flag Message Mode " + ChatColor.AQUA + "RELATIVE " + ChatColor.GREEN + "enabled.");
+            player.sendMessage(Component.text("Flag Message Mode ", NamedTextColor.GREEN)
+                                        .append(Component.text("RELATIVE ", NamedTextColor.AQUA))
+                                        .append(Component.text("enabled.", NamedTextColor.GREEN)));
         }
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             databasePlayer.setFlagMessageMode(settings.getFlagMessageMode());

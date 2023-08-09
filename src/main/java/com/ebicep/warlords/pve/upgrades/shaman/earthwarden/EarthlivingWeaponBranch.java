@@ -1,17 +1,17 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
-import com.ebicep.warlords.abilties.Earthliving;
+import com.ebicep.warlords.abilities.EarthlivingWeapon;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> {
+public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWeapon> {
 
     int weaponDamage = ability.getWeaponDamage();
     int maxHits = ability.getMaxHits();
     float cooldown = ability.getCooldown();
 
-    public EarthlivingWeaponBranch(AbilityTree abilityTree, Earthliving ability) {
+    public EarthlivingWeaponBranch(AbilityTree abilityTree, EarthlivingWeapon ability) {
         super(abilityTree, ability);
 
         treeA.add(new Upgrade(
@@ -53,34 +53,34 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
 
         treeB.add(new Upgrade(
                 "Spark - Tier I",
-                "+2% Proc chance",
+                "+4% Proc chance",
                 5000,
                 () -> {
-                    ability.setProcChance(ability.getProcChance() + 2);
+                    ability.setProcChance(ability.getProcChance() + 4);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier II",
-                "+4% Proc chance",
+                "+8% Proc chance",
                 10000,
                 () -> {
-                    ability.setProcChance(ability.getProcChance() + 2);
+                    ability.setProcChance(ability.getProcChance() + 4);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier III",
-                "+6% Proc chance",
+                "+12% Proc chance",
                 15000,
                 () -> {
-                    ability.setProcChance(ability.getProcChance() + 2);
+                    ability.setProcChance(ability.getProcChance() + 4);
                 }
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "+8% Proc chance\n+1 Earthliving Weapon hit",
+                "+16% Proc chance\n+1 Earthliving Weapon hit",
                 20000,
                 () -> {
-                    ability.setProcChance(ability.getProcChance() + 2);
+                    ability.setProcChance(ability.getProcChance() + 4);
                     ability.setMaxHits(maxHits + 1);
                 }
         ));
@@ -92,7 +92,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<Earthliving> 
                         "nearby allies for 10% of their missing health and restore energy equal to the same amount.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

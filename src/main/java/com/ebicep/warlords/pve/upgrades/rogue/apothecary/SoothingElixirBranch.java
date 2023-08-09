@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
-import com.ebicep.warlords.abilties.SoothingElixir;
+import com.ebicep.warlords.abilities.SoothingElixir;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -90,7 +90,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
                 "Soothing Puddle now heals every 0.5s instead of 1s within the puddle radius and inflicts LEECH on all enemies hit by the elixir impact.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

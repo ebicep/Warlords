@@ -2,31 +2,32 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.EnvoyLegionnaire;
+import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 
 public class Zenith extends AbstractZombie implements BossMob {
-
-    private final int stormRadius = 10;
 
     public Zenith(Location spawnLocation) {
         super(spawnLocation,
@@ -43,7 +44,15 @@ public class Zenith extends AbstractZombie implements BossMob {
                 0.36f,
                 25,
                 1800,
-                2500
+                2500,
+                new Armageddon(),
+                new Cleanse(),
+                new SpawnMobAbility("Envoy Legionnaire", 30, Mobs.ENVOY_LEGIONNAIRE) {
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                }
         );
     }
 
@@ -51,83 +60,11 @@ public class Zenith extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.DARK_PURPLE + getWarlordsNPC().getName(),
-                        ChatColor.LIGHT_PURPLE + "Leader of the Illusion Vanguard",
-                        20, 40, 20
-                );
-            }
-        }
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        long playerCount = option.getGame().warlordsPlayers().count();
-        Location loc = warlordsNPC.getLocation();
-        float multiplier;
-        DifficultyIndex difficulty = option.getDifficulty();
-        switch (difficulty) {
-            case EASY:
-                multiplier = 0.5f;
-                break;
-            case HARD:
-                multiplier = 1;
-                break;
-            case EXTREME:
-                multiplier = 1.25f;
-                break;
-            default:
-                multiplier = 0.75f;
-                break;
-        }
-        if (ticksElapsed % 240 == 0) {
-            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
-            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
-            warlordsNPC.addSpeedModifier(warlordsNPC, "Armageddon Slowness", -99, 90);
-            new GameRunnable(warlordsNPC.getGame()) {
-                @Override
-                public void run() {
-                    if (warlordsNPC.isDead()) {
-                        this.cancel();
-                        return;
-                    }
 
-                    EffectUtils.strikeLightningInCylinder(loc, stormRadius, false, 12, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius, 12, playerCount, multiplier);
-                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 5, false, 24, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius + 5, 24, playerCount, multiplier);
-                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 36, warlordsNPC.getGame());
-                    shockwave(loc, stormRadius + 10, 36, playerCount, multiplier);
-                    if (difficulty == DifficultyIndex.HARD || difficulty == DifficultyIndex.EXTREME || difficulty == DifficultyIndex.ENDLESS) {
-                        EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 48, warlordsNPC.getGame());
-                        shockwave(loc, stormRadius + 15, 48, playerCount, multiplier);
-                        EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 60, warlordsNPC.getGame());
-                        shockwave(loc, stormRadius + 15, 60, playerCount, multiplier);
-                    }
-                }
-            }.runTaskLater(40);
-        }
-
-        if (ticksElapsed % 80 == 0) {
-            EffectUtils.playSphereAnimation(loc, 4, ParticleEffect.SPELL_WITCH, 2);
-            for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(loc, 4, 4, 4)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                Utils.addKnockback(name, warlordsNPC.getLocation(), we, -1.5, 0.3);
-                we.addDamageInstance(warlordsNPC, "Cleanse", (300 * playerCount) * multiplier, (400 * playerCount) * multiplier, 0, 100, false);
-                EffectUtils.strikeLightning(we.getLocation(), false);
-            }
-        }
-
-        if (ticksElapsed % 600 == 0) {
-            for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
-                option.spawnNewMob(new EnvoyLegionnaire(loc));
-            }
-        }
     }
 
     @Override
@@ -153,7 +90,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                                           .build()
                     );
                     Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
-                    receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100, false);
+                    receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100);
 
                     if (counter == 3 || receiver.isDead()) {
                         this.cancel();
@@ -165,7 +102,7 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(self.getLocation(), Sound.BLAZE_HIT, 2, 0.2f);
+        Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
     }
 
     @Override
@@ -181,36 +118,6 @@ public class Zenith extends AbstractZombie implements BossMob {
         EffectUtils.strikeLightning(deathLocation, false, 5);
     }
 
-    private void shockwave(Location loc, double radius, int tickDelay, long playerCount, float damageMultiplier) {
-        new GameRunnable(warlordsNPC.getGame()) {
-            @Override
-            public void run() {
-                if (warlordsNPC.isDead()) {
-                    this.cancel();
-                }
-
-                Utils.playGlobalSound(loc, Sound.ENDERDRAGON_GROWL, 10, 0.4f);
-                Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
-                for (WarlordsEntity we : PlayerFilter
-                        .entitiesAround(loc, radius, radius, radius)
-                        .aliveEnemiesOf(warlordsNPC)
-                ) {
-                    if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC,
-                                "Armageddon",
-                                (550 * playerCount) * damageMultiplier,
-                                (700 * playerCount) * damageMultiplier,
-                                0,
-                                100,
-                                false
-                        );
-                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
-                    }
-                }
-            }
-        }.runTaskLater(tickDelay);
-    }
-
     @Override
     public HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops() {
         return new HashMap<>() {{
@@ -222,5 +129,152 @@ public class Zenith extends AbstractZombie implements BossMob {
                 put(DifficultyIndex.ENDLESS, .05);
             }});
         }};
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_PURPLE;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Leader of the Illusion Vanguard", NamedTextColor.LIGHT_PURPLE);
+    }
+
+
+    private static class Armageddon extends AbstractPveAbility {
+
+        private final int stormRadius = 10;
+
+
+        public Armageddon() {
+            super(
+                    "Armageddon",
+                    550,
+                    700,
+                    12,
+                    100
+            );
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+
+            long playerCount = pveOption.getGame().warlordsPlayers().count();
+            Location loc = wp.getLocation();
+            DifficultyIndex difficulty = pveOption.getDifficulty();
+            float multiplier = switch (difficulty) {
+                case EASY -> 0.5f;
+                case HARD -> 1;
+                case EXTREME -> 1.25f;
+                default -> 0.75f;
+            };
+
+            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
+            Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.85f);
+            wp.addSpeedModifier(wp, "Armageddon Slowness", -99, 90);
+            Game game = wp.getGame();
+            new GameRunnable(game) {
+                @Override
+                public void run() {
+                    if (wp.isDead()) {
+                        this.cancel();
+                        return;
+                    }
+
+                    EffectUtils.strikeLightningInCylinder(loc, stormRadius, false, 12, game);
+                    shockwave(loc, stormRadius, 12, playerCount, multiplier, wp);
+                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 5, false, 24, game);
+                    shockwave(loc, stormRadius + 5, 24, playerCount, multiplier, wp);
+                    EffectUtils.strikeLightningInCylinder(loc, stormRadius + 10, false, 36, game);
+                    shockwave(loc, stormRadius + 10, 36, playerCount, multiplier, wp);
+                    if (difficulty == DifficultyIndex.HARD || difficulty == DifficultyIndex.EXTREME || difficulty == DifficultyIndex.ENDLESS) {
+                        EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 48, game);
+                        shockwave(loc, stormRadius + 15, 48, playerCount, multiplier, wp);
+                        EffectUtils.strikeLightningInCylinder(loc, stormRadius + 15, false, 60, game);
+                        shockwave(loc, stormRadius + 15, 60, playerCount, multiplier, wp);
+                    }
+                }
+            }.runTaskLater(40);
+            return true;
+        }
+
+        private void shockwave(Location loc, double radius, int tickDelay, long playerCount, float damageMultiplier, WarlordsEntity wp) {
+            new GameRunnable(wp.getGame()) {
+                @Override
+                public void run() {
+                    if (wp.isDead()) {
+                        this.cancel();
+                    }
+
+                    Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 0.4f);
+                    Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
+                    for (WarlordsEntity we : PlayerFilter
+                            .entitiesAround(loc, radius, radius, radius)
+                            .aliveEnemiesOf(wp)
+                    ) {
+                        if (we.getCooldownManager().hasCooldownFromName("Cloaked")) {
+                            continue;
+                        }
+                        we.addDamageInstance(wp,
+                                "Armageddon",
+                                (minDamageHeal * playerCount) * damageMultiplier,
+                                (maxDamageHeal * playerCount) * damageMultiplier,
+                                critChance,
+                                critMultiplier
+                        );
+                        Utils.addKnockback(name, wp.getLocation(), we, -2, 0.2);
+                    }
+                }
+            }.runTaskLater(tickDelay);
+        }
+
+    }
+
+    private static class Cleanse extends AbstractPveAbility {
+
+        public Cleanse() {
+            super(
+                    "Cleanse",
+                    300,
+                    400,
+                    4,
+                    100
+            );
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+
+            long playerCount = pveOption.getGame().warlordsPlayers().count();
+            Location loc = wp.getLocation();
+            DifficultyIndex difficulty = pveOption.getDifficulty();
+            float multiplier = switch (difficulty) {
+                case EASY -> 0.5f;
+                case HARD -> 1;
+                case EXTREME -> 1.25f;
+                default -> 0.75f;
+            };
+
+            EffectUtils.playSphereAnimation(loc, 4, Particle.SPELL_WITCH, 2);
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(loc, 4, 4, 4)
+                    .aliveEnemiesOf(wp)
+            ) {
+                Utils.addKnockback(name, wp.getLocation(), we, -1.5, 0.3);
+                we.addDamageInstance(
+                        wp,
+                        name,
+                        (minDamageHeal * playerCount) * multiplier,
+                        (maxDamageHeal * playerCount) * multiplier,
+                        critChance,
+                        critMultiplier
+                );
+                EffectUtils.strikeLightning(we.getLocation(), false);
+            }
+            return true;
+        }
     }
 }

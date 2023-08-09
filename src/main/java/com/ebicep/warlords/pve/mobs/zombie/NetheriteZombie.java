@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BasicMob;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -17,6 +18,10 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class NetheriteZombie extends AbstractZombie implements BasicMob {
 
@@ -36,7 +41,8 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
                 0.3f,
                 10,
                 1000,
-                1300
+                1300,
+                new ReduceWeaponCooldowns()
         );
     }
 
@@ -48,21 +54,7 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 120 == 0) {
-            for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(warlordsNPC, 5, 5, 5)
-                    .aliveEnemiesOf(warlordsNPC)
-                    .closestFirst(warlordsNPC)
-            ) {
-                EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), 0, 0, 0, 1);
-                we.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.WEAPON, 20);
-            }
 
-            FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                    .withColor(Color.BLACK)
-                    .with(FireworkEffect.Type.BALL_LARGE)
-                    .build());
-        }
     }
 
     @Override
@@ -73,5 +65,42 @@ public class NetheriteZombie extends AbstractZombie implements BasicMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    private static class ReduceWeaponCooldowns extends AbstractAbility {
+
+        public ReduceWeaponCooldowns() {
+            super("Reduce Weapon", 6, 100);
+        }
+
+        @Override
+        public void updateDescription(Player player) {
+
+        }
+
+        @Override
+        public List<Pair<String, String>> getAbilityInfo() {
+            return null;
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+            wp.subtractEnergy(energyCost, false);
+
+            for (WarlordsEntity we : PlayerFilter
+                    .entitiesAround(wp, 5, 5, 5)
+                    .aliveEnemiesOf(wp)
+                    .closestFirst(wp)
+            ) {
+                EffectUtils.playParticleLinkAnimation(we.getLocation(), wp.getLocation(), 0, 0, 0, 1);
+                we.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.WEAPON, 20);
+            }
+
+            EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder()
+                                                                              .withColor(Color.BLACK)
+                                                                              .with(FireworkEffect.Type.BALL_LARGE)
+                                                                              .build());
+            return true;
+        }
     }
 }

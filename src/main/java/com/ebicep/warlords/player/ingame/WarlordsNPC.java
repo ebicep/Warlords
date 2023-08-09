@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Specializations;
@@ -10,11 +11,16 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.minecraft.world.entity.Mob;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
@@ -25,95 +31,40 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.UUID;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public final class WarlordsNPC extends WarlordsEntity {
 
     public static Zombie spawnZombieNoAI(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
-        jimmy.setBaby(false);
-        jimmy.setCustomNameVisible(true);
+        return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
+            zombie.setAdult();
+            zombie.setCustomNameVisible(true);
 
-        if (inv != null) {
-            jimmy.getEquipment().setBoots(inv.getBoots());
-            jimmy.getEquipment().setLeggings(inv.getLeggings());
-            jimmy.getEquipment().setChestplate(inv.getChestplate());
-            jimmy.getEquipment().setHelmet(inv.getHelmet());
-            jimmy.getEquipment().setItemInHand(inv.getItemInHand());
-        } else {
-            jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-        }
-        ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
-        ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(0);
-        //prevents jimmy from moving
-        net.minecraft.server.v1_8_R3.Entity nmsEn = ((CraftEntity) jimmy).getHandle();
-        NBTTagCompound compound = new NBTTagCompound();
-        nmsEn.c(compound);
-        compound.setByte("NoAI", (byte) 1);
-        nmsEn.f(compound);
-        return jimmy;
+            if (inv != null) {
+                zombie.getEquipment().setBoots(inv.getBoots());
+                zombie.getEquipment().setLeggings(inv.getLeggings());
+                zombie.getEquipment().setChestplate(inv.getChestplate());
+                zombie.getEquipment().setHelmet(inv.getHelmet());
+                zombie.getEquipment().setItemInMainHand(inv.getItemInMainHand());
+            } else {
+                zombie.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+            }
+            zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
+            zombie.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(0);
+            //prevents zombie from moving
+            zombie.setAI(false);
+        });
 
-    }
-
-    public static <T extends LivingEntity> T spawnEntity(@Nonnull Class<T> clazz, @Nonnull Location loc, @Nullable EntityEquipment inv) {
-        T entity = loc.getWorld().spawn(loc, clazz);
-        if (entity instanceof Zombie) {
-            ((Zombie) entity).setBaby(false);
-        }
-
-        entity.setCustomNameVisible(true);
-
-        if (inv != null) {
-            entity.getEquipment().setBoots(inv.getBoots());
-            entity.getEquipment().setLeggings(inv.getLeggings());
-            entity.getEquipment().setChestplate(inv.getChestplate());
-            entity.getEquipment().setHelmet(inv.getHelmet());
-            entity.getEquipment().setItemInHand(inv.getItemInHand());
-        } else {
-            entity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
-        }
-
-        return entity;
-    }
-
-    public static <T extends CustomEntity<?>> LivingEntity spawnCustomEntity(
-            @Nonnull Class<T> clazz,
-            Supplier<T> create,
-            Consumer<T> onCreate,
-            @Nonnull Location loc,
-            @Nullable EntityEquipment inv
-    ) {
-        T customEntity = create.get();
-        onCreate.accept(customEntity);
-        customEntity.spawn(loc);
-
-        EntityInsentient entityInsentient = customEntity.get();
-        entityInsentient.persistent = true;
-
-        LivingEntity entity = (LivingEntity) entityInsentient.getBukkitEntity();
-        if (inv != null) {
-            entity.getEquipment().setBoots(inv.getBoots());
-            entity.getEquipment().setLeggings(inv.getLeggings());
-            entity.getEquipment().setChestplate(inv.getChestplate());
-            entity.getEquipment().setHelmet(inv.getHelmet());
-            entity.getEquipment().setItemInHand(inv.getItemInHand());
-        } else {
-            entity.getEquipment().setHelmet(new ItemStack(Material.BARRIER));
-        }
-
-        return entity;
     }
 
     private float minMeleeDamage;
     private float maxMeleeDamage;
     private AbstractMob<?> mob;
     private int stunTicks;
+    private Component mobNamePrefix = Component.empty();
 
     public WarlordsNPC(
-            UUID uuid,
             String name,
             Weapons weapon,
             LivingEntity entity,
@@ -121,14 +72,13 @@ public final class WarlordsNPC extends WarlordsEntity {
             Team team,
             Specializations specClass
     ) {
-        super(uuid, name, entity, game, team, specClass);
+        super(entity.getUniqueId(), name, entity, game, team, specClass);
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
     }
 
     public WarlordsNPC(
-            UUID uuid,
             String name,
             Weapons weapon,
             LivingEntity entity,
@@ -141,7 +91,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
-        super(uuid, name, entity, game, team, specClass);
+        super(entity.getUniqueId(), name, entity, game, team, specClass);
         this.walkSpeed = walkSpeed;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
@@ -153,7 +103,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     public WarlordsNPC(
-            UUID uuid,
             String name,
             Weapons weapon,
             LivingEntity entity,
@@ -167,8 +116,14 @@ public final class WarlordsNPC extends WarlordsEntity {
             float maxMeleeDamage,
             AbstractMob<?> mob
     ) {
-        super(uuid, name, entity, game, team, specClass);
+        super(entity.getUniqueId(), name, entity, game, team, specClass);
         this.mob = mob;
+        if (mob != null && mob.getMobTier() != null) {
+            mobNamePrefix = Component.textOfChildren(
+                    mob.getMobTier().getSymbol(),
+                    Component.text(" - ", NamedTextColor.GRAY)
+            );
+        }
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
@@ -180,20 +135,47 @@ public final class WarlordsNPC extends WarlordsEntity {
         spec.setDamageResistance(damageResistance);
     }
 
-    @Override
-    public void updateHealth() {
-        if (!isDead()) {
-            String oldName = getEntity().getCustomName();
-            String newName = oldName.substring(0,
-                    oldName.lastIndexOf(' ') + 1
-            ) + ChatColor.RED + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤";
-            getEntity().setCustomName(newName);
+    public WarlordsNPC(
+            String name,
+            Weapons weapon,
+            LivingEntity entity,
+            Game game,
+            Team team,
+            Specializations specClass,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            AbstractMob<?> mob,
+            AbstractPlayerClass playerClass
+    ) {
+        super(entity.getUniqueId(), name, entity, game, team, specClass);
+        this.mob = mob;
+        if (mob != null && mob.getMobTier() != null) {
+            mobNamePrefix = Component.textOfChildren(
+                    mob.getMobTier().getSymbol(),
+                    Component.text(" - ", NamedTextColor.GRAY)
+            );
         }
+        this.spec = playerClass;
+        this.minMeleeDamage = minMeleeDamage;
+        this.maxMeleeDamage = maxMeleeDamage;
+        this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
+        this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
+        updateEntity();
+        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        setSpawnGrave(false);
+        setMaxBaseHealth(maxHealth);
+    }
+
+    public Component getMobNamePrefix() {
+        return mobNamePrefix;
     }
 
     @Override
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
-        if (modifier != -99) {
+        if (modifier != -99 && getMobTier() != null) {
             if (getMobTier() == MobTier.BOSS) {
                 if (modifier < 0) {
                     modifier *= .4;
@@ -211,7 +193,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     public boolean addPotionEffect(PotionEffect potionEffect) {
         boolean applied = super.addPotionEffect(potionEffect);
         if (applied) {
-            if (potionEffect.getType() == PotionEffectType.BLINDNESS) {
+            if (potionEffect.getType() == PotionEffectType.BLINDNESS && mob != null) {
                 mob.removeTarget();
             }
         }
@@ -224,16 +206,44 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
+    public void runEveryTick() {
+        // updating entity reference in case it was unloaded
+        Entity updatedEntity = Bukkit.getEntity(uuid);
+        if (!Objects.equals(updatedEntity, entity) && updatedEntity instanceof LivingEntity) {
+            this.entity = (LivingEntity) updatedEntity;
+        }
+        super.runEveryTick();
+        if (getStunTicks() > 0) {
+            setStunTicks(getStunTicks() - 1, true);
+        }
+    }
+
+    @Override
+    public void updateHealth() {
+        if (!isDead()) {
+            getEntity().customName(Component.empty()
+                                            .append(mobNamePrefix)
+                                            .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
+                                                    NamedTextColor.RED,
+                                                    TextDecoration.BOLD
+                                            )));
+        }
+    }
+
+    @Override
     public void updateEntity() {
-        entity.setCustomName(
-                (mob != null && mob.getMobTier() != null ? ChatColor.GOLD + mob.getMobTier().getSymbol() + " §7- " : "")
-                        + ChatColor.RED + ChatColor.BOLD + NumberFormat.addCommaAndRound(this.getHealth()) + "❤"
+        entity.customName(Component.empty()
+                                   .append(mobNamePrefix)
+                                   .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED, TextDecoration.BOLD))
         );
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        AttributeInstance attributeInstance = ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
-        if (attributeInstance != null) {
-            attributeInstance.setValue(80);
+        AttributeInstance attribute = entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+        if (attribute != null) {
+            attribute.setBaseValue(100);
+        } else {
+            entity.registerAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+            Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE)).setBaseValue(80);
         }
     }
 
@@ -242,7 +252,52 @@ public final class WarlordsNPC extends WarlordsEntity {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
     }
 
+    public int getStunTicks() {
+        return stunTicks;
+    }
+
+    public void setStunTicks(int stunTicks) {
+        setStunTicks(stunTicks, false);
+    }
+
+    public void setStunTicks(int stunTicks, boolean decrement) {
+        AtomicReference<Boolean> noAI = new AtomicReference<>();
+        if (mob == null) {
+            return;
+        }
+        CustomEntity<?> customEntity = mob.getEntity();
+        if (stunTicks > 0) {
+            if (this.stunTicks <= 0) {
+                customEntity.setStunned(true);
+                noAI.set(true);
+            }
+        } else {
+            noAI.set(false);
+        }
+        if (noAI.get() != null) {
+            Mob entityInsentient = customEntity.get();
+            entityInsentient.setNoAi(noAI.get());
+            //tick later to prevent collision issues
+            if (!noAI.get()) {
+                new GameRunnable(game) {
+                    @Override
+                    public void run() {
+                        customEntity.setStunned(false);
+                    }
+                }.runTaskLater(1);
+            }
+        }
+        //stun needs to be longer to override current
+        if (decrement || this.stunTicks < stunTicks) {
+            this.stunTicks = stunTicks;
+        }
+    }
+
+    @Nullable
     public MobTier getMobTier() {
+        if (mob == null) {
+            return null;
+        }
         return mob.getMobTier() == null ? MobTier.BASE : mob.getMobTier();
     }
 
@@ -264,49 +319,5 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public AbstractMob<?> getMob() {
         return mob;
-    }
-
-    public int getStunTicks() {
-        return stunTicks;
-    }
-
-    public void setStunTicks(int stunTicks) {
-        setStunTicks(stunTicks, false);
-    }
-
-    public void setStunTicks(int stunTicks, boolean decrement) {
-        AtomicReference<Byte> ai = new AtomicReference<>();
-        CustomEntity<?> customEntity = mob.getEntity();
-        if (stunTicks > 0) {
-            if (this.stunTicks <= 0) {
-                customEntity.setStunned(true);
-                ai.set((byte) 1);
-            }
-        } else {
-            ai.set((byte) 0);
-        }
-        if (ai.get() != null) {
-            EntityInsentient entityInsentient = customEntity.get();
-            NBTTagCompound tag = entityInsentient.getNBTTag();
-            if (tag == null) {
-                tag = new NBTTagCompound();
-            }
-            entityInsentient.c(tag);
-            tag.setByte("NoAI", ai.get());
-            entityInsentient.f(tag);
-            //tick later to prevent collision issues
-            if (ai.get() == 0) {
-                new GameRunnable(game) {
-                    @Override
-                    public void run() {
-                        customEntity.setStunned(false);
-                    }
-                }.runTaskLater(1);
-            }
-        }
-        //stun needs to be longer to override current
-        if (decrement || this.stunTicks < stunTicks) {
-            this.stunTicks = stunTicks;
-        }
     }
 }

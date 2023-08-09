@@ -21,7 +21,7 @@ public class WeeklyBlessings {
     public static WeeklyBlessings currentWeeklyBlessings;
 
     public static void loadWeeklyBlessings() {
-        ChatUtils.MessageTypes.WEEKLY_BLESSINGS.sendMessage("Loading Weekly Blessings - " + DatabaseTiming.RESET_WEEKLY.get());
+        ChatUtils.MessageType.WEEKLY_BLESSINGS.sendMessage("Loading Weekly Blessings - " + DatabaseTiming.RESET_WEEKLY.get());
         if (DatabaseTiming.RESET_WEEKLY.get()) {
             currentWeeklyBlessings = new WeeklyBlessings();
             onInitialize();
@@ -43,7 +43,7 @@ public class WeeklyBlessings {
     }
 
     private static void onInitialize() {
-        ChatUtils.MessageTypes.WEEKLY_BLESSINGS.sendMessage("Initialized Weekly Blessings - " + currentWeeklyBlessings);
+        ChatUtils.MessageType.WEEKLY_BLESSINGS.sendMessage("Initialized Weekly Blessings - " + currentWeeklyBlessings);
     }
 
     private static void createNewWeeklyBlessings() {

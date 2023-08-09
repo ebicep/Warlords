@@ -2,7 +2,6 @@ package com.ebicep.warlords.game.option.pve.wavedefense;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveEditEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveRespawnEvent;
@@ -12,7 +11,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.cuboid.BoundingBoxOption;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
@@ -35,13 +33,16 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.weapons.AbstractWeapon;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
-import org.bukkit.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -54,14 +55,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
-import static com.ebicep.warlords.util.warlords.Utils.iterable;
+import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
-public class WaveDefenseOption implements Option, PveOption {
-    private static final int SCOREBOARD_PRIORITY = 5;
-    SimpleScoreboardHandler scoreboard;
+public class WaveDefenseOption implements PveOption {
+    protected static final int SCOREBOARD_PRIORITY = 5;
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
     private final Team team;
     private final WaveList waves;
@@ -87,12 +86,11 @@ public class WaveDefenseOption implements Option, PveOption {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         this.game = game;
         this.waveDefenseRewards = new WaveDefenseRewards(this);
         for (Option o : game.getOptions()) {
-            if (o instanceof BoundingBoxOption) {
-                BoundingBoxOption boundingBoxOption = (BoundingBoxOption) o;
+            if (o instanceof BoundingBoxOption boundingBoxOption) {
                 lastLocation = boundingBoxOption.getCenter();
             }
         }
@@ -175,24 +173,27 @@ public class WaveDefenseOption implements Option, PveOption {
 
 
         });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 1, "wave") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return getWaveScoreboard(player);
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList("Monsters Left: " + (spawnCount > 0 || ticksElapsed.get() < 10 ? ChatColor.RED : ChatColor.GREEN) + mobCount());
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return Collections.singletonList(
+                        Component.text("Monsters Left: ")
+                                 .append(Component.text(mobCount(), (spawnCount > 0 || ticksElapsed.get() < 10 ? NamedTextColor.RED : NamedTextColor.GREEN)))
+                );
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(6, "kills") {
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 return healthScoreboard(game);
             }
         });
@@ -212,56 +213,34 @@ public class WaveDefenseOption implements Option, PveOption {
         }.register(game);
     }
 
-    public List<String> getWaveScoreboard(WarlordsPlayer player) {
-        return Collections.singletonList("Wave: " + ChatColor.GREEN + waveCounter +
-                ChatColor.RESET +
-                (maxWave != Integer.MAX_VALUE ? "/" + ChatColor.GREEN + maxWave : "") +
-                ChatColor.RESET +
-                (currentWave != null && currentWave.getMessage() != null ? " (" + currentWave.getMessage() + ")" : ""));
-    }
-
-    private List<String> healthScoreboard(Game game) {
-        List<String> list = new ArrayList<>();
-        for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
-            float healthRatio = we.getHealth() / we.getMaxHealth();
-            ChatColor healthColor;
-            String name = we.getName();
-            String newName;
-
-            if (healthRatio >= .5) {
-                healthColor = ChatColor.GREEN;
-            } else if (healthRatio >= .25) {
-                healthColor = ChatColor.YELLOW;
-            } else {
-                healthColor = ChatColor.RED;
-            }
-
-            if (name.length() >= 8) {
-                newName = name.substring(0, 8);
-            } else {
-                newName = name;
-            }
-
-            list.add(newName + ": " + (we.isDead() ? ChatColor.DARK_RED + "DEAD" : healthColor + "❤ " + (int) we.getHealth()) + ChatColor.RESET + " / " + ChatColor.RED + "⚔ " + we.getMinuteStats()
-                                                                                                                                                                                   .total()
-                                                                                                                                                                                   .getKills());
+    public List<Component> getWaveScoreboard(WarlordsPlayer player) {
+        TextComponent.Builder waveScoreboard = Component.text();
+        waveScoreboard.append(Component.text("Wave: "))
+                      .append(Component.text(waveCounter, NamedTextColor.GREEN));
+        if (maxWave != Integer.MAX_VALUE) {
+            waveScoreboard.append(Component.text("/"))
+                          .append(Component.text(maxWave, NamedTextColor.GREEN));
         }
-
-        return list;
+        if (currentWave != null && currentWave.getMessage() != null) {
+            waveScoreboard.append(Component.text(" ("))
+                          .append(currentWave.getMessage())
+                          .append(Component.text(")"));
+        }
+        return Collections.singletonList(waveScoreboard.build());
     }
 
     public void newWave() {
         if (currentWave != null) {
-            String message;
+            TextComponent.Builder message = Component.text("Wave Complete!", NamedTextColor.GREEN).toBuilder();
             if (currentWave.getMessage() != null) {
-                message = ChatColor.GREEN + "Wave complete! (" + currentWave.getMessage() + ")";
-            } else {
-                message = ChatColor.GREEN + "Wave complete!";
+                message.append(Component.text(" ("))
+                       .append(currentWave.getMessage())
+                       .append(Component.text(")"));
             }
 
             for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
-                sendMessage(entry.getKey(), false, message);
-                entry.getKey().playSound(entry.getKey().getLocation(), Sound.LEVEL_UP, 500, 2);
+                sendMessage(entry.getKey(), false, message.build());
+                entry.getKey().playSound(entry.getKey().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
             }
         }
         waveCounter++;
@@ -274,77 +253,76 @@ public class WaveDefenseOption implements Option, PveOption {
             if (currentWave.getMessage() != null) {
                 sendMessage(entry.getKey(),
                         false,
-                        ChatColor.YELLOW + "A boss will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
+                        Component.text("A boss will spawn in ", NamedTextColor.YELLOW)
+                                 .append(Component.text(currentWave.getDelay() / 20, NamedTextColor.RED))
+                                 .append(Component.text(" seconds!"))
                 );
             } else {
                 sendMessage(entry.getKey(),
                         false,
-                        ChatColor.YELLOW + "A wave of §c§l" + spawns + "§e monsters will spawn in §c" + currentWave.getDelay() / 20 + " §eseconds!"
+                        Component.text("A wave of ", NamedTextColor.YELLOW)
+                                 .append(Component.text(spawns, NamedTextColor.RED, TextDecoration.BOLD))
+                                 .append(Component.text(" monsters will spawn in "))
+                                 .append(Component.text(currentWave.getDelay() / 20, NamedTextColor.RED))
+                                 .append(Component.text(" seconds!"))
                 );
             }
 
             float soundPitch = 0.8f;
-            String wavePrefix = "§eWave ";
-            if (waveCounter >= 10) {
-                soundPitch = 0.75f;
-                wavePrefix = "§eWave ";
-            }
-            if (waveCounter >= 25) {
-                soundPitch = 0.7f;
-                wavePrefix = "§6Wave ";
-            }
-            if (waveCounter >= 50) {
-                soundPitch = 0.65f;
-                wavePrefix = "§7Wave ";
-            }
-            if (waveCounter >= 60) {
-                soundPitch = 0.5f;
-                wavePrefix = "§8§lWave ";
-            }
-            if (waveCounter >= 70) {
-                soundPitch = 0.4f;
-                wavePrefix = "§d§lWave ";
-            }
-            if (waveCounter >= 80) {
-                soundPitch = 0.3f;
-                wavePrefix = "§5§lWave ";
-            }
-            if (waveCounter >= 90) {
-                soundPitch = 0.2f;
-                wavePrefix = "§5W§5§k§la§5§lve ";
-            }
-            if (waveCounter >= 100) {
-                soundPitch = 0.1f;
-                wavePrefix = "§4W§4§k§la§4§lve ";
-            }
+            Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
             if (waveCounter >= 101) {
-                wavePrefix = "§0W§0§k§la§0§lv§0§k§le§4§l ";
+                wavePrefix = Component.text("W ", NamedTextColor.BLACK)
+                                      .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                      .append(Component.text("v").decorate(TextDecoration.BOLD))
+                                      .append(Component.text("e " + waveCounter).decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED));
+            } else if (waveCounter == 100) {
+                soundPitch = 0.1f;
+                wavePrefix = Component.text("W", NamedTextColor.DARK_RED)
+                                      .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                      .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
+            } else if (waveCounter >= 90) {
+                soundPitch = 0.2f;
+                wavePrefix = Component.text("W", NamedTextColor.DARK_PURPLE)
+                                      .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                      .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
+            } else if (waveCounter >= 80) {
+                soundPitch = 0.3f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.DARK_PURPLE, TextDecoration.BOLD);
+            } else if (waveCounter >= 70) {
+                soundPitch = 0.4f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD);
+            } else if (waveCounter >= 60) {
+                soundPitch = 0.5f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.DARK_GRAY, TextDecoration.BOLD);
+            } else if (waveCounter >= 50) {
+                soundPitch = 0.65f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.GRAY);
+            } else if (waveCounter >= 25) {
+                soundPitch = 0.7f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.GOLD);
+            } else if (waveCounter >= 10) {
+                soundPitch = 0.75f;
+                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
             }
 
-            entry.getKey().playSound(entry.getKey().getLocation(), Sound.WITHER_SPAWN, 500, soundPitch);
-            PacketUtils.sendTitle(entry.getKey(), wavePrefix + waveCounter, "", 20, 60, 20);
+            entry.getKey().playSound(entry.getKey().getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, soundPitch);
+            entry.getKey().showTitle(Title.title(
+                    wavePrefix,
+                    Component.empty(),
+                    Title.Times.times(Ticks.duration(20), Ticks.duration(60), Ticks.duration(20))
+            ));
         }
         startSpawnTask();
     }
 
     public float getSpawnCountMultiplier(int playerCount) {
-        switch (playerCount) {
-            case 2:
-                return 1.25f;
-            case 3:
-            case 4:
-                return 1.5f;
-            case 5:
-                return 1.75f;
-            case 6:
-                return 2;
-            case 7:
-                return 2.25f;
-            case 8:
-                return 2.5f;
-        }
-
-        return 1;
+        return switch (playerCount) {
+            case 2 -> 1.25f;
+            case 3, 4 -> 1.5f;
+            case 5, 6 -> 2;
+            case 7, 8 -> 2.5f;
+            default -> 1;
+        };
     }
 
     public void startSpawnTask() {
@@ -393,43 +371,21 @@ public class WaveDefenseOption implements Option, PveOption {
 
             public WarlordsEntity spawn(Location loc) {
                 AbstractMob<?> abstractMob = currentWave.spawnRandomMonster(loc);
-                mobs.put(abstractMob, ticksElapsed.get());
                 WarlordsNPC npc = abstractMob.toNPC(game, team, UUID.randomUUID(), WaveDefenseOption.this::modifyStats);
+                mobs.put(abstractMob, ticksElapsed.get());
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
                 return npc;
             }
 
             private Location getSpawnLocation(WarlordsEntity entity) {
-                List<Location> candidates = new ArrayList<>();
-                double priority = Double.NEGATIVE_INFINITY;
-                for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
-                    if (entity == null) {
-                        return marker.getLocation();
-                    }
-                    if (candidates.isEmpty()) {
-                        candidates.add(marker.getLocation());
-                        priority = marker.getPriority(entity);
-                    } else {
-                        double newPriority = marker.getPriority(entity);
-                        if (newPriority >= priority) {
-                            if (newPriority > priority) {
-                                candidates.clear();
-                                priority = newPriority;
-                            }
-                            candidates.add(marker.getLocation());
-                        }
-                    }
-                }
-                if (!candidates.isEmpty()) {
-                    return candidates.get((int) (Math.random() * candidates.size()));
-                }
-                return lastLocation;
+                Location randomSpawnLocation = getRandomSpawnLocation(entity);
+                return randomSpawnLocation != null ? randomSpawnLocation : lastLocation;
             }
 
         }.runTaskTimer(currentWave.getDelay(), 8);
     }
 
-    private void modifyStats(WarlordsNPC warlordsNPC) {
+    protected void modifyStats(WarlordsNPC warlordsNPC) {
         warlordsNPC.getMob().onSpawn(WaveDefenseOption.this);
 
         boolean isEndless = difficulty == DifficultyIndex.ENDLESS;
@@ -457,22 +413,22 @@ public class WaveDefenseOption implements Option, PveOption {
         float difficultyHealthMultiplier;
         float difficultyDamageMultiplier;
         switch (difficulty) {
-            case EASY:
+            case EASY -> {
                 difficultyHealthMultiplier = 0.75f;
                 difficultyDamageMultiplier = 0.75f;
-                break;
-            case HARD:
+            }
+            case HARD -> {
                 difficultyHealthMultiplier = 1.5f;
                 difficultyDamageMultiplier = 1.5f;
-                break;
-            case EXTREME:
+            }
+            case EXTREME -> {
                 difficultyHealthMultiplier = 2;
                 difficultyDamageMultiplier = 1.75f;
-                break;
-            default:
+            }
+            default -> {
                 difficultyHealthMultiplier = 1;
                 difficultyDamageMultiplier = 1;
-                break;
+            }
         }
 
         // Final health value after applying all modifiers.
@@ -536,13 +492,13 @@ public class WaveDefenseOption implements Option, PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
-        return mobs;
+    public PveRewards<?> getRewards() {
+        return waveDefenseRewards;
     }
 
     @Override
-    public PveRewards<?> getRewards() {
-        return waveDefenseRewards;
+    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+        return mobs;
     }
 
     @Override
@@ -555,7 +511,7 @@ public class WaveDefenseOption implements Option, PveOption {
     public void start(@Nonnull Game game) {
         if (DatabaseManager.guildService != null) {
             HashMap<Guild, HashSet<UUID>> guilds = new HashMap<>();
-            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).collect(Collectors.toList());
+            List<UUID> uuids = game.playersWithoutSpectators().map(Map.Entry::getKey).toList();
             for (Guild guild : GuildManager.GUILDS) {
                 for (UUID uuid : uuids) {
                     Optional<GuildPlayer> guildPlayer = guild.getPlayerMatchingUUID(uuid);
@@ -564,10 +520,8 @@ public class WaveDefenseOption implements Option, PveOption {
                     }
                 }
             }
-            System.out.println(guilds);
             guilds.forEach((guild, validUUIDs) -> {
                 for (AbstractGuildUpgrade<?> upgrade : guild.getUpgrades()) {
-                    System.out.println("Upgrading " + upgrade.getUpgrade().getName() + " for " + validUUIDs.size() + " players");
                     upgrade.getUpgrade().onGame(game, validUUIDs, upgrade.getTier());
                 }
             });
@@ -590,20 +544,15 @@ public class WaveDefenseOption implements Option, PveOption {
 
                     if (difficulty == DifficultyIndex.ENDLESS) {
                         switch (waveCounter) {
-                            case 50:
-                            case 100:
-                                getGame().forEachOnlineWarlordsPlayer(wp -> {
-                                    wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
-                                    wp.sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "+1 Master Upgrade");
-                                });
-                                break;
+                            case 50, 75 -> getGame().forEachOnlineWarlordsPlayer(wp -> {
+                                wp.getAbilityTree().setMaxMasterUpgrades(wp.getAbilityTree().getMaxMasterUpgrades() + 1);
+                                wp.sendMessage(Component.text("+1 Master Upgrade", NamedTextColor.RED, TextDecoration.BOLD));
+                            });
                         }
                     }
                 }
 
-                for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
-                    mob.whileAlive(mobs.get(mob) - ticksElapsed.get(), WaveDefenseOption.this);
-                }
+                mobTick();
 
                 //check every 10 seconds for mobs in void
                 if (ticksElapsed.get() % 200 == 0) {
@@ -621,57 +570,6 @@ public class WaveDefenseOption implements Option, PveOption {
                 ticksElapsed.getAndIncrement();
             }
         }.runTaskTimer(20, 0);
-    }
-
-    @Override
-    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            WarlordsPlayer warlordsPlayer = (WarlordsPlayer) player;
-            if (player.getEntity() instanceof Player) {
-                game.setPlayerTeam((OfflinePlayer) player.getEntity(), Team.BLUE);
-                player.setTeam(Team.BLUE);
-                player.updateArmor();
-            }
-            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
-                //weapons
-                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                Optional<AbstractWeapon> optionalWeapon = pveStats
-                        .getWeaponInventory()
-                        .stream()
-                        .filter(AbstractWeapon::isBound)
-                        .filter(abstractWeapon -> abstractWeapon.getSpecializations() == player.getSpecClass())
-                        .findFirst();
-                optionalWeapon.ifPresent(abstractWeapon -> {
-                    warlordsPlayer.getCosmeticSettings().setWeaponSkin(abstractWeapon.getSelectedWeaponSkin());
-                    warlordsPlayer.setWeapon(abstractWeapon);
-                    abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
-                    player.updateEntity();
-                    player.getSpec().updateCustomStats();
-                });
-            });
-        }
-    }
-
-    @Override
-    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        AbstractWeapon weapon = warlordsPlayer.getWeapon();
-        if (weapon == null) {
-            WeaponOption.showWeaponStats(warlordsPlayer, player);
-        } else {
-            WeaponOption.showPvEWeapon(warlordsPlayer, player);
-        }
-
-        player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(ChatColor.GREEN + "Upgrade Talisman").get());
-        if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
-            ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
-        }
-    }
-
-    @Override
-    public void onSpecChange(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            ((WarlordsPlayer) player).resetAbilityTree();
-        }
     }
 
     public int getWavesCleared() {

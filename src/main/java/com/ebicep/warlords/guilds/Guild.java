@@ -15,10 +15,12 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.*;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -143,7 +145,7 @@ public class Guild {
 
     public void join(Player player) {
         addPlayer(player, getDefaultRole());
-        sendGuildMessageToOnlinePlayers(ChatColor.AQUA + player.getName() + ChatColor.GREEN + " has joined the guild!", true);
+        sendGuildMessageToOnlinePlayers(Component.text(player.getName(), NamedTextColor.AQUA).append(Component.text(" has joined the guild!", NamedTextColor.GREEN)), true);
         log(new GuildLogJoin(player.getUniqueId()));
         queueUpdate();
     }
@@ -157,9 +159,9 @@ public class Guild {
         return null;
     }
 
-    public void sendGuildMessageToOnlinePlayers(String message, boolean centered) {
+    public void sendGuildMessageToOnlinePlayers(Component message, boolean centered) {
         for (Player onlinePlayer : getOnlinePlayers()) {
-            ChatUtils.sendMessageToPlayer(onlinePlayer, message, ChatColor.GREEN, centered);
+            ChatUtils.sendMessageToPlayer(onlinePlayer, message, NamedTextColor.GREEN, centered);
         }
     }
 
@@ -181,27 +183,21 @@ public class Guild {
         this.defaultRole = defaultRole;
     }
 
-    public void sendGuildMessageWithEventsToOnlinePlayers(ComponentBuilder componentBuilder, boolean centered) {
-        for (Player onlinePlayer : getOnlinePlayers()) {
-            ChatUtils.sendMessageToPlayer(onlinePlayer, componentBuilder.create(), ChatColor.GREEN, centered);
-        }
-    }
-
-    public void sendGuildMessageToPlayer(Player player, String message, boolean centered) {
-        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, centered);
+    public void sendGuildMessageToPlayer(Player player, Component message, boolean centered) {
+        ChatUtils.sendMessageToPlayer(player, message, NamedTextColor.GREEN, centered);
     }
 
     public void leave(Player player) {
         this.players.removeIf(guildPlayer -> guildPlayer.getUUID().equals(player.getUniqueId()));
         this.guildPlayerUUIDCache.remove(player.getUniqueId());
-        sendGuildMessageToOnlinePlayers(ChatColor.AQUA + player.getName() + ChatColor.RED + " has left the guild!", true);
-        sendGuildMessage(player, ChatColor.RED + "You left the guild!");
+        sendGuildMessageToOnlinePlayers(Component.text(player.getName(), NamedTextColor.AQUA).append(Component.text(" has left the guild!", NamedTextColor.RED)), true);
+        sendGuildMessage(player, Component.text("You left the guild!", NamedTextColor.RED));
         log(new GuildLogLeave(player.getUniqueId()));
         queueUpdate();
     }
 
-    public static void sendGuildMessage(Player player, String message) {
-        ChatUtils.sendMessageToPlayer(player, message, ChatColor.GREEN, true);
+    public static void sendGuildMessage(Player player, Component message) {
+        ChatUtils.sendMessageToPlayer(player, message, NamedTextColor.GREEN, true);
     }
 
     public void transfer(GuildPlayer guildPlayer) {
@@ -212,7 +208,9 @@ public class Guild {
         roles.get(getRoleLevel(guildPlayer)).getPlayers().remove(guildPlayer.getUUID());
         roles.get(0).getPlayers().add(guildPlayer.getUUID());
         this.currentMaster = guildPlayer.getUUID();
-        sendGuildMessageToOnlinePlayers(ChatColor.GREEN + "The guild was transferred to " + ChatColor.AQUA + guildPlayer.getName(), true);
+        sendGuildMessageToOnlinePlayers(Component.text("The guild was transferred to ", NamedTextColor.GREEN).append(Component.text(guildPlayer.getName(), NamedTextColor.AQUA)),
+                true
+        );
         log(new GuildLogTransfer(oldMaster, currentMaster));
         queueUpdate();
     }
@@ -230,7 +228,7 @@ public class Guild {
         getRoleOfPlayer(target.getUUID()).getPlayers().remove(target.getUUID());
         this.players.removeIf(player -> player.getUUID().equals(target.getUUID()));
         this.guildPlayerUUIDCache.remove(target.getUUID());
-        sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.RED + " was kicked from the guild!", true);
+        sendGuildMessageToOnlinePlayers(Component.text(target.getName(), NamedTextColor.AQUA).append(Component.text(" was kicked from the guild!", NamedTextColor.RED)), true);
         log(new GuildLogKick(sender.getUUID(), target.getUUID()));
         queueUpdate();
     }
@@ -249,8 +247,11 @@ public class Guild {
             if (roles.get(i).getPlayers().contains(target.getUUID())) {
                 roles.get(i).getPlayers().remove(target.getUUID());
                 roles.get(i - 1).getPlayers().add(target.getUUID());
-                sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been promoted to " + roles.get(i - 1)
-                                                                                                                                      .getRoleName(), true);
+                sendGuildMessageToOnlinePlayers(Component.text(target.getName(), NamedTextColor.AQUA)
+                                                         .append(Component.text(" has been promoted to " + roles.get(i - 1).getRoleName(), NamedTextColor.GREEN)),
+                        true
+                );
+
                 log(new GuildLogPromote(sender.getUUID(),
                         target.getUUID(),
                         roles.get(i).getRoleName(),
@@ -269,8 +270,10 @@ public class Guild {
             if (roles.get(i).getPlayers().contains(target.getUUID())) {
                 roles.get(i).getPlayers().remove(target.getUUID());
                 roles.get(i + 1).getPlayers().add(target.getUUID());
-                sendGuildMessageToOnlinePlayers(ChatColor.AQUA + target.getName() + ChatColor.GREEN + " has been demoted to " + roles.get(i + 1)
-                                                                                                                                     .getRoleName(), true);
+                sendGuildMessageToOnlinePlayers(Component.text(target.getName(), NamedTextColor.AQUA)
+                                                         .append(Component.text(" has been demoted to " + roles.get(i + 1).getRoleName(), NamedTextColor.RED)),
+                        true
+                );
                 log(new GuildLogDemote(sender.getUUID(),
                         target.getUUID(),
                         roles.get(i).getRoleName(),
@@ -287,35 +290,46 @@ public class Guild {
     public void disband() {
         this.disbandDate = Instant.now();
         GuildManager.removeGuild(this);
-        sendGuildMessageToOnlinePlayers(ChatColor.RED + "The guild has been disbanded!", true);
+        sendGuildMessageToOnlinePlayers(Component.text("The guild has been disbanded!", NamedTextColor.RED), true);
         queueUpdate();
     }
 
-    public String getList() {
-        StringBuilder sb = new StringBuilder(ChatColor.GREEN + "------------------------------------------\n");
-        sb.append(ChatColor.GOLD).append(" Guild Name: ").append(this.name).append("\n \n");
+    public Component getList() {
+        TextComponent.Builder list = Component.text("------------------------------------------", NamedTextColor.GREEN)
+                                              .append(Component.newline())
+                                              .toBuilder();
+        list.append(Component.text(" Guild Name: " + this.name, NamedTextColor.GOLD))
+            .append(Component.newline())
+            .append(Component.newline())
+            .append(Component.space());
         for (GuildRole role : this.roles) {
             if (role.getPlayers().isEmpty()) {
                 continue;
             }
-            sb.append(ChatColor.GREEN).append(ChatColor.BOLD).append(" = ").append(role.getRoleName()).append(" =\n ");
+            list.append(Component.text(" = " + role.getRoleName() + " = ", NamedTextColor.GREEN, TextDecoration.BOLD));
+            list.append(Component.newline());
             List<GuildPlayer> guildPlayers = players.stream()
                                                     .filter(player -> role.getPlayers().contains(player.getUUID()))
-                                                    .collect(Collectors.toList());
+                                                    .toList();
             for (int i = 0, guildPlayersSize = guildPlayers.size(); i < guildPlayersSize; i++) {
                 GuildPlayer player = guildPlayers.get(i);
-                sb.append(player.getListName()).append(" ");
+                list.append(player.getListName()).append(Component.text(" "));
                 if (i % 4 == 0 && i != 0) {
-                    sb.append("\n ");
+                    list.append(Component.newline())
+                        .append(Component.space());
                 }
             }
-            sb.append("\n \n");
+            list.append(Component.newline());
         }
-        sb.append(" \n");
-        sb.append(ChatColor.YELLOW).append(" Total Players: ").append(ChatColor.GREEN).append(this.players.size()).append("\n");
-        sb.append(ChatColor.YELLOW).append(" Online Players: ").append(ChatColor.GREEN).append(this.getOnlinePlayers().size()).append("\n");
-        sb.append(ChatColor.GREEN).append("------------------------------------------\n");
-        return sb.toString();
+        list.append(Component.newline());
+        list.append(Component.text(" Total Players: ", NamedTextColor.YELLOW))
+            .append(Component.text(this.players.size(), NamedTextColor.GREEN))
+            .append(Component.newline());
+        list.append(Component.text(" Online Players: ", NamedTextColor.YELLOW))
+            .append(Component.text(this.getOnlinePlayers().size(), NamedTextColor.GREEN))
+            .append(Component.newline());
+        list.append(Component.text("------------------------------------------", NamedTextColor.GREEN));
+        return list.build();
     }
 
     public List<Player> getOnlinePlayersWithPermission(GuildPermissions permission) {
@@ -356,7 +370,7 @@ public class Guild {
 
     public void setName(String name) {
         this.name = name;
-        sendGuildMessageToOnlinePlayers(ChatColor.GREEN + "The guild name was changed to " + ChatColor.GOLD + name, true);
+        sendGuildMessageToOnlinePlayers(Component.text("The guild name was changed to ", NamedTextColor.GREEN).append(Component.text(name, NamedTextColor.GOLD)), true);
     }
 
     public GuildTag getTag() {
@@ -378,7 +392,7 @@ public class Guild {
             this.tag.setName(tagName);
             log(new GuildLogTagChangeName(sender.getUUID(), oldName, tagName));
         }
-        sendGuildMessageToOnlinePlayers(ChatColor.GREEN + "The guild tag was changed to " + ChatColor.GOLD + tagName, true);
+        sendGuildMessageToOnlinePlayers(Component.text("The guild tag was changed to ", NamedTextColor.GREEN).append(Component.text(tagName, NamedTextColor.GOLD)), true);
         queueUpdate();
         CustomScoreboard.updateLobbyPlayerNames();
     }
@@ -406,9 +420,7 @@ public class Guild {
     public void setOpen(boolean open) {
         if (this.open != open) {
             this.open = open;
-            sendGuildMessageToOnlinePlayers((open ? ChatColor.GREEN : ChatColor.RED) + "The guild is now " + (open ? "open" : "closed"),
-                    true
-            );
+            sendGuildMessageToOnlinePlayers(Component.text("The guild is now " + (open ? "open" : "closed"), open ? NamedTextColor.GREEN : NamedTextColor.RED), true);
             queueUpdate();
         }
     }
@@ -420,9 +432,7 @@ public class Guild {
     public void setMuted(GuildPlayer sender, boolean muted) {
         if (this.muted != muted) {
             this.muted = muted;
-            sendGuildMessageToOnlinePlayers((muted ? ChatColor.RED : ChatColor.GREEN) + "The guild is now " + (muted ? "muted" : "unmuted"),
-                    true
-            );
+            sendGuildMessageToOnlinePlayers(Component.text("The guild is now " + (muted ? "muted" : "unmuted"), (muted ? NamedTextColor.RED : NamedTextColor.GREEN)), true);
             if (muted) {
                 log(new GuildLogMuteGuild(sender.getUUID()));
             } else {
@@ -519,25 +529,23 @@ public class Guild {
     }
 
     public void printAuditLog(Player player, int page) {
-        int maxLogPage = auditLog.size() / LOG_PER_PAGE + 1;
+        int maxLogPage = auditLog.size() / LOG_PER_PAGE + (auditLog.size() % LOG_PER_PAGE == 0 ? 0 : 1);
         if (page < 1) {
             page = 1;
         } else if (page > maxLogPage) {
             page = maxLogPage;
 
         }
-        StringBuilder log = new StringBuilder(ChatColor.GOLD + "Guild Log (" + page + "/" + maxLogPage + ")\n");
-        auditLog.stream()
-                .skip((page - 1) * LOG_PER_PAGE)
-                .limit(LOG_PER_PAGE)
-                .forEach(guildLog -> log.append(ChatColor.GRAY).append(guildLog.getFormattedLog()).append("\n"));
-        if (log.length() > 0) {
-            log.setLength(log.length() - 1);
-        }
         ChatUtils.sendMessageToPlayer(
                 player,
-                log.toString(),
-                ChatColor.GREEN,
+                Component.text("Guild Log (" + page + "/" + maxLogPage + ")", NamedTextColor.GOLD)
+                         .append(Component.newline())
+                         .append(auditLog.stream()
+                                         .skip((page - 1) * LOG_PER_PAGE)
+                                         .limit(LOG_PER_PAGE)
+                                         .map(AbstractGuildLog::getFormattedLog)
+                                         .collect(Component.toComponent(Component.newline()))),
+                NamedTextColor.GREEN,
                 false
         );
     }
@@ -550,9 +558,10 @@ public class Guild {
         if (motd == null || motd.isEmpty()) {
             return;
         }
-        player.sendMessage(ChatColor.GREEN.toString() + ChatColor.BOLD + "---------- Guild Message of the Day ----------");
+        player.sendMessage(Component.text("---------- Guild Message of the Day ----------", NamedTextColor.GREEN, TextDecoration.BOLD));
         motd.forEach(player::sendMessage);
-        player.sendMessage(ChatColor.GREEN.toString() + ChatColor.BOLD + "-------------------------------------------");
+        player.sendMessage(Component.text("-------------------------------------------", NamedTextColor.GREEN, TextDecoration.BOLD));
+
     }
 
     public Map<GameEvents, Map<Long, Long>> getEventStats() {

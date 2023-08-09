@@ -1,5 +1,6 @@
 package com.ebicep.warlords.guilds.upgrades.temporary;
 
+import com.ebicep.warlords.events.EventFlags;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsCoinSummaryEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.guilds.upgrades.GuildUpgrade;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.time.Instant;
@@ -72,9 +74,12 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
         public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
             game.registerEvents(new Listener() {
 
-                @EventHandler
+                @EventHandler(priority = EventPriority.HIGHEST)
                 public void onEvent(WarlordsAddCurrencyEvent event) {
                     if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
+                        return;
+                    }
+                    if (!event.getEventFlags().contains(EventFlags.GUILD)) {
                         return;
                     }
                     event.getCurrencyToAdd().set((int) (event.getCurrencyToAdd().get() * getValueFromTier(tier)));
@@ -86,7 +91,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     WEAPON_DROP_RATE(
             "Weapon Drop Rate",
             "Increases the chance of a mob dropping a weapon",
-            Material.WOOD_AXE,
+            Material.WOODEN_AXE,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
         @Override
@@ -103,9 +108,12 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
         public void onGame(Game game, HashSet<UUID> validUUIDs, int tier) {
             game.registerEvents(new Listener() {
 
-                @EventHandler
+                @EventHandler(priority = EventPriority.HIGHEST)
                 public void onEvent(WarlordsDropWeaponEvent event) {
                     if (!validUUIDs.contains(event.getWarlordsEntity().getUuid())) {
+                        return;
+                    }
+                    if (!event.getEventFlags().contains(EventFlags.GUILD)) {
                         return;
                     }
                     event.addModifier(getValueFromTier(tier));
@@ -117,7 +125,7 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     RESPAWN_TIME_REDUCTION(
             "Respawn Time Reduction",
             "Reduces the time it takes to respawn",
-            Material.WATCH,
+            Material.CLOCK,
             start -> start.plus(24, ChronoUnit.HOURS)
     ) {
         @Override
@@ -182,28 +190,18 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
     }
 
     public long getCost(int tier) {
-        switch (tier) {
-            case 1:
-                return 1000;
-            case 2:
-                return 2000;
-            case 3:
-                return 4000;
-            case 4:
-                return 8000;
-            case 5:
-                return 12000;
-            case 6:
-                return 18000;
-            case 7:
-                return 27000;
-            case 8:
-                return 40500;
-            case 9:
-                return 60750;
-            default:
-                return Long.MAX_VALUE;
-        }
+        return switch (tier) {
+            case 1 -> 1000;
+            case 2 -> 2000;
+            case 3 -> 4000;
+            case 4 -> 8000;
+            case 5 -> 12000;
+            case 6 -> 18000;
+            case 7 -> 27000;
+            case 8 -> 40500;
+            case 9 -> 60750;
+            default -> Long.MAX_VALUE;
+        };
     }
 
 }

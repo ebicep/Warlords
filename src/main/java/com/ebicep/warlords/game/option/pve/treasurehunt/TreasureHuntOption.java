@@ -3,7 +3,6 @@ package com.ebicep.warlords.game.option.pve.treasurehunt;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -15,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TreasureHuntOption implements Option, PveOption {
+public class TreasureHuntOption implements PveOption {
 
     private Game game;
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();

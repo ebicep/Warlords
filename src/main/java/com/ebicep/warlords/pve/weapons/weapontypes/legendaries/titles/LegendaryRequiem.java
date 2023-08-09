@@ -1,8 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.abilties.UndyingArmy;
+import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -18,13 +17,17 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
+import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
-import com.ebicep.warlords.util.java.Utils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
-import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -89,7 +92,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 int alliedNPCs = (int) game.warlordsNPCs()
                                            .filter(warlordsNPC -> warlordsNPC.isTeammate(player))
                                            .count();
-                int spawnAmount = Utils.generateRandomValueBetweenInclusive(1, 3);
+                int spawnAmount = JavaUtils.generateRandomValueBetweenInclusive(1, 3);
                 if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
                     spawnAmount = SPAWN_LIMIT - alliedNPCs;
                 }
@@ -103,7 +106,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                                                                  .limit(spawnAmount)
                                                                  .toList();
                 toConvert.forEach(convertedEnemy -> {
-                    EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, ParticleEffect.VILLAGER_HAPPY, 1);
+                    EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, Particle.VILLAGER_HAPPY, 1);
                     convertedEnemy.setTeam(Team.BLUE);
                     AbstractMob<?> mob = convertedEnemy.getMob();
                     updateMobEquipment(mob, player);
@@ -111,7 +114,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                        .aliveTeammatesOf(player)
                                        .filter(teammate -> {
-                                           EntityLiving target = teammate.getMob().getTarget();
+                                           LivingEntity target = teammate.getMob().getTarget();
                                            return target != null && Objects.equals(target.getBukkitEntity(), convertedEnemy.getEntity());
                                        })
                                        .forEach(teammate -> teammate.getMob().removeTarget());
@@ -149,10 +152,10 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     return;
                 }
                 if (player.isSneaking()) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, .5f + .05f * shiftTickTime);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, .5f + .05f * shiftTickTime);
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         allSpawnedMobs.forEach(mob -> {
                             if (pveOption.getMobs().contains(mob)) {
                                 mob.getWarlordsNPC().die(mob.getWarlordsNPC());
@@ -177,7 +180,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 if (spawnAmount <= 0) {
                     return;
                 }
-                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                 HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
                     AbstractMob<?> mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mobs.BASIC_PIG_ZOMBIE).createMob.apply(player.getLocation());
@@ -213,10 +216,11 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Every " + formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s") +
-                " summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies. " +
-                "Shift for 1 second to remove all summoned mobs.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Every ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s"))
+                        .append(Component.text(" summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies. " +
+                                "Shift for 1 second to remove all summoned mobs."));
     }
 
     @Override
@@ -255,7 +259,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Collections.singletonList(new Pair<>(
                 formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s"),
                 formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "s")

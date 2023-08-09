@@ -10,8 +10,9 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
-import com.ebicep.warlords.util.java.Utils;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.java.JavaUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -53,11 +54,11 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
 
     @Override
     public void generateStats() {
-        this.meleeDamage = Utils.generateRandomValueBetweenInclusive(MELEE_DAMAGE_MIN, MELEE_DAMAGE_MAX - getMeleeDamageRange());
-        this.critChance = Utils.generateRandomValueBetweenInclusive(CRIT_CHANCE_MIN, CRIT_CHANCE_MAX);
-        this.critMultiplier = Utils.generateRandomValueBetweenInclusive(CRIT_MULTIPLIER_MIN, CRIT_MULTIPLIER_MAX);
-        this.healthBonus = Utils.generateRandomValueBetweenInclusive(HEALTH_BONUS_MIN, HEALTH_BONUS_MAX);
-        this.speedBonus = Utils.generateRandomValueBetweenInclusive(SPEED_BONUS_MIN, SPEED_BONUS_MAX);
+        this.meleeDamage = JavaUtils.generateRandomValueBetweenInclusive(MELEE_DAMAGE_MIN, MELEE_DAMAGE_MAX - getMeleeDamageRange());
+        this.critChance = JavaUtils.generateRandomValueBetweenInclusive(CRIT_CHANCE_MIN, CRIT_CHANCE_MAX);
+        this.critMultiplier = JavaUtils.generateRandomValueBetweenInclusive(CRIT_MULTIPLIER_MIN, CRIT_MULTIPLIER_MAX);
+        this.healthBonus = JavaUtils.generateRandomValueBetweenInclusive(HEALTH_BONUS_MIN, HEALTH_BONUS_MAX);
+        this.speedBonus = JavaUtils.generateRandomValueBetweenInclusive(SPEED_BONUS_MIN, SPEED_BONUS_MAX);
     }
 
     @Override
@@ -77,22 +78,23 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     }
 
     @Override
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return Arrays.asList(
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(getSpeedBonus()) + "%",
-                "",
+                Component.text("Speed: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(getSpeedBonus()) + "%", NamedTextColor.GREEN)),
+                Component.empty(),
                 getWeaponScoreString()
         );
     }
 
     @Override
-    public List<String> getLoreAddons() {
-        return Collections.singletonList(ChatColor.LIGHT_PURPLE + "Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]");
+    public List<Component> getLoreAddons() {
+        return Collections.singletonList(Component.text("Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]", NamedTextColor.LIGHT_PURPLE));
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.DARK_PURPLE;
+    public NamedTextColor getTextColor() {
+        return NamedTextColor.DARK_PURPLE;
     }
 
     public float getSpeedBonus() {
@@ -108,23 +110,38 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     }
 
     @Override
-    public List<String> getUpgradeLore() {
+    public List<Component> getUpgradeLore() {
         float upgradedMeleeDamage = meleeDamage * (meleeDamage < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier());
         return Arrays.asList(
-                ChatColor.GRAY + "Damage: " + ChatColor.RED +
-                        formatOptionalTenths(meleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(meleeDamage + getMeleeDamageRange()) +
-                        ChatColor.GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(upgradedMeleeDamage) + ChatColor.GRAY + " - " + ChatColor.RED + formatOptionalTenths(
-                        upgradedMeleeDamage + getMeleeDamageRange()),
-                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + formatOptionalTenths(critChance) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(critChance) + "%",
-                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + formatOptionalTenths(critMultiplier) + "%" + ChatColor.GREEN + " > " +
-                        ChatColor.RED + formatOptionalTenths(critMultiplier) + "%",
-                "",
-                ChatColor.GRAY + "Health: " + ChatColor.GREEN + format(healthBonus) + " > " +
-                        format(healthBonus * (healthBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())),
-                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + format(speedBonus) + "%" + " > " +
-                        format(speedBonus * (speedBonus < 0 ? getUpgradeMultiplierNegative() : getUpgradeMultiplier())) + "%"
+                Component.text("Damage: ", NamedTextColor.GRAY)
+                         .append(Component.text(formatOptionalTenths(meleeDamage), NamedTextColor.RED))
+                         .append(Component.text(" - "))
+                         .append(Component.text(formatOptionalTenths(meleeDamage + getMeleeDamageRange()), NamedTextColor.RED))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(formatOptionalTenths(upgradedMeleeDamage), NamedTextColor.RED))
+                         .append(Component.text(" - "))
+                         .append(Component.text(formatOptionalTenths(upgradedMeleeDamage + getMeleeDamageRange()), NamedTextColor.RED)),
+                Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                         .append(Component.text(formatOptionalTenths(critChance) + "%", NamedTextColor.RED))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(formatOptionalTenths(critChance) + "%", NamedTextColor.RED)),
+                Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                         .append(Component.text(formatOptionalTenths(critMultiplier) + "%", NamedTextColor.RED))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(formatOptionalTenths(critMultiplier) + "%", NamedTextColor.RED)),
+                Component.empty(),
+                Component.text("Health: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(healthBonus), NamedTextColor.GREEN))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(format(healthBonus * (healthBonus > 0 ?
+                                                                      getUpgradeMultiplier() :
+                                                                      getUpgradeMultiplierNegative())), NamedTextColor.GREEN)),
+                Component.text("Speed: ", NamedTextColor.GRAY)
+                         .append(Component.text(format(speedBonus) + "%", NamedTextColor.GREEN))
+                         .append(GREEN_ARROW)
+                         .append(Component.text(format(speedBonus * (speedBonus > 0 ?
+                                                                     getUpgradeMultiplier() :
+                                                                     getUpgradeMultiplierNegative())) + "%", NamedTextColor.GREEN))
         );
     }
 

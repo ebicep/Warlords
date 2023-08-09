@@ -9,7 +9,8 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Comparator;
 
@@ -22,9 +23,9 @@ public class TutorialCommand extends BaseCommand {
         Game game = warlordsPlayer.getGame();
         if (game.isState(PlayingState.class)) {
             game.setNextState(new EndState(game, null));
-            warlordsPlayer.sendMessage(ChatColor.GREEN + "Tutorial skipped!");
+            warlordsPlayer.sendMessage(Component.text("Tutorial skipped!", NamedTextColor.GREEN));
         } else {
-            warlordsPlayer.sendMessage(ChatColor.RED + "You can only skip the tutorial when you are in the tutorial!");
+            warlordsPlayer.sendMessage(Component.text("You can only skip the tutorial when you are in the tutorial!", NamedTextColor.RED));
         }
     }
 
@@ -32,7 +33,7 @@ public class TutorialCommand extends BaseCommand {
     @Description("Aborts the tutorial")
     public void abortTutorial(@Conditions("requireGame:gamemode=TUTORIAL") WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.getGame().close();
-        warlordsPlayer.sendMessage(ChatColor.GREEN + "Tutorial aborted!");
+        warlordsPlayer.sendMessage(Component.text("Tutorial aborted!", NamedTextColor.GREEN));
     }
 
     @HelpCommand

@@ -20,6 +20,7 @@ public class WarlordsGiveExperienceEvent extends AbstractWarlordsEntityEvent {
         return experienceSummary;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

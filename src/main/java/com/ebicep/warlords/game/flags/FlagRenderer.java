@@ -4,7 +4,10 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -12,16 +15,17 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.material.Banner;
-import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -30,13 +34,13 @@ import java.util.List;
 import static org.bukkit.block.BlockFace.*;
 
 public class FlagRenderer {
-	
+
     private final FlagInfo info;
-    private int timer = 0;
     private final List<Player> affectedPlayers = new ArrayList<>();
     private final List<Entity> renderedArmorStands = new ArrayList<>();
     private final List<Block> renderedBlocks = new ArrayList<>();
     private final List<Runnable> runningTasksCancel = new ArrayList<>();
+    private int timer = 0;
     private FlagLocation lastLocation;
 
     public FlagRenderer(FlagInfo info) {
@@ -53,6 +57,7 @@ public class FlagRenderer {
 
     /**
      * Returns the last state rendered, could be null
+     *
      * @return
      */
     @Nullable
@@ -67,7 +72,13 @@ public class FlagRenderer {
         if (timer <= 0 && !(info.getFlag() instanceof WaitingFlagLocation)) {
             timer = 20;
             float offset = info.getFlag() instanceof PlayerFlagLocation ? 1.5F : 0.5F;
-            info.getFlag().getLocation().getWorld().playEffect(info.getFlag().getLocation().clone().add(0, offset, 0), Effect.STEP_SOUND, info.getTeam() == Team.RED ? Material.REDSTONE_BLOCK.getId() : Material.LAPIS_BLOCK.getId());
+            info.getFlag()
+                .getLocation()
+                .getWorld()
+                .playEffect(info.getFlag().getLocation().clone().add(0, offset, 0),
+                        Effect.STEP_SOUND,
+                        info.getTeam() == Team.RED ? Material.REDSTONE_BLOCK : Material.LAPIS_BLOCK
+                );
         }
         timer--;
     }
@@ -80,20 +91,18 @@ public class FlagRenderer {
         Warlords plugin = Warlords.getInstance();
         if (this.lastLocation instanceof GroundFlagLocation || this.lastLocation instanceof SpawnFlagLocation) {
             Block block = this.lastLocation.getLocation().getBlock();
-            for (int i = 0; !block.isEmpty() && block.getType() != Material.STANDING_BANNER && i < 4; i++) {
+            for (int i = 0; !block.isEmpty() && !(block.getState() instanceof org.bukkit.block.Banner) && i < 4; i++) {
                 block = block.getRelative(0, 1, 0);
             }
-            if (block.isEmpty() || block.getType() == Material.STANDING_BANNER) {
+            if (block.isEmpty() || block.getState() instanceof org.bukkit.block.Banner) {
                 renderedBlocks.add(block);
-                block.setType(Material.STANDING_BANNER);
+                block.setType(info.getTeam() == Team.BLUE ? Material.BLUE_BANNER : Material.RED_BANNER);
                 org.bukkit.block.Banner banner = (org.bukkit.block.Banner) block.getState();
-                banner.setBaseColor(info.getTeam() == Team.BLUE ? DyeColor.BLUE : DyeColor.RED);
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
                 banner.update();
-                MaterialData newData = block.getState().getData();
                 Vector target = this.lastLocation.getLocation().getDirection();
-                Vector toTest = new Vector(0,0,0);
+                Vector toTest = new Vector(0, 0, 0);
                 BlockFace dir = SOUTH;
                 double distance = Double.MAX_VALUE;
                 for (BlockFace face : new BlockFace[]{
@@ -123,43 +132,42 @@ public class FlagRenderer {
                         distance = newDistance;
                     }
                 }
-                ((Banner) newData).setFacingDirection(dir);
-                block.setData(newData.getData());
+                @NotNull BlockData newData = block.getState().getBlockData();
+                if (newData instanceof Rotatable rotatable) {
+                    rotatable.setRotation(dir);
+                    block.setBlockData(newData);
+                }
             }
 
-            ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, 0, .5), ArmorStand.class);
-            renderedArmorStands.add(stand);
-            stand.setGravity(false);
-            stand.setCanPickupItems(false);
-            stand.setCustomName(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "" + ChatColor.BOLD + "BLU FLAG" : ChatColor.RED + "" + ChatColor.BOLD + "RED FLAG");
-            stand.setCustomNameVisible(true);
-            stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
-            stand.setVisible(false);
+            ArmorStand flag = Utils.spawnArmorStand(block.getLocation().add(.5, 0, .5), armorStand -> {
+                armorStand.customName(Component.text(info.getTeam() == Team.BLUE ? "BLU FLAG" : "RED FLAG",
+                        info.getTeam() == Team.BLUE ? NamedTextColor.BLUE : NamedTextColor.RED,
+                        TextDecoration.BOLD
+                ));
+                armorStand.setCustomNameVisible(true);
+                armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
+            });
+            renderedArmorStands.add(flag);
 
-            ArmorStand stand1 = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, -0.3, .5), ArmorStand.class);
-            renderedArmorStands.add(stand1);
-            stand1.setGravity(false);
-            stand1.setCanPickupItems(false);
-            stand1.setCustomName(ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT");
-            stand1.setCustomNameVisible(true);
-            stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
-            stand1.setVisible(false);
+            ArmorStand flagInteract = Utils.spawnArmorStand(block.getLocation().add(.5, -0.3, .5), armorStand -> {
+                armorStand.customName(Component.text("LEFT-CLICK TO STEAL IT", NamedTextColor.WHITE, TextDecoration.BOLD));
+                armorStand.setCustomNameVisible(true);
+                armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
+            });
+            renderedArmorStands.add(flagInteract);
 
-        } else if (this.lastLocation instanceof PlayerFlagLocation) {
-            PlayerFlagLocation flag = (PlayerFlagLocation) this.lastLocation;
+        } else if (this.lastLocation instanceof PlayerFlagLocation flag) {
             runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier(flag.getPlayer(), "FLAG", -20, 0, true));
             LivingEntity entity = ((PlayerFlagLocation) this.lastLocation).getPlayer().getEntity();
-            if (entity instanceof Player) {
-                Player player = (Player)entity;
+            if (entity instanceof Player player) {
                 this.affectedPlayers.add(player);
-                ItemStack item = new ItemStack(Material.BANNER);
+                ItemStack item = new ItemStack(info.getTeam() == Team.BLUE ? Material.BLUE_BANNER : Material.RED_BANNER);
                 BannerMeta banner = (BannerMeta) item.getItemMeta();
-                banner.setBaseColor(info.getTeam() == Team.BLUE ? DyeColor.BLUE : DyeColor.RED);
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
                 item.setItemMeta(banner);
                 player.getInventory().setHelmet(item);
-                player.getInventory().setItem(6, new ItemBuilder(Material.BANNER, 1).name("§aDrop Flag").get());
+                player.getInventory().setItem(6, new ItemBuilder(Material.BLACK_BANNER, 1).name(Component.text("Drop Flag", NamedTextColor.GREEN)).get());
             }
         }
     }

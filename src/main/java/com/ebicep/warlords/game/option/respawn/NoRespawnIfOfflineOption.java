@@ -7,10 +7,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
+
 public class NoRespawnIfOfflineOption implements Option, Listener {
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         game.registerEvents(this);
     }
 

@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.flags;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -29,15 +31,16 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
     }
 
     @Override
-    public FlagLocation update(FlagInfo info) {
+    public FlagLocation update(@Nonnull FlagInfo info) {
         return null;
     }
 
+    @Nonnull
     @Override
-    public List<String> getDebugInformation() {
+    public List<TextComponent> getDebugInformation() {
         return Arrays.asList(
-                "Type: " + this.getClass().getSimpleName(),
-                "lastToucher: " + flagReturner
+                Component.text("Type: " + this.getClass().getSimpleName()),
+                Component.text("lastToucher: " + flagReturner)
         );
     }
 

@@ -1,7 +1,9 @@
 package com.ebicep.warlords.pve.items.modifiers;
 
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class ItemBucklerModifier {
 
@@ -25,18 +27,24 @@ public class ItemBucklerModifier {
         }
 
         @Override
-        public String getDescription() {
+        public TextComponent getDescription() {
             return getDescriptionCalculated((ordinal() + 1) * getIncreasePerTier());
         }
 
         @Override
-        public String getDescriptionCalculated(float amount) {
-            return ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%" + ChatColor.GRAY + " Weight";
+        public TextComponent getDescriptionCalculated(float amount) {
+            return Component.textOfChildren(
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%", NamedTextColor.GREEN),
+                    Component.text(" Weight", NamedTextColor.GRAY)
+            );
         }
 
         @Override
-        public String getDescriptionCalculatedInverted(float amount) {
-            return ChatColor.GRAY + "Weight: " + ChatColor.GREEN + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%";
+        public TextComponent getDescriptionCalculatedInverted(float amount) {
+            return Component.textOfChildren(
+                    Component.text("Weight: ", NamedTextColor.GRAY),
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%", NamedTextColor.GREEN)
+            );
         }
 
         @Override
@@ -65,18 +73,24 @@ public class ItemBucklerModifier {
         }
 
         @Override
-        public String getDescription() {
+        public TextComponent getDescription() {
             return getDescriptionCalculated(-(ordinal() + 1) * getIncreasePerTier());
         }
 
         @Override
-        public String getDescriptionCalculated(float amount) {
-            return ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%" + ChatColor.GRAY + " Weight";
+        public TextComponent getDescriptionCalculated(float amount) {
+            return Component.textOfChildren(
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%", NamedTextColor.RED),
+                    Component.text(" Weight", NamedTextColor.GRAY)
+            );
         }
 
         @Override
-        public String getDescriptionCalculatedInverted(float amount) {
-            return ChatColor.GRAY + "Weight: " + ChatColor.RED + NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%";
+        public TextComponent getDescriptionCalculatedInverted(float amount) {
+            return Component.textOfChildren(
+                    Component.text("Weight: ", NamedTextColor.GRAY),
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX_INVERSE.format(amount) + "%", NamedTextColor.RED)
+            );
         }
 
         @Override

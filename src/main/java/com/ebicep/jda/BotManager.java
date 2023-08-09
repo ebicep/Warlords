@@ -6,6 +6,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.ServerStatusCommand;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -14,7 +15,7 @@ import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.party.PartyManager;
-import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.java.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -107,8 +108,10 @@ public class BotManager {
             if (game == null) {
                 continue;
             }
-            if (game.getState() instanceof PreLobbyState) {
-                PreLobbyState state = (PreLobbyState) game.getState();
+            if (game.getGameMode() == GameMode.LOBBY) {
+                continue;
+            }
+            if (game.getState() instanceof PreLobbyState state) {
                 if (!state.hasEnoughPlayers()) {
                     eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
                                                                                                       .getMapName() + " Lobby - Waiting for players\n");
@@ -118,7 +121,7 @@ public class BotManager {
                 }
             } else if (game.getState() instanceof PlayingState) {
                 OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
-                String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
+                String time = StringUtils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
                 boolean pve = false;
                 for (Option option : game.getOptions()) {
@@ -129,8 +132,7 @@ public class BotManager {
                     eb.appendDescription("**Game**: " + game.getGameMode().name + " - " +
                             game.getMap().getMapName() + " - " +
                             time + word);
-                    if (option instanceof WaveDefenseOption) {
-                        WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+                    if (option instanceof WaveDefenseOption waveDefenseOption) {
                         eb.appendDescription(" - " +
                                 waveDefenseOption.getDifficulty().getName() + " - Wave " + waveDefenseOption.getWaveCounter() + "\n");
                     } else {
@@ -139,9 +141,10 @@ public class BotManager {
                     break;
                 }
                 if (!pve) {
-                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " + game.getMap()
-                                                                                                      .getMapName() + " - " + time + word + " - " + game.getPoints(
-                            Team.BLUE) + ":" + game.getPoints(Team.RED) + "\n");
+                    eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " +
+                            game.getMap().getMapName() + " - " +
+                            time + word + " - " +
+                            game.getPoints(Team.BLUE) + ":" + game.getPoints(Team.RED) + "\n");
                 }
             }
         }

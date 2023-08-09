@@ -8,7 +8,8 @@ import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
 import com.ebicep.warlords.guilds.upgrades.permanent.GuildUpgradesPermanent;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,9 +39,11 @@ public class GuildListener implements Listener {
                         guild.log(new GuildLogDailyCoinBonus(player.getUniqueId(), coins));
                         guild.sendGuildMessageToPlayer(
                                 event.getPlayer(),
-                                ChatColor.GRAY + "+" + ChatColor.GREEN + coins + " Player Coins " + ChatColor.GRAY + "from " +
-                                        ChatColor.YELLOW + upgrade.getUpgrade().getName() +
-                                        ChatColor.GRAY + " upgrade.",
+                                Component.text("+", NamedTextColor.GRAY)
+                                         .append(Component.text(coins + " Player Coins ", NamedTextColor.GREEN))
+                                         .append(Component.text("from "))
+                                         .append(Component.text(upgrade.getUpgrade().getName(), NamedTextColor.YELLOW))
+                                         .append(Component.text(" upgrade.")),
                                 true
                         );
                         guild.queueUpdate();

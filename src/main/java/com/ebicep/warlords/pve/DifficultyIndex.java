@@ -1,55 +1,103 @@
 package com.ebicep.warlords.pve;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public enum DifficultyIndex {
 
     EASY("Easy",
-            "For those seeking a lighter challenge,\nrecommended for solo players." +
-                    "\n\nModifiers:\n§a-25% Mob Health\n-25% Mob Damage\n-25% Mob Spawns",
-            ChatColor.GREEN,
+            List.of(
+                    Component.text("For those seeking a lighter challenge,"),
+                    Component.text("recommended for solo players."),
+                    Component.empty(),
+                    Component.text("Modifies:"),
+                    Component.text("-25% Mob Health", NamedTextColor.GREEN),
+                    Component.text("-25% Mob Damage", NamedTextColor.GREEN),
+                    Component.text("-25% Mob Spawns", NamedTextColor.GREEN)
+            ),
+            NamedTextColor.GREEN,
             25,
             .75f
     ),
     NORMAL("Normal",
-            "Fight off 25 waves of monsters to\nearn rewards." +
-                    "\n\nModifiers:\n§aNone",
-            ChatColor.YELLOW,
+            List.of(
+                    Component.text("Fight off 25 waves of monsters to"),
+                    Component.text("earn rewards."),
+                    Component.empty(),
+                    Component.text("Modifies:"),
+                    Component.text("None", NamedTextColor.GREEN)
+            ),
+            NamedTextColor.YELLOW,
             25,
             1
     ),
     HARD("Hard",
-            "Fight off 25 waves of formidable\nopponents and bosses with augmented\nabilities." +
-                    "\n\nModifiers:\n§c+50% Mob Health\n+50% Mob Damage\n\nHard scaling, Illusion, Exiled and\nVoid monsters appear much sooner and\nat a higher rate.\n\nNo respawns, only way to respawn\nis by clearing the wave.",
-            ChatColor.GOLD,
+            List.of(
+                    Component.text("Fight off 25 waves of formidable"),
+                    Component.text("opponents and bosses with augmented"),
+                    Component.text("abilities."),
+                    Component.empty(),
+                    Component.text("Modifiers:"),
+                    Component.text("+50% Mob Health", NamedTextColor.RED),
+                    Component.text("+50% Mob Damage", NamedTextColor.RED),
+                    Component.empty(),
+                    Component.text("Hard scaling, Illusion, Exiled and", NamedTextColor.RED),
+                    Component.text("Void monsters appear much sooner and", NamedTextColor.RED),
+                    Component.text("at a higher rate.", NamedTextColor.RED),
+                    Component.empty(),
+                    Component.text("No respawns, only way to respawn", NamedTextColor.RED),
+                    Component.text("is by clearing the wave.", NamedTextColor.RED)
+            ),
+            NamedTextColor.GOLD,
             25,
             2
     ),
     EXTREME("Extreme",
-            "Fight off 25 waves of the hardest\nopponents and bosses with augmented\nabilities." +
-                    "\n\nModifiers:\n§c+100% Mob Health\n+75% Mob Damage\n\nExtreme Exiled and\nVoid monsters appear much sooner and\nat a higher rate.\n\nNo respawns, only way to respawn\nis by clearing the wave.",
-            ChatColor.DARK_RED,
+            List.of(
+                    Component.text("Fight off 25 waves of the hardest"),
+                    Component.text("opponents and bosses with augmented"),
+                    Component.text("abilities."),
+                    Component.empty(),
+                    Component.text("Modifiers:"),
+                    Component.text("+100% Mob Health", NamedTextColor.RED),
+                    Component.text("+75% Mob Damage", NamedTextColor.RED),
+                    Component.empty(),
+                    Component.text("Extreme Exiled and", NamedTextColor.RED),
+                    Component.text("Void monsters appear much sooner and", NamedTextColor.RED),
+                    Component.text("at a higher rate.", NamedTextColor.RED),
+                    Component.empty(),
+                    Component.text("No respawns, only way to respawn", NamedTextColor.RED),
+                    Component.text("is by clearing the wave.", NamedTextColor.RED)
+            ),
+            NamedTextColor.DARK_RED,
             25,
             6
     ),
     ENDLESS("Endless",
-            "Fight to the death against endless\nwaves of monsters to prove your\nworth against the Vanguard." +
-                    "\n\nModifiers:\n§c+25% Mob Spawns",
-            ChatColor.RED,
+            List.of(
+                    Component.text("Fight to the death against endless"),
+                    Component.text("waves of monsters to prove your"),
+                    Component.text("worth against the Vanguard."),
+                    Component.empty(),
+                    Component.text("Modifies:"),
+                    Component.text("+25% Mob Spawns", NamedTextColor.RED)
+            ),
+            NamedTextColor.RED,
             Integer.MAX_VALUE,
             1.25f
     ),
     BOSS_RUSH("Boss Rush",
-            "",
-            ChatColor.RED,
+            List.of(),
+            NamedTextColor.RED,
             8,
             1
     ),
     EVENT("Event",
-            "",
-            ChatColor.BLUE,
+            List.of(),
+            NamedTextColor.BLUE,
             Integer.MAX_VALUE,
             1
     ),
@@ -66,15 +114,15 @@ public enum DifficultyIndex {
     public static final DifficultyIndex[] VALUES = values();
 
     private final String name;
-    private final String description;
-    private final ChatColor difficultyColor;
+    private final List<Component> description;
+    private final NamedTextColor difficultyColor;
     private final int maxWaves;
     private final float rewardsMultiplier;
 
     DifficultyIndex(
             @Nonnull String name,
-            String description,
-            ChatColor difficultyColor,
+            List<Component> description,
+            NamedTextColor difficultyColor,
             int maxWaves,
             float rewardsMultiplier
     ) {
@@ -93,11 +141,11 @@ public enum DifficultyIndex {
         return name;
     }
 
-    public ChatColor getDifficultyColor() {
+    public NamedTextColor getDifficultyColor() {
         return difficultyColor;
     }
 
-    public String getDescription() {
+    public List<Component> getDescription() {
         return description;
     }
 

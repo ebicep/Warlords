@@ -11,6 +11,9 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
 import org.bukkit.entity.Player;
@@ -87,8 +90,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
                 }
                 if (event.isDamageInstance() && event.isCrit() && event.getAbility().isEmpty()) {
                     player.addEnergy(player, "Suspicious Weapon", ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel());
-                    if (player.getEntity() instanceof Player) {
-                        Player p = (Player) player.getEntity();
+                    if (player.getEntity() instanceof Player p) {
                         if (sound != null) {
                             sound.cancel();
                         }
@@ -121,8 +123,10 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Play an among us sound and gain " + formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()) + " energy whenever you land a melee crit.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Play an among us sound and gain ", NamedTextColor.GRAY)
+                        .append(formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(" energy whenever you land a melee crit."));
     }
 
     @Override
@@ -176,7 +180,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Collections.singletonList(new Pair<>(
                 formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()),
                 formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevelUpgraded())

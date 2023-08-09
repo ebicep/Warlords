@@ -2,9 +2,19 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="maven9" />
+      <option name="name" value="maven9" />
+      <option name="url" value="https://repo.maven.apache.org/maven2/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="is-releases" />
+      <option name="name" value="is-releases" />
+      <option name="url" value="https://repo.infernalsuite.com/repository/maven-releases/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="jitpack.io" />
@@ -22,9 +32,24 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="maven-central" />
+      <option name="name" value="maven-central" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="citizens-repo" />
+      <option name="name" value="Citizens Repository" />
+      <option name="url" value="https://maven.citizensnpcs.co/repo" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="papermc" />
       <option name="name" value="papermc" />
       <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="rapture-snapshots" />
+      <option name="name" value="rapture-snapshots" />
+      <option name="url" value="https://repo.rapture.pw/repository/maven-releases/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="dv8tion" />
@@ -47,6 +72,11 @@
       <option name="url" value="https://repo.aikar.co/content/groups/aikar/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="MavenLocal" />
+      <option name="name" value="MavenLocal" />
+      <option name="url" value="file:/$USER_HOME$/.m2/repository/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="dmulloy2-repo" />
       <option name="name" value="dmulloy2-repo" />
       <option name="url" value="https://repo.dmulloy2.net/repository/public/" />
@@ -57,6 +87,11 @@
       <option name="url" value="https://repo.glaremasters.me/repository/concuncan/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="is-snapshots" />
+      <option name="name" value="is-snapshots" />
+      <option name="url" value="https://repo.infernalsuite.com/repository/maven-snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="jboss.community" />
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
@@ -65,6 +100,11 @@
       <option name="id" value="everything" />
       <option name="name" value="everything" />
       <option name="url" value="https://repo.citizensnpcs.co/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven5" />
+      <option name="name" value="maven5" />
+      <option name="url" value="https://hub.spigotmc.org/nexus/content/groups/public/" />
     </remote-repository>
   </component>
 </project>

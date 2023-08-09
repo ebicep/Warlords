@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RespawnWaveOption implements Option, Listener {
@@ -69,7 +70,7 @@ public class RespawnWaveOption implements Option, Listener {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         game.registerEvents(this);
         game.registerGameMarker(TimerSkipAbleMarker.class, (delayInTicks) -> {
             currentTimer += delayInTicks / 20;
@@ -83,7 +84,7 @@ public class RespawnWaveOption implements Option, Listener {
     }
 
     @Override
-    public void start(Game game) {
+    public void start(@Nonnull Game game) {
         new GameRunnable(game) {
             @Override
             public void run() {

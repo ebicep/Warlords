@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
+import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -30,7 +31,8 @@ public class BasicSkeleton extends AbstractSkeleton implements BasicMob {
                 0.05f,
                 0,
                 0,
-                0
+                0,
+                new Fireball(5.5f)
         );
     }
 

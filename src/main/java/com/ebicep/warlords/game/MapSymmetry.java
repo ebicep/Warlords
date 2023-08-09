@@ -1,14 +1,14 @@
 package com.ebicep.warlords.game;
 
-import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-
-import java.util.Collection;
-
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
 
 public enum MapSymmetry {
     NONE() {
@@ -65,6 +65,7 @@ public enum MapSymmetry {
 
     public MapSymmetryMarker asMarker() {
         return new MapSymmetryMarker() {
+            @Nonnull
             @Override
             public MapSymmetry getSymmetry() {
                 return MapSymmetry.this;

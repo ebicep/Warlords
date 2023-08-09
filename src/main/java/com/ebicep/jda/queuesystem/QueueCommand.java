@@ -5,7 +5,8 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -23,11 +24,11 @@ public class QueueCommand extends BaseCommand {
     @Description("Joins the queue")
     public void join(@Conditions("party:false") Player player) {//, @Optional String time) {
         if (QueueManager.queue.contains(player.getUniqueId())) {
-            player.sendMessage(ChatColor.RED + "You are already in the queue!");
+            player.sendMessage(Component.text("You are already in the queue!", NamedTextColor.RED));
         } else {
             QueueManager.addPlayerToQueue(player.getName(), false);
             QueueManager.removePlayerFromFutureQueue(player.getName());
-            player.sendMessage(ChatColor.GREEN + "You are now #" + QueueManager.queue.size() + " in queue!");
+            player.sendMessage(Component.text("You are now #" + QueueManager.queue.size() + " in queue!", NamedTextColor.GREEN));
             QueueManager.sendQueue();
         }
     }
@@ -36,7 +37,7 @@ public class QueueCommand extends BaseCommand {
     @Description("Leaves the queue")
     public void leave(Player player) {
         QueueManager.removePlayerFromQueue(player.getName());
-        player.sendMessage(ChatColor.RED + "You left the queue!");
+        player.sendMessage(Component.text("You left the queue!", NamedTextColor.RED));
         QueueManager.sendQueue();
     }
 
@@ -54,7 +55,7 @@ public class QueueCommand extends BaseCommand {
     @Description("Removes a player from the queue")
     public void remove(Player player, Integer queuePosition) {
         if (queuePosition > QueueManager.queue.size() || queuePosition < 1) {
-            player.sendMessage(ChatColor.RED + "Invalid queue number!");
+            player.sendMessage(Component.text("Invalid queue number!", NamedTextColor.RED));
             return;
         }
 
@@ -70,7 +71,7 @@ public class QueueCommand extends BaseCommand {
         QueueManager.queue.clear();
         QueueManager.futureQueue.clear();
         QueueManager.sendQueue();
-        player.sendMessage(ChatColor.GREEN + "Queue cleared");
+        player.sendMessage(Component.text("Queue cleared", NamedTextColor.GREEN));
     }
 
     @HelpCommand

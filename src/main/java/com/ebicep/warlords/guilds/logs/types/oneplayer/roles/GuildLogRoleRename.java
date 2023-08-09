@@ -1,6 +1,7 @@
 package com.ebicep.warlords.guilds.logs.types.oneplayer.roles;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.UUID;
@@ -16,12 +17,12 @@ public class GuildLogRoleRename extends AbstractGuildLogRole {
     }
 
     @Override
-    public String getAction() {
-        return "renamed";
+    public Component getAction() {
+        return Component.text("renamed");
     }
 
     @Override
-    public String append() {
-        return "to " + ChatColor.GREEN + newName;
+    public Component append() {
+        return Component.text("to ").append(Component.text(newName, NamedTextColor.GREEN));
     }
 }

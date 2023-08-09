@@ -7,16 +7,19 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WeaponSkillBoostMenu {
 
@@ -25,11 +28,7 @@ public class WeaponSkillBoostMenu {
         put(Currencies.SKILL_BOOST_MODIFIER, 1L);
     }};
 
-    public static List<String> costLore = new ArrayList<>() {{
-        add("");
-        add(ChatColor.AQUA + "Cost: ");
-        cost.forEach((currency, amount) -> add(ChatColor.GRAY + " - " + currency.getCostColoredName(amount)));
-    }};
+    public static List<Component> costLore = PvEUtils.getCostLore(cost, true);
 
     public static void openWeaponSkillBoostMenu(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon) {
         Menu menu = new Menu("Skill Boost", 9 * 6);
@@ -47,15 +46,14 @@ public class WeaponSkillBoostMenu {
         for (int i = 0; i < values.size(); i++) {
             SkillBoosts skillBoost = values.get(i);
             ItemBuilder builder = new ItemBuilder(specializations.specType.itemStack)
-                    .name(ChatColor.GREEN + skillBoost.name)
-                    .flags(ItemFlag.HIDE_ENCHANTS);
-            List<String> lore = new ArrayList<>();
+                    .name(Component.text(skillBoost.name, NamedTextColor.GREEN));
+            List<Component> lore = new ArrayList<>();
             boolean selected = skillBoost == weapon.getSelectedSkillBoost();
             if (selected) {
-                lore.add(ChatColor.GREEN + "Currently selected!");
+                lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
-                lore.add(ChatColor.YELLOW + "Click to select!");
+                lore.add(Component.text("Click to select!", NamedTextColor.YELLOW));
                 if (!weapon.getUnlockedSkillBoosts().contains(skillBoost)) {
                     lore.addAll(WeaponSkillBoostMenu.costLore);
                 }
@@ -67,11 +65,14 @@ public class WeaponSkillBoostMenu {
                     builder.get(),
                     (m, e) -> {
                         if (selected) {
-                            player.sendMessage(ChatColor.RED + "You already have this skill boost selected!");
+                            player.sendMessage(Component.text("You already have this skill boost selected!", NamedTextColor.RED));
                             return;
                         }
-                        List<String> confirmLore = new ArrayList<>();
-                        confirmLore.add(ChatColor.GRAY + "Change Skill Boost to " + ChatColor.GREEN + skillBoost.name);
+                        List<Component> confirmLore = new ArrayList<>();
+                        confirmLore.add(Component.textOfChildren(
+                                Component.text("Change Skill Boost to ", NamedTextColor.GRAY),
+                                Component.text(skillBoost.name, NamedTextColor.GREEN)
+                        ));
                         if (!weapon.getUnlockedSkillBoosts().contains(skillBoost)) {
                             confirmLore.addAll(costLore);
                         }
@@ -80,7 +81,10 @@ public class WeaponSkillBoostMenu {
                                 Currencies currency = currenciesLongEntry.getKey();
                                 long value = currenciesLongEntry.getValue();
                                 if (databasePlayer.getPveStats().getCurrencyValue(currency) < value) {
-                                    player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(value) + ChatColor.RED + " to unlock this skill boost.");
+                                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                .append(currency.getCostColoredName(value))
+                                                                .append(Component.text(" to unlock this skill boost."))
+                                    );
                                     return;
                                 }
                             }
@@ -90,7 +94,7 @@ public class WeaponSkillBoostMenu {
                                 "Change Skill Boost",
                                 3,
                                 confirmLore,
-                                Collections.singletonList(ChatColor.GRAY + "Go back"),
+                                Menu.GO_BACK,
                                 (m2, e2) -> {
                                     unlockSkillBoost(player, databasePlayer, weapon, skillBoost);
                                     openWeaponSkillBoostMenu(player, databasePlayer, weapon);
@@ -117,13 +121,15 @@ public class WeaponSkillBoostMenu {
         }
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-        player.spigot().sendMessage(
-                new ComponentBuilder(ChatColor.GRAY + "Changed ")
-                        .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                        .append(ChatColor.GRAY + "'s skill boost from " + ChatColor.GREEN + oldSkillBoost.name + ChatColor.GRAY + " to " + ChatColor.GREEN + skillBoost.name + ChatColor.GRAY + "!")
-                        .create()
-        );
-        player.playSound(player.getLocation(), Sound.LEVEL_UP, 500, 2);
+        player.sendMessage(Component.text("Changed ", NamedTextColor.GRAY)
+                                    .append(weapon.getHoverComponent(false))
+                                    .append(Component.text("'s skill boost from "))
+                                    .append(Component.text(oldSkillBoost.name, NamedTextColor.GREEN))
+                                    .append(Component.text(" to "))
+                                    .append(Component.text(skillBoost.name))
+                                    .append(Component.text("!")));
+
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
     }
 
 }

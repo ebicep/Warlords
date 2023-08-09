@@ -10,10 +10,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
+
 public class WinByMaxWaveClearOption implements Option {
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption) {
                 game.registerEvents(new Listener() {

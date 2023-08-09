@@ -7,13 +7,16 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
-import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.java.JavaUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -63,29 +66,31 @@ public class GameOvertimeOption implements Option, Listener {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         game.registerEvents(this);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onEvent(WarlordsGameTriggerWinEvent event) {
-        if (!wasActivated && event.getCause() instanceof WinAfterTimeoutOption && event.getDeclaredWinner() == null) {
+        if (!wasActivated && event.getCause() instanceof WinAfterTimeoutOption drawAfterTimeoutOption && event.getDeclaredWinner() == null) {
             event.setCancelled(true);
             for (Team team : TeamMarker.getTeams(event.getGame())) {
                 event.getGame().setPoints(team, 0);
             }
             for (Option option : event.getGame().getOptions()) {
-                if (option instanceof WinByPointsOption) {
-                    WinByPointsOption winByPointsOption = (WinByPointsOption) option;
+                if (option instanceof WinByPointsOption winByPointsOption) {
                     winByPointsOption.setPointLimit(overTimePoints);
                 }
             }
-            WinAfterTimeoutOption drawAfterTimeoutOption = (WinAfterTimeoutOption) event.getCause();
             drawAfterTimeoutOption.setTimeRemaining(overTimeTime);
             event.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach " + overTimePoints + " points wins!", 0, 60, 0);
-                player.sendMessage("§dOvertime is now active!");
-                player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);
+                player.showTitle(Title.title(
+                        Component.text("OVERTIME!", NamedTextColor.LIGHT_PURPLE),
+                        Component.text("First team to reach " + overTimePoints + " points wins!", NamedTextColor.YELLOW),
+                        Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
+                ));
+                player.sendMessage(Component.text("Overtime is now active!", NamedTextColor.LIGHT_PURPLE));
+                player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, 1);
             });
             wasActivated = true;
         }
@@ -98,8 +103,8 @@ public class GameOvertimeOption implements Option, Listener {
 
     @Override
     public void checkConflicts(List<Option> options) {
-        boolean hasDrawAfterTimeoutOption = Utils.collectionHasItem(options, e -> e instanceof WinAfterTimeoutOption);
-        boolean hasWinByPointsOption = Utils.collectionHasItem(options, e -> e instanceof WinByPointsOption);
+        boolean hasDrawAfterTimeoutOption = JavaUtils.collectionHasItem(options, e -> e instanceof WinAfterTimeoutOption);
+        boolean hasWinByPointsOption = JavaUtils.collectionHasItem(options, e -> e instanceof WinByPointsOption);
         if (!hasDrawAfterTimeoutOption || !hasWinByPointsOption) {
             throw new IllegalArgumentException("Game requires a WinAfterTimeoutOption and a WinByPointsOption for the GameOvertimeOption to work properly");
         }

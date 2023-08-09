@@ -1,14 +1,20 @@
 package com.ebicep.warlords.util.bukkit;
 
 
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nonnull;
 
 public class LocationBuilder extends Location {
 
     public LocationBuilder(Location location) {
         super(location.getWorld(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+    }
+
+    public LocationBuilder(World world, double x, double y, double z) {
+        super(world, x, y, z);
     }
 
     public LocationBuilder x(double x) {
@@ -46,14 +52,16 @@ public class LocationBuilder extends Location {
         return this;
     }
 
+    @Nonnull
     @Override
-    public LocationBuilder add(Vector vector) {
+    public LocationBuilder add(@Nonnull Vector vector) {
         super.add(vector);
         return this;
     }
 
+    @Nonnull
     @Override
-    public LocationBuilder subtract(Vector vector) {
+    public LocationBuilder subtract(@Nonnull Vector vector) {
         super.subtract(vector);
         return this;
     }
@@ -78,31 +86,27 @@ public class LocationBuilder extends Location {
         return this;
     }
 
+    public LocationBuilder forward(double amount) {
+        this.add(this.getDirection().multiply(amount));
+        return this;
+    }
+
     public LocationBuilder backward(float amount) {
         this.add(this.getDirection().multiply(-amount));
         return this;
     }
 
     public LocationBuilder left(float amount) {
-        this.add(Utils.getLeftDirection(this).multiply(amount));
+        this.add(LocationUtils.getLeftDirection(this).multiply(amount));
         return this;
     }
 
     public LocationBuilder right(float amount) {
-        this.add(Utils.getRightDirection(this).multiply(amount));
+        this.add(LocationUtils.getRightDirection(this).multiply(amount));
         return this;
     }
 
-    /**
-     * Gets a location
-     * @return A location object
-     * @deprecated The new <code>LocationBuilder</code> instances are locations, this method is no longer needed
-     */
-    @Deprecated
-    public Location get() {
-        return this;
-    }
-
+    @Nonnull
     @Override
     public LocationBuilder clone() {
         return (LocationBuilder) super.clone();

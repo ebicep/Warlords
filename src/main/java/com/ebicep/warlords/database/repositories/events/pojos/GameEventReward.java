@@ -2,7 +2,7 @@ package com.ebicep.warlords.database.repositories.events.pojos;
 
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.LinkedHashMap;
 
@@ -19,7 +19,7 @@ public class GameEventReward extends AbstractReward {
     }
 
     @Override
-    public ChatColor getNameColor() {
-        return ChatColor.RED;
+    public NamedTextColor getNameColor() {
+        return NamedTextColor.RED;
     }
 }

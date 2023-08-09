@@ -10,7 +10,8 @@ import com.ebicep.warlords.commands.DatabasePlayerFuture;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.time.Month;
 import java.time.Year;
@@ -29,15 +30,21 @@ public class PatreonCommand extends BaseCommand {
             year = Year.from(ZonedDateTime.now());
         }
         Year finalYear = year;
-        return databasePlayerFuture.getFuture().thenAccept(databasePlayer -> {
+        return databasePlayerFuture.future().thenAccept(databasePlayer -> {
             boolean given = PatreonReward.giveMonthlyPatreonRewards(databasePlayer, month, finalYear);
-            ChatChannels.sendDebugMessage(issuer,
-                    given ? ChatColor.GREEN + "Gave " +
-                            ChatColor.LIGHT_PURPLE + finalYear.getValue() + " " + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) +
-                            ChatColor.GREEN + " Patreon reward to " + ChatColor.AQUA + databasePlayer.getName() :
-                            ChatColor.AQUA + databasePlayer.getName() + ChatColor.RED + " has already received their monthly Patreon reward",
-                    true
-            );
+            if (given) {
+                ChatChannels.sendDebugMessage(issuer,
+                        Component.text("Gave ", NamedTextColor.GREEN)
+                                 .append(Component.text(finalYear.getValue() + " " + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH), NamedTextColor.LIGHT_PURPLE))
+                                 .append(Component.text(" Patreon reward to "))
+                                 .append(Component.text(databasePlayer.getName(), NamedTextColor.AQUA))
+                );
+            } else {
+                ChatChannels.sendDebugMessage(issuer,
+                        Component.text(databasePlayer.getName(), NamedTextColor.AQUA)
+                                 .append(Component.text(" has already received their monthly Patreon reward", NamedTextColor.RED))
+                );
+            }
             PatreonReward.givePatreonFutureMessage(databasePlayer, month, finalYear);
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         });

@@ -23,8 +23,11 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -42,6 +45,7 @@ public class WeaponManagerMenu {
     public static final int MAX_WEAPONS_PER_PAGE = 45;
     public static final int MAX_WEAPONS = MAX_WEAPONS_PER_PAGE * 5;
     public static final int MAX_WEAPONS_PATREON = MAX_WEAPONS_PER_PAGE * 10;
+    public static final Component GO_BACK = Component.text("Go Back.", NamedTextColor.GRAY);
 
     public static final HashMap<UUID, PlayerWeaponMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
 
@@ -93,8 +97,8 @@ public class WeaponManagerMenu {
         if (page - 1 > 0) {
             menu.setItem(0, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Previous Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page - 1))
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page - 1);
@@ -105,8 +109,8 @@ public class WeaponManagerMenu {
         if (weaponInventory.size() > (page * MAX_WEAPONS_PER_PAGE)) {
             menu.setItem(8, 5,
                     new ItemBuilder(Material.ARROW)
-                            .name(ChatColor.GREEN + "Next Page")
-                            .lore(ChatColor.YELLOW + "Page " + (page + 1))
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
                             .get(),
                     (m, e) -> {
                         menuSettings.setPage(page + 1);
@@ -118,25 +122,36 @@ public class WeaponManagerMenu {
 
         menu.setItem(1, 5,
                 new ItemBuilder(Material.FURNACE)
-                        .name(ChatColor.GREEN + "Salvage All Weapons")
-                        .lore(
-                                WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " +
-                                        ChatColor.GRAY + "to salvage all weapons below " + ChatColor.GREEN + menuSettings.getWeaponScoreSalvage() +
-                                        "% " + ChatColor.GRAY + "weapon score, excluding bound weapons.", 160),
-                                "",
-                                WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GRAY + "to salvage all " +
-                                        ChatColor.GREEN + "filtered " + ChatColor.GRAY + "weapons below " + ChatColor.GREEN + menuSettings.getWeaponScoreSalvage() +
-                                        "% " + ChatColor.GRAY + "weapon score, excluding bound weapons.", 160),
-                                "",
-                                WordWrap.wrapWithNewline(ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " +
-                                        ChatColor.GRAY + "to change the weapon score filter amount.", 160),
-                                "",
-                                ChatColor.LIGHT_PURPLE + "This feature is for Patreons only!"
-                        )
+                        .name(Component.text("Salvage All Weapons", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(
+                                Component.textOfChildren(
+                                        Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to salvage all weapons below ", NamedTextColor.GRAY),
+                                        Component.text(menuSettings.getWeaponScoreSalvage() + "% ", NamedTextColor.GREEN),
+                                        Component.text("weapon score, excluding bound weapons.", NamedTextColor.GRAY)
+                                ), 160))
+                        .addLore(Component.empty())
+                        .addLore(WordWrap.wrap(
+                                Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to salvage all ", NamedTextColor.GRAY),
+                                        Component.text("filtered ", NamedTextColor.GREEN),
+                                        Component.text("weapons below ", NamedTextColor.GRAY),
+                                        Component.text(menuSettings.getWeaponScoreSalvage() + "% ", NamedTextColor.GREEN),
+                                        Component.text("weapon score, excluding bound weapons.", NamedTextColor.GRAY)
+                                ), 160))
+                        .addLore(Component.empty())
+                        .addLore(WordWrap.wrap(
+                                Component.textOfChildren(
+                                        Component.text("SHIFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to change the weapon score filter amount.", NamedTextColor.GRAY)
+                                ), 160))
+                        .addLore(Component.empty())
+                        .addLore(Component.text("This feature is for Patreons only!", NamedTextColor.LIGHT_PURPLE))
                         .get(),
                 (m, e) -> {
                     if (!(player.hasPermission("group.patreon") || player.hasPermission("group.contentcreator")) && !Permissions.isAdmin(player)) {
-                        player.sendMessage(ChatColor.RED + "You must be a Patreon to use this feature!");
+                        player.sendMessage(Component.text("You must be a Patreon to use this feature!", NamedTextColor.RED));
                         return;
                     }
                     if (e.isShiftClick()) {
@@ -156,16 +171,20 @@ public class WeaponManagerMenu {
                             weapon.isBound() ||
                             ((WeaponScore) weapon).getWeaponScore() >= menuSettings.getWeaponScoreSalvage());
                     if (weaponsToSalvage.isEmpty()) {
-                        player.sendMessage(ChatColor.RED + "No weapons to salvage!");
+                        player.sendMessage(Component.text("No weapons to salvage!", NamedTextColor.RED));
                         return;
                     }
-                    List<String> salvageLore = new ArrayList<>();
-                    salvageLore.add(ChatColor.GRAY + "Salvage Weapons:");
+                    List<Component> salvageLore = new ArrayList<>();
+                    salvageLore.add(Component.text("Salvage Weapons:", NamedTextColor.GRAY));
                     for (int i = 0; i < weaponsToSalvage.size(); i++) {
                         AbstractWeapon weapon = weaponsToSalvage.get(i);
-                        salvageLore.add(ChatColor.GRAY + " - " + weapon.getName() + ChatColor.YELLOW + " (" + ((WeaponScore) weapon).getWeaponScore() + ")");
+                        salvageLore.add(Component.textOfChildren(
+                                Component.text(" - ", NamedTextColor.GRAY)
+                                         .append(weapon.getName()),
+                                Component.text(" (" + ((WeaponScore) weapon).getWeaponScore() + ")", NamedTextColor.YELLOW)
+                        ));
                         if (i > 50) {
-                            salvageLore.add(ChatColor.GRAY + " - . . .");
+                            salvageLore.add(Component.text(" - . . .", NamedTextColor.GRAY));
                             break;
                         }
                     }
@@ -173,7 +192,7 @@ public class WeaponManagerMenu {
                             "Confirm Salvaging Weapons",
                             3,
                             salvageLore,
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 for (AbstractWeapon weapon : weaponsToSalvage) {
                                     WeaponSalvageMenu.salvageWeapon(player, databasePlayer, (AbstractWeapon & Salvageable) weapon);
@@ -188,12 +207,14 @@ public class WeaponManagerMenu {
         );
         menu.setItem(2, 5,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.DARK_AQUA + "Your Weapon Drops")
-                        .lore(
-                                Currencies.STAR_PIECES.stream()
-                                                      .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))
-                                                      .collect(Collectors.joining("\n")),
-                                "",
+                        .name(Component.text("Your Weapon Drops", NamedTextColor.DARK_AQUA))
+                        .lore(Currencies.STAR_PIECES
+                                .stream()
+                                .map(starPiece -> starPiece.getCostColoredName(databasePlayerPvE.getCurrencyValue(starPiece)))
+                                .collect(Collectors.toList())
+                        )
+                        .addLore(
+                                Component.empty(),
                                 Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER)),
                                 Currencies.LIMIT_BREAKER.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.LIMIT_BREAKER))
                         )
@@ -203,8 +224,8 @@ public class WeaponManagerMenu {
         );
         menu.setItem(3, 5,
                 new ItemBuilder(Material.MILK_BUCKET)
-                        .name(ChatColor.GREEN + "Reset Settings")
-                        .lore(ChatColor.GRAY + "Reset the filter, sort, and order of weapons")
+                        .name(Component.text("Reset Settings", NamedTextColor.GREEN))
+                        .lore(Component.text("Reset the filter, sort, and order of weapons", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> {
                     menuSettings.reset();
@@ -213,20 +234,40 @@ public class WeaponManagerMenu {
         );
         menu.setItem(5, 5,
                 new ItemBuilder(Material.HOPPER)
-                        .name(ChatColor.GREEN + "Filter By")
-                        .lore(
-                                Arrays.stream(WeaponsPvE.VALUES)
-                                      .map(value -> (filterBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                      .collect(Collectors.joining("\n")),
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " + ChatColor.GREEN + "to change rarity filter",
-                                "",
-                                Arrays.stream(BindFilterOptions.VALUES)
-                                      .map(value -> (bindFilterOption == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                      .collect(Collectors.joining("\n")),
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to change bind filter",
-                                "",
-                                selectedSpecFilter ? ChatColor.GRAY + "None\n" + ChatColor.AQUA + "Selected Spec" : ChatColor.AQUA + "All Specs\n" + ChatColor.GRAY + "Selected Spec",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "SHIFT-CLICK " + ChatColor.GREEN + "to change spec filter"
+                        .name(Component.text("Filter By", NamedTextColor.GREEN))
+                        .lore(Arrays.stream(WeaponsPvE.VALUES)
+                                    .map(value -> Component.text(value.name, filterBy == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                                    .collect(Collectors.toList())
+                        )
+                        .addLore(Component.textOfChildren(
+                                        Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to change filter by", NamedTextColor.GREEN)
+                                ),
+                                Component.empty()
+                        )
+                        .addLore(Arrays.stream(BindFilterOptions.VALUES)
+                                       .map(value -> Component.text(value.name, bindFilterOption == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                                       .collect(Collectors.toList())
+                        )
+                        .addLore(Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to change bind filter", NamedTextColor.GREEN)
+                                ),
+                                Component.empty()
+                        )
+                        .addLore(selectedSpecFilter ?
+                                 Component.textOfChildren(
+                                         Component.text("None", NamedTextColor.GRAY),
+                                         Component.text("Selected Spec", NamedTextColor.AQUA)
+                                 ) :
+                                 Component.textOfChildren(
+                                         Component.text("None", NamedTextColor.AQUA),
+                                         Component.text("Selected Spec", NamedTextColor.GRAY)
+                                 ),
+                                Component.textOfChildren(
+                                        Component.text("SHIFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to change spec filter", NamedTextColor.GREEN)
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -242,11 +283,11 @@ public class WeaponManagerMenu {
                 }
         );
         menu.setItem(6, 5,
-                new ItemBuilder(Material.REDSTONE_COMPARATOR)
-                        .name(ChatColor.GREEN + "Sort By")
+                new ItemBuilder(Material.COMPARATOR)
+                        .name(Component.text("Sort By", NamedTextColor.GREEN))
                         .lore(Arrays.stream(SortOptions.VALUES)
-                                    .map(value -> (sortedBy == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name)
-                                    .collect(Collectors.joining("\n"))
+                                    .map(value -> Component.text(value.name, sortedBy == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                                    .collect(Collectors.toList())
                         )
                         .get(),
                 (m, e) -> {
@@ -256,10 +297,16 @@ public class WeaponManagerMenu {
         );
         menu.setItem(7, 5,
                 new ItemBuilder(Material.LEVER)
-                        .name(ChatColor.GREEN + "Sort Order")
+                        .name(Component.text("Sort Order", NamedTextColor.GREEN))
                         .lore(menuSettings.isAscending() ?
-                              ChatColor.AQUA + "Ascending\n" + ChatColor.GRAY + "Descending" :
-                              ChatColor.GRAY + "Ascending\n" + ChatColor.AQUA + "Descending"
+                              Component.textOfChildren(
+                                      Component.text("Ascending", NamedTextColor.AQUA),
+                                      Component.text("Descending", NamedTextColor.GRAY)
+                              ) :
+                              Component.textOfChildren(
+                                      Component.text("Ascending", NamedTextColor.GRAY),
+                                      Component.text("Descending", NamedTextColor.AQUA)
+                              )
                         )
                         .get(),
                 (m, e) -> {
@@ -279,23 +326,52 @@ public class WeaponManagerMenu {
     public static void openWeaponEditor(Player player, DatabasePlayer databasePlayer, AbstractWeapon weapon) {
         List<Pair<ItemStack, BiConsumer<Menu, InventoryClickEvent>>> weaponOptions = new ArrayList<>();
         //bind common/rare/epic/legendary
+        boolean isBound = weapon.isBound();
+        ItemBuilder bindWeapon = new ItemBuilder(Material.SLIME_BALL)
+                .name(Component.text("Bind Weapon", NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(Component.text(
+                                "Only the weapon bound to your selected specialization will be used in game.", NamedTextColor.GRAY),
+                        180
+                ))
+                .addLore(Component.empty())
+                .addLore(WordWrap.wrap(
+                        Component.textOfChildren(
+                                Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to bind this weapon to your its specialization", NamedTextColor.GREEN)
+                        ),
+                        180
+                ))
+                .addLore(WordWrap.wrap(
+                        Component.textOfChildren(
+                                Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to view all bound weapons", NamedTextColor.GREEN)
+                        ),
+                        180
+                ));
+        if (isBound) {
+            bindWeapon.enchant(Enchantment.OXYGEN, 1);
+        }
         weaponOptions.add(new Pair<>(
-                new ItemBuilder(Material.SLIME_BALL)
-                        .name(ChatColor.GREEN + "Bind Weapon")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                        "Only the weapon bound to your selected specialization will be used in game." +
-                                        "\n\nIf you want to use this weapon, bind it to its specialization.",
-                                180
-                        ))
-                        .get(),
-                (m, e) -> openWeaponBindMenu(player, databasePlayer, weapon)
+                bindWeapon.get(),
+                (m, e) -> {
+                    if (e.isLeftClick()) {
+                        if (isBound) {
+                            player.sendMessage(Component.text("This weapon is already bound!", NamedTextColor.RED));
+                        } else {
+                            WeaponBindMenu.bindWeaponDirectly(player, databasePlayer, weapon);
+                            openWeaponEditor(player, databasePlayer, weapon);
+                        }
+                    } else if (e.isRightClick()) {
+                        openWeaponBindMenu(player, databasePlayer, weapon);
+                    }
+                }
         ));
         //fairy essence reskin commmon/rare/epic/legendary
         weaponOptions.add(new Pair<>(
                 new ItemBuilder(Material.PAINTING)
-                        .name(ChatColor.GREEN + "Skin Selector")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                        "Change the skin of your weapon to better match your tastes.",
+                        .name(Component.text("Skin Selector", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(Component.text(
+                                        "Change the skin of your weapon to better match your tastes.", NamedTextColor.GRAY),
                                 180
                         ))
                         .get(),
@@ -307,39 +383,54 @@ public class WeaponManagerMenu {
             weaponOptions.add(new Pair<>(
                     !(weapon instanceof EpicWeapon) ?
                     new ItemBuilder(Material.FURNACE)
-                            .name(ChatColor.GREEN + "Salvage Weapon")
+                            .name(Component.text("Salvage Weapon", NamedTextColor.GREEN))
                             .lore(
-                                    ChatColor.GRAY + "Click here to salvage this weapon and claim its materials.",
-                                    "",
-                                    ChatColor.YELLOW + "Shift-Click" + ChatColor.GRAY + " to instantly salvage this weapon.",
-                                    "",
-                                    ChatColor.GREEN + "Rewards: " + ((Salvageable) weapon).getSalvageRewardMessage(),
-                                    "",
-                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
+                                    Component.text("Click here to salvage this weapon and claim its materials.", NamedTextColor.GRAY),
+                                    Component.empty(),
+                                    Component.text("Shift-Click", NamedTextColor.YELLOW)
+                                             .append(Component.text(" to instantly salvage this weapon.", NamedTextColor.GRAY)),
+                                    Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("Rewards: ", NamedTextColor.GREEN),
+                                            ((Salvageable) weapon).getSalvageRewardMessage()
+                                    ),
+                                    Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("WARNING: ", NamedTextColor.RED),
+                                            Component.text("This action cannot be undone.", NamedTextColor.GRAY)
+                                    )
                             )
                             .get() :
                     new ItemBuilder(Material.FURNACE)
-                            .name(ChatColor.GREEN + "Salvage Weapon")
+                            .name(Component.text("Salvage Weapon", NamedTextColor.GREEN))
                             .lore(
-                                    ChatColor.GRAY + "Click here to salvage this weapon and claim its materials.",
-                                    "",
-                                    ChatColor.GREEN + "Rewards: " + ((Salvageable) weapon).getSalvageRewardMessage(),
-                                    "",
-                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
+                                    Component.text("Click here to salvage this weapon and claim its materials.", NamedTextColor.GRAY),
+                                    Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("Rewards: ", NamedTextColor.GREEN),
+                                            ((Salvageable) weapon).getSalvageRewardMessage()
+                                    ),
+                                    Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("WARNING: ", NamedTextColor.RED),
+                                            Component.text("This action cannot be undone.", NamedTextColor.GRAY)
+                                    )
                             )
                             .get(),
                     (m, e) -> {
-                        if (weapon.isBound()) {
-                            player.sendMessage(ChatColor.RED + "You cannot salvage a bound weapon!");
+                        if (isBound) {
+                            player.sendMessage(Component.text("You cannot salvage a bound weapon!", NamedTextColor.RED));
                             return;
                         }
                         Specializations weaponSpec = weapon.getSpecializations();
                         List<AbstractWeapon> sameSpecWeapons = pveStats.getWeaponInventory()
                                                                        .stream()
                                                                        .filter(w -> w.getSpecializations() == weaponSpec)
-                                                                       .collect(Collectors.toList());
+                                                                       .toList();
                         if (sameSpecWeapons.size() == 1) {
-                            player.sendMessage(ChatColor.RED + "You cannot salvage this weapon because you need to have at least one for each specialization!");
+                            player.sendMessage(Component.text("You cannot salvage this weapon because you need to have at least one for each specialization!",
+                                    NamedTextColor.RED
+                            ));
                             return;
                         }
 
@@ -355,15 +446,17 @@ public class WeaponManagerMenu {
         //reroll common/rare/epic
         if (weapon instanceof StatsRerollable) {
             weaponOptions.add(new Pair<>(
-                    new ItemBuilder(Material.WORKBENCH)
-                            .name(ChatColor.GREEN + "Weapon Stats Reroll")
+                    new ItemBuilder(Material.CRAFTING_TABLE)
+                            .name(Component.text("Weapon Stats Reroll", NamedTextColor.GREEN))
                             .lore(((StatsRerollable) weapon).getRerollCostLore())
                             .get(),
                     (m, e) -> {
                         int rerollCost = ((StatsRerollable) weapon).getRerollCost();
                         if (pveStats.getCurrencyValue(Currencies.COIN) < rerollCost) {
-                            player.sendMessage(ChatColor.RED + "You need " + Currencies.COIN.getCostColoredName(rerollCost) +
-                                    ChatColor.RED + " to reroll the stats of this weapon!");
+                            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                        .append(Currencies.COIN.getCostColoredName(rerollCost))
+                                                        .append(Component.text(" to reroll the stats of this weapon!"))
+                            );
                             return;
                         }
                         WeaponRerollMenu.openWeaponRerollMenu(player, databasePlayer, (AbstractWeapon & StatsRerollable) weapon);
@@ -371,16 +464,15 @@ public class WeaponManagerMenu {
             ));
         }
         //upgrade epic/legendary
-        if (weapon instanceof Upgradeable) {
-            Upgradeable upgradeable = (Upgradeable) weapon;
+        if (weapon instanceof Upgradeable upgradeable) {
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.ANVIL)
-                            .name(ChatColor.GREEN + "Upgrade Weapon")
+                            .name(Component.text("Upgrade Weapon", NamedTextColor.GREEN))
                             .lore(upgradeable.getUpgradeCostLore())
                             .get(),
                     (m, e) -> {
                         if (upgradeable.getUpgradeLevel() >= upgradeable.getMaxUpgradeLevel()) {
-                            player.sendMessage(ChatColor.RED + "You can't upgrade this weapon anymore.");
+                            player.sendMessage(Component.text("You can't upgrade this weapon anymore.", NamedTextColor.RED));
                             return;
                         }
                         LinkedHashMap<Currencies, Long> upgradeCost = upgradeable.getUpgradeCost(upgradeable.getUpgradeLevel() + 1);
@@ -388,7 +480,10 @@ public class WeaponManagerMenu {
                             Currencies currency = currenciesLongEntry.getKey();
                             Long cost = currenciesLongEntry.getValue();
                             if (pveStats.getCurrencyValue(currency) < cost) {
-                                player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(cost) + ChatColor.RED + " to upgrade this weapon!");
+                                player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                            .append(currency.getCostColoredName(cost))
+                                                            .append(Component.text(" to upgrade this weapon!"))
+                                );
                                 return;
                             }
                         }
@@ -396,26 +491,32 @@ public class WeaponManagerMenu {
                     }
             ));
         }
-        if (weapon instanceof AbstractLegendaryWeapon) {
+        if (weapon instanceof AbstractLegendaryWeapon legendaryWeapon) {
             PLAYER_MENU_SETTINGS.putIfAbsent(player.getUniqueId(), new PlayerWeaponMenuSettings(databasePlayer));
             PlayerWeaponMenuSettings menuSettings = PLAYER_MENU_SETTINGS.get(player.getUniqueId());
             StarPieces selectedStarPiece = menuSettings.getSelectedStarPiece();
             //star piece
-            AbstractLegendaryWeapon legendaryWeapon = (AbstractLegendaryWeapon) weapon;
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NETHER_STAR)
-                            .name(ChatColor.GREEN + "Apply a " + selectedStarPiece.currency.name)
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                            "This star piece provides a " + selectedStarPiece.currency.chatColor + selectedStarPiece.starPieceBonusValue +
-                                            "% " + ChatColor.GRAY + "stat boost to a random stat.",
+                            .name(Component.text("Apply a " + selectedStarPiece.currency.name, NamedTextColor.GREEN))
+                            .lore(WordWrap.wrap(
+                                    Component.text("This star piece provides a ", NamedTextColor.GRAY)
+                                             .append(Component.text(selectedStarPiece.starPieceBonusValue + "% ", selectedStarPiece.currency.textColor))
+                                             .append(Component.text("stat boost to a random stat.")),
                                     180
                             ))
                             .addLore(legendaryWeapon.getStarPieceCostLore(selectedStarPiece))
-                            .addLore(
-                                    "",
-                                    ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GRAY + "to apply star piece.",
-                                    ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GRAY + "to change star piece selection."
+                            .addLore(Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                            Component.text("to apply star piece.", NamedTextColor.GRAY)
+                                    ),
+                                    Component.textOfChildren(
+                                            Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                            Component.text("to change star piece selection.", NamedTextColor.GRAY)
+                                    )
                             )
+
                             .get(),
                     (m, e) -> {
                         if (e.isLeftClick()) {
@@ -425,28 +526,37 @@ public class WeaponManagerMenu {
                                 Currencies currency = currenciesLongEntry.getKey();
                                 Long cost = currenciesLongEntry.getValue();
                                 if (pveStats.getCurrencyValue(currency) < cost) {
-                                    player.sendMessage(ChatColor.RED + "You need " + currency.getCostColoredName(cost) + ChatColor.RED + " to apply this star piece!");
-                                    return;
+                                            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                        .append(currency.getCostColoredName(cost))
+                                                                        .append(Component.text(" to apply this star piece!"))
+                                            );
+                                            return;
+                                        }
+                                    }
+                                    WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, legendaryWeapon, selectedStarPiece);
+                                } else if (e.isRightClick()) {
+                                    menuSettings.setSelectedStarPiece(selectedStarPiece.next());
+                                    openWeaponEditor(player, databasePlayer, weapon);
                                 }
                             }
-                            WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, legendaryWeapon, selectedStarPiece);
-                        } else if (e.isRightClick()) {
-                            menuSettings.setSelectedStarPiece(selectedStarPiece.next());
-                            openWeaponEditor(player, databasePlayer, weapon);
-                        }
-                    }
+                    )
+            );
+            List<Component> upgradeWeaponTitleLore = new ArrayList<>(
+                    WordWrap.wrap(Component.text("Change your weapon title to modify its stat distribution.", NamedTextColor.GRAY), 180)
+            );
+            upgradeWeaponTitleLore.add(Component.empty());
+            upgradeWeaponTitleLore.add(Component.textOfChildren(
+                    Component.text("Upgrade Weapon Title ", NamedTextColor.GREEN),
+                    Component.text("[RIGHT-CLICK]", NamedTextColor.YELLOW, TextDecoration.BOLD)
             ));
-            List<String> upgradeWeaponTitleLore = new ArrayList<>();
-            upgradeWeaponTitleLore.addAll(Arrays.asList(
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Change your weapon title to modify its stat distribution.", 180),
-                    "",
-                    ChatColor.GREEN + "Upgrade Weapon Title " + ChatColor.YELLOW + ChatColor.BOLD + "[RIGHT-CLICK]",
-                    WordWrap.wrapWithNewline(ChatColor.GRAY + "Upgrade your weapon title to increase its passive effect.", 180)
-            ));
+            upgradeWeaponTitleLore.addAll(WordWrap.wrap(Component.text("Upgrade your weapon title to increase its passive effect.", NamedTextColor.GRAY), 180));
             upgradeWeaponTitleLore.addAll(legendaryWeapon.getTitleUpgradeCostLore());
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.NAME_TAG)
-                            .name(ChatColor.GREEN + "Change Weapon Title " + ChatColor.YELLOW + ChatColor.BOLD + "[LEFT-CLICK]")
+                            .name(Component.textOfChildren(
+                                    Component.text("Change Weapon Title ", NamedTextColor.GREEN),
+                                    Component.text("[LEFT-CLICK]", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                            ))
                             .lore(upgradeWeaponTitleLore)
                             .get(),
                     (m, e) -> {
@@ -454,15 +564,15 @@ public class WeaponManagerMenu {
                             WeaponTitleMenu.openWeaponTitleMenu(player, databasePlayer, legendaryWeapon, 1);
                         } else if (e.isRightClick()) {
                             if (legendaryWeapon.getTitleUpgradeCost(legendaryWeapon.getTitleLevelUpgraded()) == null) {
-                                player.sendMessage(ChatColor.RED + "This title level upgrade is currently unavailable!");
+                                player.sendMessage(Component.text("This title level upgrade is currently unavailable!", NamedTextColor.RED));
                                 return;
                             }
                             if (legendaryWeapon.getTitleLevel() >= 4) {
-                                player.sendMessage(ChatColor.RED + "You can't upgrade this weapon title anymore.");
+                                player.sendMessage(Component.text("You can't upgrade this weapon title anymore.", NamedTextColor.RED));
                                 return;
                             }
                             if (legendaryWeapon.getTitleLevelUpgraded() > legendaryWeapon.getUpgradeLevel()) {
-                                player.sendMessage(ChatColor.RED + "You need to upgrade your weapon to upgrade its title.");
+                                player.sendMessage(Component.text("You need to upgrade your weapon to upgrade its title.", NamedTextColor.RED));
                                 return;
                             }
                             for (Map.Entry<Spendable, Long> enumLongEntry : legendaryWeapon.getTitleUpgradeCost(legendaryWeapon.getTitleLevelUpgraded())
@@ -471,7 +581,10 @@ public class WeaponManagerMenu {
                                 Spendable spendable = enumLongEntry.getKey();
                                 Long currencyCost = enumLongEntry.getValue();
                                 if (spendable.getFromPlayer(databasePlayer) < currencyCost) {
-                                    player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(currencyCost) + ChatColor.RED + " to upgrade this title!");
+                                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                .append(spendable.getCostColoredName(currencyCost))
+                                                                .append(Component.text(" to upgrade this title!"))
+                                    );
                                     return;
                                 }
                             }
@@ -481,9 +594,9 @@ public class WeaponManagerMenu {
             ));
             weaponOptions.add(new Pair<>(
                     new ItemBuilder(Material.BOOKSHELF)
-                            .name(ChatColor.GREEN + "Change Skill Boost")
-                            .lore(WordWrap.wrapWithNewline(ChatColor.GRAY +
-                                            "Change the skill boost of this weapon.",
+                            .name(Component.text("Change Skill Boost", NamedTextColor.GREEN))
+                            .lore(WordWrap.wrap(Component.text(
+                                            "Change the skill boost of this weapon.", NamedTextColor.GRAY),
                                     180
                             ))
                             .get(),
@@ -603,6 +716,11 @@ public class WeaponManagerMenu {
             setWeaponInventory(databasePlayer.getPveStats().getWeaponInventory());
         }
 
+        public void setWeaponInventory(List<AbstractWeapon> weaponInventory) {
+            this.weaponInventory = weaponInventory;
+            this.sortedWeaponInventory = new ArrayList<>(weaponInventory);
+        }
+
         public void reset() {
             this.page = 1;
             this.rarityFilter = WeaponsPvE.NONE;
@@ -647,11 +765,6 @@ public class WeaponManagerMenu {
 
         public List<AbstractWeapon> getSortedWeaponInventory() {
             return sortedWeaponInventory;
-        }
-
-        public void setWeaponInventory(List<AbstractWeapon> weaponInventory) {
-            this.weaponInventory = weaponInventory;
-            this.sortedWeaponInventory = new ArrayList<>(weaponInventory);
         }
 
         public WeaponsPvE getRarityFilter() {

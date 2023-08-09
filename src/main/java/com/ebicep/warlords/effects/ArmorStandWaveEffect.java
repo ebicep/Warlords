@@ -1,12 +1,16 @@
 package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class ArmorStandWaveEffect {
     private final List<Stand> stands;
@@ -22,7 +26,7 @@ public class ArmorStandWaveEffect {
                 }
             }
         }
-        Collections.sort(stands, Comparator.comparing(Stand::getTimer).reversed());
+        stands.sort(Comparator.comparing(Stand::getTimer).reversed());
     }
 
     public void play() {
@@ -45,7 +49,7 @@ public class ArmorStandWaveEffect {
         }.runTaskTimer(Warlords.getInstance(), 1, 1);
     }
 
-    class Stand {
+    static class Stand {
         private final Location loc;
         private ArmorStand stand;
         private int timer;
@@ -65,12 +69,10 @@ public class ArmorStandWaveEffect {
             timer++;
             if (timer >= 0) {
                 if (stand == null) {
-                    stand = loc.getWorld().spawn(loc, ArmorStand.class);
-                    stand.setGravity(false);
-                    stand.setHelmet(texture);
-                    stand.setBasePlate(false);
-                    stand.setVisible(false);
-                    stand.setMarker(true);
+                    stand = Utils.spawnArmorStand(loc, armorStand -> {
+                        armorStand.getEquipment().setHelmet(texture);
+                        armorStand.setMarker(true);
+                    });
                 }
                 stand.teleport(stand.getLocation().add(0, 0.3 - timer / 20D, 0));
 

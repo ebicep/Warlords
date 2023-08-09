@@ -1,16 +1,17 @@
 package com.ebicep.warlords.pve.weapons.weaponaddons;
 
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.StarPieces;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
 import com.ebicep.warlords.util.java.NumberFormat;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static com.ebicep.warlords.util.java.Utils.generateRandomIndexFromListSize;
+import static com.ebicep.warlords.util.java.JavaUtils.generateRandomIndexFromListSize;
 
 public interface StarPieceBonus {
 
@@ -21,8 +22,8 @@ public interface StarPieceBonus {
 
     List<WeaponStats> getRandomStatBonus();
 
-    default String getStarPieceBonusString() {
-        return ChatColor.WHITE + " (+" + getStarPieceBonusValue() + "% ✦)";
+    default Component getStarPieceBonusString() {
+        return Component.text(" (+" + getStarPieceBonusValue() + "% ✦)", NamedTextColor.WHITE);
     }
 
     int getStarPieceBonusValue();
@@ -36,12 +37,8 @@ public interface StarPieceBonus {
         return 1 + getStarPieceBonusValue() / 100.0f;
     }
 
-    default List<String> getStarPieceCostLore(StarPieces starPieceCurrency) {
-        List<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatColor.AQUA + "Cost: ");
-        getStarPieceBonusCost(starPieceCurrency).forEach((currencies, cost) -> lore.add(ChatColor.GRAY + " - " + currencies.getCostColoredName(cost)));
-        return lore;
+    default List<Component> getStarPieceCostLore(StarPieces starPieceCurrency) {
+        return PvEUtils.getCostLore(getStarPieceBonusCost(starPieceCurrency), true);
     }
 
     default LinkedHashMap<Currencies, Long> getStarPieceBonusCost(StarPieces starPieceCurrency) {

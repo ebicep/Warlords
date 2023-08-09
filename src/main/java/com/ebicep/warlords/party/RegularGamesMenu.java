@@ -10,22 +10,26 @@ import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.*;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class RegularGamesMenu {
 
     private final Party party;
     private final List<RegularGamePlayer> regularGamePlayers = new ArrayList<>();
-    private final HashMap<Team, List<UUID>> selectedPlayersToSwap = new HashMap<Team, List<UUID>>() {{
+    private final HashMap<Team, List<UUID>> selectedPlayersToSwap = new HashMap<>() {{
         put(Team.BLUE, new ArrayList<>());
         put(Team.RED, new ArrayList<>());
     }};
-    private HashMap<Team, Boolean> checkPlayers = new HashMap<Team, Boolean>() {{
+    private HashMap<Team, Boolean> checkPlayers = new HashMap<>() {{
         put(Team.BLUE, true);
         put(Team.RED, true);
     }};
@@ -36,7 +40,9 @@ public class RegularGamesMenu {
 
     public void openMenuForPlayer(Player player) {
         Optional<RegularGamePlayer> gamePlayerOptional = regularGamePlayers.stream().filter(p -> p.getUuid().equals(player.getUniqueId())).findFirst();
-        if (!gamePlayerOptional.isPresent()) return;
+        if (gamePlayerOptional.isEmpty()) {
+            return;
+        }
 
         RegularGamePlayer regularGamePlayer = gamePlayerOptional.get();
         Menu menu = new Menu("Team Builder", 9 * 6);
@@ -60,21 +66,21 @@ public class RegularGamesMenu {
         //two columns of class icons
         for (int i = 0; i < Classes.VALUES.length; i++) {
             Classes spec = Classes.VALUES[i];
-            menu.setItem(2, i + 1, new ItemBuilder(spec.item).name(ChatColor.GREEN + spec.name).get(), (m, e) -> {
+            menu.setItem(2, i + 1, new ItemBuilder(spec.item).name(Component.text(spec.name, NamedTextColor.GREEN)).get(), (m, e) -> {
             });
-            menu.setItem(6, i + 1, new ItemBuilder(spec.item).name(ChatColor.GREEN + spec.name).get(), (m, e) -> {
+            menu.setItem(6, i + 1, new ItemBuilder(spec.item).name(Component.text(spec.name, NamedTextColor.GREEN)).get(), (m, e) -> {
             });
         }
 
         //row of spec icons
         for (int i = 0; i < SpecType.VALUES.length; i++) {
             SpecType specType = SpecType.VALUES[i];
-            menu.setItem(i + 3, 0, new ItemBuilder(specType.itemStack).name(specType.chatColor + specType.name).get(), (m, e) -> {
+            menu.setItem(i + 3, 0, new ItemBuilder(specType.itemStack).name(Component.text(specType.name, specType.textColor)).get(), (m, e) -> {
             });
         }
 
         //bottom items
-        List<RegularGamePlayer> teamPlayers = regularGamePlayers.stream().filter(p -> p.getTeam() == team).collect(Collectors.toList());
+        List<RegularGamePlayer> teamPlayers = regularGamePlayers.stream().filter(p -> p.getTeam() == team).toList();
 
         //players with perms to interact with menu
         List<UUID> uuidsWithPerms = new ArrayList<>();
@@ -86,30 +92,39 @@ public class RegularGamesMenu {
                 }
             }
         }
-        List<String> editors = new ArrayList<>();
+        List<Component> editors = new ArrayList<>();
         for (UUID uuid : uuidsWithPerms) {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-            if (offlinePlayer != null) {
-                editors.add(ChatColor.GRAY + offlinePlayer.getName());
-            }
+            editors.add(Component.text(offlinePlayer.getName(), NamedTextColor.GRAY));
         }
 
         //showing general list of spec and respective players
-        List<String> playerOnSpecs = new ArrayList<>();
+        List<Component> playerOnSpecs = new ArrayList<>();
         for (Specializations value : Specializations.VALUES) {
             Optional<RegularGamePlayer> playerOptional = teamPlayers.stream().filter(p -> p.getSelectedSpec() == value).findFirst();
             if (playerOptional.isPresent()) {
-                playerOnSpecs.add(ChatColor.GOLD + value.name + ChatColor.GRAY + " - " + ChatColor.AQUA + Bukkit.getOfflinePlayer(playerOptional.get().getUuid()).getName());
+                playerOnSpecs.add(
+                        Component.textOfChildren(
+                                Component.text(value.name, NamedTextColor.GOLD),
+                                Component.text(" - ", NamedTextColor.GRAY),
+                                Component.text(Bukkit.getOfflinePlayer(playerOptional.get().getUuid()).getName(), NamedTextColor.AQUA)
+                        )
+                );
             } else {
-                playerOnSpecs.add(ChatColor.GOLD + value.name + ChatColor.GRAY + " - " + ChatColor.AQUA);
+                playerOnSpecs.add(
+                        Component.textOfChildren(
+                                Component.text(value.name, NamedTextColor.GOLD),
+                                Component.text(" - ", NamedTextColor.GRAY)
+                        )
+                );
             }
         }
 
         menu.setItem(
                 7,
                 3,
-                new ItemBuilder(Material.BOOK_AND_QUILL)
-                        .name(ChatColor.GREEN + "Editors")
+                new ItemBuilder(Material.WRITABLE_BOOK)
+                        .name(Component.text("Editors", NamedTextColor.GREEN))
                         .lore(editors)
                         .get(),
                 (m, e) -> {
@@ -118,8 +133,8 @@ public class RegularGamesMenu {
         menu.setItem(
                 7,
                 4,
-                new ItemBuilder(Material.SIGN)
-                        .name(ChatColor.GREEN + "General Information")
+                new ItemBuilder(Material.OAK_SIGN)
+                        .name(Component.text("General Information", NamedTextColor.GREEN))
                         .lore(playerOnSpecs)
                         .get(),
                 (m, e) -> {
@@ -128,11 +143,13 @@ public class RegularGamesMenu {
         menu.setItem(
                 7,
                 5,
-                new ItemBuilder(Material.WOOL, 1, (short) 5)
-                        .name(ChatColor.GREEN + "Confirm Team")
+                new ItemBuilder(Material.LIME_WOOL)
+                        .name(Component.text("Confirm Team", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
-                    if (!uuidsWithPerms.contains(player.getUniqueId())) return;
+                    if (!uuidsWithPerms.contains(player.getUniqueId())) {
+                        return;
+                    }
                     for (RegularGamePlayer teamPlayer : teamPlayers) {
                         UUID uuid = teamPlayer.getUuid();
                         Specializations spec = teamPlayer.getSelectedSpec();
@@ -142,16 +159,20 @@ public class RegularGamesMenu {
                             databasePlayer.setLastSpec(spec);
                         });
                         if (offlinePlayer.getPlayer() != null) {
-                            offlinePlayer.getPlayer().sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
-                            offlinePlayer.getPlayer()
-                                    .sendMessage(ChatColor.GREEN + "Your spec was automatically changed to " + ChatColor.YELLOW + spec.name + ChatColor.GREEN + "!");
-                            offlinePlayer.getPlayer().sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
+                            offlinePlayer.getPlayer().sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
+                            offlinePlayer.getPlayer().sendMessage(Component.text("Your spec was automatically changed to ")
+                                                                           .append(Component.text(spec.name, NamedTextColor.YELLOW))
+                                                                           .append(Component.text("!")));
+                            offlinePlayer.getPlayer().sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
                         }
                     }
                     regularGamePlayers.forEach(p -> {
                         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(p.getUuid());
                         if (offlinePlayer.getPlayer() != null) {
-                            offlinePlayer.getPlayer().sendMessage(ChatColor.GREEN + "The " + team.coloredPrefix() + ChatColor.GREEN + " team is ready!");
+                            offlinePlayer.getPlayer().sendMessage(Component.text("The ", NamedTextColor.GREEN)
+                                                                           .append(team.coloredPrefix())
+                                                                           .append(Component.text(" team is ready!"))
+                            );
                         }
                     });
                 }
@@ -191,15 +212,15 @@ public class RegularGamesMenu {
 
             int x = selectedSpec.specType == SpecType.DAMAGE ? 3 :
                     selectedSpec.specType == SpecType.TANK ? 4 :
-                            selectedSpec.specType == SpecType.HEALER ? 5 :
-                                    -1;
+                    selectedSpec.specType == SpecType.HEALER ? 5 :
+                    -1;
             int y = classes == Classes.MAGE ? 1 :
                     classes == Classes.WARRIOR ? 2 :
-                            classes == Classes.PALADIN ? 3 :
-                                    classes == Classes.SHAMAN ? 4 :
-                                            -1;
+                    classes == Classes.PALADIN ? 3 :
+                    classes == Classes.SHAMAN ? 4 :
+                    -1;
             if (x == -1 || y == -1) {
-                System.out.println("ERROR trying to get players spec position for regular game menu");
+                ChatUtils.MessageType.WARLORDS.sendMessage("ERROR trying to get players spec position for regular game menu");
                 continue;
             }
 
@@ -207,15 +228,15 @@ public class RegularGamesMenu {
 
             ItemBuilder itemBuilder;
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-            String name = offlinePlayer != null ? offlinePlayer.getName() : "UNKNOWN";
+            String name = offlinePlayer.getName();
             if (selectedPlayersToSwap.get(team).contains(uuid)) {
-                itemBuilder = new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.CREEPER.ordinal()))
-                        .name(ChatColor.AQUA + name + ChatColor.GREEN + " SELECTED")
-                        .lore(ChatColor.GOLD + p.getSelectedSpec().name);
+                itemBuilder = new ItemBuilder(new ItemStack(Material.CREEPER_HEAD))
+                        .name(Component.text(name, NamedTextColor.AQUA).append(Component.text(" SELECTED", NamedTextColor.GREEN)))
+                        .lore(Component.text(p.getSelectedSpec().name, NamedTextColor.GOLD));
             } else {
                 itemBuilder = new ItemBuilder(HeadUtils.getHead(uuid))
-                        .name(ChatColor.AQUA + name)
-                        .lore(ChatColor.GOLD + p.getSelectedSpec().name);
+                        .name(Component.text(name, NamedTextColor.AQUA))
+                        .lore(Component.text(p.getSelectedSpec().name, NamedTextColor.GOLD));
             }
 
             menu.setItem(
@@ -223,7 +244,9 @@ public class RegularGamesMenu {
                     y,
                     itemBuilder.get(),
                     (m, e) -> {
-                        if (!uuidsWithPerms.contains(player.getUniqueId())) return;
+                        if (!uuidsWithPerms.contains(player.getUniqueId())) {
+                            return;
+                        }
 
                         List<UUID> uuids = selectedPlayersToSwap.get(team);
                         //unselect player
@@ -242,49 +265,59 @@ public class RegularGamesMenu {
         }
         //fillers
         Arrays.stream(Specializations.VALUES)
-                .filter(classes -> !assignedClasses.contains(classes)).collect(Collectors.toList())
-                .forEach(selectedSpec -> {
-                    Classes classes = Specializations.getClass(selectedSpec);
+              .filter(classes -> !assignedClasses.contains(classes)).toList()
+              .forEach(selectedSpec -> {
+                  Classes classes = Specializations.getClass(selectedSpec);
 
-                    int x = selectedSpec.specType == SpecType.DAMAGE ? 3 :
-                            selectedSpec.specType == SpecType.TANK ? 4 :
-                                    selectedSpec.specType == SpecType.HEALER ? 5 :
-                                            -1;
-                    int y = classes == Classes.MAGE ? 1 :
-                            classes == Classes.WARRIOR ? 2 :
-                                    classes == Classes.PALADIN ? 3 :
-                                            classes == Classes.SHAMAN ? 4 :
-                                                    classes == Classes.ROGUE ? 5 : -1;
-                    menu.setItem(
-                            x,
-                            y,
-                            new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 7).name(ChatColor.GRAY + "Available Spec").get(),
-                            (m, e) -> {
-                                if (!uuidsWithPerms.contains(player.getUniqueId())) return;
+                  int x = selectedSpec.specType == SpecType.DAMAGE ? 3 :
+                          selectedSpec.specType == SpecType.TANK ? 4 :
+                          selectedSpec.specType == SpecType.HEALER ? 5 :
+                          -1;
+                  int y = classes == Classes.MAGE ? 1 :
+                          classes == Classes.WARRIOR ? 2 :
+                          classes == Classes.PALADIN ? 3 :
+                          classes == Classes.SHAMAN ? 4 :
+                          classes == Classes.ROGUE ? 5 : -1;
+                  menu.setItem(
+                          x,
+                          y,
+                          new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE)
+                                  .name(Component.text("Available Spec", NamedTextColor.GRAY))
+                                  .get(),
+                          (m, e) -> {
+                              if (!uuidsWithPerms.contains(player.getUniqueId())) {
+                                  return;
+                              }
 
-                                //give new spec
-                                List<UUID> uuids = selectedPlayersToSwap.get(team);
-                                if (uuids.size() == 1) {
-                                    regularGamePlayers.stream()
-                                            .filter(p -> p.getUuid().equals(selectedPlayersToSwap.get(team).get(0)))
-                                            .findFirst()
-                                            .ifPresent(p -> {
-                                                p.setSelectedSpec(selectedSpec);
-                                                selectedPlayersToSwap.get(team).clear();
-                                            });
-                                }
-                                menu.openForPlayer(player);
-                            }
-                    );
-                });
+                              //give new spec
+                              List<UUID> uuids = selectedPlayersToSwap.get(team);
+                              if (uuids.size() == 1) {
+                                  regularGamePlayers.stream()
+                                                    .filter(p -> p.getUuid().equals(selectedPlayersToSwap.get(team).get(0)))
+                                                    .findFirst()
+                                                    .ifPresent(p -> {
+                                                        p.setSelectedSpec(selectedSpec);
+                                                        selectedPlayersToSwap.get(team).clear();
+                                                    });
+                              }
+                              menu.openForPlayer(player);
+                          }
+                  );
+              });
 
         menu.openForPlayer(player);
     }
 
     private void swapPlayers(Team team) {
-        Optional<RegularGamePlayer> regularGamePlayer1 = regularGamePlayers.stream().filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(selectedPlayersToSwap.get(team).get(0))).findFirst();
-        Optional<RegularGamePlayer> regularGamePlayer2 = regularGamePlayers.stream().filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(selectedPlayersToSwap.get(team).get(1))).findFirst();
-        if (!regularGamePlayer1.isPresent() || !regularGamePlayer2.isPresent()) return;
+        Optional<RegularGamePlayer> regularGamePlayer1 = regularGamePlayers.stream()
+                                                                           .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(selectedPlayersToSwap.get(team).get(0)))
+                                                                           .findFirst();
+        Optional<RegularGamePlayer> regularGamePlayer2 = regularGamePlayers.stream()
+                                                                           .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(selectedPlayersToSwap.get(team).get(1)))
+                                                                           .findFirst();
+        if (regularGamePlayer1.isEmpty() || regularGamePlayer2.isEmpty()) {
+            return;
+        }
         Specializations classToSwap = regularGamePlayer1.get().getSelectedSpec();
         regularGamePlayer1.get().setSelectedSpec(regularGamePlayer2.get().getSelectedSpec());
         regularGamePlayer2.get().setSelectedSpec(classToSwap);

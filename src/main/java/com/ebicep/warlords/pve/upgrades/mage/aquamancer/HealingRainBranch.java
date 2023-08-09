@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.aquamancer;
 
-import com.ebicep.warlords.abilties.HealingRain;
+import com.ebicep.warlords.abilities.HealingRain;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -87,11 +87,13 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         masterUpgrade = new Upgrade(
                 "Electrifying Storm",
                 "Healing Rain - Master Upgrade",
-                "+4s Additional duration" +
-                        "\n\nUp to 8 enemies in Healing Rain will be struck with lightning for 224 - 377 (+1% of their max health) damage every 2 seconds.",
+                """
+                        +4s Additional duration
+
+                        Up to 8 enemies in Healing Rain will be struck with lightning for 224 - 377 (+1% of their max health) damage every 2 seconds.""",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                     ability.setTickDuration(ability.getTickDuration() + 80);
                 }
         );

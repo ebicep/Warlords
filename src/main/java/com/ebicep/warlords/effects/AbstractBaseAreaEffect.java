@@ -12,11 +12,12 @@ public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implemen
     protected Location center;
     protected final List<T> effects = new ArrayList<>();
 
+    @Nonnull
     public Location getCenter() {
         return center;
     }
 
-    public void setCenter(Location center) {
+    public void setCenter(@Nonnull Location center) {
         this.center = center;
     }
 
@@ -24,7 +25,8 @@ public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implemen
         this.effects.add(effect);
     }
 
-    public void addEffects(T... effect) {
+    @SafeVarargs
+    public final void addEffects(T... effect) {
         this.effects.addAll(Arrays.asList(effect));
     }
 
@@ -36,7 +38,8 @@ public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implemen
         effects.clear();
     }
 
-    public void replaceEffects(Predicate<T> search, T... replaceWith) {
+    @SafeVarargs
+    public final void replaceEffects(Predicate<T> search, T... replaceWith) {
         ListIterator<T> itr = this.effects.listIterator();
         int replaced = 0;
         while (itr.hasNext()) {

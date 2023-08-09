@@ -5,6 +5,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 public class WarlordsGiveWeaponEvent extends AbstractWarlordsEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
@@ -23,6 +25,7 @@ public class WarlordsGiveWeaponEvent extends AbstractWarlordsEntityEvent {
         return weapon;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

@@ -6,7 +6,8 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -24,29 +25,20 @@ public class DifficultyMenu {
             menu.setItem(
                     9 / 2 - index.length + 1 + i * 2,
                     1,
-                    new ItemBuilder(Material.REDSTONE_LAMP_OFF)
-                            .name(difficulty.getDifficultyColor() + ChatColor.BOLD.toString() + difficulty.getName())
-                            .lore(ChatColor.GRAY + difficulty.getDescription())
+                    new ItemBuilder(Material.REDSTONE_LAMP)
+                            .name(Component.text(difficulty.getName(), difficulty.getDifficultyColor(), TextDecoration.BOLD))
+                            .lore(difficulty.getDescription())
                             .get(),
                     (m, e) -> {
-                        GameMap map = null;
-                        switch (finalI) {
-                            case 0:
-                                map = GameMap.ILLUSION_APERTURE;
-                                break;
-                            case 1:
-                                map = GameMap.ILLUSION_RIFT;
-                                break;
-                            case 2:
-                                map = GameMap.ILLUSION_VALLEY;
-                                break;
-                            case 3:
-                                map = GameMap.ILLUSION_VALLEY2;
-                                break;
-                            case 4:
-                                map = GameMap.ILLUSION_CROSSFIRE;
-                                break;
-                        }
+                        GameMap map;
+                        map = switch (finalI) {
+                            case 0 -> GameMap.ILLUSION_APERTURE;
+                            case 1 -> GameMap.ILLUSION_RIFT;
+                            case 2 -> GameMap.ILLUSION_VALLEY;
+                            case 3 -> GameMap.ILLUSION_VALLEY2;
+                            case 4 -> GameMap.ILLUSION_CROSSFIRE;
+                            default -> null;
+                        };
                         GameMap finalMap = map;
                         if (finalMap != null) {
                             GameStartCommand.startGamePvE(player, GameMode.WAVE_DEFENSE, queueEntryBuilder ->

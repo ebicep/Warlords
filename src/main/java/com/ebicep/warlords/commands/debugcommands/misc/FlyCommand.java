@@ -6,7 +6,8 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -25,9 +26,8 @@ public class FlyCommand extends BaseCommand {
         boolean allowFlight = otherPlayer.getAllowFlight();
         ChatChannels.sendDebugMessage(
                 player,
-                ChatColor.AQUA + otherPlayer.getName() + (allowFlight ? ChatColor.GREEN : ChatColor.RED) +
-                        " Fly " + (allowFlight ? "Enabled" : "Disabled"),
-                true
+                Component.text(otherPlayer.getName(), NamedTextColor.AQUA)
+                         .append(Component.text(" Fly " + (allowFlight ? "Enabled" : "Disabled"), allowFlight ? NamedTextColor.GREEN : NamedTextColor.RED))
         );
     }
 

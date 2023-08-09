@@ -4,8 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -17,14 +16,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HeadUtils {
 
 
-    public static final ConcurrentHashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> PLAYER_HEADS = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<UUID, net.minecraft.world.item.ItemStack> PLAYER_HEADS = new ConcurrentHashMap<>();
 //    private static Field metaProfileField;
 
     public static void updateHeads() {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             updateHead(onlinePlayer);
         }
-        ChatUtils.MessageTypes.WARLORDS.sendMessage("Heads updated");
+        ChatUtils.MessageType.WARLORDS.sendMessage("Heads updated");
     }
 
     public static void updateHead(Player player) {
@@ -32,9 +31,9 @@ public class HeadUtils {
 
             @Override
             public void run() {
-                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+                ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD);
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-                skullMeta.setOwner(player.getName()); //Involves a potentially blocking web request to acquire the profile data for the provided name.
+                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(player.getUniqueId()));
                 playerSkull.setItemMeta(skullMeta);
                 PLAYER_HEADS.put(player.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
             }
@@ -49,16 +48,16 @@ public class HeadUtils {
         if (PLAYER_HEADS.containsKey(uuid)) {
             return CraftItemStack.asBukkitCopy(PLAYER_HEADS.get(uuid));
         }
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+        ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-        skullMeta.setOwner(Bukkit.getOfflinePlayer(uuid).getName()); //Involves a potentially blocking web request to acquire the profile data for the provided name.
+        skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(uuid));
         playerSkull.setItemMeta(skullMeta);
         PLAYER_HEADS.put(uuid, CraftItemStack.asNMSCopy(playerSkull));
         return playerSkull;
     }
 /*
     public static ItemStack getHead(UUID uuid) {
-        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+        ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD);
 
 
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);

@@ -82,6 +82,13 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Settings.ChatSettings.ChatEnergy chatEnergyMode = Settings.ChatSettings.ChatEnergy.ALL;
     @Field("chat_kills")
     private Settings.ChatSettings.ChatKills chatKillsMode = Settings.ChatSettings.ChatKills.ALL;
+    @Field("chat_insignia")
+    private Settings.ChatSettings.ChatInsignia chatInsigniaMode = Settings.ChatSettings.ChatInsignia.ALL;
+    @Field("chat_event_points")
+    private Settings.ChatSettings.ChatEventPoints chatEventPointsMode = Settings.ChatSettings.ChatEventPoints.ALL;
+    @Field("chat_upgrade")
+    private Settings.ChatSettings.ChatUpgrade chatUpgradeMode = Settings.ChatSettings.ChatUpgrade.ALL;
+
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
     private List<String> permissions = new ArrayList<>();
 
@@ -110,10 +117,12 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         return uuid.equals(that.uuid);
     }
 
+
     @Override
     public String toString() {
         return "DatabasePlayer{" +
-                "uuid='" + uuid + '\'' +
+                "id='" + id + '\'' +
+                ", uuid=" + uuid +
                 ", name='" + name + '\'' +
                 '}';
     }
@@ -144,18 +153,10 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         specStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
         //UPDATE GAMEMODES
         switch (gameMode) {
-            case CAPTURE_THE_FLAG:
-                this.ctfStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case TEAM_DEATHMATCH:
-                this.tdmStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case INTERCEPTION:
-                this.interceptionStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
-            case DUEL:
-                this.duelStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-                break;
+            case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            case TEAM_DEATHMATCH -> this.tdmStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            case INTERCEPTION -> this.interceptionStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            case DUEL -> this.duelStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
@@ -171,8 +172,19 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     }
 
 
-
     public String getName() {
+        if (name == null) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                name = player.getName();
+            }
+        }
+        if (name == null) {
+            name = Bukkit.getOfflinePlayer(uuid).getName();
+        }
+        if (name == null) {
+            name = "?";
+        }
         return name;
     }
 
@@ -373,6 +385,30 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         this.chatKillsMode = chatKillsMode;
     }
 
+    public Settings.ChatSettings.ChatInsignia getChatInsigniaMode() {
+        return chatInsigniaMode;
+    }
+
+    public void setChatInsigniaMode(Settings.ChatSettings.ChatInsignia chatInsigniaMode) {
+        this.chatInsigniaMode = chatInsigniaMode;
+    }
+
+    public Settings.ChatSettings.ChatEventPoints getChatEventPointsMode() {
+        return chatEventPointsMode;
+    }
+
+    public void setChatEventPointsMode(Settings.ChatSettings.ChatEventPoints chatEventPointsMode) {
+        this.chatEventPointsMode = chatEventPointsMode;
+    }
+
+    public Settings.ChatSettings.ChatUpgrade getChatUpgradeMode() {
+        return chatUpgradeMode;
+    }
+
+    public void setChatUpgradeMode(Settings.ChatSettings.ChatUpgrade chatUpgradeMode) {
+        this.chatUpgradeMode = chatUpgradeMode;
+    }
+
     public String getId() {
         return id;
     }
@@ -385,12 +421,12 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         this.permissions = permissions;
     }
 
-    public boolean hasPermission(String permission) {
-        return permissions.contains(permission);
-    }
-
     public boolean isPatreon() {
         return hasPermission("group.patreon") || hasPermission("group.contentcreator");
+    }
+
+    public boolean hasPermission(String permission) {
+        return permissions.contains(permission);
     }
 
 }

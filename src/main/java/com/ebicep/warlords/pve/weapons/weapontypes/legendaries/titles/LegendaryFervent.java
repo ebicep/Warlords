@@ -13,6 +13,9 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.google.common.util.concurrent.AtomicDouble;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -52,15 +55,22 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you lose " + NumberFormat.addCommas(DAMAGE_TO_TAKE) +
-                " health (Post damage reduction). Maximum 3 stacks.\n\nWhen at max stacks, shift for 1 second to consume all 3 stacks and your strikes deal " +
-                formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " more damage for " +
-                formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()) + " seconds. Can be triggered every 40 seconds.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you lose " + NumberFormat.addCommas(DAMAGE_TO_TAKE) +
+                                        " health (Post damage reduction). Maximum 3 stacks.",
+                                NamedTextColor.GRAY
+                        )
+                        .append(Component.newline())
+                        .append(Component.newline())
+                        .append(Component.text("When at max stacks, shift for 1 second to consume all 3 stacks and your strikes deal "))
+                        .append(formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" more damage for "))
+                        .append(formatTitleUpgrade(ABILITY_DURATION + ABILITY_DURATION_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(" seconds. Can be triggered every 40 seconds."));
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
                         formatTitleUpgrade(ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
@@ -169,10 +179,10 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
                     return;
                 }
                 if (player.isSneaking()) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, .5f + .05f * shiftTickTime);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, .5f + .05f * shiftTickTime);
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         player.getCooldownManager().removeCooldown(cooldown.get());
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Fervent Ability",

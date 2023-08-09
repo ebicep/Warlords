@@ -8,7 +8,8 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -22,16 +23,16 @@ public class StatsLeaderboardCommand extends BaseCommand {
         StatsLeaderboardManager.enabled = !StatsLeaderboardManager.enabled;
         StatsLeaderboardManager.addHologramLeaderboards(false);
         if (StatsLeaderboardManager.enabled) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards enabled", true);
+            ChatChannels.sendDebugMessage(issuer, Component.text("Leaderboards enabled", NamedTextColor.GREEN));
         } else {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Leaderboards disabled", true);
+            ChatChannels.sendDebugMessage(issuer, Component.text("Leaderboards disabled", NamedTextColor.GREEN));
         }
     }
 
     @Subcommand("forcereload")
     public void forceReload(CommandIssuer issuer) {
         StatsLeaderboardManager.addHologramLeaderboards(false);
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Leaderboards reloaded", true);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Leaderboards reloaded", NamedTextColor.GREEN));
     }
 
     @Subcommand("reload")
@@ -40,17 +41,17 @@ public class StatsLeaderboardCommand extends BaseCommand {
             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
                 StatsLeaderboardManager.resetLeaderboards(activeCollection, false);
             }
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "All leaderboards reloaded", true);
+            ChatChannels.sendDebugMessage(issuer, Component.text("All leaderboards reloaded", NamedTextColor.GREEN));
         } else {
             StatsLeaderboardManager.resetLeaderboards(collection, false);
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + collection.name + " leaderboards reloaded", true);
+            ChatChannels.sendDebugMessage(issuer, Component.text(collection.name + " leaderboards reloaded", NamedTextColor.GREEN));
         }
     }
 
     @Subcommand("refresh")
     public void refresh(CommandIssuer issuer) {
         StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
-        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Refreshed visibility for all players", true);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Refreshed visibility for all players", NamedTextColor.GREEN));
     }
 
     @Subcommand("page")

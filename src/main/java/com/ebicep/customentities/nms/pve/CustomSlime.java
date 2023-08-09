@@ -1,26 +1,32 @@
 package com.ebicep.customentities.nms.pve;
 
-import net.minecraft.server.v1_8_R3.Entity;
-import net.minecraft.server.v1_8_R3.EntitySlime;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.phys.Vec3;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 
-public class CustomSlime extends EntitySlime implements CustomEntity<CustomSlime> {
+import javax.annotation.Nonnull;
 
-    public CustomSlime(World world) {
-        super(world);
-        setSize(5);
+public class CustomSlime extends Slime implements CustomEntity<CustomSlime> {
+
+    public CustomSlime(ServerLevel serverLevel) {
+        super(EntityType.SLIME, serverLevel);
+        setSize(5, true);
+        giveBaseAI();
     }
 
     public CustomSlime(org.bukkit.World world) {
         this(((CraftWorld) world).getHandle());
     }
 
-    //jump
     @Override
-    protected void bF() {
-        this.motY = 0.1; //motion y
-        this.ai = true; //isAirBorne
+    protected void jumpFromGround() {
+        Vec3 vec3d = this.getDeltaMovement();
+        this.setDeltaMovement(vec3d.x, .1, vec3d.z);
+        this.hasImpulse = true;
     }
 
     @Override
@@ -31,15 +37,22 @@ public class CustomSlime extends EntitySlime implements CustomEntity<CustomSlime
     private boolean stunned;
 
     @Override
-    public void collide(Entity entity) {
-        if (stunned) {
-            return;
-        }
-        super.collide(entity);
+    public boolean canCollideWithBukkit(@Nonnull Entity entity) {
+        return !stunned;
     }
 
     @Override
     public void setStunned(boolean stunned) {
         this.stunned = stunned;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceSquared) {
+        return false;
+    }
+
+    @Override
+    public DisguiseType getDisguiseType() {
+        return DisguiseType.SLIME;
     }
 }

@@ -10,6 +10,8 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -35,8 +37,7 @@ public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase implements W
         super(game, gameWinEvent, counted);
         //this.difficulty =
         for (Option option : game.getOptions()) {
-            if (option instanceof WaveDefenseOption) {
-                WaveDefenseOption waveDefenseOption = (WaveDefenseOption) option;
+            if (option instanceof WaveDefenseOption waveDefenseOption) {
                 this.wavesCleared = waveDefenseOption.getWavesCleared();
                 game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEWaveDefense(warlordsPlayer, waveDefenseOption)));
             }
@@ -70,9 +71,9 @@ public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase implements W
     }
 
     @Override
-    public List<String> getExtraLore() {
-        List<String> lore = new ArrayList<>(super.getExtraLore());
-        lore.add(ChatColor.GRAY + "Waves Cleared: " + ChatColor.YELLOW + wavesCleared);
+    public List<Component> getExtraLore() {
+        List<Component> lore = new ArrayList<>(super.getExtraLore());
+        lore.add(Component.text("Waves Cleared: ", NamedTextColor.GRAY).append(Component.text(wavesCleared)));
         return lore;
     }
 

@@ -2,6 +2,7 @@ package com.ebicep.jda.queuesystem;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -34,7 +35,7 @@ public class QueueListener extends ListenerAdapter {
             TextChannel textChannel = event.getTextChannel();
 
             String playerName = event.getMember().getEffectiveName();
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayerIfCached(playerName);
             if (Objects.equals(event.getSubcommandName(), "join") || Objects.equals(event.getSubcommandName(), "leave")) {
                 if (offlinePlayer == null || offlinePlayer.getName().contains(" ") || offlinePlayer.getName().contains("?")) {
                     event.reply("Invalid Name").queue();
@@ -44,17 +45,9 @@ public class QueueListener extends ListenerAdapter {
             UUID playerUUID = offlinePlayer.getUniqueId();
 
             switch (Objects.requireNonNull(event.getSubcommandName())) {
-                case "refresh": {
-                    refreshQueue(event);
-                    break;
-                }
-                case "join": {
-                    joinQueue(event, member, textChannel, playerName, playerUUID);
-                    break;
-                }
-                case "leave": {
-                    leaveQueue(event, playerName, playerUUID);
-                }
+                case "refresh" -> refreshQueue(event);
+                case "join" -> joinQueue(event, member, textChannel, playerName, playerUUID);
+                case "leave" -> leaveQueue(event, playerName, playerUUID);
             }
         }
     }
@@ -69,7 +62,7 @@ public class QueueListener extends ListenerAdapter {
             event.reply("You are already in the queue").queue();
             return;
         }
-        if (QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(playerUUID))) {
+        if (QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.uuid().equals(playerUUID))) {
             QueueManager.removePlayerFromFutureQueue(playerUUID);
             QueueManager.addPlayerToQueue(playerName, false);
             event.reply("You were moved from the future to the current queue").queue();
@@ -113,9 +106,9 @@ public class QueueListener extends ListenerAdapter {
                         @Override
                         public void run() {
                             QueueManager.addPlayerToQueue(playerName, false);
-                            QueueManager.futureQueue.removeIf(futureQueuePlayer -> futureQueuePlayer.getUuid()
-                                                                                                    .equals(Bukkit.getOfflinePlayer(member.getEffectiveName())
-                                                                                                                  .getUniqueId()));
+                            QueueManager.futureQueue.removeIf(futureQueuePlayer -> futureQueuePlayer
+                                    .uuid()
+                                    .equals(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(member.getEffectiveName())).getUniqueId()));
                             textChannel.sendMessage("<@" + member.getId() + "> You are now in the queue, make sure you are on the server once the party is open")
                                        .queue();
                             QueueManager.sendQueue();
@@ -137,7 +130,7 @@ public class QueueListener extends ListenerAdapter {
             if (QueueManager.queue.stream().anyMatch(uuid -> uuid.equals(playerUUID))) {
                 QueueManager.removePlayerFromQueue(playerName);
                 event.reply("You left the queue").queue();
-            } else if (QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(playerUUID))) {
+            } else if (QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.uuid().equals(playerUUID))) {
                 QueueManager.removePlayerFromFutureQueue(playerName);
                 event.reply("You left the future queue").queue();
             } else {
@@ -145,7 +138,7 @@ public class QueueListener extends ListenerAdapter {
             }
             QueueManager.sendQueue();
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
         }
     }
 }

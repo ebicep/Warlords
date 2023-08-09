@@ -14,20 +14,21 @@ import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.mobs.MobDrops;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -75,27 +76,27 @@ public class ItemCraftingMenu {
         Menu menu = new Menu("Ethical Enya", 9 * 4);
 
         menu.setItem(1, 1,
-                new ItemBuilder(org.bukkit.Material.STAINED_CLAY, 1, (short) 4)
-                        .name(ChatColor.GREEN + "Delta Forging")
-                        .lore(ChatColor.GRAY + "Craft a Delta Tiered Item")
+                new ItemBuilder(Material.YELLOW_TERRACOTTA)
+                        .name(Component.text("Delta Forging", NamedTextColor.GREEN))
+                        .lore(Component.text("Craft a Delta Tiered Item", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.DELTA, new HashMap<>())
         );
 
         menu.setItem(4, 1,
-                new ItemBuilder(org.bukkit.Material.STAINED_CLAY, 1, (short) 1)
-                        .name(ChatColor.GREEN + "Omega Forging")
-                        .lore(ChatColor.GRAY + "Craft an Omega Tiered Item")
+                new ItemBuilder(Material.WHITE_TERRACOTTA)
+                        .name(Component.text("Omega Forging", NamedTextColor.GREEN))
+                        .lore(Component.text("Craft an Omega Tiered Item", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> {
-                    player.sendMessage(ChatColor.RED + "The time for this has not yet come.");
-                    //openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>())
+                    //player.sendMessage(Component.text("The time for this has not yet come.", NamedTextColor.RED));
+                    openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>());
                 }
         );
         menu.setItem(7, 1,
                 new ItemBuilder(Material.ANVIL)
-                        .name(ChatColor.GREEN + "Celestial Smeltery")
-                        .lore(ChatColor.GRAY + "Smelt Celestial Bronze")
+                        .name(Component.text("Celestial Smeltery", NamedTextColor.GREEN))
+                        .lore(Component.text("Smelt Celestial Bronze", NamedTextColor.GRAY))
                         .get(),
                 (m, e) -> openCelestialSmelteryMenu(player, databasePlayer, null)
         );
@@ -108,10 +109,10 @@ public class ItemCraftingMenu {
         Menu menu = new Menu(itemTier.name + " Forging", 9 * 6);
 
         TierCostInfo tierCostInfo = TIER_COST_INFO.get(itemTier);
-        List<TierRequirement> requirements = tierCostInfo.getRequirements();
+        List<TierRequirement> requirements = tierCostInfo.requirements();
         for (TierRequirement requirement : requirements) {
-            ItemTier tier = requirement.getTier();
-            ItemMenuUtil.addItemTierRequirement(menu, tier, items.get(tier), requirement.getX(), requirement.getY(), (m, e) -> {
+            ItemTier tier = requirement.tier();
+            ItemMenuUtil.addItemTierRequirement(menu, tier, items.get(tier), requirement.x(), requirement.y(), (m, e) -> {
                 openItemSelectMenu(
                         player,
                         databasePlayer,
@@ -125,10 +126,10 @@ public class ItemCraftingMenu {
             });
         }
 
-        Pair<Integer, Integer> costLocation = tierCostInfo.getCostLocation();
+        Pair<Integer, Integer> costLocation = tierCostInfo.costLocation();
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
 
-        ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, tierCostInfo.getCost(), costLocation.getA(), costLocation.getB());
+        ItemMenuUtil.addSpendableCostRequirement(databasePlayer, menu, tierCostInfo.cost(), costLocation.getA(), costLocation.getB());
         ItemMenuUtil.addItemConfirmation(menu, () -> {
             addCraftItemConfirmation(player, databasePlayer, items, menu, requirements, pveStats, itemTier);
         });
@@ -150,8 +151,11 @@ public class ItemCraftingMenu {
                 "Select an Item",
                 onClick,
                 itemBuilder -> itemBuilder.addLore(
-                        "",
-                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select"
+                        Component.empty(),
+                        Component.textOfChildren(
+                                Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text(" to select", NamedTextColor.GREEN)
+                        )
                 ),
                 new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer)
                         .setItemInventory(databasePlayer.getPveStats()
@@ -178,36 +182,84 @@ public class ItemCraftingMenu {
             DatabasePlayerPvE pveStats,
             ItemTier tier
     ) {
-        boolean requirementsMet = requirements.stream().allMatch(requirement -> items.get(requirement.getTier()) != null);
+        boolean requirementsMet = requirements.stream().allMatch(requirement -> items.get(requirement.tier()) != null);
         boolean enoughMobDrops = TIER_COST_INFO.get(tier)
-                                               .getCost()
+                                               .cost()
                                                .entrySet()
                                                .stream()
                                                .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
+        AbstractItem inheritedItem = null;
+        if (tier == ItemTier.DELTA) {
+            inheritedItem = items.get(ItemTier.GAMMA);
+        } else if (tier == ItemTier.OMEGA) {
+            inheritedItem = items.get(ItemTier.DELTA);
+        }
+        if (inheritedItem == null) {
+            return;
+        }
+
+        Set<BasicStatPool> statPools = new HashSet<>(inheritedItem.getStatPool().keySet());
+        BasicStatPool[] otherStats = Arrays.stream(BasicStatPool.VALUES)
+                                           .filter(pool -> !statPools.contains(pool))
+                                           .toArray(BasicStatPool[]::new);
+        //add random other stat to stat pool
+        BasicStatPool otherStat = otherStats[ThreadLocalRandom.current().nextInt(otherStats.length)];
+        statPools.add(otherStat);
+
+        AbstractItem itemToCraft;
+        if (inheritedItem instanceof CraftsInto) {
+            itemToCraft = ((CraftsInto) inheritedItem).getCraftsInto(statPools);
+        } else {
+            itemToCraft = null;
+        }
+        if (!(itemToCraft instanceof AbstractSpecialItem craftedItem)) {
+            player.sendMessage(Component.text("An error occurred while crafting the item. Please report this!", NamedTextColor.RED));
+            return;
+        }
+        itemToCraft.setModifier(inheritedItem.getModifier());
+        ItemBuilder itemBuilder;
+        if (requirementsMet && enoughMobDrops) {
+            ItemStack craftedItemObfuscated = craftedItem.generateItemStackWithObfuscatedStat(otherStat);
+            itemBuilder = new ItemBuilder(craftedItemObfuscated)
+                    .name(Component.text("Click to Craft " + craftedItem.getName(), NamedTextColor.GREEN))
+                    .addLore(Component.empty())
+                    .addLore(
+                            WordWrap.wrap(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
+                                            "It will also have an additional random stat and become reblessed.", NamedTextColor.GRAY),
+                                    160
+                            )
+                    );
+        } else {
+            itemBuilder = new ItemBuilder(Material.BARRIER)
+                    .name(Component.text("Click to Craft Item", NamedTextColor.GREEN))
+                    .lore(
+                            ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
+                            ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
+                            Component.empty()
+                    )
+                    .addLore(
+                            WordWrap.wrap(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
+                                            "It will also have an additional random stat and become reblessed.", NamedTextColor.GRAY),
+                                    160
+                            )
+                    );
+        }
         menu.setItem(6, 2,
-                new ItemBuilder(requirementsMet && enoughMobDrops ? tier.clayBlock : new ItemStack(Material.BARRIER))
-                        .name(ChatColor.GREEN + "Click to Craft Item")
-                        .lore(
-                                ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
-                                ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
-                                "",
-                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
-                                                "It will also have an additional random stat and become reblessed.",
-                                        160
-                                )
-                        )
-                        .get(),
+                itemBuilder.get(),
                 (m, e) -> {
                     if (!requirementsMet) {
-                        player.sendMessage(ChatColor.RED + "You do not have all the required items to craft this item!");
+                        player.sendMessage(Component.text("You do not have all the required items to craft this item!", NamedTextColor.RED));
                         return;
                     }
                     TierCostInfo tierCostInfo = TIER_COST_INFO.get(tier);
-                    for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
+                    for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.cost().entrySet()) {
                         Spendable spendable = currenciesLongEntry.getKey();
                         Long cost = currenciesLongEntry.getValue();
                         if (spendable.getFromPlayer(databasePlayer) < cost) {
-                            player.sendMessage(ChatColor.RED + "You need " + spendable.getCostColoredName(cost) + ChatColor.RED + " to craft this item!");
+                            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                        .append(spendable.getCostColoredName(cost))
+                                                        .append(Component.text(" to craft this item!"))
+                            );
                             return;
                         }
                     }
@@ -215,48 +267,26 @@ public class ItemCraftingMenu {
                     Menu.openConfirmationMenu(player,
                             "Confirm Item Craft",
                             3,
-                            Collections.singletonList(ChatColor.GRAY + "Craft " + tier.getColoredName() + ChatColor.GRAY + " Item"),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Collections.singletonList(Component.textOfChildren(
+                                    Component.text("Craft ", NamedTextColor.GRAY),
+                                    tier.getColoredName(),
+                                    Component.text(" Item")
+                            )),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 for (TierRequirement requirement : requirements) {
-                                    pveStats.getItemsManager().removeItem(items.get(requirement.getTier()));
+                                    pveStats.getItemsManager().removeItem(items.get(requirement.tier()));
                                 }
-                                for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.getCost().entrySet()) {
+                                for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.cost().entrySet()) {
                                     currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                 }
-
-                                AbstractItem inheritedItem = null;
-                                if (tier == ItemTier.DELTA) {
-                                    inheritedItem = items.get(ItemTier.GAMMA);
-                                } else if (tier == ItemTier.OMEGA) {
-                                    inheritedItem = items.get(ItemTier.DELTA);
-                                }
-                                if (inheritedItem == null) {
-                                    return;
-                                }
-
-                                Set<BasicStatPool> statPools = new HashSet<>(inheritedItem.getStatPool().keySet());
-                                BasicStatPool[] otherStats = Arrays.stream(BasicStatPool.VALUES)
-                                                                   .filter(pool -> !statPools.contains(pool))
-                                                                   .toArray(BasicStatPool[]::new);
-                                //add random other stat to stat pool
-                                statPools.add(otherStats[ThreadLocalRandom.current().nextInt(otherStats.length)]);
-
-                                AbstractItem craftedItem;
-                                if (inheritedItem instanceof CraftsInto) {
-                                    craftedItem = ((CraftsInto) inheritedItem).getCraftsInto(statPools);
-                                } else {
-                                    craftedItem = inheritedItem.getType().createBasicInherited(tier, statPools);
-                                }
-                                craftedItem.setModifier(inheritedItem.getModifier());
-                                craftedItem.bless(null);
-                                pveStats.getItemsManager().addItem(craftedItem);
+                                itemToCraft.bless(null);
+                                pveStats.getItemsManager().addItem(itemToCraft);
                                 AbstractItem.sendItemMessage(player,
-                                        new ComponentBuilder(ChatColor.GRAY + "You crafted ")
-                                                .appendHoverItem(craftedItem.getItemName(), craftedItem.generateItemStack())
+                                        Component.textOfChildren(Component.text("You crafted ", NamedTextColor.GRAY), itemToCraft.getHoverComponent())
                                 );
                                 player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
-                                player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 1);
+                                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
                                 player.closeInventory();
                             },
                             (m2, e2) -> openForgingMenu(player, databasePlayer, tier, items),
@@ -271,17 +301,24 @@ public class ItemCraftingMenu {
         Menu menu = new Menu("Celestial Smeltery", 9 * 6);
 
         ItemBuilder itemBuilder = new ItemBuilder(Material.PAPER)
-                .name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" +
-                        ChatColor.GREEN + " to select a" + (boughtBlessing != null ? " different " : " ") + "blessing")
-                .enchant(Enchantment.OXYGEN, 1)
-                .flags(ItemFlag.HIDE_ENCHANTS);
+                .name(Component.textOfChildren(
+                        Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                        Component.text(" to select a" + (boughtBlessing != null ? " different " : " ") + "blessing", NamedTextColor.GREEN)
+                ))
+                .enchant(Enchantment.OXYGEN, 1);
         if (boughtBlessing == null) {
-            itemBuilder.name(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a blessing");
+            itemBuilder.name(Component.textOfChildren(
+                    Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                    Component.text(" to select a blessing", NamedTextColor.GREEN)
+            ));
         } else {
-            itemBuilder.name(ChatColor.GREEN + "Tier " + (boughtBlessing) + " Bought Blessing")
+            itemBuilder.name(Component.text("Tier " + (boughtBlessing) + " Bought Blessing", NamedTextColor.GREEN))
                        .addLore(
-                               "",
-                               ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to select a different blessing"
+                               Component.empty(),
+                               Component.textOfChildren(
+                                       Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                       Component.text(" to select a different blessing", NamedTextColor.GREEN)
+                               )
                        );
         }
 
@@ -313,11 +350,12 @@ public class ItemCraftingMenu {
             int finalTier = tier;
             menu.setItem(tier + 1, 1,
                     new ItemBuilder(Material.PAPER)
-                            .name(ChatColor.GREEN + "Tier " + tier + " Bought Blessings")
-                            .lore(ChatColor.GRAY + "Amount: " + ChatColor.YELLOW + blessingBoughtAmount)
-                            .amount(blessingBoughtAmount)
+                            .name(Component.text("Tier " + tier + " Bought Blessings", NamedTextColor.GREEN))
+                            .lore(Component.textOfChildren(
+                                    Component.text("Amount: ", NamedTextColor.GRAY),
+                                    Component.text(blessingBoughtAmount, NamedTextColor.YELLOW)
+                            ))
                             .enchant(Enchantment.OXYGEN, 1)
-                            .flags(ItemFlag.HIDE_ENCHANTS)
                             .get(),
                     (m, e) -> {
                         if (blessingBoughtAmount > 0) {
@@ -339,7 +377,7 @@ public class ItemCraftingMenu {
                                                     .stream()
                                                     .allMatch(entry -> entry.getKey().getFromPlayer(databasePlayer) >= entry.getValue());
         ItemBuilder itemBuilder = new ItemBuilder(hasBoughtBlessing && enoughCost ? Material.ANVIL : Material.BARRIER)
-                .name(ChatColor.GREEN + "Click to Smelt a Celestial Bronze")
+                .name(Component.text("Click to Smelt a Celestial Bronze", NamedTextColor.GREEN))
                 .lore(
                         ItemMenuUtil.getRequirementMetString(hasBoughtBlessing, "Blessing Selected"),
                         ItemMenuUtil.getRequirementMetString(enoughCost, "Enough Loot")
@@ -356,11 +394,14 @@ public class ItemCraftingMenu {
                             "Confirm Smelt",
                             3,
                             new ArrayList<>() {{
-                                add(ChatColor.GRAY + "Smelt a Celestial Bronze");
+                                add(Component.text("Smelt a Celestial Bronze", NamedTextColor.GRAY));
                                 addAll(PvEUtils.getCostLore(CELESTIAL_SMELTERY_COST, "Smelt Cost", true));
-                                add(ChatColor.GRAY + " - " + ChatColor.GREEN + "Tier " + boughtBlessing + " Bought Blessing");
+                                add(Component.textOfChildren(
+                                        Component.text(" - ", NamedTextColor.GRAY),
+                                        Component.text("Tier " + boughtBlessing + " Bought Blessing", NamedTextColor.GREEN)
+                                ));
                             }},
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 for (Map.Entry<Spendable, Long> spendableLongEntry : CELESTIAL_SMELTERY_COST.entrySet()) {
                                     spendableLongEntry.getKey().subtractFromPlayer(databasePlayer, spendableLongEntry.getValue());
@@ -370,10 +411,10 @@ public class ItemCraftingMenu {
 
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                 player.playSound(player.getLocation(), "mage.inferno.activation", 2, 0.5f);
-                                player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 1);
+                                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
                                 player.closeInventory();
 
-                                AbstractItem.sendItemMessage(player, ChatColor.GREEN + "You smelted a Celestial Bronze");
+                                AbstractItem.sendItemMessage(player, Component.text("You smelted a Celestial Bronze", NamedTextColor.GREEN));
                             },
                             (m2, e2) -> openCelestialSmelteryMenu(player, databasePlayer, boughtBlessing),
                             (m2) -> {
@@ -384,52 +425,10 @@ public class ItemCraftingMenu {
 
     }
 
-    static class TierRequirement {
-        private final ItemTier tier;
-        private final int x;
-        private final int y;
-
-        TierRequirement(ItemTier tier, int x, int y) {
-            this.tier = tier;
-            this.x = x;
-            this.y = y;
-        }
-
-        public ItemTier getTier() {
-            return tier;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
+    record TierRequirement(ItemTier tier, int x, int y) {
     }
 
-    static class TierCostInfo {
-        private final LinkedHashMap<Spendable, Long> cost;
-        private final Pair<Integer, Integer> costLocation;
-        private final List<TierRequirement> requirements;
-
-        TierCostInfo(LinkedHashMap<Spendable, Long> cost, Pair<Integer, Integer> costLocation, List<TierRequirement> requirements) {
-            this.cost = cost;
-            this.costLocation = costLocation;
-            this.requirements = requirements;
-        }
-
-        public LinkedHashMap<Spendable, Long> getCost() {
-            return cost;
-        }
-
-        public Pair<Integer, Integer> getCostLocation() {
-            return costLocation;
-        }
-
-        public List<TierRequirement> getRequirements() {
-            return requirements;
-        }
+    record TierCostInfo(LinkedHashMap<Spendable, Long> cost, Pair<Integer, Integer> costLocation, List<TierRequirement> requirements) {
 
     }
 

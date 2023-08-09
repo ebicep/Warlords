@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.items;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -8,8 +8,8 @@ import com.ebicep.warlords.pve.DifficultyMode;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.statpool.StatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
+import com.ebicep.warlords.pve.items.types.BonusStats;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.HandsOfTheHolyCorpse;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -77,17 +77,17 @@ public class ItemLoadout {
         getActualItems(itemsManager).forEach(item -> {
             ItemTier tier = item.getTier();
             addStatPool(statPoolValues, statPoolHighestTier, item.getStatPool(), tier);
-            if (item instanceof AbstractSpecialItem) {
-                if (item instanceof ItemAddonClassBonus) {
-                    if (((ItemAddonClassBonus) item).getClasses() != Specializations.getClass(warlordsPlayer.getSpecClass())) {
-                        return;
-                    }
+            if (item instanceof ItemAddonClassBonus itemAddonClassBonus) {
+                if (itemAddonClassBonus.getClasses() != Specializations.getClass(warlordsPlayer.getSpecClass())) {
+                    return;
                 }
-                addStatPool(statPoolValues, statPoolHighestTier, ((AbstractSpecialItem) item).getBonusStats(), tier);
-                if (item instanceof AppliesToWarlordsPlayer && !appliedClasses.contains(item.getClass())) {
-                    appliedClasses.add(item.getClass());
-                    ((AppliesToWarlordsPlayer) item).applyToWarlordsPlayer(warlordsPlayer, pveOption);
-                }
+            }
+            if (item instanceof BonusStats bonusStats) {
+                addStatPool(statPoolValues, statPoolHighestTier, bonusStats.getBonusStats(), tier);
+            }
+            if (item instanceof AppliesToWarlordsPlayer appliesToWarlordsPlayer && !appliedClasses.contains(item.getClass())) {
+                appliedClasses.add(item.getClass());
+                appliesToWarlordsPlayer.applyToWarlordsPlayer(warlordsPlayer, pveOption);
             }
         });
 

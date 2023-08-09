@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -19,7 +18,7 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
                 "Illusion Swordsman",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.CARPET),
+                        new ItemStack(Material.WHITE_CARPET),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),
                         new ItemStack(Material.CHAINMAIL_LEGGINGS),
                         new ItemStack(Material.CHAINMAIL_BOOTS),
@@ -57,11 +56,11 @@ public class EliteZombie extends AbstractZombie implements EliteMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+        EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.PURPLE)
                                                                        .with(FireworkEffect.Type.BURST)
                                                                        .withTrail()
                                                                        .build());
-        Utils.playGlobalSound(deathLocation, Sound.ZOMBIE_DEATH, 2, 0.4f);
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_ZOMBIE_DEATH, 2, 0.4f);
     }
 }

@@ -15,8 +15,9 @@ import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.Pair;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -26,29 +27,13 @@ import java.util.UUID;
 @CommandAlias("endprivategame")
 public class PrivateGameTerminateCommand extends BaseCommand {
 
-    private static void endGameInstance(Player player, GameManager.GameHolder holder, Game game) {
-        if (holder.getGame() == null) return;
-
-        if (holder.getGame().isFrozen()) {
-            holder.getGame().clearFrozenCauses();
-        }
-        Optional<PlayingState> state = game.getState(PlayingState.class);
-        if (!state.isPresent()) {
-            player.sendMessage(ChatColor.RED + "The game is not in playing state, instead it is in " + game.getState().getClass().getSimpleName());
-        } else {
-            player.sendMessage(ChatColor.RED + "Terminating game...");
-            game.setNextState(new EndState(game, null));
-        }
-    }
-
     @Default
     @Description("Terminates your current game if private")
     public void endPrivateGame(@Conditions("requireGame:withAddon=PRIVATE_GAME") WarlordsPlayer warlordsPlayer) {
         Game game = warlordsPlayer.getGame();
-        if (!(warlordsPlayer.getEntity() instanceof Player)) {
+        if (!(warlordsPlayer.getEntity() instanceof Player player)) {
             return;
         }
-        Player player = (Player) warlordsPlayer.getEntity();
         for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
             if (Objects.equals(gameHolder.getGame(), game)) {
                 Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(warlordsPlayer.getUuid());
@@ -56,9 +41,9 @@ public class PrivateGameTerminateCommand extends BaseCommand {
                     Player partyLeader = Bukkit.getPlayer(partyPlayerPair.getA().getPartyLeader().getUUID());
                     if (partyLeader.getPlayer() != null && partyLeader.getPlayer().getUniqueId().equals(warlordsPlayer.getUuid())) {
                         endGameInstance(player, gameHolder, game);
-                        player.sendMessage(ChatColor.GREEN + "Game has been terminated. Warping back to lobby...");
+                        player.sendMessage(Component.text("Game has been terminated. Warping back to lobby...", NamedTextColor.GREEN));
                     } else {
-                        player.sendMessage(ChatColor.RED + "You are not the party leader, unable to terminate game.");
+                        player.sendMessage(Component.text("You are not the party leader, unable to terminate game.", NamedTextColor.RED));
                     }
                 } else {
                     // Remove dummies in case of Practice map
@@ -68,15 +53,32 @@ public class PrivateGameTerminateCommand extends BaseCommand {
                     game.removePlayer(UUID.fromString("503adef4-fa6f-4b1b-87bf-cb755e4feb40"));
 
                     if (game.warlordsPlayers().count() > 1) {
-                        player.sendMessage(ChatColor.RED + "You are not the only player in the game, unable to terminate game.");
+                        player.sendMessage(Component.text("You are not the only player in the game, unable to terminate game.", NamedTextColor.RED));
                     } else {
                         endGameInstance(player, gameHolder, game);
-                        player.sendMessage(ChatColor.GREEN + "Game has been terminated. Warping back to lobby...");
+                        player.sendMessage(Component.text("Game has been terminated. Warping back to lobby...", NamedTextColor.GREEN));
                     }
                 }
 
                 return;
             }
+        }
+    }
+
+    private static void endGameInstance(Player player, GameManager.GameHolder holder, Game game) {
+        if (holder.getGame() == null) {
+            return;
+        }
+
+        if (holder.getGame().isFrozen()) {
+            holder.getGame().clearFrozenCauses();
+        }
+        Optional<PlayingState> state = game.getState(PlayingState.class);
+        if (state.isEmpty()) {
+            player.sendMessage(Component.text("The game is not in playing state, instead it is in " + game.getState().getClass().getSimpleName(), NamedTextColor.RED));
+        } else {
+            player.sendMessage(Component.text("Terminating game...", NamedTextColor.RED));
+            game.setNextState(new EndState(game, null));
         }
     }
 

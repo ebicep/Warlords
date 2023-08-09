@@ -8,7 +8,8 @@ import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -42,27 +43,13 @@ public class PatreonReward extends AbstractReward implements Listener {
             }
         }
         patreonRewards.add(new PatreonReward(Instant.now()
-                .atZone(ZoneOffset.UTC)
-                .withMonth(month.getValue())
-                .withYear(year.getValue())
-                .toInstant()
+                                                    .atZone(ZoneOffset.UTC)
+                                                    .withMonth(month.getValue())
+                                                    .withYear(year.getValue())
+                                                    .toInstant()
         ));
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
         return true;
-    }
-
-    public static void givePatreonFutureMessage(DatabasePlayer databasePlayer, Month month, Year year) {
-        databasePlayer.addFutureMessage(new FutureMessage(
-                Arrays.asList(
-                        ChatColor.LIGHT_PURPLE + "------------------------------------------------",
-                        ChatColor.GREEN + "You received your " +
-                                ChatColor.LIGHT_PURPLE + year.getValue() + " " + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) +
-                                ChatColor.GREEN + " Patreon reward!",
-                        ChatColor.GREEN + "Claim it in your Rewards Inventory",
-                        ChatColor.LIGHT_PURPLE + "------------------------------------------------"
-                ),
-                true
-        ));
     }
 
     public Instant getTimeGiven() {
@@ -99,8 +86,22 @@ public class PatreonReward extends AbstractReward implements Listener {
         }
     }
 
+    public static void givePatreonFutureMessage(DatabasePlayer databasePlayer, Month month, Year year) {
+        databasePlayer.addFutureMessage(FutureMessage.create(
+                Arrays.asList(
+                        Component.text("------------------------------------------------", NamedTextColor.LIGHT_PURPLE),
+                        Component.text("You received your ", NamedTextColor.GREEN)
+                                 .append(Component.text(month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + year.getValue(), NamedTextColor.LIGHT_PURPLE))
+                                 .append(Component.text(" Patreon reward!", NamedTextColor.GREEN)),
+                        Component.text("Claim it in your Rewards Inventory", NamedTextColor.GREEN),
+                        Component.text("------------------------------------------------", NamedTextColor.LIGHT_PURPLE)
+                ),
+                true
+        ));
+    }
+
     @Override
-    public ChatColor getNameColor() {
-        return ChatColor.LIGHT_PURPLE;
+    public NamedTextColor getNameColor() {
+        return NamedTextColor.LIGHT_PURPLE;
     }
 }

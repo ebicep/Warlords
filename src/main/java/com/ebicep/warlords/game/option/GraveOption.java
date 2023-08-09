@@ -4,16 +4,19 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,37 +28,35 @@ import java.util.function.Function;
  */
 public class GraveOption implements Option, Listener {
 
-    public static final Material DEFAULT_GRAVE_MATERIAL = Material.SAPLING;
+    public static final Material DEFAULT_GRAVE_MATERIAL = Material.DARK_OAK_SAPLING;
     public static final byte DEFAULT_GRAVE_MATERIAL_DATA = (byte) 5;
-    public static final Function<WarlordsEntity, String> DEFAULT_GRAVE_TEXT = wp
-            -> wp.getTeam().teamColor() + wp.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD";
+    public static final Function<WarlordsEntity, Component> DEFAULT_GRAVE_TEXT = wp ->
+            Component.textOfChildren(
+                    Component.text(wp.getName(), wp.getTeam().teamColor()),
+                    Component.text(" - ", NamedTextColor.GRAY),
+                    Component.text("DEAD", NamedTextColor.YELLOW)
+            );
 
     private final List<Grave> graves = new LinkedList<>();
     private Material material;
-    private byte data;
-    private Function<WarlordsEntity, String> graveName;
+    private Function<WarlordsEntity, Component> graveName;
     private boolean activated = true;
 
     public GraveOption() {
-        this(DEFAULT_GRAVE_MATERIAL, DEFAULT_GRAVE_MATERIAL_DATA, DEFAULT_GRAVE_TEXT);
+        this(DEFAULT_GRAVE_MATERIAL, DEFAULT_GRAVE_TEXT);
     }
 
-    public GraveOption(Function<WarlordsEntity, String> graveName) {
-        this(DEFAULT_GRAVE_MATERIAL, DEFAULT_GRAVE_MATERIAL_DATA, graveName);
+    public GraveOption(Material material, Function<WarlordsEntity, Component> graveName) {
+        this.material = Objects.requireNonNull(material, "material");
+        this.graveName = Objects.requireNonNull(graveName, "graveName");
+    }
+
+    public GraveOption(Function<WarlordsEntity, Component> graveName) {
+        this(DEFAULT_GRAVE_MATERIAL, graveName);
     }
 
     public GraveOption(Material material) {
-        this(material, (byte) 0, DEFAULT_GRAVE_TEXT);
-    }
-
-    public GraveOption(Material material, byte data) {
-        this(material, data, DEFAULT_GRAVE_TEXT);
-    }
-
-    public GraveOption(Material material, byte data, Function<WarlordsEntity, String> graveName) {
-        this.material = Objects.requireNonNull(material, "material");
-        this.data = data;
-        this.graveName = Objects.requireNonNull(graveName, "graveName");
+        this(material, DEFAULT_GRAVE_TEXT);
     }
 
     public Material getMaterial() {
@@ -66,19 +67,11 @@ public class GraveOption implements Option, Listener {
         this.material = Objects.requireNonNull(material, "material");
     }
 
-    public byte getData() {
-        return data;
-    }
-
-    public void setData(byte data) {
-        this.data = data;
-    }
-
-    public Function<WarlordsEntity, String> getGraveName() {
+    public Function<WarlordsEntity, Component> getGraveName() {
         return graveName;
     }
 
-    public void setGraveName(Function<WarlordsEntity, String> graveName) {
+    public void setGraveName(Function<WarlordsEntity, Component> graveName) {
         this.graveName = Objects.requireNonNull(graveName, "graveName");
     }
 
@@ -91,12 +84,12 @@ public class GraveOption implements Option, Listener {
     }
 
     @Override
-    public void register(Game game) {
+    public void register(@Nonnull Game game) {
         game.registerEvents(this);
     }
 
     @Override
-    public void onGameCleanup(Game game) {
+    public void onGameCleanup(@Nonnull Game game) {
         this.activated = false;
         for (Grave grave : graves) {
             grave.remove();
@@ -108,17 +101,6 @@ public class GraveOption implements Option, Listener {
     public void onEvent(WarlordsDeathEvent event) {
         if (event.getWarlordsEntity().shouldSpawnGrave()) {
             addGrave(event.getWarlordsEntity());
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEvent(WarlordsRespawnEvent event) {
-        for (Iterator<Grave> it = this.graves.iterator(); it.hasNext();) {
-            Grave grave = it.next();
-            if (grave.getOwner() == event.getWarlordsEntity()) {
-                grave.remove();
-                it.remove();
-            }
         }
     }
 
@@ -144,7 +126,8 @@ public class GraveOption implements Option, Listener {
                     for (; toTest.getY() > 0; toTest.subtract(0, 1, 0)) {
                         Block underTest = toTest.getBlock();
                         if (underTest.getType() != Material.AIR) {
-                            if (underTest.getType().isTransparent() || underTest.getType() == Material.STANDING_BANNER || underTest.getType() == Material.BANNER) {
+                            if (underTest.getType()
+                                         .isTransparent() || underTest.getBlockData() instanceof Banner || underTest.getType() == Material.BLACK_BANNER) {
                                 // We have hit a sappling, fence, torch or other non-solid
                                 break;
                             }
@@ -172,16 +155,25 @@ public class GraveOption implements Option, Listener {
         if (bestGraveCandidate != null) {
             //spawn grave
             bestGraveCandidate.setType(material);
-            bestGraveCandidate.setData(data);
-            ArmorStand deathStand = (ArmorStand) player.getWorld().spawnEntity(bestGraveCandidate.getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
-            String name = this.graveName.apply(player);
-            if (name != null) {
-                deathStand.setCustomName(name);
-                deathStand.setCustomNameVisible(true);
+            ArmorStand deathStand = Utils.spawnArmorStand(bestGraveCandidate.getLocation().add(.5, -1.5, .5), armorStand -> {
+                Component name = this.graveName.apply(player);
+                if (name != null) {
+                    armorStand.customName(name);
+                    armorStand.setCustomNameVisible(true);
+                }
+            });
+            this.graves.add(new Grave(player, deathStand, bestGraveCandidate, material));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEvent(WarlordsRespawnEvent event) {
+        for (Iterator<Grave> it = this.graves.iterator(); it.hasNext(); ) {
+            Grave grave = it.next();
+            if (grave.getOwner() == event.getWarlordsEntity()) {
+                grave.remove();
+                it.remove();
             }
-            deathStand.setGravity(false);
-            deathStand.setVisible(false);
-            this.graves.add(new Grave(player, deathStand, bestGraveCandidate, material, data));
         }
     }
 
@@ -191,14 +183,12 @@ public class GraveOption implements Option, Listener {
         private final ArmorStand armorStand;
         private final Block block;
         private final Material material;
-        private final byte data;
 
-        public Grave(WarlordsEntity owner, ArmorStand armorStand, Block location, Material material, byte data) {
+        public Grave(WarlordsEntity owner, ArmorStand armorStand, Block location, Material material) {
             this.owner = owner;
             this.armorStand = armorStand;
             this.block = location;
             this.material = material;
-            this.data = data;
         }
 
         public WarlordsEntity getOwner() {
@@ -207,7 +197,7 @@ public class GraveOption implements Option, Listener {
 
         public void remove() {
             Block deathBlock = block;
-            if (deathBlock.getType() == material && deathBlock.getData() == data) {
+            if (deathBlock.getType() == material) {
                 deathBlock.setType(Material.AIR);
             }
             armorStand.remove();

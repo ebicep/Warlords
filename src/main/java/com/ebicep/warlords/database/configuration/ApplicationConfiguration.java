@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.configuration;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -16,7 +17,7 @@ import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -39,7 +40,7 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
     @Bean
     @Override
     public MongoClient mongoClient() {
-        System.out.println("Getting mongoClient");
+        ChatUtils.MessageType.WARLORDS.sendMessage("Getting mongoClient");
         MongoClientSettings mongoClientSettings = MongoClientSettings
                 .builder()
                 .applyConnectionString(new ConnectionString(key))
@@ -67,7 +68,7 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
 
     @Override
     public MongoCustomConversions customConversions() {
-        return new MongoCustomConversions(Arrays.asList(
+        return new MongoCustomConversions(List.of(
                 new StringToSpendableConverter()
         ));
     }

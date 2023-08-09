@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 
-import com.ebicep.warlords.abilties.CrusadersStrike;
+import com.ebicep.warlords.abilities.CrusadersStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -102,7 +102,7 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
                 50000,
                 () -> {
                     ability.setEnergyRadius(ability.getEnergyRadius() * 2);
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

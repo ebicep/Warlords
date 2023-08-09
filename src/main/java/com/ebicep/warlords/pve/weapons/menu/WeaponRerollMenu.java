@@ -6,9 +6,9 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.StatsRerollable;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -19,13 +19,16 @@ public class WeaponRerollMenu {
 
         int rerollCost = weapon.getRerollCost();
         menu.setItem(2, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
-                        .name(ChatColor.GREEN + "Confirm")
-                        .lore(ChatColor.GRAY + "Reroll this weapon and reset its stats.")
+                new ItemBuilder(Material.GREEN_CONCRETE)
+                        .name(Component.text("Confirm", NamedTextColor.GREEN))
+                        .lore(Component.text("Reroll this weapon and reset its stats.", NamedTextColor.GRAY))
                         .addLore(weapon.getRerollCostLore())
                         .addLore(
-                                "",
-                                ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("WARNING: ", NamedTextColor.RED),
+                                        Component.text("This action cannot be undone.", NamedTextColor.GRAY)
+                                )
                         )
                         .get(),
                 (m, e) -> {
@@ -42,9 +45,9 @@ public class WeaponRerollMenu {
         );
 
         menu.setItem(6, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
-                        .name(ChatColor.RED + "Deny")
-                        .lore(ChatColor.GRAY + "Go back.")
+                new ItemBuilder(Material.RED_CONCRETE)
+                        .name(Menu.DENY)
+                        .lore(WeaponManagerMenu.GO_BACK)
                         .get(),
                 (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );
@@ -57,16 +60,13 @@ public class WeaponRerollMenu {
             return;
         }
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
-            ComponentBuilder componentBuilder = new ComponentBuilder(ChatColor.GRAY + "Reroll Result: ")
-                    .appendHoverItem(weapon.getName(), weapon.generateItemStack(false));
-
+            Component component = Component.text("Reroll Result: ", NamedTextColor.GRAY)
+                                           .append(weapon.getHoverComponent(false));
             weapon.reroll();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.spigot().sendMessage(
-                    componentBuilder.append(ChatColor.GRAY + " to ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .create()
+            player.sendMessage(component.append(Component.text(" to "))
+                                        .append(weapon.getHoverComponent(false))
             );
         }
     }

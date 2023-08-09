@@ -5,6 +5,8 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -18,7 +20,7 @@ public class SpawnpointOption extends MarkerOption {
 
     public static final int BAD_TEAM_PENALTY = -10000;
 
-    public SpawnpointOption(Location location, ToDoubleFunction<WarlordsEntity> teamCheck, List<String> debugExtra) {
+    public SpawnpointOption(Location location, ToDoubleFunction<WarlordsEntity> teamCheck, List<TextComponent> debugExtra) {
         super(new SpawnLocationMarker() {
                   @Override
                   public double getPriority(WarlordsEntity player) {
@@ -31,7 +33,7 @@ public class SpawnpointOption extends MarkerOption {
                   }
 
                 },
-                DebugLocationMarker.create(Material.BED, 0, SpawnpointOption.class, "Spawnpoint", location, () -> debugExtra)
+                DebugLocationMarker.create(Material.BLACK_BED, 0, SpawnpointOption.class, Component.text("Spawnpoint"), location, () -> debugExtra)
         );
     }
 
@@ -39,7 +41,7 @@ public class SpawnpointOption extends MarkerOption {
         return new SpawnpointOption(
                 location,
                 (p) -> p.getTeam() == team ? 0 : BAD_TEAM_PENALTY,
-                Arrays.asList("Type: for-team", "Team: " + team)
+                Arrays.asList(Component.text("Type: for-team"), Component.text("Team: " + team))
         );
     }
 
@@ -71,7 +73,7 @@ public class SpawnpointOption extends MarkerOption {
                     double distanceToFriendlies = distances.getOrDefault(Boolean.TRUE, 0d);
                     return distanceToFriendlies - distanceToEnemy;
                 },
-                Arrays.asList("Type: avoiding-enemy-players")
+                List.of(Component.text("Type: avoiding-enemy-players"))
         );
     }
 }

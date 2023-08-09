@@ -58,7 +58,7 @@ public class DatabaseTiming {
                 .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Monthly Stats"))
                 .async(timing -> {
                     if (timing == null) {
-                        ChatUtils.MessageTypes.TIMINGS.sendMessage("Could not find Monthly Stats timing in database. Creating new timing.");
+                        ChatUtils.MessageType.TIMINGS.sendMessage("Could not find Monthly Stats timing in database. Creating new timing.");
                         DatabaseManager.timingsService.create(new DatabaseTiming("Monthly Stats", DateUtil.getResetDateCurrentMonth(), Timing.MONTHLY));
                     } else {
                         ZonedDateTime resetTime = timing.getLastReset().atZone(ZoneOffset.UTC);
@@ -67,7 +67,7 @@ public class DatabaseTiming {
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateCurrentMonth());
                             DatabaseManager.timingsService.update(timing);
-                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Monthly information reset");
+                            ChatUtils.MessageType.TIMINGS.sendMessage("Monthly information reset");
                             return true;
                         }
                     }
@@ -95,17 +95,17 @@ public class DatabaseTiming {
                 .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Weekly Stats"))
                 .async(timing -> {
                     if (timing == null) {
-                        ChatUtils.MessageTypes.TIMINGS.sendMessage("Could not find Weekly Stats timing in database. Creating new timing.");
+                        ChatUtils.MessageType.TIMINGS.sendMessage("Could not find Weekly Stats timing in database. Creating new timing.");
                         DatabaseManager.timingsService.create(new DatabaseTiming("Weekly Stats", DateUtil.getResetDateLatestMonday(), Timing.WEEKLY));
                     } else {
                         long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), currentDate);
-                        ChatUtils.MessageTypes.TIMINGS.sendMessage("Weekly Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
+                        ChatUtils.MessageType.TIMINGS.sendMessage("Weekly Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
                         //10 min buffer
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 30) {
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateLatestMonday());
                             DatabaseManager.timingsService.update(timing);
-                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Weekly information reset");
+                            ChatUtils.MessageType.TIMINGS.sendMessage("Weekly information reset");
                             return true;
                         }
                     }
@@ -137,17 +137,17 @@ public class DatabaseTiming {
                 .asyncFirst(() -> DatabaseManager.timingsService.findByTitle("Daily Stats"))
                 .async(timing -> {
                     if (timing == null) {
-                        ChatUtils.MessageTypes.TIMINGS.sendMessage("Could not find Daily Stats timing in database. Creating new timing.");
+                        ChatUtils.MessageType.TIMINGS.sendMessage("Could not find Daily Stats timing in database. Creating new timing.");
                         DatabaseManager.timingsService.create(new DatabaseTiming("Daily Stats", DateUtil.getResetDateToday(), Timing.DAILY));
                     } else {
                         long minutesBetween = ChronoUnit.MINUTES.between(timing.getLastReset(), currentDate);
-                        ChatUtils.MessageTypes.TIMINGS.sendMessage("Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
+                        ChatUtils.MessageType.TIMINGS.sendMessage("Daily Reset Time Minute: " + minutesBetween + " > " + (timing.getTiming().minuteDuration - 30));
                         //10 min buffer
                         if (minutesBetween > 0 && minutesBetween > timing.getTiming().minuteDuration - 10) {
                             //updating date to current
                             timing.setLastReset(DateUtil.getResetDateToday());
                             DatabaseManager.timingsService.update(timing);
-                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Daily information reset");
+                            ChatUtils.MessageType.TIMINGS.sendMessage("Daily information reset");
                             return true;
                         }
                     }
@@ -200,11 +200,11 @@ public class DatabaseTiming {
                                     true
                             );
                             DatabaseManager.playerService.deleteAll(PlayersCollections.MONTHLY);
-                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Stored previous monthly stats and reset current monthly stats");
+                            ChatUtils.MessageType.TIMINGS.sendMessage("Stored previous monthly stats and reset current monthly stats");
                         })
                         .execute();
             } catch (Exception e) {
-                ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("Error clearing monthly collection");
+                ChatUtils.MessageType.TIMINGS.sendErrorMessage("Error clearing monthly collection");
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.MONTHLY).clear();
@@ -226,7 +226,7 @@ public class DatabaseTiming {
 
                 ExperienceManager.awardWeeklyExperience(topPlayers);
             } catch (Exception e) {
-                ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
+                ChatUtils.MessageType.TIMINGS.sendErrorMessage("ERROR DOING WEEKLY EXP THINGY - COMPS DIDNT HAPPEN?");
             }
             try {
                 //clearing weekly
@@ -238,11 +238,11 @@ public class DatabaseTiming {
                                     true
                             );
                             DatabaseManager.playerService.deleteAll(PlayersCollections.WEEKLY);
-                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Stored previous weekly stats and reset current weekly stats");
+                            ChatUtils.MessageType.TIMINGS.sendMessage("Stored previous weekly stats and reset current weekly stats");
                         })
                         .execute();
             } catch (Exception e) {
-                ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("Error clearing weekly collection");
+                ChatUtils.MessageType.TIMINGS.sendErrorMessage("Error clearing weekly collection");
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.WEEKLY).clear();
@@ -267,11 +267,11 @@ public class DatabaseTiming {
                                     true
                             );
                             DatabaseManager.playerService.deleteAll(PlayersCollections.DAILY);
-                            ChatUtils.MessageTypes.TIMINGS.sendMessage("Stored previous daily stats and reset current daily stats");
+                            ChatUtils.MessageType.TIMINGS.sendMessage("Stored previous daily stats and reset current daily stats");
                         })
                         .execute();
             } catch (Exception e) {
-                ChatUtils.MessageTypes.TIMINGS.sendErrorMessage("Error clearing daily collection");
+                ChatUtils.MessageType.TIMINGS.sendErrorMessage("Error clearing daily collection");
             }
             //reloading boards
             DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.DAILY).clear();

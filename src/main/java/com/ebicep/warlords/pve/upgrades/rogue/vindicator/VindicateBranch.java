@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.rogue.vindicator;
 
-import com.ebicep.warlords.abilties.Vindicate;
+import com.ebicep.warlords.abilities.Vindicate;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -87,10 +87,10 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
         masterUpgrade = new Upgrade(
                 "Reflective Barrier",
                 "Vindicate - Master Upgrade",
-                "Enemies who try to attack you while Vindicate is active are pushed back and reflect 75% of the damage you take back.",
+                "Enemies who try to attack you while Vindicate is active are pushed back and reflect 90% of the damage you take back.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                 }
         );
     }

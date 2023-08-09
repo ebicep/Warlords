@@ -9,8 +9,9 @@ import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Flags;
 import co.aikar.commands.annotation.HelpCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
@@ -28,12 +29,20 @@ public class MessageCommand extends BaseCommand {
             return;
         }
         if (player.getUniqueId().equals(target.getUniqueId())) {
-            player.sendMessage(ChatColor.RED + "You cannot message yourself!");
+            player.sendMessage(Component.text("You cannot message yourself!", NamedTextColor.RED));
             return;
         }
 
-        player.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + target.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-        target.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+        player.sendMessage(Component.empty()
+                                    .append(Component.text("To ", NamedTextColor.DARK_PURPLE))
+                                    .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                                    .append(Component.text(": ", NamedTextColor.WHITE))
+                                    .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
+        target.sendMessage(Component.empty()
+                                    .append(Component.text("From ", NamedTextColor.DARK_PURPLE))
+                                    .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                                    .append(Component.text(": ", NamedTextColor.WHITE))
+                                    .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
         PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), target.getUniqueId());
         LAST_PLAYER_MESSAGES.put(newPlayerMessage, Instant.now());
     }
@@ -42,22 +51,32 @@ public class MessageCommand extends BaseCommand {
     @Description("Reply to a player")
     public void reply(Player player, String message) {
         Optional<PlayerMessage> playerMessage = LAST_PLAYER_MESSAGES.entrySet().stream()
-                .filter(playerMessageLongEntry -> playerMessageLongEntry.getKey().getTo().equals(player.getUniqueId()))
-                .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
-                .map(Map.Entry::getKey)
-                .findFirst();
+                                                                    .filter(playerMessageLongEntry -> playerMessageLongEntry.getKey()
+                                                                                                                            .to()
+                                                                                                                            .equals(player.getUniqueId()))
+                                                                    .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
+                                                                    .map(Map.Entry::getKey)
+                                                                    .findFirst();
         if (playerMessage.isPresent() && Instant.now().isBefore(LAST_PLAYER_MESSAGES.get(playerMessage.get()).plus(5, ChronoUnit.MINUTES))) {
-            Player otherPlayer = Bukkit.getPlayer(playerMessage.get().getFrom());
+            Player otherPlayer = Bukkit.getPlayer(playerMessage.get().from());
             if (otherPlayer != null) {
-                player.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-                otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + player.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+                player.sendMessage(Component.empty()
+                                            .append(Component.text("To ", NamedTextColor.DARK_PURPLE))
+                                            .append(Component.text(otherPlayer.getName(), NamedTextColor.AQUA))
+                                            .append(Component.text(": ", NamedTextColor.WHITE))
+                                            .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
+                otherPlayer.sendMessage(Component.empty()
+                                                 .append(Component.text("From ", NamedTextColor.DARK_PURPLE))
+                                                 .append(Component.text(player.getName(), NamedTextColor.AQUA))
+                                                 .append(Component.text(": ", NamedTextColor.WHITE))
+                                                 .append(Component.text(message, NamedTextColor.LIGHT_PURPLE)));
                 PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
                 LAST_PLAYER_MESSAGES.put(newPlayerMessage, Instant.now());
             } else {
-                player.sendMessage(ChatColor.RED + "That player is no longer online!");
+                player.sendMessage(Component.text("That player is no longer online!", NamedTextColor.RED));
             }
         } else {
-            player.sendMessage(ChatColor.RED + "Nobody has messages you within the last 5 minutes.");
+            player.sendMessage(Component.text("Nobody has messages you within the last 5 minutes.", NamedTextColor.RED));
         }
     }
 
@@ -68,14 +87,7 @@ public class MessageCommand extends BaseCommand {
     }
 }
 
-class PlayerMessage {
-    private final UUID from;
-    private final UUID to;
-
-    public PlayerMessage(UUID from, UUID to) {
-        this.from = from;
-        this.to = to;
-    }
+record PlayerMessage(UUID from, UUID to) {
 
     @Override
     public String toString() {
@@ -85,24 +97,16 @@ class PlayerMessage {
                 '}';
     }
 
-    public UUID getFrom() {
-        return from;
-    }
-
-    public UUID getTo() {
-        return to;
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PlayerMessage that = (PlayerMessage) o;
         return Objects.equals(from, that.from) && Objects.equals(to, that.to);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(from, to);
-    }
 }

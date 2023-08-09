@@ -11,13 +11,17 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
-import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.java.StringUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.entity.Player;
 
 import java.util.EnumSet;
 import java.util.OptionalInt;
 
-import static com.ebicep.warlords.util.warlords.Utils.toTitleHumanCase;
+import static com.ebicep.warlords.util.java.StringUtils.toTitleHumanCase;
 
 @CommandAlias("gamelist")
 @CommandPermission("warlords.game.list")
@@ -27,44 +31,51 @@ public class GameListCommand extends BaseCommand {
     @Description("Lists all games")
     public void listGames(CommandIssuer issuer) {
         for (GameHolder holder : Warlords.getGameManager().getGames()) {
-            StringBuilder message = new StringBuilder();
-            message.append(ChatColor.GRAY).append("[")
-                    .append(ChatColor.AQUA).append(holder.getName())
-                    .append(ChatColor.GRAY).append("|")
-                    .append(ChatColor.AQUA).append(toTitleHumanCase(holder.getMap().name()));
+            TextComponent.Builder message = Component.empty().color(NamedTextColor.GRAY)
+                                                     .append(Component.text("["))
+                                                     .append(Component.text(holder.getName(), NamedTextColor.AQUA))
+                                                     .append(Component.text("|"))
+                                                     .append(Component.text(toTitleHumanCase(holder.getMap().name()), NamedTextColor.AQUA))
+                                                     .append(Component.text("]"))
+                                                     .toBuilder();
             Game game = holder.getGame();
             if (game == null) {
-                message.append(']').append(ChatColor.GOLD).append(" <inactive>");
+                message.append(Component.text("]"))
+                       .append(Component.text(" <inactive>", NamedTextColor.GOLD));
             } else {
                 if (holder.getMap().getGameModes().size() > 1) {
-                    message.append(ChatColor.GRAY).append("/").append(ChatColor.AQUA).append(toTitleHumanCase(game.getGameMode()));
+                    message.append(Component.text("/"))
+                           .append(Component.text(toTitleHumanCase(game.getGameMode()), NamedTextColor.AQUA));
                 }
-                message.append(ChatColor.GRAY).append("] ");
-                //message.append('(').append(ChatColor.GOLD).append(game.getGameId()).append(ChatColor.GRAY).append(") ");
+                message.append(Component.text("]"));
                 EnumSet<GameAddon> addons = game.getAddons();
                 if (!addons.isEmpty()) {
-                    message.append(ChatColor.GRAY).append('(');
+                    message.append(Component.text("("));
                     for (GameAddon addon : addons) {
-                        message.append(ChatColor.GREEN).append(addon.name());
-                        message.append(ChatColor.GRAY).append(',');
+                        message.append(Component.text(addon.name(), NamedTextColor.GREEN));
+                        message.append(Component.text(", "));
                     }
-                    message.setLength(message.length() - 1);
-                    message.append("] ");
+                    message.append(Component.text(") "));
                 }
-                message.append(ChatColor.GOLD).append(game.getState().getClass().getSimpleName())
-                        .append(ChatColor.GRAY).append(" [ ")
-                        .append(ChatColor.GREEN).append(game.getPlayers().size())
-                        .append(ChatColor.GRAY).append("/")
-                        .append(ChatColor.GREEN).append(game.getMinPlayers())
-                        .append(ChatColor.GRAY).append("..")
-                        .append(ChatColor.GREEN).append(game.getMaxPlayers())
-                        .append(ChatColor.GRAY).append("] ");
+                message.append(Component.text(game.getState().getClass().getSimpleName(), NamedTextColor.GOLD))
+                       .append(Component.text("["))
+                       .append(Component.text(game.getPlayers().size(), NamedTextColor.GREEN))
+                       .append(Component.text("/"))
+                       .append(Component.text(game.getMinPlayers(), NamedTextColor.GREEN))
+                       .append(Component.text(".."))
+                       .append(Component.text(game.getMaxPlayers(), NamedTextColor.GREEN))
+                       .append(Component.text("] "));
                 OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
-                String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
+                String time = StringUtils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
-                message.append(time).append(word);
+                message.append(Component.text(time))
+                       .append(Component.text(word));
             }
-            issuer.sendMessage(message.toString());
+            if (issuer.getIssuer() instanceof Player player) {
+                player.sendMessage(message.build());
+            } else {
+                issuer.sendMessage(PlainTextComponentSerializer.plainText().serialize(message.build()));
+            }
         }
     }
 

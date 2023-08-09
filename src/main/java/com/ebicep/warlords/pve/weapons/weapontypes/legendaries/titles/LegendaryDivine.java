@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -12,6 +12,9 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -126,14 +129,14 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                     return;
                 }
                 if (player.isSneaking()) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, .5f + .05f * shiftTickTime);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, .5f + .05f * shiftTickTime);
                     shiftTickTime++;
                     if (shiftTickTime == 20) {
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         player.getCooldownManager().removeCooldown(cooldown.get());
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
                             if (ability.getEnergyCost() > 0) {
-                                abilityEnergyCostReduction.put(ability, ability.getEnergyCost() * 0.4f);
+                                abilityEnergyCostReduction.put(ability, 0.4f);
                             }
                         }
                         abilityEnergyCost(-1);
@@ -169,18 +172,24 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
             }
 
             public void abilityEnergyCost(int multiplier) {
-                abilityEnergyCostReduction.forEach((abstractAbility, aFloat) -> abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() + aFloat * multiplier));
+                abilityEnergyCostReduction.forEach((abstractAbility, aFloat) -> abstractAbility.setEnergyCostMultiplicative(abstractAbility.getEnergyCostMultiplicative() + aFloat * multiplier));
                 player.updateItems();
             }
         }.runTaskTimer(0, 0);
     }
 
     @Override
-    public String getPassiveEffect() {
-        return "Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times." +
-                " Maximum 3 stacks.\n\nWhen at max stacks, shift for 1 second to consume all 3 stacks and gain 40% energy cost reduction for all abilities, " +
-                formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%") + " increased damage, and " +
-                formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()) + " EPS for 6 seconds. Can be triggered every 40 seconds.";
+    public TextComponent getPassiveEffect() {
+        return Component.text("Gain a " + DAMAGE_BOOST + "% damage boost for " + DURATION + " seconds when you deal damage " + TARGETS_TO_HIT + " times. Maximum 3 stacks.",
+                                NamedTextColor.GRAY
+                        )
+                        .append(Component.newline())
+                        .append(Component.newline())
+                        .append(Component.text("When at max stacks, shift for 1 second to consume all 3 stacks and gain 40% energy cost reduction for all abilities, "))
+                        .append(formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" increased damage, and "))
+                        .append(formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()))
+                        .append(Component.text(" EPS for 6 seconds. Can be triggered every 40 seconds."));
     }
 
     @Override
@@ -234,7 +243,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     }
 
     @Override
-    public List<Pair<String, String>> getPassiveEffectUpgrade() {
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
                         formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),

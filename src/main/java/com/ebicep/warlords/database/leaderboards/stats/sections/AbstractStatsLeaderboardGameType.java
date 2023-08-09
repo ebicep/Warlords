@@ -41,28 +41,17 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
         Predicate<DatabasePlayer> externalFilter = null;
         if (this instanceof PvELeaderboard) {
             switch (collection) {
-                case LIFETIME:
-                    externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 50;
-                    break;
-                case MONTHLY:
-                    externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 25;
-                    break;
-                case WEEKLY:
-                    externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 10;
-                    break;
+                case LIFETIME -> externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 50;
+                case MONTHLY -> externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 25;
+                case WEEKLY -> externalFilter = databasePlayer -> databasePlayer.getPveStats().getPlays() < 10;
             }
         } else {
-            switch (collection) {
-                case LIFETIME:
-                    externalFilter = databasePlayer -> databasePlayer.getPlays() < 50;
-                    break;
-                case MONTHLY:
-                    externalFilter = databasePlayer -> databasePlayer.getPlays() < 25;
-                    break;
-                case WEEKLY:
-                    externalFilter = databasePlayer -> databasePlayer.getPlays() < 10;
-                    break;
-            }
+            externalFilter = switch (collection) {
+                case LIFETIME -> databasePlayer -> databasePlayer.getPlays() < 50;
+                case MONTHLY-> databasePlayer -> databasePlayer.getPlays() < 25;
+                case WEEKLY -> databasePlayer -> databasePlayer.getPlays() < 10;
+                default -> null;
+            };
         }
         String subTitle = getSubTitle();
         for (StatsLeaderboardCategory<T> category : gameTypeCategories) {

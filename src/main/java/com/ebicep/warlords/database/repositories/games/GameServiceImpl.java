@@ -3,7 +3,6 @@ package com.ebicep.warlords.database.repositories.games;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -16,8 +15,12 @@ import java.util.List;
 @Service("gameService")
 public class GameServiceImpl implements GameService {
 
-    @Autowired
+    final
     MongoTemplate mongoTemplate;
+
+    public GameServiceImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Override
     public boolean exists(DatabaseGameBase game, GamesCollections collections) {
@@ -27,45 +30,41 @@ public class GameServiceImpl implements GameService {
     @Override
     public void create(DatabaseGameBase game) {
         switch (game.getGameMode()) {
-            case CAPTURE_THE_FLAG:
-                create(game, GamesCollections.CTF);
-                break;
-            case TEAM_DEATHMATCH:
-                create(game, GamesCollections.TDM);
-                break;
+            case CAPTURE_THE_FLAG -> create(game, GamesCollections.CTF);
+            case TEAM_DEATHMATCH -> create(game, GamesCollections.TDM);
         }
     }
 
     @Override
     public void create(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.insert(game, collection.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + collection.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + collection.collectionName);
         mongoTemplate.insert(game, GamesCollections.ALL.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + GamesCollections.ALL.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("" + game.getDate() + " - was created in " + GamesCollections.ALL.collectionName);
     }
 
     @Override
     public void createBackup(DatabaseGameBase game) {
         mongoTemplate.insert(game, "Games_Backup");
-        System.out.println("[GameService] " + game.getDate() + " - was created in Games_Backup");
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage(game.getDate() + " - was created in Games_Backup");
     }
 
     @Override
     public void save(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.save(game, collection.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Updated " + game.getDate() + " in " + collection.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("Updated " + game.getDate() + " in " + collection.collectionName);
     }
 
     @Override
     public void delete(DatabaseGameBase game, GamesCollections collection) {
         mongoTemplate.remove(game, collection.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Deleted " + game.getDate() + " in " + collection.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("Deleted " + game.getDate() + " in " + collection.collectionName);
     }
 
     @Override
     public void updateMany(Query query, UpdateDefinition update, Class<?> clazz, GamesCollections collection) {
         mongoTemplate.updateMulti(query, update, clazz, collection.collectionName);
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("UpdatedMany (" + query + ") - (" + update + ") in " + collection.collectionName);
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("UpdatedMany (" + query + ") - (" + update + ") in " + collection.collectionName);
     }
 
     @Override

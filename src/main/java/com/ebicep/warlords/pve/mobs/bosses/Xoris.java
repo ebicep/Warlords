@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -9,15 +8,14 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.Particle;
 
 public class Xoris extends AbstractZombie implements BossMob {
 
@@ -44,29 +42,14 @@ public class Xoris extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn(PveOption option) {
-        super.onSpawn(option);
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.GRAY + getWarlordsNPC().getName(),
-                        ChatColor.DARK_PURPLE + "Empress of the Envoy Legion",
-                        20, 30, 20
-                );
-            }
-        }
-    }
-
-    @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (test) {
             Location loc = warlordsNPC.getLocation();
             int counter = 0;
-            if (ticksElapsed % 4 == 0 ) {
+            if (ticksElapsed % 4 == 0) {
                 counter++;
                 loc.setYaw(counter);
-                EffectUtils.playHelixAnimation(loc, 20, ParticleEffect.FLAME, 1, 8);
+                EffectUtils.playHelixAnimation(loc, 20, Particle.FLAME, 1, 8);
             }
         }
     }
@@ -79,5 +62,15 @@ public class Xoris extends AbstractZombie implements BossMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         test = true;
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.GRAY;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Empress of the Envoy Legion", NamedTextColor.DARK_PURPLE);
     }
 }

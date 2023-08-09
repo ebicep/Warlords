@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
-import com.ebicep.warlords.abilties.AvengersStrike;
+import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -24,42 +24,42 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
         treeA.add(new Upgrade(
                 "Impair - Tier I",
-                "+7.5% Damage\n+2.5 Energy steal",
+                "+7.5% Damage\n+7.5 Energy steal",
                 5000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.075f);
                     ability.setMaxDamageHeal(maxDamage * 1.075f);
-                    ability.setEnergySteal(energySteal + 2.5f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+15% Damage\n+5 Energy steal",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
-                    ability.setEnergySteal(energySteal + 5);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+22.5% Damage\n+7.5 Energy steal",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
                     ability.setEnergySteal(energySteal + 7.5f);
                 }
         ));
         treeA.add(new Upgrade(
+                "Impair - Tier II",
+                "+15% Damage\n+15 Energy steal",
+                10000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.15f);
+                    ability.setMaxDamageHeal(maxDamage * 1.15f);
+                    ability.setEnergySteal(energySteal + 15);
+                }
+        ));
+        treeA.add(new Upgrade(
+                "Impair - Tier III",
+                "+22.5% Damage\n+22.5 Energy steal",
+                15000,
+                () -> {
+                    ability.setMinDamageHeal(minDamage * 1.225f);
+                    ability.setMaxDamageHeal(maxDamage * 1.225f);
+                    ability.setEnergySteal(energySteal + 22.5f);
+                }
+        ));
+        treeA.add(new Upgrade(
                 "Impair - Tier IV",
-                "+30% Damage\n+10 Energy steal",
+                "+30% Damage\n+30 Energy steal",
                 20000,
                 () -> {
                     ability.setMinDamageHeal(minDamage * 1.3f);
                     ability.setMaxDamageHeal(maxDamage * 1.3f);
-                    ability.setEnergySteal(energySteal + 10);
+                    ability.setEnergySteal(energySteal + 30);
                 }
         ));
 
@@ -103,11 +103,15 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
         masterUpgrade = new Upgrade(
                 "Avenger's Slash",
                 "Avenger's Strike - Master Upgrade",
-                "-5 Additional energy cost.\n\nAvenger's Strike hits 2 additional enemies for 50% of the original strike damage." +
-                        "\n\nDeal 40% more damage against BASIC enemies and deal 0.5% max health damage against ELITE enemies.",
+                """
+                        -5 Additional energy cost.
+
+                        Avenger's Strike hits 2 additional enemies for 50% of the original strike damage.
+
+                        Deal 40% more damage against BASIC enemies and deal 0.5% max health damage against ELITE enemies.""",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                     ability.setEnergyCost(ability.getEnergyCost() - 5);
                 }
         );

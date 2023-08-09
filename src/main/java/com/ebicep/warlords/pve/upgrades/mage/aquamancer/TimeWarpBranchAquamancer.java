@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.aquamancer;
 
-import com.ebicep.warlords.abilties.TimeWarpAquamancer;
+import com.ebicep.warlords.abilities.TimeWarpAquamancer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -81,13 +81,12 @@ public class TimeWarpBranchAquamancer extends AbstractUpgradeBranch<TimeWarpAqua
         masterUpgrade = new Upgrade(
                 "Monsoon Leap",
                 "Time Warp - Master Upgrade",
-                "Time Warp can now be re-activated to teleport you back early. Additionally, double the duration of Time Warp and now leave a water altar " +
+                "Time Warp can now be re-activated to teleport you back early. Additionally, triple the duration of Time Warp and now leave a water altar " +
                         "that grants allies immunity to debuffs and slowness effects while near it. " +
                         "The altar is removed upon warping back.",
                 50000,
                 () -> {
-                    ability.setTickDuration(ability.getTickDuration() * 2);
-                    ability.setPveUpgrade(true);
+                    ability.setTickDuration(ability.getTickDuration() * 3);
                 }
         );
     }

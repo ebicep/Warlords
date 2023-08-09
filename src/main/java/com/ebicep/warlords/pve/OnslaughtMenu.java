@@ -6,7 +6,8 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -20,10 +21,10 @@ public class OnslaughtMenu {
         menu.setItem(
                 4,
                 1,
-                new ItemBuilder(Material.BLAZE_POWDER).name(ChatColor.GREEN + "Start an Onslaught game").get(),
+                new ItemBuilder(Material.BLAZE_POWDER).name(Component.text("Start an Onslaught game", NamedTextColor.GREEN)).get(),
                 (m, e) -> GameStartCommand.startGamePvE(player, GameMode.ONSLAUGHT, queueEntryBuilder ->
                         queueEntryBuilder.setMap(GameMap.ILLUSION_PHANTOM)
-                                .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+                                         .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                 )
         );

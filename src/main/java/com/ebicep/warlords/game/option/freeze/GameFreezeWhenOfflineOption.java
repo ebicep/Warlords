@@ -7,7 +7,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.OfflinePlayer;
 
 import javax.annotation.Nonnull;
@@ -15,11 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class GameFreezeWhenOfflineOption implements Option {
 
-    private static final String FROZEN_MESSAGE = ChatColor.YELLOW + "Missing player detected!";
+    private static final Component FROZEN_MESSAGE = Component.text("Missing player detected!", NamedTextColor.YELLOW);
     public static boolean enabled = true;
 
     @Override
@@ -53,8 +53,8 @@ public class GameFreezeWhenOfflineOption implements Option {
                 } else {
                     if (anyOffline) {
                         List<Map.Entry<OfflinePlayer, Team>> players = game.offlinePlayersWithoutSpectators()
-                                .filter(offlinePlayerTeamEntry -> !offlinePlayerTeamEntry.getKey().isOnline())
-                                .collect(Collectors.toList());
+                                                                           .filter(offlinePlayerTeamEntry -> !offlinePlayerTeamEntry.getKey().isOnline())
+                                                                           .toList();
                         for (Map.Entry<OfflinePlayer, Team> player : players) {
                             offlineDuration.merge(player.getKey().getUniqueId(), 1, Integer::sum);
                             if (offlineDuration.get(player.getKey().getUniqueId()) > leaveCheckDuration.getOrDefault(player.getKey().getUniqueId(), 4)) {
@@ -64,9 +64,9 @@ public class GameFreezeWhenOfflineOption implements Option {
 
                                 ChatChannels.sendDebugMessage(
                                         (CommandIssuer) null,
-                                        ChatColor.GREEN + "Leave Cooldown of " + ChatColor.AQUA + player.getKey().getName() +
-                                                ChatColor.GREEN + " increased to " + (leaveCheckDuration.get(player.getKey().getUniqueId()) / 2) + " seconds",
-                                        true
+                                        Component.text("Leave Cooldown of ", NamedTextColor.GREEN)
+                                                 .append(Component.text(player.getKey().getName(), NamedTextColor.AQUA))
+                                                 .append(Component.text(" increased to " + (leaveCheckDuration.get(player.getKey().getUniqueId()) / 2) + " seconds"))
                                 );
                                 break;
                             }

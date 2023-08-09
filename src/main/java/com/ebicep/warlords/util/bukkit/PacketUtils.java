@@ -1,66 +1,79 @@
 package com.ebicep.warlords.util.bukkit;
 
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+import net.minecraft.world.entity.Entity;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
-import java.util.UUID;
+import java.util.List;
 
 public class PacketUtils {
 
+    public static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
 
-    public static void sendTitle(UUID uuid, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer != null && offlinePlayer.isOnline()) {
-            sendTitle(offlinePlayer.getPlayer(), title, subtitle, fadeIn, stay, fadeOut);
+    public static void init(Warlords instance) {
+        ProtocolManager protocolManager;
+        protocolManager = ProtocolLibrary.getProtocolManager();
+        protocolManager.removePacketListeners(instance);
+        protocolManager.addPacketListener(
+                new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Server.WORLD_PARTICLES) {
+                    int counter = 0;
+
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        // Item packets (id: 0x29)
+                        if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
+                            Player player = event.getPlayer();
+                            if (Warlords.hasPlayer(player)) {
+                                if (counter++ % PlayerSettings.PLAYER_SETTINGS.get(player.getUniqueId()).getParticleQuality().particleReduction == 0) {
+                                    event.setCancelled(true);
+                                }
+                            }
+                        }
+                    }
+                });
+        List<Sound> blockedSounds = List.of(
+                Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
+                Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK
+        );
+        protocolManager.addPacketListener(
+
+                new PacketAdapter(instance, PacketType.Play.Server.NAMED_SOUND_EFFECT) {
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        Sound sound = event.getPacket().getSoundEffects().getValues().get(0);
+                        if (sound != null && blockedSounds.contains(sound)) {
+                            event.setCancelled(true);
+                        }
+                    }
+                });
+    }
+
+    public static void removeEntityForPlayer(Player player, int entityId) {
+        PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundRemoveEntitiesPacket(entityId)));
+    }
+
+    public static void spawnEntityForPlayer(Player player, Entity entity) {
+        PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundAddEntityPacket(entity)));
+    }
+
+    public static void playRightClickAnimationForPlayer(Entity swinger, Player... players) {
+        for (Player player : players) {
+            PROTOCOL_MANAGER.sendServerPacket(player,
+                    PacketContainer.fromPacket(new ClientboundAnimatePacket(swinger, ClientboundAnimatePacket.SWING_MAIN_HAND))
+            );
         }
-    }
-
-    public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        CraftPlayer craftplayer = (CraftPlayer) player;
-        PlayerConnection connection = craftplayer.getHandle().playerConnection;
-        IChatBaseComponent titleJSON = IChatBaseComponent.ChatSerializer.a("{'text': '" + title + "'}");
-        IChatBaseComponent subtitleJSON = IChatBaseComponent.ChatSerializer.a("{'text': '" + subtitle + "'}");
-        PacketPlayOutTitle durationPacket = new PacketPlayOutTitle(fadeIn, stay, fadeOut);
-        PacketPlayOutTitle titlePacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, titleJSON, fadeIn, stay, fadeOut);
-        PacketPlayOutTitle subtitlePacket = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, subtitleJSON);
-        connection.sendPacket(durationPacket);
-        connection.sendPacket(titlePacket);
-        connection.sendPacket(subtitlePacket);
-    }
-
-    public static void sendTabHF(Player player, String header, String footer) {
-
-        CraftPlayer craftplayer = (CraftPlayer) player;
-        PlayerConnection connection = craftplayer.getHandle().playerConnection;
-        IChatBaseComponent headerJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + header + "\"}");
-        IChatBaseComponent footerJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + footer + "\"}");
-        PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter();
-
-        try {
-            Field headerField = packet.getClass().getDeclaredField("a");
-            headerField.setAccessible(true);
-            headerField.set(packet, headerJSON);
-            headerField.setAccessible(!headerField.isAccessible());
-
-            Field footerField = packet.getClass().getDeclaredField("b");
-            footerField.setAccessible(true);
-            footerField.set(packet, footerJSON);
-            footerField.setAccessible(!footerField.isAccessible());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        connection.sendPacket(packet);
-    }
-
-    public static void sendActionBar(Player p, String message) {
-        IChatBaseComponent cbc = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + message + "\"}");
-        PacketPlayOutChat ppoc = new PacketPlayOutChat(cbc, (byte) 2);
-        ((CraftPlayer) p).getHandle().playerConnection.sendPacket(ppoc);
     }
 
 }

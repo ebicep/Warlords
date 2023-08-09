@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.mage.aquamancer;
 
-import com.ebicep.warlords.abilties.WaterBolt;
+import com.ebicep.warlords.abilities.WaterBolt;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -100,7 +100,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                 "+100% Projectile speed\n\nWater Bolt increases the damage dealt of all allies it hits by 10% for 10 seconds.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
+
                     ability.setProjectileSpeed(ability.getProjectileSpeed() * 2);
                 }
         );

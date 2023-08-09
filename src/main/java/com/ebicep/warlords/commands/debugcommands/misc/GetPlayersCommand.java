@@ -8,12 +8,11 @@ import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.util.java.Pair;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -27,15 +26,15 @@ public class GetPlayersCommand extends co.aikar.commands.BaseCommand {
     public void getPlayers(@Conditions("party:true") Player player) {
         Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
         if (partyPlayerPair != null) {
-            TextComponent message = new TextComponent(ChatColor.GREEN.toString() + ChatColor.UNDERLINE + ChatColor.BOLD + "CLICK ME FOR PLAYERS");
-            message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Copy the URL without (https://)").create()));
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://" + partyPlayerPair.getA().getPartyPlayers().stream()
-                    .map(PartyPlayer::getUUID)
-                    .map(Bukkit::getOfflinePlayer)
-                    .map(OfflinePlayer::getName)
-                    .collect(Collectors.joining(","))
-            ));
-            player.spigot().sendMessage(message);
+            player.sendMessage(Component.text("CLICK ME FOR PLAYERS - AUTO COPIED TO CLIPBOARD", NamedTextColor.GREEN, TextDecoration.UNDERLINED, TextDecoration.BOLD)
+                                        .clickEvent(ClickEvent.copyToClipboard(partyPlayerPair.getA()
+                                                                                              .getPartyPlayers()
+                                                                                              .stream()
+                                                                                              .map(PartyPlayer::getUUID)
+                                                                                              .map(Bukkit::getOfflinePlayer)
+                                                                                              .map(OfflinePlayer::getName)
+                                                                                              .collect(Collectors.joining(","))))
+            );
         }
     }
 

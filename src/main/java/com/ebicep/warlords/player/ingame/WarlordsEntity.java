@@ -1,15 +1,16 @@
 package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilties.*;
-import com.ebicep.warlords.abilties.internal.AbstractAbility;
-import com.ebicep.warlords.abilties.internal.HealingPowerup;
+import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.*;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
@@ -27,29 +28,33 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
+import net.minecraft.server.level.ServerLevel;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.potion.PotionEffect;
@@ -65,18 +70,16 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.bukkit.ItemBuilder.*;
-
 public abstract class WarlordsEntity {
 
     //RED << (Receiving from enemy / Negative from team?)
-    public static final String RECEIVE_ARROW_RED = ChatColor.RED + "\u00AB";
+    public static final Component RECEIVE_ARROW_RED = Component.text("«", NamedTextColor.RED);
     //GREEN << (Receiving from team / Positive from enemy?)
-    public static final String RECEIVE_ARROW_GREEN = ChatColor.GREEN + "\u00AB";
+    public static final Component RECEIVE_ARROW_GREEN = Component.text("«", NamedTextColor.GREEN);
     //RED >> (Doing negatives teammates?)
-    public static final String GIVE_ARROW_RED = ChatColor.RED + "\u00BB";
+    public static final Component GIVE_ARROW_RED = Component.text("»", NamedTextColor.RED);
     //GREEN >> (Doing negatives to enemy / Doing positives to team)
-    public static final String GIVE_ARROW_GREEN = ChatColor.GREEN + "\u00BB";
+    public static final Component GIVE_ARROW_GREEN = Component.text("»", NamedTextColor.GREEN);
     private static final int MINUTE_STATS_SPLITS = 35;
     protected final Game game;
     protected boolean spawnGrave = true;
@@ -89,6 +92,10 @@ public abstract class WarlordsEntity {
     protected Specializations specClass;
     @Nullable
     protected CompassTargetMarker compassTarget;
+    protected CooldownManager cooldownManager = new CooldownManager(this);
+    protected float health;
+    protected float maxHealth;
+    protected float maxBaseHealth;
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();
@@ -98,12 +105,8 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
     private final Location deathLocation;
-    private final CooldownManager cooldownManager = new CooldownManager(this);
     private Vector currentVector;
     private Team team;
-    private float health;
-    private float maxHealth;
-    private float maxBaseHealth;
     private int regenTickTimer;
     private float regenTickTimerModifier = 1;
     private int respawnTickTimer = -1;
@@ -199,24 +202,26 @@ public abstract class WarlordsEntity {
                 '}';
     }
 
-    private void appendDebugMessageEvent(StringBuilder debugMessage, WarlordsDamageHealingEvent event) {
-        debugMessage.append("\n").append(ChatColor.GRAY).append(" - ");
+    private void appendDebugMessageEvent(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
+        TextComponent grayBar = Component.text(" | ", NamedTextColor.GRAY);
+        debugMessage.append(Component.newline())
+                    .append(Component.text(" - ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Self", this.getName(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Attacker", event.getAttacker().getName(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Ability", event.getAbility(), false);
-        debugMessage.append("\n").append(ChatColor.GRAY).append(" - ");
+        debugMessage.append(Component.newline())
+                    .append(Component.text(" - ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Min", event.getMin(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Max", event.getMax(), false);
-        debugMessage.append(ChatColor.GRAY).append("  |  ");
+        debugMessage.append(Component.text("  |  ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Crit Chance", event.getCritChance(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(grayBar);
         appendDebugMessage(debugMessage, "Crit Multiplier", event.getCritMultiplier(), false);
-        debugMessage.append("\n").append(ChatColor.GRAY).append(" - ");
-        appendDebugMessage(debugMessage, "Ignore Reduction", "" + event.isIgnoreReduction(), false);
-        debugMessage.append(ChatColor.GRAY).append(" | ");
+        debugMessage.append(Component.newline())
+                    .append(Component.text(" - ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Flags", "" + event.getFlags(), false);
     }
 
@@ -224,7 +229,7 @@ public abstract class WarlordsEntity {
         if (isDead()) {
             return Optional.empty();
         }
-        StringBuilder debugMessage = new StringBuilder(ChatColor.AQUA + "Pre Event:");
+        TextComponent.Builder debugMessage = Component.text().color(NamedTextColor.GREEN).append(Component.text("Pre Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -246,13 +251,12 @@ public abstract class WarlordsEntity {
     /**
      * Adds a damage instance to an ability or a player.
      *
-     * @param attacker        Assigns the damage value to the original caster.
-     * @param ability         Name of the ability.
-     * @param min             The minimum damage amount.
-     * @param max             The maximum damage amount.
-     * @param critChance      The critical chance of the damage instance.
-     * @param critMultiplier  The critical multiplier of the damage instance.
-     * @param ignoreReduction Whether the instance has to ignore damage reductions.
+     * @param attacker       Assigns the damage value to the original caster.
+     * @param ability        Name of the ability.
+     * @param min            The minimum damage amount.
+     * @param max            The maximum damage amount.
+     * @param critChance     The critical chance of the damage instance.
+     * @param critMultiplier The critical multiplier of the damage instance.
      */
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
             WarlordsEntity attacker,
@@ -260,10 +264,9 @@ public abstract class WarlordsEntity {
             float min,
             float max,
             float critChance,
-            float critMultiplier,
-            boolean ignoreReduction
+            float critMultiplier
     ) {
-        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, EnumSet.noneOf(InstanceFlags.class), null);
+        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class), null);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -273,10 +276,9 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
             UUID uuid
     ) {
-        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, EnumSet.noneOf(InstanceFlags.class), uuid);
+        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class), uuid);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -286,10 +288,9 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
             EnumSet<InstanceFlags> flags
     ) {
-        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, flags, null);
+        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, flags, null);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -299,7 +300,6 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
             EnumSet<InstanceFlags> flags,
             UUID uuid
     ) {
@@ -310,15 +310,13 @@ public abstract class WarlordsEntity {
                 max,
                 critChance,
                 critMultiplier,
-                ignoreReduction,
-                false,
                 true,
                 flags,
                 uuid
         ));
     }
 
-    private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(StringBuilder debugMessage, WarlordsDamageHealingEvent event) {
+    private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
             abstractCooldown.doBeforeVariableSetFromSelf(event);
         }
@@ -332,12 +330,11 @@ public abstract class WarlordsEntity {
         float max = event.getMax();
         float critChance = event.getCritChance();
         float critMultiplier = event.getCritMultiplier();
-        boolean ignoreReduction = event.isIgnoreReduction();
-        boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
         EnumSet<InstanceFlags> flags = event.getFlags();
-
+        boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
+        boolean pierceDamage = flags.contains(InstanceFlags.PIERCE_DAMAGE);
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
@@ -345,29 +342,28 @@ public abstract class WarlordsEntity {
             return Optional.empty();
         }
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Post Event:");
+        debugMessage.append(Component.newline()).append(Component.text("Post Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
-
 
         float initialHealth = health;
 
         List<AbstractCooldown<?>> selfCooldownsDistinct = getCooldownManager().getCooldownsDistinct();
         List<AbstractCooldown<?>> attackersCooldownsDistinct = attacker.getCooldownManager().getCooldownsDistinct();
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Before Reduction:");
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+        debugMessage.append(Component.newline()).append(Component.text("Before Reduction:", NamedTextColor.AQUA));
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
             abstractCooldown.doBeforeReductionFromSelf(event);
             appendDebugMessage(debugMessage, 2, abstractCooldown);
         }
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attacker Cooldowns");
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.doBeforeReductionFromAttacker(event);
             appendDebugMessage(debugMessage, 2, abstractCooldown);
         }
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Crit Modifiers:");
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attacker Cooldowns");
+        debugMessage.append(Component.newline()).append(Component.text("Crit Modifiers:", NamedTextColor.AQUA));
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
         if (critChance > 0) {
             float previousCC = critChance;
             float previousCM = critMultiplier;
@@ -385,10 +381,15 @@ public abstract class WarlordsEntity {
             }
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                 critChance = abstractCooldown.setCritChanceFromAttacker(event, critChance);
+                critMultiplier = abstractCooldown.setCritMultiplierFromAttacker(event, critMultiplier);
                 if (previousCC != critChance) {
                     appendDebugMessage(debugMessage, 2, "Crit Chance", critChance, abstractCooldown);
                 }
+                if (previousCM != critMultiplier) {
+                    appendDebugMessage(debugMessage, 2, "Crit Multiplier", critMultiplier, abstractCooldown);
+                }
                 previousCC = critChance;
+                previousCM = critMultiplier;
             }
         }
         //crit
@@ -399,13 +400,15 @@ public abstract class WarlordsEntity {
             isCrit = true;
             damageValue *= critMultiplier / 100f;
         }
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Calculated Damage:");
+        debugMessage.append(Component.newline()).append(Component.text("Calculated Damage:", NamedTextColor.AQUA));
         appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
         appendDebugMessage(debugMessage, 1, "Crit", "" + isCrit);
 
         final float damageHealValueBeforeAllReduction = damageValue;
-        if (!flags.contains(InstanceFlags.IGNORE_SELF_RES)) {
-            debugMessage.append("\n").append(ChatColor.AQUA).append("Spec Damage Reduction: ").append(ChatColor.BLUE).append(spec.getDamageResistance());
+        if (!flags.contains(InstanceFlags.IGNORE_SELF_RES) && !trueDamage) {
+            debugMessage.append(Component.newline())
+                        .append(Component.text("Spec Damage Reduction: ", NamedTextColor.AQUA))
+                        .append(Component.text(spec.getDamageResistance(), NamedTextColor.BLUE));
             addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
             appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
         }
@@ -416,14 +419,13 @@ public abstract class WarlordsEntity {
                 sendTookDamageMessage(min, "melee damage");
                 resetRegenTimer();
                 if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
-                    if (entity instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) entity,
-                                ChatColor.RED + "YOU DIED!",
-                                ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage and died.",
-                                0, 40, 0
-                        );
-                    }
+                    entity.showTitle(Title.title(
+                            Component.text("YOU DIED!", NamedTextColor.RED),
+                            Component.text("You took ", NamedTextColor.GRAY)
+                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
+                                     .append(Component.text(" melee damage and died.")),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                    ));
                     health = 0;
                     die(attacker);
                 } else {
@@ -435,15 +437,13 @@ public abstract class WarlordsEntity {
                 sendTookDamageMessage(damageValue, "fall damage");
                 resetRegenTimer();
                 if (health - damageValue <= 0 && !cooldownManager.checkUndyingArmy(false)) {
-                    // Title card "YOU DIED!"
-                    if (entity instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) entity,
-                                ChatColor.RED + "YOU DIED!",
-                                ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage and died.",
-                                0, 40, 0
-                        );
-                    }
+                    entity.showTitle(Title.title(
+                            Component.text("YOU DIED!", NamedTextColor.RED),
+                            Component.text("You took ", NamedTextColor.GRAY)
+                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
+                                     .append(Component.text(" fall damage and died.")),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                    ));
                     health = 0;
                     die(attacker);
                 } else {
@@ -453,7 +453,7 @@ public abstract class WarlordsEntity {
 
                 for (OrderOfEviscerate orderOfEviscerate : new CooldownFilter<>(attacker, RegularCooldown.class)
                         .filterCooldownClassAndMapToObjectsOfClass(OrderOfEviscerate.class)
-                        .collect(Collectors.toList())
+                        .toList()
                 ) {
                     orderOfEviscerate.addAndCheckDamageThreshold(damageValue, attacker);
                 }
@@ -465,40 +465,40 @@ public abstract class WarlordsEntity {
             return Optional.empty();
         }
         float previousDamageValue = damageValue;
-        // Reduction before Intervene.
-        if (!ignoreReduction) {
-            // Flag carrier multiplier.
-            double flagMultiplier = getFlagDamageMultiplier();
-            if (flagMultiplier != 1) {
-                debugMessage.append("\n").append(ChatColor.AQUA).append("Flag Damage Multiplier:");
-            }
+        // Flag carrier multiplier.
+        double flagMultiplier = getFlagDamageMultiplier();
+        if (flagMultiplier != 1) {
+            debugMessage.append(Component.newline())
+                        .append(Component.text("Flag Damage Multiplier: " + NumberFormat.formatOptionalHundredths(flagMultiplier), NamedTextColor.AQUA));
             damageValue *= flagMultiplier;
-            if (flagMultiplier != 1) {
-                appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
-            }
-            // Checks whether the player is standing in a Hammer of Light.
-            if (!HammerOfLight.isStandingInHammer(attacker, this)) {
-                debugMessage.append("\n").append(ChatColor.AQUA).append("Before Intervene");
-                appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
-                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    damageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
-                    if (previousDamageValue != damageValue) {
-                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
-                    }
-                    previousDamageValue = damageValue;
-                }
+            appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
+        }
+        // Reduction before Intervene.
 
-                appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attacker Cooldowns");
-                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                    damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
-                    if (previousDamageValue != damageValue) {
-                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
-                    }
-                    previousDamageValue = damageValue;
+        if (!trueDamage) {
+            debugMessage.append(Component.newline()).append(Component.text("Before Intervene", NamedTextColor.AQUA));
+            appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
+            for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                float newDamageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
+                if (newDamageValue < damageValue && pierceDamage) { // pierce ignores victim dmg reduction
+                    continue;
                 }
-            } else {
-                debugMessage.append("\n").append(ChatColor.RED).append("In Hammer");
+                damageValue = newDamageValue;
+                if (previousDamageValue != damageValue) {
+                    appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                }
+                previousDamageValue = damageValue;
             }
+
+            appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
+            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
+                if (previousDamageValue != damageValue) {
+                    appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                }
+                previousDamageValue = damageValue;
+            }
+            //debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
         }
 
         final float damageHealValueBeforeInterveneReduction = damageValue;
@@ -507,12 +507,11 @@ public abstract class WarlordsEntity {
                 .filterCooldownClass(Intervene.class)
                 .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), this))
                 .findFirst();
-        if (optionalInterveneCooldown.isPresent() &&
-                optionalInterveneCooldown.get().getTicksLeft() > 0 &&
-                !HammerOfLight.isStandingInHammer(attacker, this) &&
+        if (!trueDamage && !pierceDamage &&
+                optionalInterveneCooldown.isPresent() && optionalInterveneCooldown.get().getTicksLeft() > 0 &&
                 isEnemy(attacker)
         ) {
-            debugMessage.append("\n").append(ChatColor.AQUA).append("Intervene:");
+            debugMessage.append(Component.newline()).append(Component.text("Intervene:", NamedTextColor.AQUA));
 
             Intervene intervene = (Intervene) optionalInterveneCooldown.get().getCooldownObject();
             WarlordsEntity intervenedBy = optionalInterveneCooldown.get().getFrom();
@@ -538,11 +537,11 @@ public abstract class WarlordsEntity {
                         remainingVeneDamage,
                         isCrit ? 100 : 0,
                         100,
-                        true
+                        EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                 );
                 //extra overVeneDamage to target
                 float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
-                addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : 0, 100, true)
+                addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : 0, 100)
                         .ifPresent(finalEvent::set);
             } else {
                 intervenedBy.addDamageInstance(attacker,
@@ -550,8 +549,7 @@ public abstract class WarlordsEntity {
                         damageValue,
                         damageValue,
                         isCrit ? 100 : 0,
-                        100,
-                        false
+                        100
                 );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
@@ -578,107 +576,166 @@ public abstract class WarlordsEntity {
             intervenedBy.getEntity().playEffect(EntityEffect.HURT);
             EffectUtils.playParticleLinkAnimation(getLocation(), intervenedBy.getLocation(), 255, 0, 0, 2);
             // Remove horses.
-            removeHorse();
-            intervenedBy.removeHorse();
+            if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
+                removeHorse();
+            }
 
-            appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Intervene From Attacker");
+            appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Intervene From Attacker");
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                 abstractCooldown.onInterveneFromAttacker(event, damageValue);
                 appendDebugMessage(debugMessage, 2, abstractCooldown);
             }
         } else {
             // Damage reduction after Intervene
-            if (!ignoreReduction) {
-                if (!HammerOfLight.isStandingInHammer(attacker, this)) {
-                    // Damage Reduction
-                    // Example: .8 = 20% reduction.
-                    debugMessage.append("\n").append(ChatColor.AQUA).append("After Intervene:");
-                    appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
-                    for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                        damageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
-                        if (previousDamageValue != damageValue) {
-                            appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
-                        }
-                        previousDamageValue = damageValue;
+            if (!trueDamage) {
+                // Damage Reduction
+                // Example: .8 = 20% reduction.
+                debugMessage.append(Component.newline()).append(Component.text("After Intervene:", NamedTextColor.AQUA));
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
+                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                    float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
+                    if (newDamageValue < damageValue && pierceDamage) { // pierce ignores victim dmg reduction
+                        continue;
                     }
-
-                    appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
-                    for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                        damageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
-                        if (previousDamageValue != damageValue) {
-                            appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
-                        }
-                        previousDamageValue = damageValue;
+                    damageValue = newDamageValue;
+                    if (previousDamageValue != damageValue) {
+                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
                     }
-                } else {
-                    debugMessage.append("\n").append(ChatColor.RED).append("In Hammer");
+                    previousDamageValue = damageValue;
                 }
+
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
+                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                    damageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
+                    if (previousDamageValue != damageValue) {
+                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                    }
+                    previousDamageValue = damageValue;
+                }
+                //debugMessage.append(Component.newline()).append(Component.text("In Hammer", NamedTextColor.RED));
             }
 
             final float damageHealValueBeforeShieldReduction = damageValue;
             // Arcane Shield
-            Optional<RegularCooldown> arcaneShieldCooldown = new CooldownFilter<>(this, RegularCooldown.class)
-                    .filterCooldownClass(ArcaneShield.class)
+            Optional<RegularCooldown> shieldCooldown = new CooldownFilter<>(this, RegularCooldown.class)
+                    .filterCooldownClass(Shield.class)
                     .filter(RegularCooldown::hasTicksLeft)
                     .findFirst();
-            if (arcaneShieldCooldown.isPresent() &&
-                    isEnemy(attacker) &&
-                    !HammerOfLight.isStandingInHammer(attacker, this)
+            if (!trueDamage &&
+                    !pierceDamage &&
+                    shieldCooldown.isPresent() &&
+                    isEnemy(attacker)
             ) {
-                debugMessage.append("\n").append(ChatColor.AQUA).append("Arcane Shield:");
-
-                RegularCooldown cooldown = arcaneShieldCooldown.get();
-                ArcaneShield arcaneShield = (ArcaneShield) cooldown.getCooldownObject();
+                RegularCooldown cooldown = shieldCooldown.get();
+                Shield shield = (Shield) cooldown.getCooldownObject();
+                debugMessage.append(Component.newline()).append(Component.text("Shield (" + shield.getName() + "): ", NamedTextColor.AQUA));
+                appendDebugMessage(debugMessage, 1, NamedTextColor.GREEN, "Pre Health: " + shield.getShieldHealth());
                 //adding dmg to shield
-                arcaneShield.addShieldHealth(-damageValue);
+                shield.addShieldHealth(-damageValue);
+                appendDebugMessage(debugMessage, 1, NamedTextColor.GREEN, "Post Health: " + shield.getShieldHealth());
+
                 //check if broken
-                if (arcaneShield.getShieldHealth() <= 0) {
+                TextComponent.Builder ownMessage = Component.text();
+                TextComponent.Builder attackerMessage = Component.text();
+                if (shield.getShieldHealth() <= 0) {
                     cooldown.setTicksLeft(0);
-                    addDamageInstance(new StringBuilder(), new WarlordsDamageHealingEvent(
+                }
+                if (shield.getShieldHealth() < 0) {
+                    float newDamage = -shield.getShieldHealth();
+                    addDamageInstance(Component.text(), new WarlordsDamageHealingEvent(
                             this,
                             attacker,
                             ability,
-                            -arcaneShield.getShieldHealth(),
-                            -arcaneShield.getShieldHealth(),
+                            newDamage,
+                            newDamage,
                             isCrit ? 100 : 0,
-                            1,
-                            false,
+                            100,
                             true,
-                            true,
-                            EnumSet.noneOf(InstanceFlags.class)
+                            EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                     ));
 
-                    addAbsorbed(-(arcaneShield.getShieldHealth()));
+                    addAbsorbed(-(shield.getShieldHealth()));
 
                     doOnStaticAbility(ArcaneShield.class, ArcaneShield::addTimesBroken);
                     return Optional.empty();
                 } else {
-                    if (entity instanceof Player) {
-                        ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (maxHealth * .5) * 20));
+                    if (entity instanceof Player player) {
+                        double totalShieldHealth = new CooldownFilter<>(this, RegularCooldown.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                                .mapToDouble(Shield::getShieldHealth)
+                                .sum();
+                        ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
                     }
 
                     if (isMeleeHit) {
-                        sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s melee " + ChatColor.GRAY + "hit.");
-                        attacker.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your melee hit was absorbed by " + name);
+                        ownMessage.append(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s melee hit.",
+                                NamedTextColor.GRAY
+                        )));
+                        attackerMessage.append(GIVE_ARROW_GREEN.append(Component.text(" Your melee hit was absorbed by " + name + ".", NamedTextColor.GRAY)));
                     } else {
-                        sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s " + ability + " " + ChatColor.GRAY + "hit.");
-                        attacker.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " was absorbed by " + name + ChatColor.GRAY + ".");
+                        ownMessage.append(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s " + ability + " hit.",
+                                NamedTextColor.GRAY
+                        )));
+                        attackerMessage.append(GIVE_ARROW_GREEN.append(Component.text(" Your " + ability + " was absorbed by " + name + ".",
+                                NamedTextColor.GRAY
+                        )));
                     }
 
                     addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
                 }
 
-                appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "On Shield");
-                appendDebugMessage(debugMessage, 2, ChatColor.DARK_GREEN, "Self Cooldowns");
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "On Shield");
+                appendDebugMessage(debugMessage, 2, NamedTextColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                     abstractCooldown.onShieldFromSelf(event, damageValue, isCrit);
                     appendDebugMessage(debugMessage, 3, abstractCooldown);
                 }
 
-                appendDebugMessage(debugMessage, 2, ChatColor.DARK_GREEN, "Attackers Cooldowns");
+                appendDebugMessage(debugMessage, 2, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                     abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
                     appendDebugMessage(debugMessage, 3, abstractCooldown);
+                }
+
+                if (shield.getShieldHealth() >= 0) {
+                    DatabasePlayer databasePlayer = DatabaseManager.getPlayer(getUuid(), getEntity() instanceof Player);
+                    switch (databasePlayer.getChatHealingMode()) {
+                        case ALL -> {
+                            if (showDebugMessage) {
+                                sendMessage(ownMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
+                            } else {
+                                sendMessage(ownMessage.build());
+                            }
+                        }
+                        case CRITS_ONLY -> {
+                            if (isCrit) {
+                                if (showDebugMessage) {
+                                    sendMessage(ownMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
+                                } else {
+                                    sendMessage(ownMessage.build());
+                                }
+                            }
+                        }
+                    }
+                    databasePlayer = DatabaseManager.getPlayer(attacker.getUuid(), attacker.getEntity() instanceof Player);
+                    switch (databasePlayer.getChatHealingMode()) {
+                        case ALL -> {
+                            if (attacker.showDebugMessage) {
+                                attacker.sendMessage(attackerMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
+                            } else {
+                                attacker.sendMessage(attackerMessage.build());
+                            }
+                        }
+                        case CRITS_ONLY -> {
+                            if (isCrit) {
+                                if (attacker.showDebugMessage) {
+                                    attacker.sendMessage(attackerMessage.build().hoverEvent(HoverEvent.showText(debugMessage)));
+                                } else {
+                                    attacker.sendMessage(attackerMessage.build());
+                                }
+                            }
+                        }
+                    }
                 }
 
                 playHurtAnimation(this.entity, attacker);
@@ -686,7 +743,9 @@ public abstract class WarlordsEntity {
                 if (!isMeleeHit) {
                     playHitSound(attacker);
                 }
-                removeHorse();
+                if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
+                    removeHorse();
+                }
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
@@ -713,8 +772,8 @@ public abstract class WarlordsEntity {
                     checkForAchievementsDamageAttacker(attacker);
                 }
             } else {
-                debugMessage.append("\n").append(ChatColor.AQUA).append("Modify Damage After All");
-                appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+                debugMessage.append(Component.newline()).append(Component.text("Modify Damage After All:", NamedTextColor.AQUA));
+                appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                     damageValue = abstractCooldown.modifyDamageAfterAllFromSelf(event, damageValue, isCrit);
                     if (previousDamageValue != damageValue) {
@@ -727,14 +786,17 @@ public abstract class WarlordsEntity {
                 //if (isEnemy(attacker)) {
                 hitBy.put(attacker, 10);
                 cancelHealingPowerUp();
-                removeHorse();
+                if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
+                    removeHorse();
+                }
 
                 float finalDamageValue = damageValue;
                 doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));
                 doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
-                sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
-
+                if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
+                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
+                }
                 //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
@@ -794,43 +856,43 @@ public abstract class WarlordsEntity {
                 // The player died.
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 1);
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.5f);
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 1);
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 0.5f);
                     }
 
                     attacker.addKill();
 
                     game.forEachOnlinePlayer((p, t) -> {
-                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                        if (playerSettings.getChatKillsMode() == Settings.ChatSettings.ChatKills.ALL) {
+                        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
+                        Settings.ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+                        if (killsMode == Settings.ChatSettings.ChatKills.ALL || killsMode == Settings.ChatSettings.ChatKills.NO_ASSISTS) {
                             if (p == this.entity) {
-                                sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
+                                sendMessage(Component.text("You were killed by ", NamedTextColor.GRAY)
+                                                     .append(attacker.getColoredName()));
                             } else if (p == attacker.entity) {
-                                attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
+                                attacker.sendMessage(Component.text("You killed ", NamedTextColor.GRAY)
+                                                              .append(getColoredName()));
                             } else {
-                                p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
+                                p.sendMessage(getColoredName()
+                                        .append(Component.text(" was killed by ", NamedTextColor.GRAY))
+                                        .append(attacker.getColoredName()));
                             }
                         }
                     });
 
                     for (WarlordsEntity enemy : PlayerFilter.playingGame(game)
                                                             .enemiesOf(this)
-                                                            .stream().collect(Collectors.toList())
+                                                            .stream().toList()
                     ) {
                         for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
                             abstractCooldown.onDeathFromEnemies(event, damageValue, isCrit, enemy == attacker);
                         }
                     }
-                    // Title card "YOU DIED!"
-                    if (this.entity instanceof Player) {
-                        PacketUtils.sendTitle((Player) entity,
-                                ChatColor.RED + "YOU DIED!",
-                                ChatColor.GRAY + attacker.getName() + " killed you.",
-                                0,
-                                40,
-                                0
-                        );
-                    }
+                    entity.showTitle(Title.title(
+                            Component.text("YOU DIED!", NamedTextColor.RED),
+                            Component.text(attacker.getName() + " killed you.", NamedTextColor.GRAY),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                    ));
                     die(attacker);
                 } else {
                     if (!isMeleeHit && this != attacker && damageValue != 0) {
@@ -853,10 +915,15 @@ public abstract class WarlordsEntity {
 
     private void sendTookDamageMessage(float damage, String from) {
         if (getEntity() instanceof Player) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(getUuid());
-            if (playerSettings.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
-                sendMessage(RECEIVE_ARROW_RED + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damage) + ChatColor.GRAY + " " + from + ".");
-            }
+            DatabaseManager.getPlayer(uuid, databasePlayer -> {
+                if (databasePlayer.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
+                    sendMessage(RECEIVE_ARROW_RED
+                            .append(Component.text(" You took ", NamedTextColor.GRAY))
+                            .append(Component.text(Math.round(damage), NamedTextColor.RED))
+                            .append(Component.text(" " + from + ".", NamedTextColor.GRAY))
+                    );
+                }
+            });
         }
     }
 
@@ -864,14 +931,12 @@ public abstract class WarlordsEntity {
     /**
      * Adds a healing instance to an ability or a player.
      *
-     * @param attacker              Assigns the damage value to the original caster.
-     * @param ability               Name of the ability.
-     * @param min                   The minimum healing amount.
-     * @param max                   The maximum healing amount.
-     * @param critChance            The critical chance of the damage instance.
-     * @param critMultiplier        The critical multiplier of the damage instance.
-     * @param ignoreReduction       Whether the instance has to ignore damage reductions.
-     * @param isLastStandFromShield Whether the instance if from last stand and absorbed healing
+     * @param attacker       Assigns the damage value to the original caster.
+     * @param ability        Name of the ability.
+     * @param min            The minimum healing amount.
+     * @param max            The maximum healing amount.
+     * @param critChance     The critical chance of the damage instance.
+     * @param critMultiplier The critical multiplier of the damage instance.
      */
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
             WarlordsEntity attacker,
@@ -879,24 +944,9 @@ public abstract class WarlordsEntity {
             float min,
             float max,
             float critChance,
-            float critMultiplier,
-            boolean ignoreReduction,
-            boolean isLastStandFromShield
+            float critMultiplier
     ) {
-        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
-                        this,
-                        attacker,
-                        ability,
-                        min,
-                        max,
-                        critChance,
-                        critMultiplier,
-                        ignoreReduction,
-                        isLastStandFromShield,
-                        false,
-                        EnumSet.noneOf(InstanceFlags.class)
-                )
-        );
+        return this.addHealingInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class));
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
@@ -906,43 +956,39 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
-            boolean ignoreReduction,
-            boolean isLastStandFromShield,
             EnumSet<InstanceFlags> flags
     ) {
         return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
-                        this,
-                        attacker,
-                        ability,
-                        min, max,
-                        critChance,
-                        critMultiplier,
-                        ignoreReduction,
-                        isLastStandFromShield,
-                        false,
-                        flags
-                )
-        );
+                this,
+                attacker,
+                ability,
+                min,
+                max,
+                critChance,
+                critMultiplier,
+                false,
+                flags,
+                null
+        ));
     }
 
-    private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(StringBuilder debugMessage, WarlordsDamageHealingEvent event) {
+    private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
         WarlordsEntity attacker = event.getAttacker();
         String ability = event.getAbility();
         float min = event.getMin();
         float max = event.getMax();
         float critChance = event.getCritChance();
         float critMultiplier = event.getCritMultiplier();
-        boolean ignoreReduction = event.isIgnoreReduction();
-        boolean isLastStandFromShield = event.isIsLastStandFromShield();
+        boolean isLastStandFromShield = event.getFlags().contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
         boolean isMeleeHit = ability.isEmpty();
 
-        WarlordsDamageHealingFinalEvent finalEvent = null;
+        WarlordsDamageHealingFinalEvent finalEvent;
         // Spawn Protection / Undying Army / Game State
         if ((dead && !cooldownManager.checkUndyingArmy(false)) || !isActive()) {
             return Optional.empty();
         }
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Post Event:");
+        debugMessage.append(Component.newline()).append(Component.text("Post Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
 
         float initialHealth = health;
@@ -955,15 +1001,15 @@ public abstract class WarlordsEntity {
             isCrit = true;
             healValue *= critMultiplier / 100f;
         }
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Calculated Heal:");
+        debugMessage.append(Component.newline()).append(Component.text("Calculated Heal:", NamedTextColor.AQUA));
         appendDebugMessage(debugMessage, 1, "Heal Value", healValue);
         appendDebugMessage(debugMessage, 1, "Crit", "" + isCrit);
 
         final float healValueBeforeReduction = healValue;
         float previousHealValue = healValue;
 
-        debugMessage.append("\n").append(ChatColor.AQUA).append("Before Heal");
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
+        debugMessage.append(Component.newline()).append(Component.text("Before Heal", NamedTextColor.AQUA));
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
             healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
             if (previousHealValue != healValue) {
@@ -972,7 +1018,7 @@ public abstract class WarlordsEntity {
             previousHealValue = healValue;
         }
 
-        appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Attackers Cooldowns");
+        appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
             healValue = abstractCooldown.doBeforeHealFromAttacker(event, healValue);
             if (previousHealValue != healValue) {
@@ -983,7 +1029,6 @@ public abstract class WarlordsEntity {
 
         // Self Healing
         if (this == attacker) {
-
             if (this.health + healValue > this.maxHealth) {
                 healValue = this.maxHealth - this.health;
             }
@@ -1063,7 +1108,7 @@ public abstract class WarlordsEntity {
      * @param isLastStandFromShield whether the message is last stand healing.
      */
     private void sendHealingMessage(
-            StringBuilder debugMessage,
+            TextComponent.Builder debugMessage,
             @Nonnull WarlordsEntity player,
             float healValue,
             String ability,
@@ -1071,42 +1116,52 @@ public abstract class WarlordsEntity {
             boolean isLastStandFromShield,
             boolean isOverHeal
     ) {
-        StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
-               .append(" Your ").append(ability);
+        TextComponent.Builder secondHalf = Component.text().color(NamedTextColor.GRAY);
+        TextComponent.Builder healBuilder = Component.text().color(NamedTextColor.GREEN);
         if (isCrit) {
-            ownFeed.append(" critically");
+            healBuilder.decorate(TextDecoration.BOLD);
         }
-        ownFeed.append(" healed you for ").append(ChatColor.GREEN);
-        if (isCrit) {
-            ownFeed.append("§l");
-        }
-        ownFeed.append(Math.round(healValue));
-        ownFeed.append(isCrit ? "!" : "");
+        healBuilder.append(Component.text(Math.round(healValue)));
+        healBuilder.append(Component.text(isCrit ? "!" : ""));
         if (isLastStandFromShield) {
-            ownFeed.append(" Absorbed!");
+            healBuilder.append(Component.text(" Absorbed!"));
         }
-        ownFeed.append(ChatColor.GRAY).append(" health.");
+        secondHalf.append(healBuilder);
+        secondHalf.append(Component.text(" health."));
 
-        if (player.getEntity() instanceof Player) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUuid());
-            switch (playerSettings.getChatHealingMode()) {
-                case ALL:
+        // Own Message
+        TextComponent.Builder hitBuilder = Component.text(" Your " + ability, NamedTextColor.GRAY).toBuilder();
+        if (isCrit) {
+            hitBuilder.append(Component.text(" critically"));
+        }
+        hitBuilder.append(Component.text(" healed you for "));
+
+        TextComponent.Builder ownFeed = Component.text()
+                                                 .append(GIVE_ARROW_GREEN)
+                                                 .append(hitBuilder)
+                                                 .append(secondHalf);
+
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUuid(), player.getEntity() instanceof Player);
+        switch (databasePlayer.getChatHealingMode()) {
+            case ALL -> {
+                if (player.showDebugMessage) {
+                    player.sendMessage(ownFeed.build()
+                                              .hoverEvent(HoverEvent.showText(debugMessage))
+                    );
+                } else {
+                    player.sendMessage(ownFeed.build());
+                }
+            }
+            case CRITS_ONLY -> {
+                if (isCrit) {
                     if (player.showDebugMessage) {
-                        player.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                        player.sendMessage(ownFeed.build()
+                                                  .hoverEvent(HoverEvent.showText(debugMessage))
+                        );
                     } else {
-                        player.sendMessage(ownFeed.toString());
+                        player.sendMessage(ownFeed.build());
                     }
-                    break;
-                case CRITS_ONLY:
-                    if (isCrit) {
-                        if (player.showDebugMessage) {
-                            player.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
-                        } else {
-                            player.sendMessage(ownFeed.toString());
-                        }
-                    }
-                    break;
+                }
             }
         }
     }
@@ -1121,7 +1176,7 @@ public abstract class WarlordsEntity {
      * @param isOverHeal            whether the message is overhealing.
      */
     private void sendHealingMessage(
-            StringBuilder debugMessage,
+            TextComponent.Builder debugMessage,
             @Nonnull WarlordsEntity sender,
             @Nonnull WarlordsEntity receiver,
             float healValue, String ability,
@@ -1129,100 +1184,97 @@ public abstract class WarlordsEntity {
             boolean isLastStandFromShield,
             boolean isOverHeal
     ) {
-        // Own Message
-        StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY)
-               .append(" Your ").append(ability);
-
+        TextComponent.Builder secondHalf = Component.text().color(NamedTextColor.GRAY);
+        TextComponent.Builder healBuilder = Component.text().color(NamedTextColor.GREEN);
         if (isCrit) {
-            ownFeed.append(" critically");
+            healBuilder.decorate(TextDecoration.BOLD);
         }
-
-        if (isOverHeal) {
-            ownFeed.append(" overhealed ").append(name).append(" for ").append(ChatColor.GREEN);
-        } else {
-            ownFeed.append(" healed ").append(name).append(" for ").append(ChatColor.GREEN);
-        }
-
-        if (isCrit) {
-            ownFeed.append("§l");
-        }
-
-        ownFeed.append(Math.round(healValue));
-        ownFeed.append(isCrit ? "!" : "");
-
+        healBuilder.append(Component.text(Math.round(healValue)));
+        healBuilder.append(Component.text(isCrit ? "!" : ""));
         if (isLastStandFromShield) {
-            ownFeed.append(" Absorbed!");
+            healBuilder.append(Component.text(" Absorbed!"));
+        }
+        secondHalf.append(healBuilder);
+        secondHalf.append(Component.text(" health."));
+
+        // Own Message
+        TextComponent.Builder hitBuilder = Component.text(" Your " + ability, NamedTextColor.GRAY).toBuilder();
+        if (isCrit) {
+            hitBuilder.append(Component.text(" critically"));
+        }
+        if (isOverHeal) {
+            hitBuilder.append(Component.text(" overhealed " + name + " for "));
+        } else {
+            hitBuilder.append(Component.text(" healed " + name + " for "));
         }
 
-        ownFeed.append(ChatColor.GRAY).append(" health.");
+        TextComponent.Builder ownFeed = Component.text()
+                                                 .append(GIVE_ARROW_GREEN)
+                                                 .append(hitBuilder)
+                                                 .append(secondHalf);
 
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid(), sender.getEntity() instanceof Player);
-        switch (playerSettings.getChatHealingMode()) {
-            case ALL:
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(sender.getUuid(), sender.getEntity() instanceof Player);
+        switch (databasePlayer.getChatHealingMode()) {
+            case ALL -> {
                 if (sender.showDebugMessage) {
-                    sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                    sender.sendMessage(ownFeed.build()
+                                              .hoverEvent(HoverEvent.showText(debugMessage.build()))
+                    );
                 } else {
-                    sender.sendMessage(ownFeed.toString());
+                    sender.sendMessage(ownFeed.build());
                 }
-                break;
-            case CRITS_ONLY:
+            }
+            case CRITS_ONLY -> {
                 if (isCrit) {
                     if (sender.showDebugMessage) {
-                        sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                        sender.sendMessage(ownFeed.build()
+                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
+                        );
                     } else {
-                        sender.sendMessage(ownFeed.toString());
+                        sender.sendMessage(ownFeed.build());
                     }
                 }
-                break;
+            }
         }
 
         // Ally Message
-        StringBuilder allyFeed = new StringBuilder();
-        allyFeed.append(RECEIVE_ARROW_GREEN).append(ChatColor.GRAY).append(" ").append(sender.getName())
-                .append("'s ").append(ability);
-
+        hitBuilder = Component.text(" " + sender.getName() + "'s " + ability, NamedTextColor.GRAY).toBuilder();
         if (isCrit) {
-            allyFeed.append(" critically");
+            hitBuilder.append(Component.text(" critically"));
         }
-
         if (isOverHeal) {
-            allyFeed.append(" overhealed you for ").append(ChatColor.GREEN);
+            hitBuilder.append(Component.text(" overhealed you for "));
         } else {
-            allyFeed.append(" healed you for ").append(ChatColor.GREEN);
+            hitBuilder.append(Component.text(" healed you for "));
         }
 
-        if (isCrit) {
-            allyFeed.append("§l");
-        }
+        TextComponent.Builder allyFeed = Component.text()
+                                                  .append(RECEIVE_ARROW_GREEN)
+                                                  .append(hitBuilder)
+                                                  .append(secondHalf);
 
-        allyFeed.append(Math.round(healValue));
-        allyFeed.append(isCrit ? "!" : "");
-
-        if (isLastStandFromShield) {
-            allyFeed.append(" Absorbed!");
-        }
-
-        allyFeed.append(ChatColor.GRAY).append(" health.");
-
-        playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid(), receiver.getEntity() instanceof Player);
-        switch (playerSettings.getChatHealingMode()) {
-            case ALL:
+        databasePlayer = DatabaseManager.getPlayer(receiver.getUuid(), receiver.getEntity() instanceof Player);
+        switch (databasePlayer.getChatHealingMode()) {
+            case ALL -> {
                 if (receiver.showDebugMessage) {
-                    receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
+                    receiver.sendMessage(allyFeed.build()
+                                                 .hoverEvent(HoverEvent.showText(debugMessage.build()))
+                    );
                 } else {
-                    receiver.sendMessage(allyFeed.toString());
+                    receiver.sendMessage(allyFeed.build());
                 }
-                break;
-            case CRITS_ONLY:
+            }
+            case CRITS_ONLY -> {
                 if (isCrit) {
                     if (receiver.showDebugMessage) {
-                        receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(allyFeed.toString(), debugMessage.toString()).create());
+                        receiver.sendMessage(allyFeed.build()
+                                                     .hoverEvent(HoverEvent.showText(debugMessage.build()))
+                        );
                     } else {
-                        receiver.sendMessage(allyFeed.toString());
+                        receiver.sendMessage(allyFeed.build());
                     }
                 }
-                break;
+            }
         }
 
     }
@@ -1236,7 +1288,7 @@ public abstract class WarlordsEntity {
      * @param isMeleeHit  whether if it's a melee hit.
      */
     private void sendDamageMessage(
-            StringBuilder debugMessage,
+            TextComponent.Builder debugMessage,
             @Nonnull WarlordsEntity sender,
             @Nonnull WarlordsEntity receiver,
             String ability,
@@ -1244,154 +1296,150 @@ public abstract class WarlordsEntity {
             boolean isCrit,
             boolean isMeleeHit
     ) {
-        // Receiver feed
-        StringBuilder enemyFeed = new StringBuilder();
-        enemyFeed.append(RECEIVE_ARROW_RED).append(ChatColor.GRAY).append(" ").append(sender.getName());
-        if (!isMeleeHit) {
-            enemyFeed.append("'s ").append(ability);
-        }
-        enemyFeed.append(" hit you for ").append(ChatColor.RED);
+        TextComponent.Builder secondHalf = Component.text().color(NamedTextColor.GRAY);
+        TextComponent.Builder damageBuilder = Component.text().color(NamedTextColor.RED);
         if (isCrit) {
-            enemyFeed.append("§l");
+            damageBuilder.decorate(TextDecoration.BOLD);
         }
-        enemyFeed.append(Math.round(damageValue));
+        damageBuilder.append(Component.text(Math.round(damageValue)));
         if (isCrit) {
-            enemyFeed.append("! ").append(ChatColor.GRAY).append("critical");
+            damageBuilder.append(Component.text("! "));
+        }
+        secondHalf.append(damageBuilder);
+        if (isCrit) {
+            secondHalf.append(Component.text("critical"));
         }
         if (isMeleeHit) {
-            enemyFeed.append(ChatColor.GRAY).append(" melee");
+            secondHalf.append(Component.text(" melee"));
         }
-        enemyFeed.append(ChatColor.GRAY).append(" damage.");
+        secondHalf.append(Component.text(" damage."));
 
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(receiver.getUuid(), receiver.getEntity() instanceof Player);
-        switch (playerSettings.getChatDamageMode()) {
-            case ALL:
+        // Receiver feed
+        TextComponent.Builder hitBuilder = Component.text(" " + sender.getName(), NamedTextColor.GRAY).toBuilder();
+        if (!isMeleeHit) {
+            hitBuilder.append(Component.text("'s " + ability));
+        }
+        hitBuilder.append(Component.text(" hit you for "));
+        TextComponent.Builder enemyFeed = Component.text()
+                                                   .append(RECEIVE_ARROW_RED)
+                                                   .append(hitBuilder)
+                                                   .append(secondHalf);
+
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(getUuid(), receiver.getEntity() instanceof Player);
+        switch (databasePlayer.getChatDamageMode()) {
+            case ALL -> {
                 if (receiver.showDebugMessage) {
-                    receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(enemyFeed.toString(), debugMessage.toString()).create());
+                    receiver.sendMessage(enemyFeed.build()
+                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
+                    );
                 } else {
-                    receiver.sendMessage(enemyFeed.toString());
+                    receiver.sendMessage(enemyFeed.build());
                 }
-                break;
-            case CRITS_ONLY:
+            }
+            case CRITS_ONLY -> {
                 if (isCrit) {
                     if (receiver.showDebugMessage) {
-                        receiver.sendSpigotMessage(new ComponentBuilder().appendHoverText(enemyFeed.toString(), debugMessage.toString()).create());
+                        receiver.sendMessage(enemyFeed.build()
+                                                      .hoverEvent(HoverEvent.showText(debugMessage.build()))
+                        );
                     } else {
-                        receiver.sendMessage(enemyFeed.toString());
+                        receiver.sendMessage(enemyFeed.build());
                     }
                 }
-                break;
+            }
         }
-
 
         // Sender feed
-        StringBuilder ownFeed = new StringBuilder();
-        ownFeed.append(GIVE_ARROW_GREEN).append(ChatColor.GRAY).append(" ");
+        hitBuilder = Component.text(" ", NamedTextColor.GRAY).toBuilder();
         if (isMeleeHit) {
-            ownFeed.append("You hit ");
+            hitBuilder.append(Component.text("You hit "));
         } else {
-            ownFeed.append("Your ").append(ability).append(" hit ");
+            hitBuilder.append(Component.text("Your " + ability + " hit "));
         }
-        ownFeed.append(name);
-        ownFeed.append(" for ").append(ChatColor.RED);
-        if (isCrit) {
-            ownFeed.append("§l");
-        }
-        ownFeed.append(Math.round(damageValue));
-        if (isCrit) {
-            ownFeed.append("! ").append(ChatColor.GRAY).append("critical");
-        }
-        if (isMeleeHit) {
-            ownFeed.append(ChatColor.GRAY).append(" melee");
-        }
-
-        ownFeed.append(ChatColor.GRAY).append(" damage.");
-
-        playerSettings = PlayerSettings.getPlayerSettings(sender.getUuid(), sender.getEntity() instanceof Player);
-        switch (playerSettings.getChatDamageMode()) {
-            case ALL:
+        hitBuilder.append(Component.text(name + " for "));
+        TextComponent.Builder ownFeed = Component.text()
+                                                 .append(GIVE_ARROW_GREEN)
+                                                 .append(hitBuilder)
+                                                 .append(secondHalf);
+        databasePlayer = DatabaseManager.getPlayer(sender.getUuid(), sender.getEntity() instanceof Player);
+        switch (databasePlayer.getChatDamageMode()) {
+            case ALL -> {
                 if (sender.showDebugMessage) {
-                    sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                    sender.sendMessage(ownFeed.build()
+                                              .hoverEvent(HoverEvent.showText(debugMessage.build()))
+                    );
                 } else {
-                    sender.sendMessage(ownFeed.toString());
+                    sender.sendMessage(ownFeed.build());
                 }
-                break;
-            case CRITS_ONLY:
+            }
+            case CRITS_ONLY -> {
                 if (isCrit) {
                     if (sender.showDebugMessage) {
-                        sender.sendSpigotMessage(new ComponentBuilder().appendHoverText(ownFeed.toString(), debugMessage.toString()).create());
+                        sender.sendMessage(ownFeed.build()
+                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
+                        );
                     } else {
-                        sender.sendMessage(ownFeed.toString());
+                        sender.sendMessage(ownFeed.build());
                     }
                 }
-                break;
+            }
         }
-
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, String title, String value) {
-        appendDebugMessage(stringBuilder, title, value, true);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, String title, String value) {
+        appendDebugMessage(debugMessage, title, value, true);
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, String title, String value, boolean separator) {
+    private void appendDebugMessage(TextComponent.Builder debugMessage, String title, String value, boolean separator) {
         if (separator) {
-            stringBuilder.append("\n").append(ChatColor.GRAY).append(" - ");
+            debugMessage.append(Component.newline()).append(Component.text(" - ", NamedTextColor.GRAY));
         }
-        stringBuilder.append(ChatColor.GREEN).append(title).append(": ").append(ChatColor.GOLD).append(value);
+        debugMessage.append(Component.text(title + ": ", NamedTextColor.GREEN)).append(Component.text(value, NamedTextColor.GOLD));
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, String title, float value) {
-        appendDebugMessage(stringBuilder, title, value, true);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, String title, float value) {
+        appendDebugMessage(debugMessage, title, value, true);
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, String title, float value, boolean separator) {
-        appendDebugMessage(stringBuilder, title, NumberFormat.addCommaAndRoundHundredths(value), separator);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, String title, float value, boolean separator) {
+        appendDebugMessage(debugMessage, title, NumberFormat.addCommaAndRoundHundredths(value), separator);
     }
 
-    private void appendDebugMessage(StringBuilder debugMessage, int level, String title, String value, AbstractCooldown<?> cooldown) {
-        appendDebugMessage(debugMessage, level, ChatColor.GREEN, title);
-        debugMessage.append(": ")
-                    .append(ChatColor.GOLD)
-                    .append(value)
-                    .append(ChatColor.DARK_GRAY)
-                    .append(" (")
-                    .append(ChatColor.GRAY)
-                    .append(cooldown.getName())
-                    .append(ChatColor.DARK_GRAY)
-                    .append(")");
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, String value, AbstractCooldown<?> cooldown) {
+        appendDebugMessage(debugMessage, level, NamedTextColor.GREEN, title);
+        debugMessage.append(Component.text(": "))
+                    .append(Component.text(value, NamedTextColor.GOLD))
+                    .append(Component.text(" (", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(cooldown.getName(), NamedTextColor.GRAY))
+                    .append(Component.text(")", NamedTextColor.DARK_GRAY));
     }
 
-    private void appendDebugMessage(StringBuilder debugMessage, int level, String title, float value, AbstractCooldown<?> cooldown) {
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, float value, AbstractCooldown<?> cooldown) {
         appendDebugMessage(debugMessage, level, title, NumberFormat.addCommaAndRoundHundredths(value), cooldown);
     }
 
-    private void appendDebugMessage(StringBuilder debugMessage, int level, String title, String value) {
-        appendDebugMessage(debugMessage, level, ChatColor.GREEN, title);
-        debugMessage.append(": ")
-                    .append(ChatColor.GOLD)
-                    .append(value)
-                    .append(ChatColor.DARK_GRAY);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, String value) {
+        appendDebugMessage(debugMessage, level, NamedTextColor.GREEN, title);
+        debugMessage.append(Component.text(": "))
+                    .append(Component.text(value, NamedTextColor.GOLD));
     }
 
-    private void appendDebugMessage(StringBuilder debugMessage, int level, String title, float value) {
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, float value) {
         appendDebugMessage(debugMessage, level, title, NumberFormat.addCommaAndRoundHundredths(value));
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, int level, String title) {
-        appendDebugMessage(stringBuilder, level, ChatColor.GREEN, title);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title) {
+        appendDebugMessage(debugMessage, level, NamedTextColor.GREEN, title);
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, int level, ChatColor chatColor, String title) {
-        stringBuilder.append("\n")
-                     .append(ChatColor.GRAY)
-                     .append(" ".repeat(Math.max(0, level == 1 ? 1 : level * 2)))
-                     .append(" - ")
-                     .append(chatColor)
-                     .append(title);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, NamedTextColor textColor, String title) {
+        debugMessage.append(Component.newline())
+                    .append(Component.text(" ".repeat(Math.max(0, level == 1 ? 1 : level * 2)) + " - ", NamedTextColor.GRAY))
+                    .append(Component.text(title, textColor));
     }
 
-    private void appendDebugMessage(StringBuilder stringBuilder, int level, AbstractCooldown<?> cooldown) {
-        appendDebugMessage(stringBuilder, level, ChatColor.GREEN, cooldown.getName());
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, AbstractCooldown<?> cooldown) {
+        appendDebugMessage(debugMessage, level, NamedTextColor.GREEN, cooldown.getName());
     }
 
     /**
@@ -1399,18 +1447,19 @@ public abstract class WarlordsEntity {
      */
     private void playHitSound(WarlordsEntity attacker) {
         if (attacker.entity instanceof Player) {
-            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
+            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         }
     }
 
     /**
-     * @param entity     which entity is assigned to the hurt animation?
-     * @param hurtPlayer what warlords player should play the hurt animation?
+     * @param entity   which entity is assigned to the hurt animation?
+     * @param attacker what warlords player should play the hurt animation?
      */
-    private void playHurtAnimation(LivingEntity entity, WarlordsEntity hurtPlayer) {
-        entity.playEffect(EntityEffect.HURT);
-        for (Player player1 : hurtPlayer.getWorld().getPlayers()) {
-            player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
+    public void playHurtAnimation(LivingEntity entity, WarlordsEntity attacker) {
+        ServerLevel serverLevel = ((CraftWorld) entity.getWorld()).getHandle();
+        serverLevel.broadcastDamageEvent(((CraftEntity) entity).getHandle(), serverLevel.damageSources().generic());
+        for (Player player1 : attacker.getWorld().getPlayers()) {
+            player1.playSound(entity.getLocation(), Sound.ENTITY_PLAYER_HURT, 2, 1);
         }
     }
 
@@ -1447,12 +1496,11 @@ public abstract class WarlordsEntity {
         this.addDeath();
         FlagHolder.dropFlagForPlayer(this);
 
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             player.setGameMode(GameMode.SPECTATOR);
             //removing yellow hearts
-            ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
-            ItemStack item = ((CraftPlayer) entity).getInventory().getItem(0);
+            entity.setAbsorptionAmount(0);
+            ItemStack item = player.getInventory().getItem(0);
             //removing sg shiny weapon
             if (item != null) {
                 item.removeEnchantment(Enchantment.OXYGEN);
@@ -1464,21 +1512,20 @@ public abstract class WarlordsEntity {
 
         //giving out assists
         hitBy.forEach((assisted, value) -> {
-            if (attacker == assisted || attacker == this) {
-                assisted.sendMessage(
-                        ChatColor.GRAY +
-                                "You assisted in killing " +
-                                getColoredName()
-                );
-            } else {
-                if (attacker != null) {
-                    assisted.sendMessage(
-                            ChatColor.GRAY +
-                                    "You assisted " +
-                                    attacker.getColoredName() +
-                                    ChatColor.GRAY + " in killing " +
-                                    getColoredName()
+            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(assisted.getUuid(), assisted.getEntity() instanceof Player);
+            Settings.ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+            if (killsMode == Settings.ChatSettings.ChatKills.ALL || killsMode == Settings.ChatSettings.ChatKills.ONLY_ASSISTS) {
+                if (attacker == assisted || attacker == this) {
+                    assisted.sendMessage(Component.text("You assisted in killing ", NamedTextColor.GRAY)
+                                                  .append(getColoredName())
                     );
+                } else {
+                    if (attacker != null) {
+                        assisted.sendMessage(Component.text("You assisted ", NamedTextColor.GRAY)
+                                                      .append(attacker.getColoredName())
+                                                      .append(Component.text(" in killing "))
+                                                      .append(getColoredName()));
+                    }
                 }
             }
             assisted.addAssist();
@@ -1529,8 +1576,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public abstract void updateHealth();
-
     /**
      * Performs consumer action on WarlordsPlayers static (not the temp ones made on onActivate()) spec abilities that matches the given class.
      * Player specs and their abilities are unknown at this point.
@@ -1548,69 +1593,25 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void displayActionBar() {
-        StringBuilder actionBarMessage = new StringBuilder(ChatColor.GOLD + "§lHP: ");
-        float healthRatio = health / maxHealth;
-        if (healthRatio > 1) {
-            actionBarMessage.append(ChatColor.GREEN);
-        } else if (healthRatio >= .75) {
-            actionBarMessage.append(ChatColor.DARK_GREEN);
-        } else if (healthRatio >= .25) {
-            actionBarMessage.append(ChatColor.YELLOW);
-        } else {
-            actionBarMessage.append(ChatColor.RED);
-        }
-        int maxHealthRounded = Math.round(maxHealth);
-        int maxBaseHealthRounded = Math.round(maxBaseHealth);
-        actionBarMessage.append("§l")
-                        .append(Math.round(health))
-                        .append(ChatColor.GOLD)
-                        .append("§l/")
-                        .append(maxHealthRounded > maxBaseHealthRounded ? ChatColor.YELLOW : ChatColor.GOLD)
-                        .append(ChatColor.BOLD)
-                        .append(maxHealthRounded)
-                        .append("    ");
-        actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
-        for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
-            if (abstractCooldown.getNameAbbreviation() != null) {
-                actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(" ");
-            }
-        }
-        if (entity instanceof Player) {
-            PacketUtils.sendActionBar((Player) entity, actionBarMessage.toString());
-        }
-    }
-
-    public void displayFlagActionBar(@Nonnull Player player) {
-        if (this.compassTarget != null) {
-            PacketUtils.sendActionBar(player, this.compassTarget.getToolbarName(this));
-        } else {
-            PacketUtils.sendActionBar(player, "");
-        }
-    }
-
     public void updateArmor() {
-        if (!(this.entity instanceof Player)) {
+        if (!(this.entity instanceof Player player)) {
             return;
         }
-
-        Player player = (Player) this.entity;
 
         if (!cooldownManager.hasCooldownFromName("Cloaked") || hasFlag()) {
             if (this instanceof WarlordsPlayer) {
                 ArmorManager.resetArmor(player, (WarlordsPlayer) this);
             }
 
-            getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+            player.removePotionEffect(PotionEffectType.INVISIBILITY);
             for (Player otherPlayer : player.getWorld().getPlayers()) {
-                otherPlayer.showPlayer(player);
+                otherPlayer.showPlayer(Warlords.getInstance(), player);
             }
         }
 
         if (hasFlag()) {
-            ItemStack item = new ItemStack(Material.BANNER);
+            ItemStack item = new ItemStack(getTeam() == Team.RED ? Material.RED_BANNER : Material.BLUE_BANNER);
             BannerMeta banner = (BannerMeta) item.getItemMeta();
-            banner.setBaseColor(getTeam() == Team.RED ? DyeColor.BLUE : DyeColor.RED);
             banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
             banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
             item.setItemMeta(banner);
@@ -1622,11 +1623,6 @@ public abstract class WarlordsEntity {
         return FlagHolder.isPlayerHolderFlag(this);
     }
 
-    @Nonnull
-    public LivingEntity getEntity() {
-        return this.entity;
-    }
-
     public Team getTeam() {
         return team;
     }
@@ -1635,44 +1631,54 @@ public abstract class WarlordsEntity {
         this.team = team;
     }
 
-    public void setEntity(LivingEntity entity) {
-        this.entity = entity;
-    }
-
     public Specializations getSpecClass() {
         return specClass;
     }
 
-    public void updateItems() {
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
-            updateRedItem(player);
-            updatePurpleItem(player);
-            updateBlueItem(player);
-            updateOrangeItem(player);
+    public boolean isDisableCooldowns() {
+        return disableCooldowns;
+    }
+
+    public void setDisableCooldowns(boolean disableCooldowns) {
+        this.disableCooldowns = disableCooldowns;
+    }
+
+    public void updateItem(AbstractAbility ability) {
+        if (entity instanceof Player player) {
+            updateItem(player, ability);
         }
     }
 
-    public void updateRedItem(Player player) {
-        updateItem(player, 1, spec.getRed(), RED_ABILITY);
-    }
-
-    public void updatePurpleItem(Player player) {
-        updateItem(player, 2, spec.getPurple(), PURPLE_ABILITY);
-    }
-
-    public void updateBlueItem(Player player) {
-        updateItem(player, 3, spec.getBlue(), BLUE_ABILITY);
-    }
-
-    public void updateOrangeItem(Player player) {
-        updateItem(player, 4, spec.getOrange(), ORANGE_ABILITY);
-    }
-
-    public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
+    public void updateItem(Player player, AbstractAbility ability) {
+        Integer inventoryIndex = spec.getInventoryAbilityIndex(ability);
+        if (inventoryIndex == null || inventoryIndex == 0) { // exclude weapon
+            return;
+        }
         if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.INK_SACK, ability.getCurrentCooldownItem(), (byte) 8)
-                    .flags(ItemFlag.HIDE_ENCHANTS);
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
+            if (!ability.getSecondaryAbilities().isEmpty()) {
+                cooldown.enchant(Enchantment.OXYGEN, 1);
+            }
+            player.getInventory().setItem(inventoryIndex, cooldown.get());
+        } else {
+            player.getInventory().setItem(
+                    inventoryIndex,
+                    ability.getItem()
+            );
+        }
+    }
+
+    /**
+     * Used for custom abilities not in the spec, like legendary weapons
+     *
+     * @param player
+     * @param slot
+     * @param ability
+     * @param item
+     */
+    public void updateCustomItem(Player player, int slot, AbstractAbility ability, @Nullable ItemStack item) {
+        if (ability.getCurrentCooldown() > 0) {
+            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
             if (!ability.getSecondaryAbilities().isEmpty()) {
                 cooldown.enchant(Enchantment.OXYGEN, 1);
             }
@@ -1685,108 +1691,11 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void setRedCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getRedAbility().setCurrentCooldown(currentCooldown);
-            updateRedItem();
-        }
-    }
-
-    public boolean isDisableCooldowns() {
-        return disableCooldowns;
-    }
-
-    public AbstractAbility getRedAbility() {
-        return spec.getRed();
-    }
-
-    public void updateRedItem() {
-        if (entity instanceof Player) {
-            updateRedItem((Player) entity);
-        }
-    }
-
-    public void setDisableCooldowns(boolean disableCooldowns) {
-        this.disableCooldowns = disableCooldowns;
-    }
-
-    public void subtractRedCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getRedAbility().subtractCooldown(cooldown);
-            updateRedItem();
-        }
-    }
-
-    public void setPurpleCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getPurpleAbility().setCurrentCooldown(currentCooldown);
-            updatePurpleItem();
-        }
-    }
-
-    public AbstractAbility getPurpleAbility() {
-        return spec.getPurple();
-    }
-
-    public void updatePurpleItem() {
-        if (entity instanceof Player) {
-            updatePurpleItem((Player) entity);
-        }
-    }
-
-    public void subtractPurpleCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getPurpleAbility().subtractCooldown(cooldown);
-            updatePurpleItem();
-        }
-    }
-
-    public void setBlueCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getBlueAbility().setCurrentCooldown(currentCooldown);
-            updateBlueItem();
-        }
-    }
-
-    public AbstractAbility getBlueAbility() {
-        return spec.getBlue();
-    }
-
-    public void updateBlueItem() {
-        if (entity instanceof Player) {
-            updateBlueItem((Player) entity);
-        }
-    }
-
-    public void subtractBlueCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getBlueAbility().subtractCooldown(cooldown);
-            updateBlueItem();
-        }
-    }
-
-    public void setOrangeCurrentCooldown(float currentCooldown) {
-        if (!isDisableCooldowns()) {
-            this.getOrangeAbility().setCurrentCooldown(currentCooldown);
-            updateOrangeItem();
-        }
-    }
-
-    public AbstractAbility getOrangeAbility() {
-        return spec.getOrange();
-    }
-
-    public void updateOrangeItem() {
-        if (entity instanceof Player) {
-            updateOrangeItem((Player) entity);
-        }
-    }
-
-    public void subtractOrangeCooldown(float cooldown) {
-        if (!isDisableCooldowns()) {
-            this.getOrangeAbility().subtractCooldown(cooldown);
-            updateOrangeItem();
-        }
+    public <T> List<T> getAbilitiesMatching(Class<T> clazz) {
+        return spec.getAbilities().stream()
+                   .filter(clazz::isInstance)
+                   .map(clazz::cast)
+                   .collect(Collectors.toList());
     }
 
     public boolean isActive() {
@@ -1797,15 +1706,15 @@ public abstract class WarlordsEntity {
         this.active = active;
     }
 
-    public AbstractPlayerClass getSpec() {
-        return spec;
-    }
-
     public void resetAbilities(boolean closeInventory) {
-        for (AbstractAbility ability : spec.getAbilities()) {
+        for (AbstractAbility ability : getAbilities()) {
             ability.setCurrentCooldown(0);
         }
         updateInventory(closeInventory);
+    }
+
+    public <T> List<AbstractAbility> getAbilities() {
+        return spec.getAbilities();
     }
 
     public void updateInventory(boolean closeInventory) {
@@ -1853,30 +1762,26 @@ public abstract class WarlordsEntity {
     }
 
     public void showDeathAnimation() {
-        if (!(this.entity instanceof Player)) {
+        if (!(this.entity instanceof Player player)) {
             this.entity.damage(200);
         } else {
-            Player player = (Player) this.entity;
-            Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
-            zombie.getEquipment().setBoots(player.getInventory().getBoots());
-            zombie.getEquipment().setLeggings(player.getInventory().getLeggings());
-            zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
-            zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
-            zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
-            zombie.damage(2000);
+            // TODO: Fix zombie not dying upon spawn
+//            Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class, false, z -> {
+//                EntityEquipment equipment = z.getEquipment();
+//                PlayerInventory playerInventory = player.getInventory();
+//                equipment.setBoots(playerInventory.getBoots());
+//                equipment.setLeggings(playerInventory.getLeggings());
+//                equipment.setChestplate(playerInventory.getChestplate());
+//                equipment.setHelmet(playerInventory.getHelmet());
+//                equipment.setItemInMainHand(playerInventory.getItemInMainHand());
+//            });
+//            zombie.setAI(false);
+//            zombie.damage(2000);
         }
     }
 
     public void heal() {
         this.health = this.maxBaseHealth;
-    }
-
-    public int getRegenTickTimer() {
-        return regenTickTimer;
-    }
-
-    public void setRegenTickTimer(int regenTickTimer) {
-        this.regenTickTimer = regenTickTimer;
     }
 
     public void resetRegenTimer() {
@@ -1916,20 +1821,30 @@ public abstract class WarlordsEntity {
             this.energy = 1;
         }
         if ((int) energyGiven != 0) {
-            if (getEntity() instanceof Player) {
-                PlayerSettings receiverSettings = PlayerSettings.getPlayerSettings(getUuid());
-                PlayerSettings giverSettings = PlayerSettings.getPlayerSettings(giver.getUuid());
-                if (receiverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
-                    if (this == giver) {
-                        sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
-                    } else {
-                        sendMessage(RECEIVE_ARROW_GREEN + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
-                    }
+            DatabasePlayer receiverSettings = DatabaseManager.getPlayer(getUuid(), getEntity() instanceof Player);
+            DatabasePlayer giverSettings = DatabaseManager.getPlayer(giver.getUuid(), giver.getEntity() instanceof Player);
+            if (receiverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
+                if (this == giver) {
+                    sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your " + ability + " gave you ", NamedTextColor.GRAY))
+                            .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
+                            .append(Component.text(" energy.", NamedTextColor.GRAY))
+                    );
+                } else {
+                    sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                            .append(Component.text(" " + giver.getName() + "'s " + ability + " gave you ", NamedTextColor.GRAY))
+                            .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
+                            .append(Component.text(" energy.", NamedTextColor.GRAY))
+                    );
                 }
-                if (giverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
-                    if (this != giver) {
-                        giver.sendMessage(GIVE_ARROW_GREEN + ChatColor.GRAY + " Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) energyGiven + ChatColor.GRAY + " energy.");
-                    }
+            }
+            if (giverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
+                if (this != giver) {
+                    giver.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your " + ability + " gave " + name + " ", NamedTextColor.GRAY))
+                            .append(Component.text((int) energyGiven, NamedTextColor.YELLOW))
+                            .append(Component.text(" energy.", NamedTextColor.GRAY))
+                    );
                 }
             }
         }
@@ -1941,6 +1856,15 @@ public abstract class WarlordsEntity {
         return spec.getMaxEnergy();
     }
 
+    @Nonnull
+    public LivingEntity getEntity() {
+        return this.entity;
+    }
+
+    public void setEntity(LivingEntity entity) {
+        this.entity = entity;
+    }
+
     public UUID getUuid() {
         return uuid;
     }
@@ -1949,14 +1873,15 @@ public abstract class WarlordsEntity {
         this.uuid = uuid;
     }
 
-    public void sendMessage(String message) {
-        this.entity.sendMessage(message);
+    public void sendMessage(Component component) {
+        this.entity.sendMessage(component);
         if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
+            component.hoverEvent(null);
             game.spectators()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                .forEach(player -> player.sendMessage(message));
+                .forEach(player -> player.sendMessage(component));
         }
     }
 
@@ -1968,23 +1893,8 @@ public abstract class WarlordsEntity {
         this.name = name;
     }
 
-    public void sendSpigotMessage(BaseComponent[] message) {
-        if (this.entity instanceof Player) {
-            ((Player) this.entity).spigot().sendMessage(message);
-            if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
-                BaseComponent[] messageCopy = new BaseComponent[message.length];
-                for (int i = 0; i < message.length; i++) {
-                    BaseComponent duplicate = message[i].duplicate();
-                    duplicate.setHoverEvent(null);
-                    messageCopy[i] = duplicate;
-                }
-                game.spectators()
-                    .map(Bukkit::getPlayer)
-                    .filter(Objects::nonNull)
-                    .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                    .forEach(player -> player.spigot().sendMessage(messageCopy));
-            }
-        }
+    public float subtractEnergy(FloatModifiable amount, boolean fromAttacker) {
+        return subtractEnergy(amount.getCurrentValue(), fromAttacker);
     }
 
     public float subtractEnergy(float amount, boolean fromAttacker) {
@@ -2021,7 +1931,7 @@ public abstract class WarlordsEntity {
     }
 
     public boolean onHorse() {
-        return this.entity.isInsideVehicle();
+        return this.entity.getVehicle() != null;
     }
 
     public float getHorseCooldown() {
@@ -2030,22 +1940,6 @@ public abstract class WarlordsEntity {
 
     public void setHorseCooldown(float horseCooldown) {
         this.horseCooldown = horseCooldown;
-    }
-
-    public int getFlagDropCooldown() {
-        return flagDropCooldown;
-    }
-
-    public void setFlagDropCooldown(int flagDropCooldown) {
-        this.flagDropCooldown = flagDropCooldown;
-    }
-
-    public int getFlagPickCooldown() {
-        return flagPickCooldown;
-    }
-
-    public void setFlagPickCooldown(int flagPickCooldown) {
-        this.flagPickCooldown = flagPickCooldown;
     }
 
     public int getHitCooldown() {
@@ -2062,14 +1956,6 @@ public abstract class WarlordsEntity {
 
     public void addAssist() {
         this.minuteStats.addAssist();
-    }
-
-    public LinkedHashMap<WarlordsEntity, Integer> getHitBy() {
-        return hitBy;
-    }
-
-    public LinkedHashMap<WarlordsEntity, Integer> getHealedBy() {
-        return healedBy;
     }
 
     public void addDeath() {
@@ -2105,19 +1991,19 @@ public abstract class WarlordsEntity {
      *
      * <p>This still has the chance of producing an error depending on how big the size of minuteStats is, how many stats the player has, and what other BaseComponents are on the same line as this. (String length increases).
      * Point of reference: 300 minutes with 500K damage/healing/absorbed PER minute did not produce an error
+     * Max json size is 262144 chars
      *
      * @param minuteStatsType The type of minute stats to get the hoverable text for
      * @param hoverable       if the text should be hoverable
      * @return List of hoverable minute stats that make up minuteStatsType.name
      */
-    public BaseComponent[] getAllMinuteHoverableStats(MinuteStats minuteStatsType, boolean hoverable) {
+    public Component getAllMinuteHoverableStats(MinuteStats minuteStatsType, boolean hoverable) {
         if (!hoverable) {
-            return new ComponentBuilder(ChatColor.WHITE + minuteStatsType.name + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(
-                    minuteStats.total())))
-                    .create();
+            return Component.text(minuteStatsType.name + ": ", NamedTextColor.WHITE)
+                            .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())), NamedTextColor.GOLD));
         } else {
-            ComponentBuilder componentBuilder = new ComponentBuilder();
-            StringBuilder stringBuilder = new StringBuilder();
+            TextComponent.Builder component = Component.text();
+            TextComponent.Builder hover = Component.text();
             String minuteStatsTypeName = minuteStatsType.name;
 
             List<PlayerStatisticsMinute.Entry> entries = minuteStats.getEntries();
@@ -2134,46 +2020,37 @@ public abstract class WarlordsEntity {
                             break;
                         }
                         PlayerStatisticsMinute.Entry entry = entries.get(index);
-                        stringBuilder.append(ChatColor.WHITE)
-                                     .append("Minute ")
-                                     .append(index)
-                                     .append(": ")
-                                     .append(ChatColor.GOLD);
-                        stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
-                        stringBuilder.append("\n");
+                        hover.append(Component.text("Minute " + index + ": ", NamedTextColor.WHITE)
+                                              .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)),
+                                                      NamedTextColor.GOLD
+                                              )));
+                        hover.append(Component.newline());
                     }
-                    stringBuilder.setLength(stringBuilder.length() - 1);
-                    stringLength += stringBuilder.length();
-                    componentBuilder.appendHoverText((i > minuteStatsTypeName.length() + 1 ? ChatColor.GOLD : ChatColor.WHITE) + splitString[i],
-                            stringBuilder.toString()
-                    );
-                    stringBuilder.setLength(0);
+                    stringLength += LegacyComponentSerializer.legacySection().serialize(hover.build()).length();
+                    component.append(Component.text(splitString[i], (i > minuteStatsTypeName.length() + 1 ? NamedTextColor.GOLD : NamedTextColor.WHITE)))
+                             .hoverEvent(HoverEvent.showText(hover));
+                    hover = Component.text();
                 }
                 //this will never happen in reality
                 if (stringLength >= 8000) {
-                    for (BaseComponent baseComponent : componentBuilder.create()) {
-                        if (baseComponent instanceof TextComponent) {
-                            ((TextComponent) baseComponent).setText(((TextComponent) baseComponent).getText().replace("Minute", "Min."));
-                        }
-                    }
+                    return component.build().replaceText(builder -> builder.match("Minute").replacement("Min."));
                 }
             } else {
-                stringBuilder.append(ChatColor.AQUA).append("Stat Breakdown (").append(name).append("):");
+                hover.append(Component.text("Stat Breakdown (" + name + "):", NamedTextColor.AQUA));
                 for (int i = 0; i < size; i++) {
                     PlayerStatisticsMinute.Entry entry = entries.get(i);
-                    stringBuilder.append("\n");
-                    stringBuilder.append(ChatColor.WHITE)
-                                 .append("Minute ")
-                                 .append(i + 1)
-                                 .append(": ")
-                                 .append(ChatColor.GOLD);
-                    stringBuilder.append(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)));
+                    hover.append(Component.newline());
+                    hover.append(Component.text("Minute " + (i + 1) + ": ", NamedTextColor.WHITE))
+                         .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(entry)), NamedTextColor.GOLD));
                 }
-                componentBuilder.appendHoverText(ChatColor.WHITE + minuteStatsTypeName + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(
-                        minuteStatsType.getValue.apply(minuteStats.total())), stringBuilder.toString());
+                component.append(Component.text(minuteStatsTypeName + ": ", NamedTextColor.WHITE)
+                                          .append(Component.text(NumberFormat.addCommaAndRound(minuteStatsType.getValue.apply(minuteStats.total())),
+                                                  NamedTextColor.GOLD
+                                          )))
+                         .hoverEvent(HoverEvent.showText(hover));
             }
 
-            return componentBuilder.create();
+            return component.build();
         }
     }
 
@@ -2208,6 +2085,10 @@ public abstract class WarlordsEntity {
     }
 
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
+        if (modifier < 0 && this.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+            return () -> {
+            };
+        }
         AtomicReference<String> nameRef = new AtomicReference<>(name);
         AtomicInteger modifierRef = new AtomicInteger(modifier);
         AtomicInteger durationRef = new AtomicInteger(duration);
@@ -2216,14 +2097,6 @@ public abstract class WarlordsEntity {
         Bukkit.getPluginManager().callEvent(new WarlordsAddSpeedModifierEvent(this, from, nameRef, modifierRef, durationRef, toDisableRef));
 
         return this.speed.addSpeedModifier(from, nameRef.get(), modifierRef.get(), durationRef.get(), toDisableRef.get());
-    }
-
-    public CalculateSpeed getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(CalculateSpeed speed) {
-        this.speed = speed;
     }
 
     public Location getDeathLocation() {
@@ -2273,10 +2146,6 @@ public abstract class WarlordsEntity {
         return this.entity.getEyeLocation();
     }
 
-    public boolean isSneaking() {
-        return this.entity instanceof Player && ((Player) this.entity).isSneaking();
-    }
-
     public boolean isWasSneaking() {
         return wasSneaking;
     }
@@ -2321,13 +2190,13 @@ public abstract class WarlordsEntity {
 
     public void teleportLocationOnly(Location location) {
         if (this.entity instanceof Player) {
-            TeleportUtils.teleport((Player) this.entity, location);
+            TeleportUtils.smoothTeleport((Player) this.entity, location);
         } else {
             Location location1 = this.getLocation();
             location1.setX(location.getX());
             location1.setY(location.getY());
             location1.setZ(location.getZ());
-            this.entity.teleport(location);
+            this.entity.teleport(location1);
         }
     }
 
@@ -2349,12 +2218,12 @@ public abstract class WarlordsEntity {
                : 1;
     }
 
-    public String getColoredName() {
-        return getTeam().teamColor() + getName();
+    public Component getColoredName() {
+        return Component.text(getName(), getTeam().teamColor());
     }
 
-    public String getColoredNameBold() {
-        return getTeam().teamColor().toString() + ChatColor.BOLD + getName();
+    public Component getColoredNameBold() {
+        return Component.text(getName(), getTeam().teamColor(), TextDecoration.BOLD);
     }
 
     public void setVelocity(String from, Vector v, boolean ignoreModifications) {
@@ -2393,8 +2262,9 @@ public abstract class WarlordsEntity {
                 return false;
             }
         }
-        //addPotionEffect(effect, force);
-        this.getEntity().addPotionEffect(potionEffect, true);
+        LivingEntity livingEntity = this.getEntity();
+        livingEntity.removePotionEffect(potionEffect.getType());
+        livingEntity.addPotionEffect(potionEffect);
         return true;
     }
 
@@ -2464,8 +2334,7 @@ public abstract class WarlordsEntity {
         if (player != null) {
             player.setWalkSpeed(this.walkSpeed);
         } else {
-            ((EntityLiving) ((CraftEntity) entity).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED)
-                                                               .setValue(this.walkSpeed);
+            entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
         }
     }
 
@@ -2518,19 +2387,207 @@ public abstract class WarlordsEntity {
 
     public abstract boolean isOnline();
 
-    @Nullable
-    public CompassTargetMarker getCompassTarget() {
-        return this.compassTarget;
-    }
-
     public void runEveryTick() {
         this.spec.runEveryTick();
         // Gives the player their respawn timer as display.
         this.decrementRespawnTimer();
+
+        if (getEntity() instanceof Player player) {
+            if (getCompassTarget() != null) {
+                player.setCompassTarget(getCompassTarget().getLocation());
+            }
+        }
+
+        updateHealth();
+        getSpeed().updateSpeed();
+        for (AbstractAbility ability : getSpec().getAbilities()) {
+            if (ability.getCooldown() > 0) {
+                ability.subtractCurrentCooldown(.05f);
+            }
+            ability.checkSecondaryAbilities();
+        }
+        updateItems();
+        getCooldownManager().reduceCooldowns();
+
+        setWasSneaking(isSneaking());
+
+        // Checks whether the player has overheal active and is full health or not.
+        boolean hasOverhealCooldown = getCooldownManager().hasCooldown(Overheal.OVERHEAL_MARKER);
+        boolean hasTooMuchHealth = getHealth() > getMaxHealth();
+
+        if (hasOverhealCooldown && !hasTooMuchHealth) {
+            getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
+        }
+
+        if (!hasOverhealCooldown && hasTooMuchHealth) {
+            setHealth(getMaxHealth());
+        }
+
+        // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
+        float newHealth = getHealth() / getMaxHealth() * 40;
+        if (newHealth < 0) {
+            newHealth = 0;
+        } else if (newHealth > 40) {
+            newHealth = 40;
+        }
+        if (checkUndyingArmy(newHealth)) {
+            newHealth = 40;
+        }
+
+        // Energy
+        if (getEnergy() < getMaxEnergy()) {
+            // Standard energy value per second.
+            float energyGainPerTick = getSpec().getEnergyPerSec() / 20;
+
+            for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                energyGainPerTick = abstractCooldown.addEnergyGainPerTick(energyGainPerTick);
+            }
+            for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                energyGainPerTick = abstractCooldown.multiplyEnergyGainPerTick(energyGainPerTick);
+            }
+
+            // Setting energy gain to the value after all ability instance multipliers have been applied.
+            float newEnergy = getEnergy() + energyGainPerTick;
+            if (newEnergy > getMaxEnergy()) {
+                newEnergy = getMaxEnergy();
+            }
+            setEnergy(newEnergy);
+        }
+
+        // setting health/energy to player
+        if (getEntity() instanceof Player player) {
+            //precaution
+            player.setHealth(newHealth);
+            // Respawn fix for when a player is stuck or leaves the game.
+            if (getHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
+                heal();
+            }
+            // Checks whether the player has under 0 energy to avoid infinite energy bugs.
+            if (getEnergy() < 0) {
+                setEnergy(1);
+            }
+            player.setLevel((int) getEnergy());
+            player.setExp(getEnergy() / getMaxEnergy());
+            // Saves the amount of blocks travelled per player.
+            setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
+        }
+
+        // Melee Cooldown
+        if (getHitCooldown() > 0) {
+            setHitCooldown(getHitCooldown() - 1);
+        }
     }
 
-    public void runEverySecond() {
-        this.spec.runEverySecond();
+    private boolean checkUndyingArmy(float newHealth) {
+        // Checks whether the player has any remaining active Undying Army instances active.
+        if (!getCooldownManager().checkUndyingArmy(false) || newHealth > 0) {
+            return false;
+        }
+        for (RegularCooldown<?> undyingArmyCooldown : new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClass(UndyingArmy.class)
+                .stream()
+                .toList()
+        ) {
+            UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
+            if (undyingArmy.isArmyDead(this)) {
+                continue;
+            }
+            undyingArmy.pop(this);
+
+            // Drops the flag when popped.
+            FlagHolder.dropFlagForPlayer(this);
+
+            // Sending the message + check if getFrom is self
+            int armyDamage = Math.round(getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f));
+            if (undyingArmyCooldown.getFrom() == this) {
+                sendMessage(Component.text("» ", NamedTextColor.GREEN)
+                                     .append(Component.text(
+                                             "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
+                                             NamedTextColor.LIGHT_PURPLE
+                                     ))
+                                     .append(Component.text(armyDamage, NamedTextColor.RED))
+                                     .append(Component.text(" every second.", NamedTextColor.GRAY))
+                );
+            } else {
+                sendMessage(Component.text("» ", NamedTextColor.GREEN)
+                                     .append(Component.text(undyingArmyCooldown.getFrom()
+                                                                               .getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
+                                             NamedTextColor.LIGHT_PURPLE
+                                     ))
+                                     .append(Component.text(armyDamage, NamedTextColor.RED))
+                                     .append(Component.text(" every second.", NamedTextColor.LIGHT_PURPLE))
+                );
+            }
+
+            FireWorkEffectPlayer.playFirework(getLocation(), FireworkEffect.builder()
+                                                                           .withColor(Color.LIME)
+                                                                           .with(FireworkEffect.Type.BALL)
+                                                                           .build());
+
+            heal();
+
+            if (getEntity() instanceof Player player) {
+                player.getWorld().spigot().strikeLightningEffect(getLocation(), false);
+                player.getInventory().setItem(5, UndyingArmy.BONE);
+            }
+
+            //gives 50% of max energy if player is less than half
+            if (getEnergy() < getMaxEnergy() / 2) {
+                setEnergy(getMaxEnergy() / 2);
+            }
+
+            if (undyingArmy.isPveMasterUpgrade()) {
+                addSpeedModifier(this, "ARMY", 40, 16 * 20, "BASE");
+            }
+
+            undyingArmyCooldown.setNameAbbreviation("POPPED");
+            undyingArmyCooldown.setTicksLeft(16 * 20);
+            undyingArmyCooldown.setOnRemove(cooldownManager -> {
+                if (getEntity() instanceof Player) {
+                    if (cooldownManager.checkUndyingArmy(true)) {
+                        ((Player) getEntity()).getInventory().remove(UndyingArmy.BONE);
+                    }
+                }
+            });
+            undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
+                if (ticksElapsed % 20 == 0) {
+                    addDamageInstance(
+                            this,
+                            "",
+                            getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                            getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
+                            0,
+                            100
+                    );
+
+                    if (undyingArmy.isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
+                        PlayerFilter.entitiesAround(this, 6, 6, 6)
+                                    .aliveEnemiesOf(this)
+                                    .forEach(enemy -> {
+                                        float healthDamage = enemy.getMaxHealth() * .02f;
+                                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                        }
+                                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                        }
+                                        enemy.addDamageInstance(
+                                                this,
+                                                "Undying Army",
+                                                458 + healthDamage,
+                                                612 + healthDamage,
+                                                0,
+                                                100
+                                        );
+                                    });
+
+                    }
+                }
+            });
+            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(this, undyingArmy));
+            return true;
+        }
+        return false;
     }
 
     private void decrementRespawnTimer() {
@@ -2542,16 +2599,80 @@ public abstract class WarlordsEntity {
             respawnTickTimer--;
             if (respawnTickTimer <= 600) {
                 if (entity instanceof Player) {
-                    PacketUtils.sendTitle((Player) entity,
-                            "",
-                            team.teamColor() + "Respawning in... " + ChatColor.YELLOW + (respawnTickTimer / 20),
-                            0,
-                            40,
-                            0
-                    );
+                    entity.showTitle(Title.title(
+                            Component.empty(),
+                            Component.text("Respawning in... ", team.teamColor()).append(Component.text((respawnTickTimer / 20), NamedTextColor.YELLOW)),
+                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                    ));
                 }
             }
         }
+    }
+
+    public void displayFlagActionBar(@Nonnull Player player) {
+        if (this.compassTarget != null) {
+            player.sendActionBar(this.compassTarget.getToolbarName(this));
+        } else {
+            player.sendActionBar(Component.empty());
+        }
+    }
+
+    public void displayActionBar() {
+        TextComponent.Builder actionBarMessage = Component.text()
+                                                          .append(Component.text("HP: ", NamedTextColor.GOLD, TextDecoration.BOLD));
+        TextComponent.Builder healthBuilder = Component.text().decorate(TextDecoration.BOLD);
+        float healthRatio = health / maxHealth;
+        if (healthRatio > 1) {
+            healthBuilder.color(NamedTextColor.GREEN);
+        } else if (healthRatio >= .75) {
+            healthBuilder.color(NamedTextColor.DARK_GREEN);
+        } else if (healthRatio >= .25) {
+            healthBuilder.color(NamedTextColor.YELLOW);
+        } else {
+            healthBuilder.color(NamedTextColor.RED);
+        }
+        int maxHealthRounded = Math.round(maxHealth);
+        int maxBaseHealthRounded = Math.round(maxBaseHealth);
+        healthBuilder.append(Component.text(Math.round(health)))
+                     .append(Component.text("/", NamedTextColor.GOLD))
+                     .append(Component.text(maxHealthRounded + "    ", maxHealthRounded > maxBaseHealthRounded ? NamedTextColor.YELLOW : NamedTextColor.GOLD));
+        actionBarMessage.append(healthBuilder);
+        actionBarMessage.append(team.boldColoredPrefix().append(Component.text(" TEAM  ")));
+        for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
+            if (abstractCooldown.getNameAbbreviation() != null) {
+                actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(Component.space());
+            }
+        }
+        entity.sendActionBar(actionBarMessage.build());
+    }
+
+    @Nullable
+    public CompassTargetMarker getCompassTarget() {
+        return this.compassTarget;
+    }
+
+    public abstract void updateHealth();
+
+    public CalculateSpeed getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(CalculateSpeed speed) {
+        this.speed = speed;
+    }
+
+    public AbstractPlayerClass getSpec() {
+        return spec;
+    }
+
+    public void updateItems() {
+        if (entity instanceof Player player) {
+            spec.getAbilities().forEach(ability -> updateItem(player, ability));
+        }
+    }
+
+    public boolean isSneaking() {
+        return this.entity instanceof Player && this.entity.isSneaking();
     }
 
     public void respawn() {
@@ -2583,7 +2704,7 @@ public abstract class WarlordsEntity {
         }
 
         if (entity instanceof Player) {
-            PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
+            entity.clearTitle();
         }
         setRespawnTickTimer(-1);
         setEnergy(getMaxEnergy() / 2);
@@ -2600,6 +2721,63 @@ public abstract class WarlordsEntity {
 
     public abstract void updateEntity();
 
+    public void runEverySecond() {
+        this.spec.runEverySecond();
+        // Checks whether the player has a flag cooldown.
+        if (getFlagDropCooldown() > 0) {
+            setFlagDropCooldown(getFlagDropCooldown() - 1);
+        }
+        if (getFlagPickCooldown() > 0) {
+            setFlagPickCooldown(getFlagPickCooldown() - 1);
+        }
+        // Combat Timer - Logs combat time after 4 seconds.
+        if (getRegenTickTimer() > 6 * 20) {
+            getMinuteStats().addTimeInCombat();
+        }
+        // Assists - 10 seconds timer.
+        getHitBy().replaceAll((wp, integer) -> integer - 1);
+        getHealedBy().replaceAll((wp, integer) -> integer - 1);
+        getHitBy().entrySet().removeIf(p -> p.getValue() <= 0);
+        getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
+    }
+
+    public int getFlagDropCooldown() {
+        return flagDropCooldown;
+    }
+
+    public void setFlagDropCooldown(int flagDropCooldown) {
+        this.flagDropCooldown = flagDropCooldown;
+    }
+
+    public int getFlagPickCooldown() {
+        return flagPickCooldown;
+    }
+
+    public int getRegenTickTimer() {
+        return regenTickTimer;
+    }
+
+    public void setRegenTickTimer(int regenTickTimer) {
+        this.regenTickTimer = regenTickTimer;
+    }
+
+    @Nonnull
+    public PlayerStatisticsMinute getMinuteStats() {
+        return this.minuteStats;
+    }
+
+    public LinkedHashMap<WarlordsEntity, Integer> getHitBy() {
+        return hitBy;
+    }
+
+    public LinkedHashMap<WarlordsEntity, Integer> getHealedBy() {
+        return healedBy;
+    }
+
+    public void setFlagPickCooldown(int flagPickCooldown) {
+        this.flagPickCooldown = flagPickCooldown;
+    }
+
     public void onRemove() {
         if (!(getEntity() instanceof Player)) {
             getEntity().remove();
@@ -2613,11 +2791,6 @@ public abstract class WarlordsEntity {
         });
         getSecondStats().getEntries().clear();
         getCooldownManager().clearAllCooldowns();
-    }
-
-    @Nonnull
-    public PlayerStatisticsMinute getMinuteStats() {
-        return this.minuteStats;
     }
 
     public PlayerStatisticsSecond getSecondStats() {
@@ -2652,8 +2825,22 @@ public abstract class WarlordsEntity {
         AtomicInteger currencyToAdd = new AtomicInteger(currency);
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(this, currencyToAdd));
         this.currency += currencyToAdd.get();
-        sendMessage(ChatColor.GOLD + "+" + currencyToAdd.get() + " ❂ Insignia");
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid, getEntity() instanceof Player);
+        if (databasePlayer.getChatInsigniaMode() == Settings.ChatSettings.ChatInsignia.ALL) {
+            sendMessage(Component.text("+" + currencyToAdd.get() + " ❂ Insignia", NamedTextColor.GOLD));
+        }
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyFinalEvent(this));
+    }
+
+    public void sendMessage(String message) {
+        this.entity.sendMessage(message);
+        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
+            game.spectators()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
+                .forEach(player -> player.sendMessage(message));
+        }
     }
 
     public void subtractCurrency(int currency) {

@@ -5,9 +5,10 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,8 +21,7 @@ public class RecordTimeElapsedOption implements Option {
 
     public static int getTicksElapsed(@Nonnull Game game) {
         for (Option option : game.getOptions()) {
-            if (option instanceof RecordTimeElapsedOption) {
-                RecordTimeElapsedOption recordTimeElapsedOption = (RecordTimeElapsedOption) option;
+            if (option instanceof RecordTimeElapsedOption recordTimeElapsedOption) {
                 return recordTimeElapsedOption.getTicksElapsed();
             }
         }
@@ -50,8 +50,10 @@ public class RecordTimeElapsedOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "spec") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList("Time: " + ChatColor.GREEN + Utils.formatTimeLeft(ticksElapsed / 20));
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return Collections.singletonList(
+                        Component.text("Time: ")
+                                 .append(Component.text(StringUtils.formatTimeLeft(ticksElapsed / 20), NamedTextColor.GREEN)));
             }
         });
     }

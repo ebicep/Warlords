@@ -21,9 +21,11 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -64,7 +66,7 @@ public final class Game implements Runnable, AutoCloseable {
     private final long createdAt = System.currentTimeMillis();
     private final List<BukkitTask> gameTasks = new ArrayList<>();
     private final List<Listener> eventHandlers = new ArrayList<>();
-    private final EnumMap<Team, Integer> points = new EnumMap(Team.class);
+    private final EnumMap<Team, Integer> points = new EnumMap<>(Team.class);
 
     @Nonnull
     private final GameMap map;
@@ -72,7 +74,7 @@ public final class Game implements Runnable, AutoCloseable {
     private final GameMode gameMode;
     @Nonnull
     private final EnumSet<GameAddon> addons;
-    private final List<String> frozenCauses = new CopyOnWriteArrayList<>();
+    private final List<Component> frozenCauses = new CopyOnWriteArrayList<>();
     private final LocationFactory locations;
     private final Map<Class<? extends GameMarker>, List<GameMarker>> gameMarkers = new HashMap<>();
     @Nonnull
@@ -88,11 +90,12 @@ public final class Game implements Runnable, AutoCloseable {
     private boolean acceptsPlayers;
     private boolean acceptsSpectators;
     private Set<WarlordsPlayer> cachedPlayers = new HashSet<>();
+
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
         this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
     }
 
-    Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations, List<Option> options) {
+    Game(EnumSet<GameAddon> gameAddons, GameMap map, @Nonnull GameMode gameMode, LocationFactory locations, List<Option> options) {
         this.locations = locations;
         this.addons = gameAddons;
         this.map = map;
@@ -213,16 +216,16 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     @Nonnull
-    public List<String> getFrozenCauses() {
+    public List<Component> getFrozenCauses() {
         return Collections.unmodifiableList(frozenCauses);
     }
 
-    public void addFrozenCause(String cause) {
+    public void addFrozenCause(Component cause) {
         frozenCauses.add(cause);
         Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
     }
 
-    public void removeFrozenCause(String cause) {
+    public void removeFrozenCause(Component cause) {
         frozenCauses.remove(cause);
         Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
     }
@@ -436,16 +439,20 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public void setPlayerTeam(@Nonnull OfflinePlayer player, @Nonnull Team team) {
-        Validate.notNull(player, "player");
+        setPlayerTeam(player.getUniqueId(), team);
+    }
+
+    public void setPlayerTeam(@Nonnull UUID uuid, @Nonnull Team team) {
+        Validate.notNull(uuid, "uuid");
         Validate.notNull(team, "team");
-        if (!this.players.containsKey(player.getUniqueId())) {
+        if (!this.players.containsKey(uuid)) {
             throw new IllegalArgumentException("The specified player is not part of this game");
         }
-        Team oldTeam = this.players.get(player.getUniqueId());
+        Team oldTeam = this.players.get(uuid);
         if (team == oldTeam) {
             return;
         }
-        this.players.put(player.getUniqueId(), team);
+        this.players.put(uuid, team);
     }
 
     /**
@@ -460,6 +467,9 @@ public final class Game implements Runnable, AutoCloseable {
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
                 Warlords.getInstance().hideAndUnhidePeople(p);
+                for (Option option : options) {
+                    option.onPlayerQuit(p);
+                }
             }
             return true;
         }
@@ -472,7 +482,11 @@ public final class Game implements Runnable, AutoCloseable {
             OfflinePlayer op = Bukkit.getOfflinePlayer(player);
             this.state.onPlayerQuitGame(op);
             this.players.remove(player);
-            Warlords.removePlayer(player);
+            if (gameMode == GameMode.LOBBY) {
+                Warlords.removePlayer2(player);
+            } else {
+                Warlords.removePlayer(player);
+            }
             Player p = op.getPlayer();
             if (p != null) {
                 WarlordsEvents.joinInteraction(p, true);
@@ -726,14 +740,12 @@ public final class Game implements Runnable, AutoCloseable {
                                                                                         .createRegisteredListeners(listener, Warlords.getInstance())
                                                                                         .entrySet()) {
             if (AbstractWarlordsGameEvent.class.isAssignableFrom(entry.getKey())) {
-                entry.setValue(entry.getValue().stream().map(rl -> {
-                    return new RegisteredListener(rl.getListener(), (l, e) -> {
-                        AbstractWarlordsGameEvent wge = (AbstractWarlordsGameEvent) e;
-                        if (wge.getGame() == Game.this) {
-                            rl.callEvent(e);
-                        }
-                    }, rl.getPriority(), rl.getPlugin(), false);
-                }).collect(Collectors.toSet()));
+                entry.setValue(entry.getValue().stream().map(rl -> new RegisteredListener(rl.getListener(), (l, e) -> {
+                    AbstractWarlordsGameEvent wge = (AbstractWarlordsGameEvent) e;
+                    if (wge.getGame() == Game.this) {
+                        rl.callEvent(e);
+                    }
+                }, rl.getPriority(), rl.getPlugin(), false)).collect(Collectors.toSet()));
             }
             getEventListeners(getRegistrationClass(entry.getKey())).registerAll(entry.getValue());
         }
@@ -744,41 +756,26 @@ public final class Game implements Runnable, AutoCloseable {
         if (this.closed) {
             return;
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null,
-                ChatColor.LIGHT_PURPLE + "Closing Game",
-                false
-        );
+        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Closing Game", NamedTextColor.LIGHT_PURPLE));
         this.closed = true;
         List<Throwable> exceptions = new ArrayList<>();
         ChatChannels.sendDebugMessage((CommandIssuer) null,
-                ChatColor.LIGHT_PURPLE + "Closing Game: Tasks = " + gameTasks.size(),
-                false
+                Component.text("Closing Game: Tasks = " + gameTasks.size(), NamedTextColor.LIGHT_PURPLE)
         );
         for (BukkitTask task : gameTasks) {
             task.cancel();
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null,
-                ChatColor.LIGHT_PURPLE + "Closing Game: Tasks cancelled",
-                false
-        );
+        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Closing Game: Tasks cancelled", NamedTextColor.LIGHT_PURPLE));
         gameTasks.clear();
         for (Listener listener : eventHandlers) {
             HandlerList.unregisterAll(listener);
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null,
-                ChatColor.LIGHT_PURPLE + "Closing Game: Event handlers unregistered",
-                false
-        );
         eventHandlers.clear();
         try {
             removeAllPlayers();
         } catch (Throwable e) {
             exceptions.add(e);
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null,
-                ChatColor.LIGHT_PURPLE + "Closing Game: Players removed",
-                false
-        );
         for (Option option : options) {
             try {
                 option.onGameCleanup(this);
@@ -786,10 +783,6 @@ public final class Game implements Runnable, AutoCloseable {
                 exceptions.add(e);
             }
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null,
-                ChatColor.LIGHT_PURPLE + "Closing Game: Options cleaned up",
-                false
-        );
         this.acceptsPlayers = false;
         this.acceptsSpectators = false;
         this.nextState = null;
@@ -801,10 +794,6 @@ public final class Game implements Runnable, AutoCloseable {
             }
             this.state = new ClosedState(this);
         }
-        ChatChannels.sendDebugMessage((CommandIssuer) null,
-                ChatColor.LIGHT_PURPLE + "Closing Game: State end",
-                false
-        );
         this.options = Collections.emptyList();
         if (!exceptions.isEmpty()) {
             RuntimeException e = new RuntimeException("Problems closing the game", exceptions.get(0));
@@ -816,31 +805,13 @@ public final class Game implements Runnable, AutoCloseable {
         for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
             if (gameHolder.getGame() == this) {
                 ChatChannels.sendDebugMessage((CommandIssuer) null,
-                        ChatColor.LIGHT_PURPLE + "Closed Game: " + gameHolder.getGame().getMap() + " - " + gameHolder.getName(),
-                        true
+                        Component.text("Closed Game: " + gameHolder.getGame().getMap() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
                 );
                 gameHolder.setGame(null);
                 break;
             }
         }
         reopenGameReferencedMenus();
-    }
-
-    public static void reopenGameReferencedMenus() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            String title = player.getOpenInventory().getTopInventory().getTitle();
-            switch (title) {
-                case "Debug Options":
-                    DebugMenu.openDebugMenu(player);
-                    break;
-                case "Current Games":
-                    SpectateCommand.openSpectateMenu(player);
-                    break;
-                case "Game Selector":
-                    DebugMenuGameOptions.GamesMenu.openGameSelectorMenu(player);
-                    break;
-            }
-        }
     }
 
     public List<UUID> removeAllPlayers() {
@@ -863,6 +834,17 @@ public final class Game implements Runnable, AutoCloseable {
     @Nonnull
     public GameMap getMap() {
         return map;
+    }
+
+    public static void reopenGameReferencedMenus() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            String title = PlainTextComponentSerializer.plainText().serialize(player.getOpenInventory().title());
+            switch (title) {
+                case "Debug Options" -> DebugMenu.openDebugMenu(player);
+                case "Current Games" -> SpectateCommand.openSpectateMenu(player);
+                case "Game Selector" -> DebugMenuGameOptions.GamesMenu.openGameSelectorMenu(player);
+            }
+        }
     }
 
     @Override

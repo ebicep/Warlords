@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Supplier;
@@ -13,6 +13,7 @@ public enum FixedItems implements Spendable {
 
     SHAWL_OF_MITHRA(ShawlOfMithra::new),
     SPIDER_GAUNTLET(SpiderGauntlet::new),
+    DISASTER_FRAGMENT(DisasterFragment::new),
 
     ;
 
@@ -28,8 +29,8 @@ public enum FixedItems implements Spendable {
     }
 
     @Override
-    public ChatColor getChatColor() {
-        return ChatColor.GRAY;
+    public NamedTextColor getTextColor() {
+        return NamedTextColor.GRAY;
     }
 
     @Override

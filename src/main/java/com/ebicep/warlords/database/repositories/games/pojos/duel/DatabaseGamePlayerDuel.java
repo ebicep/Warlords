@@ -15,7 +15,6 @@ public class DatabaseGamePlayerDuel extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerDuel(WarlordsPlayer warlordsPlayer) {
         super(warlordsPlayer);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
-        //TODO abstract warlordsplayer per gamemode
     }
 
 }

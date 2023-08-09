@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.menu;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
@@ -14,18 +15,20 @@ import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.bukkit.signgui.SignGUI;
+import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.java.Utils;
-import org.bukkit.ChatColor;
+import de.rapha149.signgui.SignGUI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,8 +40,8 @@ public class ItemEquipMenu {
 
     public static final HashMap<UUID, ItemSearchMenu.PlayerItemMenuSettings> PLAYER_MENU_SETTINGS = new HashMap<>();
     private static final ItemStack ITEM_EQUIP_MENU = new ItemBuilder(Material.ARMOR_STAND)
-            .name(ChatColor.GREEN + "Item Equip Menu")
-            .lore(ChatColor.GRAY + "Click to customize your Item Loadouts")
+            .name(Component.text("Item Equip Menu", NamedTextColor.GREEN))
+            .lore(Component.text("Click to customize your Item Loadouts", NamedTextColor.GRAY))
             .get();
 
     public static void openItemEquipMenuExternal(Player player, DatabasePlayer databasePlayer) {
@@ -65,26 +68,25 @@ public class ItemEquipMenu {
                                                  .stream()
                                                  .map(ItemLoadout::getItems)
                                                  .flatMap(Collection::stream)
-                                                 .collect(Collectors.toList());
+                                                 .toList();
         ItemSearchMenu menu = new ItemSearchMenu(
                 player, "Items",
                 (i, m, e) -> {
                     if (e.isRightClick()) {
                         i.setFavorite(!i.isFavorite());
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        AbstractItem.sendItemMessage(player,
-                                new ComponentBuilder(ChatColor.GRAY + "You " + (i.isFavorite() ? "favorited" : "unfavorited") + " ")
-                                        .appendHoverItem(i.getItemName(), i.generateItemStack())
+                        AbstractItem.sendItemMessage(player, Component.text("You " + (i.isFavorite() ? "favorited" : "unfavorited") + " ", NamedTextColor.GRAY)
+                                                                      .append(i.getHoverComponent())
                         );
                         openItemEquipMenuExternal(player, databasePlayer);
                         return;
                     }
                     if (i.isFavorite()) {
-                        player.sendMessage(ChatColor.RED + "You cannot scrap a favorited item!");
+                        player.sendMessage(Component.text("You cannot scrap a favorited item!", NamedTextColor.RED));
                         return;
                     }
                     if (equippedItems.contains(i.getUUID())) {
-                        player.sendMessage(ChatColor.RED + "You cannot scrap an equipped item!");
+                        player.sendMessage(Component.text("You cannot scrap an equipped item!", NamedTextColor.RED));
                         return;
                     }
                     Pair<Integer, Integer> scrapValue = i.getTier().scrapValue;
@@ -92,27 +94,33 @@ public class ItemEquipMenu {
                             "Confirm Scrap",
                             3,
                             new ArrayList<>() {{
-                                add(ChatColor.GRAY + "Scrap this item and claim its materials.");
-                                add("");
-                                add(ChatColor.GREEN + "Rewards: " + ChatColor.GRAY + scrapValue.getA() + "-" + scrapValue.getB() + " Scrap Metal.");
-                                add("");
-                                add(ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone.");
+                                add(Component.text("Scrap this item and claim its materials.", NamedTextColor.GRAY));
+                                add(Component.empty());
+                                add(Component.textOfChildren(
+                                        Component.text("Rewards: ", NamedTextColor.GREEN),
+                                        Component.text(scrapValue.getA() + "-" + scrapValue.getB() + " Scrap Metal.", NamedTextColor.GRAY)
+                                ));
+                                add(Component.empty());
+                                add(Component.textOfChildren(
+                                        Component.text("WARNING: ", NamedTextColor.RED),
+                                        Component.text("This action cannot be undone.", NamedTextColor.GRAY)
+                                ));
                             }},
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                 ItemsManager itemsManager = pveStats.getItemsManager();
-                                int scrapAmount = Utils.generateRandomValueBetweenInclusive(scrapValue.getA(), scrapValue.getB());
+                                int scrapAmount = JavaUtils.generateRandomValueBetweenInclusive(scrapValue.getA(), scrapValue.getB());
                                 pveStats.addCurrency(Currencies.SCRAP_METAL, scrapAmount);
                                 itemsManager.removeItem(i);
                                 itemsManager.getLoadouts().forEach(itemLoadout -> itemLoadout.getItems().removeIf(itemUUID -> itemUUID.equals(i.getUUID())));
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
                                 AbstractItem.sendItemMessage(player,
-                                        new ComponentBuilder(ChatColor.GRAY + "You received " + scrapAmount + " Scrap Metal from scrapping ")
-                                                .appendHoverItem(i.getItemName(), i.generateItemStack())
+                                        Component.text("You received " + scrapAmount + " Scrap Metal from scrapping ", NamedTextColor.GRAY)
+                                                 .hoverEvent(i.getHoverComponent())
                                 );
-                                player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
+                                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
 
                                 openItemEquipMenuExternal(player, databasePlayer);
                             },
@@ -123,9 +131,15 @@ public class ItemEquipMenu {
                 },
                 itemBuilder -> itemBuilder
                         .addLore(
-                                "",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK " + ChatColor.GREEN + "to scrap",
-                                ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK " + ChatColor.GREEN + "to favorite"
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to scrap", NamedTextColor.GREEN)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("to favorite", NamedTextColor.GREEN)
+                                )
                         ),
                 menuSettings,
                 databasePlayer,
@@ -157,22 +171,27 @@ public class ItemEquipMenu {
         addWeightPercentageBar(menu, maxWeight, loadoutWeight);
         menu.setItem(2, 1,
                 new ItemBuilder(HeadUtils.getHead(player))
-                        .name(ChatColor.AQUA + "Stat Bonuses")
+                        .name(Component.text("Stat Bonuses", NamedTextColor.AQUA))
                         .lore(ItemMenuUtil.getTotalBonusLore(equippedItems, true))
                         .get(),
                 (m, e) -> {}
         );
         menu.setItem(6, 1,
                 new ItemBuilder(Material.ANVIL)
-                        .name(ChatColor.GOLD + "Weight: " +
-                                (loadoutWeight <= maxWeight ? ChatColor.GREEN : ChatColor.RED) + loadoutWeight +
-                                ChatColor.GRAY + "/" +
-                                ChatColor.GREEN + maxWeight)
-                        .lore("",
-                                ChatColor.AQUA + "Breakdown (" + selectedSpec.name + "):"
+                        .name(Component.text("Weight: ", NamedTextColor.GOLD)
+                                       .append(Component.text(loadoutWeight, (loadoutWeight <= maxWeight ? NamedTextColor.GREEN : NamedTextColor.RED)))
+                                       .append(Component.text(" / ", NamedTextColor.GRAY))
+                                       .append(Component.text(maxWeight, NamedTextColor.GREEN))
+                        )
+                        .lore(Component.empty(),
+                                Component.text("Breakdown (" + selectedSpec.name + "):", NamedTextColor.AQUA)
                         )
                         .addLore(weightBreakdown.stream()
-                                                .map(pair -> ChatColor.AQUA + "- " + ChatColor.GRAY + pair.getA() + ": " + ChatColor.GREEN + pair.getB())
+                                                .map(pair -> Component.textOfChildren(
+                                                        Component.text("- ", NamedTextColor.AQUA),
+                                                        Component.text(pair.getA() + ": ", NamedTextColor.GRAY),
+                                                        Component.text(pair.getB(), NamedTextColor.GREEN)
+                                                ))
                                                 .collect(Collectors.toList())
                         )
                         .get(),
@@ -184,7 +203,7 @@ public class ItemEquipMenu {
             for (int j = 0; j < tier.maxEquipped; j++) {
                 menu.setItem(x, y,
                         new ItemBuilder(tier.clayBlock)
-                                .name(tier.getColoredName() + " Item")
+                                .name(tier.getColoredName().append(Component.text(" Item")))
                                 .get(),
                         (m, e) -> {
                         }
@@ -197,21 +216,36 @@ public class ItemEquipMenu {
                     menu.setItem(x, y + 1,
                             item.generateItemBuilder()
                                 .addLore(
-                                        "",
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "LEFT-CLICK" +
-                                                ChatColor.GREEN + " to swap this item.",
-                                        ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK" +
-                                                ChatColor.GREEN + " to unequip this item."
+                                        Component.empty(),
+                                        Component.textOfChildren(
+                                                Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                                Component.text(" to swap this item.", NamedTextColor.GREEN)
+                                        ),
+                                        Component.textOfChildren(
+                                                Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                                Component.text(" to unequip this item.", NamedTextColor.GREEN)
+                                        ),
+                                        Component.textOfChildren(
+                                                Component.text("SHIFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                                Component.text(" to favorite this item.", NamedTextColor.GREEN)
+                                        )
                                 )
                                 .get(),
                             (m, e) -> {
-                                if (e.isLeftClick()) {
+                                if (e.isShiftClick()) {
+                                    item.setFavorite(!item.isFavorite());
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    AbstractItem.sendItemMessage(player, Component.text("You " + (item.isFavorite() ? "favorited" : "unfavorited") + " ", NamedTextColor.GRAY)
+                                                                                  .append(item.getHoverComponent())
+                                    );
+                                    openItemLoadoutMenu(player, itemLoadout, databasePlayer);
+                                } else if (e.isLeftClick()) {
                                     openItemEquipMenu(player, databasePlayer, itemLoadout, tier, item);
                                 } else if (e.isRightClick()) {
                                     itemLoadout.getItems().remove(item.getUUID());
                                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
-                                    player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 0.1f);
+                                    player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 0.1f);
                                 }
                             }
                     );
@@ -222,7 +256,7 @@ public class ItemEquipMenu {
                 if (!equipped) {
                     menu.setItem(x, y + 1,
                             new ItemBuilder(ItemTier.NONE.clayBlock)
-                                    .name(ChatColor.GREEN + "Click to Equip Item")
+                                    .name(Component.text("Click to Equip Item", NamedTextColor.GREEN))
                                     .get(),
                             (m, e) -> openItemEquipMenu(player, databasePlayer, itemLoadout, tier, null)
                     );
@@ -235,20 +269,22 @@ public class ItemEquipMenu {
             }
         }
 
-        List<String> lore = new ArrayList<>();
+        List<Component> lore = new ArrayList<>();
         List<ItemLoadout> sortedLoadouts = loadouts.stream()
                                                    .sorted(Comparator.comparing(ItemLoadout::getCreationDate))
-                                                   .collect(Collectors.toList());
+                                                   .toList();
         for (int i = 0; i < sortedLoadouts.size(); i++) {
             ItemLoadout l = sortedLoadouts.get(i);
             DifficultyMode difficulty = l.getDifficultyMode();
             Specializations spec = l.getSpec();
-            lore.add((l.equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY).toString() + (i + 1) + ". " + l.getName() +
-                    " (" + l.getWeight(itemsManager) + " | " + difficulty.getShortName() + " | " + (spec == null ? "Any" : spec.name) + ")");
+            lore.add(Component.text((i + 1) + ". " + l.getName() +
+                            " (" + l.getWeight(itemsManager) + " | " + difficulty.getShortName() + " | " + (spec == null ? "Any" : spec.name) + ")",
+                    l.equals(itemLoadout) ? NamedTextColor.AQUA : NamedTextColor.GRAY
+            ));
         }
         menu.setItem(0, 5,
                 new ItemBuilder(Material.BOOK)
-                        .name(ChatColor.GREEN + "Change Loadout (Weight | Difficulty | Spec)")
+                        .name(Component.text("Change Loadout (Weight | Difficulty | Spec)", NamedTextColor.GREEN))
                         .lore(lore)
                         .get(),
                 (m, e) -> {
@@ -258,71 +294,77 @@ public class ItemEquipMenu {
                 }
         );
         menu.setItem(1, 5,
-                new ItemBuilder(Material.BOOK_AND_QUILL)
-                        .name(ChatColor.GREEN + "Create Loadout")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Create a new loadout to customize your experience.", 150))
+                new ItemBuilder(Material.WRITABLE_BOOK)
+                        .name(Component.text("Create Loadout", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(Component.text("Create a new loadout to customize your experience.", NamedTextColor.GRAY), 150))
                         .get(),
                 (m, e) -> {
-                    if (itemsManager.getLoadouts().size() >= 9) {
-                        player.sendMessage(ChatColor.RED + "You can only have up to 9 loadouts!");
+                    if (itemsManager.getLoadouts().size() >= 15) {
+                        player.sendMessage(Component.text("You can only have up to 15 loadouts!", NamedTextColor.RED));
                     } else {
-                        SignGUI.open(player, new String[]{"", "Enter", "Loadout Name", ""}, (p, lines) -> {
-                            String name = lines[0];
-                            if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                player.sendMessage(ChatColor.RED + "Invalid name!");
-                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
-                                return;
-                            }
-                            if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
-                                player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
-                                return;
-                            }
-                            ItemLoadout newLoadout = new ItemLoadout(name);
-                            loadouts.add(newLoadout);
-                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                            openItemLoadoutMenu(player, newLoadout, databasePlayer);
-                        });
+                        new SignGUI()
+                                .lines("", "Enter", "Loadout Name", "")
+                                .onFinish((p, lines) -> {
+                                    String name = lines[0];
+                                    if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                        player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                        return null;
+                                    }
+                                    if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
+                                        player.sendMessage(Component.text("You already have a loadout with that name!", NamedTextColor.RED));
+                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                        return null;
+                                    }
+                                    ItemLoadout newLoadout = new ItemLoadout(name);
+                                    loadouts.add(newLoadout);
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                    openItemLoadoutMenuAfterTick(player, databasePlayer, newLoadout);
+                                    return null;
+                                }).open(player);
                     }
                 }
         );
         menu.setItem(2, 5,
                 new ItemBuilder(Material.NAME_TAG)
-                        .name(ChatColor.GREEN + "Rename Loadout")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Rename the current loadout.", 150))
+                        .name(Component.text("Rename Loadout", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(Component.text("Rename the current loadout.", NamedTextColor.GRAY), 150))
                         .get(),
                 (m, e) -> {
                     if (itemLoadout.getName().equals("Default")) {
-                        player.sendMessage(ChatColor.RED + "You cannot rename the default loadout!");
+                        player.sendMessage(Component.text("You cannot rename the default loadout!", NamedTextColor.RED));
                         return;
                     }
-                    SignGUI.open(player, new String[]{"", "Enter", "Loadout Name", ""}, (p, lines) -> {
-                        String name = lines[0];
-                        if (!name.matches("[a-zA-Z0-9 ]+")) {
-                            player.sendMessage(ChatColor.RED + "Invalid name!");
-                            player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
-                            return;
-                        }
-                        if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                            player.sendMessage(ChatColor.RED + "You already have a loadout with that name!");
-                            player.playSound(player.getLocation(), Sound.VILLAGER_NO, 2, 0.5f);
-                            return;
-                        }
-                        itemLoadout.setName(name);
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                        openItemLoadoutMenu(player, itemLoadout, databasePlayer);
-                    });
+                    new SignGUI()
+                            .lines("", "Enter", "Loadout Name", "")
+                            .onFinish((p, lines) -> {
+                                String name = lines[0];
+                                if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                    player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                    return null;
+                                }
+                                if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                                    player.sendMessage(Component.text("You already have a loadout with that name!", NamedTextColor.RED));
+                                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                    return null;
+                                }
+                                itemLoadout.setName(name);
+                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                openItemLoadoutMenuAfterTick(player, databasePlayer, itemLoadout);
+                                return null;
+                            }).open(player);
                 }
         );
 
         menu.setItem(3, 5,
                 new ItemBuilder(Material.LAVA_BUCKET)
-                        .name(ChatColor.RED + "Delete Loadout")
-                        .lore(WordWrap.wrapWithNewline(ChatColor.GRAY + "Delete the current loadout.", 150))
+                        .name(Component.text("Delete Loadout", NamedTextColor.RED))
+                        .lore(WordWrap.wrap(Component.text("Delete the current loadout.", NamedTextColor.GRAY), 150))
                         .get(),
                 (m, e) -> {
                     if (itemLoadout.getName().equals("Default")) {
-                        player.sendMessage(ChatColor.RED + "You cannot delete the default loadout!");
+                        player.sendMessage(Component.text("You cannot delete the default loadout!", NamedTextColor.RED));
                         return;
                     }
                     Menu.openConfirmationMenu(
@@ -330,11 +372,17 @@ public class ItemEquipMenu {
                             "Delete Loadout",
                             3,
                             Arrays.asList(
-                                    ChatColor.GRAY + "Delete Loadout: " + ChatColor.GOLD + itemLoadout.getName(),
-                                    "",
-                                    ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This cannot be undone!"
+                                    Component.textOfChildren(
+                                            Component.text("Delete Loadout: ", NamedTextColor.GRAY),
+                                            Component.text(itemLoadout.getName(), NamedTextColor.GOLD)
+                                    ),
+                                    Component.empty(),
+                                    Component.textOfChildren(
+                                            Component.text("WARNING: ", NamedTextColor.RED),
+                                            Component.text("This cannot be undone!", NamedTextColor.GRAY)
+                                    )
                             ),
-                            Collections.singletonList(ChatColor.GRAY + "Go back"),
+                            Menu.GO_BACK,
                             (m2, e2) -> {
                                 loadouts.remove(itemLoadout);
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
@@ -349,18 +397,18 @@ public class ItemEquipMenu {
         menu.setItem(4, 5, MENU_BACK, (m, e) -> openItemEquipMenuInternal(player, databasePlayer));
         lore.clear();
         for (int i = 0; i < loadouts.size(); i++) {
-            lore.add("" + (loadouts.get(i).equals(itemLoadout) ? ChatColor.AQUA : ChatColor.GRAY) + (i + 1) + ". " + loadouts.get(i).getName());
+            lore.add(Component.text((i + 1) + ". " + loadouts.get(i).getName(),
+                    (loadouts.get(i).equals(itemLoadout) ? NamedTextColor.AQUA : NamedTextColor.GRAY)
+            ));
         }
         menu.setItem(5, 5,
                 new ItemBuilder(Material.TRIPWIRE_HOOK)
-                        .name(ChatColor.GREEN + "Change Loadout Priority")
-                        .lore(
-                                WordWrap.wrapWithNewline(ChatColor.GRAY + "Change the priority of the current loadout, for when you have " +
-                                                "multiple loadouts with the same filters.",
-                                        170
-                                ),
-                                ""
-                        )
+                        .name(Component.text("Change Loadout Priority", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(Component.text("Change the priority of the current loadout, for when you have " +
+                                        "multiple loadouts with the same filters.", NamedTextColor.GRAY),
+                                170
+                        ))
+                        .addLore(Component.empty())
                         .addLore(lore)
                         .get(),
                 (m, e) -> {
@@ -380,11 +428,11 @@ public class ItemEquipMenu {
         lore.clear();
         DifficultyMode[] difficultyModes = DifficultyMode.VALUES;
         for (DifficultyMode value : difficultyModes) {
-            lore.add((itemLoadout.getDifficultyMode() == value ? ChatColor.AQUA : ChatColor.GRAY) + value.name);
+            lore.add(Component.text(value.name, itemLoadout.getDifficultyMode() == value ? NamedTextColor.AQUA : NamedTextColor.GRAY));
         }
         menu.setItem(6, 5,
-                new ItemBuilder(Material.REDSTONE_COMPARATOR)
-                        .name(ChatColor.GREEN + "Bind to Mode")
+                new ItemBuilder(Material.COMPARATOR)
+                        .name(Component.text("Bind to Mode", NamedTextColor.GREEN))
                         .lore(lore)
                         .get(),
                 (m, e) -> {
@@ -394,14 +442,16 @@ public class ItemEquipMenu {
                 }
         );
         lore.clear();
-        lore.add((itemLoadout.getSpec() == null ? ChatColor.AQUA : ChatColor.GRAY) + "Any");
+        lore.add(Component.text("Any", itemLoadout.getSpec() == null ? NamedTextColor.AQUA : NamedTextColor.GRAY));
         Specializations[] specializations = Specializations.VALUES;
         for (Specializations spec : specializations) {
-            lore.add((itemLoadout.getSpec() == spec ? ChatColor.AQUA : ChatColor.GRAY) + spec.name + " - " + ItemsManager.getMaxWeight(databasePlayer, spec));
+            lore.add(Component.text(spec.name + " - " + ItemsManager.getMaxWeight(databasePlayer, spec),
+                    itemLoadout.getSpec() == spec ? NamedTextColor.AQUA : NamedTextColor.GRAY
+            ));
         }
         menu.setItem(7, 5,
                 new ItemBuilder(Material.SLIME_BALL)
-                        .name(ChatColor.GREEN + "Bind to Specialization")
+                        .name(Component.text("Bind to Specialization", NamedTextColor.GREEN))
                         .lore(lore)
                         .get(),
                 (m, e) -> {
@@ -414,10 +464,19 @@ public class ItemEquipMenu {
                     }
                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
                 }
         );
         menu.openForPlayer(player);
+    }
+
+    private static void openItemLoadoutMenuAfterTick(Player player, DatabasePlayer databasePlayer, ItemLoadout itemLoadout) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                openItemLoadoutMenu(player, itemLoadout, databasePlayer);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     private static void addWeightPercentageBar(Menu menu, int maxWeight, int loadoutWeight) {
@@ -426,17 +485,17 @@ public class ItemEquipMenu {
         for (int i = 0; i < 9; i++) {
             ItemBuilder itemBuilder;
             if (overweight) {
-                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 15)
-                        .name(ChatColor.RED + "Overweight!");
+                itemBuilder = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
+                        .name(Component.text("Overweight!", NamedTextColor.RED));
             } else if (i <= ratio - 1) {
-                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 5);
+                itemBuilder = new ItemBuilder(Material.LIME_STAINED_GLASS_PANE);
             } else if (i != 0 && i <= ratio - .5) {
-                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 4);
+                itemBuilder = new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE);
             } else {
-                itemBuilder = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 14);
+                itemBuilder = new ItemBuilder(Material.RED_STAINED_GLASS_PANE);
             }
             if (!overweight) {
-                itemBuilder.name(" ");
+                itemBuilder.name(Component.text(" "));
             }
             menu.setItem(i, 0,
                     itemBuilder.get(),
@@ -461,7 +520,7 @@ public class ItemEquipMenu {
                         itemLoadout.getItems().remove(previousItem.getUUID());
                     }
                     itemLoadout.getItems().add(i.getUUID());
-                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 2);
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 2);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                 },

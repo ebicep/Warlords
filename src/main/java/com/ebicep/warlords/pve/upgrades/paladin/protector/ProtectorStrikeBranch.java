@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
-import com.ebicep.warlords.abilties.ProtectorsStrike;
+import com.ebicep.warlords.abilities.ProtectorsStrike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -84,22 +84,20 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
         ));
         treeB.add(new Upgrade(
                 "Spark - Tier IV",
-                "-10 Energy cost\n+1 Healing target",
+                "-10 Energy cost",
                 20000,
                 () -> {
                     ability.setEnergyCost(energyCost - 10);
-                    ability.setMaxAllies(ability.getMaxAllies() + 1);
                 }
         ));
 
         masterUpgrade = new Upgrade(
                 "Alleviating Strike",
                 "Protector's Strike - Master Upgrade",
-                "Increase the healing of Protector's Strike on the lowest health allies and you by 50%. Additionally, double the healing range and increase your strike radius by 1 block.",
+                "Increase the healing of Protector's Strike on the lowest health allies and you by 50%. Additionally, double the healing range and increase the ally limit by 2.",
                 50000,
                 () -> {
-                    ability.setPveUpgrade(true);
-                    ability.setHitbox(ability.getHitbox() + 1);
+                    ability.setMaxAllies(ability.getMaxAllies() + 2);
                     ability.setStrikeRadius(ability.getStrikeRadius() * 2);
                 }
         );

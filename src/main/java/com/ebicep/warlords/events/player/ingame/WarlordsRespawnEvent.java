@@ -38,6 +38,7 @@ public class WarlordsRespawnEvent extends AbstractWarlordsEntityEvent implements
         this.cancelled = cancelled;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

@@ -34,6 +34,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -78,6 +79,11 @@ public class DatabaseManager {
         if (!StatsLeaderboardManager.enabled) {
             NPCManager.createGameJoinNPCs();
         }
+        if (ApplicationConfiguration.key == null) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Database key is null, disabling database");
+            enabled = false;
+            return;
+        }
 
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
 
@@ -91,7 +97,7 @@ public class DatabaseManager {
             weeklyBlessingsService = context.getBean("itemsWeeklyBlessingsService", WeeklyBlessingsService.class);
             illusionVendorService = context.getBean("illusionVendorService", IllusionVendorService.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
             return;
         }
         NPCManager.createDatabaseRequiredNPCs();
@@ -107,14 +113,14 @@ public class DatabaseManager {
             }
         });
 
-        ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Storing all guilds");
+        ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Storing all guilds");
         long guildStart = System.nanoTime();
         Warlords.newChain()
                 .asyncFirst(() -> guildService.findAll())
                 .syncLast(GuildManager.GUILDS::addAll)
                 .sync(() -> {
                     GuildManager.GUILDS.removeIf(guild -> guild.getDisbandDate() != null);
-                    ChatUtils.MessageTypes.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
+                    ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Stored " + GuildManager.GUILDS.size() + " guilds in " + (System.nanoTime() - guildStart) / 1000000 + "ms");
                     DatabaseTiming.checkTimings();
                     GuildLeaderboardManager.recalculateAllLeaderboards();
                     GuildManager.reloadPlayerCaches();
@@ -135,22 +141,22 @@ public class DatabaseManager {
             }
         }.runTaskTimer(Warlords.getInstance(), 20, 20);
 
-        ChatUtils.MessageTypes.LEADERBOARDS.sendMessage("Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
+        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Loading Leaderboard Holograms - " + StatsLeaderboardManager.enabled);
         Warlords.newChain()
                 .async(() -> StatsLeaderboardManager.addHologramLeaderboards(true))
                 .execute();
 
         //Loading last 5 games
-        ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loading Last Games");
+        ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loading Last Games");
         long gameStart = System.nanoTime();
         Warlords.newChain()
                 .asyncFirst(() -> gameService.getLastGames(15))
                 .syncLast((games) -> {
-                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
+                    ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
                     DatabaseGameBase.previousGames.addAll(games);
                     StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
                     Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
-                    ChatUtils.MessageTypes.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
+                    ChatUtils.MessageType.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
                 })
                 .execute();
     }
@@ -167,7 +173,7 @@ public class DatabaseManager {
                                     callback.accept(databasePlayer);
                                 }).execute();
                     }
-                    ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid + " in " + collections);
+                    ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Loaded Player " + uuid + " in " + collections);
                 },
                 () -> {
                     DatabasePlayer newDatabasePlayer = new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName());
@@ -198,10 +204,12 @@ public class DatabaseManager {
     }
 
     public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
-        if (playerService == null || !enabled) {
+        if (playerService == null && !enabled) {
+            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
+            databasePlayerConsumer.accept(concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName())));
             return;
         }
-        ChatUtils.MessageTypes.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
                 playersCollections
         ));
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid, playersCollections);
@@ -210,6 +218,27 @@ public class DatabaseManager {
         } else {
             onNotFound.run();
         }
+    }
+
+    @Nonnull
+    public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections, boolean isAPlayer) {
+        if (!isAPlayer || (playerService == null && !enabled)) {
+            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
+            if (isAPlayer) {
+                return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            } else {
+                return concurrentHashMap.getOrDefault(uuid, new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            }
+        }
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
+                playersCollections
+        ));
+        return DatabaseManager.playerService.findByUUID(uuid, playersCollections);
+    }
+
+    @Nonnull
+    public static DatabasePlayer getPlayer(UUID uuid, boolean isAPlayer) {
+        return getPlayer(uuid, PlayersCollections.LIFETIME, isAPlayer);
     }
 
     private static void loadPlayerInfo(UUID uuid, DatabasePlayer databasePlayer) {
@@ -253,10 +282,6 @@ public class DatabaseManager {
         playerSettings.setHotkeyMode(databasePlayer.getHotkeyMode());
         playerSettings.setParticleQuality(databasePlayer.getParticleQuality());
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
-
-        playerSettings.setChatDamageMode(databasePlayer.getChatDamageMode());
-        playerSettings.setChatHealingMode(databasePlayer.getChatHealingMode());
-        playerSettings.setChatEnergyMode(databasePlayer.getChatEnergyMode());
     }
 
     public static boolean inCache(UUID uuid, PlayersCollections collection) {
@@ -304,7 +329,9 @@ public class DatabaseManager {
     }
 
     public static void updatePlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer) {
-        if (playerService == null || !enabled) {
+        if (playerService == null && !enabled) {
+            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
+            databasePlayerConsumer.accept(concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName())));
             return;
         }
         getPlayer(uuid, playersCollections, databasePlayer -> {
@@ -332,6 +359,11 @@ public class DatabaseManager {
 
     public static void getPlayer(UUID uuid, Consumer<DatabasePlayer> databasePlayerConsumer) {
         getPlayer(uuid, PlayersCollections.LIFETIME, databasePlayerConsumer, () -> {
+        });
+    }
+
+    public static void getPlayer(Player player, Consumer<DatabasePlayer> databasePlayerConsumer) {
+        getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, databasePlayerConsumer, () -> {
         });
     }
 

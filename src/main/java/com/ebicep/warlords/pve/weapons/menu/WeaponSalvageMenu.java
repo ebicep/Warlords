@@ -7,10 +7,10 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Salvageable;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -23,12 +23,13 @@ public class WeaponSalvageMenu {
         Menu menu = new Menu("Confirm salvage", 9 * 3);
 
         menu.setItem(2, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 13)
-                        .name(ChatColor.GREEN + "Confirm")
+                new ItemBuilder(Material.GREEN_CONCRETE)
+                        .name(Component.text("Confirm", NamedTextColor.GREEN))
                         .lore(
-                                ChatColor.GRAY + "Salvage this weapon and claim its materials.",
-                                "",
-                                ChatColor.RED + "WARNING: " + ChatColor.GRAY + "This action cannot be undone."
+                                Component.text("Salvage this weapon and claim its materials.", NamedTextColor.GRAY),
+                                Component.empty(),
+                                Component.text("WARNING: ", NamedTextColor.RED)
+                                         .append(Component.text("This action cannot be undone.", NamedTextColor.GRAY))
                         )
                         .get(),
                 (m, e) -> {
@@ -44,9 +45,9 @@ public class WeaponSalvageMenu {
         );
 
         menu.setItem(6, 1,
-                new ItemBuilder(Material.STAINED_CLAY, 1, (short) 14)
-                        .name(ChatColor.RED + "Deny")
-                        .lore(ChatColor.GRAY + "Go back.")
+                new ItemBuilder(Material.RED_CONCRETE)
+                        .name(Menu.DENY)
+                        .lore(WeaponManagerMenu.GO_BACK)
                         .get(),
                 (m, e) -> WeaponManagerMenu.openWeaponEditor(player, databasePlayer, weapon)
         );
@@ -65,13 +66,12 @@ public class WeaponSalvageMenu {
             databasePlayer.getPveStats().addCurrency(Currencies.SYNTHETIC_SHARD, salvageAmount.get());
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.spigot().sendMessage(
-                    new ComponentBuilder(ChatColor.GRAY + "You received " + ChatColor.WHITE + salvageAmount.get() + " Synthetic Shard" + (salvageAmount.get() == 1 ? "" : "s") + ChatColor.GRAY + " from salvaging ")
-                            .appendHoverItem(weapon.getName(), weapon.generateItemStack(false))
-                            .create()
-            );
+            player.sendMessage(Component.text("You received ", NamedTextColor.GRAY)
+                                        .append(Currencies.SYNTHETIC_SHARD.getCostColoredName(salvageAmount.get()))
+                                        .append(Component.text(" from salvaging "))
+                                        .append(weapon.getHoverComponent(false)));
 
-            player.playSound(player.getLocation(), Sound.NOTE_PLING, 2, 2);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
             player.playSound(player.getLocation(), "rogue.remedicchains.impact", 0.1f, 1);
         }
     }

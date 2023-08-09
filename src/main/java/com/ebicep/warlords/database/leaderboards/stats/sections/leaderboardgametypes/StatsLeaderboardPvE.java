@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgame
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvEDifficultyStats;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
@@ -11,14 +12,13 @@ import com.ebicep.warlords.util.java.NumberFormat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.SPAWN_POINT;
 
 public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEDifficultyStats> implements PvELeaderboard {
 
     private static final List<StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats>> CATEGORIES = new ArrayList<>() {{
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats(), "All Modes", "All"));
+        add(new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Modes", "All"));
     }};
 
     public StatsLeaderboardPvE() {
@@ -91,11 +91,11 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
             statsLeaderboards.add(new StatsLeaderboard("Average Masterworks Fair " + value.name + " Placement", SPAWN_POINT,
                     databasePlayer -> {
                         List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction()
-                                .apply(databasePlayer))
+                                                                                                                         .apply(databasePlayer))
                                 .getMasterworksFairEntries()
                                 .stream()
                                 .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                                .collect(Collectors.toList());
+                                .toList();
                         if (masterworksFairEntries.isEmpty()) {
                             return 0;
                         }
@@ -105,11 +105,11 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                     },
                     databasePlayer -> {
                         List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction()
-                                .apply(databasePlayer))
+                                                                                                                         .apply(databasePlayer))
                                 .getMasterworksFairEntries()
                                 .stream()
                                 .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value)
-                                .collect(Collectors.toList());
+                                .toList();
                         if (masterworksFairEntries.isEmpty()) {
                             return "0";
                         }

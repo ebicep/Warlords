@@ -174,6 +174,11 @@ public class CalculateSpeed {
         this.changed = changed || isChanged;
     }
 
+    public void removeModifier(String name) {
+        boolean isChanged = this.modifiers.removeIf(modifier -> modifier.name.equals(name));
+        this.changed = changed || isChanged;
+    }
+
     public void addBaseModifier(float add) {
         baseModifier.setModifier(baseModifier.modifier + add);
         changed = true;
@@ -181,6 +186,10 @@ public class CalculateSpeed {
 
     public void setBaseSpeedToWalkingSpeed(float baseSpeedToWalkingSpeed) {
         this.baseSpeedToWalkingSpeed = baseSpeedToWalkingSpeed / 113 * 100 / BASE_SPEED;
+    }
+
+    public List<Modifier> getModifiers() {
+        return modifiers;
     }
 
     public static class Modifier {

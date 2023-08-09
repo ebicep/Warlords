@@ -13,6 +13,8 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -100,9 +102,11 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     @Override
-    public List<String> getExtraLore() {
-        List<String> extraLore = super.getExtraLore();
-        extraLore.add(ChatColor.GRAY + "Highest Split: " + ChatColor.YELLOW + highestSplit);
+    public List<Component> getExtraLore() {
+        List<Component> extraLore = super.getExtraLore();
+        extraLore.add(Component.text("Highest Split: ", NamedTextColor.GRAY)
+                               .append(Component.text(highestSplit, NamedTextColor.YELLOW))
+        );
         return extraLore;
     }
 

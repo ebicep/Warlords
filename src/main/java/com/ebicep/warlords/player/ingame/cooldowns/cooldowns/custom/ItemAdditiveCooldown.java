@@ -6,17 +6,18 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import org.bukkit.util.Vector;
 
+import java.util.EnumSet;
 import java.util.Objects;
 
 public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
 
     public static void increaseDamage(WarlordsPlayer warlordsPlayer, float damageBoost) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
-            if (cooldown instanceof ItemAdditiveCooldown) {
-                ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
+            if (cooldown instanceof ItemAdditiveCooldown damageHealCooldown) {
                 damageHealCooldown.addDamageBoost(damageBoost);
                 return;
             }
@@ -30,8 +31,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
 
     public static void increaseHealing(WarlordsPlayer warlordsPlayer, float healBoost) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
-            if (cooldown instanceof ItemAdditiveCooldown) {
-                ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
+            if (cooldown instanceof ItemAdditiveCooldown damageHealCooldown) {
                 damageHealCooldown.addHealBoost(healBoost);
                 return;
             }
@@ -45,8 +45,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
 
     public static void increaseKBRes(WarlordsPlayer warlordsPlayer, float kbRes) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
-            if (cooldown instanceof ItemAdditiveCooldown) {
-                ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
+            if (cooldown instanceof ItemAdditiveCooldown damageHealCooldown) {
                 damageHealCooldown.addKBRes(kbRes);
                 return;
             }
@@ -60,8 +59,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
 
     public static void increaseThorns(WarlordsPlayer warlordsPlayer, float thorns, int maxThornsDamage) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
-            if (cooldown instanceof ItemAdditiveCooldown) {
-                ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
+            if (cooldown instanceof ItemAdditiveCooldown damageHealCooldown) {
                 damageHealCooldown.addThorns(thorns, maxThornsDamage);
                 return;
             }
@@ -76,8 +74,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
 
     public static void increaseCritChance(WarlordsPlayer warlordsPlayer, float additionalCritChance) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
-            if (cooldown instanceof ItemAdditiveCooldown) {
-                ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
+            if (cooldown instanceof ItemAdditiveCooldown damageHealCooldown) {
                 damageHealCooldown.addCritChance(additionalCritChance);
                 return;
             }
@@ -91,8 +88,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
 
     public static void increaseCritMultiplier(WarlordsPlayer warlordsPlayer, float additionalCritMultiplier) {
         for (AbstractCooldown<?> cooldown : warlordsPlayer.getCooldownManager().getCooldowns()) {
-            if (cooldown instanceof ItemAdditiveCooldown) {
-                ItemAdditiveCooldown damageHealCooldown = (ItemAdditiveCooldown) cooldown;
+            if (cooldown instanceof ItemAdditiveCooldown damageHealCooldown) {
                 damageHealCooldown.addCritMultiplier(additionalCritMultiplier);
                 return;
             }
@@ -160,7 +156,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     @Override
     public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
         // prevent recursion
-        if (Objects.equals(event.getAttacker(), from)) {
+        if (Objects.equals(event.getAttacker(), from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
             return;
         }
         if (thorns <= 0) {
@@ -170,7 +166,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
         if (thornsDamage > maxThornsDamage) {
             thornsDamage = maxThornsDamage;
         }
-        event.getAttacker().addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, false);
+        event.getAttacker().addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, EnumSet.of(InstanceFlags.RECURSIVE));
     }
 
     @Override

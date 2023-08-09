@@ -18,6 +18,7 @@ public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements Dat
     private DatabasePaladinTDM paladin = new DatabasePaladinTDM();
     private DatabaseShamanTDM shaman = new DatabaseShamanTDM();
     private DatabaseRogueTDM rogue = new DatabaseRogueTDM();
+    private DatabaseArcanistTDM arcanist = new DatabaseArcanistTDM();
 
     @Override
     public void updateCustomStats(
@@ -40,56 +41,38 @@ public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements Dat
 
     @Override
     public DatabaseBaseTDM getSpec(Specializations specializations) {
-        switch (specializations) {
-            case PYROMANCER:
-                return mage.getPyromancer();
-            case CRYOMANCER:
-                return mage.getCryomancer();
-            case AQUAMANCER:
-                return mage.getAquamancer();
-            case BERSERKER:
-                return warrior.getBerserker();
-            case DEFENDER:
-                return warrior.getDefender();
-            case REVENANT:
-                return warrior.getRevenant();
-            case AVENGER:
-                return paladin.getAvenger();
-            case CRUSADER:
-                return paladin.getCrusader();
-            case PROTECTOR:
-                return paladin.getProtector();
-            case THUNDERLORD:
-                return shaman.getThunderlord();
-            case SPIRITGUARD:
-                return shaman.getSpiritguard();
-            case EARTHWARDEN:
-                return shaman.getEarthwarden();
-            case ASSASSIN:
-                return rogue.getAssassin();
-            case VINDICATOR:
-                return rogue.getVindicator();
-            case APOTHECARY:
-                return rogue.getApothecary();
-        }
-        return null;
+        return switch (specializations) {
+            case PYROMANCER -> mage.getPyromancer();
+            case CRYOMANCER -> mage.getCryomancer();
+            case AQUAMANCER -> mage.getAquamancer();
+            case BERSERKER -> warrior.getBerserker();
+            case DEFENDER -> warrior.getDefender();
+            case REVENANT -> warrior.getRevenant();
+            case AVENGER -> paladin.getAvenger();
+            case CRUSADER -> paladin.getCrusader();
+            case PROTECTOR -> paladin.getProtector();
+            case THUNDERLORD -> shaman.getThunderlord();
+            case SPIRITGUARD -> shaman.getSpiritguard();
+            case EARTHWARDEN -> shaman.getEarthwarden();
+            case ASSASSIN -> rogue.getAssassin();
+            case VINDICATOR -> rogue.getVindicator();
+            case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case LUMINARY -> arcanist.getLuminary();
+        };
     }
 
     @Override
     public DatabaseBaseTDM getClass(Classes classes) {
-        switch (classes) {
-            case MAGE:
-                return mage;
-            case WARRIOR:
-                return warrior;
-            case PALADIN:
-                return paladin;
-            case SHAMAN:
-                return shaman;
-            case ROGUE:
-                return rogue;
-        }
-        return null;
+        return switch (classes) {
+            case MAGE -> mage;
+            case WARRIOR -> warrior;
+            case PALADIN -> paladin;
+            case SHAMAN -> shaman;
+            case ROGUE -> rogue;
+            case ARCANIST -> arcanist;
+        };
     }
 
     @Override

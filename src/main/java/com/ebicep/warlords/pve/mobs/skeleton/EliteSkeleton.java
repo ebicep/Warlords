@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
+import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -18,7 +19,7 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
                 "Illusion Warlock",
                 MobTier.ELITE,
                 new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.CARPET, 1, (short) 1),
+                        new ItemStack(Material.ORANGE_CARPET),
                         new ItemStack(Material.CHAINMAIL_CHESTPLATE),
                         new ItemStack(Material.CHAINMAIL_LEGGINGS),
                         new ItemStack(Material.CHAINMAIL_BOOTS),
@@ -28,7 +29,8 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
                 0.05f,
                 0,
                 0,
-                0
+                0,
+                new Fireball(5.5f)
         );
     }
 
@@ -56,10 +58,10 @@ public class EliteSkeleton extends AbstractSkeleton implements EliteMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                .withColor(Color.PURPLE)
-                .with(FireworkEffect.Type.BURST)
-                .withTrail()
-                .build());
-        Utils.playGlobalSound(deathLocation, Sound.SKELETON_DEATH, 2, 0.4f);
+                                                                       .withColor(Color.PURPLE)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .withTrail()
+                                                                       .build());
+        Utils.playGlobalSound(deathLocation, Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
     }
 }

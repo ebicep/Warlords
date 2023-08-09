@@ -32,8 +32,7 @@ public class DatabaseGamePvEOnslaught extends DatabaseGamePvEBase {
         //this.difficulty =
         super(game, gameWinEvent, counted);
         for (Option option : game.getOptions()) {
-            if (option instanceof OnslaughtOption) {
-                OnslaughtOption pveonslaughtOption = (OnslaughtOption) option;
+            if (option instanceof OnslaughtOption pveonslaughtOption) {
                 game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEOnslaught(warlordsPlayer, pveonslaughtOption)));
             }
         }

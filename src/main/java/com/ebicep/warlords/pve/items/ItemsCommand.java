@@ -14,9 +14,9 @@ import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
 import com.ebicep.warlords.pve.items.types.specialitems.SpecialItems;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
@@ -45,10 +45,10 @@ public class ItemsCommand extends BaseCommand {
     @Subcommand("addfoundblessings")
     public void addFoundBlessings(Player player, @Conditions("limits:min=1,max=10") Integer amount) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                    databasePlayer.getPveStats()
-                                  .getItemsManager()
-                                  .addBlessingsFound(amount);
-                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Added " + amount + " found blessings", true);
+            databasePlayer.getPveStats()
+                          .getItemsManager()
+                          .addBlessingsFound(amount);
+            ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " found blessings", NamedTextColor.GREEN));
                 }
         );
     }
@@ -56,11 +56,11 @@ public class ItemsCommand extends BaseCommand {
     @Subcommand("addboughtblessings")
     public void addBoughtBlessings(Player player, @Conditions("limits:min=1,max=5") Integer tier, @Conditions("limits:min=1,max=10") Integer amount) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                    databasePlayer.getPveStats()
-                                  .getItemsManager()
-                                  .getBlessingsBought()
-                                  .merge(tier, amount, Integer::sum);
-                    ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Added " + amount + " Tier " + tier + " bought blessings", true);
+            databasePlayer.getPveStats()
+                          .getItemsManager()
+                          .getBlessingsBought()
+                          .merge(tier, amount, Integer::sum);
+            ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " Tier " + tier + " bought blessings", NamedTextColor.GREEN));
                 }
         );
     }
@@ -69,7 +69,7 @@ public class ItemsCommand extends BaseCommand {
     public void generate(Player player, ItemType type, ItemTier tier, @Default("1") @Conditions("limits:min=1,max=10") Integer amount) {
         if (tier == ItemTier.NONE) {
             tier = ItemTier.ALPHA;
-            ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Item tier was set to " + tier.name() + " because it was NONE", true);
+            ChatChannels.sendDebugMessage(player, Component.text("Item tier was set to " + tier.name() + " because it was NONE", NamedTextColor.GREEN));
         }
         ItemTier finalTier = tier;
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
@@ -79,10 +79,8 @@ public class ItemsCommand extends BaseCommand {
                     continue;
                 }
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
-                ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                        new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
-                                .appendHoverItem(item.getItemName(), item.generateItemStack())
-                );
+                ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
+                                                                                    .append(item.getHoverComponent()));
             }
         });
     }
@@ -98,10 +96,8 @@ public class ItemsCommand extends BaseCommand {
                     continue;
                 }
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
-                ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                        new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
-                                .appendHoverItem(item.getItemName(), item.generateItemStack())
-                );
+                ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
+                                                                                    .append(item.getHoverComponent()));
             }
         });
     }
@@ -113,10 +109,8 @@ public class ItemsCommand extends BaseCommand {
             for (int i = 0; i < amount; i++) {
                 AbstractSpecialItem item = specialItem.create.get();
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
-                ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                        new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
-                                .appendHoverItem(item.getItemName(), item.generateItemStack())
-                );
+                ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
+                                                                                    .append(item.getHoverComponent()));
             }
         });
     }
@@ -126,9 +120,8 @@ public class ItemsCommand extends BaseCommand {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             AbstractFixedItem item = fixedItem.create.get();
             databasePlayer.getPveStats().getItemsManager().addItem(item);
-            ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                    new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
-                            .appendHoverItem(item.getItemName(), item.generateItemStack())
+            ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
+                                                                                .append(item.getHoverComponent())
             );
         });
     }
@@ -137,9 +130,7 @@ public class ItemsCommand extends BaseCommand {
     public void clear(Player player) {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             databasePlayer.getPveStats().getItemsManager().getItemInventory().clear();
-            ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-                    new ComponentBuilder(ChatColor.GREEN + "Cleared items")
-            );
+            ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Cleared items", NamedTextColor.GREEN));
         });
     }
 
@@ -149,8 +140,8 @@ public class ItemsCommand extends BaseCommand {
 //        DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
 //            for (int i = 0; i < amount; i++) {
 //                databasePlayer.getPveStats().getItemsManager().addItem(item);
-//                ChatChannels.playerSpigotSendMessage(player, ChatChannels.DEBUG,
-//                        new ComponentBuilder(ChatColor.GRAY + "Spawned item: ")
+//                ChatChannels.playerSendMessage(player, ChatChannels.DEBUG,
+//                        Component.text(ChatColor.GRAY + "Spawned item: ")
 //                                .appendHoverItem(item.getName(), item.generateItemStack())
 //                );
 //            }
@@ -159,7 +150,7 @@ public class ItemsCommand extends BaseCommand {
 //
 //    @Subcommand("reload")
 //    public void reload(CommandIssuer issuer) {
-//        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Reloading items...", true);
+//        ChatChannels.sendDebugMessage(issuer, Component.text("Reloading items...");
 //        Items.reload();
 //    }
 //
@@ -174,7 +165,7 @@ public class ItemsCommand extends BaseCommand {
 //                .async(() -> {
 //                    for (Items item : Items.VALUES) {
 //                        DatabaseManager.itemService.create(new Item(item));
-//                        ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Created item: " + ChatColor.YELLOW + item, true);
+//                        ChatChannels.sendDebugMessage(issuer, Component.text("Created item: " + ChatColor.YELLOW + item);
 //                    }
 //                }).execute();
 //    }

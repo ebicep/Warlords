@@ -1,9 +1,9 @@
 package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.effects.TeamBasedEffect;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.function.DoubleUnaryOperator;
@@ -21,15 +21,15 @@ public class CircumferenceEffect extends AbstractEffectPlayer<CircleEffect> {
     private double cachedParticles;
     private double pendingParticles;
 
-    public CircumferenceEffect(ParticleEffect own, ParticleEffect other) {
+    public CircumferenceEffect(Particle own, Particle other) {
         this(new TeamBasedEffect(own, other));
     }
 
-    public CircumferenceEffect(ParticleEffect effect) {
+    public CircumferenceEffect(Particle effect) {
         this(new TeamBasedEffect(effect));
     }
 
-    public CircumferenceEffect(TeamBasedEffect effect) {
+    public CircumferenceEffect(@Nonnull TeamBasedEffect effect) {
         this.effect = effect;
     }
 
@@ -63,12 +63,12 @@ public class CircumferenceEffect extends AbstractEffectPlayer<CircleEffect> {
     }
 
 
-    public CircumferenceEffect effect(@Nonnull ParticleEffect effect) {
+    public CircumferenceEffect effect(@Nonnull Particle effect) {
         this.effect = new TeamBasedEffect(effect);
         return this;
     }
 
-    public CircumferenceEffect effect(@Nonnull ParticleEffect ownTeam, @Nonnull ParticleEffect enemyTeam) {
+    public CircumferenceEffect effect(@Nonnull Particle ownTeam, @Nonnull Particle enemyTeam) {
         this.effect = new TeamBasedEffect(ownTeam, enemyTeam);
         return this;
     }

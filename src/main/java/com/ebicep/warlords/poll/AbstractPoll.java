@@ -1,12 +1,12 @@
 package com.ebicep.warlords.poll;
 
 import com.ebicep.warlords.Warlords;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -26,6 +26,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
         String toString = poll.toString();
         return toString.substring(toString.indexOf("@") + 1);
     }
+
     protected final HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
     protected String id;
     protected String question;
@@ -83,37 +84,32 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
     public List<Player> getPlayersAllowedToVote() {
         List<UUID> uuids = getUUIDsAllowedToVote();
         return Bukkit.getOnlinePlayers()
-                .stream()
-                .filter(player -> uuids.contains(player.getUniqueId()))
-                .collect(Collectors.toList());
+                     .stream()
+                     .filter(player -> uuids.contains(player.getUniqueId()))
+                     .collect(Collectors.toList());
     }
 
     private void sendPollAnnouncement(boolean first) {
         getPlayersAllowedToVote().forEach(player -> {
-            player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+            player.sendMessage(Component.text("------------------------------------------", NamedTextColor.BLUE, TextDecoration.BOLD));
             if (first) {
-                player.sendMessage(ChatColor.YELLOW + "There is a new poll! Answer it below by clicking on an option!");
+                player.sendMessage(Component.text("There is a new poll! Answer it below by clicking on an option!", NamedTextColor.YELLOW));
             }
-            player.sendMessage(ChatColor.YELLOW + "Question: " + ChatColor.GREEN + question);
+            player.sendMessage(Component.text("Question: ", NamedTextColor.YELLOW).append(Component.text(question, NamedTextColor.GREEN)));
             for (int i = 0; i < options.size(); i++) {
-                TextComponent message = new TextComponent(ChatColor.YELLOW + " - " + (i + 1) + ". " + ChatColor.GOLD + options.get(i));
-                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                        new ComponentBuilder(ChatColor.GREEN + "Click here to vote for " + options.get(i)).create()
-                ));
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/poll answer " + id + " " + (i + 1)));
-                player.spigot().sendMessage(message);
+                player.sendMessage(Component.text(" - " + (i + 1) + ". ", NamedTextColor.YELLOW).append(Component.text(options.get(i), NamedTextColor.GOLD))
+                                            .hoverEvent(HoverEvent.showText(Component.text("Click here to vote for " + options.get(i), NamedTextColor.GREEN)))
+                                            .clickEvent(ClickEvent.runCommand("/poll answer " + id + " " + (i + 1)))
+                );
             }
             if (!infiniteVotingTime) {
-                player.spigot().sendMessage(
-                        new com.ebicep.warlords.util.bukkit.ComponentBuilder(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds! - ")
-                                .append(ChatColor.YELLOW + id)
-                                .appendClickEvent(ClickEvent.Action.SUGGEST_COMMAND, id)
-                                .create()
+                player.sendMessage(Component.text("The poll will end in " + timeLeft + " seconds! - " + id, NamedTextColor.YELLOW)
+                                            .append(Component.text(id).clickEvent(ClickEvent.copyToClipboard(id)))
                 );
             } else {
-                player.sendMessage(ChatColor.YELLOW + "The poll will end in when everyone has voted!");
+                player.sendMessage(Component.text("The poll will end in when everyone has voted!", NamedTextColor.YELLOW));
             }
-            player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+            player.sendMessage(Component.text("------------------------------------------", NamedTextColor.BLUE, TextDecoration.BOLD));
         });
     }
 
@@ -126,43 +122,38 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
 
     public void sendPollResultsToPlayers(List<Player> players) {
         int[] numberOfVote = new int[options.size()];
-        String[] squareRatio = new String[options.size()];
+        Component[] squareRatio = new Component[options.size()];
         for (int i = 0; i < options.size(); i++) {
             int finalI = i;
             numberOfVote[i] = (int) playerAnsweredWithOption.values().stream().filter(v -> v == finalI + 1).count();
 
             int counter = (int) Math.round((double) numberOfVote[i] / playerAnsweredWithOption.size() * 10);
-            squareRatio[i] = ChatColor.GREEN.toString();
-            for (int j = 0; j < counter; j++) {
-                squareRatio[i] += "■";
-            }
-            squareRatio[i] += ChatColor.GRAY;
-            for (int j = 0; j < 10 - counter; j++) {
-                squareRatio[i] += "■";
-            }
+            squareRatio[i] = Component.text("■".repeat(counter), NamedTextColor.GREEN)
+                                      .append(Component.text("■".repeat(10 - counter), NamedTextColor.GRAY));
         }
         players.forEach(player -> {
-            player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-            player.sendMessage(ChatColor.YELLOW + "Question: " + ChatColor.GREEN + question);
+            player.sendMessage(Component.text("------------------------------------------", NamedTextColor.BLUE, TextDecoration.BOLD));
+            player.sendMessage(Component.text("Question: ", NamedTextColor.YELLOW).append(Component.text(question, NamedTextColor.GREEN)));
             for (int i = 0; i < options.size(); i++) {
-                player.sendMessage(ChatColor.GOLD + options.get(i) + ChatColor.DARK_GRAY + " - " +
-                        ChatColor.YELLOW + numberOfVote[i] +
-                        " (" + (Math.round((double) numberOfVote[i] / playerAnsweredWithOption.size() * 100)) + "%) " +
-                        ChatColor.GOLD + "[" + squareRatio[i] + ChatColor.GOLD + "]"
+                long percentageVoted = Math.round((double) numberOfVote[i] / playerAnsweredWithOption.size() * 100);
+                player.sendMessage(Component.text(options.get(i), NamedTextColor.GOLD)
+                                            .append(Component.text(" - ", NamedTextColor.DARK_GRAY))
+                                            .append(Component.text(numberOfVote[i] + " (" + percentageVoted + "%) ", NamedTextColor.YELLOW))
+                                            .append(Component.text("["))
+                                            .append(squareRatio[i])
+                                            .append(Component.text("]"))
                 );
             }
             Set<UUID> nonVoters = new HashSet<>(getUUIDsAllowedToVote());
             nonVoters.removeAll(playerAnsweredWithOption.keySet());
-            StringBuilder playersThatDidntVote = new StringBuilder(ChatColor.YELLOW + "Non Voters: " + ChatColor.AQUA);
-            for (UUID nonVoter : nonVoters) {
-                playersThatDidntVote.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(nonVoter).getName())
-                        .append(ChatColor.GRAY).append(", ");
-            }
-            playersThatDidntVote.setLength(playersThatDidntVote.length() - 2);
+            Component playersThatDidntVote = Component.text("Non Voters: ", NamedTextColor.YELLOW)
+                                                      .append(nonVoters.stream()
+                                                                       .map(uuid -> Component.text(Bukkit.getOfflinePlayer(uuid).getName(), NamedTextColor.AQUA))
+                                                                       .collect(Component.toComponent(Component.text(", ", NamedTextColor.GRAY))));
             if (sendNonVoterMessage(player)) {
                 player.sendMessage(playersThatDidntVote.toString());
             }
-            player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+            player.sendMessage(Component.text("------------------------------------------", NamedTextColor.BLUE, TextDecoration.BOLD));
         });
     }
 

@@ -12,20 +12,25 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventPoisonousSpider;
+import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import org.bukkit.ChatColor;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -39,20 +44,13 @@ public class FieldEffect implements Option {
     }
 
     private void addOptions(List<Option> options) {
-        List<String> lines = new ArrayList<>();
-        lines.add(ChatColor.WHITE.toString() + ChatColor.BOLD + "Field Effects");
-        lines.add("");
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.text("Field Effects", NamedTextColor.WHITE, TextDecoration.BOLD));
+        lines.add(Component.empty());
         fieldEffects.forEach(effect -> {
-            List<String> effectLore = Arrays.asList(WordWrap.wrapWithNewline(ChatColor.GREEN + effect.name + ": " + ChatColor.GRAY + effect.description, 200)
-                                                            .split("\n"));
-            for (int i = 0; i < effectLore.size(); i++) {
-                if (i != 0) {
-                    lines.add(ChatColor.GRAY + effectLore.get(i));
-                } else {
-                    lines.add(effectLore.get(i));
-                }
-            }
-            lines.add("");
+            lines.addAll(WordWrap.wrap(Component.text(effect.name + ": ", NamedTextColor.GREEN)
+                                                .append(Component.text(effect.description, NamedTextColor.GRAY)), 170));
+            lines.add(Component.empty());
         });
         options.add(TextOption.Type.CHAT_CENTERED.create(lines));
     }
@@ -104,8 +102,7 @@ public class FieldEffect implements Option {
                                 LinkedCooldown<?> linkedCooldown = (LinkedCooldown<?>) abstractCooldown;
                                 linkedCooldown.setTicksLeft((int) (linkedCooldown.getTicksLeft() * 0.7));
                             }
-                        } else if (abstractCooldown instanceof RegularCooldown) {
-                            RegularCooldown<?> regularCooldown = (RegularCooldown<?>) abstractCooldown;
+                        } else if (abstractCooldown instanceof RegularCooldown<?> regularCooldown) {
                             regularCooldown.setTicksLeft((int) (regularCooldown.getTicksLeft() * 0.7));
                         }
                     }
@@ -200,6 +197,61 @@ public class FieldEffect implements Option {
 //                    }
 
                 });
+            }
+        },
+        LOST_BUFF("Lost Buff",
+                "Players and mobs will lose 1% of their max health every second."
+        ) {
+            @Override
+            public void onStart(Game game) {
+                new GameRunnable(game) {
+
+                    @Override
+                    public void run() {
+                        PlayerFilter.playingGame(game)
+                                    .forEach(warlordsEntity -> {
+                                        if (warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
+                                            return;
+                                        }
+                                        float damage = warlordsEntity.getMaxHealth() * .01f;
+                                        warlordsEntity.resetRegenTimer();
+                                        if (warlordsEntity.getHealth() - damage <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
+                                            warlordsEntity.setHealth(0);
+                                            warlordsEntity.die(warlordsEntity);
+                                        } else {
+                                            warlordsEntity.setHealth(warlordsEntity.getHealth() - damage);
+                                            warlordsEntity.playHurtAnimation(warlordsEntity.getEntity(), warlordsEntity);
+                                        }
+                                    });
+                    }
+
+                }.runTaskTimer(200, 20);
+            }
+        },
+        DEBUFF_THING("Debuff Thing",
+                "Each debuff on a mobs will increase the damage they take by 10%. (Max 120%)"
+        ) {
+            @Override
+            public void onWarlordsEntityCreated(WarlordsEntity player) {
+                if (player instanceof WarlordsNPC) {
+                    player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Debuff Thing",
+                            null,
+                            null,
+                            null,
+                            player,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            false
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            int debuffDamageBoost = Math.min(event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns().size(), 12);
+                            return currentDamageValue * (1 + (debuffDamageBoost * .2f));
+                        }
+                    });
+                }
             }
         },
         ;

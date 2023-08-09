@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.state;
 
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.WarlordsPlusCommand;
@@ -21,31 +22,32 @@ import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
-import com.ebicep.warlords.player.ingame.PlayerStatisticsSecond;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.*;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.PlayerNameInstance;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,7 +57,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PlayingState implements State, TimerDebugAble {
@@ -74,29 +75,28 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void begin() {
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has started");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has started");
         Warlords.getGameManager().getGames().stream()
                 .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().equals(game))
                 .findAny()
                 .ifPresent(gameHolder -> {
                     ChatChannels.sendDebugMessage((CommandIssuer) null,
-                            ChatColor.LIGHT_PURPLE + "Started Game: " + game.getGameMode() + " - " + gameHolder.getName(),
-                            true
+                            Component.text("Started Game: " + game.getGameMode() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
                     );
                 });
         this.game.setAcceptsSpectators(true);
         this.game.setAcceptsPlayers(false);
         this.resetTimer();
         RemoveEntities.doRemove(this.game);
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Adding game options");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding game options");
         for (Option option : game.getOptions()) {
             option.start(game);
         }
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game options added");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game options added");
 
         this.game.forEachOfflinePlayer((player, team) -> {
             Player p = player.getPlayer();
-            if (team == null || !player.isOnline()) {
+            if (team == null || (!player.isOnline() && com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()))) {
                 return;
             }
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
@@ -107,14 +107,14 @@ public class PlayingState implements State, TimerDebugAble {
                         continue;
                     }
                     if (p != null) {
-                        p.sendMessage(ChatColor.RED + selectedSpec.name + " is currently disabled. Your specialization has been changed.");
+                        p.sendMessage(Component.text(selectedSpec.name + " is currently disabled. Your specialization has been changed.", NamedTextColor.RED));
                     }
                     playerSettings.setSelectedSpec(value);
                     break;
                 }
                 if (playerSettings.getSelectedSpec().isBanned()) {
                     if (p != null) {
-                        p.sendMessage(ChatColor.RED + "All specializations are currently disabled. Game closing.");
+                        p.sendMessage(Component.text("All specializations are currently disabled. Game closing.", NamedTextColor.RED));
                     }
                 }
             }
@@ -125,8 +125,8 @@ public class PlayingState implements State, TimerDebugAble {
             ));
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
-                Utils.resetPlayerMovementStatistics(p);
             }
+            Utils.resetPlayerMovementStatistics(player);
         });
 
         game.registerEvents(new Listener() {
@@ -138,6 +138,7 @@ public class PlayingState implements State, TimerDebugAble {
         });
         new GameRunnable(game) {
 
+
             @Override
             public void run() {
                 game.forEachOnlinePlayer((player, team) -> {
@@ -146,7 +147,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
         }.runTaskTimer(0, 10);
 
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Started recording timed stats");
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Started recording timed stats");
 
         new GameRunnable(game) {
 
@@ -190,103 +191,7 @@ public class PlayingState implements State, TimerDebugAble {
         Warlords.getInstance().hideAndUnhidePeople();
         Game.reopenGameReferencedMenus();
 
-        ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Game start done");
-    }
-
-    @Nonnull
-    public Game getGame() {
-        return game;
-    }
-
-    private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
-        this.updateHealth(customScoreboard);
-        this.updateNames(customScoreboard);
-        this.updateBasedOnGameScoreboards(customScoreboard, warlordsPlayer);
-    }
-
-    private void updateHealth(@Nonnull CustomScoreboard customScoreboard) {
-        Scoreboard scoreboard = customScoreboard.getScoreboard();
-        Objective health = customScoreboard.getHealth();
-        if (health == null || scoreboard.getObjective("health") == null) {
-            health = scoreboard.registerNewObjective("health", "dummy");
-            health.setDisplaySlot(DisplaySlot.BELOW_NAME);
-            health.setDisplayName(ChatColor.RED + "❤");
-            customScoreboard.setHealth(health);
-        }
-        Objective finalHealth = health;
-        this.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-            if (warlordsEntity != null) {
-                finalHealth.getScore(warlordsEntity.getName()).setScore(Math.round(warlordsEntity.getHealth()));
-            }
-        });
-    }
-
-    private void updateNames(@Nonnull CustomScoreboard customScoreboard) {
-        Scoreboard scoreboard = customScoreboard.getScoreboard();
-        this.getGame().forEachOfflineWarlordsPlayer((player, team) -> {
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-            if (warlordsEntity == null) {
-                return;
-            }
-            String name = warlordsEntity.getName();
-            UUID uuid = warlordsEntity.getUuid();
-            String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsEntity.getSpecClass()));
-            if (scoreboard.getTeam(name) == null) {
-                org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(name);
-                temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
-                                                                                          .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
-                temp.addEntry(name);
-                temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + levelString + ChatColor.DARK_GRAY + "]");
-            } else {
-                scoreboard.getTeam(name).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsEntity.getSpec()
-                                                                                                              .getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
-                if (warlordsEntity.getCarriedFlag() != null) {
-                    scoreboard.getTeam(name).setSuffix(
-                            ChatColor.DARK_GRAY + "[" +
-                                    ChatColor.GRAY + "Lv" +
-                                    levelString +
-                                    ChatColor.DARK_GRAY + "]" +
-                                    ChatColor.WHITE + "⚑"
-                    );
-                } else {
-                    String s = ChatColor.GRAY + " - " + ChatColor.RED + "⚔ " + warlordsEntity.getMinuteStats().total().getKills();
-                    scoreboard.getTeam(name).setSuffix(
-                            ChatColor.DARK_GRAY + " [" +
-                                    ChatColor.GRAY + "Lv" +
-                                    levelString +
-                                    ChatColor.DARK_GRAY + "]"
-                    );
-                }
-            }
-        });
-    }
-
-    private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
-        List<String> scoreboard = new ArrayList<>();
-
-        ScoreboardHandler lastHandler = null;
-        String lastGroup = null;
-        boolean lastWasEmpty = true;
-        for (ScoreboardHandler handler : Utils.iterable(game
-                .getScoreboardHandlers()
-                .stream()
-                .sorted(Comparator.comparing((ScoreboardHandler sh) -> sh.getPriority(warlordsPlayer)))
-        )) {
-            String group = handler.getGroup();
-            if ((lastGroup == null || !lastGroup.equals(group)) && !lastWasEmpty && handler.emptyLinesBetween() && lastHandler.emptyLinesBetween()) {
-                scoreboard.add("");
-                lastWasEmpty = true;
-            }
-            lastHandler = handler;
-            lastGroup = group;
-            List<String> handlerContents = handler.computeLines(warlordsPlayer);
-            if (!handlerContents.isEmpty()) {
-                lastWasEmpty = false;
-                scoreboard.addAll(handlerContents);
-            }
-        }
-        customScoreboard.giveNewSideBar(false, scoreboard);
+        ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game start done");
     }
 
     @Override
@@ -299,23 +204,20 @@ public class PlayingState implements State, TimerDebugAble {
                     byteArrayDataOutput.writeInt((int) wp.getEnergy());
                     byteArrayDataOutput.writeInt((int) wp.getMaxEnergy());
                     AbstractPlayerClass spec = wp.getSpec();
-                    byteArrayDataOutput.writeInt(spec.getRed().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getRed()
-                                                                                                                    .getCurrentCooldown() + .5));
-                    byteArrayDataOutput.writeInt(spec.getPurple().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getPurple()
-                                                                                                                       .getCurrentCooldown() + .5));
-                    byteArrayDataOutput.writeInt(spec.getBlue().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getBlue()
-                                                                                                                     .getCurrentCooldown() + .5));
-                    byteArrayDataOutput.writeInt(spec.getOrange().getCurrentCooldown() == 0 ? 0 : (int) Math.round(spec.getOrange()
-                                                                                                                       .getCurrentCooldown() + .5));
+                    List<AbstractAbility> abilities = spec.getAbilities();
+                    for (int i = 1; i < abilities.size() && i < 5; i++) {
+                        AbstractAbility ability = abilities.get(i);
+                        byteArrayDataOutput.writeInt(ability.getCurrentCooldown() == 0 ? 0 : (int) Math.round(ability.getCurrentCooldown() + .5));
+                    }
                     if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                         game.onlinePlayers().forEach(playerTeamEntry -> {
-                            playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "Warlords", byteArrayDataOutput.toByteArray());
+                            playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());
                         });
                     } else {
                         game.spectators().forEach(uuid -> {
                             Player player = Bukkit.getPlayer(uuid);
                             if (player != null && WarlordsPlusCommand.UUIDS.contains(player.getUniqueId())) {
-                                player.sendPluginMessage(Warlords.getInstance(), "Warlords", byteArrayDataOutput.toByteArray());
+                                player.sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());
                             }
                         });
                     }
@@ -330,17 +232,17 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void end() {
         this.getGame().forEachOfflineWarlordsEntity(e -> e.setActive(false));
-        System.out.println(" ----- GAME END ----- ");
-        System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
-        System.out.println("Force End = " + (winEvent == null));
-        System.out.println("Player Count = " + game.warlordsPlayers().count());
-        System.out.println("Players = " + game.warlordsPlayers().collect(Collectors.toList()));
-        System.out.println("Timer = " + timer);
-        System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
-        System.out.println("GameMode = " + game.getGameMode());
-        System.out.println("Map = " + game.getMap());
-        System.out.println("Game Addons = " + game.getAddons());
-        System.out.println(" ----- GAME END ----- ");
+        ChatUtils.MessageType.WARLORDS.sendMessage(" ----- GAME END ----- ");
+        ChatUtils.MessageType.WARLORDS.sendMessage("RecordGames = " + RecordGamesCommand.recordGames);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Force End = " + (winEvent == null));
+        ChatUtils.MessageType.WARLORDS.sendMessage("Player Count = " + game.warlordsPlayers().count());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Players = " + game.warlordsPlayers().toList());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Timer = " + timer);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
+        ChatUtils.MessageType.WARLORDS.sendMessage("GameMode = " + game.getGameMode());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Map = " + game.getMap());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Game Addons = " + game.getAddons());
+        ChatUtils.MessageType.WARLORDS.sendMessage(" ----- GAME END ----- ");
 
         List<WarlordsPlayer> players = PlayerFilterGeneric.playingGameWarlordsPlayers(game).toList();
         if (players.isEmpty()) {
@@ -354,18 +256,18 @@ public class PlayingState implements State, TimerDebugAble {
                     timer >= 6000;
             //comps
             if (isCompGame) {
-                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Adding comp game");
+                ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding comp game");
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, RecordGamesCommand.recordGames));
-                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding comp game");
+                ChatUtils.MessageType.GAME_DEBUG.sendMessage("Done adding comp game");
             }
             //pubs or pve
             else if (players.size() >= game.getMap().getMinPlayers()) {
-                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Adding pub game");
+                ChatUtils.MessageType.GAME_DEBUG.sendMessage("Adding pub/pve game");
                 if (DatabaseManager.playerService == null) {
                     return;
                 }
                 gameAdded.set(DatabaseGameBase.addGame(game, winEvent, true));
-                ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Done adding pub game");
+                ChatUtils.MessageType.GAME_DEBUG.sendMessage("Done adding pub/pve game");
                 if (!com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
                     SRCalculator.recalculateSR();
                 }
@@ -374,7 +276,7 @@ public class PlayingState implements State, TimerDebugAble {
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && players.size() >= 6 && timer >= 6000) {
                 DatabaseGameBase.addGame(game, null, false);
             } else {
-                ChatUtils.MessageTypes.WARLORDS.sendMessage(
+                ChatUtils.MessageType.WARLORDS.sendMessage(
                         "This PUB/COMP game was not added to the database and player information remained the same");
             }
         }
@@ -384,15 +286,23 @@ public class PlayingState implements State, TimerDebugAble {
     public void onPlayerReJoinGame(@Nonnull Player player) {
         WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp == null) {
-            // Spectator
-            player.setGameMode(GameMode.SPECTATOR);
             Location spawn = Stream.concat(
                     getGame().getMarkers(SpawnLocationMarker.class).stream(),
                     getGame().getMarkers(LobbyLocationMarker.class).stream()
             ).map(LocationMarker::getLocation).collect(Utils.randomElement());
             player.teleport(spawn);
+            // Spectator - delay because multiverse is dumb
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    player.setGameMode(GameMode.SPECTATOR);
+                }
+            }.runTaskLater(Warlords.getInstance(), 1);
         }
         if (wp instanceof WarlordsPlayer) {
+            player.setFlying(false);
+            player.setAllowFlight(false);
             CustomScoreboard sb = CustomScoreboard.getPlayerScoreboard(player);
             updateBasedOnGameState(sb, (WarlordsPlayer) wp);
         }
@@ -401,6 +311,160 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     public int getTicksElapsed() {
         return this.timer;
+    }
+
+    @Nonnull
+    public Game getGame() {
+        return game;
+    }
+
+    private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
+        this.updateHealth(customScoreboard);
+        this.updateNames(customScoreboard, warlordsPlayer);
+        this.getGame().forEachOnlineWarlordsPlayer(warlordsEntity -> {
+            UUID uuid = warlordsEntity.getUuid();
+            String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsEntity.getSpecClass()));
+            TextComponent.Builder playerTabName = Component.text()
+                                                           .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                                                           .append(Component.text(warlordsEntity.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                                           .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                                           .append(Component.text(warlordsEntity.getName(), warlordsEntity.getTeam().teamColor))
+                                                           .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                                           .append(Component.text("Lv" + levelString, NamedTextColor.GOLD))
+                                                           .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+            if (warlordsEntity.getCarriedFlag() != null) {
+                playerTabName.append(Component.text("⚑", NamedTextColor.WHITE));
+            }
+            if (warlordsEntity.getEntity() instanceof Player player) {
+                player.playerListName(playerTabName.build());
+            }
+        });
+        this.updateBasedOnGameScoreboards(customScoreboard, warlordsPlayer);
+    }
+
+    private void updateHealth(@Nonnull CustomScoreboard customScoreboard) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+        Objective health = customScoreboard.getHealth();
+        if (health == null || scoreboard.getObjective("health") == null) {
+            health = scoreboard.registerNewObjective("health", Criteria.DUMMY, Component.text("❤", NamedTextColor.RED));
+            health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+            customScoreboard.setHealth(health);
+        }
+        Objective finalHealth = health;
+        this.getGame().forEachOfflinePlayer((player, team) -> {
+            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+            if (warlordsEntity != null) {
+                finalHealth.getScore(warlordsEntity.getName()).setScore(Math.round(warlordsEntity.getHealth()));
+            }
+        });
+    }
+
+    public void updateNames(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsEntity warlordsPlayer) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+        List<AbstractCooldown<?>> cooldowns;
+        if (warlordsPlayer != null) {
+            cooldowns = warlordsPlayer.getCooldownManager().getCooldowns();
+        } else {
+            cooldowns = new ArrayList<>();
+        }
+        this.getGame().forEachOfflineWarlordsPlayer((player, team) -> {
+            WarlordsEntity otherPlayer = Warlords.getPlayer(player);
+            if (otherPlayer == null) {
+                return;
+            }
+            if (otherPlayer instanceof WarlordsPlayerDisguised) {
+                return;
+            }
+            String name = otherPlayer.getName();
+            UUID uuid = otherPlayer.getUuid();
+            List<AbstractCooldown<?>> otherPlayerCooldowns = otherPlayer.getCooldownManager().getCooldowns();
+            String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, otherPlayer.getSpecClass()));
+            Team playerTeam = scoreboard.getTeam(name);
+            if (playerTeam == null) {
+                playerTeam = scoreboard.registerNewTeam(name);
+                playerTeam.addEntry(name);
+            }
+            playerTeam.setCanSeeFriendlyInvisibles(true);
+            if (warlordsPlayer != null) {
+                playerTeam.addEntity(warlordsPlayer.getEntity());
+            }
+            playerTeam.color(team.teamColor());
+            //tab name
+            //prefix
+            TextComponent.Builder prefix = Component.text();
+            if (warlordsPlayer != null) {
+                cooldowns.forEach(cd -> {
+                    PlayerNameInstance.PlayerNameData prefixFromSelf = cd.addPrefixFromSelf();
+                    if (prefixFromSelf != null && prefixFromSelf.displayPredicate().test(otherPlayer)) {
+                        prefix.append(Component.space().append(prefixFromSelf.text()));
+                    }
+                });
+                otherPlayerCooldowns.forEach(cd -> {
+                    PlayerNameInstance.PlayerNameData prefixFromEnemy = cd.addPrefixFromOther();
+                    if (prefixFromEnemy != null && prefixFromEnemy.displayPredicate().test(warlordsPlayer)) {
+                        prefix.append(Component.space().append(prefixFromEnemy.text()));
+                    }
+                });
+            }
+            TextComponent.Builder basePrefix = Component.text()
+                                                        .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                                                        .append(Component.text(otherPlayer.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                                        .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+            prefix.append(basePrefix);
+            playerTeam.prefix(prefix.build());
+            //suffix
+            TextComponent.Builder baseSuffix = Component.text()
+                                                        .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                                                        .append(Component.text("Lv" + levelString, NamedTextColor.GOLD))
+                                                        .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+            if (otherPlayer.getCarriedFlag() != null) {
+                baseSuffix.append(Component.text("⚑", NamedTextColor.WHITE));
+            }
+            TextComponent.Builder suffix = Component.text();
+            suffix.append(baseSuffix);
+            if (warlordsPlayer != null) {
+                cooldowns.forEach(cd -> {
+                    PlayerNameInstance.PlayerNameData suffixFromSelf = cd.addSuffixFromSelf();
+                    if (suffixFromSelf != null && suffixFromSelf.displayPredicate().test(otherPlayer)) {
+                        suffix.append(Component.space().append(suffixFromSelf.text()));
+                    }
+                });
+                otherPlayerCooldowns.forEach(cd -> {
+                    PlayerNameInstance.PlayerNameData suffixFromEnemy = cd.addSuffixFromOther();
+                    if (suffixFromEnemy != null && suffixFromEnemy.displayPredicate().test(warlordsPlayer)) {
+                        suffix.append(Component.space().append(suffixFromEnemy.text()));
+                    }
+                });
+            }
+            playerTeam.suffix(suffix.build());
+        });
+    }
+
+    private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
+        List<Component> scoreboard = new ArrayList<>();
+
+        ScoreboardHandler lastHandler = null;
+        String lastGroup = null;
+        boolean lastWasEmpty = true;
+        for (ScoreboardHandler handler : JavaUtils.iterable(game
+                .getScoreboardHandlers()
+                .stream()
+                .sorted(Comparator.comparing((ScoreboardHandler sh) -> sh.getPriority(warlordsPlayer)))
+        )) {
+            String group = handler.getGroup();
+            if ((lastGroup == null || !lastGroup.equals(group)) && !lastWasEmpty && handler.emptyLinesBetween() && lastHandler.emptyLinesBetween()) {
+                scoreboard.add(Component.empty());
+                lastWasEmpty = true;
+            }
+            lastHandler = handler;
+            lastGroup = group;
+            List<Component> handlerContents = handler.computeLines(warlordsPlayer);
+            if (!handlerContents.isEmpty()) {
+                lastWasEmpty = false;
+                scoreboard.addAll(handlerContents);
+            }
+        }
+        customScoreboard.giveNewSideBar(false, scoreboard);
     }
 
     @Override
@@ -419,25 +483,6 @@ public class PlayingState implements State, TimerDebugAble {
 
     @Override
     public void resetTimer() throws IllegalStateException {
-    }
-
-    /**
-     * Updates the names of the player on the scoreboard. To be used when the spec of a warlord player changes
-     *
-     * @param we the player changing
-     */
-    public void updatePlayerName(@Nonnull WarlordsEntity we) {
-        this.getGame().forEachOfflineWarlordsPlayer((player, team) -> {
-            Scoreboard scoreboard = CustomScoreboard.getPlayerScoreboard(player.getUniqueId()).getScoreboard();
-            int level = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
-            //System.out.println("Updating scorebopard for " + player + " setting " + warlordsPlayer + " to team " + warlordsPlayer.getTeam());
-            scoreboard.getTeam(we.getName())
-                      .setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + we.getSpec()
-                                                                                .getClassNameShort() + ChatColor.DARK_GRAY + "] " + we.getTeam().teamColor());
-            scoreboard.getTeam(we.getName())
-                      .setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
-
-        });
     }
 
 }

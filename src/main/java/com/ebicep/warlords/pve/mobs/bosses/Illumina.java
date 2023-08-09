@@ -1,11 +1,10 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.abilties.PrismGuard;
-import com.ebicep.warlords.abilties.internal.DamageCheck;
+import com.ebicep.warlords.abilities.PrismGuard;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.effects.ParticleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -14,22 +13,29 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.skeleton.ExiledSkeleton;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.ForgottenZombie;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Illumina extends AbstractZombie implements BossMob {
@@ -40,6 +46,10 @@ public class Illumina extends AbstractZombie implements BossMob {
     private boolean phaseFourTriggered = false;
 
     private AtomicInteger damageToDeal = new AtomicInteger(0);
+
+    private PrismGuard prismGuard = new PrismGuard() {{
+        setTickDuration(200);
+    }};
 
     public Illumina(Location spawnLocation) {
         super(spawnLocation,
@@ -56,9 +66,30 @@ public class Illumina extends AbstractZombie implements BossMob {
                 0.33f,
                 25,
                 2000,
-                3000
+                3000,
+                new Bramble(),
+                new BrambleSlowness(),
+                new SpawnMobAbility("Exiled Skeleton", 30, Mobs.EXILED_SKELETON) {
+                    @Override
+                    public int getSpawnAmount() {
+                        long playerCount = pveOption.getGame().warlordsPlayers().count();
+                        DifficultyIndex difficulty = pveOption.getDifficulty();
+                        return (int) (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount);
+                    }
+                }
         );
     }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("General of the Illusion Legion", NamedTextColor.DARK_GRAY);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.BLUE;
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
@@ -70,23 +101,9 @@ public class Illumina extends AbstractZombie implements BossMob {
             warlordsNPC.setMaxHealth(newHealth);
         }
 
-        for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        ChatColor.BLUE + "Illumina",
-                        ChatColor.DARK_GRAY + "General of the Illusion Legion",
-                        20, 30, 20
-                );
-            }
-        }
-
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new IronGolem(spawnLocation));
         }
-
-        PrismGuard prismGuard = new PrismGuard();
-        warlordsNPC.getSpec().setBlue(prismGuard);
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -116,49 +133,12 @@ public class Illumina extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        long playerCount = option.getGame().warlordsPlayers().count();
         // immune to slowness
         warlordsNPC.getSpeed().removeSlownessModifiers();
 
+        long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();
-        if (ticksElapsed % 100 == 0) {
-            Utils.playGlobalSound(loc, Sound.DIG_GRASS, 500, 0.4f);
-            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.LEAVES, (byte) 0).play();
-            for (WarlordsEntity we : PlayerFilterGeneric
-                    .entitiesAround(warlordsNPC, 7, 7, 7)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
-                we.addDamageInstance(
-                        warlordsNPC,
-                        "Bramble",
-                        1200,
-                        1800,
-                        -1,
-                        100,
-                        true
-                );
-            }
-        }
-
-        if (ticksElapsed % 220 == 0) {
-            EffectUtils.strikeLightningInCylinder(loc, 6, false);
-            for (WarlordsEntity we : PlayerFilterGeneric
-                    .entitiesAround(warlordsNPC, 6, 6, 6)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                we.getSpeed().addSpeedModifier(warlordsNPC, "Bramble Slowness", -99, 30);
-                Utils.addKnockback(name, loc, we, -2, 0.3);
-            }
-        }
-
         DifficultyIndex difficulty = option.getDifficulty();
-
-        if (ticksElapsed % 800 == 0) {
-            for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
-                option.spawnNewMob(new ExiledSkeleton(spawnLocation));
-            }
-        }
 
         if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
             phaseOneTriggered = true;
@@ -217,21 +197,20 @@ public class Illumina extends AbstractZombie implements BossMob {
                 .playingGame(getWarlordsNPC().getGame())
                 .aliveEnemiesOf(warlordsNPC)
         ) {
-            if (we.getEntity() instanceof Player) {
-                PacketUtils.sendTitle(
-                        (Player) we.getEntity(),
-                        "",
-                        ChatColor.RED + "Keep attacking Illumina to stop the draining!",
-                        10, 35, 0
-                );
-            }
+            we.getEntity().showTitle(Title.title(
+                    Component.empty(),
+                    Component.text("Keep attacking Illumina to stop the draining!", NamedTextColor.RED),
+                    Title.Times.times(Ticks.duration(10), Ticks.duration(35), Ticks.duration(0))
+            ));
+
             Utils.addKnockback(name, warlordsNPC.getLocation(), we, -4, 0.35);
-            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.WITHER_SPAWN, 500, 0.3f);
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, 0.3f);
         }
 
         AtomicInteger countdown = new AtomicInteger(timeToDealDamage);
         new GameRunnable(warlordsNPC.getGame()) {
             int counter = 0;
+
             @Override
             public void run() {
                 if (warlordsNPC.isDead()) {
@@ -241,18 +220,18 @@ public class Illumina extends AbstractZombie implements BossMob {
 
                 if (damageToDeal.get() <= 0) {
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BALL_LARGE)
-                            .build());
-                    warlordsNPC.getSpec().getBlue().onActivate(warlordsNPC, null);
+                                                                                               .withColor(Color.WHITE)
+                                                                                               .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                               .build());
+                    prismGuard.onActivate(warlordsNPC, null);
                     this.cancel();
                     return;
                 }
 
                 if (counter++ % 20 == 0) {
                     countdown.getAndDecrement();
-                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
-                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.NOTE_STICKS, 500, 0.4f);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
+                    Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 500, 0.4f);
                     for (WarlordsEntity we : PlayerFilter
                             .entitiesAround(warlordsNPC, 100, 100, 100)
                             .aliveEnemiesOf(warlordsNPC)
@@ -272,8 +251,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                                 600,
                                 600,
                                 -1,
-                                100,
-                                true
+                                100
                         );
                     }
                 }
@@ -284,9 +262,9 @@ public class Illumina extends AbstractZombie implements BossMob {
                     }
 
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                            .withColor(Color.WHITE)
-                            .with(FireworkEffect.Type.BALL_LARGE)
-                            .build());
+                                                                                               .withColor(Color.WHITE)
+                                                                                               .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                               .build());
                     EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 10);
                     Utils.playGlobalSound(warlordsNPC.getLocation(), "shaman.earthlivingweapon.impact", 500, 0.5f);
 
@@ -295,15 +273,14 @@ public class Illumina extends AbstractZombie implements BossMob {
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
-                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), ParticleEffect.VILLAGER_HAPPY);
+                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
                         we.addDamageInstance(
                                 warlordsNPC,
                                 "Death Ray",
                                 we.getMaxHealth() * 0.9f,
                                 we.getMaxHealth() * 0.9f,
                                 -1,
-                                100,
-                                true
+                                100
                         );
 
                         warlordsNPC.addHealingInstance(
@@ -312,26 +289,74 @@ public class Illumina extends AbstractZombie implements BossMob {
                                 we.getMaxHealth() * 2,
                                 we.getMaxHealth() * 2,
                                 -1,
-                                100,
-                                false,
-                                false
+                                100
                         );
                     }
 
                     this.cancel();
                 }
 
-                for (WarlordsEntity we : PlayerFilter.playingGame(getWarlordsNPC().getGame())) {
-                    if (we.getEntity() instanceof Player) {
-                        PacketUtils.sendTitle(
-                                (Player) we.getEntity(),
-                                ChatColor.YELLOW.toString() + countdown.get(),
-                                ChatColor.RED.toString() + damageToDeal.get(),
-                                0, 4, 0
-                        );
-                    }
-                }
+                ChatUtils.sendTitleToGamePlayers(
+                        getWarlordsNPC().getGame(),
+                        Component.text(countdown.get(), NamedTextColor.YELLOW),
+                        Component.text(damageToDeal.get(), NamedTextColor.RED),
+                        0, 4, 0
+                );
             }
         }.runTaskTimer(40, 0);
+    }
+
+    public static class Bramble extends AbstractPveAbility {
+
+        public Bramble() {
+            super("Bramble", 1200, 1800, 5, 100);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+            Location loc = wp.getLocation();
+
+            Utils.playGlobalSound(loc, Sound.BLOCK_GRASS_BREAK, 500, 0.4f);
+            new FallingBlockWaveEffect(loc.add(0, 1, 0), 7, 1.2, Material.OAK_LEAVES).play();
+            for (WarlordsEntity we : PlayerFilterGeneric
+                    .entitiesAround(wp, 7, 7, 7)
+                    .aliveEnemiesOf(wp)
+            ) {
+                we.addSpeedModifier(wp, "Bramble Slowness", -99, 30);
+                we.addDamageInstance(
+                        wp,
+                        "Bramble",
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier
+                );
+            }
+            return true;
+        }
+    }
+
+    public static class BrambleSlowness extends AbstractPveAbility {
+
+        public BrambleSlowness() {
+            super("Bramble Slowness", 5, 100);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(energyCost, false);
+            Location loc = wp.getLocation();
+
+            EffectUtils.strikeLightningInCylinder(loc, 6, false);
+            for (WarlordsEntity we : PlayerFilterGeneric
+                    .entitiesAround(wp, 6, 6, 6)
+                    .aliveEnemiesOf(wp)
+            ) {
+                we.addSpeedModifier(wp, "Bramble Slowness", -99, 30);
+                Utils.addKnockback(name, loc, we, -2, 0.3);
+            }
+            return true;
+        }
     }
 }

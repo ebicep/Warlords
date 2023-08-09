@@ -7,11 +7,11 @@ import com.ebicep.warlords.guilds.logs.types.twoplayer.GuildLogInvite;
 import com.ebicep.warlords.guilds.upgrades.temporary.GuildUpgradeTemporary;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -50,8 +50,9 @@ public class GuildManager {
                         if (shouldRemove) {
                             for (Player player : guild.getOnlinePlayers()) {
                                 Guild.sendGuildMessage(player,
-                                        ChatColor.RED + "Your guild upgrade " + ChatColor.YELLOW + upgrade.getUpgrade()
-                                                                                                          .getName() + ChatColor.RED + " has expired!"
+                                        Component.text("Your guild upgrade ", NamedTextColor.RED)
+                                                 .append(Component.text(upgrade.getUpgrade().getName(), NamedTextColor.GREEN))
+                                                 .append(Component.text(" has expired!"))
                                 );
                             }
                         }
@@ -118,15 +119,19 @@ public class GuildManager {
         guild.log(new GuildLogInvite(from.getUniqueId(), to.getUniqueId()));
         guild.queueUpdate();
 
-        ChatUtils.sendCenteredMessage(to, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
-        ChatUtils.sendCenteredMessage(to, ChatColor.AQUA + from.getName() + ChatColor.YELLOW + " has invited you to join their guild!");
-        TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to accept. " + ChatColor.GOLD + "Click here to join " + guild.getName());
-        message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(ChatColor.GREEN + "Click to join " + guild.getName()).create()
-        ));
-        message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guild join " + guild.getName()));
-        ChatUtils.sendCenteredMessageWithEvents(to, Collections.singletonList(message));
-        ChatUtils.sendCenteredMessage(to, ChatColor.GREEN.toString() + ChatColor.BOLD + "------------------------------------------");
+        ChatUtils.sendCenteredMessage(to, Component.text("------------------------------------------", NamedTextColor.GREEN, TextDecoration.BOLD));
+        ChatUtils.sendCenteredMessage(to,
+                Component.text(from.getName(), NamedTextColor.AQUA).append(Component.text(" has invited you to join their guild!", NamedTextColor.YELLOW))
+        );
+        ChatUtils.sendCenteredMessage(to,
+                Component.text("You have", NamedTextColor.YELLOW)
+                         .append(Component.text(" 5 ", NamedTextColor.RED))
+                         .append(Component.text("minutes to accept. "))
+                         .append(Component.text("Click here to join " + guild.getName(), NamedTextColor.GOLD))
+                         .hoverEvent(HoverEvent.showText(Component.text("Click to join " + guild.getName(), NamedTextColor.GREEN)))
+                         .clickEvent(ClickEvent.runCommand("/guild join " + guild.getName()))
+        );
+        ChatUtils.sendCenteredMessage(to, Component.text("------------------------------------------", NamedTextColor.GREEN, TextDecoration.BOLD));
     }
 
     public static boolean hasInviteFromGuild(Player invited, Guild guild) {
@@ -144,27 +149,7 @@ public class GuildManager {
                      .findFirst();
     }
 
-    static class GuildInvite {
-        private final UUID uuid;
-        private final Guild guild;
-
-        public GuildInvite(UUID uuid, Guild guild) {
-            this.uuid = uuid;
-            this.guild = guild;
-        }
-
-        public UUID getUuid() {
-            return uuid;
-        }
-
-        public Guild getGuild() {
-            return guild;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(uuid, guild);
-        }
+    record GuildInvite(UUID uuid, Guild guild) {
 
         @Override
         public boolean equals(Object o) {

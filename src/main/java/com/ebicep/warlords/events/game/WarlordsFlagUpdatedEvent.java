@@ -6,6 +6,8 @@ import com.ebicep.warlords.game.flags.FlagInfo;
 import com.ebicep.warlords.game.flags.FlagLocation;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 public class WarlordsFlagUpdatedEvent extends AbstractWarlordsGameEvent {
 
     private static final HandlerList handlers = new HandlerList();
@@ -36,6 +38,7 @@ public class WarlordsFlagUpdatedEvent extends AbstractWarlordsGameEvent {
         return info.getFlag();
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

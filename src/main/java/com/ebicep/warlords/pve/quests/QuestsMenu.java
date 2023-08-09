@@ -3,7 +3,8 @@ package com.ebicep.warlords.pve.quests;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -14,7 +15,7 @@ public class QuestsMenu {
 
     public static void openQuestMenu(Player player) {
         if (!QuestCommand.isQuestsEnabled) {
-            player.sendMessage(ChatColor.RED + "Quests are currently disabled.");
+            player.sendMessage(Component.text("Quests are currently disabled.", NamedTextColor.RED));
             return;
         }
         Menu menu = new Menu("Quests", 9 * 6);
@@ -33,8 +34,8 @@ public class QuestsMenu {
                 row.getAndIncrement();
                 col.set(1);
                 menu.setItem(col.get(), row.get(),
-                        new ItemBuilder(Material.BOOK_AND_QUILL)
-                                .name(ChatColor.GREEN + (quest.expireOn != null ? "Limited" : quest.time.name) + " Quests")
+                        new ItemBuilder(Material.WRITABLE_BOOK)
+                                .name(Component.text((quest.expireOn != null ? "Limited" : quest.time.name) + " Quests", NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> {
                         }

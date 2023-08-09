@@ -13,20 +13,20 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
-import net.minecraft.server.v1_8_R3.EntityInsentient;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @CommandAlias("mob")
 @CommandPermission("group.administrator")
@@ -44,14 +44,13 @@ public class MobCommand extends BaseCommand {
     ) {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof PveOption) {
-                PveOption pveOption = (PveOption) option;
+            if (option instanceof PveOption pveOption) {
                 for (int i = 0; i < amount; i++) {
                     AbstractMob<?> mob = mobType.createMob.apply(player.getLocation());
                     pveOption.spawnNewMob(mob);
                     SPAWNED_MOBS.add(mob);
                 }
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spawned " + amount + " Mobs", true);
+                ChatChannels.sendDebugMessage(player, Component.text("Spawned " + amount + " Mobs", NamedTextColor.GREEN));
                 return;
             }
         }
@@ -64,12 +63,11 @@ public class MobCommand extends BaseCommand {
     ) {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof PveOption) {
-                PveOption pveOption = (PveOption) option;
+            if (option instanceof PveOption pveOption) {
                 AbstractMob<?> mob = mobType.createMob.apply(player.getLocation());
                 pveOption.spawnNewMob(mob, Team.BLUE);
                 SPAWNED_MOBS.add(mob);
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + "Spawned Test Mob - " + mob.getWarlordsNPC().getUuid(), true);
+                ChatChannels.sendDebugMessage(player, Component.text("Spawned Test Mob - " + mob.getWarlordsNPC().getUuid(), NamedTextColor.GREEN));
                 return;
             }
         }
@@ -78,10 +76,9 @@ public class MobCommand extends BaseCommand {
     @Subcommand("togglespawning")
     public void toggleSpawning(@Conditions("requireGame:gamemode=PVE") Player player) {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof PveOption) {
-                PveOption pveOption = (PveOption) option;
+            if (option instanceof PveOption pveOption) {
                 pveOption.setPauseMobSpawn(!pveOption.isPauseMobSpawn());
-                ChatChannels.sendDebugMessage(player, ChatColor.GREEN + (pveOption.isPauseMobSpawn() ? "Disabled" : "Enabled") + " mob spawning", true);
+                ChatChannels.sendDebugMessage(player, Component.text((pveOption.isPauseMobSpawn() ? "Disabled" : "Enabled") + " mob spawning", NamedTextColor.GREEN));
                 return;
             }
         }
@@ -91,9 +88,9 @@ public class MobCommand extends BaseCommand {
     public void toggleArmorStandEggSac(CommandIssuer issuer) {
         EventEggSac.ARMOR_STAND = !EventEggSac.ARMOR_STAND;
         if (EventEggSac.ARMOR_STAND) {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.GREEN + "Enabled armor stand egg sac", true);
+            ChatChannels.sendDebugMessage(issuer, Component.text("Enabled armor stand egg sac", NamedTextColor.GREEN));
         } else {
-            ChatChannels.sendDebugMessage(issuer, ChatColor.RED + "Disabled armor stand egg sac", true);
+            ChatChannels.sendDebugMessage(issuer, Component.text("Disabled armor stand egg sac", NamedTextColor.RED));
         }
     }
 
@@ -103,8 +100,9 @@ public class MobCommand extends BaseCommand {
             spawnedMob.getWarlordsNPC().addSpeedModifier(null, "Test", speed, 30 * 20, "BASE");
         }
         ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set Speed: " + ChatColor.YELLOW + speed + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                true
+                Component.text("Set Speed: ", NamedTextColor.GREEN)
+                         .append(Component.text(speed, NamedTextColor.YELLOW))
+                         .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs"))
         );
     }
 
@@ -114,10 +112,9 @@ public class MobCommand extends BaseCommand {
         for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
             spawnedMob.setTarget(target);
         }
-        ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                true
-        );
+        ChatChannels.sendDebugMessage(player, Component.text("Set Target: ", NamedTextColor.GREEN)
+                                                       .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                                                       .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs")));
     }
 
     @Subcommand("targetnpc")
@@ -127,8 +124,9 @@ public class MobCommand extends BaseCommand {
             spawnedMob.setTarget(target);
         }
         ChatChannels.sendDebugMessage(player,
-                ChatColor.GREEN + "Set Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                true
+                Component.text("Set Target: ", NamedTextColor.GREEN)
+                         .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                         .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs"))
         );
     }
 
@@ -138,8 +136,9 @@ public class MobCommand extends BaseCommand {
             if (option instanceof PveOption) {
                 ((PveOption) option).getMobs().forEach(abstractMob -> abstractMob.setTarget(target));
                 ChatChannels.sendDebugMessage(player,
-                        ChatColor.GREEN + "Set All Mob Target: " + ChatColor.AQUA + target.getName() + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                        true
+                        Component.text("Set All Mob Target: ", NamedTextColor.GREEN)
+                                 .append(Component.text(target.getName(), NamedTextColor.AQUA))
+                                 .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs"))
                 );
                 return;
             }
@@ -152,40 +151,59 @@ public class MobCommand extends BaseCommand {
         //Ghoul Caller - @MainLobby | 10,-3,3
         for (Option option : game.getOptions()) {
             if (option instanceof PveOption) {
-                String message = ((PveOption) option)
-                        .getMobs()
-                        .stream()
-                        .map(abstractMob -> {
-                            EntityInsentient entity = abstractMob.getEntityInsentient();
-                            return abstractMob.getWarlordsNPC().getColoredName() +
-                                    ChatColor.GREEN + " @" + entity.getWorld().getWorld().getName() +
-                                    ChatColor.GRAY + " | " + ChatColor.GREEN + entity.locX + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + entity.locY + ChatColor.GRAY + "," + ChatColor.GREEN + entity.locZ;
-                        })
-                        .collect(Collectors.joining("\n"));
-                ChatChannels.sendDebugMessage(issuer, message, true);
+//                Component message = ((PveOption) option)
+//                        .getMobs()
+//                        .stream()
+//                        .map(abstractMob -> {
+//                            Mob mob = abstractMob.getMob();
+//                            return abstractMob.getWarlordsNPC().getColoredName() +
+//                                    Component.text(" @" + mob.getLevel().getWorld().getName() +
+//                                    ChatColor.GRAY + " | " + Component.text(mob.getX() + ChatColor.GRAY + "," + ChatColor.DARK_GREEN + mob.getY() + ChatColor.GRAY + "," + Component.text(mob.getZ();
+//                        })
+//                        .collect(Collectors.joining("\n"));
+//                ChatChannels.sendDebugMessage(issuer, message);
                 return;
             }
         }
     }
 
-    @Subcommand("ai")
-    public void ai(@Conditions("requireGame:gamemode=PVE") Player player, @Conditions("limits:min=0,max=1") Integer ai) {
+    @Subcommand("noai")
+    public void noAi(@Conditions("requireGame:gamemode=PVE") Player player, Boolean ai) {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof PveOption) {
-                ((PveOption) option).getMobs().forEach(abstractMob -> {
-                    EntityInsentient entityInsentient = abstractMob.getEntity().get();
-                    NBTTagCompound tag = entityInsentient.getNBTTag();
-                    if (tag == null) {
-                        tag = new NBTTagCompound();
-                    }
-                    entityInsentient.c(tag);
-                    tag.setByte("NoAI", ai.byteValue());
-                    entityInsentient.f(tag);
-                });
+            if (option instanceof PveOption pveOption) {
+                pveOption.getMobs()
+                         .stream()
+                         .map(abstractMob -> abstractMob.getEntity().get())
+                         .forEach(entityInsentient -> entityInsentient.setNoAi(ai));
                 ChatChannels.sendDebugMessage(player,
-                        ChatColor.GREEN + "Set All Mob NoAI to " + ChatColor.YELLOW + ai + ChatColor.GREEN + " for " + SPAWNED_MOBS.size() + " mobs",
-                        true
+                        Component.text("Set All Mob NoAI to ", NamedTextColor.GREEN)
+                                 .append(Component.text(ai, NamedTextColor.YELLOW))
+                                 .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs"))
                 );
+                return;
+            }
+        }
+    }
+
+    @Subcommand("fakeplay")
+    public void fakePlayer(@Conditions("requireGame:gamemode=PVE") Player player) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        for (Option option : game.getOptions()) {
+            if (option instanceof PveOption pveOption) {
+                pveOption.getMobs()
+                         .stream()
+                         .map(AbstractMob::getWarlordsNPC)
+                         .findFirst()
+                         .ifPresent(warlordsNPC -> {
+                             ChatChannels.sendDebugMessage(player, Component.text(warlordsNPC + " - " + warlordsNPC.getLocation(), NamedTextColor.GREEN));
+                             AbstractMob<?> mob = warlordsNPC.getMob();
+                             mob.getLivingEntity().remove();
+                             WarlordsPlayerDisguised playerDisguised = new WarlordsPlayerDisguised(player, warlordsNPC);
+                             Warlords.getPlayers().put(player.getUniqueId(), playerDisguised);
+                             game.getPlayers().put(player.getUniqueId(), warlordsNPC.getTeam());
+                             player.setGameMode(GameMode.ADVENTURE);
+                             player.teleport(warlordsNPC.getLocation());
+                         });
                 return;
             }
         }
@@ -206,9 +224,8 @@ public class MobCommand extends BaseCommand {
                 databasePlayer.getPveStats().addMobDrops(mobDrop, amount);
             });
             ChatChannels.playerSendMessage(player,
-                    ChatColor.GREEN + "Gave yourself " + mobDrop.getCostColoredName(amount),
                     ChatChannels.DEBUG,
-                    true
+                    Component.text("Gave yourself ", NamedTextColor.GREEN).append(mobDrop.getCostColoredName(amount))
             );
         }
 
