@@ -174,6 +174,9 @@ public class PlayerHotBarItemListener implements Listener {
         if (!e.getPlayer().getWorld().getName().equals("MainLobby")) {
             return;
         }
+        if (Warlords.getPlayer(e.getPlayer()) != null) {
+            return;
+        }
         if (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }

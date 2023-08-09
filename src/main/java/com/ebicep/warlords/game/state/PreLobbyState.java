@@ -206,17 +206,18 @@ public class PreLobbyState implements State, TimerDebugAble {
                         //specs that dont have an even amount of players to redistribute later
                         List<UUID> playersLeft = new ArrayList<>();
                         //distributing specs evenly
-                        playerSpecs.forEach((classes, playerList) -> {
+                        playerSpecs.forEach((specs, playerList) -> {
                             int amountOfTargetSpecsOnBlue = (int) teams.entrySet()
                                                                        .stream()
                                                                        .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && PlayerSettings.getPlayerSettings(
-                                                                               playerTeamEntry.getKey()).getSelectedSpec() == classes)
+                                                                               playerTeamEntry.getKey()).getSelectedSpec() == specs)
                                                                        .count();
                             int amountOfTargetSpecsOnRed = (int) teams.entrySet()
                                                                       .stream()
                                                                       .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && PlayerSettings.getPlayerSettings(
-                                                                              playerTeamEntry.getKey()).getSelectedSpec() == classes)
+                                                                              playerTeamEntry.getKey()).getSelectedSpec() == specs)
                                                                       .count();
+                            Collections.shuffle(playerList);
                             for (UUID uuid : playerList) {
                                 //add to red team
                                 if (amountOfTargetSpecsOnBlue > amountOfTargetSpecsOnRed) {
@@ -389,7 +390,16 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     bestTeam.forEach((uuid, team) -> {
                         PlayerSettings.getPlayerSettings(uuid).setWantedTeam(team);
-                        game.setPlayerTeam(Bukkit.getOfflinePlayer(uuid), team);
+                        game.setPlayerTeam(uuid, team);
+                        List<LobbyLocationMarker> lobbies = game.getMarkers(LobbyLocationMarker.class);
+                        LobbyLocationMarker location = lobbies.stream().filter(e -> e.matchesTeam(team)).collect(Utils.randomElement());
+                        if (location != null) {
+                            Player player = Bukkit.getPlayer(uuid);
+                            if (player != null) {
+                                player.teleport(location.getLocation());
+                                Warlords.setRejoinPoint(player.getUniqueId(), location.getLocation());
+                            }
+                        }
                     });
 
                     int bluePlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();

@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -109,6 +108,11 @@ public class CripplingStrike extends AbstractStrike {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new CripplingStrikeBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
         randomHitEffect(location, 7, 255, 0, 0);
@@ -116,45 +120,43 @@ public class CripplingStrike extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
+        nearPlayer.addDamageInstance(
                 wp,
                 name,
                 minDamageHeal,
                 maxDamageHeal,
                 critChance,
                 critMultiplier
-        );
-        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
-                .findAny();
+        ).ifPresent(finalEvent -> {
+            if (finalEvent.isDead()) {
+                return;
+            }
+            Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
+                    .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
+                    .findAny();
+            if (optionalCripplingStrike.isPresent()) {
+                CripplingStrike cripplingStrike = optionalCripplingStrike.get();
+                nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class, true);
+                cripple(wp,
+                        nearPlayer,
+                        name,
+                        new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
+                        crippleDuration * 20,
+                        convertToDivisionDecimal(cripple) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(cripplePerStrike)
+                );
+            } else {
+                nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
+                                                .append(Component.text("crippled", NamedTextColor.RED))
+                                                .append(Component.text(".", NamedTextColor.GRAY)));
+                cripple(wp, nearPlayer, name, crippleDuration * 20, convertToDivisionDecimal(cripple));
+            }
+        });
 
         if (pveMasterUpgrade) {
             tripleHit(wp, nearPlayer);
         }
 
-        if (optionalCripplingStrike.isPresent()) {
-            CripplingStrike cripplingStrike = optionalCripplingStrike.get();
-            nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class, true);
-            cripple(wp,
-                    nearPlayer,
-                    name,
-                    new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
-                    crippleDuration * 20,
-                    convertToDivisionDecimal(cripple) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(cripplePerStrike)
-            );
-        } else {
-            nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
-                                            .append(Component.text("crippled", NamedTextColor.RED))
-                                            .append(Component.text(".", NamedTextColor.GRAY)));
-            cripple(wp, nearPlayer, name, crippleDuration * 20, convertToDivisionDecimal(cripple));
-        }
-
         return true;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new CripplingStrikeBranch(abilityTree, this);
     }
 
     public int getConsecutiveStrikeCounter() {

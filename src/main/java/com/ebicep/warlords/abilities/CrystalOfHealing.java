@@ -88,7 +88,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
             armorStand.setGravity(true);
             armorStand.customName(Component.text(60, NamedTextColor.GREEN));
             armorStand.setCustomNameVisible(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.BROWN_STAINED_GLASS_PANE));
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.LIME_STAINED_GLASS));
         });
         for (WarlordsEntity warlordsEntity : PlayerFilter.playingGame(wp.getGame()).enemiesOf(wp)) {
             if (warlordsEntity.getEntity() instanceof Player p) {

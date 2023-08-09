@@ -147,6 +147,7 @@ public class GameFreezeOption implements Option, Listener {
 
     private void unfreeze() {
         game.forEachOnlinePlayerWithoutSpectators((p, team) -> unfreezePlayer(p));
+        playersWithHorsePreFreeze.clear();
     }
 
     private void freezePlayer(Player p, Component message) {
