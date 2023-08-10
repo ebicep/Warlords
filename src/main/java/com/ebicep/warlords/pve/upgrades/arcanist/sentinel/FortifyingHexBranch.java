@@ -114,7 +114,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 () -> {
                     ability.setMaxEnemiesHit(200);
                     ability.setMaxAlliesHit(200);
-                    ability.setEnergyCostAdditive(ability.getEnergyCost() - 15);
+                    ability.setEnergyCostAdditive(ability.getEnergyCostAdditive() - 15);
                 }
         );
     }

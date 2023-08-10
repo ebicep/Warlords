@@ -194,34 +194,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return 4;
     }
 
-    @Override
-    public LinkedHashMap<Currencies, Long> getUpgradeCost(int tier) {
-        LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
-        switch (tier) {
-            case 1 -> {
-                cost.put(Currencies.COIN, 100000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
-            }
-            case 2 -> {
-                cost.put(Currencies.COIN, 250000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 15000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 10000L);
-            }
-            case 3 -> {
-                cost.put(Currencies.COIN, 500000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 20000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 15000L);
-            }
-            case 4 -> {
-                cost.put(Currencies.COIN, 1000000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 25000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 20000L);
-            }
-        }
-        return cost;
-    }
-
     public float getSpeedBonus() {
         float speedBonus = getSpeedBonusValue();
         speedBonus *= Math.pow(speedBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);
@@ -676,6 +648,34 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         } else {
             return PvEUtils.getCostLore(upgradeCost, "Upgrade Cost", true);
         }
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getUpgradeCost(int tier) {
+        LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
+        switch (tier) {
+            case 1 -> {
+                cost.put(Currencies.COIN, 100000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
+            }
+            case 2 -> {
+                cost.put(Currencies.COIN, 250000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 15000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 10000L);
+            }
+            case 3 -> {
+                cost.put(Currencies.COIN, 500000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 20000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 15000L);
+            }
+            case 4 -> {
+                cost.put(Currencies.COIN, 1000000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 25000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 20000L);
+            }
+        }
+        return cost;
     }
 
     public LinkedHashMap<Spendable, Long> getTitleUpgradeCost(int tier) {

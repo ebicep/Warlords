@@ -42,6 +42,13 @@ public enum StarPieces {
                 put(Currencies.EPIC_STAR_PIECE, 3L);
                 put(Currencies.COIN, 1_000_000L);
             }}
+    ),
+    ASCENDANT(Currencies.ASCENDANT_STAR_PIECE,
+            60,
+                    new LinkedHashMap<>() {{
+        put(Currencies.LEGENDARY_STAR_PIECE, 3L);
+        put(Currencies.COIN, 2_000_000L);
+    }}
     );
 
     public static final StarPieces[] VALUES = values();
