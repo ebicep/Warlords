@@ -23,6 +23,7 @@ public class CustomMagmaCube extends MagmaCube implements CustomEntity<CustomMag
 
     public CustomMagmaCube(org.bukkit.World world) {
         this(((CraftWorld) world).getHandle());
+        giveBaseAI(1.0, 0.6, 100);
     }
 
     //jump

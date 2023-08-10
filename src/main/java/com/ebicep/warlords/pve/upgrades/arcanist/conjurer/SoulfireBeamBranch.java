@@ -95,7 +95,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                 "Eradicating Beam",
                 "Soulfire Beam - Master Upgrade",
                 """
-                        Increase the damage multiplier on the first 4 max stack targets by 800%.
+                        Increase the damage multiplier on the first 4 max stack targets by 600%.
                         """,
                 50000,
                 () -> {
