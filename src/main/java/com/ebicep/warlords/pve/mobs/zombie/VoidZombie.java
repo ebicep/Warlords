@@ -96,7 +96,7 @@ public class VoidZombie extends AbstractZombie implements EliteMob {
     private static class VoidShred extends AbstractAbility {
 
         public VoidShred() {
-            super("Void Shred", 0.5f, 100);
+            super("Void Shred", 2, 100);
         }
 
         @Override

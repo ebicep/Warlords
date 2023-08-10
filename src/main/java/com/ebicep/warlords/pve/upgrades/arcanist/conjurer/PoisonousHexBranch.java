@@ -99,7 +99,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                         """,
                 50000,
                 () -> {
-                    ability.setMaxEnemiesHit(Integer.MAX_VALUE);
+                    ability.setMaxEnemiesHit(200);
                 }
         );
     }
