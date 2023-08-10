@@ -9,6 +9,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -214,6 +215,9 @@ public class HealingTotem extends AbstractTotem implements Duration {
                                         .forEach(enemy -> {
                                             enemy.addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
                                             enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
+                                            if (enemy instanceof WarlordsNPC npc) {
+                                                npc.setDamageResistancePrefix(npc.getDamageResistancePrefix() - 5);
+                                            }
                                             EffectUtils.playParticleLinkAnimation(enemy.getLocation(), totemStand.getLocation(), 255, 255, 255, 1);
                                             enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                                                     "Totem Crippling",

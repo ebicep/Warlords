@@ -102,6 +102,9 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                                     .closestFirst(wp)
                             ) {
                                 we.setDamageResistance(we.getSpec().getDamageResistance() - 1);
+                                if (we instanceof WarlordsNPC npc) {
+                                    npc.setDamageResistancePrefix(npc.getDamageResistancePrefix() - 1);
+                                }
                                 we.addSpeedModifier(wp, "Ice Barrier Slowness", -75, 20);
                             }
                         }

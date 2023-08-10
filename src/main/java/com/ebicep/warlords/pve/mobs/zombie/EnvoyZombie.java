@@ -28,7 +28,7 @@ public class EnvoyZombie extends AbstractZombie implements EliteMob {
                 ),
                 7000,
                 0.4f,
-                20,
+                80,
                 500,
                 700
         );
