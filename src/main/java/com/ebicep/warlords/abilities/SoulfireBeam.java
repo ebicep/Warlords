@@ -71,8 +71,8 @@ public class SoulfireBeam extends AbstractBeam {
                     hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
                 }
                 if (projectile.getHit().size() <= 4 && pveMasterUpgrade) {
-                    minDamage *= 10;
-                    maxDamage *= 10;
+                    minDamage *= 7;
+                    maxDamage *= 7;
                 } else {
                     minDamage *= 2;
                     maxDamage *= 2;
