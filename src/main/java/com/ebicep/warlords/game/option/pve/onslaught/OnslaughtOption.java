@@ -314,7 +314,7 @@ public class OnslaughtOption implements PveOption {
     public int getSpawnLimit(int playerCount) {
         return switch (playerCount) {
             case 1 -> 7;
-            case 2 -> 11;
+            case 2 -> 12;
             case 3 -> 15;
             case 4 -> 20;
             case 5 -> 25;
