@@ -18,12 +18,14 @@ public class TournamentStats {
     private DatabasePlayerTournamentStats tournament1Stats = new DatabasePlayerTournamentStats();
     @Field("tournament_2_stats") // june 2023
     private DatabasePlayerTournamentStats tournament2Stats = new DatabasePlayerTournamentStats();
+    @Field("tournament_3_stats") // aug 2023
+    private DatabasePlayerTournamentStats tournament3Stats = new DatabasePlayerTournamentStats();
 
     public TournamentStats() {
     }
 
     public DatabasePlayerTournamentStats getCurrentTournamentStats() {
-        return this.tournament2Stats;
+        return this.tournament3Stats;
     }
 
     public static class DatabasePlayerTournamentStats extends DatabasePlayerGeneral {
