@@ -357,7 +357,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                 }
 
                 if (damageToDeal.get() <= 0) {
-                    FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                    EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
                                                                                                .withColor(Color.WHITE)
                                                                                                .with(FireworkEffect.Type.BALL_LARGE)
                                                                                                .build());

@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Overheal;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -101,7 +102,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                 .limit(8)
                         ) {
                             Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
-                            FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
+                            EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder()
                                                                                                        .withColor(Color.AQUA)
                                                                                                        .with(FireworkEffect.Type.BURST)
                                                                                                        .build());

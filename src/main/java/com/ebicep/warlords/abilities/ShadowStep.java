@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -70,7 +71,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
             player.setFallDistance(-fallDamageNegation);
         }
 
-        FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
+        EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder()
                 .withColor(Color.BLACK)
                 .with(FireworkEffect.Type.BALL)
                 .build());

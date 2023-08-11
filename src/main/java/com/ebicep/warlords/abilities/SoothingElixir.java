@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -167,7 +167,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                     BukkitTask particleTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
                     wp.getGame().registerGameTask(particleTask);
 
-                    FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
+                    EffectUtils.playFirework(newLoc, FireworkEffect.builder()
                                                                             .withColor(Color.WHITE)
                                                                             .with(FireworkEffect.Type.BURST)
                                                                             .build());

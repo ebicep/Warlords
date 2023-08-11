@@ -10,7 +10,6 @@ import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.*;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
@@ -2519,7 +2518,7 @@ public abstract class WarlordsEntity {
                 );
             }
 
-            FireWorkEffectPlayer.playFirework(getLocation(), FireworkEffect.builder()
+            EffectUtils.playFirework(getLocation(), FireworkEffect.builder()
                                                                            .withColor(Color.LIME)
                                                                            .with(FireworkEffect.Type.BALL)
                                                                            .build());

@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -258,7 +257,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                         option.spawnNewMob(new IronGolem(spawnLocation));
                     }
 
-                    FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
+                    EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
                                                                                                .withColor(Color.WHITE)
                                                                                                .with(FireworkEffect.Type.BALL_LARGE)
                                                                                                .build());

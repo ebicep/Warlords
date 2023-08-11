@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -82,7 +81,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                     }
 
                     counter++;
-                    FireWorkEffectPlayer.playFirework(
+                    EffectUtils.playFirework(
                             receiver.getLocation(),
                             FireworkEffect.builder()
                                           .withColor(Color.WHITE)
@@ -109,7 +108,7 @@ public class Zenith extends AbstractZombie implements BossMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         for (int i = 0; i < 3; i++) {
-            FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+            EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                            .withColor(Color.WHITE)
                                                                            .with(FireworkEffect.Type.BALL_LARGE)
                                                                            .build());

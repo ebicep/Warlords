@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -157,7 +156,7 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
+        EffectUtils.playFirework(receiver.getLocation(), FireworkEffect.builder()
                 .withColor(Color.RED)
                 .with(FireworkEffect.Type.BALL)
                 .build());

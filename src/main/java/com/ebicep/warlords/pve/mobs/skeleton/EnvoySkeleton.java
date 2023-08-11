@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.skeleton;
 
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
@@ -58,11 +57,14 @@ public class EnvoySkeleton extends AbstractSkeleton implements EliteMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.PURPLE)
-                                                                       .with(FireworkEffect.Type.BURST)
-                                                                       .withTrail()
-                                                                       .build());
+        EffectUtils.playFirework(
+                deathLocation,
+                FireworkEffect.builder()
+                   .withColor(Color.PURPLE)
+                   .with(FireworkEffect.Type.BURST)
+                   .withTrail()
+                   .build()
+        );
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
     }
 }

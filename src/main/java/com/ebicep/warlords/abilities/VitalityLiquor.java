@@ -2,8 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -110,7 +110,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                     .findAny()
                     .ifPresent(regularCooldown -> {
                         Utils.playGlobalSound(enemyTarget.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.6f);
-                        FireWorkEffectPlayer.playFirework(enemyTarget.getLocation(), FireworkEffect.builder()
+                        EffectUtils.playFirework(enemyTarget.getLocation(), FireworkEffect.builder()
                                                                                                    .withColor(Color.ORANGE)
                                                                                                    .with(FireworkEffect.Type.STAR)
                                                                                                    .build());

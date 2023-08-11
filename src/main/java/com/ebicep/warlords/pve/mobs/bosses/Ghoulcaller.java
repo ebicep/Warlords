@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -105,7 +104,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                         .forEach(enemyPlayer -> SoulShackle.shacklePlayer(attacker, enemyPlayer, 40));
         }
 
-        FireWorkEffectPlayer.playFirework(receiver.getLocation(), FireworkEffect.builder()
+        EffectUtils.playFirework(receiver.getLocation(), FireworkEffect.builder()
                                                                                 .withColor(Color.BLACK)
                                                                                 .with(FireworkEffect.Type.BURST)
                                                                                 .build());
@@ -119,7 +118,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+        EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.GRAY)
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .withTrail()
