@@ -128,8 +128,8 @@ public class FreezingBreath extends AbstractAbility implements RedAbilityIcon {
                 breathTarget.addDamageInstance(
                         wp,
                         name,
-                        minDamageHeal * (pveMasterUpgrade ? 1.5f : 1),
-                        maxDamageHeal * (pveMasterUpgrade ? 1.5f : 1),
+                        minDamageHeal,
+                        maxDamageHeal,
                         critChance,
                         critMultiplier
                 );

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -46,10 +45,6 @@ public class Illumina extends AbstractZombie implements BossMob {
     private boolean phaseFourTriggered = false;
 
     private AtomicInteger damageToDeal = new AtomicInteger(0);
-
-    private PrismGuard prismGuard = new PrismGuard() {{
-        setTickDuration(200);
-    }};
 
     public Illumina(Location spawnLocation) {
         super(spawnLocation,
@@ -183,7 +178,7 @@ public class Illumina extends AbstractZombie implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+        EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.BLUE)
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .build());
@@ -219,11 +214,13 @@ public class Illumina extends AbstractZombie implements BossMob {
                 }
 
                 if (damageToDeal.get() <= 0) {
-                    FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                                                                                               .withColor(Color.WHITE)
-                                                                                               .with(FireworkEffect.Type.BALL_LARGE)
-                                                                                               .build());
-                    prismGuard.onActivate(warlordsNPC, null);
+                    EffectUtils.playFirework(
+                            warlordsNPC.getLocation(),
+                            FireworkEffect.builder()
+                               .withColor(Color.WHITE)
+                               .with(FireworkEffect.Type.BALL_LARGE)
+                               .build()
+                    );
                     this.cancel();
                     return;
                 }

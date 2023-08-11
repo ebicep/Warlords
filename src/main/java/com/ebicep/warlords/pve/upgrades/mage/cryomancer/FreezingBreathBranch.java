@@ -94,6 +94,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 "Unleash a blizzard typhoon in front of you, dealing 50% more damage.\n\nAdditionally, gain 5% damage reduction for each enemy hit, lasts 4 seconds. (up to 30%)",
                 50000,
                 () -> {
+                    ability.multiplyMinMax(1.5f);
                     ability.setHitbox(ability.getHitbox() * 1.6f);
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
 
