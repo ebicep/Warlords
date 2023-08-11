@@ -69,7 +69,7 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
 
         Location standLocation = LocationUtils.getGroundLocation(player);
         standLocation.setYaw(0);
-        standLocation.setY(standLocation.getY() - 0.6);
+        standLocation.setY(standLocation.getY() - 0.5);
 
         playSound(player, standLocation);
 
