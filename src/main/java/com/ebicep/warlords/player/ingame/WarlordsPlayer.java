@@ -41,6 +41,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -367,11 +368,17 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             resetPlayerAddons();
             updateArmor();
 
-            if (isDead()) {
-                player.setGameMode(GameMode.SPECTATOR);
-            } else {
-                player.setGameMode(GameMode.ADVENTURE);
-            }
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    if (isDead()) {
+                        player.setGameMode(GameMode.SPECTATOR);
+                    } else {
+                        player.setGameMode(GameMode.ADVENTURE);
+                    }
+                }
+            }.runTaskLater(Warlords.getInstance(), 1);
         } else {
             this.entity.remove();
             this.entity = spawnJimmy(this.entity.getLocation(), this.entity.getEquipment());
