@@ -6,7 +6,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.pve.mobs.witherskeleton.AbstractWitherSkeleton;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -14,19 +14,20 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
-public class Physira extends AbstractZombie implements BossMob {
+public class Physira extends AbstractWitherSkeleton implements BossMob {
 
     public Physira(Location spawnLocation) {
         super(spawnLocation,
                 "Physira",
                 MobTier.RAID_BOSS,
                 new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEMON_KING),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 60, 60),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 60, 60),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 60, 60),
-                        Weapons.SILVER_PHANTASM_STAFF_2.getItem()
+                        SkullUtils.getSkullFrom(SkullID.GRADIENT_SOUL),
+                        new ItemStack(Material.NETHERITE_CHESTPLATE),
+                        new ItemStack(Material.NETHERITE_LEGGINGS),
+                        new ItemStack(Material.NETHERITE_BOOTS),
+                        Weapons.VIRIDIAN_BLADE.getItem()
                 ),
                 3000000,
                 0.15f,

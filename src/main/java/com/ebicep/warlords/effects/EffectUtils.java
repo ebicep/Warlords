@@ -10,10 +10,7 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -317,7 +314,15 @@ public class EffectUtils {
     }
 
     public static void strikeLightning(Location location, boolean isSilent) {
-        location.getWorld().spigot().strikeLightningEffect(location, isSilent);
+        //location.getWorld().spigot().strikeLightning(location, isSilent);
+        LightningStrike lightningStrike = (LightningStrike) location.getWorld().spawnEntity(location, EntityType.LIGHTNING);
+        lightningStrike.setSilent(isSilent);
+    }
+
+    public static void strikeLightning(Location location, boolean isSilent, double ticksLived) {
+        LightningStrike lightningStrike = (LightningStrike) location.getWorld().spawnEntity(location, EntityType.LIGHTNING);
+        lightningStrike.setSilent(isSilent);
+        lightningStrike.setTicksLived((int) ticksLived);
     }
 
     public static void strikeLightningInCylinder(Location location, double cylinderRadius, boolean isSilent, int ticksDelay, Game game) {
