@@ -136,7 +136,7 @@ public class HorseOption implements Option, Listener {
 
         private final WarlordsEntity warlordsEntityOwner;
         private final int cooldown = 15;
-        private final float speed = .3f;
+        private final float speed = .318f;
 
         public CustomHorse(WarlordsEntity warlordsEntityOwner) {
             this.warlordsEntityOwner = warlordsEntityOwner;
