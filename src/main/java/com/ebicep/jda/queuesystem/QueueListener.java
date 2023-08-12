@@ -138,7 +138,7 @@ public class QueueListener extends ListenerAdapter {
             }
             QueueManager.sendQueue();
         } catch (Exception e) {
-            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
         }
     }
 }

@@ -75,7 +75,7 @@ public class EditStatsCommand extends BaseCommand {
                             player.sendMessage(Component.text("Returned: " + object, NamedTextColor.YELLOW));
                         } catch (Exception e) {
                             player.sendMessage("Error: " + e.getMessage());
-                            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+                            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
                         }
                         break;
                     }
