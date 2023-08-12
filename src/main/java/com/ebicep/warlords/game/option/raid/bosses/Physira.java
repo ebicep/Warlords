@@ -1,6 +1,11 @@
 package com.ebicep.warlords.game.option.raid.bosses;
 
+import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.PhysiraCheck;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Team;
@@ -10,13 +15,18 @@ import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.AbstractWitherSkeleton;
+import com.ebicep.warlords.pve.mobs.witherskeleton.WitherWarrior;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,8 +35,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,6 +52,7 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
     List<WarlordsNPC> pylons = new ArrayList<>();
 
     private BossAbilityPhase phaseOne;
+    private BossAbilityPhase phaseTwo;
 
     public Physira(Location spawnLocation) {
         super(spawnLocation,
@@ -61,7 +76,7 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        phaseOne = new BossAbilityPhase(warlordsNPC, 95, () -> {
+        phaseOne = new BossAbilityPhase(warlordsNPC, 25, () -> {
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -140,11 +155,152 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
                 }
             };
         });
+
+        phaseTwo = new BossAbilityPhase(warlordsNPC, 95, () -> {
+
+            WarlordsEntity divineProtector = null;
+            for (WarlordsEntity we : PlayerFilter
+                    .playingGame(warlordsNPC.getGame())
+                    .aliveEnemiesOf(warlordsNPC)
+                    .limit(1)
+            ) {
+                divineProtector = we;
+                ChatUtils.sendTitleToGamePlayers(
+                        warlordsNPC.getGame(),
+                        Component.text("RUN!", NamedTextColor.RED),
+                        Component.text(we.getName() + " has been marked to give Divine Protection", NamedTextColor.GOLD),
+                        20, 60, 20
+                );
+                we.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 540, 0, false));
+                we.getCooldownManager().removeCooldown(DamageCheck.class, false);
+                we.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Divine Protection",
+                        "DIVINE PROTECTION",
+                        DamageCheck.class,
+                        DamageCheck.DAMAGE_CHECK,
+                        warlordsNPC,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                        },
+                        28 * 20,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            new CircleEffect(
+                                    we.getGame(),
+                                    we.getTeam(),
+                                    we.getLocation().clone().add(0, 0.25, 0),
+                                    8,
+                                    new CircumferenceEffect(Particle.FIREWORKS_SPARK, Particle.FIREWORKS_SPARK).particlesPerCircumference(1),
+                                    new DoubleLineEffect(Particle.SPELL)
+                            ).playEffects();
+                            if (ticksLeft % 2 == 0) {
+                                for (WarlordsEntity ally : PlayerFilter
+                                        .entitiesAround(we, 8, 100, 8)
+                                        .aliveTeammatesOfExcludingSelf(we)
+                                ) {
+                                    ally.getCooldownManager().removeCooldown(PhysiraCheck.class, false);
+                                    ally.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            "Divine Protection",
+                                            "DIVINE PROTECTION",
+                                            PhysiraCheck.class,
+                                            PhysiraCheck.PHYSIRA_CHECK,
+                                            warlordsNPC,
+                                            CooldownTypes.ABILITY,
+                                            cooldownManager -> {
+                                            },
+                                            3
+                                    ) {
+                                        @Override
+                                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                            return currentDamageValue * 0;
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                ) {
+                    @Override
+                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 0.05f;
+                    }
+                });
+            }
+
+            WarlordsEntity finalDivineProtector = divineProtector;
+            new GameRunnable(warlordsNPC.getGame()) {
+                int counter = 0;
+                @Override
+                public void run() {
+                    if (counter == 1) {
+                        warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 400, 0, false));
+                        warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 400, 0, false));
+                    }
+
+                    if (counter % 3 == 0) {
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 500, 0.2f);
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.AMBIENT_CRIMSON_FOREST_MOOD, 500, 1f);
+
+                        EffectUtils.playSphereAnimation(
+                                warlordsNPC.getLocation(),
+                                1 + (0.1f * counter),
+                                Particle.CHERRY_LEAVES,
+                                1
+                        );
+
+                        for (WarlordsEntity we : PlayerFilter
+                                .playingGame(warlordsNPC.getGame())
+                                .aliveEnemiesOf(warlordsNPC)
+                        ) {
+                            we.addDamageInstance(
+                                    warlordsNPC,
+                                    "Divine Punishment",
+                                    1000,
+                                    1000,
+                                    -1,
+                                    100,
+                                    EnumSet.of(InstanceFlags.NO_MESSAGE)
+                            );
+                            EffectUtils.playParticleLinkAnimation(
+                                    we.getLocation(),
+                                    warlordsNPC.getLocation(),
+                                    255, 150, 150,
+                                    2
+                            );
+                        }
+
+                        if (finalDivineProtector == null) {
+                            return;
+                        }
+
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(finalDivineProtector, 100, 100, 100)
+                                .aliveEnemiesOf(finalDivineProtector)
+                        ) {
+                            if (we instanceof WarlordsNPC) {
+                                ((WarlordsNPC) we).getMob().setTarget(finalDivineProtector);
+                            }
+                        }
+                    }
+
+                    if (counter % 60 == 0) {
+                        for (int i = 0; i < pveOption.playerCount(); i++) {
+                            pveOption.spawnNewMob(new WitherWarrior(warlordsNPC.getLocation()));
+                        }
+                    }
+
+                    if (counter == 400) {
+                        this.cancel();
+                    }
+
+                    counter++;
+                }
+            }.runTaskTimer(140, 0);
+        });
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         phaseOne.initialize(warlordsNPC.getHealth());
+        phaseTwo.initialize(warlordsNPC.getHealth());
     }
 
     @Override
