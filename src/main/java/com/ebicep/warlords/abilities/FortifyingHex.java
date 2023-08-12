@@ -38,7 +38,7 @@ import java.util.List;
 public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
 
     private int maxEnemiesHit = 1;
-    private int maxAlliesHit = 2;
+    private int maxAlliesHit = 1;
     private int maxFullDistance = 40;
     private int tickDuration = 120;
     private int damageReduction = 5;
