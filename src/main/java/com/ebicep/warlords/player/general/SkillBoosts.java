@@ -1171,7 +1171,8 @@ public enum SkillBoosts {
             GuardianBeam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GuardianBeam guardianBeam) {
-                    guardianBeam.setShieldPercent(guardianBeam.getShieldPercent() + 5);
+                    guardianBeam.setShieldPercentSelf(guardianBeam.getShieldPercentSelf() + 5);
+                    guardianBeam.setShieldPercentAlly(guardianBeam.getShieldPercentAlly() + 5);
                     guardianBeam.setCooldown(guardianBeam.getCooldown() * .8f);
                 }
             }
