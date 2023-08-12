@@ -12,6 +12,7 @@ import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.StringUtils;
 import net.kyori.adventure.text.Component;
@@ -70,7 +71,8 @@ public class GameStartCommand {
                 return;
             }
             for (PartyPlayer partyPlayer : party.getPartyPlayers()) {
-                if (Warlords.getPlayer(partyPlayer.getUUID()) != null) {
+                WarlordsEntity warlordsEntity = Warlords.getPlayer(partyPlayer.getUUID());
+                if (warlordsEntity != null && warlordsEntity.getGame().getGameMode() != GameMode.LOBBY) {
                     player.sendMessage(Component.text("You cannot start a game with a player who is already in a game.", NamedTextColor.RED));
                     return;
                 }
