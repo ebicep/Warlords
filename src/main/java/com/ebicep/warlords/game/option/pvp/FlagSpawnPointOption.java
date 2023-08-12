@@ -38,6 +38,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 
@@ -70,6 +71,12 @@ public class FlagSpawnPointOption implements Option {
         this.info = new FlagInfo(team, loc, this::onFlagUpdate);
         this.renderer = new FlagRenderer(info);
         this.registerCompassMarker = registerCompassMarker;
+    }
+
+    private void onFlagUpdate(FlagInfo info, FlagLocation old) {
+        scoreboard.markChanged();
+        Bukkit.getPluginManager().callEvent(new WarlordsFlagUpdatedEvent(game, info, old));
+        renderer.checkRender();
     }
 
     @Override
@@ -125,6 +132,65 @@ public class FlagSpawnPointOption implements Option {
                 }
             }
 
+            private boolean onFlagInteract(WarlordsEntity wp) {
+                Team team = wp.getTeam();
+                if (wp.isDead()) {
+                    return false;
+                }
+
+                if (wp.getFlagPickCooldown() != 0 && wp.getTeam() != info.getTeam()) {
+                    wp.sendMessage(Component.text("You cannot pick up the flag yet!", NamedTextColor.RED));
+                    return false;
+                }
+
+                if (renderer.getLastFlagState() != info.getFlag()) {
+                    // Prevent the player from interacting when the render state is outdated
+                    return false;
+                }
+
+                wp.setFlagDropCooldown(2);
+
+                if (info.getFlag() instanceof GroundFlagLocation groundFlagLocation) {
+                    if (team == info.getTeam()) {
+                        // Return flag
+                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp));
+                    } else {
+                        // Steal flag
+                        info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getDamageTimer()));
+                        if (wp.getEntity().getVehicle() != null) {
+                            wp.getEntity().getVehicle().remove();
+                        }
+                    }
+                    return true;
+                } else if (info.getFlag() instanceof SpawnFlagLocation) {
+                    if (team == info.getTeam()) {
+                        // Nothing
+                        wp.sendMessage(Component.text("You cannot steal your own team's flag!", NamedTextColor.RED));
+                    } else {
+                        // Steal flag
+                        info.setFlag(new PlayerFlagLocation(wp, 0));
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Flag Damage Resistance",
+                                "RES",
+                                FlagSpawnPointOption.class,
+                                null,
+                                wp,
+                                CooldownTypes.BUFF,
+                                cooldownManager -> {
+                                },
+                                15 * 20
+                        ) {
+                            @Override
+                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                return currentDamageValue * .9f;
+                            }
+                        });
+                    }
+                    return true;
+                }
+                return false;
+            }
+
             @EventHandler(priority = EventPriority.LOW)
             public void onPotentialFlagInteract(PlayerInteractEvent event) {
                 if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -165,85 +231,14 @@ public class FlagSpawnPointOption implements Option {
                                 entityLoc.getY() + 2,
                                 entityLoc.getZ() + 0.5
                         );
-                        aabb.clip(from, to).ifPresent(vec3 -> onFlagInteract(wp));
-                    }
-                }
-            }
-
-            private void onFlagInteract(WarlordsEntity wp) {
-                Team team = wp.getTeam();
-                if (wp.isDead()) {
-                    return;
-                }
-
-                if (wp.getFlagPickCooldown() != 0 && wp.getTeam() != info.getTeam()) {
-                    wp.sendMessage("§cYou cannot pick up the flag yet!");
-                    return;
-                }
-
-                if (renderer.getLastFlagState() != info.getFlag()) {
-                    // Prevent the player from interacting when the render state is outdated
-                    return;
-                }
-
-                wp.setFlagDropCooldown(2);
-
-                if (info.getFlag() instanceof GroundFlagLocation groundFlagLocation) {
-                    if (team == info.getTeam()) {
-                        // Return flag
-                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp));
-                    } else {
-                        // Steal flag
-                        info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getDamageTimer()));
-                        if (wp.getEntity().getVehicle() != null) {
-                            wp.getEntity().getVehicle().remove();
+                        Optional<Vec3> clip = aabb.clip(from, to);
+                        if (clip.isPresent() && onFlagInteract(wp)) {
+                            return;
                         }
-                    }
-                } else if (info.getFlag() instanceof SpawnFlagLocation) {
-                    if (team == info.getTeam()) {
-                        // Nothing
-                        wp.sendMessage("§cYou cannot steal your own team's flag!");
-                    } else {
-                        // Steal flag
-                        info.setFlag(new PlayerFlagLocation(wp, 0));
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Flag Damage Resistance",
-                                "RES",
-                                FlagSpawnPointOption.class,
-                                null,
-                                wp,
-                                CooldownTypes.BUFF,
-                                cooldownManager -> {
-                                },
-                                15 * 20
-                        ) {
-                            @Override
-                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * .9f;
-                            }
-                        });
                     }
                 }
             }
         });
-    }
-
-    private boolean flagIsInCaptureZone(PlayerFlagLocation playerFlagLocation) {
-        for (FlagCaptureMarker flag : game.getMarkers(FlagCaptureMarker.class)) {
-            if (flag.shouldCountAsCapture(playerFlagLocation)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean flagCaptureIsNotBlocked(PlayerFlagLocation playerFlagLocation) {
-        for (FlagCaptureInhibitMarker blocker : game.getMarkers(FlagCaptureInhibitMarker.class)) {
-            if (blocker.isInhibitingFlagCapture(playerFlagLocation)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -274,6 +269,24 @@ public class FlagSpawnPointOption implements Option {
         }.runTaskTimer(0, 1);
     }
 
+    private boolean flagIsInCaptureZone(PlayerFlagLocation playerFlagLocation) {
+        for (FlagCaptureMarker flag : game.getMarkers(FlagCaptureMarker.class)) {
+            if (flag.shouldCountAsCapture(playerFlagLocation)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean flagCaptureIsNotBlocked(PlayerFlagLocation playerFlagLocation) {
+        for (FlagCaptureInhibitMarker blocker : game.getMarkers(FlagCaptureInhibitMarker.class)) {
+            if (blocker.isInhibitingFlagCapture(playerFlagLocation)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onGameCleanup(@Nonnull Game game) {
         this.renderer.reset();
@@ -292,12 +305,6 @@ public class FlagSpawnPointOption implements Option {
     @Nonnull
     public FlagRenderer getRenderer() {
         return renderer;
-    }
-
-    private void onFlagUpdate(FlagInfo info, FlagLocation old) {
-        scoreboard.markChanged();
-        Bukkit.getPluginManager().callEvent(new WarlordsFlagUpdatedEvent(game, info, old));
-        renderer.checkRender();
     }
 
 }
