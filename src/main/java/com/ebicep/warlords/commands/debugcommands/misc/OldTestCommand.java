@@ -1,6 +1,5 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -8,14 +7,12 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import net.kyori.adventure.text.Component;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -170,15 +167,6 @@ public class OldTestCommand implements CommandExecutor {
 //                    0
 //            );
 
-            player.playerListName(Component.text("TEST"));
-            new BukkitRunnable() {
-
-
-                @Override
-                public void run() {
-                    player.playerListName(null);
-                }
-            }.runTaskLater(Warlords.getInstance(), 60);
 
 //            ArmorStand stand = Utils.spawnArmorStand(player.getLocation(), armorStand -> {
 //                armorStand.getEquipment().setHelmet(new ItemStack(Material.SPRUCE_FENCE_GATE));
