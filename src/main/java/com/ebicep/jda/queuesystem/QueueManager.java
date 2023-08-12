@@ -44,30 +44,6 @@ public class QueueManager {
         }
     }
 
-    public static Component getQueue() {
-        TextComponent.Builder queueList = Component.text("Queue -", NamedTextColor.GREEN)
-                                                   .append(Component.newline())
-                                                   .toBuilder();
-        for (int i = 0; i < queue.size(); i++) {
-            UUID uuid = queue.get(i);
-            queueList.append(Component.text("    " + i + 1 + ". ", NamedTextColor.YELLOW))
-                     .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(uuid).getName()), NamedTextColor.AQUA))
-                     .append(Component.newline());
-        }
-        if (!futureQueue.isEmpty()) {
-            queueList.append(Component.newline());
-            queueList.append(Component.text("Future Queue -", NamedTextColor.GREEN)
-                                      .append(Component.newline()));
-            futureQueue.forEach(futureQueuePlayer -> {
-                queueList.append(Component.text("    - ", NamedTextColor.YELLOW))
-                         .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(futureQueuePlayer.uuid()).getName()), NamedTextColor.AQUA))
-                         .append(Component.text(" (" + futureQueuePlayer.timeString() + ")", NamedTextColor.GRAY))
-                         .append(Component.newline());
-            });
-        }
-        return queueList.asComponent();
-    }
-
     public static MessageEmbed getQueueDiscord() {
         StringBuilder queue = new StringBuilder();
         for (int i = 0; i < QueueManager.queue.size(); i++) {
@@ -93,6 +69,33 @@ public class QueueManager {
                 .addField("Future Queue", futureQueue.toString(), true)
                 .setFooter("Usage: /queue")
                 .build();
+    }
+
+    public static Component getQueue() {
+        TextComponent.Builder queueList = Component.text("Queue -", NamedTextColor.GREEN)
+                                                   .append(Component.newline())
+                                                   .toBuilder();
+        for (int i = 0; i < queue.size(); i++) {
+            UUID uuid = queue.get(i);
+            queueList.append(Component.text("    " + i + 1 + ". ", NamedTextColor.YELLOW))
+                     .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(uuid).getName()), NamedTextColor.AQUA))
+                     .append(Component.newline());
+        }
+        if (!futureQueue.isEmpty()) {
+            queueList.append(Component.newline());
+            queueList.append(Component.text("Future Queue -", NamedTextColor.GREEN)
+                                      .append(Component.newline()));
+            for (int i = 0; i < futureQueue.size(); i++) {
+                FutureQueuePlayer futureQueuePlayer = futureQueue.get(i);
+                queueList.append(Component.text("    - ", NamedTextColor.YELLOW))
+                         .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(futureQueuePlayer.uuid()).getName()), NamedTextColor.AQUA))
+                         .append(Component.text(" (" + futureQueuePlayer.timeString() + ")", NamedTextColor.GRAY));
+                if (i != futureQueue.size() - 1) {
+                    queueList.append(Component.newline());
+                }
+            }
+        }
+        return queueList.asComponent();
     }
 
     public static void sendQueue() {
@@ -121,6 +124,16 @@ public class QueueManager {
         removePlayerFromFutureQueue(uuid);
     }
 
+    public static void removePlayerFromFutureQueue(UUID uuid) {
+        futureQueue.removeIf(futureQueuePlayer -> {
+            if (futureQueuePlayer.uuid().equals(uuid)) {
+                futureQueuePlayer.task().cancel();
+                return true;
+            }
+            return false;
+        });
+    }
+
     public static void addPlayerToFutureQueue(String name, String timeString, BukkitTask task) {
         addPlayerToFutureQueue(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(name)).getUniqueId(), timeString, task);
     }
@@ -133,16 +146,6 @@ public class QueueManager {
 
     public static void removePlayerFromFutureQueue(String name) {
         removePlayerFromFutureQueue(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(name)).getUniqueId());
-    }
-
-    public static void removePlayerFromFutureQueue(UUID uuid) {
-        futureQueue.removeIf(futureQueuePlayer -> {
-            if (futureQueuePlayer.uuid().equals(uuid)) {
-                futureQueuePlayer.task().cancel();
-                return true;
-            }
-            return false;
-        });
     }
 
     public record FutureQueuePlayer(UUID uuid, String timeString, BukkitTask task) {

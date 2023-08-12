@@ -78,7 +78,7 @@ public class WaveDefenseRewards extends PveRewards<WaveDefenseOption> {
                  .warlordsPlayers()
                  .forEach(warlordsPlayer -> {
                      UUID uuid = warlordsPlayer.getUuid();
-                     getPlayerRewards(uuid).setIllusionShardGain(wavesCleared / 5);
+                     getPlayerRewards(uuid).setIllusionShardGain(wavesCleared / 5 * (pveOption.getDifficulty() == DifficultyIndex.EXTREME ? 2 : 1));
                  });
     }
 

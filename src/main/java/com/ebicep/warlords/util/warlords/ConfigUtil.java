@@ -25,7 +25,7 @@ public class ConfigUtil {
             ApplicationConfiguration.key = config.getString("database_key");
             BotManager.botToken = config.getString("botToken");
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
     }
 
@@ -36,7 +36,7 @@ public class ConfigUtil {
                 Weapons.getWeapon(key).isUnlocked = config.getBoolean(key);
             }
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
     }
 
@@ -48,7 +48,7 @@ public class ConfigUtil {
             }
             config.save(new File(instance.getDataFolder(), "weapons.yml"));
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
     }
 
@@ -76,7 +76,7 @@ public class ConfigUtil {
                 waitingChannel
              */
         } catch (Exception e) {
-            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
         }
     }
 }

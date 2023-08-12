@@ -313,7 +313,7 @@ public enum ChatChannels {
                 audience.sendMessage(component);
             }
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
     }
 

@@ -217,32 +217,32 @@ public class Warlords extends JavaPlugin {
                 BotManager.task.cancel();
             }
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         if (DatabaseManager.enabled) {
             //updates all queues, locks main thread to ensure update is complete before disabling
             try {
                 DatabaseManager.updateQueue();
             } catch (Exception e) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             }
             try {
                 if (MasterworksFairManager.currentFair != null) {
                     DatabaseManager.masterworksFairService.update(MasterworksFairManager.currentFair);
                 }
             } catch (Exception e) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             }
             try {
                 GuildManager.updateGuilds();
             } catch (Exception e) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             }
         }
         try {
             taskChainFactory.shutdown(10, TimeUnit.SECONDS);
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
             // Pre-caution
@@ -253,7 +253,7 @@ public class Warlords extends JavaPlugin {
                 player.clearTitle();
             }
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
             CraftServer server = (CraftServer) Bukkit.getServer();
@@ -261,12 +261,12 @@ public class Warlords extends JavaPlugin {
             server.getWorldMetadata().invalidateAll(this);
             server.getPlayerMetadata().invalidateAll(this);
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
             gameManager.close();
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
             if (holographicDisplaysEnabled) {
@@ -274,12 +274,12 @@ public class Warlords extends JavaPlugin {
                 HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
             }
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
             NPCManager.destroyNPCs();
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
             BotManager.deleteStatusMessage();
@@ -287,7 +287,7 @@ public class Warlords extends JavaPlugin {
                 BotManager.jda.shutdownNow();
             }
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
 
         ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is disabled");
@@ -392,7 +392,7 @@ public class Warlords extends JavaPlugin {
             try {
                 BotManager.connect();
             } catch (LoginException e) {
-                ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
+                ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
             }
         }
 

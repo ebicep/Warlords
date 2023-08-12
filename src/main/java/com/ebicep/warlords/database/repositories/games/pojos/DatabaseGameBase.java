@@ -165,7 +165,7 @@ public abstract class DatabaseGameBase {
             );
         } catch (Exception e) {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Error adding game to database");
-            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e);
 
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGameBase> createDatabaseGame = game.getGameMode().createDatabaseGame;
             if (createDatabaseGame == null) {
@@ -233,7 +233,7 @@ public abstract class DatabaseGameBase {
             Warlords.newChain()
                     .async(() -> DatabaseManager.gameService.createBackup(databaseGame))
                     .execute();
-            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage(e);
         }
     }
 

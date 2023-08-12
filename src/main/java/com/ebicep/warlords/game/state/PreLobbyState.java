@@ -29,6 +29,7 @@ import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -552,19 +553,20 @@ public class PreLobbyState implements State, TimerDebugAble {
         player.getActivePotionEffects().clear();
         player.getInventory().clear();
 
-        if (team == null) {
-            player.setAllowFlight(true);
-            player.setGameMode(GameMode.SPECTATOR);
-        } else {
-            player.setAllowFlight(false);
-            player.setGameMode(GameMode.ADVENTURE);
-
+        player.setAllowFlight(team == null);
+        if (team != null) {
             for (PreGameItemOption item : items) {
                 if (item != null) {
                     player.getInventory().setItem(item.getSlot(), item.getItem(game, player));
                 }
             }
         }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.setGameMode(team == null ? GameMode.SPECTATOR : GameMode.ADVENTURE);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
 
         LobbyLocationMarker location = LobbyLocationMarker.getRandomLobbyLocation(game, team);
         if (location != null) {

@@ -97,7 +97,7 @@ public class DatabaseManager {
             weeklyBlessingsService = context.getBean("itemsWeeklyBlessingsService", WeeklyBlessingsService.class);
             illusionVendorService = context.getBean("illusionVendorService", IllusionVendorService.class);
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             return;
         }
         NPCManager.createDatabaseRequiredNPCs();

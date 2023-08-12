@@ -431,7 +431,7 @@ public class CooldownManager {
 
             abstractCooldowns.clear();
         } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
     }
 

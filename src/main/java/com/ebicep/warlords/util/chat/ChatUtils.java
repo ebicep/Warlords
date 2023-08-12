@@ -192,6 +192,10 @@ public class ChatUtils {
             Warlords.getInstance().getComponentLogger().error(Component.text("[" + name + "] " + message, NamedTextColor.RED));
         }
 
+        public void sendErrorMessage(Throwable throwable) {
+            Warlords.getInstance().getComponentLogger().error(Component.text("[" + name + "] ", NamedTextColor.RED), throwable);
+        }
+
         public boolean isEnabled() {
             return enabled;
         }

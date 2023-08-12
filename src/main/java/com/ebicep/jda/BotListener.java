@@ -88,7 +88,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                 });
             }
         } catch (Exception e) {
-            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
+            ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
         }
     }
 
@@ -177,13 +177,13 @@ public class BotListener extends ListenerAdapter implements Listener {
                                                   .append(Component.text(spec, NamedTextColor.YELLOW)));
                         }
                     } else if (fieldName.contains("Red Team")) {
-                        blueTeam.add(Component.text("Blue Team", NamedTextColor.DARK_RED, TextDecoration.BOLD).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
+                        redTeam.add(Component.text("Blue Team", NamedTextColor.DARK_RED, TextDecoration.BOLD).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
                         for (String player : players) {
                             String name = player.substring(0, player.indexOf('-'));
                             String spec = player.substring(player.indexOf('-') + 1);
-                            blueTeam.add(Component.text(name, NamedTextColor.RED)
-                                                  .append(Component.text(" - ", NamedTextColor.DARK_GRAY))
-                                                  .append(Component.text(spec, NamedTextColor.YELLOW)));
+                            redTeam.add(Component.text(name, NamedTextColor.RED)
+                                                 .append(Component.text(" - ", NamedTextColor.DARK_GRAY))
+                                                 .append(Component.text(spec, NamedTextColor.YELLOW)));
                         }
                     }
                 }
@@ -310,7 +310,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                             return null;
                         }).get();
                     } catch (InterruptedException | ExecutionException e) {
-                        ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e.getMessage());
+                        ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
                     }
                 }
             }
