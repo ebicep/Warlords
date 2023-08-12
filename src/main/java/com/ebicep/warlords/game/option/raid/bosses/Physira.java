@@ -49,10 +49,11 @@ import static java.lang.Math.cos;
 public class Physira extends AbstractWitherSkeleton implements BossMob {
 
     private Listener listener;
-    List<WarlordsNPC> pylons = new ArrayList<>();
+    List<WarlordsNPC> pylons = new ArrayList<>();;
 
     private BossAbilityPhase phaseOne;
     private BossAbilityPhase phaseTwo;
+    private BossAbilityPhase phaseThree;
 
     public Physira(Location spawnLocation) {
         super(spawnLocation,
@@ -66,7 +67,7 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
                         Weapons.VIRIDIAN_BLADE.getItem()
                 ),
                 10000,
-                0f,
+                0,
                 0,
                 3000,
                 4000
@@ -76,7 +77,7 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        phaseOne = new BossAbilityPhase(warlordsNPC, 25, () -> {
+        phaseOne = new BossAbilityPhase(warlordsNPC, 75, () -> {
             ChatUtils.sendTitleToGamePlayers(
                     warlordsNPC.getGame(),
                     Component.empty(),
@@ -131,6 +132,28 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
                                         .withTrail()
                                         .build()
                         );
+
+                        for (WarlordsEntity we : PlayerFilter
+                                .playingGame(warlordsNPC.getGame())
+                                .aliveEnemiesOf(warlordsNPC)
+                        ) {
+                            we.addDamageInstance(
+                                    warlordsNPC,
+                                    "Valerian Death",
+                                    700 * 100,
+                                    1300 * 100,
+                                    100,
+                                    300,
+                                    EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                            );
+                            EffectUtils.strikeLightning(we.getLocation(), false);
+                            EffectUtils.playParticleLinkAnimation(
+                                    we.getLocation(),
+                                    warlordsNPC.getLocation(),
+                                    Particle.CHERRY_LEAVES
+                            );
+                        }
+
                         warlordsNPC.getGame().registerEvents(listener);
                         this.cancel();
                     }
@@ -156,7 +179,7 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
             };
         });
 
-        phaseTwo = new BossAbilityPhase(warlordsNPC, 95, () -> {
+        phaseTwo = new BossAbilityPhase(warlordsNPC, 50, () -> {
 
             WarlordsEntity divineProtector = null;
             for (WarlordsEntity we : PlayerFilter
@@ -281,7 +304,7 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
                         }
                     }
 
-                    if (counter % 60 == 0) {
+                    if (counter % 100 == 0) {
                         for (int i = 0; i < pveOption.playerCount(); i++) {
                             pveOption.spawnNewMob(new WitherWarrior(warlordsNPC.getLocation()));
                         }
@@ -299,8 +322,10 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        phaseOne.initialize(warlordsNPC.getHealth());
-        phaseTwo.initialize(warlordsNPC.getHealth());
+        float health = warlordsNPC.getHealth();
+        phaseOne.initialize(health);
+        phaseTwo.initialize(health);
+        //phaseThree.initialize(health);
     }
 
     @Override
