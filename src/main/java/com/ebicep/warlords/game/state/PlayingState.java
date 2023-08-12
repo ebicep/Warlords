@@ -385,7 +385,7 @@ public class PlayingState implements State, TimerDebugAble {
                 playerTeam.addEntry(name);
             }
             playerTeam.setCanSeeFriendlyInvisibles(true);
-            if (warlordsPlayer != null) {
+            if (warlordsPlayer != null && warlordsPlayer.getTeam() == otherPlayer.getTeam() && !playerTeam.hasEntity(warlordsPlayer.getEntity())) {
                 playerTeam.addEntity(warlordsPlayer.getEntity());
             }
             playerTeam.color(team.teamColor());
