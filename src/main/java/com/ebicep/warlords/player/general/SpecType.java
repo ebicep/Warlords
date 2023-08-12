@@ -17,7 +17,7 @@ public enum SpecType {
     public final String name;
     public final ItemStack itemStack;
     public final String symbol;
-    public final NamedTextColor textColor;
+    private final NamedTextColor textColor;
 
     SpecType(String name, ItemStack itemStack, String symbol, NamedTextColor textColor) {
         this.name = name;
@@ -30,4 +30,7 @@ public enum SpecType {
         return Component.text(symbol, textColor);
     }
 
+    public NamedTextColor getTextColor() {
+        return textColor;
+    }
 }

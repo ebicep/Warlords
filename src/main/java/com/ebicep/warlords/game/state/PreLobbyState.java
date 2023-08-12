@@ -435,7 +435,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                                 Specializations specializations = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
                                 ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(player.getName(), playerTeamEntry.getValue().teamColor())
                                                                                              .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                                                             .append(Component.text(specializations.name, specializations.specType.textColor))
+                                                                                             .append(Component.text(specializations.name, specializations.specType.getTextColor()))
                                                                                              .append(Component.text(" - ", NamedTextColor.GRAY))
                                                                                              .append(Component.text(playersSR.getOrDefault(uuid, 500),
                                                                                                      NamedTextColor.GOLD

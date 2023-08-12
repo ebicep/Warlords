@@ -75,7 +75,7 @@ public class RegularGamesMenu {
         //row of spec icons
         for (int i = 0; i < SpecType.VALUES.length; i++) {
             SpecType specType = SpecType.VALUES[i];
-            menu.setItem(i + 3, 0, new ItemBuilder(specType.itemStack).name(Component.text(specType.name, specType.textColor)).get(), (m, e) -> {
+            menu.setItem(i + 3, 0, new ItemBuilder(specType.itemStack).name(Component.text(specType.name, specType.getTextColor())).get(), (m, e) -> {
             });
         }
 

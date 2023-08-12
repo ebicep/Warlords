@@ -17,6 +17,6 @@ public class CustomEvoker extends Evoker implements CustomEntity<CustomEvoker> {
 
     @Override
     public CustomEvoker get() {
-        return null;
+        return this;
     }
 }

@@ -20,6 +20,6 @@ public class CustomWarden extends Warden implements CustomEntity<CustomWarden> {
 
     @Override
     public CustomWarden get() {
-        return null;
+        return this;
     }
 }

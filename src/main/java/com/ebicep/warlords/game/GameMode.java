@@ -606,7 +606,7 @@ public enum GameMode {
         int x = 3;
         for (SpecType value : SpecType.VALUES) {
             ItemBuilder itemBuilder = new ItemBuilder(value.itemStack)
-                    .name(Component.text(value.name, value.textColor));
+                    .name(Component.text(value.name, value.getTextColor()));
             List<Component> lore = new ArrayList<>();
             lore.add(Component.text("Total: ", NamedTextColor.GREEN)
                               .append(Component.text((int) game.getPlayers().keySet().stream()

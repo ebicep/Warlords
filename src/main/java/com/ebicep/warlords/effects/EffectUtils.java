@@ -319,10 +319,10 @@ public class EffectUtils {
         lightningStrike.setSilent(isSilent);
     }
 
-    public static void strikeLightning(Location location, boolean isSilent, double ticksLived) {
+    public static void strikeLightningTicks(Location location, boolean isSilent, int ticksLived) {
         LightningStrike lightningStrike = (LightningStrike) location.getWorld().spawnEntity(location, EntityType.LIGHTNING);
         lightningStrike.setSilent(isSilent);
-        lightningStrike.setTicksLived((int) ticksLived);
+        lightningStrike.setTicksLived(ticksLived);
     }
 
     public static void strikeLightningInCylinder(Location location, double cylinderRadius, boolean isSilent, int ticksDelay, Game game) {

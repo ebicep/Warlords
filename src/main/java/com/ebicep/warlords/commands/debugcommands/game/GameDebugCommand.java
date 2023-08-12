@@ -32,7 +32,7 @@ public class GameDebugCommand extends BaseCommand {
         GameStartCommand.startGame(player, false, queueEntryBuilder -> {
             queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
             queueEntryBuilder.setGameMode(GameMode.WAVE_DEFENSE);
-            queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT);
+            queueEntryBuilder.setMap(GameMap.ILLUSION_CROSSFIRE);
             queueEntryBuilder.setOnResult((queueResult, game) -> {
                 game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
                 for (Option option : game.getOptions()) {

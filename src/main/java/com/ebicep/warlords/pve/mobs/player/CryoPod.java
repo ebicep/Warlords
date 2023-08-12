@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 
 public class CryoPod extends AbstractZombie {
+
     public CryoPod(Location spawnLocation, String playerName) {
         super(
                 spawnLocation,

@@ -515,7 +515,7 @@ public class EndState implements State, TimerDebugAble {
                              .append(Component.text(NumberFormat.addCommaAndRound(experienceEarnedSpec), NamedTextColor.DARK_GREEN))
                              .append(Component.text(" " + wp.getSpec().getClassName() + " Experience", NamedTextColor.GOLD))
                              .append(Component.text(" (", NamedTextColor.GRAY))
-                             .append(Component.text(wp.getSpecClass().name, wp.getSpecClass().specType.textColor))
+                             .append(Component.text(wp.getSpecClass().name, wp.getSpecClass().specType.getTextColor()))
                              .append(Component.text(")", NamedTextColor.GRAY))
                              .hoverEvent(HoverEvent.showText(specExpSummary.build()))
             );
