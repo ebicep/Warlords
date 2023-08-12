@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WonderTrap extends AbstractAbility {
@@ -35,7 +36,9 @@ public class WonderTrap extends AbstractAbility {
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
-        return null;
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        return info;
     }
 
     @Override

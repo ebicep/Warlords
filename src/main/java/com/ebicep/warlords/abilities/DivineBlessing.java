@@ -63,7 +63,9 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
-        return null;
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        return info;
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> implements BlueAbilityIcon {
@@ -178,7 +179,9 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
-        return null;
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        return info;
     }
 
     @Override

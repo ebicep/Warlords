@@ -49,7 +49,7 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 + damageIncrease / 100f);
+                return currentDamageValue * convertToMultiplicationDecimal(damageIncrease);
             }
         };
     }

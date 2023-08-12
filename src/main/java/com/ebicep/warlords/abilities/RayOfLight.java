@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RayOfLight extends AbstractBeam {
@@ -44,7 +45,9 @@ public class RayOfLight extends AbstractBeam {
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
-        return null;
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        return info;
     }
 
     @Override
