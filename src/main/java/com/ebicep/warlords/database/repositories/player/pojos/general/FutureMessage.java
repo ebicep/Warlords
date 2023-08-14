@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.general;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -24,7 +25,13 @@ public class FutureMessage {
 
     public void sendToPlayer(Player player) {
         if (centered) {
-            messages.forEach(message -> ChatUtils.sendCenteredMessage(player, MiniMessage.miniMessage().deserialize(message)));
+            messages.forEach(message -> {
+                if (message.contains("§")) {
+                    ChatUtils.sendCenteredMessage(player, LegacyComponentSerializer.legacySection().deserialize(message));
+                } else {
+                    ChatUtils.sendCenteredMessage(player, MiniMessage.miniMessage().deserialize(message));
+                }
+            });
         } else {
             messages.forEach(player::sendMessage);
         }

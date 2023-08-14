@@ -1,6 +1,5 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -8,14 +7,12 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import net.kyori.adventure.text.Component;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -170,15 +167,6 @@ public class OldTestCommand implements CommandExecutor {
 //                    0
 //            );
 
-            player.playerListName(Component.text("TEST"));
-            new BukkitRunnable() {
-
-
-                @Override
-                public void run() {
-                    player.playerListName(null);
-                }
-            }.runTaskLater(Warlords.getInstance(), 60);
 
 //            ArmorStand stand = Utils.spawnArmorStand(player.getLocation(), armorStand -> {
 //                armorStand.getEquipment().setHelmet(new ItemStack(Material.SPRUCE_FENCE_GATE));
@@ -206,7 +194,36 @@ public class OldTestCommand implements CommandExecutor {
 //                player.sendMessage(NumberFormat.addCommaAndRound(i));
 //            }
 
+
+//            Bukkit.getOnlinePlayers()
+//                  .stream()
+//                  .filter(player1 -> player1 != player)
+//                  .forEach(otherPlayer -> {
+//                      Component displayName = Component.text("test", NamedTextColor.RED);
+//                      PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.PLAYER_INFO);
+//                      packet.getPlayerInfoActions().write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME));
+//                      packet.getPlayerInfoDataLists().write(
+//                              0,
+//                              Collections.singletonList(
+//                                      new PlayerInfoData(
+//                                              new WrappedGameProfile(otherPlayer.getUniqueId(), otherPlayer.getName()),
+//                                              0,
+//                                              EnumWrappers.NativeGameMode.fromBukkit(player.getGameMode()),
+//                                              AdventureComponentConverter.fromComponent(displayName)
+//                                      ))
+//                      );
+//                      ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+////                      otherPlayer.getPlayerProfile().setName("tst");
+////                      GameProfile gameProfile = com.destroystokyo.paper.profile.CraftPlayerProfile.asAuthlibCopy(otherPlayer.getPlayerProfile());
+////                      player.hidePlayer(Warlords.getInstance(), otherPlayer);
+////                      ClientboundGameProfilePacket clientboundGameProfilePacket = new ClientboundGameProfilePacket(gameProfile);
+////                      ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+////                      ClientboundRemoveMobEffectPacket packet = new ClientboundRemoveMobEffectPacket(otherPlayer.getEntityId(), MobEffects.INVISIBILITY);
+////                      serverPlayer.connection.send(packet);
+//                  });
         }
+
+
 
 //
 //        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {

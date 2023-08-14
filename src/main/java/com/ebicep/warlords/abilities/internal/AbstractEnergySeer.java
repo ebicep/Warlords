@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +56,9 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
-        return null;
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        return info;
     }
 
     @Override

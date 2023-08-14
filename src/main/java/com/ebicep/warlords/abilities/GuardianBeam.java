@@ -23,13 +23,15 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class GuardianBeam extends AbstractBeam implements Duration {
 
     private float runeTimerIncrease = 1.5f;
-    private int shieldPercent = 25;
+    private int shieldPercentSelf = 20;
+    private int shieldPercentAlly = 30;
     private int tickDuration = 120;
 
     public GuardianBeam() {
@@ -43,18 +45,21 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                                .append(Component.text(" damage damage and have their cooldowns increased by "))
                                .append(Component.text(format(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. If an ally has max stacks of Fortifying Hex, remove all stacks and grant them a shield with "))
-                               .append(Component.text(shieldPercent + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(shieldPercentAlly + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" of the ally’s maximum health that lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. If Guardian Beam hits a target and you have max stacks of Fortifying Hex, you also receive the shield." +
-                                       "\n\nHas a maximum range of "))
+                               .append(Component.text(" seconds. If Guardian Beam hits a target and you have max stacks of Fortifying Hex, you also receive a shield but for "))
+                               .append(Component.text(shieldPercentSelf + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(".\n\nHas a maximum range of "))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
-        return null;
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        return info;
     }
 
     @Override
@@ -70,15 +75,15 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         if (hit.isEnemy(wp)) {
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         } else {
-            giveShield(hit, hasSanctuary);
+            giveShield(hit, hasSanctuary, shieldPercentAlly);
         }
         if (projectile.getHit().isEmpty()) {
-            giveShield(wp, hasSanctuary);
+            giveShield(wp, hasSanctuary, shieldPercentSelf);
         }
         projectile.getHit().add(hit);
     }
 
-    private void giveShield(WarlordsEntity wp, boolean hasSanctuary) {
+    private void giveShield(WarlordsEntity wp, boolean hasSanctuary, int percent) {
         int selfHexStacks = (int) new CooldownFilter<>(wp, RegularCooldown.class)
                 .filterCooldownClass(FortifyingHex.class)
                 .stream()
@@ -92,7 +97,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                     name,
                     "SHIELD",
                     Shield.class,
-                    new Shield(name, wp.getMaxHealth() * (shieldPercent / 100f)),
+                    new Shield(name, wp.getMaxHealth() * convertToPercent(percent)),
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -155,12 +160,20 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         this.tickDuration = tickDuration;
     }
 
-    public int getShieldPercent() {
-        return shieldPercent;
+    public int getShieldPercentAlly() {
+        return shieldPercentAlly;
     }
 
-    public void setShieldPercent(int shieldPercent) {
-        this.shieldPercent = shieldPercent;
+    public void setShieldPercentAlly(int shieldPercentAlly) {
+        this.shieldPercentAlly = shieldPercentAlly;
+    }
+
+    public int getShieldPercentSelf() {
+        return shieldPercentSelf;
+    }
+
+    public void setShieldPercentSelf(int shieldPercentSelf) {
+        this.shieldPercentSelf = shieldPercentSelf;
     }
 
     public float getRuneTimerIncrease() {

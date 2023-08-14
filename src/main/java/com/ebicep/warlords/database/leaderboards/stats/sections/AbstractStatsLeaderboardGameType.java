@@ -70,9 +70,21 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
         statsLeaderboards.add(new StatsLeaderboard("Plays", LEAD_1, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPlays(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPlays())));
         statsLeaderboards.add(new StatsLeaderboard("Kills", LEAD_3, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKills(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKills())));
         statsLeaderboards.add(new StatsLeaderboard("Assists", CIRCULAR_1_OUTER_3, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAssists(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAssists())));
-        statsLeaderboards.add(new StatsLeaderboard("Deaths", CIRCULAR_1_OUTER_4, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDeaths(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDeaths())));
-        statsLeaderboards.add(new StatsLeaderboard("Damage", CIRCULAR_1_OUTER_6, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDamage(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDamage())));
-        statsLeaderboards.add(new StatsLeaderboard("Healing", CIRCULAR_1_OUTER_5, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHealing(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHealing())));
+        statsLeaderboards.add(new StatsLeaderboard("Deaths",
+                CIRCULAR_1_OUTER_4,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDeaths(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDeaths())
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Damage",
+                CIRCULAR_1_OUTER_6,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDamage(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDamage())
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Healing",
+                CIRCULAR_1_OUTER_5,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHealing(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getHealing())
+        ));
         statsLeaderboards.add(new StatsLeaderboard("Absorbed",
                 CIRCULAR_1_OUTER_1,
                 databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAbsorbed(),
@@ -80,31 +92,31 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
         ));
 
 
-        statsLeaderboards.add(new StatsLeaderboard("DHP",
-                CIRCULAR_2_OUTER_3,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHP(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHP())
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("DHP Per Game",
-                LEAD_4,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHPPerGame(),
-                databasePlayer -> NumberFormat.addCommaAndRound(Math.round((double) (statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHPPerGame()) * 10) / 10d)
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("Kills Per Game",
-                CIRCULAR_2_OUTER_2,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsPerGame(),
-                databasePlayer -> String.valueOf(Math.round(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsPerGame() * 10) / 10d)
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("Deaths Per Game",
-                CIRCULAR_2_OUTER_1,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDeathsPerGame(),
-                databasePlayer -> String.valueOf(Math.round(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDeathsPerGame() * 10) / 10d)
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("Kills/Assists Per Game",
-                CIRCULAR_2_OUTER_4,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsAssistsPerGame(),
-                databasePlayer -> String.valueOf(Math.round(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsAssistsPerGame() * 10) / 10d)
-        ));
+//        statsLeaderboards.add(new StatsLeaderboard("DHP",
+//                CIRCULAR_2_OUTER_3,
+//                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHP(),
+//                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHP())
+//        ));
+//        statsLeaderboards.add(new StatsLeaderboard("DHP Per Game",
+//                LEAD_4,
+//                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHPPerGame(),
+//                databasePlayer -> NumberFormat.addCommaAndRound(Math.round((double) (statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHPPerGame()) * 10) / 10d)
+//        ));
+//        statsLeaderboards.add(new StatsLeaderboard("Kills Per Game",
+//                CIRCULAR_2_OUTER_2,
+//                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsPerGame(),
+//                databasePlayer -> String.valueOf(Math.round(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsPerGame() * 10) / 10d)
+//        ));
+//        statsLeaderboards.add(new StatsLeaderboard("Deaths Per Game",
+//                CIRCULAR_2_OUTER_1,
+//                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDeathsPerGame(),
+//                databasePlayer -> String.valueOf(Math.round(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDeathsPerGame() * 10) / 10d)
+//        ));
+//        statsLeaderboards.add(new StatsLeaderboard("Kills/Assists Per Game",
+//                CIRCULAR_2_OUTER_4,
+//                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsAssistsPerGame(),
+//                databasePlayer -> String.valueOf(Math.round(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsAssistsPerGame() * 10) / 10d)
+//        ));
 
         statsLeaderboards.add(new StatsLeaderboard("Experience",
                 CENTER_BOARD,

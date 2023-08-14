@@ -77,7 +77,7 @@ public class QueueManager {
                                                    .toBuilder();
         for (int i = 0; i < queue.size(); i++) {
             UUID uuid = queue.get(i);
-            queueList.append(Component.text("    " + i + 1 + ". ", NamedTextColor.YELLOW))
+            queueList.append(Component.text("    " + (i + 1) + ". ", NamedTextColor.YELLOW))
                      .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(uuid).getName()), NamedTextColor.AQUA))
                      .append(Component.newline());
         }
