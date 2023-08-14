@@ -194,7 +194,36 @@ public class OldTestCommand implements CommandExecutor {
 //                player.sendMessage(NumberFormat.addCommaAndRound(i));
 //            }
 
+
+//            Bukkit.getOnlinePlayers()
+//                  .stream()
+//                  .filter(player1 -> player1 != player)
+//                  .forEach(otherPlayer -> {
+//                      Component displayName = Component.text("test", NamedTextColor.RED);
+//                      PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.PLAYER_INFO);
+//                      packet.getPlayerInfoActions().write(0, EnumSet.of(EnumWrappers.PlayerInfoAction.UPDATE_DISPLAY_NAME));
+//                      packet.getPlayerInfoDataLists().write(
+//                              0,
+//                              Collections.singletonList(
+//                                      new PlayerInfoData(
+//                                              new WrappedGameProfile(otherPlayer.getUniqueId(), otherPlayer.getName()),
+//                                              0,
+//                                              EnumWrappers.NativeGameMode.fromBukkit(player.getGameMode()),
+//                                              AdventureComponentConverter.fromComponent(displayName)
+//                                      ))
+//                      );
+//                      ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+////                      otherPlayer.getPlayerProfile().setName("tst");
+////                      GameProfile gameProfile = com.destroystokyo.paper.profile.CraftPlayerProfile.asAuthlibCopy(otherPlayer.getPlayerProfile());
+////                      player.hidePlayer(Warlords.getInstance(), otherPlayer);
+////                      ClientboundGameProfilePacket clientboundGameProfilePacket = new ClientboundGameProfilePacket(gameProfile);
+////                      ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
+////                      ClientboundRemoveMobEffectPacket packet = new ClientboundRemoveMobEffectPacket(otherPlayer.getEntityId(), MobEffects.INVISIBILITY);
+////                      serverPlayer.connection.send(packet);
+//                  });
         }
+
+
 
 //
 //        for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
