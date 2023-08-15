@@ -23,10 +23,11 @@ public class MyLocationCommand extends BaseCommand {
         Location location = player.getLocation();
         String locationString = NumberFormat.formatOptionalTenths(roundToHalf(location.getX())) + ", " +
                 NumberFormat.formatOptionalTenths(roundToHalf(location.getY())) + ", " +
-                NumberFormat.formatOptionalTenths(roundToHalf(location.getZ()));
+                NumberFormat.formatOptionalTenths(roundToHalf(location.getZ())) + ", " +
+                NumberFormat.formatOptionalTenths(roundToHalf(location.getYaw())) + ", " +
+                NumberFormat.formatOptionalTenths(roundToHalf(location.getPitch()));
         player.sendMessage(Component.text(locationString, NamedTextColor.AQUA, TextDecoration.BOLD)
                                     .clickEvent(ClickEvent.copyToClipboard(locationString)));
-
     }
 
     public static double roundToHalf(double d) {
