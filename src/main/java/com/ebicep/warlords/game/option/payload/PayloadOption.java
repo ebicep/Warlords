@@ -30,13 +30,15 @@ public class PayloadOption implements PveOption {
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final PayloadBrain brain;
     private final PayloadRenderer renderer = new PayloadRenderer();
+    private final PayloadSpawns spawns;
     private final BossBar bossBar = BossBar.bossBar(Component.empty(), 0, BossBar.Color.WHITE, BossBar.Overlay.NOTCHED_10); //TODO name face direction of payload 🏎
     private final Team escortingTeam;
     @Nonnull
     private Game game;
 
-    public PayloadOption(Location start, Team escortingTeam) {
+    public PayloadOption(Location start, PayloadSpawns spawns, Team escortingTeam) {
         this.brain = new PayloadBrain(start);
+        this.spawns = spawns;
         this.escortingTeam = escortingTeam;
     }
 
@@ -64,6 +66,8 @@ public class PayloadOption implements PveOption {
                 renderer.playEffects(ticksElapsed.get(), brain.getCurrentLocation().clone().add(0, .7, 0), MOVE_RADIUS);
 
                 showBossBar(netEscorting);
+
+                spawns.tick(brain.getCurrentPathIndex() / brain.getPath().size(), newLocation, PayloadOption.this::spawnNewMob);
 
                 ticksElapsed.incrementAndGet();
             }

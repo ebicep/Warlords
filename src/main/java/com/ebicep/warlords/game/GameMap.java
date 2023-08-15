@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.payload.PayloadOption;
+import com.ebicep.warlords.game.option.payload.PayloadSpawns;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.pve.ItemOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
@@ -40,6 +41,7 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -4235,7 +4237,30 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 1, 19.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 1, 19.5), Team.RED));
 
-            options.add(new PayloadOption(loc.addXYZ(0.5, 0.5, -19.5), Team.BLUE));
+            options.add(new PayloadOption(
+                    loc.addXYZ(0.5, 0.5, -19.5),
+                    new PayloadSpawns(Arrays.asList(
+                            //TODO
+                    ), Arrays.asList(
+                            new PayloadSpawns.TimedSpawnWave(20,
+                                    new Pair<>(10, Mobs.BASIC_ZOMBIE)
+                            ),
+                            new PayloadSpawns.TimedSpawnWave(30,
+                                    new Pair<>(10, Mobs.ELITE_ZOMBIE)
+                            ),
+                            new PayloadSpawns.TimedSpawnWave(60,
+                                    new Pair<>(10, Mobs.FORGOTTEN_ZOMBIE)
+                            )
+                    ), Arrays.asList(
+                            new PayloadSpawns.PayloadSpawnWave(
+                                    new Pair<>(10, Mobs.BASIC_ZOMBIE),
+                                    new Pair<>(10, Mobs.BASIC_PIG_ZOMBIE),
+                                    new Pair<>(10, Mobs.BASIC_SKELETON),
+                                    new Pair<>(10, Mobs.BASIC_BERSERK_ZOMBIE)
+                            )
+                    )),
+                    Team.BLUE
+            ));
 
             options.add(new RespawnWaveOption()); //TODO
             options.add(new RespawnProtectionOption());
