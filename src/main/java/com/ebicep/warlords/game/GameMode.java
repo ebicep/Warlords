@@ -529,6 +529,8 @@ public enum GameMode {
                     Component.text("GO!", NamedTextColor.GREEN),
                     Component.text("Payload!", NamedTextColor.YELLOW)
             ));
+
+            options.add(new RecordTimeElapsedOption());
             options.add(new GameFreezeOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
