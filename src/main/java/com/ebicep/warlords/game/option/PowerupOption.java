@@ -136,7 +136,7 @@ public class PowerupOption implements Option {
             @Override
             public void run() {
                 if (cooldown == 0) {
-                    PlayerFilter.entitiesAround(location, 1.4, 1.4, 1.4)
+                    PlayerFilter.entitiesAround(location, 1.6, 1.6, 1.6)
                                 .isAlive()
                                 .first((nearPlayer) -> {
                                     if (nearPlayer instanceof WarlordsPlayer) {

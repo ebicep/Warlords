@@ -19,6 +19,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nonnull;
@@ -111,7 +112,10 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
-                            ((Player) wp.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
+                            ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
+                            if (item != null) {
+                                item.removeEnchantment(Enchantment.OXYGEN);
+                            }
                         }
                     }
                 },
@@ -181,9 +185,12 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             }
         });
 
-        ItemMeta newItemMeta = player.getInventory().getItem(0).getItemMeta();
-        newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
-        player.getInventory().getItem(0).setItemMeta(newItemMeta);
+        ItemStack item = player.getInventory().getItem(0);
+        if (item != null) {
+            ItemMeta newItemMeta = item.getItemMeta();
+            newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+            item.setItemMeta(newItemMeta);
+        }
 
         return true;
     }
