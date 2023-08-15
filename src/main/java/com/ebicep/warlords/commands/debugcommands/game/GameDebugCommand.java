@@ -44,4 +44,17 @@ public class GameDebugCommand extends BaseCommand {
         });
     }
 
+    @CommandAlias("gamedebug3|gd3")
+    @Description("Auto starts payload game")
+    public void gameDebug3(@Conditions("outsideGame") Player player) {
+        GameStartCommand.startGame(player, false, queueEntryBuilder -> {
+            queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
+            queueEntryBuilder.setGameMode(GameMode.PAYLOAD);
+            queueEntryBuilder.setMap(GameMap.PAYLOAD);
+            queueEntryBuilder.setOnResult((queueResult, game) -> {
+                game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
+            });
+        });
+    }
+
 }

@@ -391,11 +391,6 @@ public class OnslaughtOption implements PveOption {
     }
 
     @Override
-    public int playerCount() {
-        return (int) game.warlordsPlayers().count();
-    }
-
-    @Override
     public void spawnNewMob(AbstractMob<?> mob) {
         mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());

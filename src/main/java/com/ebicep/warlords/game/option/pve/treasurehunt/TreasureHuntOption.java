@@ -86,11 +86,6 @@ public class TreasureHuntOption implements PveOption {
     }
 
     @Override
-    public int playerCount() {
-        return (int) game.warlordsPlayers().count();
-    }
-
-    @Override
     public void spawnNewMob(AbstractMob<?> mob, Team team) {
         mob.toNPC(game, team, UUID.randomUUID(), warlordsNPC -> {});
         game.addNPC(mob.getWarlordsNPC());

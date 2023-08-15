@@ -94,7 +94,9 @@ public interface PveOption extends Option {
 
     ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
 
-    int playerCount();
+    default int playerCount() {
+        return (int) getGame().warlordsPlayers().count();
+    }
 
     default int mobCount() {
         return (int) getMobs()

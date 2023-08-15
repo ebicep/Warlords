@@ -36,11 +36,6 @@ public class RaidOption implements PveOption {
     }
 
     @Override
-    public int playerCount() {
-        return 0;
-    }
-
-    @Override
     public Set<AbstractMob<?>> getMobs() {
         return null;
     }

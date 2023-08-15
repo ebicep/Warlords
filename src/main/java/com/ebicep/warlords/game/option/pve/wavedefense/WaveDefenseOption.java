@@ -445,11 +445,6 @@ public class WaveDefenseOption implements PveOption {
     }
 
     @Override
-    public int playerCount() {
-        return (int) game.warlordsPlayers().count();
-    }
-
-    @Override
     public Set<AbstractMob<?>> getMobs() {
         return mobs.keySet();
     }

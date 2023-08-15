@@ -71,6 +71,15 @@ public class LocationBuilder extends Location {
         return this;
     }
 
+    public LocationBuilder faceTowards(Location location) {
+        this.setDirection(getLocationTowards(location));
+        return this;
+    }
+
+    public Vector getLocationTowards(Location location) {
+        return location.toVector().subtract(this.toVector()).normalize();
+    }
+
     public LocationBuilder pitch(float pitch) {
         this.setPitch(pitch);
         return this;

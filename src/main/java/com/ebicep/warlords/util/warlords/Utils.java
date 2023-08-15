@@ -229,6 +229,7 @@ public class Utils {
             armorStand.setBasePlate(false);
             armorStand.setCanPickupItems(false);
             armorStand.setArms(false);
+            armorStand.setRemoveWhenFarAway(false);
             if (standConsumer != null) {
                 standConsumer.accept(armorStand);
             }

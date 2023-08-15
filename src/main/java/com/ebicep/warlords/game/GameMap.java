@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.option.payload.PayloadOption;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.pve.ItemOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
@@ -4214,7 +4215,39 @@ public enum GameMap {
         }
 
     },
+    PAYLOAD(
+            "Payload",
+            32,
+            12,
+            5 * SECOND,
+            "Payload",
+            3,
+            GameMode.PAYLOAD
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
 
+            options.add(LobbyLocationMarker.create(loc.addXYZ(9.5, 1, 19.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(9.5, 1, 19.5), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 1, 19.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 1, 19.5), Team.RED));
+
+            options.add(new PayloadOption(loc.addXYZ(0.5, 0.5, -19.5), Team.BLUE));
+
+            options.add(new RespawnWaveOption()); //TODO
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+
+            return options;
+        }
+
+    },
     ;
 
     public static final GameMap[] VALUES = values();
