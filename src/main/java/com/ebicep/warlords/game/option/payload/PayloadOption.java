@@ -135,7 +135,6 @@ public class PayloadOption implements PveOption {
                 for (WarlordsEntity warlordsEntity : PlayerFilterGeneric
                         .entitiesAround(oldLocation, MOVE_RADIUS, MOVE_RADIUS, MOVE_RADIUS)
                         .filter(e -> Warlords.getPlayer(e.getUuid()) != null)
-                        .warlordsPlayers()
                 ) {
                     if (warlordsEntity.getTeam() == escortingTeam) {
                         escorting++;
