@@ -21,7 +21,7 @@ public class PayloadBrain {
         add(locationBuilder -> locationBuilder.forward(1).addY(1));
         add(locationBuilder -> locationBuilder.forward(1).addY(-1));
     }};
-    private static final double MOVE_PER_TICK = 0.05;//25; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
+    private static final double MOVE_PER_TICK = 0.3;//25; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
 
     private final Location start;
     private final List<Location> path = new ArrayList<>();
@@ -75,9 +75,12 @@ public class PayloadBrain {
     }
 
 
-    public void tick() {
+    /**
+     * @return true if the path is complete / reached end
+     */
+    public boolean tick() {
         if (currentPathIndex >= path.size()) {
-            return;
+            return true;
         }
         Location nextPathLocation;
         if (currentPathIndex >= path.size() - 1) {
@@ -91,6 +94,7 @@ public class PayloadBrain {
         currentLocation.setDirection(direction);
         currentLocation.add(direction.multiply(MOVE_PER_TICK));
         currentPathIndex += MOVE_PER_TICK;
+        return false;
     }
 
     public Location getStart() {

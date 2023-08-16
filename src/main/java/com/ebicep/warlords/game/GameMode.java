@@ -20,6 +20,7 @@ import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
+import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
@@ -530,7 +531,7 @@ public enum GameMode {
                     Component.text("Payload!", NamedTextColor.YELLOW)
             ));
 
-            options.add(new RecordTimeElapsedOption());
+            options.add(new WinAfterTimeoutOption(600, Team.RED));
             options.add(new GameFreezeOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());

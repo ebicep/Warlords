@@ -1,11 +1,13 @@
 package com.ebicep.warlords.game.option.payload;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -58,11 +60,18 @@ public class PayloadOption implements PveOption {
 
             @Override
             public void run() {
+                if (game.getState(EndState.class).isPresent()) {
+                    cancel();
+                    return;
+                }
                 Location oldLocation = brain.getCurrentLocation();
 
                 int netEscorting = getNetEscorting(oldLocation);
                 if (netEscorting > 0) {
-                    brain.tick();
+                    boolean reachedEnd = brain.tick();
+                    if (reachedEnd) {
+                        Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, PayloadOption.this, escortingTeam));
+                    }
                 }
                 Location newLocation = brain.getCurrentLocation();
                 renderer.move(newLocation);
