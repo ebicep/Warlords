@@ -215,16 +215,21 @@ public class LocationUtils {
 
     @Nonnull
     public static Location getGroundLocation(Player player) {
+        return getGroundLocation(player.getLocation());
+    }
+
+    @Nonnull
+    public static Location getGroundLocation(Location startLocation) {
         //get location of block below player that isnt air using loop
-        Location location = player.getLocation();
+        Location location = startLocation.clone();
         location.setY(location.getY() - 1);
         while (!location.getBlock().isSolid() && location.getY() > 0) {
             location.setY(location.getY() - 1);
         }
         if (location.getY() <= 0) {
-            return player.getLocation();
+            return startLocation;
         }
-        location.setY(player.getWorld().getBlockAt(location).getLocation().getY() + 1);
+        location.setY(startLocation.getWorld().getBlockAt(location).getLocation().getY() + 1);
         return location;
     }
 

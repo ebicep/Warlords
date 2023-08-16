@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
-import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -17,7 +16,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -128,13 +126,13 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
 
                             newLoc.setPitch(-12);
                             Location impactLocation = newLoc.clone().subtract(speed);
-                            spawnFallingBlocks(impactLocation, 3, 10);
+                            Utils.spawnFallingBlocks(impactLocation, 3, 10);
 
                             new GameRunnable(wp.getGame()) {
 
                                 @Override
                                 public void run() {
-                                    spawnFallingBlocks(impactLocation, 3.5, 20);
+                                    Utils.spawnFallingBlocks(impactLocation, 3.5, 20);
                                 }
 
                             }.runTaskLater(1);
@@ -149,34 +147,6 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new BoulderBranch(abilityTree, this);
-    }
-
-    private void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount) {
-        double angle = 0;
-
-        for (int i = 0; i < amount; i++) {
-            FallingBlock fallingBlock;
-            Location spawnLoc = impactLocation.clone();
-
-            double x = initialCircleRadius * Math.cos(angle);
-            double z = initialCircleRadius * Math.sin(angle);
-            angle += 360.0 / amount + (int) (Math.random() * 4 - 2);
-            spawnLoc.add(x, 1, z);
-
-            if (spawnLoc.getWorld().getBlockAt(spawnLoc).getType() == Material.AIR) {
-                fallingBlock = switch ((int) (Math.random() * 3)) {
-                    case 0 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT.createBlockData());
-                    case 1 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.STONE.createBlockData());
-                    case 2 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.PODZOL.createBlockData());
-                    default -> throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
-                };
-
-                fallingBlock.setVelocity(impactLocation.toVector().subtract(spawnLoc.toVector()).normalize().multiply(-.5).setY(.25));
-                fallingBlock.setDropItem(false);
-                WarlordsEvents.addEntityUUID(fallingBlock);
-            }
-
-        }
     }
 
     public double getVelocity() {

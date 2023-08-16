@@ -381,6 +381,34 @@ public class Utils {
         }.runTaskTimer(0, 1);
     }
 
+    public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount) {
+        double angle = 0;
+
+        for (int i = 0; i < amount; i++) {
+            FallingBlock fallingBlock;
+            Location spawnLoc = impactLocation.clone();
+
+            double x = initialCircleRadius * Math.cos(angle);
+            double z = initialCircleRadius * Math.sin(angle);
+            angle += 360.0 / amount + (int) (Math.random() * 4 - 2);
+            spawnLoc.add(x, 1, z);
+
+            if (spawnLoc.getWorld().getBlockAt(spawnLoc).getType() == Material.AIR) {
+                fallingBlock = switch ((int) (Math.random() * 3)) {
+                    case 0 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT.createBlockData());
+                    case 1 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.STONE.createBlockData());
+                    case 2 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.PODZOL.createBlockData());
+                    default -> throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
+                };
+
+                fallingBlock.setVelocity(impactLocation.toVector().subtract(spawnLoc.toVector()).normalize().multiply(-.5).setY(.25));
+                fallingBlock.setDropItem(false);
+                WarlordsEvents.addEntityUUID(fallingBlock);
+            }
+
+        }
+    }
+
     public static class SimpleEntityEquipment implements EntityEquipment {
 
         private ItemStack helmet;

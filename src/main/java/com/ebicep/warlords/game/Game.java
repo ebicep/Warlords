@@ -27,6 +27,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -91,6 +93,8 @@ public final class Game implements Runnable, AutoCloseable {
     private boolean acceptsPlayers;
     private boolean acceptsSpectators;
     private Set<WarlordsPlayer> cachedPlayers = new HashSet<>();
+    private Map<Location, Material> previousBlocks = new HashMap<>(); // for when world blocks are changed and needs to be revertd later
+
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
         this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
@@ -817,6 +821,10 @@ public final class Game implements Runnable, AutoCloseable {
             }
         }
         reopenGameReferencedMenus();
+        // TODO check
+        previousBlocks.forEach((location, material) -> {
+            location.getBlock().setType(material);
+        });
     }
 
     public List<UUID> removeAllPlayers() {
@@ -920,5 +928,9 @@ public final class Game implements Runnable, AutoCloseable {
 
     public Set<WarlordsPlayer> getCachedPlayers() {
         return cachedPlayers;
+    }
+
+    public Map<Location, Material> getPreviousBlocks() {
+        return previousBlocks;
     }
 }

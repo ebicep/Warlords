@@ -115,6 +115,21 @@ public class LocationBuilder extends Location {
         return this;
     }
 
+    public LocationBuilder lookLeft() {
+        yaw(getYaw() - 90);
+        return this;
+    }
+
+    public LocationBuilder lookRight() {
+        yaw(getYaw() + 90);
+        return this;
+    }
+
+    public LocationBuilder lookBackwards() {
+        yaw(getYaw() + 180);
+        return this;
+    }
+
     @Nonnull
     @Override
     public LocationBuilder clone() {
