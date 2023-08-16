@@ -67,7 +67,6 @@ public class PayloadOption implements PveOption {
                 if (we instanceof WarlordsNPC) {
                     AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.containsKey(mobToRemove)) {
-                        mobToRemove.getWarlordsNPC().getHealthBar().remove();
                         mobToRemove.onDeath(killer, we.getDeathLocation(), PayloadOption.this);
                         new GameRunnable(game) {
                             @Override

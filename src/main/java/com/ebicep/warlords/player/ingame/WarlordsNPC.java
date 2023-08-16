@@ -13,6 +13,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
@@ -62,7 +63,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     private AbstractMob<?> mob;
     private int stunTicks;
     private Component mobNamePrefix = Component.empty();
-    private ArmorStand healthBar;
+    private ArmorStand nameDisplay;
     private ItemDisplay aspect;
 
     public WarlordsNPC(
@@ -180,6 +181,12 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
+    public void die(@org.jetbrains.annotations.Nullable WarlordsEntity attacker) {
+        super.die(attacker);
+        nameDisplay.remove();
+    }
+
+    @Override
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
         if (modifier != -99 && getMobTier() != null) {
             if (getMobTier() == MobTier.BOSS) {
@@ -227,36 +234,35 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateHealth() {
         if (!isDead()) {
-            healthBar.customName(Component.empty()
-                    .append(mobNamePrefix)
-                    .append(Component.text("- "))
-                    .append(Component.text(name, NamedTextColor.GRAY))
-                    .append(Component.text(" - "))
-                    .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD))
-            );
-            healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
+            nameDisplay.customName(getNameComponent());
+            nameDisplay.teleport(entity.getLocation().clone().add(0, 2.25, 0));
 
             entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         }
     }
 
+    @Nonnull
+    private TextComponent getNameComponent() {
+        return Component.empty()
+                        .append(mobNamePrefix)
+                        .append(Component.text("- "))
+                        .append(Component.text(name, NamedTextColor.GRAY))
+                        .append(Component.text(" - "))
+                        .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD));
+    }
+
     @Override
     public void updateEntity() {
-        healthBar = Utils.spawnArmorStand(getLocation(), armorStand -> {
+        nameDisplay = Utils.spawnArmorStand(getLocation(), armorStand -> {
             armorStand.setGravity(true);
             armorStand.setMarker(true);
             armorStand.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
             armorStand.setCustomNameVisible(true);
         });
 
-        healthBar.customName(Component.empty()
-                .append(mobNamePrefix)
-                .append(Component.text("- "))
-                .append(Component.text(name, NamedTextColor.GRAY))
-                .append(Component.text(" - "))
-                .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD))
+        nameDisplay.customName(getNameComponent()
         );
-        healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
+        nameDisplay.teleport(entity.getLocation().clone().add(0, 2.25, 0));
 
         entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         entity.setCustomNameVisible(true);
@@ -343,14 +349,6 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public AbstractMob<?> getMob() {
         return mob;
-    }
-
-    public ArmorStand getHealthBar() {
-        return healthBar;
-    }
-
-    public void setHealthBar(ArmorStand healthBar) {
-        this.healthBar = healthBar;
     }
 
     public float getDamageResistancePrefix() {
