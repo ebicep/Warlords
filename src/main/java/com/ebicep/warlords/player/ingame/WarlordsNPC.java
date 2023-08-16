@@ -235,7 +235,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     public void updateHealth() {
         if (!isDead()) {
             nameDisplay.customName(getNameComponent());
-            nameDisplay.teleport(entity.getLocation().clone().add(0, 2.25, 0));
+            nameDisplay.teleport(entity.getLocation().clone().add(0, entity.getHeight() + 0.275, 0));
 
             entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         }
@@ -260,9 +260,8 @@ public final class WarlordsNPC extends WarlordsEntity {
             armorStand.setCustomNameVisible(true);
         });
 
-        nameDisplay.customName(getNameComponent()
-        );
-        nameDisplay.teleport(entity.getLocation().clone().add(0, 2.25, 0));
+        nameDisplay.customName(getNameComponent());
+        nameDisplay.teleport(entity.getLocation().clone().add(0, entity.getHeight() + 0.275, 0));
 
         entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         entity.setCustomNameVisible(true);
