@@ -10,7 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.minecraft.util.Mth;
@@ -75,9 +75,10 @@ public class PayloadOption implements PveOption {
             private int getNetEscorting(Location oldLocation) {
                 int escorting = 0;
                 int nonEscorting = 0;
-                for (WarlordsEntity warlordsEntity : PlayerFilter
+                for (WarlordsEntity warlordsEntity : PlayerFilterGeneric
                         .entitiesAround(oldLocation, MOVE_RADIUS, MOVE_RADIUS, MOVE_RADIUS)
                         .filter(e -> Warlords.getPlayer(e.getUuid()) != null)
+                        .warlordsPlayers()
                 ) {
                     if (warlordsEntity.getTeam() == escortingTeam) {
                         escorting++;
@@ -91,8 +92,8 @@ public class PayloadOption implements PveOption {
             private void showBossBar(int netEscorting) {
                 if (netEscorting > 0) {
                     // https://en.wikipedia.org/wiki/List_of_Unicode_characters#Unicode_symbols:~:text=assigned%20code%20points-,Enclosed%20Alphanumerics,-%5Bedit%5D
-                    String unicodeNumber = String.valueOf(Character.toChars(0x2460 + netEscorting - 1));
-                    bossBar.name(Component.text("Ⓟ" + ">>>" + (netEscorting > 16 ? netEscorting : unicodeNumber))); // ⋙ 〉 ≫ ① ②
+                    String unicodeNumber = String.valueOf(Character.toChars((netEscorting <= 20 ? 0x2460 : 0x2470) + netEscorting - 1));
+                    bossBar.name(Component.text("Ⓟ" + ">>>" + (netEscorting > 20 ? netEscorting : unicodeNumber))); // ⋙ 〉 ≫ ① ②
                 } else {
                     bossBar.name(Component.empty());
                 }
