@@ -21,7 +21,7 @@ public class PayloadBrain {
         add(locationBuilder -> locationBuilder.forward(1).addY(1));
         add(locationBuilder -> locationBuilder.forward(1).addY(-1));
     }};
-    private static final double MOVE_PER_TICK = 0.025; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
+    private static final double MOVE_PER_TICK = 0.05;//25; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
 
     private final Location start;
     private final List<Location> path = new ArrayList<>();

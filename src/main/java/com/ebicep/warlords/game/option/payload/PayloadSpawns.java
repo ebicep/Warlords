@@ -17,7 +17,7 @@ public class PayloadSpawns {
     private static final double SPAWN_DISTANCE_SQUARED = 20 * 20;
     private final List<Location> spawnLocations;
     private final List<TimedSpawnWave> timedSpawnWaves;
-    private final List<PayloadSpawnWave> payloadSpawnWaves;
+    private final List<PayloadSpawnWave> payloadSpawnWaves; //index 0 = spawn wave at 10%, index 1 = spawn wave at 20%, etc
     private int spawnTimer = 0;
     private int payloadSpawnCounter = 0;
 
@@ -30,10 +30,10 @@ public class PayloadSpawns {
     public void tick(double payloadProgress, Location payloadLocation, BiConsumer<AbstractMob<?>, Team> spawnMethod) {
         int payloadProgressCounter = (int) (payloadProgress * 10);
         if (payloadProgressCounter > payloadSpawnCounter) {
-            if (!payloadSpawnWaves.isEmpty() && payloadProgressCounter <= payloadSpawnWaves.size()) {
-                payloadSpawnCounter = payloadProgressCounter;
+            if (!payloadSpawnWaves.isEmpty() && payloadProgressCounter - 1 < payloadSpawnWaves.size()) {
                 List<Location> spawnLocationsNear = getSpawnLocationsNear(payloadLocation);
-                spawnMobs(spawnMethod, payloadSpawnWaves.get(payloadProgressCounter).spawns(), spawnLocationsNear);
+                spawnMobs(spawnMethod, payloadSpawnWaves.get(payloadSpawnCounter).spawns(), spawnLocationsNear);
+                payloadSpawnCounter = payloadProgressCounter;
                 spawnTimer = 1;
                 return;
             }
@@ -41,7 +41,7 @@ public class PayloadSpawns {
         spawnTimer++;
         List<Location> spawnLocationsNear = null;
         for (TimedSpawnWave timedSpawnWave : timedSpawnWaves) {
-            int spawnPerTick = timedSpawnWave.mod();
+            int spawnPerTick = timedSpawnWave.perSecond() * 20;
             if (spawnTimer % spawnPerTick != 0) {
                 continue;
             }
@@ -50,17 +50,6 @@ public class PayloadSpawns {
             }
             List<Pair<Integer, Mobs>> spawns = timedSpawnWave.spawns();
             spawnMobs(spawnMethod, spawns, spawnLocationsNear);
-        }
-    }
-
-    private static void spawnMobs(BiConsumer<AbstractMob<?>, Team> spawnMethod, List<Pair<Integer, Mobs>> spawns, List<Location> spawnLocationsNear) {
-        for (Pair<Integer, Mobs> spawn : spawns) {
-            Integer spawnAmount = spawn.getA();
-            Mobs mobToSpawn = spawn.getB();
-            for (int i = 0; i < spawnAmount; i++) {
-                int randomIndex = ThreadLocalRandom.current().nextInt(spawnLocationsNear.size());
-                spawnMethod.accept(mobToSpawn.createMob.apply(spawnLocationsNear.get(randomIndex)), Team.BLUE);
-            }
         }
     }
 
@@ -74,10 +63,25 @@ public class PayloadSpawns {
         return locations;
     }
 
-    public record TimedSpawnWave(int mod, List<Pair<Integer, Mobs>> spawns) {
+    private static void spawnMobs(BiConsumer<AbstractMob<?>, Team> spawnMethod, List<Pair<Integer, Mobs>> spawns, List<Location> spawnLocationsNear) {
+        int size = spawnLocationsNear.size();
+        if (size == 0) {
+            return;
+        }
+        for (Pair<Integer, Mobs> spawn : spawns) {
+            Integer spawnAmount = spawn.getA();
+            Mobs mobToSpawn = spawn.getB();
+            for (int i = 0; i < spawnAmount; i++) {
+                int randomIndex = ThreadLocalRandom.current().nextInt(size);
+                spawnMethod.accept(mobToSpawn.createMob.apply(spawnLocationsNear.get(randomIndex)), Team.BLUE);
+            }
+        }
+    }
+
+    public record TimedSpawnWave(int perSecond, List<Pair<Integer, Mobs>> spawns) {
         @SafeVarargs
-        public TimedSpawnWave(int mod, Pair<Integer, Mobs>... spawns) {
-            this(mod, Arrays.asList(spawns));
+        public TimedSpawnWave(int perSecond, Pair<Integer, Mobs>... spawns) {
+            this(perSecond, Arrays.asList(spawns));
         }
     }
 

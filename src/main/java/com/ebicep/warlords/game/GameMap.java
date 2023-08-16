@@ -47,6 +47,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -4237,10 +4238,27 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 1, 19.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 1, 19.5), Team.RED));
 
+            World world = loc.getWorld();
             options.add(new PayloadOption(
                     loc.addXYZ(0.5, 0.5, -19.5),
                     new PayloadSpawns(Arrays.asList(
-                            //TODO
+                            new Location(world, 11.5, 1, -17, 67, 18),
+                            new Location(world, 8, 1, -10, 96, 17),
+                            new Location(world, -5, 1, -5.5, -131, 10),
+                            new Location(world, -14.5, 1, -12.5, -110, 12),
+                            new Location(world, -17, 1, -19.5, -94, 12),
+                            new Location(world, 5.5, 1, -30.5, 22, 10),
+                            new Location(world, -7, 1, -32, -28, 14),
+                            new Location(world, 8, 1, 2.5, 103, 24),
+                            new Location(world, -0.5, 1, 7, 172, 21),
+                            new Location(world, -10, 1, 12.5, -133, 11),
+                            new Location(world, 3.5, 1, 18.5, 164, 16),
+                            new Location(world, 14, 1, 16, 139, 15),
+                            new Location(world, 15, 1, 9, 117, 14),
+                            new Location(world, 18, 1, 0.5, 91, 19),
+                            new Location(world, -13, 1, 14.5, -135, 5),
+                            new Location(world, -7.5, 1, 20.5, -153, 0),
+                            new Location(world, 4.5, 1, 22, 145, 10)
                     ), Arrays.asList(
                             new PayloadSpawns.TimedSpawnWave(20,
                                     new Pair<>(10, Mobs.BASIC_ZOMBIE)
@@ -4257,6 +4275,12 @@ public enum GameMap {
                                     new Pair<>(10, Mobs.BASIC_PIG_ZOMBIE),
                                     new Pair<>(10, Mobs.BASIC_SKELETON),
                                     new Pair<>(10, Mobs.BASIC_BERSERK_ZOMBIE)
+                            ),
+                            new PayloadSpawns.PayloadSpawnWave(
+                                    new Pair<>(10, Mobs.ELITE_ZOMBIE),
+                                    new Pair<>(10, Mobs.ELITE_PIG_ZOMBIE),
+                                    new Pair<>(10, Mobs.ELITE_SKELETON),
+                                    new Pair<>(10, Mobs.ELITE_BERSERK_ZOMBIE)
                             )
                     )),
                     Team.BLUE
@@ -4267,7 +4291,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+            options.add(new BoundingBoxOption(world, AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
