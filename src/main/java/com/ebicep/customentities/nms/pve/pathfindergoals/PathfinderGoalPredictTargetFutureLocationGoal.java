@@ -17,6 +17,9 @@ public class PathfinderGoalPredictTargetFutureLocationGoal extends Goal {
     private final Mob self;
     private final AtomicInteger delay = new AtomicInteger((int) (Math.random() * 10)); //countdown for delay, starts at a random number so shots are not all fired at the same time
 
+    private float yaw;
+    private float pitch;
+
     public PathfinderGoalPredictTargetFutureLocationGoal(Mob self) {
         this.self = self;
     }
@@ -46,9 +49,14 @@ public class PathfinderGoalPredictTargetFutureLocationGoal extends Goal {
             if (!NumberConversions.isFinite(yaw) || !NumberConversions.isFinite(pitch)) {
                 return;
             }
-            self.getBukkitEntity().setRotation(yaw, pitch);
-
+            this.yaw = yaw;
+            this.pitch = pitch;
+            //TODO maybe look every second so its not choppy
         }
+    }
+
+    public void lookAtPredicted() {
+        self.getBukkitEntity().setRotation(yaw, pitch);
     }
 
     public static Location lookAtLocation(Location loc, Location toLookAt) {

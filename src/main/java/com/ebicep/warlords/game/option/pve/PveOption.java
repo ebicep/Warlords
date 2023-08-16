@@ -1,9 +1,12 @@
 package com.ebicep.warlords.game.option.pve;
 
+import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalPredictTargetFutureLocationGoal;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.game.Game;
@@ -28,6 +31,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.Zombie;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -229,6 +233,26 @@ public interface PveOption extends Option {
                         }
                     }
                 }
+            }
+
+            @EventHandler
+            public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
+                AbstractAbility ability = event.getAbility();
+                if (!(ability instanceof ProjectileAbility)) {
+                    return;
+                }
+                WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+                if (!(warlordsEntity instanceof WarlordsNPC warlordsNPC) || warlordsNPC.getMob() == null) {
+                    return;
+                }
+                AbstractMob<?> npcMob = warlordsNPC.getMob();
+                Set<WrappedGoal> availableGoals = npcMob.getMob().goalSelector.getAvailableGoals();
+                availableGoals.stream()
+                              .map(WrappedGoal::getGoal)
+                              .filter(PathfinderGoalPredictTargetFutureLocationGoal.class::isInstance)
+                              .findFirst()
+                              .map(PathfinderGoalPredictTargetFutureLocationGoal.class::cast)
+                              .ifPresent(PathfinderGoalPredictTargetFutureLocationGoal::lookAtPredicted);
             }
 
             @EventHandler

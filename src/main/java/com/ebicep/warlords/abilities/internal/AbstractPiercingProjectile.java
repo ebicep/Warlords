@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 
-public abstract class AbstractPiercingProjectile extends AbstractAbility {
+public abstract class AbstractPiercingProjectile extends AbstractAbility implements ProjectileAbility {
 
     public int playersHit = 0;
     public int playersHitBySplash = 0;
