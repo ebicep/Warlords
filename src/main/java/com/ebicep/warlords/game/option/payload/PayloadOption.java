@@ -67,7 +67,7 @@ public class PayloadOption implements PveOption {
 
                 showBossBar(netEscorting);
 
-                spawns.tick(brain.getCurrentPathIndex() / brain.getPath().size(), newLocation, PayloadOption.this::spawnNewMob);
+//                spawns.tick(brain.getCurrentPathIndex() / brain.getPath().size(), newLocation, PayloadOption.this::spawnNewMob);
 
                 ticksElapsed.incrementAndGet();
             }
