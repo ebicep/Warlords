@@ -20,6 +20,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -331,6 +332,10 @@ public final class Game implements Runnable, AutoCloseable {
     public void setNextState(@Nullable State nextState) {
         if (this.closed) {
             throw new IllegalStateException("Game has been closed");
+        }
+        if (state != null && nextState != null && state.getClass().equals(nextState.getClass())) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("POSSIBLE ERROR IN GAME STATE TRANSITION - " +
+                    state.getClass().getSimpleName() + " -> " + nextState.getClass().getSimpleName());
         }
         this.nextState = nextState;
     }
