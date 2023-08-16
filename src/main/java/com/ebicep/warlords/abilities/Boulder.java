@@ -17,11 +17,9 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -73,80 +71,36 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
         } else {
             speed = player.getLocation().getDirection().multiply(boulderSpeed);
         }
-        ArmorStand stand = Utils.spawnArmorStand(location, armorStand -> {
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.TALL_GRASS));
-            armorStand.customName(Component.text("Boulder"));
-            armorStand.setCustomNameVisible(false);
-        });
 
         Location initialCastLocation = player.getLocation();
 
-        new GameRunnable(wp.getGame()) {
-
-            @Override
-            public void run() {
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(true);
-            }
-
-            private void quarterStep(boolean last) {
-
-                if (!stand.isValid()) {
-                    this.cancel();
-                    return;
-                }
-
-                speed.add(new Vector(0, boulderGravity * boulderSpeed, 0));
-                Location newLoc = stand.getLocation();
-                newLoc.add(speed);
-                stand.teleport(newLoc);
-                newLoc.add(0, 1.75, 0);
-
-                stand.setHeadPose(new EulerAngle(-speed.getY() * 3, 0, 0));
-
-                boolean shouldExplode;
-
-                if (last) {
-                    wp.getLocation().getWorld().spawnParticle(
-                            Particle.CRIT,
-                            newLoc.clone().add(0, -1, 0),
-                            6,
-                            0.3F,
-                            0.3F,
-                            0.3F,
-                            0.1F,
-                            null,
-                            true
-                    );
-                }
-
-                WarlordsEntity directHit = null;
-                if (
-                        !newLoc.getBlock().isEmpty()
-                                && newLoc.getBlock().getType() != Material.GRASS
-                                && newLoc.getBlock().getType() != Material.BARRIER
-                                && newLoc.getBlock().getType() != Material.VINE
-                ) {
-                    // Explode based on collision
-                    shouldExplode = true;
-                } else {
-                    directHit = PlayerFilter
-                            .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                            .aliveEnemiesOf(wp).findFirstOrNull();
-                    shouldExplode = directHit != null;
-                }
-
-
-                if (shouldExplode) {
-                    stand.remove();
+        Utils.spawnThrowableProjectile(
+                wp.getGame(),
+                Utils.spawnArmorStand(location, armorStand -> {
+                    armorStand.getEquipment().setHelmet(new ItemStack(Material.TALL_GRASS));
+                    armorStand.customName(Component.text("Boulder"));
+                    armorStand.setCustomNameVisible(false);
+                }),
+                speed,
+                boulderGravity,
+                boulderSpeed,
+                (newLoc, integer) -> wp.getLocation().getWorld().spawnParticle(
+                        Particle.CRIT,
+                        newLoc.clone().add(0, -1, 0),
+                        6,
+                        0.3F,
+                        0.3F,
+                        0.3F,
+                        0.1F,
+                        null,
+                        true
+                ),
+                newLoc -> PlayerFilter
+                        .entitiesAroundRectangle(newLoc, 1, 2, 1)
+                        .aliveEnemiesOf(wp)
+                        .findFirstOrNull(),
+                (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, "shaman.boulder.impact", 2, 1);
-
-                    WarlordsEntity directHitFinal = directHit;
 
                     new GameRunnable(wp.getGame()) {
                         @Override
@@ -163,7 +117,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
                                     warpsKnockbacked++;
                                 }
                                 Vector v;
-                                if (p == directHitFinal) {
+                                if (p == directHit) {
                                     v = initialCastLocation.toVector().subtract(p.getLocation().toVector()).normalize().multiply(-velocity).setY(0.2);
                                 } else {
                                     v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
@@ -182,15 +136,12 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
                                 public void run() {
                                     spawnFallingBlocks(impactLocation, 3.5, 20);
                                 }
+
                             }.runTaskLater(1);
                         }
                     }.runTaskLater(1);
-
-                    this.cancel();
                 }
-            }
-
-        }.runTaskTimer(0, 1);
+        );
 
         return true;
     }

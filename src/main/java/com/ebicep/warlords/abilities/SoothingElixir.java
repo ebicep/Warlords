@@ -19,11 +19,9 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -77,46 +75,19 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
-        ArmorStand stand = Utils.spawnArmorStand(location, armorStand -> {
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.PINK_STAINED_GLASS));
-        });
 
-        new GameRunnable(wp.getGame()) {
-            int timer = 0;
-
-            @Override
-            public void run() {
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(true);
-            }
-
-            private void quarterStep(boolean last) {
-
-                if (!stand.isValid()) {
-                    this.cancel();
-                    return;
-                }
-
-                speed.add(new Vector(0, GRAVITY * SPEED, 0));
-                Location newLoc = stand.getLocation();
-                newLoc.add(speed);
-                stand.teleport(newLoc);
-                newLoc.add(0, 1.75, 0);
-
-                stand.setHeadPose(new EulerAngle(-speed.getY() * 3, 0, 0));
-
-                boolean shouldExplode;
-
-                timer++;
-                if (last) {
+        Utils.spawnThrowableProjectile(
+                wp.getGame(),
+                Utils.spawnArmorStand(location, armorStand -> {
+                    armorStand.getEquipment().setHelmet(new ItemStack(Material.PINK_STAINED_GLASS));
+                }),
+                speed,
+                GRAVITY,
+                SPEED,
+                (newLoc, integer) -> {
                     Matrix4d center = new Matrix4d(newLoc);
                     for (float i = 0; i < 6; i++) {
-                        double angle = Math.toRadians(i * 90) + timer * 0.3;
+                        double angle = Math.toRadians(i * 90) + integer * 0.3;
                         double width = 0.3D;
                         newLoc.getWorld().spawnParticle(
                                 Particle.VILLAGER_HAPPY,
@@ -131,27 +102,12 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                         );
 
                     }
-                }
-
-                WarlordsEntity directHit;
-                if (
-                        !newLoc.getBlock().isEmpty()
-                                && newLoc.getBlock().getType() != Material.GRASS
-                                && newLoc.getBlock().getType() != Material.BARRIER
-                                && newLoc.getBlock().getType() != Material.VINE
-                ) {
-                    // Explode based on collision
-                    shouldExplode = true;
-                } else {
-                    directHit = PlayerFilter
-                            .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                            .aliveTeammatesOfExcludingSelf(wp)
-                            .findFirstOrNull();
-                    shouldExplode = directHit != null;
-                }
-
-                if (shouldExplode) {
-                    stand.remove();
+                },
+                newLoc -> PlayerFilter
+                        .entitiesAroundRectangle(newLoc, 1, 2, 1)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .findFirstOrNull(),
+                (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.1f);
                     Utils.playGlobalSound(newLoc, Sound.BLOCK_GLASS_BREAK, 1.5f, 0.7f);
                     Utils.playGlobalSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
@@ -168,9 +124,9 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                     wp.getGame().registerGameTask(particleTask);
 
                     EffectUtils.playFirework(newLoc, FireworkEffect.builder()
-                                                                            .withColor(Color.WHITE)
-                                                                            .with(FireworkEffect.Type.BURST)
-                                                                            .build());
+                                                                   .withColor(Color.WHITE)
+                                                                   .with(FireworkEffect.Type.BURST)
+                                                                   .build());
 
                     for (WarlordsEntity nearEntity : PlayerFilter
                             .entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
@@ -239,12 +195,8 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                             );
                         }
                     }
-
-                    this.cancel();
                 }
-            }
-
-        }.runTaskTimer(0, 1);
+        );
 
         Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 

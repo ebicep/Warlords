@@ -3,6 +3,7 @@ package com.ebicep.warlords.util.bukkit;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.Entity;
@@ -11,7 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
@@ -223,5 +226,29 @@ public class LocationUtils {
         }
         location.setY(player.getWorld().getBlockAt(location).getLocation().getY() + 1);
         return location;
+    }
+
+    /**
+     * Return A List Of Locations That
+     * Make Up A Circle Using A Provided
+     * Center, Radius, And Desired Points.
+     *
+     * @param center
+     * @param radius
+     * @param amount
+     * @return
+     */
+    public static List<Location> getCircle(Location center, float radius, int amount) {
+        World world = center.getWorld();
+        double increment = ((2 * Math.PI) / amount);
+        List<Location> locations = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            float angle = (float) (i * increment);
+            float x = (float) (center.getX() + (radius * Math.cos(angle)));
+            float z = (float) (center.getZ() + (radius * Math.sin(angle)));
+            Location location = new Location(world, x, center.getY(), z);
+            locations.add(location);
+        }
+        return locations;
     }
 }

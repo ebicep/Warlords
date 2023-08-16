@@ -19,7 +19,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -108,7 +107,7 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
         Location location = wp.getLocation();
 
         for (int i = 0; i < slamSize; i++) {
-            fallingBlockLocations.add(getCircle(location, i, (i * ((int) (Math.PI * 2)))));
+            fallingBlockLocations.add(LocationUtils.getCircle(location, i, (i * ((int) (Math.PI * 2)))));
         }
 
         fallingBlockLocations.get(0).add(wp.getLocation());
@@ -119,7 +118,7 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
                     for (Location location : fallingBlockLocation) {
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                            FallingBlock fallingBlock = addFallingBlock(location.clone());
+                            FallingBlock fallingBlock = Utils.addFallingBlock(location.clone());
                             customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, GroundSlam.this));
                             WarlordsEvents.addEntityUUID(fallingBlock);
                         }
@@ -187,54 +186,6 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
             }
 
         }.runTaskTimer(0, 0);
-    }
-
-    /**
-     * Return A List Of Locations That
-     * Make Up A Circle Using A Provided
-     * Center, Radius, And Desired Points.
-     *
-     * @param center
-     * @param radius
-     * @param amount
-     * @return
-     */
-    private List<Location> getCircle(Location center, float radius, int amount) {
-        World world = center.getWorld();
-        double increment = ((2 * Math.PI) / amount);
-        List<Location> locations = new ArrayList<>();
-        for (int i = 0; i < amount; i++) {
-            float angle = (float) (i * increment);
-            float x = (float) (center.getX() + (radius * Math.cos(angle)));
-            float z = (float) (center.getZ() + (radius * Math.sin(angle)));
-            Location location = new Location(world, x, center.getY(), z);
-            locations.add(location);
-        }
-        return locations;
-    }
-
-    private FallingBlock addFallingBlock(Location location) {
-        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
-            location.add(0, 1, 0);
-        }
-        Location blockToGet = location.clone().add(0, -1, 0);
-        if (location.getWorld().getBlockAt(blockToGet).getType() == Material.AIR) {
-            blockToGet.add(0, -1, 0);
-            if (location.getWorld().getBlockAt(blockToGet).getType() == Material.AIR) {
-                blockToGet.add(0, -1, 0);
-            }
-        }
-        Material type = location.getWorld().getBlockAt(blockToGet).getType();
-        if (type == Material.GRASS) {
-            if ((int) (Math.random() * 3) == 2) {
-                type = Material.DIRT;
-            }
-        }
-        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location.add(0, .6, 0), type.createBlockData());
-        fallingBlock.setVelocity(new Vector(0, .14, 0));
-        fallingBlock.setDropItem(false);
-        WarlordsEvents.addEntityUUID(fallingBlock);
-        return fallingBlock;
     }
 
     @Override

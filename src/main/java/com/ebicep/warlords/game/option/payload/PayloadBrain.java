@@ -58,7 +58,7 @@ public class PayloadBrain {
                 Material nextLocationMaterial = nextLocation.getBlock().getType();
                 if (nextLocationMaterial == TARGET_MATERIAL || nextLocationMaterial == END_MATERIAL) {
                     path.add(nextLocation);
-                    Vector newDirection = current.getLocationTowards(nextLocation);
+                    Vector newDirection = current.getVectorTowards(nextLocation);
                     current = nextLocation;
                     current.setDirection(newDirection.setY(0));
                     if (nextLocationMaterial == END_MATERIAL) {

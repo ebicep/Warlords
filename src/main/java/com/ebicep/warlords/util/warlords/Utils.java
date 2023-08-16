@@ -1,5 +1,7 @@
 package com.ebicep.warlords.util.warlords;
 
+import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.google.common.base.Preconditions;
@@ -9,12 +11,14 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +27,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -270,6 +276,109 @@ public class Utils {
     ) {
         Vector v = vectorLocation.toVector().subtract(target.getLocation().toVector()).normalize().multiply(multiplier).setY(yBoost);
         target.setVelocity(from, v, ignoreModifiers);
+    }
+
+    public static FallingBlock addFallingBlock(Location location) {
+        return addFallingBlock(location, new Vector(0, .14, 0));
+    }
+
+    public static FallingBlock addFallingBlock(Location location, Vector vector) {
+        FallingBlock fallingBlock = spawnTexturedFallingBlockAt(location);
+        fallingBlock.setVelocity(vector);
+        fallingBlock.setDropItem(false);
+        WarlordsEvents.addEntityUUID(fallingBlock);
+        return fallingBlock;
+    }
+
+    @Nonnull
+    private static FallingBlock spawnTexturedFallingBlockAt(Location location) {
+        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
+            location.add(0, 1, 0);
+        }
+        Location blockToGet = location.clone().add(0, -1, 0);
+        if (location.getWorld().getBlockAt(blockToGet).getType() == Material.AIR) {
+            blockToGet.add(0, -1, 0);
+            if (location.getWorld().getBlockAt(blockToGet).getType() == Material.AIR) {
+                blockToGet.add(0, -1, 0);
+            }
+        }
+        Material type = location.getWorld().getBlockAt(blockToGet).getType();
+        if (type == Material.GRASS) {
+            if ((int) (Math.random() * 3) == 2) {
+                type = Material.DIRT;
+            }
+        }
+        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location.add(0, .6, 0), type.createBlockData());
+        return fallingBlock;
+    }
+
+    public static void spawnThrowableProjectile(
+            Game game,
+            ArmorStand stand,
+            Vector vector,
+            double gravity,
+            double speed,
+            BiConsumer<Location, Integer> onLast,
+            Function<Location, WarlordsEntity> directHitFunction,
+            BiConsumer<Location, WarlordsEntity> onImpact
+    ) {
+        new GameRunnable(game) {
+            int ticksElapsed = 0;
+
+            @Override
+            public void run() {
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(true);
+            }
+
+            private void quarterStep(boolean last) {
+                if (!stand.isValid()) {
+                    this.cancel();
+                    return;
+                }
+
+                vector.add(new Vector(0, gravity * speed, 0));
+                Location newLoc = stand.getLocation();
+                newLoc.add(vector);
+                stand.teleport(newLoc);
+                newLoc.add(0, 1.75, 0);
+
+                stand.setHeadPose(new EulerAngle(-vector.getY() * 3, 0, 0));
+
+                boolean shouldExplode;
+
+                ticksElapsed++;
+                if (last) {
+                    onLast.accept(newLoc, ticksElapsed);
+                }
+
+                WarlordsEntity directHit = null;
+                Material type = newLoc.getBlock().getType();
+                if (type != Material.AIR
+                        && type != Material.GRASS
+                        && type != Material.BARRIER
+                        && type != Material.VINE
+                ) {
+                    // Explode based on collision
+                    shouldExplode = true;
+                } else {
+                    directHit = directHitFunction.apply(newLoc);
+                    shouldExplode = directHit != null;
+                }
+
+                if (shouldExplode) {
+                    stand.remove();
+                    onImpact.accept(newLoc, directHit);
+                    this.cancel();
+                }
+            }
+
+        }.runTaskTimer(0, 1);
     }
 
     public static class SimpleEntityEquipment implements EntityEquipment {

@@ -72,11 +72,11 @@ public class LocationBuilder extends Location {
     }
 
     public LocationBuilder faceTowards(Location location) {
-        this.setDirection(getLocationTowards(location));
+        this.setDirection(getVectorTowards(location));
         return this;
     }
 
-    public Vector getLocationTowards(Location location) {
+    public Vector getVectorTowards(Location location) {
         return location.toVector().subtract(this.toVector()).normalize();
     }
 
