@@ -14,7 +14,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -231,17 +230,13 @@ public final class WarlordsNPC extends WarlordsEntity {
             healthBar.customName(Component.empty()
                     .append(mobNamePrefix)
                     .append(Component.text("- "))
-                    .append(Component.text(name, NamedTextColor.GRAY, TextDecoration.BOLD))
+                    .append(Component.text(name, NamedTextColor.GRAY))
                     .append(Component.text(" - "))
                     .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD))
             );
             healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
 
-            entity.customName(Component.text(
-                    NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
-                    NamedTextColor.RED,
-                    TextDecoration.BOLD)
-            );
+            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         }
     }
 
@@ -250,28 +245,20 @@ public final class WarlordsNPC extends WarlordsEntity {
         healthBar = Utils.spawnArmorStand(getLocation(), armorStand -> {
             armorStand.setGravity(true);
             armorStand.setMarker(true);
-            armorStand.customName(Component.text(
-                    NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
-                    NamedTextColor.RED,
-                    TextDecoration.BOLD)
-            );
+            armorStand.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
             armorStand.setCustomNameVisible(true);
         });
 
         healthBar.customName(Component.empty()
                 .append(mobNamePrefix)
                 .append(Component.text("- "))
-                .append(Component.text(name, NamedTextColor.GRAY, TextDecoration.BOLD))
+                .append(Component.text(name, NamedTextColor.GRAY))
                 .append(Component.text(" - "))
                 .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD))
         );
         healthBar.teleport(entity.getLocation().clone().add(0, 2.25, 0));
 
-        entity.customName(Component.text(
-                NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
-                NamedTextColor.RED,
-                TextDecoration.BOLD)
-        );
+        entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
 

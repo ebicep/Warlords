@@ -367,11 +367,7 @@ public class PlayingState implements State, TimerDebugAble {
         } else {
             cooldowns = new ArrayList<>();
         }
-        this.getGame().forEachOfflineWarlordsPlayer((player, team) -> {
-            WarlordsEntity otherPlayer = Warlords.getPlayer(player);
-            if (otherPlayer == null) {
-                return;
-            }
+        this.getGame().forEachOfflineWarlordsEntity(otherPlayer -> {
             if (otherPlayer instanceof WarlordsPlayerDisguised) {
                 return;
             }
@@ -382,9 +378,10 @@ public class PlayingState implements State, TimerDebugAble {
             Team playerTeam = scoreboard.getTeam(name);
             if (playerTeam == null) {
                 playerTeam = scoreboard.registerNewTeam(name);
-                playerTeam.addEntry(name);
+                playerTeam.addEntity(otherPlayer.getEntity());
             }
-            playerTeam.color(team.teamColor());
+            playerTeam.color(otherPlayer.getTeam().teamColor());
+
             //tab name
             //prefix
             TextComponent.Builder prefix = Component.text();
@@ -402,22 +399,28 @@ public class PlayingState implements State, TimerDebugAble {
                     }
                 });
             }
-            TextComponent.Builder basePrefix = Component.text()
-                                                        .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                        .append(Component.text(otherPlayer.getSpec().getClassNameShort(), NamedTextColor.GOLD))
-                                                        .append(Component.text("] ", NamedTextColor.DARK_GRAY));
-            prefix.append(basePrefix);
-            playerTeam.prefix(prefix.build());
-            //suffix
-            TextComponent.Builder baseSuffix = Component.text()
-                                                        .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                        .append(Component.text("Lv" + levelString, NamedTextColor.GOLD))
-                                                        .append(Component.text("] ", NamedTextColor.DARK_GRAY));
-            if (otherPlayer.getCarriedFlag() != null) {
-                baseSuffix.append(Component.text("⚑", NamedTextColor.WHITE));
+            if (otherPlayer instanceof WarlordsPlayer) {
+                TextComponent.Builder basePrefix = Component.text()
+                                                            .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                                                            .append(Component.text(otherPlayer.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                                            .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                prefix.append(basePrefix);
             }
+            playerTeam.prefix(prefix.build());
+
+
+            //suffix
             TextComponent.Builder suffix = Component.text();
-            suffix.append(baseSuffix);
+            if (otherPlayer instanceof WarlordsPlayer) {
+                TextComponent.Builder baseSuffix = Component.text()
+                                                            .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                                                            .append(Component.text("Lv" + levelString, NamedTextColor.GOLD))
+                                                            .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                if (otherPlayer.getCarriedFlag() != null) {
+                    baseSuffix.append(Component.text("⚑", NamedTextColor.WHITE));
+                }
+                suffix.append(baseSuffix);
+            }
             if (warlordsPlayer != null) {
                 cooldowns.forEach(cd -> {
                     PlayerNameInstance.PlayerNameData suffixFromSelf = cd.addSuffixFromSelf();
