@@ -42,6 +42,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -368,17 +370,17 @@ public class PlayingState implements State, TimerDebugAble {
             cooldowns = new ArrayList<>();
         }
         this.getGame().forEachOfflineWarlordsEntity(otherPlayer -> {
-            if (otherPlayer instanceof WarlordsPlayerDisguised) {
+            if (otherPlayer instanceof WarlordsPlayerDisguised || otherPlayer instanceof WarlordsNPC) {
                 return;
             }
-            String name = otherPlayer.getName();
+            LivingEntity entity = otherPlayer.getEntity();
             UUID uuid = otherPlayer.getUuid();
             List<AbstractCooldown<?>> otherPlayerCooldowns = otherPlayer.getCooldownManager().getCooldowns();
             String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, otherPlayer.getSpecClass()));
-            Team playerTeam = scoreboard.getTeam(name);
+            Team playerTeam = scoreboard.getEntityTeam(entity);
             if (playerTeam == null) {
-                playerTeam = scoreboard.registerNewTeam(name);
-                playerTeam.addEntity(otherPlayer.getEntity());
+                playerTeam = scoreboard.registerNewTeam(((CraftEntity) entity).getHandle().getScoreboardName());
+                playerTeam.addEntity(entity);
             }
             playerTeam.color(otherPlayer.getTeam().teamColor());
 
