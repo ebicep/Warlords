@@ -1,10 +1,12 @@
 package com.ebicep.warlords.game.option.payload;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +16,7 @@ import java.util.function.BiConsumer;
 
 public class PayloadSpawns {
 
-    private static final double SPAWN_DISTANCE_SQUARED = 20 * 20;
+    private static final double SPAWN_DISTANCE_SQUARED = 10 * 10;
     private final List<Location> spawnLocations;
     private final List<TimedSpawnWave> timedSpawnWaves;
     private final List<PayloadSpawnWave> payloadSpawnWaves; //index 0 = spawn wave at 10%, index 1 = spawn wave at 20%, etc
@@ -75,6 +77,13 @@ public class PayloadSpawns {
                 int randomIndex = ThreadLocalRandom.current().nextInt(size);
                 spawnMethod.accept(mobToSpawn.createMob.apply(spawnLocationsNear.get(randomIndex)), Team.RED);
             }
+        }
+    }
+
+
+    public void renderSpawnLocations() {
+        for (Location spawnLocation : spawnLocations) {
+            EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, spawnLocation.clone().add(0, .5, 0), 1);
         }
     }
 

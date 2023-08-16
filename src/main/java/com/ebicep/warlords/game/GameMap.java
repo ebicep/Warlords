@@ -4242,6 +4242,8 @@ public enum GameMap {
             options.add(new PayloadOption(
                     loc.addXYZ(0.5, 0.5, -19.5),
                     new PayloadSpawns(Arrays.asList(
+                            new Location(world, 4.5, 1, -25.5, 23, 35),
+                            new Location(world, -5, 1, -25, -40, 32),
                             new Location(world, 11.5, 1, -17, 67, 18),
                             new Location(world, 8, 1, -10, 96, 17),
                             new Location(world, -5, 1, -5.5, -131, 10),

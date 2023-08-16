@@ -79,9 +79,12 @@ public class PayloadOption implements PveOption {
 
                 showBossBar(netEscorting);
 
-//                spawns.tick(brain.getCurrentPathIndex() / brain.getPath().size(), newLocation, PayloadOption.this::spawnNewMob);
+                spawns.tick(brain.getCurrentPathIndex() / brain.getPath().size(), newLocation, PayloadOption.this::spawnNewMob);
 
+                if (ticksElapsed.get() % 10 == 0) {
+                    spawns.renderSpawnLocations();
 //                renderer.renderPath(brain.getPath());
+                }
                 ticksElapsed.incrementAndGet();
             }
 
@@ -126,6 +129,10 @@ public class PayloadOption implements PveOption {
         }.runTaskTimer(0, 0);
     }
 
+    protected void modifyStats(WarlordsNPC warlordsNPC) {
+        //TODO
+    }
+
     @Nonnull
     @Override
     public Game getGame() {
@@ -158,10 +165,6 @@ public class PayloadOption implements PveOption {
     @Override
     public PveRewards<?> getRewards() {
         return null; //TODO
-    }
-
-    protected void modifyStats(WarlordsNPC warlordsNPC) {
-        //TODO
     }
 
 }
