@@ -4232,11 +4232,11 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
 
-            options.add(LobbyLocationMarker.create(loc.addXYZ(9.5, 1, 19.5), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(9.5, 1, 19.5), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(12.5, 1, -5.5, 90, 3), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(12.5, 1, -5.5, 90, 3), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 1, 19.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(9.5, 1, 19.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(12.5, 1, -5.5, 90, 3), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(12.5, 1, -5.5, 90, 3), Team.RED));
 
             World world = loc.getWorld();
             options.add(new PayloadOption(

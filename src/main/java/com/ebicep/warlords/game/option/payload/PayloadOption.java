@@ -81,6 +81,7 @@ public class PayloadOption implements PveOption {
 
 //                spawns.tick(brain.getCurrentPathIndex() / brain.getPath().size(), newLocation, PayloadOption.this::spawnNewMob);
 
+//                renderer.renderPath(brain.getPath());
                 ticksElapsed.incrementAndGet();
             }
 

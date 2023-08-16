@@ -21,7 +21,7 @@ public class PayloadBrain {
         add(locationBuilder -> locationBuilder.forward(1).addY(1));
         add(locationBuilder -> locationBuilder.forward(1).addY(-1));
     }};
-    private static final double MOVE_PER_TICK = 0.3;//25; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
+    private static final double MOVE_PER_TICK = 0.15;//25; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
 
     private final Location start;
     private final List<Location> path = new ArrayList<>();
@@ -60,7 +60,7 @@ public class PayloadBrain {
                     path.add(nextLocation);
                     Vector newDirection = current.getLocationTowards(nextLocation);
                     current = nextLocation;
-                    current.setDirection(newDirection);
+                    current.setDirection(newDirection.setY(0));
                     if (nextLocationMaterial == END_MATERIAL) {
                         return;
                     }
