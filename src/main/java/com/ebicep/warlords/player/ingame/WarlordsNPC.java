@@ -13,7 +13,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -223,19 +222,13 @@ public final class WarlordsNPC extends WarlordsEntity {
         if (!isDead()) {
             getEntity().customName(Component.empty()
                                             .append(mobNamePrefix)
-                                            .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
-                                                    NamedTextColor.RED,
-                                                    TextDecoration.BOLD
-                                            )));
+                                            .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED)));
         }
     }
 
     @Override
     public void updateEntity() {
-        entity.customName(Component.empty()
-                                   .append(mobNamePrefix)
-                                   .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED, TextDecoration.BOLD))
-        );
+        entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + " ❤", NamedTextColor.RED));
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         AttributeInstance attribute = entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
