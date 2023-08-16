@@ -9,11 +9,12 @@ import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-import net.minecraft.util.Mth;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -26,12 +27,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PayloadOption implements PveOption {
 
     private static final double MOVE_RADIUS = 5;
+    private static final int BOSS_BAR_FILL_SPACE = 45;
+    private static final int BOSS_BAR_ESCORT_SPACE = 6;
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final PayloadBrain brain;
     private final PayloadRenderer renderer = new PayloadRenderer();
     private final PayloadSpawns spawns;
-    private final BossBar bossBar = BossBar.bossBar(Component.empty(), 0, BossBar.Color.WHITE, BossBar.Overlay.NOTCHED_10); //TODO name face direction of payload 🏎
+    private final BossBar bossBar = BossBar.bossBar(Component.empty(), 0, BossBar.Color.BLUE, BossBar.Overlay.NOTCHED_10);
     private final Team escortingTeam;
     @Nonnull
     private Game game;
@@ -90,14 +93,23 @@ public class PayloadOption implements PveOption {
             }
 
             private void showBossBar(int netEscorting) {
-                if (netEscorting > 0) {
+                float progress = (float) (brain.getCurrentPathIndex() / brain.getPath().size());
+                String pushing = "";
+                boolean escorting = netEscorting > 0;
+                if (escorting) {
                     // https://en.wikipedia.org/wiki/List_of_Unicode_characters#Unicode_symbols:~:text=assigned%20code%20points-,Enclosed%20Alphanumerics,-%5Bedit%5D
-                    String unicodeNumber = String.valueOf(Character.toChars((netEscorting <= 20 ? 0x2460 : 0x2470) + netEscorting - 1));
-                    bossBar.name(Component.text("Ⓟ" + ">>>" + (netEscorting > 20 ? netEscorting : unicodeNumber))); // ⋙ 〉 ≫ ① ②
-                } else {
-                    bossBar.name(Component.empty());
+                    // https://www.compart.com/en/unicode/search?q=Dingbat+Negative+Circled+#characters
+                    // String unicodeNumber = String.valueOf(Character.toChars((netEscorting <= 20 ? 0x2460 : 0x2470) + netEscorting - 1));
+                    String unicodeNumber = String.valueOf(Character.toChars((netEscorting <= 10 ? 0x2776 : 0x24E1) + netEscorting - 1));
+                    pushing = ">>>" + (netEscorting > 20 ? netEscorting : unicodeNumber); // ⋙ 〉 ≫ ① ②
                 }
-                bossBar.progress(Mth.clamp((float) (brain.getCurrentPathIndex() / brain.getPath().size()), 0, 1));
+                bossBar.name(Component.textOfChildren(
+                        Component.text(" ".repeat((int) (progress * BOSS_BAR_FILL_SPACE) + (escorting ? BOSS_BAR_ESCORT_SPACE : 0))),
+                        Component.text("🄿", NamedTextColor.BLUE),
+                        Component.text(pushing),
+                        Component.text(" ".repeat((int) ((1 - progress) * BOSS_BAR_FILL_SPACE)))
+                ));
+                bossBar.progress(MathUtils.clamp(progress, 0, 1));
                 game.forEachOnlinePlayer((player, team) -> player.showBossBar(bossBar));
             }
 
