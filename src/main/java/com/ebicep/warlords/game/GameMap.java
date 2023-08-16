@@ -4263,26 +4263,26 @@ public enum GameMap {
                             new Location(world, 4.5, 1, 22, 145, 10)
                     ), Arrays.asList(
                             new PayloadSpawns.TimedSpawnWave(20,
-                                    new Pair<>(10, Mobs.BASIC_ZOMBIE)
+                                    new Pair<>(8, Mobs.BASIC_ZOMBIE)
                             ),
                             new PayloadSpawns.TimedSpawnWave(30,
-                                    new Pair<>(10, Mobs.ELITE_ZOMBIE)
+                                    new Pair<>(8, Mobs.ELITE_ZOMBIE)
                             ),
                             new PayloadSpawns.TimedSpawnWave(60,
-                                    new Pair<>(10, Mobs.FORGOTTEN_ZOMBIE)
+                                    new Pair<>(8, Mobs.FORGOTTEN_ZOMBIE)
                             )
                     ), Arrays.asList(
                             new PayloadSpawns.PayloadSpawnWave(
-                                    new Pair<>(10, Mobs.BASIC_ZOMBIE),
-                                    new Pair<>(10, Mobs.BASIC_PIG_ZOMBIE),
-                                    new Pair<>(10, Mobs.BASIC_SKELETON),
-                                    new Pair<>(10, Mobs.BASIC_BERSERK_ZOMBIE)
+                                    new Pair<>(8, Mobs.BASIC_ZOMBIE),
+                                    new Pair<>(8, Mobs.BASIC_PIG_ZOMBIE),
+                                    new Pair<>(8, Mobs.BASIC_SKELETON),
+                                    new Pair<>(8, Mobs.BASIC_BERSERK_ZOMBIE)
                             ),
                             new PayloadSpawns.PayloadSpawnWave(
-                                    new Pair<>(10, Mobs.ELITE_ZOMBIE),
-                                    new Pair<>(10, Mobs.ELITE_PIG_ZOMBIE),
-                                    new Pair<>(10, Mobs.ELITE_SKELETON),
-                                    new Pair<>(10, Mobs.ELITE_BERSERK_ZOMBIE)
+                                    new Pair<>(8, Mobs.ELITE_ZOMBIE),
+                                    new Pair<>(8, Mobs.ELITE_PIG_ZOMBIE),
+                                    new Pair<>(8, Mobs.ELITE_SKELETON),
+                                    new Pair<>(8, Mobs.ELITE_BERSERK_ZOMBIE)
                             )
                     )),
                     Team.BLUE
