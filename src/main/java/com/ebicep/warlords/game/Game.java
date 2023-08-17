@@ -822,9 +822,8 @@ public final class Game implements Runnable, AutoCloseable {
         }
         reopenGameReferencedMenus();
         // TODO check
-        previousBlocks.forEach((location, material) -> {
-            location.getBlock().setType(material);
-        });
+        previousBlocks.forEach((location, material) -> location.getBlock().setType(material));
+        previousBlocks.clear();
     }
 
     public List<UUID> removeAllPlayers() {

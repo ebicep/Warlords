@@ -59,6 +59,14 @@ public class PathfinderGoalPredictTargetFutureLocationGoal extends Goal {
         self.getBukkitEntity().setRotation(yaw, pitch);
     }
 
+    public float getYaw() {
+        return yaw;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
     public static Location lookAtLocation(Location loc, Location toLookAt) {
         //Clone the loc to prevent applied changes to the input loc
         loc = loc.clone();

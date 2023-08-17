@@ -138,6 +138,8 @@ public enum Mobs {
     //SmartSkeleton
     SMART_SKELETON(SmartSkeleton.class, SmartSkeleton::new),
 
+    MAGMATIC_OOZE(MagmaticOoze.class, MagmaticOoze::new),
+
     ;
 
     public static final Mobs[] MOBS = values();

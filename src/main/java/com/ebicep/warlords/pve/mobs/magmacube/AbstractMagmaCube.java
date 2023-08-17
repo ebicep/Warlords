@@ -38,6 +38,34 @@ public abstract class AbstractMagmaCube extends AbstractMob<CustomMagmaCube> {
         );
     }
 
+    public AbstractMagmaCube(
+            int size,
+            Location spawnLocation,
+            String name,
+            MobTier mobTier,
+            EntityEquipment ee,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            AbstractAbility... abilities
+    ) {
+        super(
+                new CustomMagmaCube(spawnLocation.getWorld(), size),
+                spawnLocation,
+                name,
+                mobTier,
+                ee,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                abilities
+        );
+    }
+
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 

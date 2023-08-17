@@ -17,12 +17,21 @@ public class CustomMagmaCube extends MagmaCube implements CustomEntity<CustomMag
     private final int flameHitbox = 6;
 
     public CustomMagmaCube(ServerLevel serverLevel) {
+        this(serverLevel, 7);
+    }
+
+    public CustomMagmaCube(ServerLevel serverLevel, int size) {
         super(EntityType.MAGMA_CUBE, serverLevel);
-        setSize(7, true);
+        setSize(size, true);
     }
 
     public CustomMagmaCube(org.bukkit.World world) {
         this(((CraftWorld) world).getHandle());
+        giveBaseAI(1.0, 0.6, 100);
+    }
+
+    public CustomMagmaCube(org.bukkit.World world, int size) {
+        this(((CraftWorld) world).getHandle(), size);
         giveBaseAI(1.0, 0.6, 100);
     }
 

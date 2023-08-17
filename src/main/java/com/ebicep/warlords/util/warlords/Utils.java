@@ -382,6 +382,10 @@ public class Utils {
     }
 
     public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount) {
+        spawnFallingBlocks(impactLocation, initialCircleRadius, amount, -.5, .25);
+    }
+
+    public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount, double vectorMultiply, double vectorY) {
         double angle = 0;
 
         for (int i = 0; i < amount; i++) {
@@ -401,11 +405,10 @@ public class Utils {
                     default -> throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
                 };
 
-                fallingBlock.setVelocity(impactLocation.toVector().subtract(spawnLoc.toVector()).normalize().multiply(-.5).setY(.25));
+                fallingBlock.setVelocity(impactLocation.toVector().subtract(spawnLoc.toVector()).normalize().multiply(vectorMultiply).setY(vectorY));
                 fallingBlock.setDropItem(false);
                 WarlordsEvents.addEntityUUID(fallingBlock);
             }
-
         }
     }
 

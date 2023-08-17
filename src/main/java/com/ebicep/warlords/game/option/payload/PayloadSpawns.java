@@ -16,7 +16,7 @@ import java.util.function.BiConsumer;
 
 public class PayloadSpawns {
 
-    private static final double SPAWN_DISTANCE_SQUARED = 10 * 10;
+    private static final double SPAWN_DISTANCE_SQUARED = 20 * 20;
     private final List<Location> spawnLocations;
     private final List<TimedSpawnWave> timedSpawnWaves;
     private final List<PayloadSpawnWave> payloadSpawnWaves; //index 0 = spawn wave at 10%, index 1 = spawn wave at 20%, etc
