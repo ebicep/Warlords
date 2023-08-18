@@ -155,6 +155,11 @@ public enum Currencies implements Spendable {
             return false;
         }
     },
+    ASCENDANT_SHARD(
+            "Ascendant Shard",
+            NamedTextColor.GOLD, //TODO
+            new ItemStack(Material.BRICK)
+    ),
 
 
     ;

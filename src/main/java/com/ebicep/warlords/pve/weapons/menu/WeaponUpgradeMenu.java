@@ -67,7 +67,6 @@ public class WeaponUpgradeMenu {
             );
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
         }
-
     }
 
 }

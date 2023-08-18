@@ -46,6 +46,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     protected Map<LegendaryTitles, LegendaryWeaponTitleInfo> titles = new HashMap<>();
     @Field("upgrade_level")
     protected int upgradeLevel = 0;
+    protected boolean ascendant = false;
 
     public AbstractLegendaryWeapon() {
     }
@@ -73,6 +74,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         this.unlockedSkillBoosts = legendaryWeapon.getUnlockedSkillBoosts();
         this.titles = new HashMap<>(legendaryWeapon.getTitles());
         this.upgradeLevel = legendaryWeapon.getUpgradeLevel();
+        this.ascendant = legendaryWeapon.isAscendant();
     }
 
     public SkillBoosts getSelectedSkillBoost() {
@@ -105,6 +107,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Override
     public void upgrade() {
         this.upgradeLevel++;
+        if (this.upgradeLevel == 5) {
+            this.ascendant = true;
+        }
     }
 
     @Override
@@ -191,7 +196,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public int getMaxUpgradeLevel() {
-        return 4;
+        return isAscendant() ? 5 : 4;
     }
 
     public float getSpeedBonus() {
@@ -255,7 +260,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
         for (AbstractUpgradeBranch<?> upgradeBranch : player.getAbilityTree().getUpgradeBranches()) {
             if (upgradeBranch.getAbility().getClass().equals(selectedSkillBoost.ability)) {
-                upgradeBranch.setFreeUpgrades(1);
+                upgradeBranch.setFreeUpgrades(isAscendant() ? 2 : 1);
                 break;
             }
         }
@@ -361,7 +366,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         if (getTitleName().isEmpty()) {
             return super.getName();
         } else {
-            return Component.text(getTitleName() + " ", NamedTextColor.GOLD)
+            return Component.text(getTitleName() + " ", getTextColor())
                             .append(super.getName());
         }
     }
@@ -455,7 +460,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public NamedTextColor getTextColor() {
-        return NamedTextColor.GOLD;
+        return isAscendant() ? NamedTextColor.RED : NamedTextColor.GOLD;
     }
 
     public String getTitleName() {
@@ -674,6 +679,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 cost.put(Currencies.SYNTHETIC_SHARD, 25000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 20000L);
             }
+            case 5 -> {
+                cost.put(Currencies.COIN, 2000000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 50000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 40000L);
+                cost.put(Currencies.ASCENDANT_SHARD, 100L);
+            }
         }
         return cost;
     }
@@ -711,4 +722,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return cost;
     }
 
+    public boolean isAscendant() {
+        return ascendant;
+    }
 }
