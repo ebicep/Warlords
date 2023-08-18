@@ -76,9 +76,9 @@ public interface CustomEntity<T extends Mob> {
 
             //targets entity that hit it
             //aiTargetHitBy();
-            //targets closest entities
-            aiTargetClosest();
         }
+        //targets closest entities
+        aiTargetClosest();
         //look at player
         aiLookAtPlayer();
         //look idle
@@ -122,9 +122,7 @@ public interface CustomEntity<T extends Mob> {
 
     default void aiTargetClosest() {
         T entity = get();
-        if (entity instanceof PathfinderMob) {
-            entity.targetSelector.addGoal(2, new PathfinderGoalTargetAgroWarlordsEntity(entity));
-        }
+        entity.targetSelector.addGoal(2, new PathfinderGoalTargetAgroWarlordsEntity(entity));
     }
 
     default void spawn(Location location) {

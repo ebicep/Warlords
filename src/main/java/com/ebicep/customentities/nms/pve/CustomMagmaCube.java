@@ -14,8 +14,6 @@ import javax.annotation.Nonnull;
 
 public class CustomMagmaCube extends MagmaCube implements CustomEntity<CustomMagmaCube> {
 
-    private final int flameHitbox = 6;
-
     public CustomMagmaCube(ServerLevel serverLevel) {
         this(serverLevel, 7);
     }
