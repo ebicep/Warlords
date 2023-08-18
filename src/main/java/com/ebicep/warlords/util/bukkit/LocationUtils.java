@@ -24,6 +24,12 @@ public class LocationUtils {
     private static final Location LOCATION_CACHE_SORT = new Location(null, 0, 0, 0);
     private static final Location LOCATION_CACHE_DISTANCE = new Location(null, 0, 0, 0);
 
+    public record TimedLocationBlockHolder(LocationBlockHolder locationBlockHolder, long time) {
+        public TimedLocationBlockHolder(LocationBlockHolder locationBlockHolder) {
+            this(locationBlockHolder, System.currentTimeMillis());
+        }
+    }
+
     public record LocationBlockHolder(World world, int x, int y, int z) {
         public LocationBlockHolder(Location location) {
             this(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());

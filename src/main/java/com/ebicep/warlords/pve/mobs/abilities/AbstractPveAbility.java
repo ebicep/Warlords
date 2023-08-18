@@ -21,6 +21,10 @@ public abstract class AbstractPveAbility extends AbstractAbility {
         super(name, cooldown, energyCost);
     }
 
+    public AbstractPveAbility(String name, float cooldown, float energyCost, boolean startNoCooldown) {
+        super(name, cooldown, energyCost, startNoCooldown);
+    }
+
     public AbstractPveAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }

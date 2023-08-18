@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -29,30 +30,27 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
 
     private static final Material DAMAGE_BLOCK = Material.MAGMA_BLOCK;
-    private final Map<LocationUtils.LocationBlockHolder, Material> previousBlocks;
+    private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
     private int splitNumber;
 
     public MagmaticOoze(Location spawnLocation) {
-        this(spawnLocation, 0, new HashMap<>());
+        this(spawnLocation, 75_000f, 0, new HashMap<>());
     }
 
-    public MagmaticOoze(Location spawnLocation, int splitNumber, Map<LocationUtils.LocationBlockHolder, Material> previousBlocks) {
+    public MagmaticOoze(Location spawnLocation, float health, int splitNumber, Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
         super(10 - (splitNumber * 2),
                 spawnLocation,
                 "Magmatic Ooze",
                 MobTier.ILLUSION,
                 null,
-                100_000 / (splitNumber + 1),
+                (int) (health / (splitNumber + 1)),
                 1f,
                 40,
                 100,
@@ -61,7 +59,7 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                 new FlamingSlam(900 - (splitNumber * 100), 1400 - (splitNumber * 100)),
                 new HeatAura(100 - (splitNumber * 10), 10 - splitNumber),
                 new MoltenFissure(previousBlocks),
-                new Split(splitNumber, loc -> new MagmaticOoze(loc, splitNumber + 1, previousBlocks))
+                new Split(splitNumber, (loc, we) -> new MagmaticOoze(loc, we.getHealth(), splitNumber + 1, previousBlocks))
         );
         this.splitNumber = splitNumber;
         this.previousBlocks = previousBlocks;
@@ -70,7 +68,7 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        if (splitNumber == 0) {
+        if (splitNumber == 0 && option.getMobs().stream().noneMatch(MagmaticOoze.class::isInstance)) {
             Game game = option.getGame();
             new GameRunnable(game) {
 
@@ -78,6 +76,16 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
 
                 @Override
                 public void run() {
+                    previousBlocks.entrySet().removeIf(timedLocationBlockHolderMaterialEntry -> {
+                        long time = timedLocationBlockHolderMaterialEntry.getKey().time();
+                        // remove if 30*5 seconds have passed
+                        if (time < System.currentTimeMillis() - 150_000) {
+                            Block block = timedLocationBlockHolderMaterialEntry.getKey().locationBlockHolder().getBlock();
+                            block.setType(timedLocationBlockHolderMaterialEntry.getValue());
+                            return true;
+                        }
+                        return false;
+                    });
                     PlayerFilter.playingGame(getGame())
                                 .aliveEnemiesOf(warlordsNPC)
                                 .forEach(warlordsEntity -> {
@@ -93,10 +101,11 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                                         warlordsEntity.addDamageInstance(
                                                 warlordsNPC,
                                                 "Magma",
+                                                100,
                                                 150,
-                                                200,
                                                 0,
-                                                100
+                                                100,
+                                                EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                                         );
                                     } else {
                                         damageCooldown.remove(warlordsEntity); // remove if not on magma
@@ -128,12 +137,12 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                     // all dead
                     // restore blocks
                     previousBlocks.forEach((location, material) -> {
-                        Block block = location.getBlock();
+                        Block block = location.locationBlockHolder().getBlock();
                         block.setType(material);
                     });
                 }
             }
-        }.runTaskLater(2);
+        }.runTaskLater(3);
     }
 
     public static class FieryProjectile extends AbstractPveAbility implements ProjectileAbility {
@@ -198,9 +207,9 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                                 ) {
                                     Vector v;
                                     if (p == directHit) {
-                                        v = new LocationBuilder(location).getVectorTowards(p.getLocation()).multiply(kbVelocity).setY(1.3);
+                                        v = new LocationBuilder(location).getVectorTowards(p.getLocation()).multiply(kbVelocity).setY(1);
                                     } else {
-                                        v = new LocationBuilder(p.getLocation()).getVectorTowards(newLoc).multiply(-kbVelocity).setY(1.3);
+                                        v = new LocationBuilder(p.getLocation()).getVectorTowards(newLoc).multiply(-kbVelocity).setY(1);
                                     }
                                     p.setVelocity(name, v, false, false);
                                     p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -256,7 +265,7 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                                     .findAny()
                                     .ifPresent(enemy -> {
                                         Vector vectorTowardsEnemy = new LocationBuilder(wp.getLocation()).getVectorTowards(enemy.getLocation());
-                                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.5 + (wp.getLocation().distance(enemy.getLocation()) * .025)), true);
+                                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.25 + (wp.getLocation().distance(enemy.getLocation()) * .025)), true);
                                     });
                         launchedTowardsPlayer = true;
                     }
@@ -339,9 +348,9 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
         private static final int MIN_BREAK_SIZE = 3;
         private static final int MAX_BREAK_SIZE = 5;
         private static final int VALID_CHECK = 1;
-        private final Map<LocationUtils.LocationBlockHolder, Material> previousBlocks;
+        private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
 
-        public MoltenFissure(Map<LocationUtils.LocationBlockHolder, Material> previousBlocks) {
+        public MoltenFissure(Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
             super("Molten Fissure", 30, 50);
             this.previousBlocks = previousBlocks;
         }
@@ -495,7 +504,7 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                 private void spawnDamageBlock(LocationBuilder location) {
                     Block block = location.getBlock();
                     LocationUtils.LocationBlockHolder blockHolder = new LocationUtils.LocationBlockHolder(location);
-                    previousBlocks.putIfAbsent(blockHolder, block.getType());
+                    previousBlocks.putIfAbsent(new LocationUtils.TimedLocationBlockHolder(blockHolder), block.getType());
                     game.getPreviousBlocks().putIfAbsent(blockHolder, block.getType());
                     block.setType(DAMAGE_BLOCK);
                 }
@@ -571,11 +580,11 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
     private static class Split extends AbstractPveAbility {
         private final int maxSplit = 4;
         private final int split;
+        private final BiFunction<Location, WarlordsEntity, AbstractMob<?>> splitSpawnFunction;
+        private double splitChance = .2;
 
-        private final Function<Location, AbstractMob<?>> splitSpawnFunction;
-
-        public Split(int split, Function<Location, AbstractMob<?>> splitSpawnFunction) {
-            super("Split", 20, 50);
+        public Split(int split, BiFunction<Location, WarlordsEntity, AbstractMob<?>> splitSpawnFunction) {
+            super("Split", 20, 50, true);
             this.split = split;
             this.splitSpawnFunction = splitSpawnFunction;
         }
@@ -586,8 +595,11 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                 return true;
             }
             // 25% chance to split
-            if (ThreadLocalRandom.current().nextInt(4) == 0) {
-                pveOption.spawnNewMob(splitSpawnFunction.apply(wp.getLocation()));
+            if (ThreadLocalRandom.current().nextDouble() < splitChance) {
+                pveOption.spawnNewMob(splitSpawnFunction.apply(wp.getLocation(), wp));
+                splitChance = .2;
+            } else {
+                splitChance += .15;
             }
             return true;
         }

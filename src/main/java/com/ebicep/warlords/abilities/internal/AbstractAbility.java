@@ -49,19 +49,39 @@ public abstract class AbstractAbility implements AbilityIcon {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
     }
 
-    public AbstractAbility(String name, float cooldown, float energyCost) {
-        this(name, 0, 0, cooldown, energyCost, 0, 0);
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, false);
     }
 
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+    public AbstractAbility(
+            String name,
+            float minDamageHeal,
+            float maxDamageHeal,
+            float cooldown,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            boolean startNoCooldown
+    ) {
         this.name = name;
         this.minDamageHeal = minDamageHeal;
         this.maxDamageHeal = maxDamageHeal;
         this.cooldown = cooldown;
+        if (startNoCooldown) {
+            this.currentCooldown = cooldown;
+        }
         this.energyCost = new FloatModifiable(energyCost);
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         boosted = false;
+    }
+
+    public AbstractAbility(String name, float cooldown, float energyCost) {
+        this(name, 0, 0, cooldown, energyCost, 0, 0);
+    }
+
+    public AbstractAbility(String name, float cooldown, float energyCost, boolean startNoCooldown) {
+        this(name, 0, 0, cooldown, energyCost, 0, 0, startNoCooldown);
     }
 
     public abstract void updateDescription(Player player);
@@ -159,8 +179,8 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     /**
-     * @param ticksDelay how many ticks before it allows you to activate the ability
-     * @param runnable secondary ability runnable
+     * @param ticksDelay   how many ticks before it allows you to activate the ability
+     * @param runnable     secondary ability runnable
      * @param infiniteUses should the ability have infinite uses
      * @param shouldRemove remove condition
      */
