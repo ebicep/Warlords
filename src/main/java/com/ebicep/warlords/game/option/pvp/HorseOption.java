@@ -61,7 +61,7 @@ public class HorseOption implements Option, Listener {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
-            playerHorses.put(player.getUuid(), new CustomHorse(player));
+            playerHorses.put(player.getUuid(), new CustomHorse());
         }
     }
 
@@ -117,11 +117,14 @@ public class HorseOption implements Option, Listener {
         if (!(warlordsEntity instanceof WarlordsPlayer)) {
             return null;
         }
+        if (!(warlordsEntity.getEntity() instanceof Player player)) {
+            return null;
+        }
         for (Option option : warlordsEntity.getGame().getOptions()) {
             if (option instanceof HorseOption) {
                 HashMap<UUID, CustomHorse> horses = ((HorseOption) option).getPlayerHorses();
-                CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new CustomHorse(warlordsEntity));
-                customHorse.spawn();
+                CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new CustomHorse());
+                customHorse.spawn(player);
                 return customHorse;
             }
         }
@@ -134,18 +137,10 @@ public class HorseOption implements Option, Listener {
 
     public static class CustomHorse {
 
-        private final WarlordsEntity warlordsEntityOwner;
         private final int cooldown = 15;
         private final float speed = .318f;
 
-        public CustomHorse(WarlordsEntity warlordsEntityOwner) {
-            this.warlordsEntityOwner = warlordsEntityOwner;
-        }
-
-        public void spawn() {
-            if (!(warlordsEntityOwner.getEntity() instanceof Player player)) {
-                return;
-            }
+        public void spawn(Player player) {
             Horse h = player.getWorld().spawn(player.getLocation(), Horse.class, false, horse -> {
                 horse.setTamed(true);
                 horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
@@ -162,10 +157,6 @@ public class HorseOption implements Option, Listener {
                 attribute.setBaseValue(speed);
             });
             h.addPassenger(player); // not sure if including this in function above will cause issues
-        }
-
-        public WarlordsEntity getWarlordsOwner() {
-            return warlordsEntityOwner;
         }
 
         public int getCooldown() {
