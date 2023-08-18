@@ -252,6 +252,7 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
             new GameRunnable(game) {
 
                 boolean launchedTowardsPlayer = false;
+                WarlordsEntity target = null;
 
                 @Override
                 public void run() {
@@ -260,14 +261,18 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                     // TODO maybe tp look towards random ppl then launch towards them
                     if (currentVector.getY() <= 0 && !launchedTowardsPlayer) {
                         // diagonally towards enemy player
-                        PlayerFilter.playingGame(game)
-                                    .aliveEnemiesOf(wp)
-                                    .findAny()
-                                    .ifPresent(enemy -> {
-                                        Vector vectorTowardsEnemy = new LocationBuilder(wp.getLocation()).getVectorTowards(enemy.getLocation());
-                                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.25 + (wp.getLocation().distance(enemy.getLocation()) * .025)), true);
-                                    });
+                        Vector vectorTowardsEnemy = new LocationBuilder(wp.getLocation()).getVectorTowards(target.getLocation());
+                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.25 + (wp.getLocation().distance(target.getLocation()) * .025)), true);
                         launchedTowardsPlayer = true;
+                    } else {
+                        if (target == null || target.isDead()) {
+                            PlayerFilter.playingGame(game)
+                                        .aliveEnemiesOf(wp)
+                                        .findAny()
+                                        .ifPresent(enemy -> target = enemy);
+                        }
+                        // fire line particle to target
+                        EffectUtils.playParticleLinkAnimation(wp.getLocation(), target.getLocation(), Particle.LANDING_LAVA); //TODO particle
                     }
                     if (launchedTowardsPlayer) {
                         // check if hit ground
