@@ -58,7 +58,7 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                 100,
                 200,
                 new FieryProjectile(600 - (splitNumber * 10), 700 - (splitNumber * 10)),
-                new FlamingSlam(1000 - (splitNumber * 100), 1500 - (splitNumber * 100)),
+                new FlamingSlam(900 - (splitNumber * 100), 1400 - (splitNumber * 100)),
                 new HeatAura(100 - (splitNumber * 10), 10 - splitNumber),
                 new MoltenFissure(previousBlocks),
                 new Split(splitNumber, loc -> new MagmaticOoze(loc, splitNumber + 1, previousBlocks))
@@ -198,9 +198,9 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
                                 ) {
                                     Vector v;
                                     if (p == directHit) {
-                                        v = new LocationBuilder(location).getVectorTowards(p.getLocation()).multiply(kbVelocity).setY(1.5);
+                                        v = new LocationBuilder(location).getVectorTowards(p.getLocation()).multiply(kbVelocity).setY(1.3);
                                     } else {
-                                        v = new LocationBuilder(p.getLocation()).getVectorTowards(newLoc).multiply(-kbVelocity).setY(1.5);
+                                        v = new LocationBuilder(p.getLocation()).getVectorTowards(newLoc).multiply(-kbVelocity).setY(1.3);
                                     }
                                     p.setVelocity(name, v, false, false);
                                     p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -313,7 +313,7 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             // increase heat / damage on every use
-            if (this.timesUsed <= 50) { // ~1.2k max at split 0
+            if (this.timesUsed <= 40) { // ~700 max at split 0
                 this.multiplyMinMax(1.05f);
             }
             PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
