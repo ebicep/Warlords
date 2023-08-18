@@ -2,7 +2,6 @@
 package com.ebicep.warlords.game.state;
 
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.util.bukkit.RemoveEntities;
 
 public class ClosedState implements State {
     private final Game game;
@@ -25,7 +24,6 @@ public class ClosedState implements State {
 
     @Override
     public void end() {
-        RemoveEntities.doRemove(this.game);
     }
 
     @Override

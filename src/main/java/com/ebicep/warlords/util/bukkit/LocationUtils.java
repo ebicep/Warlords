@@ -4,6 +4,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.Entity;
@@ -15,12 +16,59 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 public class LocationUtils {
     private static final Location LOCATION_CACHE_SORT = new Location(null, 0, 0, 0);
     private static final Location LOCATION_CACHE_DISTANCE = new Location(null, 0, 0, 0);
+
+    public record LocationBlockHolder(World world, int x, int y, int z) {
+        public LocationBlockHolder(Location location) {
+            this(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        }
+
+        public Block getBlock() {
+            return world.getBlockAt(x, y, z);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final LocationBlockHolder other = (LocationBlockHolder) obj;
+
+            if (!Objects.equals(this.world, other.world)) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.y) != Double.doubleToLongBits(other.y)) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.z) != Double.doubleToLongBits(other.z)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+
+            hash = 19 * hash + (world != null ? world.hashCode() : 0);
+            hash = 19 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
+            hash = 19 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+            hash = 19 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
+            return hash;
+        }
+    }
 
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease), player2.getEyeLocation());

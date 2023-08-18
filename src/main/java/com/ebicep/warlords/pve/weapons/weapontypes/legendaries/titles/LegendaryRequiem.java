@@ -17,7 +17,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
-import com.ebicep.warlords.util.java.JavaUtils;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -92,7 +92,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 int alliedNPCs = (int) game.warlordsNPCs()
                                            .filter(warlordsNPC -> warlordsNPC.isTeammate(player))
                                            .count();
-                int spawnAmount = JavaUtils.generateRandomValueBetweenInclusive(1, 3);
+                int spawnAmount = MathUtils.generateRandomValueBetweenInclusive(1, 3);
                 if (alliedNPCs + spawnAmount > SPAWN_LIMIT) {
                     spawnAmount = SPAWN_LIMIT - alliedNPCs;
                 }

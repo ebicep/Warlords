@@ -308,8 +308,7 @@ public class Utils {
                 type = Material.DIRT;
             }
         }
-        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location.add(0, .6, 0), type.createBlockData());
-        return fallingBlock;
+        return location.getWorld().spawnFallingBlock(location.add(0, .6, 0), type.createBlockData());
     }
 
     public static void spawnThrowableProjectile(

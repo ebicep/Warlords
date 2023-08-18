@@ -1,13 +1,13 @@
 package com.ebicep.warlords.pve.weapons.weaponaddons;
 
-import com.ebicep.warlords.util.java.JavaUtils;
+import com.ebicep.warlords.util.java.MathUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public interface Salvageable {
 
     default int getSalvageAmount() {
-        return JavaUtils.generateRandomValueBetweenInclusive(getMinSalvageAmount(), getMaxSalvageAmount());
+        return MathUtils.generateRandomValueBetweenInclusive(getMinSalvageAmount(), getMaxSalvageAmount());
     }
 
     int getMinSalvageAmount();

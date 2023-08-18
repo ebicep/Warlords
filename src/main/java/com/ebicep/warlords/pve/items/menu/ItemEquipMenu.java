@@ -18,7 +18,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.java.JavaUtils;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
@@ -110,7 +110,7 @@ public class ItemEquipMenu {
                             (m2, e2) -> {
                                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                 ItemsManager itemsManager = pveStats.getItemsManager();
-                                int scrapAmount = JavaUtils.generateRandomValueBetweenInclusive(scrapValue.getA(), scrapValue.getB());
+                                int scrapAmount = MathUtils.generateRandomValueBetweenInclusive(scrapValue.getA(), scrapValue.getB());
                                 pveStats.addCurrency(Currencies.SCRAP_METAL, scrapAmount);
                                 itemsManager.removeItem(i);
                                 itemsManager.getLoadouts().forEach(itemLoadout -> itemLoadout.getItems().removeIf(itemUUID -> itemUUID.equals(i.getUUID())));

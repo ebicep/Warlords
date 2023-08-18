@@ -17,10 +17,6 @@ public class JavaUtils {
         return clazz.getEnumConstants()[x];
     }
 
-    public static int generateRandomValueBetweenInclusive(int min, int max) {
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
-    }
-
     public static int generateRandomIndexFromListSize(int size) {
         return ThreadLocalRandom.current().nextInt(size);
     }

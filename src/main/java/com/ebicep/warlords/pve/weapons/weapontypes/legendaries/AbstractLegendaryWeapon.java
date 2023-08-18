@@ -18,7 +18,7 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.StarPieceBonus;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.java.JavaUtils;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -55,7 +55,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         Specializations selectedSpec = PlayerSettings.getPlayerSettings(uuid).getSelectedSpec();
         List<SkillBoosts> skillBoosts = selectedSpec.skillBoosts;
         this.specialization = selectedSpec;
-        this.selectedSkillBoost = skillBoosts.get(JavaUtils.generateRandomValueBetweenInclusive(0, skillBoosts.size() - 1));
+        this.selectedSkillBoost = skillBoosts.get(MathUtils.generateRandomValueBetweenInclusive(0, skillBoosts.size() - 1));
         this.unlockedSkillBoosts.add(selectedSkillBoost);
         this.selectedWeaponSkin = Weapons.getRandomWeaponFromRarity(WeaponsRarity.LEGENDARY);
         this.unlockedWeaponSkins.add(this.selectedWeaponSkin);

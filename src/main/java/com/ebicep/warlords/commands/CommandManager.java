@@ -480,6 +480,31 @@ public class CommandManager {
                 throw new ConditionFailedException("Max value must be " + max);
             }
         });
+        manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
+            if (value == null) {
+                return;
+            }
+            if (c.hasConfig("previousGames")) {
+                int size = DatabaseGameBase.previousGames.size();
+                if (size == 0) {
+                    throw new ConditionFailedException("No previous games found!");
+                }
+                if (value < 0 || value > size) {
+                    throw new ConditionFailedException("Game must be an index in the previous games list!");
+                }
+                return;
+            }
+
+            double min = Double.parseDouble(c.getConfigValue("min", ""));
+            double max = Double.parseDouble(c.getConfigValue("max", ""));
+
+            if (c.hasConfig("min") && min > value) {
+                throw new ConditionFailedException("Min value must be " + min);
+            }
+            if (c.hasConfig("max") && max < value) {
+                throw new ConditionFailedException("Max value must be " + max);
+            }
+        });
         manager.getCommandConditions().addCondition(PartyPlayer.class, "lowerRank", (command, exec, partyPlayer) -> {
             Player player = command.getIssuer().getPlayer();
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
@@ -523,7 +548,7 @@ public class CommandManager {
 
         manager.registerCommand(new DebugCommand());
         manager.registerCommand(new DebugModeCommand());
-        manager.registerCommand(new ForceActivateCommand());
+        manager.registerCommand(new AbilityCommand());
         manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
         manager.registerCommand(new StunClearCommand());
@@ -542,7 +567,7 @@ public class CommandManager {
         manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
         manager.registerCommand(new GetPlayersCommand());
         manager.registerCommand(new MuteCommand());
-        manager.registerCommand(new MyLocationCommand());
+        manager.registerCommand(new LocationCommand());
         manager.registerCommand(new PatreonCommand());
         manager.registerCommand(new PvECurrencyCommand());
         manager.registerCommand(new RecordGamesCommand());
