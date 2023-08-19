@@ -23,7 +23,7 @@ public class EventExiledCore extends AbstractEventCore {
                         null,
                         null
                 ),
-                80000,
+                10000,
                 0,
                 0,
                 0,
