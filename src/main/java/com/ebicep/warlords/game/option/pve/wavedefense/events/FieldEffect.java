@@ -229,7 +229,7 @@ public class FieldEffect implements Option {
             }
         },
         DEBUFF_THING("Debuff Thing",
-                "Each debuff on a mobs will increase the damage they take by 10%. (Max 120%)"
+                "Each debuff on a mobs will increase the damage they take by 15%. (Max 120%)"
         ) {
             @Override
             public void onWarlordsEntityCreated(WarlordsEntity player) {
@@ -248,7 +248,7 @@ public class FieldEffect implements Option {
                         @Override
                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                             int debuffDamageBoost = Math.min(event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns().size(), 12);
-                            return currentDamageValue * (1 + (debuffDamageBoost * .2f));
+                            return currentDamageValue * (1 + (debuffDamageBoost * .15f));
                         }
                     });
                 }

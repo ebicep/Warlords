@@ -23,7 +23,7 @@ public class EventIllusionCore extends AbstractEventCore {
                         null,
                         null
                 ),
-                40000,
+                60000,
                 0,
                 0,
                 0,

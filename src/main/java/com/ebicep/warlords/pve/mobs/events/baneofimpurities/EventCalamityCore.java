@@ -23,7 +23,7 @@ public class EventCalamityCore extends AbstractEventCore {
                         null,
                         null
                 ),
-                100000,
+                120000,
                 0,
                 0,
                 0,

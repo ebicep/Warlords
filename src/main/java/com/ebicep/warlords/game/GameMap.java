@@ -3773,7 +3773,7 @@ public enum GameMap {
                 @Override
                 public float getSpawnCountMultiplier(int playerCount) {
                     return switch (playerCount) {
-                        case 3 -> 1.25f;
+                        case 3 -> 1.2f;
                         case 4 -> 1.5f;
                         default -> 1;
                     };
@@ -3791,9 +3791,9 @@ public enum GameMap {
                     float waveHealthMultiplier = 0;
                     float waveMeleeDamageMultiplier = 0;
                     switch (playerCount) {
-                        case 1, 2 -> healthMultiplier = .9f;
-                        case 3 -> healthMultiplier = 1.05f;
-                        default -> healthMultiplier = 1.20f;
+                        case 1, 2 -> healthMultiplier = .8f;
+                        case 3 -> healthMultiplier = .95f;
+                        default -> healthMultiplier = 1.10f;
                     }
                     if (wavesCleared >= 10) {
                         waveHealthMultiplier += .05;
