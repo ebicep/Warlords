@@ -67,6 +67,11 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+        int playerCount = option.playerCount();
+        float scaledHealth = warlordsNPC.getMaxHealth() * (.25f * playerCount);
+        warlordsNPC.setMaxBaseHealth(scaledHealth);
+        warlordsNPC.setHealth(scaledHealth);
+
         warlordsNPC.setStunTicks(Integer.MAX_VALUE);
         warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
