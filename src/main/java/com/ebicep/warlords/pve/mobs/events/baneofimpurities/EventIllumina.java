@@ -130,13 +130,13 @@ public class EventIllumina extends AbstractZombie implements BossMob {
 
         if (!phaseOneTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .7f)) {
             phaseOneTriggered = true;
-            timedDamage(option, playerCount, 25000, 11);
+            timedDamage(option, playerCount, 7500, 11);
         } else if (!phaseTwoTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .4f)) {
             phaseTwoTriggered = true;
-            timedDamage(option, playerCount, 37000, 11);
+            timedDamage(option, playerCount, 10000, 11);
         } else if (!phaseThreeTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f)) {
             phaseThreeTriggered = true;
-            timedDamage(option, playerCount, 50000, 11);
+            timedDamage(option, playerCount, 14500, 11);
         }
 
         if (ticksElapsed % 200 == 0) {
