@@ -90,8 +90,8 @@ public enum Currencies implements Spendable {
             NamedTextColor.YELLOW,
             new ItemStack(Material.SUNFLOWER)
     ),
-    EVENT_POINTS_ILLUIMINA(
-            "Mithra Event Point",
+    EVENT_POINTS_ILLUIMINA( //TODO FIX
+            "Illumina Event Point",
             NamedTextColor.YELLOW,
             new ItemStack(Material.SUNFLOWER)
     ),

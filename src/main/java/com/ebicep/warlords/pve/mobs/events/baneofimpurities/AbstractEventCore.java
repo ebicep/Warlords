@@ -37,17 +37,12 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
     public AbstractEventCore(
             Location spawnLocation,
             String name,
-            MobTier mobTier,
             EntityEquipment ee,
             int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
-            float maxMeleeDamage,
             int killTime,
             RandomCollection<Mobs> summonList
     ) {
-        super(spawnLocation, name, mobTier, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
+        super(spawnLocation, name, MobTier.BOSS, ee, maxHealth, 0, 0, 0, 0);
         this.killTime = killTime;
         this.summonList = summonList;
         livingEntity.setGravity(false);
@@ -56,7 +51,7 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
 
     @Override
     public Component getDescription() {
-        return Component.text("Core..", NamedTextColor.DARK_GRAY);
+        return Component.text("Bing Bang BOOM..", NamedTextColor.DARK_GRAY);
     }
 
     @Override
@@ -70,6 +65,7 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
         int playerCount = option.playerCount();
         float scaledHealth = warlordsNPC.getMaxHealth() * (.25f * playerCount);
         warlordsNPC.setMaxBaseHealth(scaledHealth);
+        warlordsNPC.setMaxHealth(scaledHealth);
         warlordsNPC.setHealth(scaledHealth);
 
         warlordsNPC.setStunTicks(Integer.MAX_VALUE);

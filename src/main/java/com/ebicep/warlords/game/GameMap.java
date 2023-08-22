@@ -3782,6 +3782,9 @@ public enum GameMap {
                 @Override
                 protected void modifyStats(WarlordsNPC warlordsNPC) {
                     warlordsNPC.getMob().onSpawn(this);
+                    if (warlordsNPC.getMobTier() == MobTier.BOSS) {
+                        return;
+                    }
                     int playerCount = playerCount();
                     int wavesCleared = getWavesCleared();
 
@@ -3808,10 +3811,9 @@ public enum GameMap {
                     if (wavesCleared >= 40) {
                         waveHealthMultiplier += .1;
                     }
-                    if (warlordsNPC.getMobTier() != MobTier.BOSS) {
-                        healthMultiplier += waveHealthMultiplier;
-                        meleeDamageMultiplier += waveMeleeDamageMultiplier;
-                    }
+                    healthMultiplier += waveHealthMultiplier;
+                    meleeDamageMultiplier += waveMeleeDamageMultiplier;
+
                     float maxHealth = warlordsNPC.getMaxHealth();
                     float minMeleeDamage = warlordsNPC.getMinMeleeDamage();
                     float maxMeleeDamage = warlordsNPC.getMaxMeleeDamage();
