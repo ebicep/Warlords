@@ -308,7 +308,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
     @Override
     public String getEffectDescription() {
         return """
-                Your strikes have 10% chance to give mobs a random debuff below for 2s.
+                Your strikes have 20% chance to give mobs a random debuff below for 2s.
                                 
                 25% Wounding
                 15% Burn

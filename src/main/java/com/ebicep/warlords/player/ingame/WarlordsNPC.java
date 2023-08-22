@@ -158,6 +158,9 @@ public final class WarlordsNPC extends WarlordsEntity {
             );
         }
         this.spec = playerClass;
+        this.maxHealth = this.spec.getMaxHealth();
+        this.health = this.maxHealth;
+        this.maxBaseHealth = this.maxHealth;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
