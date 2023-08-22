@@ -68,7 +68,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                 if (!event.getAbility().contains("Strike")) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextDouble() > .1) {
+                if (ThreadLocalRandom.current().nextDouble() > .2) {
                     return;
                 }
                 String debuff = DEBUFFS.next();
