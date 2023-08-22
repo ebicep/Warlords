@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.SoulfireBeamBranch;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -81,19 +80,7 @@ public class SoulfireBeam extends AbstractBeam {
                     maxDamage *= 2;
                 }
             }
-            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier)
-               .ifPresent(finalEvent -> {
-                   if (pveMasterUpgrade && finalEvent.isDead()) {
-                       wp.addEnergy(wp, name, 8);
-                       new GameRunnable(wp.getGame()) {
-                           @Override
-                           public void run() {
-                               subtractCurrentCooldown(0.5f);
-                               wp.updateItem(SoulfireBeam.this);
-                           }
-                       }.runTaskLater(1);
-                   }
-               });
+            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier);
         }
     }
 
