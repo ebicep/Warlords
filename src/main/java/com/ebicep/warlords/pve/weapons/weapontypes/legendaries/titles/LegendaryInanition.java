@@ -109,7 +109,7 @@ public class LegendaryInanition extends AbstractLegendaryWeapon {
 
     @Override
     protected float getCritMultiplierValue() {
-        return 200;
+        return 190;
     }
 
     @Override

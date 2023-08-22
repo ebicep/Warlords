@@ -142,12 +142,12 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     protected float getCritChanceValue() {
-        return 20;
+        return 15;
     }
 
     @Override
     protected float getCritMultiplierValue() {
-        return 170;
+        return 200;
     }
 
     @Override

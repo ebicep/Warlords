@@ -69,7 +69,7 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
 
         Location standLocation = LocationUtils.getGroundLocation(player);
         standLocation.setYaw(0);
-        standLocation.setY(standLocation.getY() - 0.4);
+        standLocation.setY(standLocation.getY() - 0.46);
 
         playSound(player, standLocation);
 
@@ -93,7 +93,7 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
         if (!(warlordsPlayer.getEntity() instanceof Player player)) {
             return false;
         }
-        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.4).backward(1);
+        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.46).backward(1);
         Vector toEntity = this.totem.getEyeLocation().add(0, 0, 0).toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
         return dot > .93f;
