@@ -28,6 +28,8 @@ public enum LegendaryTitles {
     BRILLIANCE("Brilliance", LegendaryBrilliance.class, LegendaryBrilliance::new, LegendaryBrilliance::new, Material.MAGENTA_STAINED_GLASS_PANE),
     RELIQUARY("Reliquary", LegendaryReliquary.class, LegendaryReliquary::new, LegendaryReliquary::new, Material.LIGHT_BLUE_STAINED_GLASS_PANE),
     INCENDIARY("Incendiary", LegendaryIncendiary.class, LegendaryIncendiary::new, LegendaryIncendiary::new, Material.YELLOW_STAINED_GLASS_PANE),
+    INANITION("Inanition", LegendaryInanition.class, LegendaryInanition::new, LegendaryInanition::new, Material.LIME_STAINED_GLASS_PANE),
+
 
     ;
 
