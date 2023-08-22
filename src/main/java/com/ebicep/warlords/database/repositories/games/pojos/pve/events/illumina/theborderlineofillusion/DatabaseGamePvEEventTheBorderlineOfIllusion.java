@@ -66,7 +66,7 @@ public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvE
 
     @Override
     public GameEvents getEvent() {
-        return GameEvents.MITHRA;
+        return GameEvents.ILLUMINA;
     }
 
     @Override
