@@ -416,7 +416,7 @@ public class PlayingState implements State, TimerDebugAble {
             if (otherPlayer instanceof WarlordsPlayer) {
                 TextComponent.Builder baseSuffix = Component.text()
                                                             .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                            .append(Component.text("Lv" + levelString, NamedTextColor.GOLD))
+                                                            .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
                                                             .append(Component.text("] ", NamedTextColor.DARK_GRAY));
                 if (otherPlayer.getCarriedFlag() != null) {
                     baseSuffix.append(Component.text("⚑", NamedTextColor.WHITE));
