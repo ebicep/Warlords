@@ -43,7 +43,7 @@ public class VoidRaider extends AbstractZombie implements EliteMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Vindicate Debuff Immunity",
+                "Debuff Immunity",
                 null,
                 null,
                 null,
@@ -53,8 +53,6 @@ public class VoidRaider extends AbstractZombie implements EliteMob {
                 },
                 false,
                 (cooldown, ticksElapsed) -> {
-                    warlordsNPC.getSpeed().removeSlownessModifiers();
-                    warlordsNPC.getCooldownManager().removeDebuffCooldowns();
                 }
         ) {
             final float calculatedKBRes = 1 - knockbackResistance / 100f;

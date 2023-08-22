@@ -2085,7 +2085,7 @@ public abstract class WarlordsEntity {
     }
 
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
-        if (modifier < 0 && this.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+        if (modifier < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
             return () -> {
             };
         }
@@ -2255,7 +2255,7 @@ public abstract class WarlordsEntity {
     }
 
     public boolean addPotionEffect(PotionEffect potionEffect) {
-        if (this.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+        if (this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
             if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
                     PotionEffectType.CONFUSION.equals(potionEffect.getType())
             ) {

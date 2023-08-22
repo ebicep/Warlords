@@ -293,10 +293,18 @@ public class CooldownManager {
     }
 
     public void addCooldown(AbstractCooldown<?> abstractCooldown) {
-        if (hasCooldownFromName("Vindicate Debuff Immunity") && abstractCooldown.getCooldownType() == CooldownTypes.DEBUFF) {
+        if (Objects.equals(abstractCooldown.getName(), "Debuff Immunity")) {
+            warlordsEntity.getSpeed().removeSlownessModifiers();
+            warlordsEntity.getCooldownManager().removeDebuffCooldowns();
+        }
+        if (hasCooldownFromName("Debuff Immunity") && abstractCooldown.getCooldownType() == CooldownTypes.DEBUFF) {
             return;
         }
-        Bukkit.getPluginManager().callEvent(new WarlordsAddCooldownEvent(warlordsEntity, abstractCooldown));
+        WarlordsAddCooldownEvent event = new WarlordsAddCooldownEvent(warlordsEntity, abstractCooldown);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
         this.totalCooldowns++;
         abstractCooldowns.add(abstractCooldown);
         if (abstractCooldown.changesPlayerName()) {

@@ -217,7 +217,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                     }
                     case "Silence" -> {
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Silence");
-                        if (!victim.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+                        if (!victim.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
                             victim.getEntity().showTitle(Title.title(
                                     Component.empty(),
                                     Component.text("SILENCED", NamedTextColor.RED),
