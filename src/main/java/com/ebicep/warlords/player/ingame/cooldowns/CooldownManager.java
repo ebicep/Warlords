@@ -99,24 +99,6 @@ public class CooldownManager {
             });
     }
 
-    public List<AbstractCooldown<?>> getCooldownsDistinct() {
-        List<AbstractCooldown<?>> cooldowns = new ArrayList<>();
-        List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
-        for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
-            if (abstractCooldown.distinct() && previousCooldowns.stream()
-                                                                .anyMatch(classStringPair -> classStringPair.getA()
-                                                                                                            .equals(abstractCooldown.getCooldownClass()) && classStringPair.getB()
-                                                                                                                                                                           .equals(abstractCooldown.getName()))) {
-                continue;
-            }
-            cooldowns.add(abstractCooldown);
-            if (abstractCooldown.distinct()) {
-                previousCooldowns.add(new Pair<>(abstractCooldown.getCooldownClass(), abstractCooldown.getName()));
-            }
-        }
-        return cooldowns;
-    }
-
     public int getTotalCooldowns() {
         return totalCooldowns;
     }
@@ -147,10 +129,46 @@ public class CooldownManager {
         });
     }
 
-    public List<AbstractCooldown<?>> getDebuffCooldowns() {
-        return abstractCooldowns.stream()
-                                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
-                                .toList();
+    public void removeCooldown(AbstractCooldown<?> abstractCooldown) {
+        removeCooldown(abstractCooldown, false);
+    }
+
+    public void removeCooldown(AbstractCooldown<?> abstractCooldown, boolean noForce) {
+        if (!noForce) {
+            abstractCooldown.getOnRemoveForce().accept(this);
+        }
+        abstractCooldowns.remove(abstractCooldown);
+        updatePlayerNames(abstractCooldown);
+    }
+
+    public List<AbstractCooldown<?>> getDebuffCooldowns(boolean distinct) {
+        if (distinct) {
+            return getCooldownsDistinct().stream()
+                                         .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                                         .toList();
+        } else {
+            return abstractCooldowns.stream()
+                                    .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                                    .toList();
+        }
+    }
+
+    public List<AbstractCooldown<?>> getCooldownsDistinct() {
+        List<AbstractCooldown<?>> cooldowns = new ArrayList<>();
+        List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
+        for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
+            if (abstractCooldown.distinct() && previousCooldowns.stream()
+                                                                .anyMatch(classStringPair -> classStringPair.getA()
+                                                                                                            .equals(abstractCooldown.getCooldownClass()) && classStringPair.getB()
+                                                                                                                                                                           .equals(abstractCooldown.getName()))) {
+                continue;
+            }
+            cooldowns.add(abstractCooldown);
+            if (abstractCooldown.distinct()) {
+                previousCooldowns.add(new Pair<>(abstractCooldown.getCooldownClass(), abstractCooldown.getName()));
+            }
+        }
+        return cooldowns;
     }
 
     public int removeDebuffCooldowns() {
@@ -190,18 +208,6 @@ public class CooldownManager {
         if (matchingCooldowns.size() >= limit) {
             removeCooldown(matchingCooldowns.get(0));
         }
-    }
-
-    public void removeCooldown(AbstractCooldown<?> abstractCooldown) {
-        removeCooldown(abstractCooldown, false);
-    }
-
-    public void removeCooldown(AbstractCooldown<?> abstractCooldown, boolean noForce) {
-        if (!noForce) {
-            abstractCooldown.getOnRemoveForce().accept(this);
-        }
-        abstractCooldowns.remove(abstractCooldown);
-        updatePlayerNames(abstractCooldown);
     }
 
     public final <T> void addRegularCooldown(

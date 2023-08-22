@@ -228,7 +228,7 @@ public class FieldEffect implements Option {
                 }.runTaskTimer(200, 20);
             }
         },
-        DEBUFF_THING("Debuff Thing",
+        DUMB_DEBUFFS("Dumb Debuffs",
                 "Each debuff on a mobs will increase the damage they take by 15%. (Max 120%)"
         ) {
             @Override
@@ -247,7 +247,7 @@ public class FieldEffect implements Option {
                     ) {
                         @Override
                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            int debuffDamageBoost = Math.min(event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns().size(), 12);
+                            int debuffDamageBoost = Math.min(event.getWarlordsEntity().getCooldownManager().getDebuffCooldowns(true).size(), 12);
                             return currentDamageValue * (1 + (debuffDamageBoost * .15f));
                         }
                     });
