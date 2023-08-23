@@ -245,6 +245,7 @@ public class OnslaughtOption implements PveOption {
                 AbstractMob<?> abstractMob = currentMobSet.spawnRandomMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
                 WarlordsNPC wpc = abstractMob.toNPC(game, team, UUID.randomUUID(), OnslaughtOption.this::modifyStats);
+                game.addNPC(wpc);
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
                 return wpc;
             }

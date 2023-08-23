@@ -235,7 +235,7 @@ public class FieldEffect implements Option {
             public void onWarlordsEntityCreated(WarlordsEntity player) {
                 if (player instanceof WarlordsNPC) {
                     player.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                            "Debuff Thing",
+                            "Dumb Debuffs",
                             null,
                             null,
                             null,
