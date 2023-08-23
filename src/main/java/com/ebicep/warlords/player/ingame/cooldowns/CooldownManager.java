@@ -143,7 +143,7 @@ public class CooldownManager {
 
     public List<AbstractCooldown<?>> getDebuffCooldowns(boolean distinct) {
         if (distinct) {
-            return getCooldownsDistinct().stream()
+            return getCooldownsSingular().stream()
                                          .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
                                          .toList();
         } else {
@@ -153,14 +153,13 @@ public class CooldownManager {
         }
     }
 
-    public List<AbstractCooldown<?>> getCooldownsDistinct() {
+    public List<AbstractCooldown<?>> getCooldownsSingular() {
         List<AbstractCooldown<?>> cooldowns = new ArrayList<>();
         List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
         for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
-            if (abstractCooldown.distinct() && previousCooldowns.stream()
-                                                                .anyMatch(classStringPair -> classStringPair.getA()
-                                                                                                            .equals(abstractCooldown.getCooldownClass()) && classStringPair.getB()
-                                                                                                                                                                           .equals(abstractCooldown.getName()))) {
+            if (previousCooldowns.stream().anyMatch(classStringPair -> classStringPair.getA().equals(abstractCooldown.getCooldownClass()) &&
+                    classStringPair.getB().equals(abstractCooldown.getName()))
+            ) {
                 continue;
             }
             cooldowns.add(abstractCooldown);
@@ -171,14 +170,22 @@ public class CooldownManager {
         return cooldowns;
     }
 
-    public int removeDebuffCooldowns() {
-        List<AbstractCooldown<?>> toRemove = abstractCooldowns.stream()
-                                                              .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
-                                                              .toList();
-        toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
-        abstractCooldowns.removeAll(toRemove);
-        toRemove.forEach(this::updatePlayerNames);
-        return toRemove.size();
+    public List<AbstractCooldown<?>> getCooldownsDistinct() {
+        List<AbstractCooldown<?>> cooldowns = new ArrayList<>();
+        List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
+        for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
+            if (abstractCooldown.distinct() && previousCooldowns.stream()
+                                                                .anyMatch(classStringPair -> classStringPair.getA().equals(abstractCooldown.getCooldownClass())
+                                                                        && classStringPair.getB().equals(abstractCooldown.getName()))
+            ) {
+                continue;
+            }
+            cooldowns.add(abstractCooldown);
+            if (abstractCooldown.distinct()) {
+                previousCooldowns.add(new Pair<>(abstractCooldown.getCooldownClass(), abstractCooldown.getName()));
+            }
+        }
+        return cooldowns;
     }
 
     public List<AbstractCooldown<?>> getAbilityCooldowns() {
@@ -310,6 +317,16 @@ public class CooldownManager {
         if (abstractCooldown.changesPlayerName()) {
             updatePlayerNames();
         }
+    }
+
+    public int removeDebuffCooldowns() {
+        List<AbstractCooldown<?>> toRemove = abstractCooldowns.stream()
+                                                              .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                                                              .toList();
+        toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
+        abstractCooldowns.removeAll(toRemove);
+        toRemove.forEach(this::updatePlayerNames);
+        return toRemove.size();
     }
 
     public boolean hasCooldownFromName(String name) {

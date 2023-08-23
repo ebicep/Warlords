@@ -212,7 +212,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
 
         modifyStats.accept(warlordsNPC);
-        game.addNPC(warlordsNPC);
 
         return warlordsNPC;
     }
