@@ -21,7 +21,7 @@ public class EventExiledCore extends AbstractEventCore {
                         null,
                         null
                 ),
-                100000,
+                400000,
                 45,
                 new RandomCollection<Mobs>()
                         .add(0.2, Mobs.EXTREME_ZEALOT)

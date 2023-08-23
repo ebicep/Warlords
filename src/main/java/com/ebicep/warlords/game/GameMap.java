@@ -3793,9 +3793,9 @@ public enum GameMap {
                     float waveHealthMultiplier = 0;
                     float waveMeleeDamageMultiplier = 0;
                     switch (playerCount) {
-                        case 1, 2 -> healthMultiplier = .8f;
-                        case 3 -> healthMultiplier = .95f;
-                        default -> healthMultiplier = 1.10f;
+                        case 1, 2 -> healthMultiplier = 1.1f;
+                        case 3 -> healthMultiplier = 1.25f;
+                        default -> healthMultiplier = 1.40f;
                     }
                     if (wavesCleared >= 10) {
                         waveHealthMultiplier += .05;

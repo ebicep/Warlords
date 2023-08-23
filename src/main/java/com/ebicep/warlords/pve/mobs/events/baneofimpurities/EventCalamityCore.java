@@ -21,7 +21,7 @@ public class EventCalamityCore extends AbstractEventCore {
                         null,
                         null
                 ),
-                140000,
+                300000,
                 60,
                 new RandomCollection<Mobs>()
                         .add(0.2, Mobs.FORGOTTEN_LANCER)

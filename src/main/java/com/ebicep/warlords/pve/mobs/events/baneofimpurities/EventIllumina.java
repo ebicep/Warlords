@@ -66,7 +66,7 @@ public class EventIllumina extends AbstractZombie implements BossMob {
                         Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
                         Weapons.NEW_LEAF_SCYTHE.getItem()
                 ),
-                350000,
+                525000,
                 0.33f,
                 0,
                 950,
@@ -130,13 +130,13 @@ public class EventIllumina extends AbstractZombie implements BossMob {
 
         if (!phaseOneTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .7f)) {
             phaseOneTriggered = true;
-            timedDamage(option, playerCount, 7500, 11);
+            timedDamage(option, playerCount, 10000, 11);
         } else if (!phaseTwoTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .4f)) {
             phaseTwoTriggered = true;
-            timedDamage(option, playerCount, 10000, 11);
+            timedDamage(option, playerCount, 15000, 11);
         } else if (!phaseThreeTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f)) {
             phaseThreeTriggered = true;
-            timedDamage(option, playerCount, 14500, 11);
+            timedDamage(option, playerCount, 20000, 11);
         }
 
         if (ticksElapsed % 200 == 0) {

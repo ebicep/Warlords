@@ -21,7 +21,7 @@ public class EventIllusionCore extends AbstractEventCore {
                         null,
                         null
                 ),
-                80000,
+                200000,
                 30,
                 new RandomCollection<Mobs>()
                         .add(0.3, Mobs.BASIC_ZOMBIE)
