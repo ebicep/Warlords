@@ -299,11 +299,11 @@ public class WeaponManagerMenu {
                 new ItemBuilder(Material.LEVER)
                         .name(Component.text("Sort Order", NamedTextColor.GREEN))
                         .lore(menuSettings.isAscending() ?
-                              Component.textOfChildren(
+                              Arrays.asList(
                                       Component.text("Ascending", NamedTextColor.AQUA),
                                       Component.text("Descending", NamedTextColor.GRAY)
                               ) :
-                              Component.textOfChildren(
+                              Arrays.asList(
                                       Component.text("Ascending", NamedTextColor.GRAY),
                                       Component.text("Descending", NamedTextColor.AQUA)
                               )
