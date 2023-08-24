@@ -106,17 +106,10 @@ public class EventPointsOption implements Option, Listener {
         if (!(deadEntity instanceof WarlordsNPC)) {
             return;
         }
-        addKillPoints((WarlordsNPC) deadEntity, killer);
-    }
-
-    @EventHandler
-    public void onConvert(WarlordsMobConvertEvent event) {
-        WarlordsEntity converter = event.getWarlordsEntity();
-        List<WarlordsNPC> converted = event.getConverted();
-        if (!(converter instanceof WarlordsNPC)) {
+        if (Objects.equals(deadEntity, killer)) {
             return;
         }
-        converted.forEach(warlordsNPC -> addKillPoints(warlordsNPC, converter));
+        addKillPoints((WarlordsNPC) deadEntity, killer);
     }
 
     private void addKillPoints(WarlordsNPC deadEntity, WarlordsEntity killer) {
@@ -141,6 +134,13 @@ public class EventPointsOption implements Option, Listener {
         if (databasePlayer.getChatEventPointsMode() == Settings.ChatSettings.ChatEventPoints.ALL) {
             warlordsPlayer.sendMessage(Component.text("+" + amount + " ✪ Points", NamedTextColor.YELLOW));
         }
+    }
+
+    @EventHandler
+    public void onConvert(WarlordsMobConvertEvent event) {
+        WarlordsEntity converter = event.getWarlordsEntity();
+        List<WarlordsNPC> converted = event.getConverted();
+        converted.forEach(warlordsNPC -> addKillPoints(warlordsNPC, converter));
     }
 
     @EventHandler
