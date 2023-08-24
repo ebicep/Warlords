@@ -585,7 +585,7 @@ public class ItemMichaelMenu {
                                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2, 2);
                                     player.closeInventory();
 
-                                    AbstractItem.sendItemMessage(player, component.hoverEvent(item.getHoverComponent()));
+                                    AbstractItem.sendItemMessage(player, component.append(item.getHoverComponent()));
                                 },
                                 (m2, e2) -> openApplyBlessingMenu(player, databasePlayer, menuData),
                                 (m2) -> {
@@ -674,9 +674,9 @@ public class ItemMichaelMenu {
                                     Component.text(" - ", NamedTextColor.GRAY),
                                     Component.text((blessingFound ? NumberFormat.formatOptionalHundredths(item.getTier().blessedChance * 100) : "100") + "%",
                                             NamedTextColor.YELLOW
-                                    ),
-                                    Component.text(" ", NamedTextColor.GREEN).append(itemBlessing.getDescription())
-                            )
+                                    )
+                            ),
+                            Component.text(" ", NamedTextColor.GREEN).append(itemBlessing.getDescription())
                     );
                 }
                 int modifier = item.getModifier();
