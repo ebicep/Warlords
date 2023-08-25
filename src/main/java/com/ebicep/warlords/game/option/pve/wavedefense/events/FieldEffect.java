@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.TextOption;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -69,6 +70,10 @@ public class FieldEffect implements Option {
 
             @Override
             public void run() {
+                if (game.isState(EndState.class)) {
+                    cancel();
+                    return;
+                }
                 fieldEffects.forEach(fieldEffect -> fieldEffect.run(game, ticksElapsed));
                 ticksElapsed++;
             }
@@ -203,29 +208,28 @@ public class FieldEffect implements Option {
                 "Players and mobs will lose 1% of their max health every second."
         ) {
             @Override
-            public void onStart(Game game) {
-                new GameRunnable(game) {
-
-                    @Override
-                    public void run() {
-                        PlayerFilter.playingGame(game)
-                                    .forEach(warlordsEntity -> {
-                                        if (warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
-                                            return;
-                                        }
-                                        float damage = warlordsEntity.getMaxHealth() * .01f;
-                                        warlordsEntity.resetRegenTimer();
-                                        if (warlordsEntity.getHealth() - damage <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-                                            warlordsEntity.setHealth(0);
-                                            warlordsEntity.die(warlordsEntity);
-                                        } else {
-                                            warlordsEntity.setHealth(warlordsEntity.getHealth() - damage);
-                                            warlordsEntity.playHurtAnimation(warlordsEntity.getEntity(), warlordsEntity);
-                                        }
-                                    });
-                    }
-
-                }.runTaskTimer(200, 20);
+            public void run(Game game, int ticksElapsed) {
+                if (ticksElapsed < 200) {
+                    return;
+                }
+                if (ticksElapsed % 20 != 0) {
+                    return;
+                }
+                PlayerFilter.playingGame(game)
+                            .forEach(warlordsEntity -> {
+                                if (warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
+                                    return;
+                                }
+                                float damage = warlordsEntity.getMaxHealth() * .01f;
+                                warlordsEntity.resetRegenTimer();
+                                if (warlordsEntity.getHealth() - damage <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
+                                    warlordsEntity.setHealth(0);
+                                    warlordsEntity.die(warlordsEntity);
+                                } else {
+                                    warlordsEntity.setHealth(warlordsEntity.getHealth() - damage);
+                                    //warlordsEntity.playHurtAnimation(warlordsEntity.getEntity(), warlordsEntity);
+                                }
+                            });
             }
         },
         DUMB_DEBUFFS("Dumb Debuffs",
