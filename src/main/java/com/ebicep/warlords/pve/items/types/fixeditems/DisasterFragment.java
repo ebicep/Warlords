@@ -68,7 +68,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                 if (!event.getAbility().contains("Strike")) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextDouble() > .1) {
+                if (ThreadLocalRandom.current().nextDouble() > .2) {
                     return;
                 }
                 String debuff = DEBUFFS.next();
@@ -217,7 +217,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                     }
                     case "Silence" -> {
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Silence");
-                        if (!victim.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+                        if (!victim.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
                             victim.getEntity().showTitle(Title.title(
                                     Component.empty(),
                                     Component.text("SILENCED", NamedTextColor.RED),
@@ -308,7 +308,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
     @Override
     public String getEffectDescription() {
         return """
-                Your strikes have 10% chance to give mobs a random debuff below for 2s.
+                Your strikes have 20% chance to give mobs a random debuff below for 2s.
                                 
                 25% Wounding
                 15% Burn

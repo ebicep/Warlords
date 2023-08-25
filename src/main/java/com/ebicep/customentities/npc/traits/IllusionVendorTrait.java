@@ -193,6 +193,8 @@ public class IllusionVendorTrait extends WarlordsTrait {
     public void run() {
         if (ticksElapsed++ % 10 == 0) {
             HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + "RIGHT-CLICK");
+            hologramTrait.setLine(1, ChatColor.GREEN + "Illusion Vendor");
             String timeTill = DateUtil.getTimeTill(DateUtil.getResetDateLatestMonday(),
                     true,
                     true,

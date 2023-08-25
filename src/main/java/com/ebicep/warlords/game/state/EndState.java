@@ -796,7 +796,7 @@ public class EndState implements State, TimerDebugAble {
                 String pointsFormatted = NumberFormat.addCommas(Math.min(points, eventPointsOption.getCap()));
                 ChatUtils.sendCenteredMessage(player,
                         Component.text("+", NamedTextColor.GRAY)
-                                 .append(Component.text(pointsFormatted + " Points" + (points == 1 ? "" : "s"), NamedTextColor.YELLOW))
+                                 .append(Component.text(pointsFormatted + " Point" + (points == 1 ? "" : "s"), NamedTextColor.YELLOW))
                 );
             }
 

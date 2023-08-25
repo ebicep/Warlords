@@ -140,11 +140,11 @@ public class AchievementsMenu {
                 String spec = shouldObfuscate ? "HIDDENSPEC" : achievement.getSpec() != null ? achievement.getSpec().name : "Any";
                 itemBuilder.addLore(
                         Component.empty(),
-                        Component.text("Spec:", NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate)
+                        Component.text("Spec: ", NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate)
                                  .append(Component.text(spec, NamedTextColor.GOLD))
                 );
                 if (achievement.getDifficulty() != null) {
-                    TextComponent difficulty = Component.text("Difficulty : ", NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate);
+                    TextComponent difficulty = Component.text("Difficulty: ", NamedTextColor.GREEN).decoration(TextDecoration.OBFUSCATED, shouldObfuscate);
                     if (shouldObfuscate) {
                         itemBuilder.addLore(difficulty.append(Component.text("DIFFICULTY", NamedTextColor.GOLD))
                         );

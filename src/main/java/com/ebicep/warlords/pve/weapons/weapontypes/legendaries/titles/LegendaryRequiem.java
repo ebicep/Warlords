@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsMobConvertEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -26,6 +27,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.entity.LivingEntity;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -120,6 +122,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                                        .forEach(teammate -> teammate.getMob().removeTarget());
                     mob.removeTarget();
                 });
+                Bukkit.getPluginManager().callEvent(new WarlordsMobConvertEvent(player, toConvert));
                 new GameRunnable(game) {
 
                     @Override

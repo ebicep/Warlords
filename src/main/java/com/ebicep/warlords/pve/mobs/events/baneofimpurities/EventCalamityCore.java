@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -16,18 +15,13 @@ public class EventCalamityCore extends AbstractEventCore {
         super(
                 spawnLocation,
                 "Exiled Core",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.EXPLOSION),
                         null,
                         null,
                         null
                 ),
-                100000,
-                0,
-                0,
-                0,
-                0,
+                300000,
                 60,
                 new RandomCollection<Mobs>()
                         .add(0.2, Mobs.FORGOTTEN_LANCER)

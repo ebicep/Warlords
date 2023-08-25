@@ -156,7 +156,7 @@ public class MasterworksFairMenu {
                                     "Submit Weapon",
                                     3,
                                     Arrays.asList(
-                                            Component.text("Submit " + weapon.getName(), NamedTextColor.GRAY),
+                                            Component.text("Submit ", NamedTextColor.GRAY).append(weapon.getName()),
                                             Component.text("to the Masterworks Fair?", NamedTextColor.GRAY),
                                             Component.empty(),
                                             Component.textOfChildren(

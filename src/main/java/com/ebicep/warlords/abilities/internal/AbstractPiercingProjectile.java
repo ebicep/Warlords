@@ -110,7 +110,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         Vec3 currentPosition;
         if (projectile.getTicksLived() == 0) {
             // for initially shooting entities directly in front of player
-            Location behindCurrent = new LocationBuilder(currentLocation).backward(1.2f);
+            Location behindCurrent = new LocationBuilder(currentLocation).backward(2);
             currentPosition = new Vec3(behindCurrent.getX(), behindCurrent.getY(), behindCurrent.getZ());
         } else {
             currentPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());

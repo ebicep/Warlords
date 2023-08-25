@@ -149,9 +149,9 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
         // remove other instances of vindicate buff to override
-        target.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
+        target.getCooldownManager().removeCooldownByName("Debuff Immunity");
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Vindicate Debuff Immunity",
+                "Debuff Immunity",
                 "VIND",
                 cooldownClass,
                 cooldownObject,
@@ -161,8 +161,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    target.getSpeed().removeSlownessModifiers();
-                    target.getCooldownManager().removeDebuffCooldowns();
                 })
         ) {
             @Override

@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsGameWaveClearEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsMobConvertEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -99,20 +100,26 @@ public class EventPointsOption implements Option, Listener {
     public void onKill(WarlordsDeathEvent event) {
         WarlordsEntity deadEntity = event.getWarlordsEntity();
         WarlordsEntity killer = event.getKiller();
-        if (!(killer instanceof WarlordsPlayer)) {
+        if (killer == null) {
             return;
         }
         if (!(deadEntity instanceof WarlordsNPC)) {
             return;
         }
+        if (Objects.equals(deadEntity, killer)) {
+            return;
+        }
+        addKillPoints((WarlordsNPC) deadEntity, killer);
+    }
+
+    private void addKillPoints(WarlordsNPC deadEntity, WarlordsEntity killer) {
         if (onKill != 0) {
             PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
                                .matchingTeam(killer.getTeam())
                                .forEach(warlordsPlayer -> addTo(warlordsPlayer, onKill));
         }
         if (!perMobKill.isEmpty()) {
-            WarlordsNPC warlordsNPC = (WarlordsNPC) deadEntity;
-            Integer mobPoint = perMobKill.get(warlordsNPC.getMob().getClass());
+            Integer mobPoint = perMobKill.get(deadEntity.getMob().getClass());
             if (mobPoint != null) {
                 PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
                                    .matchingTeam(killer.getTeam())
@@ -127,6 +134,13 @@ public class EventPointsOption implements Option, Listener {
         if (databasePlayer.getChatEventPointsMode() == Settings.ChatSettings.ChatEventPoints.ALL) {
             warlordsPlayer.sendMessage(Component.text("+" + amount + " ✪ Points", NamedTextColor.YELLOW));
         }
+    }
+
+    @EventHandler
+    public void onConvert(WarlordsMobConvertEvent event) {
+        WarlordsEntity converter = event.getWarlordsEntity();
+        List<WarlordsNPC> converted = event.getConverted();
+        converted.forEach(warlordsNPC -> addKillPoints(warlordsNPC, converter));
     }
 
     @EventHandler

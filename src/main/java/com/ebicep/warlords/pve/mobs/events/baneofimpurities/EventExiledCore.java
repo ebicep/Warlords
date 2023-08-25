@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -16,18 +15,13 @@ public class EventExiledCore extends AbstractEventCore {
         super(
                 spawnLocation,
                 "Exiled Core",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_3),
                         null,
                         null,
                         null
                 ),
-                60000,
-                0,
-                0,
-                0,
-                0,
+                400000,
                 45,
                 new RandomCollection<Mobs>()
                         .add(0.2, Mobs.EXTREME_ZEALOT)

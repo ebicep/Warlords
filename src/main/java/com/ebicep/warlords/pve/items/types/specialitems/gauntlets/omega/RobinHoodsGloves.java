@@ -31,7 +31,7 @@ public class RobinHoodsGloves extends SpecialOmegaGauntlet implements AppliesToW
 
     @Override
     public String getBonus() {
-        return "5% overall chance to drop an Item when killing a boss.";
+        return "Each Item rarity now has a 1% overall chance to drop when killing a boss.";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class RobinHoodsGloves extends SpecialOmegaGauntlet implements AppliesToW
                 if (Arrays.stream(Mobs.BOSSES).noneMatch(mobs -> Objects.equals(mobs.mobClass, deadMob.getClass()))) {
                     return;
                 }
-                event.getDropRate().set(.0125);
+                event.getDropRate().set(.01);
                 event.setModifier(1);
             }
         });

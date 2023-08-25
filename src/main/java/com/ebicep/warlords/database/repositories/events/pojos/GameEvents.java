@@ -735,7 +735,7 @@ public enum GameEvents {
                 add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 200_000));
                 add(new SpendableBuyShop(200, Currencies.FAIRY_ESSENCE, 5, 35_000));
                 add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
-                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 350_000));
                 add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 8_000));
                 add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
                 add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));

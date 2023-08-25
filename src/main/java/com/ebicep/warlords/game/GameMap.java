@@ -3626,7 +3626,6 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(6.5, 22, -7.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 22, 6.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 22, 0.5), Team.RED));
 
             options.add(new PowerupOption(loc.addXYZ(16.5, 24.5, 17.5), PowerupType.COOLDOWN, 30, 180, 30));
             options.add(new PowerupOption(loc.addXYZ(-15.5, 24.5, -18.5), PowerupType.HEALING, 5, 90, 30));
@@ -3638,16 +3637,16 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
-            Location bossSpawnLocation = new Location(loc.getWorld(), 2.5, 25.5, -2.5);
+            Location bossSpawnLocation = new Location(loc.getWorld(), 0.5, 24.5, -0.5);
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(16, 10 * SECOND, null)
+                    .add(1, new SimpleWave(16, 8 * SECOND, null)
                             .add(0.4, Mobs.GHOST_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SLIME)
                             .add(0.2, Mobs.ELITE_SKELETON)
                             .add(0.1, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.2, Mobs.SLIME_ZOMBIE)
                     )
-                    .add(4, new SimpleWave(16, 10 * SECOND, null)
+                    .add(4, new SimpleWave(16, 8 * SECOND, null)
                             .add(0.3, Mobs.GHOST_ZOMBIE)
                             .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             .add(0.2, Mobs.ELITE_ZOMBIE)
@@ -3655,7 +3654,7 @@ public enum GameMap {
                             .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.1, Mobs.VOID_SKELETON)
                     )
-                    .add(9, new SimpleWave(16, 10 * SECOND, null)
+                    .add(9, new SimpleWave(16, 8 * SECOND, null)
                             .add(0.3, Mobs.FORGOTTEN_LANCER)
                             .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SLIME)
@@ -3663,17 +3662,17 @@ public enum GameMap {
                             .add(0.2, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.2, Mobs.ENVOY_ZOMBIE)
                     )
-                    .add(10, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
+                    .add(10, new SimpleWave(1, 8 * SECOND, Component.text("Boss"), MobTier.BOSS)
                             .add(1, Mobs.EVENT_ILLUSION_CORE, bossSpawnLocation)
                     )
-                    .add(11, new SimpleWave(16, 10 * SECOND, null)
+                    .add(11, new SimpleWave(15, 8 * SECOND, null)
                             .add(0.2, Mobs.FORGOTTEN_LANCER)
                             .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             .add(0.2, Mobs.BASIC_SLIME)
                             .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
                             .add(0.2, Mobs.GHOST_ZOMBIE)
                     )
-                    .add(14, new SimpleWave(25, 10 * SECOND, null)
+                    .add(14, new SimpleWave(18, 8 * SECOND, null)
                             .add(0.1, Mobs.ENVOY_PIG_ZOMBIE)
                             .add(0.1, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.2, Mobs.SPIDER)
@@ -3681,7 +3680,7 @@ public enum GameMap {
                             .add(0.2, Mobs.ELITE_PIG_ZOMBIE)
                             .add(0.3, Mobs.BASIC_SLIME)
                     )
-                    .add(19, new SimpleWave(30, 10 * SECOND, null)
+                    .add(19, new SimpleWave(20, 8 * SECOND, null)
                             .add(0.3, Mobs.GHOST_ZOMBIE)
                             .add(0.1, Mobs.EXILED_SKELETON)
                             .add(0.1, Mobs.SPIDER)
@@ -3691,17 +3690,17 @@ public enum GameMap {
                             .add(0.1, Mobs.ENVOY_ZOMBIE)
                             .add(0.1, Mobs.VOID_SKELETON)
                     )
-                    .add(20, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
+                    .add(20, new SimpleWave(1, 8 * SECOND, Component.text("Boss"), MobTier.BOSS)
                             .add(1, Mobs.EVENT_EXILED_CORE, bossSpawnLocation)
                     )
-                    .add(21, new SimpleWave(30, 10 * SECOND, null)
+                    .add(21, new SimpleWave(24, 8 * SECOND, null)
                             .add(0.1, Mobs.EXTREME_ZEALOT)
                             .add(0.1, Mobs.ENVOY_ZOMBIE)
                             .add(0.2, Mobs.EXILED_SKELETON)
                             .add(0.2, Mobs.BASIC_SLIME)
                             .add(0.6, Mobs.SLIME_ZOMBIE)
                     )
-                    .add(22, new SimpleWave(15, 10 * SECOND, null)
+                    .add(22, new SimpleWave(14, 8 * SECOND, null)
                             .add(0.1, Mobs.EXTREME_ZEALOT)
                             .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.2, Mobs.EXILED_ZOMBIE_RIFT)
@@ -3711,7 +3710,7 @@ public enum GameMap {
                             .add(0.1, Mobs.ENVOY_ZOMBIE)
                             .add(0.1, Mobs.ENVOY_SKELETON)
                     )
-                    .add(25, new SimpleWave(20, 10 * SECOND, null)
+                    .add(25, new SimpleWave(18, 8 * SECOND, null)
                             .add(0.05, Mobs.BASIC_ZOMBIE)
                             .add(0.05, Mobs.BASIC_PIG_ZOMBIE)
                             .add(0.1, Mobs.GHOST_ZOMBIE)
@@ -3725,7 +3724,7 @@ public enum GameMap {
                             .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             .add(0.1, Mobs.BASIC_SLIME)
                     )
-                    .add(29, new SimpleWave(15, 10 * SECOND, null)
+                    .add(29, new SimpleWave(18, 8 * SECOND, null)
                             .add(0.2, Mobs.VOID_SKELETON)
                             .add(0.3, Mobs.FORGOTTEN_LANCER)
                             .add(0.1, Mobs.EXILED_ZOMBIE_RIFT)
@@ -3733,10 +3732,10 @@ public enum GameMap {
                             .add(0.2, Mobs.ENVOY_SKELETON)
                             .add(0.1, Mobs.EXILED_SKELETON)
                     )
-                    .add(30, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
+                    .add(30, new SimpleWave(1, 8 * SECOND, Component.text("Boss"), MobTier.BOSS)
                             .add(1, Mobs.EVENT_ILLUMINA, bossSpawnLocation)
                     )
-                    .add(31, new SimpleWave(20, 10 * SECOND, null)
+                    .add(31, new SimpleWave(20, 8 * SECOND, null)
                             .add(0.2, Mobs.EXILED_SKELETON)
                             .add(0.4, Mobs.FORGOTTEN_LANCER)
                             .add(0.1, Mobs.BASIC_SLIME)
@@ -3744,7 +3743,7 @@ public enum GameMap {
                             .add(0.1, Mobs.EXILED_ZOMBIE_LAVA)
                             .add(0.1, Mobs.SLIME_ZOMBIE)
                     )
-                    .add(36, new SimpleWave(24, 10 * SECOND, null)
+                    .add(36, new SimpleWave(24, 8 * SECOND, null)
                             .add(0.1, Mobs.VOID_SKELETON)
                             .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
                             .add(0.1, Mobs.GHOST_ZOMBIE)
@@ -3757,7 +3756,7 @@ public enum GameMap {
                             .add(0.1, Mobs.FORGOTTEN_LANCER)
                             .add(0.1, Mobs.BASIC_SLIME)
                     )
-                    .add(40, new SimpleWave(1, 10 * SECOND, Component.text("Boss"), MobTier.BOSS)
+                    .add(40, new SimpleWave(1, 8 * SECOND, Component.text("Boss"), MobTier.BOSS)
                             .add(1, Mobs.EVENT_CALAMITY_CORE, bossSpawnLocation)
                     )
                     .loop(6, 36, 5)
@@ -3780,7 +3779,7 @@ public enum GameMap {
                 @Override
                 public float getSpawnCountMultiplier(int playerCount) {
                     return switch (playerCount) {
-                        case 3 -> 1.25f;
+                        case 3 -> 1.2f;
                         case 4 -> 1.5f;
                         default -> 1;
                     };
@@ -3789,6 +3788,13 @@ public enum GameMap {
                 @Override
                 protected void modifyStats(WarlordsNPC warlordsNPC) {
                     warlordsNPC.getMob().onSpawn(this);
+                    if (warlordsNPC.getMobTier() == MobTier.BOSS) {
+                        float scaledHealth = (float) (warlordsNPC.getMaxHealth() * (.0625 * Math.pow(Math.E, 0.69314718056 * playerCount()))); // ln4/2 = 0.69314718056
+                        warlordsNPC.setMaxBaseHealth(scaledHealth);
+                        warlordsNPC.setMaxHealth(scaledHealth);
+                        warlordsNPC.setHealth(scaledHealth);
+                        return;
+                    }
                     int playerCount = playerCount();
                     int wavesCleared = getWavesCleared();
 
@@ -3798,9 +3804,9 @@ public enum GameMap {
                     float waveHealthMultiplier = 0;
                     float waveMeleeDamageMultiplier = 0;
                     switch (playerCount) {
-                        case 1, 2 -> healthMultiplier = .9f;
-                        case 3 -> healthMultiplier = 1.05f;
-                        default -> healthMultiplier = 1.20f;
+                        case 1, 2 -> healthMultiplier = 1.1f;
+                        case 3 -> healthMultiplier = 1.25f;
+                        default -> healthMultiplier = 1.40f;
                     }
                     if (wavesCleared >= 10) {
                         waveHealthMultiplier += .05;
@@ -3815,10 +3821,9 @@ public enum GameMap {
                     if (wavesCleared >= 40) {
                         waveHealthMultiplier += .1;
                     }
-                    if (warlordsNPC.getMobTier() != MobTier.BOSS) {
-                        healthMultiplier += waveHealthMultiplier;
-                        meleeDamageMultiplier += waveMeleeDamageMultiplier;
-                    }
+                    healthMultiplier += waveHealthMultiplier;
+                    meleeDamageMultiplier += waveMeleeDamageMultiplier;
+
                     float maxHealth = warlordsNPC.getMaxHealth();
                     float minMeleeDamage = warlordsNPC.getMinMeleeDamage();
                     float maxMeleeDamage = warlordsNPC.getMaxMeleeDamage();
@@ -3837,6 +3842,7 @@ public enum GameMap {
                     .onPerWaveClear(1, 500)
                     .onPerWaveClear(5, 2000)
                     .onPerMobKill(Mobs.GHOST_ZOMBIE, 10)
+                    .onPerMobKill(Mobs.SPIDER, 10)
                     .onPerMobKill(Mobs.BASIC_SLIME, 10)
                     .onPerMobKill(Mobs.ELITE_SKELETON, 15)
                     .onPerMobKill(Mobs.ELITE_PIG_ZOMBIE, 15)
@@ -3845,18 +3851,19 @@ public enum GameMap {
                     .onPerMobKill(Mobs.SLIME_ZOMBIE, 25)
                     .onPerMobKill(Mobs.ELITE_ZOMBIE, 30)
                     .onPerMobKill(Mobs.VOID_SKELETON, 35)
+                    .onPerMobKill(Mobs.EXILED_VOID_LANCER, 35)
                     .onPerMobKill(Mobs.ENVOY_BERSERKER_ZOMBIE, 35)
                     .onPerMobKill(Mobs.FORGOTTEN_LANCER, 40)
                     .onPerMobKill(Mobs.EXILED_ZOMBIE_RIFT, 45)
                     .onPerMobKill(Mobs.EXTREME_ZEALOT, 45)
                     .onPerMobKill(Mobs.EXILED_SKELETON, 50)
-                    .onPerMobKill(Mobs.EVENT_ILLUSION_CORE, 250)
-                    .onPerMobKill(Mobs.EVENT_EXILED_CORE, 250)
-                    .onPerMobKill(Mobs.EVENT_CALAMITY_CORE, 250)
-                    .onPerMobKill(Mobs.EVENT_ILLUMINA, 400)
+                    .onPerMobKill(Mobs.EVENT_ILLUSION_CORE, 2500)
+                    .onPerMobKill(Mobs.EVENT_EXILED_CORE, 2500)
+                    .onPerMobKill(Mobs.EVENT_CALAMITY_CORE, 2500)
+                    .onPerMobKill(Mobs.EVENT_ILLUMINA, 3000)
             );
             options.add(new CurrencyOnEventOption()
-                    .startWith(50000)
+                    .startWith(100000)
                     .onKill(500)
                     .setPerWaveClear(5, 25000)
                     .disableGuildBonus()
@@ -3871,7 +3878,7 @@ public enum GameMap {
                     .playerExpPerXSec(10, 10)
                     .guildExpPerXSec(20, 30)
             );
-            options.add(new FieldEffect(options, FieldEffect.FieldEffects.LOST_BUFF, FieldEffect.FieldEffects.DEBUFF_THING));
+            options.add(new FieldEffect(options, FieldEffect.FieldEffects.LOST_BUFF, FieldEffect.FieldEffects.DUMB_DEBUFFS));
 
             return options;
         }

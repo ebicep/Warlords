@@ -149,7 +149,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
 
     public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
         shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class, false);
-        if (!shackleTarget.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
+        if (!shackleTarget.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
             shackleTarget.getEntity().showTitle(Title.title(
                     Component.empty(),
                     Component.text("SILENCED", NamedTextColor.RED),

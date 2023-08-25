@@ -23,7 +23,7 @@ public enum Currencies implements Spendable {
     SYNTHETIC_SHARD(
             "Synthetic Shard",
             NamedTextColor.WHITE,
-            new ItemStack(Material.GRAY_STAINED_GLASS_PANE)
+            new ItemStack(Material.GRAY_STAINED_GLASS)
     ),
     LEGEND_FRAGMENTS(
             "Legend Fragment",
@@ -95,8 +95,8 @@ public enum Currencies implements Spendable {
             NamedTextColor.YELLOW,
             new ItemStack(Material.SUNFLOWER)
     ),
-    EVENT_POINTS_ILLUIMINA(
-            "Mithra Event Point",
+    EVENT_POINTS_ILLUIMINA( //TODO FIX
+            "Illumina Event Point",
             NamedTextColor.YELLOW,
             new ItemStack(Material.SUNFLOWER)
     ),

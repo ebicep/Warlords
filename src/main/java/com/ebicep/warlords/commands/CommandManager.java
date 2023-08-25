@@ -559,6 +559,8 @@ public class CommandManager {
         manager.registerCommand(new UnstuckCommand(), true);
 
         manager.registerCommand(new AdminCommand());
+        manager.registerCommand(new DatabaseCommand());
+        manager.registerCommand(new DebugValueCommand());
         manager.registerCommand(new EditStatsCommand());
         manager.registerCommand(new ExperienceCommand());
         manager.registerCommand(new FindPlayerCommand());

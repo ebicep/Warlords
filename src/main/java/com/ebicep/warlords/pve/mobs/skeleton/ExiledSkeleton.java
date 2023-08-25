@@ -165,6 +165,12 @@ public class ExiledSkeleton extends AbstractSkeleton implements EliteMob {
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
                             if (ticksLeft % 20 == 0) {
                                 float healthDamage = enemy.getMaxHealth() * 0.05f;
+                                if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                }
+                                if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                }
                                 enemy.addDamageInstance(
                                         wp,
                                         name,

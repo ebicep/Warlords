@@ -109,7 +109,6 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
         float outgoingHealingBoost = HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel();
         float cooldown = COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel();
         return Component.text("When your health falls below 30%, incoming healing increases by 50% and outgoing healing increases by ", NamedTextColor.GRAY)
-                        .append(Component.text("Deal "))
                         .append(formatTitleUpgrade(outgoingHealingBoost, "%"))
                         .append(Component.text(" for 10s. Can be triggered once every "))
                         .append(formatTitleUpgrade(cooldown, "s"))
