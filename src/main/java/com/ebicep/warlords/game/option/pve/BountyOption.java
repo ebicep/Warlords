@@ -8,15 +8,13 @@ import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class BountyOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
-        List<TracksDuringGame> tracksDuringGames = new ArrayList<>();
+        Map<UUID, List<TracksDuringGame>> tracksDuringGames = new HashMap<>();
         game.forEachOfflinePlayer((offlinePlayer, team) -> {
             if (team == null) {
                 return;
@@ -26,14 +24,14 @@ public class BountyOption implements Option {
                 DatabaseManager.getPlayer(uniqueId, collection, databasePlayer -> {
                     List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
                     for (AbstractBounty bounty : trackableBounties) {
-                        if (bounty instanceof TracksDuringGame tracksDuringGame) {
-                            tracksDuringGames.add(tracksDuringGame);
+                        if (bounty instanceof TracksDuringGame tracksDuringGame && tracksDuringGame.trackGame(game)) {
+                            tracksDuringGames.computeIfAbsent(uniqueId, k -> new ArrayList<>()).add(tracksDuringGame);
                         }
                     }
                 });
             }
         });
-        TracksDuringGame.applyToGame(game, tracksDuringGames);
+        game.registerEvents(TracksDuringGame.getListener(tracksDuringGames));
     }
 
 }

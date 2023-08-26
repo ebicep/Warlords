@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounties;
+import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
@@ -96,6 +97,8 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
                 for (AbstractBounty bounty : trackableBounties) {
                     if (bounty instanceof TracksPostGame tracksPostGame) {
                         tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer);
+                    } else if (bounty instanceof TracksDuringGame tracksDuringGame) {
+                        tracksDuringGame.apply();
                     }
                 }
             });

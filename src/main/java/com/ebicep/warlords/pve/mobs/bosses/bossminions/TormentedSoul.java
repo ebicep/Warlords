@@ -17,7 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 
-public class TormentedSoul extends AbstractZombie implements BossMob {
+public class TormentedSoul extends AbstractZombie implements BossMob, BossMinion {
 
     private float reduceCooldown = 0.2f;
 

@@ -15,7 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 
-public class BoltaroExiled extends AbstractZombie implements EliteMob {
+public class BoltaroExiled extends AbstractZombie implements EliteMob, BossMinion {
 
     public BoltaroExiled(Location spawnLocation) {
         super(spawnLocation,

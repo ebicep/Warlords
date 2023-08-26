@@ -14,7 +14,7 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
-public class BoltaroShadow extends AbstractSkeleton implements BossMob {
+public class BoltaroShadow extends AbstractSkeleton implements BossMob, BossMinion {
 
     public BoltaroShadow(Location spawnLocation) {
         super(spawnLocation,

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Currencies;
@@ -66,6 +67,8 @@ public abstract class AbstractBounty implements RewardSpendable {
 
     public abstract String getDescription();
 
+    public abstract Bounties getBounty();
+
     protected Component getProgress(int progress, int target) {
         return getProgress(progress, String.valueOf(target));
     }
@@ -97,5 +100,9 @@ public abstract class AbstractBounty implements RewardSpendable {
     public void claim(DatabasePlayer databasePlayer) {
         this.claimed = Instant.now();
         getCurrencyReward().forEach((spendable, aLong) -> spendable.addToPlayer(databasePlayer, aLong));
+        databasePlayer.getPveStats().addBountiesCompleted();
+        DatabaseManager.getPlayer(databasePlayer.getUuid(), lifetimeDatabasePlayer -> {
+            lifetimeDatabasePlayer.getPveStats().getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+        });
     }
 }

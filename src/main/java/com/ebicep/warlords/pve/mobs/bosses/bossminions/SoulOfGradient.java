@@ -22,7 +22,7 @@ import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 
-public class SoulOfGradient extends AbstractZombie implements BossMob {
+public class SoulOfGradient extends AbstractZombie implements BossMob, BossMinion {
 
     public SoulOfGradient(Location spawnLocation) {
         super(spawnLocation,

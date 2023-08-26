@@ -14,7 +14,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-public class NarmerAcolyte extends AbstractZombie implements BossMob {
+public class NarmerAcolyte extends AbstractZombie implements BossMob, BossMinion {
 
     public NarmerAcolyte(Location spawnLocation) {
         super(spawnLocation,

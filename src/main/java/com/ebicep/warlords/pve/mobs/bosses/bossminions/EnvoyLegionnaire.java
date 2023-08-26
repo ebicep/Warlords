@@ -19,7 +19,7 @@ import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 
-public class EnvoyLegionnaire extends AbstractZombie implements BossMob {
+public class EnvoyLegionnaire extends AbstractZombie implements BossMob, BossMinion {
 
     public EnvoyLegionnaire(Location spawnLocation) {
         super(spawnLocation,
