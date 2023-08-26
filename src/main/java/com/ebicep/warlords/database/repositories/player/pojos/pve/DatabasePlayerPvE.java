@@ -27,6 +27,8 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
+import com.ebicep.warlords.pve.bountysystem.Bounties;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
@@ -98,8 +100,15 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     private Map<MobDrops, Long> mobDrops = new LinkedHashMap<>();
     @Field("completed_tutorial")
     private boolean completedTutorial = false;
+    //OLD
+    @Deprecated
     @Field("quests_completed")
     private Map<Quests, Long> questsCompleted = new HashMap<>();
+    //NEW BOUNTIES
+    private Map<Bounties, Long> completedBounties = new HashMap<>();
+    private int bountiesCompleted = 0; // can only get 2 extra for daily/weekly
+    private List<AbstractBounty> activeBounties = new ArrayList<>();
+
     @Field("auto_upgrade_profiles")
     private Map<Specializations, List<AutoUpgradeProfile>> autoUpgradeProfiles = new HashMap<>();
     @Field("auto_save_upgrade_profile")
@@ -192,12 +201,12 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         }
 
         //QUESTS
-        for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
-            questsCompleted.merge(quests, (long) multiplier, Long::sum);
-            if (quests.time == playersCollection || playersCollection == PlayersCollections.LIFETIME) {
-                quests.rewards.forEach((curr, aLong) -> curr.addToPlayer(databasePlayer, aLong * multiplier));
-            }
-        }
+//        for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
+//            questsCompleted.merge(quests, (long) multiplier, Long::sum);
+//            if (quests.time == playersCollection || playersCollection == PlayersCollections.LIFETIME) {
+//                quests.rewards.forEach((curr, aLong) -> curr.addToPlayer(databasePlayer, aLong * multiplier));
+//            }
+//        }
 
         getItemsManager().addBlessingsFound(gamePlayerPvE.getBlessingsFound() * multiplier);
 
@@ -378,6 +387,25 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     public Map<Quests, Long> getQuestsCompleted() {
         return questsCompleted;
+    }
+
+    public Map<Bounties, Long> getCompletedBounties() {
+        return completedBounties;
+    }
+
+    public int getBountiesCompleted() {
+        return bountiesCompleted;
+    }
+
+    public List<AbstractBounty> getActiveBounties() {
+        return activeBounties;
+    }
+
+    public List<AbstractBounty> getTrackableBounties() {
+        return activeBounties.stream()
+                             .filter(abstractBounty -> abstractBounty.notClaimed() &&
+                                     (abstractBounty.isStarted() && abstractBounty.getProgress() != null))
+                             .toList();
     }
 
     public List<PatreonReward> getPatreonRewards() {

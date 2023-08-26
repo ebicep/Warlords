@@ -42,6 +42,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.poll.AbstractPoll;
 import com.ebicep.warlords.poll.PollCommand;
+import com.ebicep.warlords.pve.bountysystem.BountyCommand;
 import com.ebicep.warlords.pve.commands.*;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
 import com.ebicep.warlords.pve.items.ItemsCommand;
@@ -627,6 +628,8 @@ public class CommandManager {
         manager.registerCommand(new AbilityTreeCommand());
 
         manager.registerCommand(new GameJoinCommand());
+
+        manager.registerCommand(new BountyCommand());
     }
 
     @Nullable

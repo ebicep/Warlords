@@ -2,12 +2,16 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
+import com.ebicep.warlords.pve.bountysystem.Bounties;
+import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
@@ -48,8 +52,11 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
     private Map<MobDrops, Long> mobDropsGained = new HashMap<>();
     @Field("items_found")
     private List<AbstractItem> itemsFound = new ArrayList<>();
+    @Deprecated
     @Field("quests_completed")
-    private List<Quests> questsCompleted = new ArrayList<>();
+    private List<Quests> questsCompleted = null;
+    @Field("bounties_completed")
+    private List<Bounties> bountiesCompleted = null;
 
     public DatabaseGamePlayerPvEBase() {
     }
@@ -83,10 +90,19 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
         this.illusionShardGained = playerPveRewards.getIllusionShardGain();
         this.blessingsFound = playerPveRewards.getBlessingsFound();
         this.mobDropsGained = new HashMap<>(playerPveRewards.getMobDropsGained());
-        List<Quests> questsFromGameStats = Quests.getQuestsFromGameStats(warlordsPlayer, pveOption, true);
-        this.questsCompleted.addAll(questsFromGameStats);
+        for (PlayersCollections collection : AbstractBounty.MAX_BOUNTIES.keySet()) {
+            DatabaseManager.getPlayer(uuid, collection, databasePlayer -> {
+                List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
+                for (AbstractBounty bounty : trackableBounties) {
+                    if (bounty instanceof TracksPostGame tracksPostGame) {
+                        tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer);
+                    }
+                }
+            });
+        }
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName() + " DONE");
     }
+
     public int getPrestige() {
         return prestige;
     }
@@ -151,7 +167,4 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
         return itemsFound;
     }
 
-    public List<Quests> getQuestsCompleted() {
-        return questsCompleted;
-    }
 }

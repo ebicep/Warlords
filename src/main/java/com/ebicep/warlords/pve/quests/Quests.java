@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import java.time.Instant;
 import java.util.*;
 
+@Deprecated
 public enum Quests {
     DAILY_300_KA("Tribute [LEGACY]",
             "Get 150 Kills/Assists in 1 game",

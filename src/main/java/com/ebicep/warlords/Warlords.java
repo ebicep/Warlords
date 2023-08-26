@@ -25,6 +25,7 @@ import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
@@ -327,6 +328,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
         getServer().getPluginManager().registerEvents(new Shield(), this);
         getServer().getPluginManager().registerEvents(new HorseOption(), this);
+        getServer().getPluginManager().registerEvents(TracksOutsideGame.getListener(), this);
 
         getCommand("oldtest").setExecutor(new OldTestCommand());
 

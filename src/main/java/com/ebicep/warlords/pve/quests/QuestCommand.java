@@ -9,6 +9,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+@Deprecated
 @CommandAlias("quest")
 @CommandPermission("group.administrator")
 public class QuestCommand extends BaseCommand {

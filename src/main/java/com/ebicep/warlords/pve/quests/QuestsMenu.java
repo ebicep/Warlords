@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Deprecated
 public class QuestsMenu {
 
     public static void openQuestMenu(Player player) {

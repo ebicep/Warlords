@@ -139,7 +139,7 @@ public class NPCManager {
                     createMasterworksFairNPC();
                     createWeaponsManagerNPC();
                     createLegendaryWeaponNPC();
-                    createQuestMenuNPC();
+//                    createQuestMenuNPC();
                     createStarPieceSynthesizerNPC();
                     createMysteriousTokenNPC();
                     createItemMichaelNPC();

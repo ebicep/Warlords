@@ -26,7 +26,6 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
-import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
@@ -268,7 +267,7 @@ public class EndState implements State, TimerDebugAble {
                 if (option instanceof PveOption pveOption) {
                     showCoinSummary(pveOption, players);
                     showDropsSummary(pveOption, players);
-                    showQuestSummary(pveOption, players);
+//                    showQuestSummary(pveOption, players);
                     break;
                 }
             }
@@ -755,25 +754,25 @@ public class EndState implements State, TimerDebugAble {
     }
 
 
-    private void showQuestSummary(PveOption pveOption, List<WarlordsPlayer> players) {
-        for (WarlordsPlayer wp : players) {
-            Player player = Bukkit.getPlayer(wp.getUuid());
-            if (player == null) {
-                continue;
-            }
-            List<Quests> quests = Quests.getQuestsFromGameStats(wp, pveOption, false);
-            if (!quests.isEmpty()) {
-                player.sendMessage("");
-                ChatUtils.sendCenteredMessage(player, Component.text("✚ QUESTS SUMMARY ✚", NamedTextColor.AQUA, TextDecoration.BOLD));
-            }
-            for (Quests quest : quests) {
-                ChatUtils.sendCenteredMessage(player,
-                        Component.text(quest.name, NamedTextColor.GREEN)
-                                 .hoverEvent(HoverEvent.showText(Component.text(quest.description, NamedTextColor.GREEN)))
-                );
-            }
-        }
-    }
+//    private void showQuestSummary(PveOption pveOption, List<WarlordsPlayer> players) {
+//        for (WarlordsPlayer wp : players) {
+//            Player player = Bukkit.getPlayer(wp.getUuid());
+//            if (player == null) {
+//                continue;
+//            }
+//            List<Quests> quests = Quests.getQuestsFromGameStats(wp, pveOption, false);
+//            if (!quests.isEmpty()) {
+//                player.sendMessage("");
+//                ChatUtils.sendCenteredMessage(player, Component.text("✚ QUESTS SUMMARY ✚", NamedTextColor.AQUA, TextDecoration.BOLD));
+//            }
+//            for (Quests quest : quests) {
+//                ChatUtils.sendCenteredMessage(player,
+//                        Component.text(quest.name, NamedTextColor.GREEN)
+//                                 .hoverEvent(HoverEvent.showText(Component.text(quest.description, NamedTextColor.GREEN)))
+//                );
+//            }
+//        }
+//    }
 
     private void showEventStats(List<WarlordsPlayer> players) {
         sendGlobalMessage(game, Component.empty(), false);
