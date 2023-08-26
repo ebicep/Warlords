@@ -1,10 +1,11 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.bountysystem.rewards.RewardSpendable;
+import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
@@ -14,19 +15,11 @@ import org.bukkit.enchantments.Enchantment;
 
 import javax.annotation.Nullable;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractBounty implements RewardSpendable {
 
-    public static final Map<Currencies, Long> COST = new HashMap<>() {{
-        put(Currencies.COIN, 5000L);
-    }};
-    public static Map<PlayersCollections, Integer> MAX_BOUNTIES = new HashMap<>() {{
-        put(PlayersCollections.DAILY, 2);
-        put(PlayersCollections.WEEKLY, 2);
-        put(PlayersCollections.LIFETIME, Integer.MAX_VALUE);
-    }};
+    protected int value;
     private boolean started = false;
     private Instant claimed = null;
 
@@ -59,15 +52,29 @@ public abstract class AbstractBounty implements RewardSpendable {
      * @return Progress display - if null, bounty is completed
      */
     @Nullable
-    public abstract Component getProgress();
-
-    public String getName() {
-        return "TODO"; //TODO abstract
+    public Component getProgress() {
+        if (value >= getTarget()) {
+            return null;
+        }
+        return getProgress(value, getTarget());
     }
+
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public abstract int getTarget();
+
+    public abstract String getName();
 
     public abstract String getDescription();
 
-    public abstract Bounties getBounty();
+    public abstract Bounty getBounty();
 
     protected Component getProgress(int progress, int target) {
         return getProgress(progress, String.valueOf(target));
@@ -82,7 +89,7 @@ public abstract class AbstractBounty implements RewardSpendable {
     }
 
     public Map<Currencies, Long> getCost() {
-        return COST;
+        return BountyUtils.COST;
     }
 
     public boolean isStarted() {
@@ -99,10 +106,11 @@ public abstract class AbstractBounty implements RewardSpendable {
 
     public void claim(DatabasePlayer databasePlayer) {
         this.claimed = Instant.now();
-        getCurrencyReward().forEach((spendable, aLong) -> spendable.addToPlayer(databasePlayer, aLong));
         databasePlayer.getPveStats().addBountiesCompleted();
         DatabaseManager.getPlayer(databasePlayer.getUuid(), lifetimeDatabasePlayer -> {
-            lifetimeDatabasePlayer.getPveStats().getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+            DatabasePlayerPvE lifetimePveStats = lifetimeDatabasePlayer.getPveStats();
+            lifetimePveStats.getBountyRewards().add(new BountyReward(getCurrencyReward(), getBounty()));
+            lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
         });
     }
 }

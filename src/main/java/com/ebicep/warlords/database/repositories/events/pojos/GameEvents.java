@@ -23,7 +23,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.i
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
-import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
+import com.ebicep.warlords.events.player.WeaponSalvageEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
@@ -328,7 +328,7 @@ public enum GameEvents {
             super.initialize();
             Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
                 @EventHandler
-                public void onPreWeaponSalvage(PreWeaponSalvageEvent event) {
+                public void onPreWeaponSalvage(WeaponSalvageEvent.Pre event) {
                     event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
                 }
             }, Warlords.getInstance());
@@ -539,7 +539,7 @@ public enum GameEvents {
             super.initialize();
             Warlords.getInstance().getServer().getPluginManager().registerEvents(new Listener() {
                 @EventHandler
-                public void onPreWeaponSalvage(PreWeaponSalvageEvent event) {
+                public void onPreWeaponSalvage(WeaponSalvageEvent.Pre event) {
                     event.getSalvageAmount().getAndUpdate(operand -> (int) (operand * 1.25));
                 }
             }, Warlords.getInstance());

@@ -140,6 +140,13 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
         }
     }
 
+    public void addJumps() {
+        current.jumps++;
+        if (this.total != null) {
+            this.total.jumps++;
+        }
+    }
+
     public void addMobKill(String mob) {
         current.mobKills.putIfAbsent(mob, 0L);
         current.mobKills.put(mob, current.mobKills.get(mob) + 1);
@@ -237,6 +244,8 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
 
         @Nonnegative
         private int meleeHits;
+        @Nonnegative
+        private int jumps;
 
         private Map<String, Long> mobKills = new LinkedHashMap<>();
         private Map<String, Long> mobAssists = new LinkedHashMap<>();
@@ -257,6 +266,7 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             respawnTimeSpent += other.respawnTimeSpent;
             damageTaken += other.damageTaken;
             meleeHits += other.meleeHits;
+            jumps += other.jumps;
             other.mobKills.forEach((s, aLong) -> mobKills.merge(s, aLong, Long::sum));
             other.mobAssists.forEach((s, aLong) -> mobAssists.merge(s, aLong, Long::sum));
             other.mobDeaths.forEach((s, aLong) -> mobDeaths.merge(s, aLong, Long::sum));
@@ -332,6 +342,10 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             return meleeHits;
         }
 
+        public int getJumps() {
+            return jumps;
+        }
+
         public Map<String, Long> getMobKills() {
             return mobKills;
         }
@@ -385,6 +399,7 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
                     respawnTimeSpent == entry.respawnTimeSpent &&
                     damageTaken == entry.damageTaken &&
                     meleeHits == entry.meleeHits &&
+                    jumps == entry.jumps &&
                     mobKills.equals(entry.mobKills) &&
                     mobAssists.equals(entry.mobAssists) &&
                     mobDeaths.equals(entry.mobDeaths);
@@ -407,6 +422,7 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
             hash = 13 * hash + this.respawnTimeSpent;
             hash = 13 * hash + (int) (this.damageTaken ^ (this.damageTaken >>> 32));
             hash = 13 * hash + this.meleeHits;
+            hash = 13 * hash + this.jumps;
             hash = 13 * hash + Objects.hashCode(this.mobKills);
             hash = 13 * hash + Objects.hashCode(this.mobAssists);
             hash = 13 * hash + Objects.hashCode(this.mobDeaths);

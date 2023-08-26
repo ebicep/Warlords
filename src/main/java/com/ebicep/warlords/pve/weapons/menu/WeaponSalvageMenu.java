@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.weapons.menu;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
+import com.ebicep.warlords.events.player.WeaponSalvageEvent;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -61,9 +61,10 @@ public class WeaponSalvageMenu {
         }
         AtomicInteger salvageAmount = new AtomicInteger(weapon.getSalvageAmount());
         if (databasePlayer.getPveStats().getWeaponInventory().contains(weapon)) {
-            Bukkit.getPluginManager().callEvent(new PreWeaponSalvageEvent(salvageAmount));
+            Bukkit.getPluginManager().callEvent(new WeaponSalvageEvent.Pre(player.getUniqueId(), weapon, salvageAmount));
             databasePlayer.getPveStats().getWeaponInventory().remove(weapon);
             databasePlayer.getPveStats().addCurrency(Currencies.SYNTHETIC_SHARD, salvageAmount.get());
+            Bukkit.getPluginManager().callEvent(new WeaponSalvageEvent.Post(player.getUniqueId(), weapon, salvageAmount));
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
             player.sendMessage(Component.text("You received ", NamedTextColor.GRAY)

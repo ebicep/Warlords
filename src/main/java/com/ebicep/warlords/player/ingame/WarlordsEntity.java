@@ -2805,7 +2805,7 @@ public abstract class WarlordsEntity {
     }
 
     public Vector getCurrentVector() {
-        return currentVector;
+        return currentVector; //TODO just use velocity
     }
 
     public void setCurrentVector(Vector currentVector) {

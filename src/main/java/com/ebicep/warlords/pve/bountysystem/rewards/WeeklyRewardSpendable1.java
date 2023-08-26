@@ -4,11 +4,10 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public interface WeeklyRewardSpendable1 extends RewardSpendable {
 
-    Map<Spendable, Long> REWARD = new LinkedHashMap<>() {{
+    LinkedHashMap<Spendable, Long> REWARD = new LinkedHashMap<>() {{
         put(Currencies.COIN, 50000L);
         put(Currencies.SYNTHETIC_SHARD, 150L);
         put(Currencies.FAIRY_ESSENCE, 150L);
@@ -17,7 +16,7 @@ public interface WeeklyRewardSpendable1 extends RewardSpendable {
     }};
 
     @Override
-    default Map<Spendable, Long> getCurrencyReward() {
+    default LinkedHashMap<Spendable, Long> getCurrencyReward() {
         return REWARD;
     }
 

@@ -2,11 +2,15 @@ package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
+import com.ebicep.warlords.pve.bountysystem.events.BountyStartEvent;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -52,14 +56,19 @@ public class BountyMenu {
                         (m, e) -> {
                             if (bounty.isStarted()) {
                                 if (bounty.getProgress() == null) {
-                                    bounty.claim(databasePlayer);
-                                    player.sendMessage(Component.text("You claimed the bounty " + bounty.getName() + "!", NamedTextColor.GREEN));
+                                    claimBounty(player, databasePlayer, bounty);
                                     player.closeInventory();
                                 }
                             } else {
                                 //AbstractBounty.COST
                                 bounty.setStarted(true);
-                                player.sendMessage(Component.text("You started the bounty " + bounty.getName() + "!", NamedTextColor.GREEN));
+                                BountyUtils.sendBountyMessage(
+                                        player,
+                                        Component.text("You started the bounty ", NamedTextColor.GRAY)
+                                                 .append(Component.text(bounty.getName(), NamedTextColor.GREEN))
+                                                 .append(Component.text("!"))
+                                );
+                                Bukkit.getPluginManager().callEvent(new BountyStartEvent(databasePlayer, bounty));
                                 player.closeInventory();
                             }
                         }
@@ -73,8 +82,7 @@ public class BountyMenu {
                         (m, e) -> {
                             for (AbstractBounty bounty : bounties) {
                                 if (bounty.isStarted()) {
-                                    bounty.claim(databasePlayer);
-                                    player.sendMessage(Component.text("You claimed the bounty " + bounty.getName() + "!", NamedTextColor.GREEN));
+                                    claimBounty(player, databasePlayer, bounty);
                                 }
                             }
                             player.closeInventory();
@@ -83,6 +91,17 @@ public class BountyMenu {
             }
             menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         });
+    }
+
+    private static void claimBounty(Player player, DatabasePlayer databasePlayer, AbstractBounty bounty) {
+        bounty.claim(databasePlayer);
+        BountyUtils.sendBountyMessage(
+                player,
+                Component.text("You claimed the bounty ", NamedTextColor.GRAY)
+                         .append(Component.text(bounty.getName(), NamedTextColor.GREEN))
+                         .append(Component.text("!"))
+        );
+        Bukkit.getPluginManager().callEvent(new BountyClaimEvent(databasePlayer, bounty));
     }
 
 }

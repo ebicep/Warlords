@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 public enum GuildSpendable implements Spendable {
 
-    COIN("Coin") {
+    GUILD_COIN("Coin") {
         @Override
         public NamedTextColor getTextColor() {
             return NamedTextColor.GOLD;
@@ -39,7 +39,7 @@ public enum GuildSpendable implements Spendable {
             return guildPlayerPair.getA().getCurrentCoins();
         }
     },
-    EXPERIENCE("Experience") {
+    GUILD_EXPERIENCE("Experience") {
         @Override
         public NamedTextColor getTextColor() {
             return NamedTextColor.GREEN;
@@ -76,6 +76,7 @@ public enum GuildSpendable implements Spendable {
 
     ;
 
+    public static final GuildSpendable[] VALUES = values();
     public final String name;
 
     GuildSpendable(String name) {

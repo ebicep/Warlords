@@ -4,41 +4,38 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
-import com.ebicep.warlords.pve.bountysystem.Bounties;
+import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BossMinion;
 import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
-import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.Transient;
 
 import java.util.UUID;
 
-public class Defeat20Bosses extends AbstractBounty implements TracksDuringGame, DailyRewardSpendable1 {
+public class Slayer2 extends AbstractBounty implements TracksDuringGame, DailyRewardSpendable1 {
 
-    private static final int TARGET_KILLS = 20;
-    private int kills = 0;
     @Transient
     private int newKills = 0;
 
-    @Nullable
     @Override
-    public Component getProgress() {
-        if (kills >= TARGET_KILLS) {
-            return null;
-        }
-        return getProgress(kills, TARGET_KILLS);
+    public int getTarget() {
+        return 20;
+    }
+
+    @Override
+    public String getName() {
+        return "Slayer";
     }
 
     @Override
     public String getDescription() {
-        return "Defeat " + TARGET_KILLS + " bosses in any gamemode.";
+        return "Defeat " + getTarget() + " bosses in any gamemode.";
     }
 
     @Override
-    public Bounties getBounty() {
-        return Bounties.DEFEAT20BOSSES;
+    public Bounty getBounty() {
+        return Bounty.SLAYER2;
     }
 
     @Override
@@ -51,13 +48,13 @@ public class Defeat20Bosses extends AbstractBounty implements TracksDuringGame, 
             return;
         }
         if (warlordsNPC.getMob() instanceof BossMob && !(warlordsNPC.getMob() instanceof BossMinion)) {
-            kills++;
+            newKills++;
         }
     }
 
     @Override
-    public void apply() {
-        kills += newKills;
+    public int getNewValue() {
+        return newKills;
     }
 
     @Override

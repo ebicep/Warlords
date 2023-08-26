@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
+import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 
 import javax.annotation.Nonnull;
@@ -20,7 +21,7 @@ public class BountyOption implements Option {
                 return;
             }
             UUID uniqueId = offlinePlayer.getUniqueId();
-            for (PlayersCollections collection : AbstractBounty.MAX_BOUNTIES.keySet()) {
+            for (PlayersCollections collection : BountyUtils.MAX_BOUNTIES.keySet()) {
                 DatabaseManager.getPlayer(uniqueId, collection, databasePlayer -> {
                     List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
                     for (AbstractBounty bounty : trackableBounties) {

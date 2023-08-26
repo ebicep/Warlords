@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.pve.onslaught;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.rewards.AbstractReward;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 
 import java.util.LinkedHashMap;
 
@@ -19,7 +20,7 @@ public class PouchReward extends AbstractReward {
     }
 
     @Override
-    public NamedTextColor getNameColor() {
+    public TextColor getNameColor() {
         return NamedTextColor.AQUA;
     }
 

@@ -1,14 +1,13 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -22,13 +21,30 @@ public class BountyCommand extends BaseCommand {
         BountyMenu.openBountyMenu(player);
     }
 
+    @Subcommand("addrandomfromgroup")
+    public void addRandom(Player player, PlayersCollections collection, Bounty.BountyGroup bountyGroup) {
+        Bounty randomBounty = bountyGroup.bounties[(int) (Math.random() * bountyGroup.bounties.length)];
+        add(player, collection, randomBounty);
+    }
+
     @Subcommand("add")
-    public void add(Player player, PlayersCollections collection, Bounties bounty) {
+    public void add(Player player, PlayersCollections collection, Bounty bounty) {
         DatabaseManager.getPlayer(player.getUniqueId(), collection, databasePlayer -> {
             List<AbstractBounty> activeBounties = databasePlayer.getPveStats().getActiveBounties();
             activeBounties.add(bounty.create.get());
             ChatChannels.sendDebugMessage(player, Component.text("Added " + bounty.name() + " to " + collection.name));
         });
+    }
+
+    @Subcommand("printall")
+    public void printAll(CommandIssuer issuer, @Optional Bounty.BountyGroup bountyGroup) {
+        Bounty[] bounties = bountyGroup == null ? Bounty.VALUES : bountyGroup.bounties;
+        for (Bounty bounty : bounties) {
+            AbstractBounty createdBounty = bounty.create.get();
+            ChatChannels.sendDebugMessage(issuer, Component.text(createdBounty.getName())
+                                                           .append(Component.text(" - ", NamedTextColor.DARK_GRAY))
+                                                           .append(Component.text(createdBounty.getDescription(), NamedTextColor.GRAY)));
+        }
     }
 
 

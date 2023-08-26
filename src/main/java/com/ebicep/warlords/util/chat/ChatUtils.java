@@ -169,6 +169,7 @@ public class ChatUtils {
         GAME_DEBUG("GameDebug", NamedTextColor.LIGHT_PURPLE, true),
 
         DISCORD_BOT("DiscordBot", NamedTextColor.DARK_AQUA, true),
+        BOUNTIES("Bounties", NamedTextColor.AQUA, true),
 
         ;
 

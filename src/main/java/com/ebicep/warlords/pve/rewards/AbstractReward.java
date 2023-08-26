@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -60,7 +61,7 @@ public abstract class AbstractReward {
                 .get();
     }
 
-    public NamedTextColor getNameColor() {
+    public TextColor getNameColor() {
         return NamedTextColor.GREEN;
     }
 

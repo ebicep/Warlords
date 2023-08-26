@@ -1,5 +1,6 @@
 package com.ebicep.warlords.events;
 
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.IceBarrier;
 import com.ebicep.warlords.abilities.OrderOfEviscerate;
@@ -223,9 +224,9 @@ public class WarlordsEvents implements Listener {
                         EffectUtils.playFirework(
                                 player.getLocation(),
                                 FireworkEffect.builder()
-                                  .with(FireworkEffect.Type.BALL)
-                                  .withColor(Color.fromRGB(ExperienceManager.PRESTIGE_COLORS.get(prestige).value()))
-                                  .build()
+                                              .with(FireworkEffect.Type.BALL)
+                                              .withColor(Color.fromRGB(ExperienceManager.PRESTIGE_COLORS.get(prestige).value()))
+                                              .build()
                         );
                         player.showTitle(Title.title(
                                 Component.textOfChildren(
@@ -611,6 +612,15 @@ public class WarlordsEvents implements Listener {
         if (warlordsEntity != null) {
             warlordsEntity.setCurrentVector(e.getTo().toVector().subtract(e.getFrom().toVector()).normalize().clone());
             //System.out.println(warlordsEntity.getCurrentVector());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJump(PlayerJumpEvent event) {
+        Player player = event.getPlayer();
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+        if (warlordsEntity != null) {
+            warlordsEntity.getMinuteStats().addJumps();
         }
     }
 

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.configuration;
 
+import com.ebicep.warlords.guilds.GuildSpendable;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.MobDrops;
@@ -17,6 +18,11 @@ public class StringToSpendableConverter implements Converter<String, Spendable> 
             }
         }
         for (MobDrops value : MobDrops.VALUES) {
+            if (value.name().equalsIgnoreCase(s)) {
+                return value;
+            }
+        }
+        for (GuildSpendable value : GuildSpendable.VALUES) {
             if (value.name().equalsIgnoreCase(s)) {
                 return value;
             }

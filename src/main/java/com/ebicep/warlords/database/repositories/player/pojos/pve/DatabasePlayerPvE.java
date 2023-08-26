@@ -18,7 +18,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMo
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerWaveDefenseStats;
-import com.ebicep.warlords.events.player.PreWeaponSalvageEvent;
+import com.ebicep.warlords.events.player.WeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
 import com.ebicep.warlords.guilds.Guild;
@@ -28,7 +28,7 @@ import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
-import com.ebicep.warlords.pve.bountysystem.Bounties;
+import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
@@ -36,6 +36,7 @@ import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.MobDrops;
 import com.ebicep.warlords.pve.quests.Quests;
+import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import com.ebicep.warlords.pve.rewards.types.MasterworksFairReward;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
@@ -83,6 +84,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     private List<GameEventReward> gameEventRewards = new ArrayList<>();
     @Field("pouch_rewards")
     private List<PouchReward> pouchRewards = new ArrayList<>();
+    @Field("bounty_rewards")
+    private List<BountyReward> bountyRewards = new ArrayList<>();
     //WEAPONS
     @Field("weapon_inventory")
     private List<AbstractWeapon> weaponInventory = new ArrayList<>();
@@ -108,7 +111,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     //NEW BOUNTIES
     @Transient //temp
     @Field("completed_bounties")
-    private Map<Bounties, Long> completedBounties = new HashMap<>();
+    private Map<Bounty, Long> completedBounties = new HashMap<>();
     @Transient //temp
     @Field("bounties_completed")
     private int bountiesCompleted = 0; // can only get 2 extra for daily/weekly
@@ -126,7 +129,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     @Override
     public void updateCustomStats(
-            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer,
+            DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -169,7 +173,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
                     for (AbstractWeapon weapon : weaponsToSalvage) {
                         if (weapon instanceof Salvageable salvageable) {
                             AtomicInteger randomSalvageAmount = new AtomicInteger(salvageable.getSalvageAmount());
-                            Bukkit.getPluginManager().callEvent(new PreWeaponSalvageEvent(randomSalvageAmount));
+                            Bukkit.getPluginManager().callEvent(new WeaponSalvageEvent.Pre(databasePlayer.getUuid(), weapon, randomSalvageAmount));
                             addCurrency(Currencies.SYNTHETIC_SHARD, randomSalvageAmount.get() / 2);
                         }
                     }
@@ -396,7 +400,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         return questsCompleted;
     }
 
-    public Map<Bounties, Long> getCompletedBounties() {
+    public Map<Bounty, Long> getCompletedBounties() {
         return completedBounties;
     }
 
@@ -433,6 +437,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     public List<PouchReward> getPouchRewards() {
         return pouchRewards;
+    }
+
+    public List<BountyReward> getBountyRewards() {
+        return bountyRewards;
     }
 
     public Map<Specializations, List<AutoUpgradeProfile>> getAutoUpgradeProfiles() {

@@ -10,7 +10,8 @@ import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
-import com.ebicep.warlords.pve.bountysystem.Bounties;
+import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -57,7 +58,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
     @Field("quests_completed")
     private List<Quests> questsCompleted = null;
     @Field("bounties_completed")
-    private List<Bounties> bountiesCompleted = null;
+    private List<Bounty> bountiesCompleted = null;
 
     public DatabaseGamePlayerPvEBase() {
     }
@@ -91,14 +92,14 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
         this.illusionShardGained = playerPveRewards.getIllusionShardGain();
         this.blessingsFound = playerPveRewards.getBlessingsFound();
         this.mobDropsGained = new HashMap<>(playerPveRewards.getMobDropsGained());
-        for (PlayersCollections collection : AbstractBounty.MAX_BOUNTIES.keySet()) {
+        for (PlayersCollections collection : BountyUtils.MAX_BOUNTIES.keySet()) {
             DatabaseManager.getPlayer(uuid, collection, databasePlayer -> {
                 List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
                 for (AbstractBounty bounty : trackableBounties) {
                     if (bounty instanceof TracksPostGame tracksPostGame) {
                         tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer);
                     } else if (bounty instanceof TracksDuringGame tracksDuringGame) {
-                        tracksDuringGame.apply();
+                        tracksDuringGame.apply(bounty);
                     }
                 }
             });

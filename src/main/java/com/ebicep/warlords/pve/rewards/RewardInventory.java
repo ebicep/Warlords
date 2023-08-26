@@ -37,7 +37,8 @@ public class RewardInventory {
                             databasePlayerPvE.getPatreonRewards(),
                             databasePlayerPvE.getCompensationRewards(),
                             databasePlayerPvE.getGameEventRewards(),
-                            databasePlayerPvE.getPouchRewards()
+                            databasePlayerPvE.getPouchRewards(),
+                            databasePlayerPvE.getBountyRewards()
                     )
                     .flatMap(List::stream)
                     .filter(reward -> reward.getTimeClaimed() == null)
