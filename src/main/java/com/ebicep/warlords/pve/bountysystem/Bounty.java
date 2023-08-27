@@ -43,6 +43,9 @@ public enum Bounty {
     SEPARATION(Separation.class, Separation::new),
     SLASHER(Slasher.class, Slasher::new),
     NONCOMPLIANCE(Noncompliance.class, Noncompliance::new),
+    FLAWLESS5(Flawless5.class, Flawless5::new),
+    CHALLENGE3(Challenge3.class, Challenge3::new),
+    CHALLENGE4(Challenge4.class, Challenge4::new),
 
     ;
 

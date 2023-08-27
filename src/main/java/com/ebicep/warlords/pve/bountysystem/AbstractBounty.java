@@ -17,6 +17,8 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static com.ebicep.warlords.pve.bountysystem.BountyUtils.BOUNTY_COLLECTION_INFO;
@@ -29,13 +31,13 @@ public abstract class AbstractBounty implements RewardSpendable {
     public ItemBuilder getItemWithProgress() { //TODO maybe center everything
         ItemBuilder itemBuilder = getItem();
 
-        Component progress = getProgress();
+        List<Component> progress = getProgress();
         itemBuilder.addLore(Component.empty());
         if (started) {
             if (progress == null) {
                 itemBuilder.addLore(Component.text("Click to Claim!", NamedTextColor.GREEN));
             } else {
-                itemBuilder.addLore(Component.text("Progress: ", NamedTextColor.GRAY).append(progress));
+                itemBuilder.addLore(progress);
             }
         } else {
             itemBuilder.addLore(PvEUtils.getCostLore(BountyUtils.COST, false));
@@ -67,7 +69,7 @@ public abstract class AbstractBounty implements RewardSpendable {
      * @return Progress display - if null, bounty is completed
      */
     @Nullable
-    public Component getProgress() {
+    public List<Component> getProgress() {
         if (value >= getTarget()) {
             return null;
         }
@@ -80,12 +82,13 @@ public abstract class AbstractBounty implements RewardSpendable {
 
     public abstract int getTarget();
 
-    protected Component getProgress(long progress, int target) {
-        return Component.textOfChildren(
+    protected List<Component> getProgress(long progress, int target) {
+        return Collections.singletonList(Component.textOfChildren(
+                Component.text("Progress: ", NamedTextColor.GRAY),
                 Component.text(progress, NamedTextColor.GOLD),
                 Component.text("/", NamedTextColor.AQUA),
                 Component.text(NumberFormat.addCommaAndRound(target), NamedTextColor.GOLD)
-        );
+        ));
     }
 
     public long getValue() {
