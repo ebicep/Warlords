@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.bountysystem.rewards.RewardSpendable;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -80,14 +81,10 @@ public abstract class AbstractBounty implements RewardSpendable {
     public abstract int getTarget();
 
     protected Component getProgress(int progress, int target) {
-        return getProgress(progress, String.valueOf(target));
-    }
-
-    protected Component getProgress(int progress, String target) {
         return Component.textOfChildren(
                 Component.text(progress, NamedTextColor.GOLD),
                 Component.text("/", NamedTextColor.AQUA),
-                Component.text(target, NamedTextColor.GOLD)
+                Component.text(NumberFormat.addCommaAndRound(target), NamedTextColor.GOLD)
         );
     }
 
