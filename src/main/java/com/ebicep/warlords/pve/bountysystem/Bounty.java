@@ -18,6 +18,12 @@ public enum Bounty {
     EXPLORE2(Explore2.class, Explore2::new),
     SALVAGE1(Salvage1.class, Salvage1::new),
     SALVAGE2(Salvage2.class, Salvage2::new),
+    HUNT_BOLTARO(HuntBoltaro.class, HuntBoltaro::new),
+    HUNT_GHOULCALLER(HuntGhoulcaller.class, HuntGhoulcaller::new),
+    HUNT_NARMER(HuntNarmer.class, HuntNarmer::new),
+    HUNT_MITHRA(HuntMithra.class, HuntMithra::new),
+    HUNT_ZENITH(HuntZenith.class, HuntZenith::new),
+    FLAWLESS1(Flawless1.class, Flawless1::new),
 
     ;
 

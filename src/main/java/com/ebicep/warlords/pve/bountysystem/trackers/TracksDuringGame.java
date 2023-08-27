@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.bountysystem.trackers;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUsedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
@@ -33,6 +34,11 @@ public interface TracksDuringGame {
             public void onEnergyUsed(WarlordsEnergyUsedEvent event) {
                 trackers.forEach((uuid, tracksDuringGame) -> tracksDuringGame.forEach(track -> track.onEnergyUsed(uuid, event)));
             }
+
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onKill(WarlordsDeathEvent event) {
+                trackers.forEach((uuid, tracksDuringGame) -> tracksDuringGame.forEach(track -> track.onKill(uuid, event)));
+            }
         };
     }
 
@@ -53,7 +59,7 @@ public interface TracksDuringGame {
 
     }
 
-    default void onPlayerJump() {
+    default void onKill(UUID uuid, WarlordsDeathEvent event) {
 
     }
 
