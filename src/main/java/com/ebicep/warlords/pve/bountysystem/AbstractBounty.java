@@ -4,8 +4,8 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
+import com.ebicep.warlords.pve.bountysystem.costs.BountyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.RewardSpendable;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -19,11 +19,10 @@ import org.bukkit.enchantments.Enchantment;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static com.ebicep.warlords.pve.bountysystem.BountyUtils.BOUNTY_COLLECTION_INFO;
 
-public abstract class AbstractBounty implements RewardSpendable {
+public abstract class AbstractBounty implements RewardSpendable, BountyCost {
 
     protected long value;
     private boolean started = false;
@@ -40,7 +39,7 @@ public abstract class AbstractBounty implements RewardSpendable {
                 itemBuilder.addLore(progress);
             }
         } else {
-            itemBuilder.addLore(PvEUtils.getCostLore(BountyUtils.COST, false));
+            itemBuilder.addLore(PvEUtils.getCostLore(getCost(), false));
             itemBuilder.addLore(
                     Component.empty(),
                     Component.text("Click to Start!", NamedTextColor.GREEN)
@@ -103,10 +102,6 @@ public abstract class AbstractBounty implements RewardSpendable {
 
     public void setValue(long value) {
         this.value = value;
-    }
-
-    public Map<Currencies, Long> getCost() {
-        return BountyUtils.COST;
     }
 
     public boolean isStarted() {

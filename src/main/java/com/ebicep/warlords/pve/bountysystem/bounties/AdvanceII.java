@@ -7,10 +7,11 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
+import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable4;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
-public class AdvanceII extends AbstractBounty implements TracksPostGame, DailyRewardSpendable4 {
+public class AdvanceII extends AbstractBounty implements TracksPostGame, DailyCost, DailyRewardSpendable4 {
 
     @Override
     public String getName() {

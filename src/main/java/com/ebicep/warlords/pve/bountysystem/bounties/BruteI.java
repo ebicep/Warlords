@@ -3,12 +3,13 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 
 import java.util.UUID;
 
-public class BruteI extends AbstractBounty implements TracksDuringGame, WeeklyRewardSpendable2 {
+public class BruteI extends AbstractBounty implements TracksDuringGame, WeeklyCost, WeeklyRewardSpendable2 {
 
     private int newKills = 0;
 

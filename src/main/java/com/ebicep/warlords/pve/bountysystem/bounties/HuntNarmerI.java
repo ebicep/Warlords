@@ -7,6 +7,7 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
+import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.bosses.Narmer;
@@ -14,7 +15,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.util.UUID;
 
-public class HuntNarmerI extends AbstractBounty implements TracksDuringGame, DailyRewardSpendable2 {
+public class HuntNarmerI extends AbstractBounty implements TracksDuringGame, DailyCost, DailyRewardSpendable2 {
 
     @Transient
     private int newKills = 0;

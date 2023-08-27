@@ -4,10 +4,11 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.costs.LifetimeCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.LifetimeRewardSpendable3;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
-public class MendI extends AbstractBounty implements TracksPostGame, LifetimeRewardSpendable3 {
+public class MendI extends AbstractBounty implements TracksPostGame, LifetimeCost, LifetimeRewardSpendable3 {
 
     @Override
     public String getName() {

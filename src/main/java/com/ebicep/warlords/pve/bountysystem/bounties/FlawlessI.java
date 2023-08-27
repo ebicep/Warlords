@@ -6,10 +6,11 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
+import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
-public class FlawlessI extends AbstractBounty implements TracksPostGame, DailyRewardSpendable2 {
+public class FlawlessI extends AbstractBounty implements TracksPostGame, DailyCost, DailyRewardSpendable2 {
 
     @Override
     public String getName() {

@@ -2,10 +2,11 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable4;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 
-public class RecoupI extends AbstractBounty implements TracksOutsideGame, DailyRewardSpendable4 {
+public class RecoupI extends AbstractBounty implements TracksOutsideGame, DailyCost, DailyRewardSpendable4 {
 
     @Override
     public void onSupplyDropCall(long amount) {

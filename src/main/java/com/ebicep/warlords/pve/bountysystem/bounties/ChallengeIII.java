@@ -6,10 +6,11 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
+import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable3;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
-public class ChallengeIII extends AbstractBounty implements TracksPostGame, WeeklyRewardSpendable3 {
+public class ChallengeIII extends AbstractBounty implements TracksPostGame, WeeklyCost, WeeklyRewardSpendable3 {
 
     @Override
     public String getName() {

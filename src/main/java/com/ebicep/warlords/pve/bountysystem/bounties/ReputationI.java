@@ -2,10 +2,11 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.costs.LifetimeCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.LifetimeRewardSpendable3;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 
-public class ReputationI extends AbstractBounty implements TracksOutsideGame, LifetimeRewardSpendable3 {
+public class ReputationI extends AbstractBounty implements TracksOutsideGame, LifetimeCost, LifetimeRewardSpendable3 {
 
     @Override
     public void onSpecPrestige() {

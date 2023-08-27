@@ -20,10 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
@@ -74,7 +71,8 @@ public class BountyMenu {
                                     player.closeInventory();
                                 }
                             } else {
-                                for (Map.Entry<Currencies, Long> currenciesLongEntry : BountyUtils.COST.entrySet()) {
+                                LinkedHashMap<Currencies, Long> bountyCost = bounty.getCost();
+                                for (Map.Entry<Currencies, Long> currenciesLongEntry : bountyCost.entrySet()) {
                                     Currencies currency = currenciesLongEntry.getKey();
                                     Long cost = currenciesLongEntry.getValue();
                                     if (pveStats.getCurrencyValue(currency) < cost) {
@@ -97,13 +95,13 @@ public class BountyMenu {
                                             add(Component.text("Rewards:", NamedTextColor.GRAY));
                                             bounty.getCurrencyReward()
                                                   .forEach((currencies, aLong) -> add(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
-                                            addAll(PvEUtils.getCostLore(BountyUtils.COST, true));
+                                            addAll(PvEUtils.getCostLore(bountyCost, true));
                                         }},
                                         Component.text("Cancel", NamedTextColor.RED),
                                         Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
                                         (m2, e2) -> {
                                             DatabaseManager.getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, lifetimeDatabasePlayer -> {
-                                                for (Map.Entry<Currencies, Long> currenciesLongEntry : BountyUtils.COST.entrySet()) {
+                                                for (Map.Entry<Currencies, Long> currenciesLongEntry : bountyCost.entrySet()) {
                                                     lifetimeDatabasePlayer.getPveStats().subtractCurrency(currenciesLongEntry.getKey(), currenciesLongEntry.getValue());
                                                 }
                                             });

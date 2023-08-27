@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BossMinion;
@@ -13,7 +14,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.util.UUID;
 
-public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyRewardSpendable1 {
+public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyCost, DailyRewardSpendable1 {
 
     @Transient
     private int newKills = 0;

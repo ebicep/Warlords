@@ -4,12 +4,13 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.EventTitle;
 
-public class DevelopIV extends AbstractBounty implements TracksPostGame, WeeklyRewardSpendable2 {
+public class DevelopIV extends AbstractBounty implements TracksPostGame, WeeklyCost, WeeklyRewardSpendable2 {
 
     @Override
     public String getName() {

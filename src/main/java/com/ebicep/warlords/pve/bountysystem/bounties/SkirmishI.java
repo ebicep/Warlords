@@ -4,10 +4,11 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
-public class SkirmishI extends AbstractBounty implements TracksPostGame, DailyRewardSpendable1 {
+public class SkirmishI extends AbstractBounty implements TracksPostGame, DailyCost, DailyRewardSpendable1 {
 
     @Override
     public String getName() {

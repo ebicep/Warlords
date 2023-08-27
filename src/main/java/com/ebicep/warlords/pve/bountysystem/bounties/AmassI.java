@@ -5,12 +5,13 @@ import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.costs.LifetimeCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.LifetimeRewardSpendable3;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
 import java.util.LinkedHashMap;
 
-public class AmassI extends AbstractBounty implements TracksPostGame, LifetimeRewardSpendable3 {
+public class AmassI extends AbstractBounty implements TracksPostGame, LifetimeCost, LifetimeRewardSpendable3 {
 
     @Override
     public String getName() {

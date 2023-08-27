@@ -85,6 +85,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     private List<GameEventReward> gameEventRewards = new ArrayList<>();
     @Field("pouch_rewards")
     private List<PouchReward> pouchRewards = new ArrayList<>();
+    @Transient //temp
     @Field("bounty_rewards")
     private List<BountyReward> bountyRewards = new ArrayList<>();
     //WEAPONS

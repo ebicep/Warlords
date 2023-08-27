@@ -7,11 +7,12 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
+import com.ebicep.warlords.pve.bountysystem.costs.LifetimeCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.LifetimeRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 import com.ebicep.warlords.util.java.NumberFormat;
 
-public class BoundlessI extends AbstractBounty implements TracksPostGame, LifetimeRewardSpendable2 {
+public class BoundlessI extends AbstractBounty implements TracksPostGame, LifetimeCost, LifetimeRewardSpendable2 {
 
     @Override
     public String getName() {
