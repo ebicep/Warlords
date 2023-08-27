@@ -18,7 +18,7 @@ public class DevelopI extends AbstractBounty implements TracksPostGame, WeeklyRe
 
     @Override
     public String getDescription() {
-        return "Defeat " + getTarget() + " enemies with a Common or Rare weapon in any gamemode.";
+        return "Defeat " + getTarget() + " enemies with a Common or Rare weapon equipped in any gamemode.";
     }
 
     @Override

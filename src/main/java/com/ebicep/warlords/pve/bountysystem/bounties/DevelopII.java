@@ -18,7 +18,7 @@ public class DevelopII extends AbstractBounty implements TracksPostGame, WeeklyR
 
     @Override
     public String getDescription() {
-        return "Defeat " + getTarget() + " enemies with an Epic weapon in any gamemode.";
+        return "Defeat " + getTarget() + " enemies with an Epic weapon equipped in any gamemode.";
     }
 
     @Override

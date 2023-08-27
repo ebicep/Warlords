@@ -18,7 +18,7 @@ public class DevelopIII extends AbstractBounty implements TracksPostGame, Weekly
 
     @Override
     public String getDescription() {
-        return "Defeat " + getTarget() + " with a Legendary weapon with a star piece attached in any gamemode.";
+        return "Defeat " + getTarget() + " with a Legendary weapon equipped with a star piece attached in any gamemode.";
     }
 
     @Override

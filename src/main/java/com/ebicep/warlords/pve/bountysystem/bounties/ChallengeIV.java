@@ -61,11 +61,11 @@ public class ChallengeIV extends AbstractBounty implements TracksPostGame, Weekl
                 return;
             }
             Guild guild = guildPlayerPair.getA();
-            if (!game.warlordsPlayers()
-                     .allMatch(wp -> {
-                         Pair<Guild, GuildPlayer> pair = GuildManager.getGuildAndGuildPlayerFromPlayer(warlordsPlayer.getUuid());
-                         return pair != null && pair.getA().equals(guild);
-                     })
+            if (game.warlordsPlayers()
+                    .noneMatch(wp -> {
+                        Pair<Guild, GuildPlayer> pair = GuildManager.getGuildAndGuildPlayerFromPlayer(warlordsPlayer.getUuid());
+                        return pair != null && pair.getA().equals(guild);
+                    })
             ) {
                 return;
             }
