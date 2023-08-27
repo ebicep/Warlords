@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.LegendaryWeaponCraftEvent;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.Currencies;
@@ -73,7 +74,7 @@ public class WeaponLegendaryCraftMenu {
                                     );
                                 }
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-
+                                Bukkit.getPluginManager().callEvent(new LegendaryWeaponCraftEvent(player.getUniqueId(), weapon));
                                 player.closeInventory();
                             },
                             (m2, e2) -> openWeaponLegendaryCraftMenu(player, databasePlayer),

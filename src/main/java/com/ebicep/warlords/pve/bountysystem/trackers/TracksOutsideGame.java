@@ -3,6 +3,8 @@ package com.ebicep.warlords.pve.bountysystem.trackers;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.LegendaryWeaponCraftEvent;
+import com.ebicep.warlords.events.WeaponTitlePurchaseEvent;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.events.player.SupplyDropCallEvent;
 import com.ebicep.warlords.events.player.WeaponSalvageEvent;
@@ -10,6 +12,7 @@ import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyStartEvent;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -85,6 +88,18 @@ public interface TracksOutsideGame {
                 runTracker(event.getUUID(), tracker -> tracker.onWeaponSalvage(event.getWeapon()));
             }
 
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onLegendaryWeaponCraft(LegendaryWeaponCraftEvent event) {
+                quicklyValidate();
+                runTracker(event.getUUID(), tracker -> tracker.onLegendaryWeaponCraft(event.getAbstractLegendaryWeapon()));
+            }
+
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onWeaponTitlePurchase(WeaponTitlePurchaseEvent event) {
+                quicklyValidate();
+                runTracker(event.getUUID(), tracker -> tracker.onWeaponTitlePurchase(event.getAbstractLegendaryWeapon()));
+            }
+
             private void quicklyValidate() {
                 Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
                 int onlinePlayerCount = onlinePlayers.size();
@@ -138,7 +153,12 @@ public interface TracksOutsideGame {
     }
 
     default void onSupplyDropCall(long amount) {
+    }
 
+    default void onLegendaryWeaponCraft(AbstractLegendaryWeapon weapon) {
+    }
+
+    default void onWeaponTitlePurchase(AbstractLegendaryWeapon weapon) {
     }
 
 }

@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.events.WeaponTitlePurchaseEvent;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import de.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -147,7 +149,6 @@ public class WeaponTitleMenu {
                                     (m2, e2) -> {
                                         AbstractLegendaryWeapon newTitledWeapon = titleWeapon(player, databasePlayer, weapon, title);
                                         openWeaponTitleMenu(player, databasePlayer, newTitledWeapon, titles, page);
-
                                     },
                                     (m2, e2) -> openWeaponTitleMenu(player, databasePlayer, weapon, titles, page),
                                     (m2) -> {
@@ -225,7 +226,8 @@ public class WeaponTitleMenu {
 
     public static AbstractLegendaryWeapon titleWeapon(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles title) {
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
-        if (!weapon.getTitles().containsKey(title)) {
+        boolean notPurchased = !weapon.getTitles().containsKey(title);
+        if (notPurchased) {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             weapon.getCost().forEach(pveStats::subtractCurrency);
             weapon.getTitles().put(title, new LegendaryWeaponTitleInfo());
@@ -241,8 +243,11 @@ public class WeaponTitleMenu {
                                     .append(titledWeapon.getHoverComponent(false))
                                     .append(Component.text("!"))
         );
-
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
+
+        if (notPurchased) {
+            Bukkit.getPluginManager().callEvent(new WeaponTitlePurchaseEvent(player.getUniqueId(), weapon, title));
+        }
 
         return titledWeapon;
     }
