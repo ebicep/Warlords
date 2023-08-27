@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class BountyUtils {
 
@@ -36,4 +37,13 @@ public class BountyUtils {
     public static boolean waveDefenseMatchesDifficulty(Game game, DifficultyIndex difficulty) {
         return game.getOptions().stream().anyMatch(option -> option instanceof WaveDefenseOption waveDefenseOption && waveDefenseOption.getDifficulty() == difficulty);
     }
+
+    public static <T> Optional<T> getPvEOptionFromGame(Game game, Class<T> optionClass) {
+        return game.getOptions()
+                   .stream()
+                   .filter(option -> optionClass.isAssignableFrom(option.getClass()))
+                   .map(option -> (T) option)
+                   .findFirst();
+    }
+
 }

@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
+import com.ebicep.warlords.events.player.SupplyDropCallEvent;
 import com.ebicep.warlords.events.player.WeaponSalvageEvent;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public interface TracksOutsideGame {
 
     Map<UUID, Set<TracksOutsideGame>> CACHED_ONLINE_PLAYER_TRACKERS = new HashMap<>();
+
     static Listener getListener() {
         return new Listener() {
 
@@ -102,16 +104,6 @@ public interface TracksOutsideGame {
                 }
             }
 
-            private void fixOnlineDatabasePlayers() {
-                ChatUtils.MessageType.BOUNTIES.sendMessage("Fixing online database players: " + CACHED_ONLINE_PLAYER_TRACKERS);
-                CACHED_ONLINE_PLAYER_TRACKERS.clear();
-                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    ChatUtils.MessageType.BOUNTIES.sendMessage(" - " + onlinePlayer.getUniqueId());
-                    refreshTracker(onlinePlayer.getUniqueId());
-                }
-                ChatUtils.MessageType.BOUNTIES.sendMessage("Fixed online database players");
-            }
-
             private void runTracker(UUID uuid, Consumer<TracksOutsideGame> runTracker) {
                 Set<TracksOutsideGame> tracksOutsideGames = CACHED_ONLINE_PLAYER_TRACKERS.get(uuid);
                 if (tracksOutsideGames == null) {
@@ -123,10 +115,30 @@ public interface TracksOutsideGame {
                 }
             }
 
+            private void fixOnlineDatabasePlayers() {
+                ChatUtils.MessageType.BOUNTIES.sendMessage("Fixing online database players: " + CACHED_ONLINE_PLAYER_TRACKERS);
+                CACHED_ONLINE_PLAYER_TRACKERS.clear();
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    ChatUtils.MessageType.BOUNTIES.sendMessage(" - " + onlinePlayer.getUniqueId());
+                    refreshTracker(onlinePlayer.getUniqueId());
+                }
+                ChatUtils.MessageType.BOUNTIES.sendMessage("Fixed online database players");
+            }
+
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onSupplyDropCall(SupplyDropCallEvent event) {
+                quicklyValidate();
+                runTracker(event.getUUID(), tracker -> tracker.onSupplyDropCall(event.getAmount()));
+            }
+
         };
     }
 
     default void onWeaponSalvage(AbstractWeapon weapon) {
+    }
+
+    default void onSupplyDropCall(long amount) {
+
     }
 
 }

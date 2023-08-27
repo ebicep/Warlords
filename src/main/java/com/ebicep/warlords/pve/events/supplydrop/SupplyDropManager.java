@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.events.supplydrop;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.events.player.SupplyDropCallEvent;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
@@ -175,6 +176,8 @@ public class SupplyDropManager {
             );
             DatabasePlayerPvE databasePlayerPvE = databasePlayer.getPveStats();
             databasePlayerPvE.subtractCurrency(Currencies.SUPPLY_DROP_TOKEN, amount);
+
+            Bukkit.getPluginManager().callEvent(new SupplyDropCallEvent(uuid, amount, instant));
 
             int slownessIncrementRate = amount == 1 ? 20 : 9;
             int slownessMax = amount == 1 ? 9 : 5;
