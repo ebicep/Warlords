@@ -58,6 +58,12 @@ public enum Bounty {
     CONSUMER_I(ConsumerI.class, ConsumerI::new),
     BOUNDLESS_I(BoundlessI.class, BoundlessI::new),
     DEDICATION_I(DedicationI.class, DedicationI::new),
+    REPUTATION_I(ReputationI.class, ReputationI::new),
+    IMPAIRMENT_I(ImpairmentI.class, ImpairmentI::new),
+    ENTHRALL_I(EnthrallI.class, EnthrallI::new),
+    MEND_I(MendI.class, MendI::new),
+    AMASS_I(AmassI.class, AmassI::new),
+
 
     ;
 

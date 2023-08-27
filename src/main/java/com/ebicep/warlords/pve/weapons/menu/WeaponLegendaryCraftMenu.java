@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.LegendaryWeaponCraftEvent;
+import com.ebicep.warlords.events.player.LegendaryWeaponCraftEvent;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.pve.Currencies;

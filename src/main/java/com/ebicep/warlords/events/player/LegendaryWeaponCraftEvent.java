@@ -1,4 +1,4 @@
-package com.ebicep.warlords.events;
+package com.ebicep.warlords.events.player;
 
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import org.bukkit.event.Event;

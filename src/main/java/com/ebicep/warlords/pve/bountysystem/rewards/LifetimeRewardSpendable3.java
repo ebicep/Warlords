@@ -12,7 +12,7 @@ public interface LifetimeRewardSpendable3 extends RewardSpendable {
         put(Currencies.COIN, 80000L);
         put(Currencies.SYNTHETIC_SHARD, 4000L);
         put(Currencies.LEGEND_FRAGMENTS, 1500L);
-        put(Currencies.RARE_STAR_PIECE, 3L);
+        put(Currencies.RARE_STAR_PIECE, 3L); //TODO ITEM
         put(GuildSpendable.GUILD_COIN, 5000L);
         put(GuildSpendable.GUILD_EXPERIENCE, 5000L);
     }};

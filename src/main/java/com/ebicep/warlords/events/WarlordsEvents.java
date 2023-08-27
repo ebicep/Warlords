@@ -17,6 +17,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMess
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
+import com.ebicep.warlords.events.player.SpecPrestigeEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -248,6 +249,8 @@ public class WarlordsEvents implements Listener {
                                                     .append(Component.text(value.name, NamedTextColor.GOLD)));
 
                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+                        Bukkit.getPluginManager().callEvent(new SpecPrestigeEvent(player.getUniqueId(), value, prestige));
                     }
                 } else {
                     databasePlayer.setLastLogin(Instant.now());
