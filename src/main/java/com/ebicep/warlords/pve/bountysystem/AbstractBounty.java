@@ -127,13 +127,12 @@ public abstract class AbstractBounty implements RewardSpendable {
 
         if (collection != PlayersCollections.LIFETIME) {
             pveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
-        } else {
-            DatabaseManager.getPlayer(databasePlayer.getUuid(), lifetimeDatabasePlayer -> {
-                DatabasePlayerPvE lifetimePveStats = lifetimeDatabasePlayer.getPveStats();
-                lifetimePveStats.getBountyRewards().add(new BountyReward(getCurrencyReward(), getBounty()));
-                lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
-            });
         }
+        DatabaseManager.getPlayer(databasePlayer.getUuid(), lifetimeDatabasePlayer -> {
+            DatabasePlayerPvE lifetimePveStats = lifetimeDatabasePlayer.getPveStats();
+            lifetimePveStats.getBountyRewards().add(new BountyReward(getCurrencyReward(), getBounty()));
+            lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+        });
     }
 
     public abstract Bounty getBounty();

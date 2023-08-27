@@ -102,6 +102,11 @@ public class BountyMenu {
                                         Component.text("Cancel", NamedTextColor.RED),
                                         Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
                                         (m2, e2) -> {
+                                            DatabaseManager.getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, lifetimeDatabasePlayer -> {
+                                                for (Map.Entry<Currencies, Long> currenciesLongEntry : BountyUtils.COST.entrySet()) {
+                                                    lifetimeDatabasePlayer.getPveStats().subtractCurrency(currenciesLongEntry.getKey(), currenciesLongEntry.getValue());
+                                                }
+                                            });
                                             bounty.setStarted(true);
                                             BountyUtils.sendBountyMessage(
                                                     player,
