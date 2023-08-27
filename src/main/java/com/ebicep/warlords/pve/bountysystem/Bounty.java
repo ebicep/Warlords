@@ -51,6 +51,9 @@ public enum Bounty {
     ADVANCE_III(AdvanceIII.class, AdvanceIII::new),
     ADVANCE_IV(AdvanceIV.class, AdvanceIV::new),
     CHALLENGE_VII(ChallengeVII.class, ChallengeVII::new),
+    SALVAGE_IV(SalvageIV.class, SalvageIV::new),
+    SALVAGE_V(SalvageV.class, SalvageV::new),
+    SALVAGE_VI(SalvageVI.class, SalvageVI::new),
 
     ;
 
