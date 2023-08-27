@@ -43,7 +43,7 @@ public class Charming extends AbstractBounty implements TracksDuringGame, DailyR
     }
 
     @Override
-    public int getNewValue() {
+    public long getNewValue() {
         return newUsed;
     }
 

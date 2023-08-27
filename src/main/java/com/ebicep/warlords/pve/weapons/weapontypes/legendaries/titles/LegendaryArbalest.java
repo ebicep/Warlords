@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryArbalest extends AbstractLegendaryWeapon {
+public class LegendaryArbalest extends AbstractLegendaryWeapon implements EventTitle {
 
     public static final int DAMAGE_BOOST = 30;
     public static final int DAMAGE_BOOST_PER_UPGRADE = 5;

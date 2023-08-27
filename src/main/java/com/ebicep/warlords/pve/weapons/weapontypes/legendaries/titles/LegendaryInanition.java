@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryInanition extends AbstractLegendaryWeapon {
+public class LegendaryInanition extends AbstractLegendaryWeapon implements EventTitle {
 
     private static final int DEBUFF_DAMAGE_BOOST = 10;
     private static final float DEBUFF_DAMAGE_BOOST_PER_UPGRADE = 2.5f;

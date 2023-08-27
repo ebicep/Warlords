@@ -22,7 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveCounter {
+public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveCounter, EventTitle {
 
     public static final int DEBUFF_IMMUNITY_DURATION = 5;
     public static final int DEBUFF_IMMUNITY_DURATION_INCREASE_PER_UPGRADE = 1;

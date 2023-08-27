@@ -52,7 +52,7 @@ public class HuntMithra extends AbstractBounty implements TracksDuringGame, Dail
     }
 
     @Override
-    public int getNewValue() {
+    public long getNewValue() {
         return newKills;
     }
 

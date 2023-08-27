@@ -3,35 +3,34 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
-import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
+import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
-import org.springframework.data.annotation.Transient;
+import com.ebicep.warlords.util.warlords.Utils;
 
 import java.util.UUID;
 
-public class Lucky extends AbstractBounty implements TracksDuringGame, DailyRewardSpendable1 {
+public class Noncompliance extends AbstractBounty implements TracksDuringGame, WeeklyRewardSpendable2 {
 
-    @Transient
-    private int newCrits = 0;
+    private int newKills = 0;
 
     @Override
     public int getTarget() {
-        return 1000;
+        return 500;
     }
 
     @Override
     public String getName() {
-        return "Lucky";
+        return "Separation";
     }
 
     @Override
     public String getDescription() {
-        return "Deal " + getTarget() + " critical heals/hits in any gamemode.";
+        return "Kill " + getTarget() + " enemies with knockback damage in any gamemode.";
     }
 
     @Override
     public Bounty getBounty() {
-        return Bounty.LUCKY;
+        return Bounty.NONCOMPLIANCE;
     }
 
     @Override
@@ -39,18 +38,22 @@ public class Lucky extends AbstractBounty implements TracksDuringGame, DailyRewa
         if (!event.getAttacker().getUuid().equals(uuid)) {
             return;
         }
-        if (event.isCrit()) {
-            newCrits++;
+        if (!event.isDead()) {
+            return;
         }
-    }
-
-    @Override
-    public long getNewValue() {
-        return newCrits;
+        if (!Utils.isKnockbackAbility(event.getAbility())) {
+            return;
+        }
+        newKills++;
     }
 
     @Override
     public void reset() {
-        newCrits = 0;
+        newKills = 0;
+    }
+
+    @Override
+    public long getNewValue() {
+        return newKills;
     }
 }

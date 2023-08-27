@@ -3,35 +3,38 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
-import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
+import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
-import org.springframework.data.annotation.Transient;
 
 import java.util.UUID;
 
-public class Lucky extends AbstractBounty implements TracksDuringGame, DailyRewardSpendable1 {
+public class Brute extends AbstractBounty implements TracksDuringGame, WeeklyRewardSpendable2 {
 
-    @Transient
-    private int newCrits = 0;
-
-    @Override
-    public int getTarget() {
-        return 1000;
-    }
+    private int newKills = 0;
 
     @Override
     public String getName() {
-        return "Lucky";
+        return "Brute";
     }
 
     @Override
     public String getDescription() {
-        return "Deal " + getTarget() + " critical heals/hits in any gamemode.";
+        return "Kill " + getTarget() + " enemies with melee damage in any gamemode.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 250;
     }
 
     @Override
     public Bounty getBounty() {
-        return Bounty.LUCKY;
+        return Bounty.BRUTE;
+    }
+
+    @Override
+    public void reset() {
+        newKills = 0;
     }
 
     @Override
@@ -39,18 +42,17 @@ public class Lucky extends AbstractBounty implements TracksDuringGame, DailyRewa
         if (!event.getAttacker().getUuid().equals(uuid)) {
             return;
         }
-        if (event.isCrit()) {
-            newCrits++;
+        if (!event.isDead()) {
+            return;
         }
+        if (!event.getAbility().isEmpty()) {
+            return;
+        }
+        newKills++;
     }
 
     @Override
     public long getNewValue() {
-        return newCrits;
-    }
-
-    @Override
-    public void reset() {
-        newCrits = 0;
+        return newKills;
     }
 }

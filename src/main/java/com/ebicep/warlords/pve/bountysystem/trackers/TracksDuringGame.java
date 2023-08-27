@@ -80,6 +80,6 @@ public interface TracksDuringGame {
         bounty.setValue(bounty.getValue() + getNewValue());
     }
 
-    int getNewValue();
+    long getNewValue();
 
 }

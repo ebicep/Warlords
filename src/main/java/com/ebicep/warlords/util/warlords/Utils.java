@@ -153,6 +153,19 @@ public class Utils {
                 ability.equals("Merciful Hex");
     }
 
+    public static boolean isStrikeSlashSpike(String ability) {
+        return ability.contains("Strike") ||
+                ability.contains("Slash") ||
+                ability.contains("Spike");
+    }
+
+    public static boolean isKnockbackAbility(String ability) {
+        return ability.equals("Seismic Wave") ||
+                ability.equals("Ground Slam") ||
+                ability.equals("Boulder") ||
+                ability.equals("Earthen Spike");
+    }
+
     public static ItemStack getWoolFromIndex(int index) {
         return WOOL_SORTED_BY_COLOR[index % WOOL_SORTED_BY_COLOR.length];
     }

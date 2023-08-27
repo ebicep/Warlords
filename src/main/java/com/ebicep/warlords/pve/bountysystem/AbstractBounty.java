@@ -23,7 +23,7 @@ import static com.ebicep.warlords.pve.bountysystem.BountyUtils.BOUNTY_COLLECTION
 
 public abstract class AbstractBounty implements RewardSpendable {
 
-    protected int value;
+    protected long value;
     private boolean started = false;
 
     public ItemBuilder getItemWithProgress() { //TODO maybe center everything
@@ -80,7 +80,7 @@ public abstract class AbstractBounty implements RewardSpendable {
 
     public abstract int getTarget();
 
-    protected Component getProgress(int progress, int target) {
+    protected Component getProgress(long progress, int target) {
         return Component.textOfChildren(
                 Component.text(progress, NamedTextColor.GOLD),
                 Component.text("/", NamedTextColor.AQUA),
@@ -88,11 +88,11 @@ public abstract class AbstractBounty implements RewardSpendable {
         );
     }
 
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(long value) {
         this.value = value;
     }
 

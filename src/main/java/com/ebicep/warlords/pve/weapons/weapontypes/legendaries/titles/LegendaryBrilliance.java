@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class LegendaryBrilliance extends AbstractLegendaryWeapon implements PassiveCounter {
+public class LegendaryBrilliance extends AbstractLegendaryWeapon implements PassiveCounter, EventTitle {
 
     public static final int HEALING_BOOST = 25;
     public static final float HEALING_BOOST_PER_UPGRADE = 6.25f;

@@ -53,7 +53,7 @@ public class Slayer2 extends AbstractBounty implements TracksDuringGame, DailyRe
     }
 
     @Override
-    public int getNewValue() {
+    public long getNewValue() {
         return newKills;
     }
 

@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryReliquary extends AbstractLegendaryWeapon {
+public class LegendaryReliquary extends AbstractLegendaryWeapon implements EventTitle {
 
     public static final int INCOMING_DAMAGE_INCREASE = 50;
     //    public static final int INCOMING_DAMAGE_INCREASE_PER_UPGRADE = 1;

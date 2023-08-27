@@ -43,7 +43,7 @@ public class Pursue extends AbstractBounty implements TracksDuringGame, DailyRew
     }
 
     @Override
-    public int getNewValue() {
+    public long getNewValue() {
         return newEnergyUsed;
     }
 

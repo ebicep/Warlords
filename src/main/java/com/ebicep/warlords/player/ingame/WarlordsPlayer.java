@@ -82,6 +82,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 //        }
 //    }
     protected SkillBoosts skillBoost;
+    @Nullable
     protected AbstractWeapon weapon;
 
     public WarlordsPlayer() {
@@ -417,11 +418,12 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         return abilityTree;
     }
 
+    @Nullable
     public AbstractWeapon getWeapon() {
         return weapon;
     }
 
-    public void setWeapon(AbstractWeapon weapon) {
+    public void setWeapon(@Nullable AbstractWeapon weapon) {
         this.weapon = weapon;
     }
 

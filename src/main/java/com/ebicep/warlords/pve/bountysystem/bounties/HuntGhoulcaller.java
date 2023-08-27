@@ -52,7 +52,7 @@ public class HuntGhoulcaller extends AbstractBounty implements TracksDuringGame,
     }
 
     @Override
-    public int getNewValue() {
+    public long getNewValue() {
         return newKills;
     }
 

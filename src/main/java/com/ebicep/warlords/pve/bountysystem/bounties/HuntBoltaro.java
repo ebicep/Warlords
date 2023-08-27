@@ -52,7 +52,7 @@ public class HuntBoltaro extends AbstractBounty implements TracksDuringGame, Dai
     }
 
     @Override
-    public int getNewValue() {
+    public long getNewValue() {
         return newKills;
     }
 

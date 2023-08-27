@@ -34,6 +34,15 @@ public enum Bounty {
     CHALLENGE2(Challenge2.class, Challenge2::new),
     RECOUP(Recoup.class, Recoup::new),
     SALVAGE3(Salvage3.class, Salvage3::new),
+    THRIVE(Thrive.class, Thrive::new),
+    BRUTE(Brute.class, Brute::new),
+    DEVELOP1(Develop1.class, Develop1::new),
+    DEVELOP2(Develop2.class, Develop2::new),
+    DEVELOP3(Develop3.class, Develop3::new),
+    DEVELOP4(Develop4.class, Develop4::new),
+    SEPARATION(Separation.class, Separation::new),
+    SLASHER(Slasher.class, Slasher::new),
+    NONCOMPLIANCE(Noncompliance.class, Noncompliance::new),
 
     ;
 

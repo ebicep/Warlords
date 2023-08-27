@@ -19,7 +19,7 @@ import org.bukkit.event.Listener;
 
 import java.util.*;
 
-public class LegendaryJuggernaut extends AbstractLegendaryWeapon {
+public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements EventTitle {
 
     public static final int BOOST = 10;
     public static final float BOOST_INCREASE_PER_UPGRADE = 1.25f;

@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryValiant extends AbstractLegendaryWeapon {
+public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTitle {
 
     public static final int HP_CHECK = 70;
     public static final float HP_CHECK_INCREASE_PER_UPGRADE = 2.5f;

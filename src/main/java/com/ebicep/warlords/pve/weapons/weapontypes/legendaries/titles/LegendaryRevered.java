@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryRevered extends AbstractLegendaryWeapon {
+public class LegendaryRevered extends AbstractLegendaryWeapon implements EventTitle {
 
     public static final int DAMAGE_INCREASE = 15;
     public static final float DAMAGE_INCREASE_PER_UPGRADE = 2.5f;

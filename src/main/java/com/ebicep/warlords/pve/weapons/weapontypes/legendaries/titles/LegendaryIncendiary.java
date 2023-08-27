@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class LegendaryIncendiary extends AbstractLegendaryWeapon {
+public class LegendaryIncendiary extends AbstractLegendaryWeapon implements EventTitle {
 
     public static final int CRIT_CHANCE_BOOST = 15;
     public static final float CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE = 0.5f;
