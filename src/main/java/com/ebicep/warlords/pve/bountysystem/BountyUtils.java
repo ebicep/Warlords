@@ -1,7 +1,10 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.DifficultyIndex;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -30,4 +33,7 @@ public class BountyUtils {
         ));
     }
 
+    public static boolean waveDefenseMatchesDifficulty(Game game, DifficultyIndex difficulty) {
+        return game.getOptions().stream().anyMatch(option -> option instanceof WaveDefenseOption waveDefenseOption && waveDefenseOption.getDifficulty() == difficulty);
+    }
 }

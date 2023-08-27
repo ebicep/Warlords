@@ -118,4 +118,5 @@ public abstract class AbstractBounty implements RewardSpendable {
             lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
         });
     }
+
 }

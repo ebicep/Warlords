@@ -6,10 +6,11 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
-import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable2;
+import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable3;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 
-public class Flawless1 extends AbstractBounty implements TracksPostGame, DailyRewardSpendable2 {
+public class Flawless4 extends AbstractBounty implements TracksPostGame, DailyRewardSpendable3 {
 
     @Override
     public int getTarget() {
@@ -23,21 +24,27 @@ public class Flawless1 extends AbstractBounty implements TracksPostGame, DailyRe
 
     @Override
     public String getDescription() {
-        return "Complete Easy Mode solo.";
+        return "Complete Extreme Mode with less than 10 total team deaths.";
     }
 
     @Override
     public Bounty getBounty() {
-        return Bounty.FLAWLESS1;
+        return Bounty.FLAWLESS3;
     }
 
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {
-        if (game.warlordsPlayers().count() != 1) {
+        if (!BountyUtils.waveDefenseMatchesDifficulty(game, DifficultyIndex.EXTREME)) {
             return;
         }
-        if (BountyUtils.waveDefenseMatchesDifficulty(game, DifficultyIndex.EASY)) {
+        int totalTeamDeaths = PlayerFilter.playingGame(game)
+                                          .teammatesOf(warlordsPlayer)
+                                          .stream()
+                                          .mapToInt(warlordsEntity -> warlordsEntity.getMinuteStats().total().getDeaths())
+                                          .sum();
+        if (totalTeamDeaths < 10) {
             value++;
         }
     }
+
 }

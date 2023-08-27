@@ -24,6 +24,9 @@ public enum Bounty {
     HUNT_MITHRA(HuntMithra.class, HuntMithra::new),
     HUNT_ZENITH(HuntZenith.class, HuntZenith::new),
     FLAWLESS1(Flawless1.class, Flawless1::new),
+    FLAWLESS2(Flawless2.class, Flawless2::new),
+    FLAWLESS3(Flawless3.class, Flawless3::new),
+    FLAWLESS4(Flawless4.class, Flawless4::new),
 
     ;
 

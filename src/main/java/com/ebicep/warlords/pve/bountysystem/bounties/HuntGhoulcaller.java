@@ -2,11 +2,11 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.bosses.Ghoulcaller;
@@ -48,7 +48,7 @@ public class HuntGhoulcaller extends AbstractBounty implements TracksDuringGame,
 
     @Override
     public boolean trackGame(Game game) {
-        return game.getOptions().stream().anyMatch(option -> option instanceof WaveDefenseOption waveDefenseOption && waveDefenseOption.getDifficulty() == DifficultyIndex.NORMAL);
+        return BountyUtils.waveDefenseMatchesDifficulty(game, DifficultyIndex.NORMAL);
     }
 
     @Override
