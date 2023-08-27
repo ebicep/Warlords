@@ -46,6 +46,11 @@ public enum Bounty {
     FLAWLESS_V(FlawlessV.class, FlawlessV::new),
     CHALLENGE_III(ChallengeIII.class, ChallengeIII::new),
     CHALLENGE_IV(ChallengeIV.class, ChallengeIV::new),
+    CHALLENGE_V(ChallengeV.class, ChallengeV::new),
+    CHALLENGE_VI(ChallengeVI.class, ChallengeVI::new),
+    ADVANCE_III(AdvanceIII.class, AdvanceIII::new),
+    ADVANCE_IV(AdvanceIV.class, AdvanceIV::new),
+    CHALLENGE_VII(ChallengeVII.class, ChallengeVII::new),
 
     ;
 

@@ -12,18 +12,18 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 public class ChallengeII extends AbstractBounty implements TracksPostGame, DailyRewardSpendable4 {
 
     @Override
-    public int getTarget() {
-        return 1;
-    }
-
-    @Override
     public String getName() {
         return "Challenge";
     }
 
     @Override
     public String getDescription() {
-        return "Reach 10 minutes in Onslaught.";
+        return "Reach " + getTarget() + " minutes in Onslaught.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 10;
     }
 
     @Override
@@ -35,8 +35,8 @@ public class ChallengeII extends AbstractBounty implements TracksPostGame, Daily
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {
         BountyUtils.getPvEOptionFromGame(game, OnslaughtOption.class).ifPresent(onslaughtOption -> {
             int secondsElapsed = onslaughtOption.getTicksElapsed() / 20;
-            if (secondsElapsed >= 10 * 60) {
-                value++;
+            if (secondsElapsed > value) {
+                value = secondsElapsed;
             }
         });
     }
