@@ -37,10 +37,7 @@ public class BountyMenu {
     private static void addBountiesToMenu(Player player, PlayersCollections collection, Menu menu, int y, boolean claimAll) {
         DatabaseManager.getPlayer(player.getUniqueId(), collection, databasePlayer -> {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            List<AbstractBounty> bounties = pveStats.getActiveBounties()
-                                                    .stream()
-                                                    .filter(AbstractBounty::notClaimed)
-                                                    .toList();
+            List<AbstractBounty> bounties = pveStats.getActiveBounties();
             menu.setItem(1, y,
                     new ItemBuilder(Material.BOOK)
                             .name(Component.text(collection.name + " Bounties", NamedTextColor.RED))
@@ -49,8 +46,16 @@ public class BountyMenu {
             );
             boolean canBeClaimed = false;
             for (int i = 0; i < bounties.size(); i++) {
-                // TODO fill in claimed bounties + barrier if none
                 AbstractBounty bounty = bounties.get(i);
+                if (bounty == null) {
+                    menu.setItem(i + 2, y,
+                            new ItemBuilder(Material.BARRIER)
+                                    .name(Component.text("Max bounties claimed!", NamedTextColor.RED))
+                                    .get(),
+                            (m, e) -> {}
+                    );
+                    continue;
+                }
                 if (bounty.isStarted() && bounty.getProgress() == null) {
                     canBeClaimed = true;
                 }
@@ -98,7 +103,7 @@ public class BountyMenu {
     }
 
     private static void claimBounty(Player player, PlayersCollections collection, DatabasePlayer databasePlayer, AbstractBounty bounty) {
-        bounty.claim(databasePlayer);
+        bounty.claim(databasePlayer, collection);
         BountyUtils.sendBountyMessage(
                 player,
                 Component.text("You claimed the " + collection.name.toLowerCase() + " bounty ", NamedTextColor.GRAY)

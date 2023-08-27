@@ -166,6 +166,7 @@ public class DatabaseManager {
             return;
         }
         getPlayer(uuid, collections, databasePlayer -> {
+                    databasePlayer.loadInCollection(collections);
                     if (collections == PlayersCollections.LIFETIME) {
                         Warlords.newChain()
                                 .sync(() -> {
@@ -177,6 +178,7 @@ public class DatabaseManager {
                 },
                 () -> {
                     DatabasePlayer newDatabasePlayer = new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName());
+                    newDatabasePlayer.loadInCollection(collections);
                     CACHED_PLAYERS.get(collections).put(uuid, newDatabasePlayer);
                     Warlords.newChain()
                             .asyncFirst(() -> playerService.create(newDatabasePlayer, collections))
@@ -218,27 +220,6 @@ public class DatabaseManager {
         } else {
             onNotFound.run();
         }
-    }
-
-    @Nonnull
-    public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections, boolean isAPlayer) {
-        if (!isAPlayer || (playerService == null && !enabled)) {
-            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
-            if (isAPlayer) {
-                return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
-            } else {
-                return concurrentHashMap.getOrDefault(uuid, new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
-            }
-        }
-        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
-                playersCollections
-        ));
-        return DatabaseManager.playerService.findByUUID(uuid, playersCollections);
-    }
-
-    @Nonnull
-    public static DatabasePlayer getPlayer(UUID uuid, boolean isAPlayer) {
-        return getPlayer(uuid, PlayersCollections.LIFETIME, isAPlayer);
     }
 
     private static void loadPlayerInfo(UUID uuid, DatabasePlayer databasePlayer) {
@@ -297,6 +278,27 @@ public class DatabaseManager {
         } else {
             PLAYERS_TO_UPDATE.get(PlayersCollections.LIFETIME).add(databasePlayer);
         }
+    }
+
+    @Nonnull
+    public static DatabasePlayer getPlayer(UUID uuid, boolean isAPlayer) {
+        return getPlayer(uuid, PlayersCollections.LIFETIME, isAPlayer);
+    }
+
+    @Nonnull
+    public static DatabasePlayer getPlayer(UUID uuid, PlayersCollections playersCollections, boolean isAPlayer) {
+        if (!isAPlayer || (playerService == null && !enabled)) {
+            ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.get(playersCollections);
+            if (isAPlayer) {
+                return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            } else {
+                return concurrentHashMap.getOrDefault(uuid, new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+            }
+        }
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
+                playersCollections
+        ));
+        return DatabaseManager.playerService.findByUUID(uuid, playersCollections);
     }
 
     public static void clearQueue(PlayersCollections collection) {

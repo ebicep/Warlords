@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
@@ -14,14 +15,14 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 
 import javax.annotation.Nullable;
-import java.time.Instant;
 import java.util.Map;
+
+import static com.ebicep.warlords.pve.bountysystem.BountyUtils.BOUNTY_COLLECTION_INFO;
 
 public abstract class AbstractBounty implements RewardSpendable {
 
     protected int value;
     private boolean started = false;
-    private Instant claimed = null;
 
     public ItemBuilder getItemWithProgress() { //TODO maybe center everything
         ItemBuilder itemBuilder = getItem();
@@ -35,7 +36,7 @@ public abstract class AbstractBounty implements RewardSpendable {
                 Component.text("Click to Start!", NamedTextColor.GREEN)
         );
 
-        if (started && claimed != null) {
+        if (started && progress == null) {
             itemBuilder.enchant(Enchantment.OXYGEN, 1);
         }
         return itemBuilder;
@@ -64,22 +65,11 @@ public abstract class AbstractBounty implements RewardSpendable {
         return getProgress(value, getTarget());
     }
 
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public abstract int getTarget();
-
     public abstract String getName();
 
     public abstract String getDescription();
 
-    public abstract Bounty getBounty();
+    public abstract int getTarget();
 
     protected Component getProgress(int progress, int target) {
         return getProgress(progress, String.valueOf(target));
@@ -91,6 +81,14 @@ public abstract class AbstractBounty implements RewardSpendable {
                 Component.text("/", NamedTextColor.AQUA),
                 Component.text(target, NamedTextColor.GOLD)
         );
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
     }
 
     public Map<Currencies, Long> getCost() {
@@ -105,18 +103,31 @@ public abstract class AbstractBounty implements RewardSpendable {
         this.started = started;
     }
 
-    public boolean notClaimed() {
-        return claimed == null;
+    public void claim(DatabasePlayer databasePlayer, PlayersCollections collection) {
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        pveStats.addBountiesCompleted();
+        int replaceIndex = pveStats.getActiveBounties().indexOf(this);
+        int maxBounties = BOUNTY_COLLECTION_INFO.get(collection).maxBounties();
+        AbstractBounty replacementBounty = null;
+        if (pveStats.getBountiesCompleted() < maxBounties) {
+            Bounty randomBounty = BountyUtils.getRandomBounty(collection, pveStats.getCompletedBounties().keySet().stream().toList());
+            if (randomBounty != null) {
+                replacementBounty = randomBounty.create.get();
+            }
+        }
+        pveStats.getActiveBounties().set(replaceIndex, replacementBounty);
+
+        if (collection != PlayersCollections.LIFETIME) {
+            pveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+        } else {
+            DatabaseManager.getPlayer(databasePlayer.getUuid(), lifetimeDatabasePlayer -> {
+                DatabasePlayerPvE lifetimePveStats = lifetimeDatabasePlayer.getPveStats();
+                lifetimePveStats.getBountyRewards().add(new BountyReward(getCurrencyReward(), getBounty()));
+                lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+            });
+        }
     }
 
-    public void claim(DatabasePlayer databasePlayer) {
-        this.claimed = Instant.now();
-        databasePlayer.getPveStats().addBountiesCompleted();
-        DatabaseManager.getPlayer(databasePlayer.getUuid(), lifetimeDatabasePlayer -> {
-            DatabasePlayerPvE lifetimePveStats = lifetimeDatabasePlayer.getPveStats();
-            lifetimePveStats.getBountyRewards().add(new BountyReward(getCurrencyReward(), getBounty()));
-            lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
-        });
-    }
+    public abstract Bounty getBounty();
 
 }

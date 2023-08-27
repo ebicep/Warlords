@@ -127,6 +127,10 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
                 '}';
     }
 
+    public void loadInCollection(PlayersCollections collection) {
+        pveStats.loadInCollection(collection);
+    }
+
     @Override
     public void updateCustomStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,

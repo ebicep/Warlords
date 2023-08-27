@@ -61,5 +61,26 @@ public class BountyCommand extends BaseCommand {
         }
     }
 
+    @Subcommand("forcecomplate")
+    public void forceComplete(Player player, PlayersCollections collection, Integer index) {
+        DatabaseManager.getPlayer(player.getUniqueId(), collection, databasePlayer -> {
+            List<AbstractBounty> activeBounties = databasePlayer.getPveStats().getActiveBounties();
+            try {
+                AbstractBounty abstractBounty = activeBounties.get(index);
+                abstractBounty.setValue(abstractBounty.getTarget());
+                ChatChannels.sendDebugMessage(
+                        player,
+                        Component.text("Forced completion of ", NamedTextColor.GRAY)
+                                 .append(Component.text(abstractBounty.getName(), NamedTextColor.GREEN)
+                                                  .hoverEvent(abstractBounty.getItem().get().asHoverEvent()))
+                                 .append(Component.text(" in ", NamedTextColor.GRAY))
+                                 .append(Component.text(collection.name, NamedTextColor.GREEN))
+                );
+            } catch (IndexOutOfBoundsException e) {
+                ChatChannels.sendDebugMessage(player, Component.text("Index out of bounds"));
+            }
+        });
+    }
+
 
 }

@@ -24,7 +24,7 @@ public class Recoup extends AbstractBounty implements TracksOutsideGame, DailyRe
 
     @Override
     public String getDescription() {
-        return "Call " + getTarget() + "Supply Drops.";
+        return "Call " + getTarget() + " Supply Drops.";
     }
 
     @Override

@@ -29,6 +29,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
@@ -126,6 +127,12 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     @Field("illusion_vendor_rewards_purchased")
     private Map<String, Long> illusionVendorRewardsPurchased = new HashMap<>();
+
+    public void loadInCollection(PlayersCollections collection) {
+        if (activeBounties.isEmpty()) {
+            BountyUtils.giveNewBounties(this, collection);
+        }
+    }
 
     @Override
     public void updateCustomStats(
@@ -418,8 +425,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     public List<AbstractBounty> getTrackableBounties() {
         return activeBounties.stream()
-                             .filter(abstractBounty -> abstractBounty.notClaimed() &&
-                                     (abstractBounty.isStarted() && abstractBounty.getProgress() != null))
+                             .filter(abstractBounty -> abstractBounty != null && abstractBounty.isStarted() && abstractBounty.getProgress() != null)
                              .toList();
     }
 

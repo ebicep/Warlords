@@ -43,7 +43,7 @@ public interface TracksOutsideGame {
 
             private void refreshTracker(UUID uuid) {
                 CACHED_ONLINE_PLAYER_TRACKERS.remove(uuid);
-                for (PlayersCollections collection : BountyUtils.MAX_BOUNTIES.keySet()) {
+                for (PlayersCollections collection : BountyUtils.BOUNTY_COLLECTION_INFO.keySet()) {
                     DatabaseManager.getPlayer(uuid, collection, this::refreshTracker);
                 }
             }

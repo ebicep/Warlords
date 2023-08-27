@@ -1,13 +1,11 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.pve.bountysystem.bounties.*;
-import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
-import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable2;
-import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable3;
-import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable4;
+import com.ebicep.warlords.pve.bountysystem.rewards.*;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public enum Bounty {
 
@@ -60,6 +58,15 @@ public enum Bounty {
         DAILY_2(getBountyFrom(DailyRewardSpendable2.class)),
         DAILY_3(getBountyFrom(DailyRewardSpendable3.class)),
         DAILY_4(getBountyFrom(DailyRewardSpendable4.class)),
+        DAILY_ALL(Stream.of(DAILY_1, DAILY_2, DAILY_3, DAILY_4).flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties)).toArray(Bounty[]::new)),
+        WEEKLY_1(getBountyFrom(WeeklyRewardSpendable1.class)),
+        WEEKLY_2(getBountyFrom(WeeklyRewardSpendable2.class)),
+        WEEKLY_3(getBountyFrom(WeeklyRewardSpendable3.class)),
+        WEEKLY_ALL(Stream.of(WEEKLY_1, WEEKLY_2, WEEKLY_3).flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties)).toArray(Bounty[]::new)),
+        LIFETIME_1(getBountyFrom(LifetimeRewardSpendable1.class)),
+        LIFETIME_2(getBountyFrom(LifetimeRewardSpendable2.class)),
+        LIFETIME_3(getBountyFrom(LifetimeRewardSpendable3.class)),
+        LIFETIME_ALL(Stream.of(LIFETIME_1, LIFETIME_2, LIFETIME_3).flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties)).toArray(Bounty[]::new)),
 
         ;
 
