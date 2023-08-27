@@ -16,11 +16,6 @@ public class PursueI extends AbstractBounty implements TracksDuringGame, DailyRe
     private int newEnergyUsed = 0;
 
     @Override
-    public int getTarget() {
-        return 10_000;
-    }
-
-    @Override
     public String getName() {
         return "Pursue";
     }
@@ -31,8 +26,18 @@ public class PursueI extends AbstractBounty implements TracksDuringGame, DailyRe
     }
 
     @Override
+    public int getTarget() {
+        return 10_000;
+    }
+
+    @Override
     public Bounty getBounty() {
         return Bounty.PURSUE_I;
+    }
+
+    @Override
+    public void reset() {
+        newEnergyUsed = 0;
     }
 
     @Override
@@ -45,10 +50,5 @@ public class PursueI extends AbstractBounty implements TracksDuringGame, DailyRe
     @Override
     public long getNewValue() {
         return newEnergyUsed;
-    }
-
-    @Override
-    public void reset() {
-        newEnergyUsed = 0;
     }
 }

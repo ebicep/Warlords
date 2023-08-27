@@ -14,11 +14,6 @@ public class SeparationI extends AbstractBounty implements TracksDuringGame, Wee
     private int newKills = 0;
 
     @Override
-    public int getTarget() {
-        return 500;
-    }
-
-    @Override
     public String getName() {
         return "Separation";
     }
@@ -29,8 +24,18 @@ public class SeparationI extends AbstractBounty implements TracksDuringGame, Wee
     }
 
     @Override
+    public int getTarget() {
+        return 500;
+    }
+
+    @Override
     public Bounty getBounty() {
         return Bounty.SEPARATION_I;
+    }
+
+    @Override
+    public void reset() {
+        newKills = 0;
     }
 
     @Override
@@ -45,11 +50,6 @@ public class SeparationI extends AbstractBounty implements TracksDuringGame, Wee
             return;
         }
         newKills++;
-    }
-
-    @Override
-    public void reset() {
-        newKills = 0;
     }
 
     @Override

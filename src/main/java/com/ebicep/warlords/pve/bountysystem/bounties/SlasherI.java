@@ -14,11 +14,6 @@ public class SlasherI extends AbstractBounty implements TracksDuringGame, Weekly
     private int newKills = 0;
 
     @Override
-    public int getTarget() {
-        return 500;
-    }
-
-    @Override
     public String getName() {
         return "Separation";
     }
@@ -29,8 +24,18 @@ public class SlasherI extends AbstractBounty implements TracksDuringGame, Weekly
     }
 
     @Override
+    public int getTarget() {
+        return 500;
+    }
+
+    @Override
     public Bounty getBounty() {
         return Bounty.SLASHER_I;
+    }
+
+    @Override
+    public void reset() {
+        newKills = 0;
     }
 
     @Override
@@ -45,11 +50,6 @@ public class SlasherI extends AbstractBounty implements TracksDuringGame, Weekly
             return;
         }
         newKills++;
-    }
-
-    @Override
-    public void reset() {
-        newKills = 0;
     }
 
     @Override

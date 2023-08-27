@@ -20,11 +20,6 @@ public class HuntMithraI extends AbstractBounty implements TracksDuringGame, Dai
     private int newKills = 0;
 
     @Override
-    public int getTarget() {
-        return 1;
-    }
-
-    @Override
     public String getName() {
         return "Hunt-Mithra";
     }
@@ -35,8 +30,18 @@ public class HuntMithraI extends AbstractBounty implements TracksDuringGame, Dai
     }
 
     @Override
+    public int getTarget() {
+        return 1;
+    }
+
+    @Override
     public Bounty getBounty() {
         return Bounty.HUNT_MITHRA_I;
+    }
+
+    @Override
+    public void reset() {
+        newKills = 0;
     }
 
     @Override
@@ -54,10 +59,5 @@ public class HuntMithraI extends AbstractBounty implements TracksDuringGame, Dai
     @Override
     public long getNewValue() {
         return newKills;
-    }
-
-    @Override
-    public void reset() {
-        newKills = 0;
     }
 }

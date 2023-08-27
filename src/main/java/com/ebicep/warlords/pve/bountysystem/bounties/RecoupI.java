@@ -13,11 +13,6 @@ public class RecoupI extends AbstractBounty implements TracksOutsideGame, DailyR
     }
 
     @Override
-    public int getTarget() {
-        return 10;
-    }
-
-    @Override
     public String getName() {
         return "Recoup";
     }
@@ -25,6 +20,11 @@ public class RecoupI extends AbstractBounty implements TracksOutsideGame, DailyR
     @Override
     public String getDescription() {
         return "Call " + getTarget() + " Supply Drops.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 10;
     }
 
     @Override

@@ -15,11 +15,6 @@ public class CharmingI extends AbstractBounty implements TracksDuringGame, Daily
     private int newUsed = 0;
 
     @Override
-    public int getTarget() {
-        return 500;
-    }
-
-    @Override
     public String getName() {
         return "Charming";
     }
@@ -30,8 +25,18 @@ public class CharmingI extends AbstractBounty implements TracksDuringGame, Daily
     }
 
     @Override
+    public int getTarget() {
+        return 500;
+    }
+
+    @Override
     public Bounty getBounty() {
         return Bounty.CHARMING_I;
+    }
+
+    @Override
+    public void reset() {
+        newUsed = 0;
     }
 
     @Override
@@ -45,10 +50,5 @@ public class CharmingI extends AbstractBounty implements TracksDuringGame, Daily
     @Override
     public long getNewValue() {
         return newUsed;
-    }
-
-    @Override
-    public void reset() {
-        newUsed = 0;
     }
 }

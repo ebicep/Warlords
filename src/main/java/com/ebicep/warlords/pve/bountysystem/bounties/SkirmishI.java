@@ -10,11 +10,6 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 public class SkirmishI extends AbstractBounty implements TracksPostGame, DailyRewardSpendable1 {
 
     @Override
-    public int getTarget() {
-        return 1000;
-    }
-
-    @Override
     public String getName() {
         return "Skirmish";
     }
@@ -22,6 +17,11 @@ public class SkirmishI extends AbstractBounty implements TracksPostGame, DailyRe
     @Override
     public String getDescription() {
         return "Deal " + getTarget() + " melee hits in any gamemode.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 1000;
     }
 
     @Override

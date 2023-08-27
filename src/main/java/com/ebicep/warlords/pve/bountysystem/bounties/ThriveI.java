@@ -11,11 +11,6 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 public class ThriveI extends AbstractBounty implements TracksPostGame, WeeklyRewardSpendable2 {
 
     @Override
-    public int getTarget() {
-        return 100_000_000;
-    }
-
-    @Override
     public String getName() {
         return "Thrive";
     }
@@ -23,6 +18,11 @@ public class ThriveI extends AbstractBounty implements TracksPostGame, WeeklyRew
     @Override
     public String getDescription() {
         return "Achieve " + getTarget() + " DHP.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 100_000_000;
     }
 
     @Override

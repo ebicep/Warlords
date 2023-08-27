@@ -14,11 +14,6 @@ public class NoncomplianceI extends AbstractBounty implements TracksDuringGame, 
     private int newKills = 0;
 
     @Override
-    public int getTarget() {
-        return 500;
-    }
-
-    @Override
     public String getName() {
         return "Separation";
     }
@@ -29,8 +24,18 @@ public class NoncomplianceI extends AbstractBounty implements TracksDuringGame, 
     }
 
     @Override
+    public int getTarget() {
+        return 500;
+    }
+
+    @Override
     public Bounty getBounty() {
         return Bounty.NONCOMPLIANCE_I;
+    }
+
+    @Override
+    public void reset() {
+        newKills = 0;
     }
 
     @Override
@@ -45,11 +50,6 @@ public class NoncomplianceI extends AbstractBounty implements TracksDuringGame, 
             return;
         }
         newKills++;
-    }
-
-    @Override
-    public void reset() {
-        newKills = 0;
     }
 
     @Override

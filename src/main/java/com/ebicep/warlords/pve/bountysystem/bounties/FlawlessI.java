@@ -12,11 +12,6 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 public class FlawlessI extends AbstractBounty implements TracksPostGame, DailyRewardSpendable2 {
 
     @Override
-    public int getTarget() {
-        return 1;
-    }
-
-    @Override
     public String getName() {
         return "Flawless";
     }
@@ -24,6 +19,11 @@ public class FlawlessI extends AbstractBounty implements TracksPostGame, DailyRe
     @Override
     public String getDescription() {
         return "Complete Easy Mode solo.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 1;
     }
 
     @Override

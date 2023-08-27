@@ -17,11 +17,6 @@ public class SalvageIII extends AbstractBounty implements TracksOutsideGame, Dai
     }
 
     @Override
-    public int getTarget() {
-        return 1;
-    }
-
-    @Override
     public String getName() {
         return "Salvage";
     }
@@ -29,6 +24,11 @@ public class SalvageIII extends AbstractBounty implements TracksOutsideGame, Dai
     @Override
     public String getDescription() {
         return "Salvage an Epic weapon.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 1;
     }
 
     @Override

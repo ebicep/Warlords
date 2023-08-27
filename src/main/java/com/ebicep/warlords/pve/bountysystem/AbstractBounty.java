@@ -73,7 +73,15 @@ public abstract class AbstractBounty implements RewardSpendable {
         if (value >= getTarget()) {
             return null;
         }
-        return getProgress(value, getTarget());
+        if (getTarget() == 1) { // for boolean bounties - if target is actually 1 then just override
+            return getNoProgress();
+        }
+        return Collections.singletonList(Component.textOfChildren(
+                Component.text("Progress: ", NamedTextColor.GRAY),
+                Component.text(value, NamedTextColor.GOLD),
+                Component.text("/", NamedTextColor.AQUA),
+                Component.text(NumberFormat.addCommaAndRound(getTarget()), NamedTextColor.GOLD)
+        ));
     }
 
     public abstract String getName();
@@ -82,12 +90,10 @@ public abstract class AbstractBounty implements RewardSpendable {
 
     public abstract int getTarget();
 
-    protected List<Component> getProgress(long progress, int target) {
+    protected List<Component> getNoProgress() {
         return Collections.singletonList(Component.textOfChildren(
                 Component.text("Progress: ", NamedTextColor.GRAY),
-                Component.text(progress, NamedTextColor.GOLD),
-                Component.text("/", NamedTextColor.AQUA),
-                Component.text(NumberFormat.addCommaAndRound(target), NamedTextColor.GOLD)
+                Component.text("✖", NamedTextColor.RED)
         ));
     }
 

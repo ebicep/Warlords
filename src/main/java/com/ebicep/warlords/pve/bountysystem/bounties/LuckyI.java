@@ -15,11 +15,6 @@ public class LuckyI extends AbstractBounty implements TracksDuringGame, DailyRew
     private int newCrits = 0;
 
     @Override
-    public int getTarget() {
-        return 1000;
-    }
-
-    @Override
     public String getName() {
         return "Lucky";
     }
@@ -30,8 +25,18 @@ public class LuckyI extends AbstractBounty implements TracksDuringGame, DailyRew
     }
 
     @Override
+    public int getTarget() {
+        return 1000;
+    }
+
+    @Override
     public Bounty getBounty() {
         return Bounty.LUCKY_I;
+    }
+
+    @Override
+    public void reset() {
+        newCrits = 0;
     }
 
     @Override
@@ -47,10 +52,5 @@ public class LuckyI extends AbstractBounty implements TracksDuringGame, DailyRew
     @Override
     public long getNewValue() {
         return newCrits;
-    }
-
-    @Override
-    public void reset() {
-        newCrits = 0;
     }
 }

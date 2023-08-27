@@ -32,6 +32,7 @@ public class ChallengeV extends AbstractBounty implements TracksPostGame, Weekly
         return Bounty.CHALLENGE_V;
     }
 
+
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {
         if (!BountyUtils.waveDefenseMatchesDifficulty(game, DifficultyIndex.HARD)) {

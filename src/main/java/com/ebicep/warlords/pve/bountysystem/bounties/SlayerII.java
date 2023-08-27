@@ -19,11 +19,6 @@ public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyR
     private int newKills = 0;
 
     @Override
-    public int getTarget() {
-        return 20;
-    }
-
-    @Override
     public String getName() {
         return "Slayer";
     }
@@ -34,8 +29,18 @@ public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyR
     }
 
     @Override
+    public int getTarget() {
+        return 20;
+    }
+
+    @Override
     public Bounty getBounty() {
         return Bounty.SLAYER_II;
+    }
+
+    @Override
+    public void reset() {
+        newKills = 0;
     }
 
     @Override
@@ -55,10 +60,5 @@ public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyR
     @Override
     public long getNewValue() {
         return newKills;
-    }
-
-    @Override
-    public void reset() {
-        newKills = 0;
     }
 }

@@ -11,11 +11,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 public class ExploreI extends AbstractBounty implements TracksPostGame, DailyRewardSpendable1 {
 
     @Override
-    public int getTarget() {
-        return 10_000;
-    }
-
-    @Override
     public String getName() {
         return "Explorer";
     }
@@ -23,6 +18,11 @@ public class ExploreI extends AbstractBounty implements TracksPostGame, DailyRew
     @Override
     public String getDescription() {
         return "Travel " + NumberFormat.addCommaAndRound(getTarget()) + " blocks in any gamemode.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 10_000;
     }
 
     @Override

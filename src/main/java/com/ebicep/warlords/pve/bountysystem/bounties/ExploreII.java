@@ -10,11 +10,6 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 public class ExploreII extends AbstractBounty implements TracksPostGame, DailyRewardSpendable1 {
 
     @Override
-    public int getTarget() {
-        return 250;
-    }
-
-    @Override
     public String getName() {
         return "Explorer";
     }
@@ -22,6 +17,11 @@ public class ExploreII extends AbstractBounty implements TracksPostGame, DailyRe
     @Override
     public String getDescription() {
         return "Jump " + getTarget() + " times in any gamemode.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 250;
     }
 
     @Override

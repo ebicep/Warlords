@@ -13,11 +13,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 public class FlawlessIII extends AbstractBounty implements TracksPostGame, DailyRewardSpendable3 {
 
     @Override
-    public int getTarget() {
-        return 1;
-    }
-
-    @Override
     public String getName() {
         return "Flawless";
     }
@@ -28,9 +23,15 @@ public class FlawlessIII extends AbstractBounty implements TracksPostGame, Daily
     }
 
     @Override
+    public int getTarget() {
+        return 1;
+    }
+
+    @Override
     public Bounty getBounty() {
         return Bounty.FLAWLESS_III;
     }
+
 
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {

@@ -13,11 +13,6 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 public class AdvanceII extends AbstractBounty implements TracksPostGame, DailyRewardSpendable4 {
 
     @Override
-    public int getTarget() {
-        return 50;
-    }
-
-    @Override
     public String getName() {
         return "Advance";
     }
@@ -25,6 +20,11 @@ public class AdvanceII extends AbstractBounty implements TracksPostGame, DailyRe
     @Override
     public String getDescription() {
         return "Complete 50 waves in Endless.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 50;
     }
 
     @Override

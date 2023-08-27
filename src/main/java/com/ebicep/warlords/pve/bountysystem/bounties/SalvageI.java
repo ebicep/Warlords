@@ -17,11 +17,6 @@ public class SalvageI extends AbstractBounty implements TracksOutsideGame, Daily
     }
 
     @Override
-    public int getTarget() {
-        return 15;
-    }
-
-    @Override
     public String getName() {
         return "Salvage";
     }
@@ -29,6 +24,11 @@ public class SalvageI extends AbstractBounty implements TracksOutsideGame, Daily
     @Override
     public String getDescription() {
         return "Salvage " + getTarget() + " Common weapons.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 15;
     }
 
     @Override

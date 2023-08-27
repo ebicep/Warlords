@@ -10,11 +10,6 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 public class SlayerI extends AbstractBounty implements TracksPostGame, DailyRewardSpendable1 {
 
     @Override
-    public int getTarget() {
-        return 500;
-    }
-
-    @Override
     public String getName() {
         return "Slayer";
     }
@@ -22,6 +17,11 @@ public class SlayerI extends AbstractBounty implements TracksPostGame, DailyRewa
     @Override
     public String getDescription() {
         return "Kill " + getTarget() + " enemies in any gamemode.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 500;
     }
 
     @Override

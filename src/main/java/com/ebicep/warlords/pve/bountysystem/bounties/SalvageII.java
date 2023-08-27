@@ -17,11 +17,6 @@ public class SalvageII extends AbstractBounty implements TracksOutsideGame, Dail
     }
 
     @Override
-    public int getTarget() {
-        return 5;
-    }
-
-    @Override
     public String getName() {
         return "Salvage";
     }
@@ -29,6 +24,11 @@ public class SalvageII extends AbstractBounty implements TracksOutsideGame, Dail
     @Override
     public String getDescription() {
         return "Salvage " + getTarget() + " Rare weapons.";
+    }
+
+    @Override
+    public int getTarget() {
+        return 5;
     }
 
     @Override
