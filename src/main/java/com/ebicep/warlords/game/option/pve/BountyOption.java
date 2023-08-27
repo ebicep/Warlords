@@ -15,7 +15,7 @@ public class BountyOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
-        Map<UUID, List<TracksDuringGame>> tracksDuringGames = new HashMap<>();
+        Map<UUID, Set<TracksDuringGame>> tracksDuringGames = new HashMap<>();
         game.forEachOfflinePlayer((offlinePlayer, team) -> {
             if (team == null) {
                 return;
@@ -26,7 +26,7 @@ public class BountyOption implements Option {
                     List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
                     for (AbstractBounty bounty : trackableBounties) {
                         if (bounty instanceof TracksDuringGame tracksDuringGame && tracksDuringGame.trackGame(game)) {
-                            tracksDuringGames.computeIfAbsent(uniqueId, k -> new ArrayList<>()).add(tracksDuringGame);
+                            tracksDuringGames.computeIfAbsent(uniqueId, k -> new HashSet<>()).add(tracksDuringGame);
                         }
                     }
                 });

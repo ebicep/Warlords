@@ -5,12 +5,16 @@ import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @CommandAlias("bounty")
 @CommandPermission("group.administrator")
@@ -44,6 +48,16 @@ public class BountyCommand extends BaseCommand {
             ChatChannels.sendDebugMessage(issuer, Component.text(createdBounty.getName())
                                                            .append(Component.text(" - ", NamedTextColor.DARK_GRAY))
                                                            .append(Component.text(createdBounty.getDescription(), NamedTextColor.GRAY)));
+        }
+    }
+
+    @Subcommand("printtrackoutsidegame")
+    public void printTrackOutsideGame(CommandIssuer issuer) {
+        for (Map.Entry<UUID, Set<TracksOutsideGame>> uuidSetEntry : TracksOutsideGame.CACHED_ONLINE_PLAYER_TRACKERS.entrySet()) {
+            ChatChannels.sendDebugMessage(issuer, Component.text(uuidSetEntry.getKey() + ":"));
+            for (TracksOutsideGame tracksOutsideGame : uuidSetEntry.getValue()) {
+                ChatChannels.sendDebugMessage(issuer, Component.text("   - " + tracksOutsideGame.toString()));
+            }
         }
     }
 

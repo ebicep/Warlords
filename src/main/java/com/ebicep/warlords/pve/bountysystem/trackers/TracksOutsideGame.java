@@ -1,9 +1,12 @@
 package com.ebicep.warlords.pve.bountysystem.trackers;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.events.player.WeaponSalvageEvent;
+import com.ebicep.warlords.pve.bountysystem.BountyUtils;
+import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyStartEvent;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -25,25 +28,37 @@ import java.util.stream.Collectors;
  */
 public interface TracksOutsideGame {
 
+    Map<UUID, Set<TracksOutsideGame>> CACHED_ONLINE_PLAYER_TRACKERS = new HashMap<>();
     static Listener getListener() {
         return new Listener() {
 
-            private final Map<UUID, List<TracksOutsideGame>> CACHED_ONLINE_PLAYER_TRACKERS = new HashMap<>();
+            // private final Map<UUID, Set<TracksOutsideGame>> CACHED_ONLINE_PLAYER_TRACKERS = new HashMap<>();
 
             @EventHandler
             public void onDatabasePlayerFirstLoad(DatabasePlayerFirstLoadEvent event) {
-                refreshTracker(event.getDatabasePlayer());
+                refreshTracker(event.getPlayer().getUniqueId());
+            }
+
+            private void refreshTracker(UUID uuid) {
+                CACHED_ONLINE_PLAYER_TRACKERS.remove(uuid);
+                for (PlayersCollections collection : BountyUtils.MAX_BOUNTIES.keySet()) {
+                    DatabaseManager.getPlayer(uuid, collection, this::refreshTracker);
+                }
             }
 
             private void refreshTracker(DatabasePlayer databasePlayer) {
-                CACHED_ONLINE_PLAYER_TRACKERS.put(
+                CACHED_ONLINE_PLAYER_TRACKERS.merge(
                         databasePlayer.getUuid(),
                         databasePlayer.getPveStats()
                                       .getTrackableBounties()
                                       .stream()
                                       .filter(TracksOutsideGame.class::isInstance)
                                       .map(TracksOutsideGame.class::cast)
-                                      .collect(Collectors.toList())
+                                      .collect(Collectors.toSet()),
+                        (oldValue, newValue) -> {
+                            oldValue.addAll(newValue);
+                            return oldValue;
+                        }
                 );
             }
 
@@ -54,12 +69,12 @@ public interface TracksOutsideGame {
 
             @EventHandler
             public void onBountyStart(BountyStartEvent event) {
-                refreshTracker(event.getDatabasePlayer());
+                refreshTracker(event.getDatabasePlayer().getUuid());
             }
 
             @EventHandler
-            public void onBountyClaim(BountyStartEvent event) {
-                refreshTracker(event.getDatabasePlayer());
+            public void onBountyClaim(BountyClaimEvent event) {
+                refreshTracker(event.getDatabasePlayer().getUuid());
             }
 
             @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -92,13 +107,13 @@ public interface TracksOutsideGame {
                 CACHED_ONLINE_PLAYER_TRACKERS.clear();
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     ChatUtils.MessageType.BOUNTIES.sendMessage(" - " + onlinePlayer.getUniqueId());
-                    DatabaseManager.getPlayer(onlinePlayer, this::refreshTracker);
+                    refreshTracker(onlinePlayer.getUniqueId());
                 }
                 ChatUtils.MessageType.BOUNTIES.sendMessage("Fixed online database players");
             }
 
             private void runTracker(UUID uuid, Consumer<TracksOutsideGame> runTracker) {
-                List<TracksOutsideGame> tracksOutsideGames = CACHED_ONLINE_PLAYER_TRACKERS.get(uuid);
+                Set<TracksOutsideGame> tracksOutsideGames = CACHED_ONLINE_PLAYER_TRACKERS.get(uuid);
                 if (tracksOutsideGames == null) {
                     ChatUtils.MessageType.BOUNTIES.sendErrorMessage("No tracks outside game for " + uuid);
                     return;

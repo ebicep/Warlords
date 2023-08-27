@@ -9,14 +9,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public interface TracksDuringGame {
 
-    static Listener getListener(Map<UUID, List<TracksDuringGame>> trackers) {
-        trackers.values().stream().flatMap(List::stream).forEach(TracksDuringGame::reset);
+    static Listener getListener(Map<UUID, Set<TracksDuringGame>> trackers) {
+        trackers.values().stream().flatMap(Set::stream).forEach(TracksDuringGame::reset);
         return new Listener() {
 
             @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

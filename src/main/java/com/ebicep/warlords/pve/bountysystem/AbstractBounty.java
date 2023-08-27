@@ -23,15 +23,8 @@ public abstract class AbstractBounty implements RewardSpendable {
     private boolean started = false;
     private Instant claimed = null;
 
-    public ItemBuilder getItem() { //TODO maybe center everything
-        ItemBuilder itemBuilder = new ItemBuilder(started ? Material.PAPER : Material.MAP)
-                .name(Component.text(getName(), NamedTextColor.GREEN))
-                .lore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.GRAY), 160));
-        itemBuilder.addLore(
-                Component.empty(),
-                Component.text("Rewards:", NamedTextColor.GRAY)
-        );
-        getCurrencyReward().forEach((currencies, aLong) -> itemBuilder.addLore(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
+    public ItemBuilder getItemWithProgress() { //TODO maybe center everything
+        ItemBuilder itemBuilder = getItem();
 
         Component progress = getProgress();
         itemBuilder.addLore(
@@ -45,6 +38,18 @@ public abstract class AbstractBounty implements RewardSpendable {
         if (started && claimed != null) {
             itemBuilder.enchant(Enchantment.OXYGEN, 1);
         }
+        return itemBuilder;
+    }
+
+    public ItemBuilder getItem() {
+        ItemBuilder itemBuilder = new ItemBuilder(started ? Material.PAPER : Material.MAP)
+                .name(Component.text(getName(), NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.GRAY), 160));
+        itemBuilder.addLore(
+                Component.empty(),
+                Component.text("Rewards:", NamedTextColor.GRAY)
+        );
+        getCurrencyReward().forEach((currencies, aLong) -> itemBuilder.addLore(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
         return itemBuilder;
     }
 

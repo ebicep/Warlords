@@ -7,9 +7,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyStartEvent;
+import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -52,11 +55,11 @@ public class BountyMenu {
                     canBeClaimed = true;
                 }
                 menu.setItem(i + 2, y,
-                        bounty.getItem().get(),
+                        bounty.getItemWithProgress().get(),
                         (m, e) -> {
                             if (bounty.isStarted()) {
                                 if (bounty.getProgress() == null) {
-                                    claimBounty(player, databasePlayer, bounty);
+                                    claimBounty(player, collection, databasePlayer, bounty);
                                     player.closeInventory();
                                 }
                             } else {
@@ -64,8 +67,9 @@ public class BountyMenu {
                                 bounty.setStarted(true);
                                 BountyUtils.sendBountyMessage(
                                         player,
-                                        Component.text("You started the bounty ", NamedTextColor.GRAY)
-                                                 .append(Component.text(bounty.getName(), NamedTextColor.GREEN))
+                                        Component.text("You started the " + collection.name.toLowerCase() + " bounty ", NamedTextColor.GRAY)
+                                                 .append(Component.text(bounty.getName(), NamedTextColor.GREEN)
+                                                                  .hoverEvent(bounty.getItem().get().asHoverEvent()))
                                                  .append(Component.text("!"))
                                 );
                                 Bukkit.getPluginManager().callEvent(new BountyStartEvent(databasePlayer, bounty));
@@ -82,7 +86,7 @@ public class BountyMenu {
                         (m, e) -> {
                             for (AbstractBounty bounty : bounties) {
                                 if (bounty.isStarted()) {
-                                    claimBounty(player, databasePlayer, bounty);
+                                    claimBounty(player, collection, databasePlayer, bounty);
                                 }
                             }
                             player.closeInventory();
@@ -93,12 +97,16 @@ public class BountyMenu {
         });
     }
 
-    private static void claimBounty(Player player, DatabasePlayer databasePlayer, AbstractBounty bounty) {
+    private static void claimBounty(Player player, PlayersCollections collection, DatabasePlayer databasePlayer, AbstractBounty bounty) {
         bounty.claim(databasePlayer);
         BountyUtils.sendBountyMessage(
                 player,
-                Component.text("You claimed the bounty ", NamedTextColor.GRAY)
-                         .append(Component.text(bounty.getName(), NamedTextColor.GREEN))
+                Component.text("You claimed the " + collection.name.toLowerCase() + " bounty ", NamedTextColor.GRAY)
+                         .append(Component.text(bounty.getName(), NamedTextColor.GREEN)
+                                          .hoverEvent(bounty.getItem().get().asHoverEvent()))
+                         .append(Component.text(". The reward has been added to your "))
+                         .append(Component.text("Reward Inventory", NamedTextColor.YELLOW, TextDecoration.BOLD, TextDecoration.UNDERLINED)
+                                          .clickEvent(ClickEvent.callback(audience -> RewardInventory.openRewardInventory(player, 1))))
                          .append(Component.text("!"))
         );
         Bukkit.getPluginManager().callEvent(new BountyClaimEvent(databasePlayer, bounty));
