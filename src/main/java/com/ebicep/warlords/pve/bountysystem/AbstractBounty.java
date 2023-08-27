@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.bountysystem.rewards.RewardSpendable;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -28,13 +29,20 @@ public abstract class AbstractBounty implements RewardSpendable {
         ItemBuilder itemBuilder = getItem();
 
         Component progress = getProgress();
-        itemBuilder.addLore(
-                Component.empty(),
-                started ? progress == null ?
-                          Component.text("Click to Claim!", NamedTextColor.GREEN) :
-                          Component.text("Progress: ", NamedTextColor.GRAY).append(progress) :
-                Component.text("Click to Start!", NamedTextColor.GREEN)
-        );
+        itemBuilder.addLore(Component.empty());
+        if (started) {
+            if (progress == null) {
+                itemBuilder.addLore(Component.text("Click to Claim!", NamedTextColor.GREEN));
+            } else {
+                itemBuilder.addLore(Component.text("Progress: ", NamedTextColor.GRAY).append(progress));
+            }
+        } else {
+            itemBuilder.addLore(PvEUtils.getCostLore(BountyUtils.COST, false));
+            itemBuilder.addLore(
+                    Component.empty(),
+                    Component.text("Click to Start!", NamedTextColor.GREEN)
+            );
+        }
 
         if (started && progress == null) {
             itemBuilder.enchant(Enchantment.OXYGEN, 1);

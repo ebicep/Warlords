@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class BountyUtils {
 
     public static final TextColor COLOR = TextColor.color(255, 140, 0);
-    public static final Map<Currencies, Long> COST = new HashMap<>() {{
+    public static final LinkedHashMap<Currencies, Long> COST = new LinkedHashMap<>() {{
         put(Currencies.COIN, 5000L);
     }};
     public static Map<PlayersCollections, BountyInfo> BOUNTY_COLLECTION_INFO = new HashMap<>() {{

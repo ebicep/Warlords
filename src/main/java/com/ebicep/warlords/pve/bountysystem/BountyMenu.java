@@ -5,10 +5,13 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyStartEvent;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -17,7 +20,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
@@ -39,8 +45,8 @@ public class BountyMenu {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             List<AbstractBounty> bounties = pveStats.getActiveBounties();
             menu.setItem(1, y,
-                    new ItemBuilder(Material.BOOK)
-                            .name(Component.text(collection.name + " Bounties", NamedTextColor.RED))
+                    new ItemBuilder(Material.WRITABLE_BOOK)
+                            .name(Component.text(collection.name + " Bounties", BountyUtils.COLOR))
                             .get(),
                     (m, e) -> {}
             );
@@ -68,17 +74,49 @@ public class BountyMenu {
                                     player.closeInventory();
                                 }
                             } else {
-                                //AbstractBounty.COST
-                                bounty.setStarted(true);
-                                BountyUtils.sendBountyMessage(
+                                for (Map.Entry<Currencies, Long> currenciesLongEntry : BountyUtils.COST.entrySet()) {
+                                    Currencies currency = currenciesLongEntry.getKey();
+                                    Long cost = currenciesLongEntry.getValue();
+                                    if (pveStats.getCurrencyValue(currency) < cost) {
+                                        player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                    .append(currency.getCostColoredName(cost))
+                                                                    .append(Component.text(" to start this bounty!"))
+                                        );
+                                        return;
+                                    }
+                                }
+                                Menu.openConfirmationMenu(
                                         player,
-                                        Component.text("You started the " + collection.name.toLowerCase() + " bounty ", NamedTextColor.GRAY)
-                                                 .append(Component.text(bounty.getName(), NamedTextColor.GREEN)
-                                                                  .hoverEvent(bounty.getItem().get().asHoverEvent()))
-                                                 .append(Component.text("!"))
+                                        "Start Bounty",
+                                        3,
+                                        Component.text("Start Bounty: ", NamedTextColor.GRAY)
+                                                 .append(Component.text(bounty.getName(), NamedTextColor.GREEN)),
+                                        new ArrayList<>() {{
+                                            addAll(WordWrap.wrap(Component.text(bounty.getDescription(), NamedTextColor.GRAY), 160));
+                                            add(Component.empty());
+                                            add(Component.text("Rewards:", NamedTextColor.GRAY));
+                                            bounty.getCurrencyReward()
+                                                  .forEach((currencies, aLong) -> add(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
+                                            addAll(PvEUtils.getCostLore(BountyUtils.COST, true));
+                                        }},
+                                        Component.text("Cancel", NamedTextColor.RED),
+                                        Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
+                                        (m2, e2) -> {
+                                            bounty.setStarted(true);
+                                            BountyUtils.sendBountyMessage(
+                                                    player,
+                                                    Component.text("You started the " + collection.name.toLowerCase() + " bounty ", NamedTextColor.GRAY)
+                                                             .append(Component.text(bounty.getName(), NamedTextColor.GREEN)
+                                                                              .hoverEvent(bounty.getItem().get().asHoverEvent()))
+                                                             .append(Component.text("!"))
+                                            );
+                                            Bukkit.getPluginManager().callEvent(new BountyStartEvent(databasePlayer, bounty));
+                                            player.closeInventory();
+                                        },
+                                        (m2, e2) -> openBountyMenu(player),
+                                        (m2) -> {
+                                        }
                                 );
-                                Bukkit.getPluginManager().callEvent(new BountyStartEvent(databasePlayer, bounty));
-                                player.closeInventory();
                             }
                         }
                 );
