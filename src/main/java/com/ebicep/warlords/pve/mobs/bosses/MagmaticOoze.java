@@ -587,6 +587,7 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
         private final int split;
         private final BiFunction<Location, WarlordsEntity, AbstractMob<?>> splitSpawnFunction;
         private double splitChance = .2;
+        private boolean init = false;
 
         public Split(int split, BiFunction<Location, WarlordsEntity, AbstractMob<?>> splitSpawnFunction) {
             super("Split", 20, 50, true);
@@ -596,18 +597,27 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            if (!init) {
+                init = true;
+                resetSplitChance(pveOption);
+            }
             if (split >= maxSplit) {
                 return true;
             }
             // 25% chance to split
             if (ThreadLocalRandom.current().nextDouble() < splitChance) {
                 pveOption.spawnNewMob(splitSpawnFunction.apply(wp.getLocation(), wp));
-                splitChance = .2;
+                resetSplitChance(pveOption);
             } else {
-                splitChance += .15;
+                splitChance += .05 * pveOption.playerCount();
             }
             return true;
         }
+
+        public void resetSplitChance(PveOption pveOption) {
+            splitChance = .05 * pveOption.playerCount() - .05;
+        }
+
 
     }
 }
