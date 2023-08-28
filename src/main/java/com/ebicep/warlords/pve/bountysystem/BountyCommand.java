@@ -26,16 +26,16 @@ public class BountyCommand extends BaseCommand {
     }
 
     @Subcommand("addrandomfromgroup")
-    public void addRandom(Player player, PlayersCollections collection, Bounty.BountyGroup bountyGroup) {
+    public void addRandom(Player player, PlayersCollections collection, @Conditions("limits:min=0,max=4") Integer index, Bounty.BountyGroup bountyGroup) {
         Bounty randomBounty = bountyGroup.bounties[(int) (Math.random() * bountyGroup.bounties.length)];
-        add(player, collection, randomBounty);
+        add(player, collection, index, randomBounty);
     }
 
-    @Subcommand("add")
-    public void add(Player player, PlayersCollections collection, Bounty bounty) {
+    @Subcommand("set")
+    public void add(Player player, PlayersCollections collection, @Conditions("limits:min=0,max=4") Integer index, Bounty bounty) {
         DatabaseManager.getPlayer(player.getUniqueId(), collection, databasePlayer -> {
             List<AbstractBounty> activeBounties = databasePlayer.getPveStats().getActiveBounties();
-            activeBounties.add(bounty.create.get());
+            activeBounties.set(index, bounty.create.get());
             ChatChannels.sendDebugMessage(player, Component.text("Added " + bounty.name() + " to " + collection.name));
         });
     }

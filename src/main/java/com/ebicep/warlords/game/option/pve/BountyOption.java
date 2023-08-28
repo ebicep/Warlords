@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
+import com.ebicep.warlords.util.chat.ChatUtils;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -33,6 +34,8 @@ public class BountyOption implements Option {
             }
         });
         game.registerEvents(TracksDuringGame.getListener(tracksDuringGames));
+        ChatUtils.MessageType.BOUNTIES.sendMessage("Started tracking bounties for " + tracksDuringGames.size() + " players - " + tracksDuringGames);
+
     }
 
 }
