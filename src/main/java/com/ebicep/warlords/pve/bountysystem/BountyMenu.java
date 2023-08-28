@@ -34,6 +34,7 @@ public class BountyMenu {
         addBountiesToMenu(player, PlayersCollections.WEEKLY, menu, 2, true);
         addBountiesToMenu(player, PlayersCollections.LIFETIME, menu, 3, false);
 
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
@@ -47,6 +48,7 @@ public class BountyMenu {
                             .get(),
                     (m, e) -> {}
             );
+            int bountiesStarted = bounties.stream().mapToInt(bounty -> bounty.isStarted() ? 1 : 0).sum();
             boolean canBeClaimed = false;
             for (int i = 0; i < bounties.size(); i++) {
                 AbstractBounty bounty = bounties.get(i);
@@ -71,6 +73,14 @@ public class BountyMenu {
                                     player.closeInventory();
                                 }
                             } else {
+                                BountyUtils.BountyInfo bountyInfo = BountyUtils.BOUNTY_COLLECTION_INFO.get(collection);
+                                if (bountiesStarted >= bountyInfo.maxBountiesStarted()) {
+                                    player.sendMessage(Component.text("You can only accept " + bountyInfo.maxBountiesStarted() + " " + collection.name + " bounties at a time!",
+                                            NamedTextColor.RED
+                                    ));
+                                    player.closeInventory();
+                                    return;
+                                }
                                 LinkedHashMap<Currencies, Long> bountyCost = bounty.getCost();
                                 for (Map.Entry<Currencies, Long> currenciesLongEntry : bountyCost.entrySet()) {
                                     Currencies currency = currenciesLongEntry.getKey();
@@ -139,7 +149,6 @@ public class BountyMenu {
                         }
                 );
             }
-            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         });
     }
 

@@ -118,7 +118,7 @@ public abstract class AbstractBounty implements RewardSpendable, BountyCost {
         int replaceIndex = pveStats.getActiveBounties().indexOf(this);
         int maxBounties = BOUNTY_COLLECTION_INFO.get(collection).maxBounties();
         AbstractBounty replacementBounty = null;
-        if (pveStats.getBountiesCompleted() < maxBounties) {
+        if (pveStats.getBountiesCompleted() <= maxBounties) {
             Bounty randomBounty = BountyUtils.getRandomBounty(collection, pveStats.getCompletedBounties().keySet().stream().toList());
             if (randomBounty != null) {
                 replacementBounty = randomBounty.create.get();

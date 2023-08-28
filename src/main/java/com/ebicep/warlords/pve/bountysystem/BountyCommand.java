@@ -82,5 +82,16 @@ public class BountyCommand extends BaseCommand {
         });
     }
 
+    @Subcommand("clear")
+    public void clear(Player player, PlayersCollections collection) {
+        DatabaseManager.getPlayer(player.getUniqueId(), collection, databasePlayer -> {
+            List<AbstractBounty> activeBounties = databasePlayer.getPveStats().getActiveBounties();
+            for (AbstractBounty activeBounty : activeBounties) {
+                ChatChannels.sendDebugMessage(player, Component.text("Cleared " + activeBounty.getName() + " in " + collection.name));
+            }
+            activeBounties.clear();
+        });
+    }
+
 
 }

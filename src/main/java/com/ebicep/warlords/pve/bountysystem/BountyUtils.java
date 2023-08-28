@@ -23,9 +23,9 @@ public class BountyUtils {
         put(Currencies.COIN, 5000L);
     }};
     public static Map<PlayersCollections, BountyInfo> BOUNTY_COLLECTION_INFO = new HashMap<>() {{
-        put(PlayersCollections.DAILY, new BountyInfo(Bounty.BountyGroup.DAILY_ALL.bounties, 2));
-        put(PlayersCollections.WEEKLY, new BountyInfo(Bounty.BountyGroup.WEEKLY_ALL.bounties, 2));
-        put(PlayersCollections.LIFETIME, new BountyInfo(Bounty.BountyGroup.LIFETIME_ALL.bounties, Integer.MAX_VALUE));
+        put(PlayersCollections.DAILY, new BountyInfo(Bounty.BountyGroup.DAILY_ALL.bounties, 2, 5));
+        put(PlayersCollections.WEEKLY, new BountyInfo(Bounty.BountyGroup.WEEKLY_ALL.bounties, 2, 5));
+        put(PlayersCollections.LIFETIME, new BountyInfo(Bounty.BountyGroup.LIFETIME_ALL.bounties, Integer.MAX_VALUE, 1));
     }};
 
     public static void giveNewBounties(DatabasePlayerPvE databasePlayerPvE, PlayersCollections playersCollections) {
@@ -44,6 +44,7 @@ public class BountyUtils {
             }
             activeBounties.add(randomBounty.create.get());
         }
+//        ChatUtils.MessageType.BOUNTIES.sendMessage("Gave new bounties (" + playersCollections.name() + ") - " + activeBounties.stream().map(bounty -> bounty.getBounty().name()).collect(Collectors.joining(", ")));
     }
 
     @Nullable
@@ -83,7 +84,7 @@ public class BountyUtils {
                    .findFirst();
     }
 
-    public record BountyInfo(Bounty[] bounties, int maxBounties) {
+    public record BountyInfo(Bounty[] bounties, int maxBounties, int maxBountiesStarted) {
     }
 
 }
