@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
@@ -15,7 +14,6 @@ import net.luckperms.api.node.Node;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.CHAT_ARROW;
@@ -41,28 +39,14 @@ public enum Permissions {
                                        .map(Node::getKey)
                                        .collect(Collectors.toList());
         permissions.remove("group.default");
-        int delay = 0;
         for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-            if (DatabaseManager.inCache(user.getUniqueId(), activeCollection)) {
-                DatabaseManager.updatePlayer(user.getUniqueId(), activeCollection, dp -> dp.setPermissions(permissions));
-            } else {
-                delay = 5;
+            DatabaseManager.updatePlayer(user.getUniqueId(), activeCollection, dp -> {
+                dp.setPermissions(permissions);
                 Warlords.newChain()
-                        .delay(3, TimeUnit.SECONDS)
-                        .sync(() -> {
-                            if (DatabaseManager.inCache(user.getUniqueId(), activeCollection)) {
-                                DatabaseManager.updatePlayer(user.getUniqueId(), activeCollection, dp -> dp.setPermissions(permissions));
-                            } else {
-                                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to update permissions for " + user.getUniqueId() + " in " + activeCollection.name);
-                            }
-                        })
+                        .sync(CustomScoreboard::updateLobbyPlayerNames)
                         .execute();
-            }
+            });
         }
-        Warlords.newChain()
-                .delay(delay, TimeUnit.SECONDS)
-                .sync(CustomScoreboard::updateLobbyPlayerNames)
-                .execute();
     }
 
     public static Component getPrefixWithColor(Player player, boolean includeName) {
