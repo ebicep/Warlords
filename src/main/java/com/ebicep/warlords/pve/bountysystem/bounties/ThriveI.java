@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
+import com.ebicep.warlords.util.java.NumberFormat;
 
 public class ThriveI extends AbstractBounty implements TracksPostGame, WeeklyCost, WeeklyRewardSpendable2 {
 
@@ -18,7 +19,7 @@ public class ThriveI extends AbstractBounty implements TracksPostGame, WeeklyCos
 
     @Override
     public String getDescription() {
-        return "Achieve " + getTarget() + " DHP.";
+        return "Achieve " + NumberFormat.addCommaAndRound(getTarget()) + " DHP.";
     }
 
     @Override
