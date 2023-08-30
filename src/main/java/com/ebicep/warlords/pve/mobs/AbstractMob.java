@@ -377,8 +377,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            .filter(wp -> wp.getEntity() instanceof Player)
                            .forEach(warlordsPlayer -> {
                                ItemTier[] validValues = ItemTier.VALID_VALUES;
-                               double rng = ThreadLocalRandom.current().nextDouble();
                                for (int i = validValues.length - 1; i >= 0; i--) {
+                                   double rng = ThreadLocalRandom.current().nextDouble();
                                    ItemTier itemTier = validValues[i];
                                    if (itemTier.dropChance == 0) {
                                        continue;
