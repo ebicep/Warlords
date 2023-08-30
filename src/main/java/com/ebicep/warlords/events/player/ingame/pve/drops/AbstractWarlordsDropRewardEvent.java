@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 
 public abstract class AbstractWarlordsDropRewardEvent extends AbstractWarlordsEntityEvent {
 
-    private static final HandlerList handlers = new HandlerList();
+    protected static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {
         return handlers;
