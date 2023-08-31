@@ -1875,12 +1875,11 @@ public abstract class WarlordsEntity {
     public void sendMessage(Component component) {
         this.entity.sendMessage(component);
         if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
-            component.hoverEvent(null);
             game.spectators()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                .forEach(player -> player.sendMessage(component));
+                .forEach(player -> player.sendMessage(component.hoverEvent(null)));
         }
     }
 
@@ -1893,7 +1892,7 @@ public abstract class WarlordsEntity {
     }
 
     public float subtractEnergy(FloatModifiable amount, boolean fromAttacker) {
-        return subtractEnergy(amount.getCurrentValue(), fromAttacker);
+        return subtractEnergy(amount.getCalculatedValue(), fromAttacker);
     }
 
     public float subtractEnergy(float amount, boolean fromAttacker) {

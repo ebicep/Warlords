@@ -8,8 +8,6 @@ import org.bukkit.event.HandlerList;
 
 public class WarlordsDropMobDropEvent extends AbstractWarlordsDropRewardEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
@@ -28,11 +26,6 @@ public class WarlordsDropMobDropEvent extends AbstractWarlordsDropRewardEvent {
 
     public MobDrops getMobDrop() {
         return mobDrop;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
     }
 
 }

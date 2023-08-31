@@ -377,12 +377,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                            .filter(wp -> wp.getEntity() instanceof Player)
                            .forEach(warlordsPlayer -> {
                                ItemTier[] validValues = ItemTier.VALID_VALUES;
-                               double rng = ThreadLocalRandom.current().nextDouble();
                                for (int i = validValues.length - 1; i >= 0; i--) {
                                    ItemTier itemTier = validValues[i];
                                    if (itemTier.dropChance == 0) {
                                        continue;
                                    }
+                                   double rng = ThreadLocalRandom.current().nextDouble();
                                    AtomicDouble dropRate = new AtomicDouble(itemTier.dropChance * game.getGameMode().getDropModifier());
                                    AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropItemEvent(warlordsPlayer, this, dropRate, itemTier);
                                    Bukkit.getPluginManager().callEvent(dropRewardEvent);

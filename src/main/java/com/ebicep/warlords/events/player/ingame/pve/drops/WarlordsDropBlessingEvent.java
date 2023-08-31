@@ -7,8 +7,6 @@ import org.bukkit.event.HandlerList;
 
 public class WarlordsDropBlessingEvent extends AbstractWarlordsDropRewardEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-
     public static HandlerList getHandlerList() {
         return handlers;
     }
@@ -19,11 +17,6 @@ public class WarlordsDropBlessingEvent extends AbstractWarlordsDropRewardEvent {
             AtomicDouble dropRate
     ) {
         super(player, deadMob, RewardType.BLESSING, dropRate);
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
     }
 
 }

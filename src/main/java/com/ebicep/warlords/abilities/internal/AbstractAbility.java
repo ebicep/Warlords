@@ -256,7 +256,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public float getEnergyCost() {
-        return (energyCost.getCurrentValue() + energyCost.getAdditiveModifier()) * energyCost.getMultiplicativeModifier(); // TODO check for possible floating point accuracy errors
+        return energyCost.getCalculatedValue();
     }
 
     public void setEnergyCost(float energyCost) {

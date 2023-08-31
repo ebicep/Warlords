@@ -766,7 +766,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 500L);
                     put(Currencies.EPIC_STAR_PIECE, 2L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3L);
+                    put(Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES, 3L);
                 }};
             }
             if (position == 3) {
@@ -777,7 +777,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 350L);
                     put(Currencies.EPIC_STAR_PIECE, 1L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 3L);
+                    put(Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES, 3L);
                 }};
             }
             if (4 <= position && position <= 10) {
@@ -788,7 +788,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 350L);
                     put(Currencies.RARE_STAR_PIECE, 5L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.TITLE_TOKEN_SPIDERS_BURROW, 1L);
+                    put(Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES, 1L);
                 }};
             }
             if (11 <= position && position <= 20) {
