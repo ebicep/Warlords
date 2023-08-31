@@ -6,4 +6,8 @@ public class FloatModifiable extends ValueModifiable<Float> {
         super(currentValue);
     }
 
+    public float getCalculatedValue() {
+        return (getCurrentValue() + getAdditiveModifier()) * getMultiplicativeModifier();
+    }
+
 }

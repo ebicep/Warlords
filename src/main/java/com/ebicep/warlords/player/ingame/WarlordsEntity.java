@@ -1894,7 +1894,7 @@ public abstract class WarlordsEntity {
     }
 
     public float subtractEnergy(FloatModifiable amount, boolean fromAttacker) {
-        return subtractEnergy(amount.getCurrentValue(), fromAttacker);
+        return subtractEnergy(amount.getCalculatedValue(), fromAttacker);
     }
 
     public float subtractEnergy(float amount, boolean fromAttacker) {
