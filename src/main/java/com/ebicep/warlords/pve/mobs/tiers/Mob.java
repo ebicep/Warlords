@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.mobs.mobtypes;
+package com.ebicep.warlords.pve.mobs.tiers;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;

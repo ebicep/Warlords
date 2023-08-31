@@ -1,25 +1,24 @@
-package com.ebicep.warlords.pve.mobs.mobtypes;
+package com.ebicep.warlords.pve.mobs.tiers;
 
-public interface EliteMob extends Mob {
+public interface IntermediateMob extends Mob {
 
     @Override
     default double weaponDropRate() {
-        return 5;
+        return 2;
     }
 
     @Override
     default int commonWeaponDropChance() {
-        return 75;
+        return 85;
     }
 
     @Override
     default int rareWeaponDropChance() {
-        return 20;
+        return 10;
     }
 
     @Override
     default int epicWeaponDropChance() {
-        return 5;
+        return 3;
     }
-
 }

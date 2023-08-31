@@ -1,6 +1,6 @@
-package com.ebicep.warlords.pve.mobs.mobtypes;
+package com.ebicep.warlords.pve.mobs.tiers;
 
-public interface BossMob extends Mob {
+public interface CaptainMob extends Mob {
 
     @Override
     default double weaponDropRate() {
@@ -9,16 +9,16 @@ public interface BossMob extends Mob {
 
     @Override
     default int commonWeaponDropChance() {
-        return 75;
+        return 70;
     }
 
     @Override
     default int rareWeaponDropChance() {
-        return 20;
+        return 18;
     }
 
     @Override
     default int epicWeaponDropChance() {
-        return 5;
+        return 7;
     }
 }

@@ -9,7 +9,7 @@ import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BossMinion;
-import com.ebicep.warlords.pve.mobs.mobtypes.BossMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import org.springframework.data.annotation.Transient;
 
 import java.util.UUID;
