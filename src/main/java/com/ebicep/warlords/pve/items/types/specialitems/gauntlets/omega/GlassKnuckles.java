@@ -11,8 +11,8 @@ import java.util.Set;
 public class GlassKnuckles extends SpecialOmegaGauntlet {
 
     private static final HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
-        put(SpecialStatPool.DAMAGE_RESISTANCE, -25);
-        put(BasicStatPool.DAMAGE, 500);
+        put(SpecialStatPool.DAMAGE_RESISTANCE, -30);
+        put(BasicStatPool.DAMAGE, 300);
     }};
 
     public GlassKnuckles(Set<BasicStatPool> statPool) {
@@ -30,7 +30,7 @@ public class GlassKnuckles extends SpecialOmegaGauntlet {
 
     @Override
     public String getBonus() {
-        return "-25% Damage Reduction, but deal 50% more damage.";
+        return "-30% Damage Reduction, but deal 30% more damage.";
     }
 
     @Override
