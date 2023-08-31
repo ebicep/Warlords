@@ -8,7 +8,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -16,7 +16,7 @@ import org.bukkit.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EventBoltaroShadow extends AbstractSkeleton implements BossMob {
+public class EventBoltaroShadow extends AbstractSkeleton implements BossMinionMob {
 
     private boolean forceSplit = false;
     private int split;

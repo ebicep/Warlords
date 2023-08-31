@@ -9,7 +9,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -26,7 +26,7 @@ import org.bukkit.event.Listener;
 import java.util.HashSet;
 import java.util.List;
 
-public class EventDjer extends AbstractZombie implements BossMob {
+public class EventDjer extends AbstractZombie implements BossMinionMob {
 
     private final int earthQuakeRadius = 12;
     private final HashSet<String> skillsImmuneTo = new HashSet<>() {{

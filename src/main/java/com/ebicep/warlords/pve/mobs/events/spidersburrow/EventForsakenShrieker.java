@@ -6,7 +6,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Spider;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -17,7 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class EventForsakenShrieker extends AbstractZombie implements BossMob, Spider {
+public class EventForsakenShrieker extends AbstractZombie implements BossMinionMob, Spider {
 
 
     public EventForsakenShrieker(Location spawnLocation) {

@@ -8,13 +8,13 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
-public class BoltaroShadow extends AbstractSkeleton implements BossMob, BossMinion {
+public class BoltaroShadow extends AbstractSkeleton implements BossMinionMob {
 
     public BoltaroShadow(Location spawnLocation) {
         super(spawnLocation,

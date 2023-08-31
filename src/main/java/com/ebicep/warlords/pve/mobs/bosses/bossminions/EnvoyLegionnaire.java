@@ -9,7 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -19,7 +19,7 @@ import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 
-public class EnvoyLegionnaire extends AbstractZombie implements BossMob, BossMinion {
+public class EnvoyLegionnaire extends AbstractZombie implements BossMinionMob {
 
     public EnvoyLegionnaire(Location spawnLocation) {
         super(spawnLocation,

@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.BossMinion;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import org.springframework.data.annotation.Transient;
 
@@ -53,7 +52,7 @@ public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyC
         if (!event.isDead() || !(victim instanceof WarlordsNPC warlordsNPC)) {
             return;
         }
-        if (warlordsNPC.getMob() instanceof BossMob && !(warlordsNPC.getMob() instanceof BossMinion)) {
+        if (warlordsNPC.getMob() instanceof BossMob) {
             newKills++;
         }
     }
