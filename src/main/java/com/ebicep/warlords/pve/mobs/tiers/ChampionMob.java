@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.tiers;
 
-public interface CaptainMob extends Mob {
+public interface ChampionMob extends Mob {
 
     @Override
     default double weaponDropRate() {
