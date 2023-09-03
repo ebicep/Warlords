@@ -701,7 +701,8 @@ public class WarlordsEvents implements Listener {
         }
 
         ChatChannels channel = ChatChannels.PLAYER_CHAT_CHANNELS.getOrDefault(uuid, ChatChannels.ALL);
-        channel.onPlayerChatEvent(e, prefixWithColor);
+        ChatChannels.playerSendMessage(player, channel, e.message());
+        e.setCancelled(true);
     }
 
     @EventHandler
