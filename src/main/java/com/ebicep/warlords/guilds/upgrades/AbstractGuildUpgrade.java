@@ -29,8 +29,8 @@ public abstract class AbstractGuildUpgrade<T extends Enum<T> & GuildUpgrade> {
 
     public List<Component> getLore() {
         return Arrays.asList(
-                Component.text("Current Tier: ", NamedTextColor.GRAY).append(Component.text(tier)),
-                Component.text("Effect Bonus: ", NamedTextColor.YELLOW).append(Component.text(upgrade.getEffectBonusFromTier(tier)))
+                Component.text("Current Tier: ", NamedTextColor.GRAY).append(Component.text(tier, NamedTextColor.GREEN)),
+                Component.text("Effect Bonus: ", NamedTextColor.GRAY).append(Component.text(upgrade.getEffectBonusFromTier(tier), NamedTextColor.GREEN))
         );
     }
 
