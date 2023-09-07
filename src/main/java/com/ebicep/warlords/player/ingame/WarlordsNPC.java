@@ -84,6 +84,9 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Nonnull
     private TextComponent getNameComponent() {
+        if (mob == null) {
+            return Component.text(name, NamedTextColor.GRAY);
+        }
         TextComponent.Builder builder = Component.text();
         builder.append(mobNamePrefix)
                .append(Component.text("- "));
