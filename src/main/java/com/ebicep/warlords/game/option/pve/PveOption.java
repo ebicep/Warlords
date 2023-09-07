@@ -145,14 +145,14 @@ public interface PveOption extends Option {
                 if (event.isDamageInstance()) {
                     if (attacker instanceof WarlordsNPC) {
                         AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
-                        if (getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
+                        if (mob != null && getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
                             mob.onAttack(attacker, receiver, event);
                         }
                     }
 
                     if (receiver instanceof WarlordsNPC) {
                         AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
-                        if (getMobsMap().containsKey(mob)) {
+                        if (mob != null && getMobsMap().containsKey(mob)) {
                             mob.onDamageTaken(receiver, attacker, event);
                         }
                     }
