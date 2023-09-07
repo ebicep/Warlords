@@ -16,7 +16,6 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.Pair;
-import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -41,18 +40,8 @@ public enum ChatChannels {
         }
 
         @Override
-        public void onPlayerChatEvent(AsyncChatEvent e, Component prefixWithColor) {
-            Player player = e.getPlayer();
-            e.renderer((source, sourceDisplayName, message, viewer) ->
-                    Component.textOfChildren(
-                            getFormat(player),
-                            prefixWithColor,
-                            sourceDisplayName.color(prefixWithColor.color()),
-                            Component.text(": ").append(message)
-                    )
-            );
-            setRecipients(player, e.viewers());
-            SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
+        public boolean checkInvalidChat(Player player) {
+            return false;
         }
     },
     ALL("All",
@@ -105,18 +94,8 @@ public enum ChatChannels {
         }
 
         @Override
-        public void onPlayerChatEvent(AsyncChatEvent e, Component prefixWithColor) {
-            Player player = e.getPlayer();
-            e.renderer((source, sourceDisplayName, message, viewer) ->
-                    Component.textOfChildren(
-                            getFormat(player),
-                            prefixWithColor,
-                            sourceDisplayName.color(prefixWithColor.color()),
-                            Component.text(": ").append(message)
-                    )
-            );
-            setRecipients(player, e.viewers());
-            SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
+        public boolean checkInvalidChat(Player player) {
+            return false;
         }
     },
     PARTY("Party",
@@ -131,27 +110,16 @@ public enum ChatChannels {
         }
 
         @Override
-        public void onPlayerChatEvent(AsyncChatEvent e, Component prefixWithColor) {
-            Player player = e.getPlayer();
+        public boolean checkInvalidChat(Player player) {
             UUID uuid = player.getUniqueId();
 
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
-            if (partyPlayerPair != null) {
-                e.renderer((source, sourceDisplayName, message, viewer) ->
-                        Component.textOfChildren(
-                                getFormat(player),
-                                prefixWithColor,
-                                sourceDisplayName.color(prefixWithColor.color()),
-                                Component.text(": ").append(message)
-                        )
-                );
-                setRecipients(player, e.viewers());
-                SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
-            } else {
+            if (partyPlayerPair == null) {
                 PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
                 player.sendMessage(Component.text("You are not in a party and were moved to the ALL channel.", NamedTextColor.RED));
-                e.setCancelled(true);
+                return true;
             }
+            return false;
         }
     },
     GUILD("Guild",
@@ -166,8 +134,7 @@ public enum ChatChannels {
         }
 
         @Override
-        public void onPlayerChatEvent(AsyncChatEvent e, Component prefixWithColor) {
-            Player player = e.getPlayer();
+        public boolean checkInvalidChat(Player player) {
             UUID uuid = player.getUniqueId();
 
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
@@ -176,8 +143,7 @@ public enum ChatChannels {
                 GuildPlayer guildPlayer = guildPlayerPair.getB();
                 if (guild.isMuted() && !guild.playerHasPermission(guildPlayerPair.getB(), GuildPermissions.BYPASS_MUTE)) {
                     Guild.sendGuildMessage(player, Component.text("The guild is currently muted.", NamedTextColor.RED));
-                    e.setCancelled(true);
-                    return;
+                    return true;
                 }
                 if (guildPlayer.isMuted()) {
                     GuildPlayerMuteEntry muteEntry = guildPlayer.getMuteEntry();
@@ -190,24 +156,14 @@ public enum ChatChannels {
                                          .append(Component.text("Expires at " + AbstractGuildLog.FORMATTER.format(muteEntry.getEnd()), NamedTextColor.GRAY))
                         );
                     }
-                    e.setCancelled(true);
-                    return;
+                    return true;
                 }
-                e.renderer((source, sourceDisplayName, message, viewer) ->
-                        Component.textOfChildren(
-                                getFormat(player),
-                                prefixWithColor,
-                                sourceDisplayName.color(prefixWithColor.color()),
-                                Component.text(": ").append(message)
-                        )
-                );
-                setRecipients(player, e.viewers());
-                SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
             } else {
                 PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
                 player.sendMessage(Component.text("You are not in a guild and were moved to the ALL channel.", NamedTextColor.RED));
-                e.setCancelled(true);
+                return true;
             }
+            return false;
         }
     },
     GUILD_OFFICER("Guild Officer",
@@ -222,8 +178,7 @@ public enum ChatChannels {
         }
 
         @Override
-        public void onPlayerChatEvent(AsyncChatEvent e, Component prefixWithColor) {
-            Player player = e.getPlayer();
+        public boolean checkInvalidChat(Player player) {
             UUID uuid = player.getUniqueId();
 
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(player);
@@ -241,24 +196,14 @@ public enum ChatChannels {
                                          .append(Component.text("Expires at " + AbstractGuildLog.FORMATTER.format(muteEntry.getEnd()), NamedTextColor.GRAY))
                         );
                     }
-                    e.setCancelled(true);
-                    return;
+                    return true;
                 }
-                e.renderer((source, sourceDisplayName, message, viewer) ->
-                        Component.textOfChildren(
-                                getFormat(player),
-                                prefixWithColor,
-                                sourceDisplayName.color(prefixWithColor.color()),
-                                Component.text(": ").append(message)
-                        )
-                );
-                setRecipients(player, e.viewers());
-                SeeAllChatsCommand.addPlayerSeeAllChats(e.viewers());
             } else {
                 PLAYER_CHAT_CHANNELS.put(uuid, ChatChannels.ALL);
                 player.sendMessage(Component.text("You are not in a guild and were moved to the ALL channel.", NamedTextColor.RED));
-                e.setCancelled(true);
+                return true;
             }
+            return false;
         }
     },
 
@@ -302,6 +247,10 @@ public enum ChatChannels {
      */
     public static void playerSendMessage(Player player, ChatChannels chatChannel, Component message) {
         try {
+            boolean cancel = chatChannel.checkInvalidChat(player);
+            if (cancel) {
+                return;
+            }
             Component prefixWithColor = Permissions.getPrefixWithColor(player, true);
             Component component = chatChannel.getFormat(player)
                                              .append(prefixWithColor)
@@ -309,6 +258,7 @@ public enum ChatChannels {
             Set<Audience> viewers = new HashSet<>(Bukkit.getOnlinePlayers());
             chatChannel.setRecipients(player, viewers);
             viewers.add(Bukkit.getConsoleSender());
+            SeeAllChatsCommand.addPlayerSeeAllChats(viewers);
             for (Audience audience : viewers) {
                 audience.sendMessage(component);
             }
@@ -316,6 +266,8 @@ public enum ChatChannels {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
     }
+
+    public abstract boolean checkInvalidChat(Player player);
 
     public Component getFormat(Player player) {
         return getColoredName().append(CHAT_ARROW);
@@ -392,7 +344,6 @@ public enum ChatChannels {
     public static void sendDebugMessage(Player player, Component message) {
         ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, message);
     }
-
     public final String name;
     public final NamedTextColor textColor;
 
@@ -400,7 +351,5 @@ public enum ChatChannels {
         this.name = name;
         this.textColor = textColor;
     }
-
-    public abstract void onPlayerChatEvent(AsyncChatEvent e, Component prefixWithColor);
 
 }
