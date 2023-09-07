@@ -10,14 +10,14 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
-import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
+import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 
-public class Illumination extends AbstractMagmaCube implements IntermediateMob {
+public class Illumination extends AbstractMagmaCube implements AdvancedMob {
 
     public Illumination(Location spawnLocation) {
         super(

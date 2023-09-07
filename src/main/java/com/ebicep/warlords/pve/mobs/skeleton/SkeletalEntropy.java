@@ -6,12 +6,12 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
+import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 
-public class SkeletalEntropy extends AbstractSkeleton implements EliteMob {
+public class SkeletalEntropy extends AbstractSkeleton implements AdvancedMob {
     public SkeletalEntropy(Location spawnLocation) {
         super(
                 spawnLocation,

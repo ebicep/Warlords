@@ -5,13 +5,13 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
+import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
-public class ScrupulousZombie extends AbstractZombie implements IntermediateMob {
+public class ScrupulousZombie extends AbstractZombie implements AdvancedMob {
 
     public ScrupulousZombie(Location spawnLocation) {
         super(

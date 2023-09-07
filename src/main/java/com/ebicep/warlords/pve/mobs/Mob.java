@@ -52,16 +52,16 @@ public enum Mob {
     SKELETAL_WARLOCK(SkeletalWarlock.class, SkeletalWarlock::new),
     PIG_SHAMAN(PigShaman.class, PigShaman::new),
     PIG_ALLEVIATOR(PigAlleviator.class, PigAlleviator::new),
-    ILLUMINATION(Illumination.class, Illumination::new),
-    GOLEM_APPRENTICE(GolemApprentice.class, GolemApprentice::new),
     WITCH_DEACON(WitchDeacon.class, WitchDeacon::new),
-    SCRUPULOUS_ZOMBIE(ScrupulousZombie.class, ScrupulousZombie::new),
     BLAZING_KINDLE(BlazingKindle.class, BlazingKindle::new), //TODO
     WANDER_KNIGHTS(WanderKnights.class, WanderKnights::new),
-
-    // Advanced
     ZOMBIE_SWORDSMAN(ZombieSwordsman.class, ZombieSwordsman::new),
     ZOMBIE_LAMENT(ZombieLament.class, ZombieLament::new),
+
+    // Advanced
+    ILLUMINATION(Illumination.class, Illumination::new),
+    GOLEM_APPRENTICE(GolemApprentice.class, GolemApprentice::new),
+    SCRUPULOUS_ZOMBIE(ScrupulousZombie.class, ScrupulousZombie::new),
     SLIME_GUARD(SlimeGuard.class, SlimeGuard::new),
     CELESTIAL_BOW_WIELDER(CelestialBowWielder.class, CelestialBowWielder::new),
     ZOMBIE_VANGUARD(ZombieVanguard.class, ZombieVanguard::new),
@@ -71,24 +71,24 @@ public enum Mob {
     SLIMY_CHESS(SlimyChess.class, SlimyChess::new),
     VOID_RAIDER(ZombieRaider.class, ZombieRaider::new),
     WANDER_WALKER(WanderWalker.class, WanderWalker::new),
+    SKELETAL_ENTROPY(SkeletalEntropy.class, SkeletalEntropy::new),
 
     // Elite
     CELESTIAL_SWORD_WIELDER(CelestialSwordWielder.class, CelestialSwordWielder::new),
     CELESTIAL_OPUS(CelestialOpus.class, CelestialOpus::new),
-    SKELETAL_ENTROPY(SkeletalEntropy.class, SkeletalEntropy::new),
-    SKELETAL_SORCERER(SkeletalSorcerer.class, SkeletalSorcerer::new),
     RIFT_WALKER(RiftWalker.class, RiftWalker::new),
     FIRE_SPLITTER(FireSplitter.class, FireSplitter::new),
     OVERGROWN_ZOMBIE(OvergrownZombie.class, OvergrownZombie::new),
     SKELETAL_PYROMANCER(SkeletalPyromancer.class, SkeletalPyromancer::new),
     VOID_ANOMALY(VoidAnomaly.class, VoidAnomaly::new),
+    VOID_SKELETON(VoidSkeleton.class, VoidSkeleton::new),
 
     // Champion
     NIGHTMARE_ZOMBIE(NightmareZombie.class, NightmareZombie::new),
-    VOID_SKELETON(VoidSkeleton.class, VoidSkeleton::new),
     PIG_PARTICLE(PigParticle.class, PigParticle::new),
     EXTREME_ZEALOT(ExtremeZealot.class, ExtremeZealot::new),
     SMART_SKELETON(SmartSkeleton.class, SmartSkeleton::new),
+    SKELETAL_SORCERER(SkeletalSorcerer.class, SkeletalSorcerer::new),
 
 
     // Boss

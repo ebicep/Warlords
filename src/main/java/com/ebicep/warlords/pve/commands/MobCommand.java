@@ -55,7 +55,7 @@ public class MobCommand extends BaseCommand {
         }
     }
 
-    @Subcommand("spawnall")
+    @Subcommand("spawngroup")
     @Description("Spawns all mobs in a group")
     public void spawnGroup(
             @Conditions("requireGame:gamemode=PVE") Player player,
@@ -64,6 +64,7 @@ public class MobCommand extends BaseCommand {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
             if (option instanceof PveOption pveOption) {
+                ChatChannels.sendDebugMessage(player, Component.text("Spawning " + mobGroup.name() + " mobs", NamedTextColor.GREEN));
                 for (Mob mob : mobGroup.mobs) {
                     AbstractMob<?> abstractMob = mob.createMob.apply(player.getLocation());
                     pveOption.spawnNewMob(abstractMob);

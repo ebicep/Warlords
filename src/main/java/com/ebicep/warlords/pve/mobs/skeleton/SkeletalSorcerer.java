@@ -13,7 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
+import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class SkeletalSorcerer extends AbstractSkeleton implements EliteMob {
+public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
     public SkeletalSorcerer(Location spawnLocation) {
         super(
                 spawnLocation,

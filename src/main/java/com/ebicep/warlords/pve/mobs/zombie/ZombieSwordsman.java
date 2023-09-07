@@ -4,12 +4,12 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
+import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 
-public class ZombieSwordsman extends AbstractZombie implements AdvancedMob {
+public class ZombieSwordsman extends AbstractZombie implements IntermediateMob {
 
     public ZombieSwordsman(Location spawnLocation) {
         super(
