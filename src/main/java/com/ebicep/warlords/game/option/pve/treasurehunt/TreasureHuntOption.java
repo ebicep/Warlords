@@ -87,7 +87,7 @@ public class TreasureHuntOption implements PveOption {
 
     @Override
     public void spawnNewMob(AbstractMob<?> mob, Team team) {
-        mob.toNPC(game, team, UUID.randomUUID(), warlordsNPC -> {});
+        mob.toNPC(game, team, warlordsNPC -> {});
         game.addNPC(mob.getWarlordsNPC());
         mobs.put(mob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));

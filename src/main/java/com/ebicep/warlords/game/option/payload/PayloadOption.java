@@ -27,7 +27,6 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -196,7 +195,7 @@ public class PayloadOption implements PveOption {
 
     @Override
     public void spawnNewMob(AbstractMob<?> mob, Team team) {
-        mob.toNPC(game, team, UUID.randomUUID(), this::modifyStats);
+        mob.toNPC(game, team, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
         mobs.put(mob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));

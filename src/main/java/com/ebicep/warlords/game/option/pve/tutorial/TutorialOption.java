@@ -36,7 +36,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TutorialOption implements Option {
@@ -335,7 +338,7 @@ public class TutorialOption implements Option {
                             );
                             for (Location loc : locations) {
                                 AbstractMob<?> mob = Mob.ZOMBIE_LANCER.createMob.apply(loc);
-                                testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, UUID.randomUUID(), warlordsNPC -> {})));
+                                testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, warlordsNPC -> {})));
                                 mob.setTarget(warlordsPlayer);
                             }
                             sendTutorialMessage(p,

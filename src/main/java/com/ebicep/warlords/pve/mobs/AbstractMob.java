@@ -41,10 +41,10 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
@@ -62,6 +62,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final int damageResistance;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
+    @Nullable
+    protected Aspect aspect;
     protected BossBar bossBar = BossBar.bossBar(Component.empty(), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
     protected boolean showBossBar;
 
@@ -70,6 +72,47 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     @Nonnull
     protected AbstractPlayerClass playerClass;
+
+    public AbstractMob(
+            T entity,
+            Location spawnLocation,
+            String name,
+            EntityEquipment ee,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            AbstractAbility... abilities
+    ) {
+        this.entity = entity;
+        this.spawnLocation = spawnLocation;
+        this.name = name;
+        this.ee = ee;
+        this.maxHealth = maxHealth;
+        this.walkSpeed = walkSpeed;
+        this.damageResistance = damageResistance;
+        this.minMeleeDamage = minMeleeDamage;
+        this.maxMeleeDamage = maxMeleeDamage;
+        this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
+
+        if (ThreadLocalRandom.current().nextDouble() < .05) {
+            this.aspect = Aspect.VALUES[ThreadLocalRandom.current().nextInt(Aspect.VALUES.length)];
+        }
+
+        entity.spawn(spawnLocation);
+
+        this.mob = entity.get();
+        this.mob.persist = true;
+
+        this.livingEntity = (LivingEntity) mob.getBukkitEntity();
+
+        updateEquipment();
+
+        if (getDescription() != null) {
+            bossBar.name(Component.text(name, getColor()));
+        }
+    }
 
     public void updateEquipment() {
         EntityEquipment equipment = livingEntity.getEquipment();
@@ -95,44 +138,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return NamedTextColor.WHITE;
     }
 
-    public AbstractMob(
-            T entity,
-            Location spawnLocation,
-            String name,
-            EntityEquipment ee,
-            int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
-            float maxMeleeDamage,
-            AbstractAbility... abilities
-    ) {
-        this.entity = entity;
-        this.spawnLocation = spawnLocation;
-        this.name = name;
-        this.ee = ee;
-        this.maxHealth = maxHealth;
-        this.walkSpeed = walkSpeed;
-        this.damageResistance = damageResistance;
-        this.minMeleeDamage = minMeleeDamage;
-        this.maxMeleeDamage = maxMeleeDamage;
-        this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
-
-        entity.spawn(spawnLocation);
-
-        this.mob = entity.get();
-        this.mob.persist = true;
-
-        this.livingEntity = (LivingEntity) mob.getBukkitEntity();
-
-        updateEquipment();
-
-        if (getDescription() != null) {
-            bossBar.name(Component.text(name, getColor()));
-        }
-    }
-
-    public WarlordsNPC toNPC(Game game, Team team, UUID uuid, Consumer<WarlordsNPC> modifyStats) {
+    public WarlordsNPC toNPC(Game game, Team team, Consumer<WarlordsNPC> modifyStats) {
         this.warlordsNPC = new WarlordsNPC(
                 name,
                 livingEntity,
@@ -170,6 +176,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
         if (!bossBar.name().equals(Component.empty())) {
             showBossBar = true;
+        }
+        if (aspect != null) {
+            aspect.apply(warlordsNPC);
         }
     }
 
@@ -434,5 +443,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public boolean isShowBossBar() {
         return bossBar != null && showBossBar && !warlordsNPC.isDead();
+    }
+
+    @Nullable
+    public Aspect getAspect() {
+        return aspect;
     }
 }

@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -14,13 +15,17 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -63,7 +68,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     private int stunTicks;
     private Component mobNamePrefix = Component.empty();
     private ArmorStand nameDisplay;
-    private ItemDisplay aspect;
 
     public WarlordsNPC(
             String name,
@@ -80,12 +84,22 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Nonnull
     private TextComponent getNameComponent() {
-        return Component.empty()
-                        .append(mobNamePrefix)
-                        .append(Component.text("- "))
-                        .append(Component.text(name, NamedTextColor.GRAY))
-                        .append(Component.text(" - "))
-                        .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD));
+        TextComponent.Builder builder = Component.text();
+        builder.append(mobNamePrefix)
+               .append(Component.text("- "));
+
+        TextColor nameColor = NamedTextColor.GRAY;
+        Aspect aspect = mob.getAspect();
+        if (aspect != null) {
+            nameColor = aspect.textColor;
+            builder.append(Component.text(aspect.name + " ", aspect.textColor));
+        }
+
+        builder.append(Component.text(name, nameColor))
+               .append(Component.text(" - "))
+               .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD));
+
+        return builder.build();
     }
 
     public WarlordsNPC(
@@ -126,7 +140,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public void die(@org.jetbrains.annotations.Nullable WarlordsEntity attacker) {
+    public void die(@Nullable WarlordsEntity attacker) {
         super.die(attacker);
         nameDisplay.remove();
     }

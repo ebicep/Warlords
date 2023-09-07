@@ -244,7 +244,7 @@ public class OnslaughtOption implements PveOption {
                 currentMobSet = mobSet.getWave((game.getState().getTicksElapsed() / 20) / 60, new Random());
                 AbstractMob<?> abstractMob = currentMobSet.spawnRandomMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
-                WarlordsNPC wpc = abstractMob.toNPC(game, team, UUID.randomUUID(), OnslaughtOption.this::modifyStats);
+                WarlordsNPC wpc = abstractMob.toNPC(game, team, OnslaughtOption.this::modifyStats);
                 game.addNPC(wpc);
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
                 return wpc;
@@ -393,7 +393,7 @@ public class OnslaughtOption implements PveOption {
 
     @Override
     public void spawnNewMob(AbstractMob<?> mob) {
-        mob.toNPC(game, Team.RED, UUID.randomUUID(), this::modifyStats);
+        mob.toNPC(game, Team.RED, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
         mobs.put(mob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
@@ -401,7 +401,7 @@ public class OnslaughtOption implements PveOption {
 
     @Override
     public void spawnNewMob(AbstractMob<?> mob, Team team) {
-        mob.toNPC(game, team, UUID.randomUUID(), this::modifyStats);
+        mob.toNPC(game, team, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
         mobs.put(mob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
