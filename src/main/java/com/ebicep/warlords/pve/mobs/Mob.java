@@ -51,6 +51,7 @@ public enum Mob {
     INTERMEDIATE_WARRIOR_BERSERKER(IntermediateWarriorBerserker.class, IntermediateWarriorBerserker::new),
     SKELETAL_WARLOCK(SkeletalWarlock.class, SkeletalWarlock::new),
     PIG_SHAMAN(PigShaman.class, PigShaman::new),
+    PIG_ALLEVIATOR(PigAlleviator.class, PigAlleviator::new),
     ILLUMINATION(Illumination.class, Illumination::new),
     GOLEM_APPRENTICE(GolemApprentice.class, GolemApprentice::new),
     WITCH_DEACON(WitchDeacon.class, WitchDeacon::new),
@@ -75,7 +76,6 @@ public enum Mob {
     CELESTIAL_SWORD_WIELDER(CelestialSwordWielder.class, CelestialSwordWielder::new),
     CELESTIAL_OPUS(CelestialOpus.class, CelestialOpus::new),
     SKELETAL_ENTROPY(SkeletalEntropy.class, SkeletalEntropy::new),
-    PIG_ALLEVIATOR(PigAlleviator.class, PigAlleviator::new),
     SKELETAL_SORCERER(SkeletalSorcerer.class, SkeletalSorcerer::new),
     RIFT_WALKER(RiftWalker.class, RiftWalker::new),
     FIRE_SPLITTER(FireSplitter.class, FireSplitter::new),
@@ -137,12 +137,53 @@ public enum Mob {
     ;
 
     public static final Mob[] MOBS = values();
-    public static final Mob[] BOSSES = {BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH, CHESSKING, ILLUMINA, TORMENT, VOID, PHYSIRA};
+    public static final Mob[] BASIC = {
+            ZOMBIE_LANCER, BASIC_WARRIOR_BERSERKER, SKELETAL_MAGE, PIG_DISCIPLE, SLIMY_ANOMALY,
+            ARACHNO_VENARI
+    };
+    public static final Mob[] INTERMEDIATE = {
+            HOUND, INTERMEDIATE_WARRIOR_BERSERKER, SKELETAL_WARLOCK, PIG_SHAMAN, PIG_ALLEVIATOR,
+            ILLUMINATION, GOLEM_APPRENTICE, WITCH_DEACON, SCRUPULOUS_ZOMBIE, BLAZING_KINDLE,
+            WANDER_KNIGHTS
+    };
+    public static final Mob[] ADVANCED = {
+            ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT, SLIME_GUARD, CELESTIAL_BOW_WIELDER, ZOMBIE_VANGUARD,
+            ADVANCED_WARRIOR_BERSERKER, VOID_ZOMBIE, ZOMBIE_KNIGHT, SLIMY_CHESS, VOID_RAIDER,
+            WANDER_WALKER
+    };
+    public static final Mob[] ELITE = {
+            CELESTIAL_SWORD_WIELDER, CELESTIAL_OPUS, SKELETAL_ENTROPY, SKELETAL_SORCERER, RIFT_WALKER,
+            FIRE_SPLITTER, OVERGROWN_ZOMBIE, SKELETAL_PYROMANCER, VOID_ANOMALY
+    };
+    public static final Mob[] CHAMPION = {
+            NIGHTMARE_ZOMBIE, VOID_SKELETON, PIG_PARTICLE, EXTREME_ZEALOT, SMART_SKELETON
+    };
+    public static final Mob[] BOSSES = {
+            BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH,
+            CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE,
+            PHYSIRA
+    };
     public final Class<?> mobClass;
     public final Function<Location, AbstractMob<?>> createMob;
 
     Mob(Class<?> mobClass, Function<Location, AbstractMob<?>> createMob) {
         this.createMob = createMob;
         this.mobClass = mobClass;
+    }
+
+    public enum MobGroup {
+        BASIC(Mob.BASIC),
+        INTERMEDIATE(Mob.INTERMEDIATE),
+        ADVANCED(Mob.ADVANCED),
+        ELITE(Mob.ELITE),
+        CHAMPION(Mob.CHAMPION),
+        BOSSES(Mob.BOSSES),
+        ALL(Mob.MOBS);
+
+        public final Mob[] mobs;
+
+        MobGroup(Mob[] mobs) {
+            this.mobs = mobs;
+        }
     }
 }

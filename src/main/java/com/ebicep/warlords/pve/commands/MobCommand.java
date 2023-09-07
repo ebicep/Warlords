@@ -36,7 +36,6 @@ public class MobCommand extends BaseCommand {
 
     @Subcommand("spawn")
     @Description("Spawns mobs, amount is how many")
-    @CommandCompletion("@pvemobs")
     public void spawn(
             @Conditions("requireGame:gamemode=PVE") Player player,
             Mob mobType,
@@ -51,6 +50,26 @@ public class MobCommand extends BaseCommand {
                     SPAWNED_MOBS.add(mob);
                 }
                 ChatChannels.sendDebugMessage(player, Component.text("Spawned " + amount + " Mobs", NamedTextColor.GREEN));
+                return;
+            }
+        }
+    }
+
+    @Subcommand("spawnall")
+    @Description("Spawns all mobs in a group")
+    public void spawnGroup(
+            @Conditions("requireGame:gamemode=PVE") Player player,
+            Mob.MobGroup mobGroup
+    ) {
+        SPAWNED_MOBS.clear();
+        for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
+            if (option instanceof PveOption pveOption) {
+                for (Mob mob : mobGroup.mobs) {
+                    AbstractMob<?> abstractMob = mob.createMob.apply(player.getLocation());
+                    pveOption.spawnNewMob(abstractMob);
+                    SPAWNED_MOBS.add(abstractMob);
+                    ChatChannels.sendDebugMessage(player, Component.text("Spawned " + abstractMob.getName(), NamedTextColor.GREEN));
+                }
                 return;
             }
         }
