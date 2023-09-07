@@ -48,7 +48,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             .add(1, 5);
     public static final HashMap<DifficultyIndex, Mob> DIFFICULTY_SPAWNS = new HashMap<>() {{
         put(DifficultyIndex.EASY, Mob.ZOMBIE_LANCER);
-        put(DifficultyIndex.HARD, Mob.BAIC_WARRIOR_BERSERKER);
+        put(DifficultyIndex.HARD, Mob.BASIC_WARRIOR_BERSERKER);
         put(DifficultyIndex.EXTREME, Mob.ZOMBIE_SWORDSMAN);
     }};
     public static final ItemStack CHESTPLATE = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 200, 0);

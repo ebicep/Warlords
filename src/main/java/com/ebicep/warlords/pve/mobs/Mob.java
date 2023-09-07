@@ -40,7 +40,7 @@ public enum Mob {
 
     // Basic
     ZOMBIE_LANCER(ZombieLancer.class, ZombieLancer::new),
-    BAIC_WARRIOR_BERSERKER(BasicWarriorBerserker.class, BasicWarriorBerserker::new),
+    BASIC_WARRIOR_BERSERKER(BasicWarriorBerserker.class, BasicWarriorBerserker::new),
     SKELETAL_MAGE(SkeletalMage.class, SkeletalMage::new),
     PIG_DISCIPLE(PigDisciple.class, PigDisciple::new),
     SLIMY_ANOMALY(SlimyAnomaly.class, SlimyAnomaly::new),

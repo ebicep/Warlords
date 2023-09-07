@@ -109,7 +109,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
             berserkerSpawnCount = 9;
         }
         Mob bersekerToSpawn = switch (currentWave) {
-            case 5 -> Mob.BAIC_WARRIOR_BERSERKER;
+            case 5 -> Mob.BASIC_WARRIOR_BERSERKER;
             case 10, 15 -> Mob.INTERMEDIATE_WARRIOR_BERSERKER;
             case 20, 25 -> Mob.ADVANCED_WARRIOR_BERSERKER;
             default -> currentWave % 5 == 0 ? Mob.ADVANCED_WARRIOR_BERSERKER : null;

@@ -25,7 +25,7 @@ public class EventIllusionCore extends AbstractEventCore {
                 30,
                 new RandomCollection<Mob>()
                         .add(0.3, Mob.ZOMBIE_LANCER)
-                        .add(0.2, Mob.BAIC_WARRIOR_BERSERKER)
+                        .add(0.2, Mob.BASIC_WARRIOR_BERSERKER)
                         .add(0.2, Mob.SLIMY_ANOMALY)
                         .add(0.3, Mob.PIG_DISCIPLE)
         );
