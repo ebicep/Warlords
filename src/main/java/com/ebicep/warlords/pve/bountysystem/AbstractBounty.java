@@ -128,8 +128,9 @@ public abstract class AbstractBounty implements RewardSpendable, BountyCost {
 
         if (collection != PlayersCollections.LIFETIME) {
             pveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collection);
         }
-        DatabaseManager.getPlayer(databasePlayer.getUuid(), lifetimeDatabasePlayer -> {
+        DatabaseManager.updatePlayer(databasePlayer.getUuid(), lifetimeDatabasePlayer -> {
             DatabasePlayerPvE lifetimePveStats = lifetimeDatabasePlayer.getPveStats();
             lifetimePveStats.getBountyRewards().add(new BountyReward(getCurrencyReward(), getBounty()));
             lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);

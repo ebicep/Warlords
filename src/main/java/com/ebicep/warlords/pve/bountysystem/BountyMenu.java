@@ -28,17 +28,19 @@ import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
 public class BountyMenu {
 
     public static void openBountyMenu(Player player) {
-        Menu menu = new Menu("Bounties", 9 * 6);
+        DatabaseManager.getPlayer(player, databasePlayer -> {
+            Menu menu = new Menu("Bounties", 9 * 6);
 
-        addBountiesToMenu(player, PlayersCollections.DAILY, menu, 1, true);
-        addBountiesToMenu(player, PlayersCollections.WEEKLY, menu, 2, true);
-        addBountiesToMenu(player, PlayersCollections.LIFETIME, menu, 3, false);
+            addBountiesToMenu(player, databasePlayer, PlayersCollections.DAILY, menu, 1, true);
+            addBountiesToMenu(player, databasePlayer, PlayersCollections.WEEKLY, menu, 2, true);
+            addBountiesToMenu(player, databasePlayer, PlayersCollections.LIFETIME, menu, 3, false);
 
-        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+            menu.openForPlayer(player);
+        });
     }
 
-    private static void addBountiesToMenu(Player player, PlayersCollections collection, Menu menu, int y, boolean claimAll) {
+    private static void addBountiesToMenu(Player player, DatabasePlayer lifetimeDatabasePlayer, PlayersCollections collection, Menu menu, int y, boolean claimAll) {
         DatabaseManager.getPlayer(player.getUniqueId(), collection, databasePlayer -> {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             List<AbstractBounty> bounties = pveStats.getActiveBounties();
@@ -48,7 +50,7 @@ public class BountyMenu {
                             .get(),
                     (m, e) -> {}
             );
-            int bountiesStarted = bounties.stream().mapToInt(bounty -> bounty.isStarted() ? 1 : 0).sum();
+            int bountiesStarted = bounties.stream().mapToInt(bounty -> bounty != null && bounty.isStarted() ? 1 : 0).sum();
             boolean canBeClaimed = false;
             for (int i = 0; i < bounties.size(); i++) {
                 AbstractBounty bounty = bounties.get(i);
@@ -85,7 +87,7 @@ public class BountyMenu {
                                 for (Map.Entry<Currencies, Long> currenciesLongEntry : bountyCost.entrySet()) {
                                     Currencies currency = currenciesLongEntry.getKey();
                                     Long cost = currenciesLongEntry.getValue();
-                                    if (pveStats.getCurrencyValue(currency) < cost) {
+                                    if (lifetimeDatabasePlayer.getPveStats().getCurrencyValue(currency) < cost) {
                                         player.sendMessage(Component.text("You need ", NamedTextColor.RED)
                                                                     .append(currency.getCostColoredName(cost))
                                                                     .append(Component.text(" to start this bounty!"))
@@ -110,11 +112,9 @@ public class BountyMenu {
                                         Component.text("Cancel", NamedTextColor.RED),
                                         Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
                                         (m2, e2) -> {
-                                            DatabaseManager.getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, lifetimeDatabasePlayer -> {
-                                                for (Map.Entry<Currencies, Long> currenciesLongEntry : bountyCost.entrySet()) {
-                                                    lifetimeDatabasePlayer.getPveStats().subtractCurrency(currenciesLongEntry.getKey(), currenciesLongEntry.getValue());
-                                                }
-                                            });
+                                            for (Map.Entry<Currencies, Long> currenciesLongEntry : bountyCost.entrySet()) {
+                                                lifetimeDatabasePlayer.getPveStats().subtractCurrency(currenciesLongEntry.getKey(), currenciesLongEntry.getValue());
+                                            }
                                             bounty.setStarted(true);
                                             BountyUtils.sendBountyMessage(
                                                     player,
@@ -125,6 +125,8 @@ public class BountyMenu {
                                             );
                                             Bukkit.getPluginManager().callEvent(new BountyStartEvent(databasePlayer, bounty));
                                             player.closeInventory();
+                                            DatabaseManager.queueUpdatePlayerAsync(lifetimeDatabasePlayer);
+                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collection);
                                         },
                                         (m2, e2) -> openBountyMenu(player),
                                         (m2) -> {
@@ -141,11 +143,12 @@ public class BountyMenu {
                                 .get(),
                         (m, e) -> {
                             for (AbstractBounty bounty : bounties) {
-                                if (bounty.isStarted()) {
+                                if (bounty.isStarted() && bounty.getProgress() == null) {
                                     claimBounty(player, collection, databasePlayer, bounty);
                                 }
                             }
                             player.closeInventory();
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collection);
                         }
                 );
             }
