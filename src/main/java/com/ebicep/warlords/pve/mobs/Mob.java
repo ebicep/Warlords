@@ -72,16 +72,16 @@ public enum Mob {
     VOID_RAIDER(ZombieRaider.class, ZombieRaider::new),
     WANDER_WALKER(WanderWalker.class, WanderWalker::new),
     SKELETAL_ENTROPY(SkeletalEntropy.class, SkeletalEntropy::new),
+    FIRE_SPLITTER(FireSplitter.class, FireSplitter::new),
 
     // Elite
     CELESTIAL_SWORD_WIELDER(CelestialSwordWielder.class, CelestialSwordWielder::new),
     CELESTIAL_OPUS(CelestialOpus.class, CelestialOpus::new),
     RIFT_WALKER(RiftWalker.class, RiftWalker::new),
-    FIRE_SPLITTER(FireSplitter.class, FireSplitter::new),
     OVERGROWN_ZOMBIE(OvergrownZombie.class, OvergrownZombie::new),
     SKELETAL_PYROMANCER(SkeletalPyromancer.class, SkeletalPyromancer::new),
-    VOID_ANOMALY(VoidAnomaly.class, VoidAnomaly::new),
-    VOID_SKELETON(VoidSkeleton.class, VoidSkeleton::new),
+    SKELETAL_ANOMALY(SkeletalAnomaly.class, SkeletalAnomaly::new),
+    SKELETAL_MESMER(SkeletalMesmer.class, SkeletalMesmer::new),
 
     // Champion
     NIGHTMARE_ZOMBIE(NightmareZombie.class, NightmareZombie::new),
@@ -143,20 +143,19 @@ public enum Mob {
     };
     public static final Mob[] INTERMEDIATE = {
             HOUND, INTERMEDIATE_WARRIOR_BERSERKER, SKELETAL_WARLOCK, PIG_SHAMAN, PIG_ALLEVIATOR,
-            ILLUMINATION, GOLEM_APPRENTICE, WITCH_DEACON, SCRUPULOUS_ZOMBIE, BLAZING_KINDLE,
-            WANDER_KNIGHTS
+            WITCH_DEACON, BLAZING_KINDLE, WANDER_KNIGHTS, ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT
     };
     public static final Mob[] ADVANCED = {
-            ZOMBIE_SWORDSMAN, ZOMBIE_LAMENT, SLIME_GUARD, CELESTIAL_BOW_WIELDER, ZOMBIE_VANGUARD,
-            ADVANCED_WARRIOR_BERSERKER, VOID_ZOMBIE, ZOMBIE_KNIGHT, SLIMY_CHESS, VOID_RAIDER,
-            WANDER_WALKER
+            ILLUMINATION, GOLEM_APPRENTICE, SCRUPULOUS_ZOMBIE, SLIME_GUARD, CELESTIAL_BOW_WIELDER,
+            ZOMBIE_VANGUARD, ADVANCED_WARRIOR_BERSERKER, VOID_ZOMBIE, ZOMBIE_KNIGHT, SLIMY_CHESS,
+            VOID_RAIDER, WANDER_WALKER, SKELETAL_ENTROPY, FIRE_SPLITTER
     };
     public static final Mob[] ELITE = {
-            CELESTIAL_SWORD_WIELDER, CELESTIAL_OPUS, SKELETAL_ENTROPY, SKELETAL_SORCERER, RIFT_WALKER,
-            FIRE_SPLITTER, OVERGROWN_ZOMBIE, SKELETAL_PYROMANCER, VOID_ANOMALY
+            CELESTIAL_SWORD_WIELDER, CELESTIAL_OPUS, RIFT_WALKER, OVERGROWN_ZOMBIE,
+            SKELETAL_PYROMANCER, SKELETAL_ANOMALY, SKELETAL_MESMER
     };
     public static final Mob[] CHAMPION = {
-            NIGHTMARE_ZOMBIE, VOID_SKELETON, PIG_PARTICLE, EXTREME_ZEALOT, SMART_SKELETON
+            NIGHTMARE_ZOMBIE, PIG_PARTICLE, EXTREME_ZEALOT, SMART_SKELETON
     };
     public static final Mob[] BOSSES = {
             BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH,

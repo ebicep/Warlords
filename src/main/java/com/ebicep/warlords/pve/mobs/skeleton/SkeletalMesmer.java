@@ -15,11 +15,11 @@ import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
-public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
+public class SkeletalMesmer extends AbstractSkeleton implements EliteMob {
 
     private static final float voidRadius = 7;
 
-    public VoidSkeleton(Location spawnLocation) {
+    public SkeletalMesmer(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Skeletal Mesmer",

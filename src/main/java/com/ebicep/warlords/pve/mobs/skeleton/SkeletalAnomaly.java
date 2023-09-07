@@ -12,12 +12,12 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-public class VoidAnomaly extends AbstractSkeleton implements EliteMob {
+public class SkeletalAnomaly extends AbstractSkeleton implements EliteMob {
 
-    public VoidAnomaly(Location spawnLocation) {
+    public SkeletalAnomaly(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Void Anomaly",
+                "Skeletal Anomaly",
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SEEK_DOORS),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 64, 64, 64),
