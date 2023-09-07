@@ -20,7 +20,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
@@ -292,7 +292,7 @@ public interface PveOption extends Option {
 
     PveRewards<?> getRewards();
 
-    private void addMobDrop(WarlordsEntity event, MobDrops event1) {
+    private void addMobDrop(WarlordsEntity event, MobDrop event1) {
         getRewards().getPlayerRewards(event.getUuid())
                     .getMobDropsGained()
                     .merge(event1, 1L, Long::sum);

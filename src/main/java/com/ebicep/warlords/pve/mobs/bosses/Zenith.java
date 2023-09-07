@@ -7,8 +7,8 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.MobDrops;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -44,7 +44,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                 2500,
                 new Armageddon(),
                 new Cleanse(),
-                new SpawnMobAbility("Envoy Legionnaire", 30, Mobs.ZENITH_LEGIONNAIRE) {
+                new SpawnMobAbility("Envoy Legionnaire", 30, Mob.ZENITH_LEGIONNAIRE) {
                     @Override
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();
@@ -116,9 +116,9 @@ public class Zenith extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops() {
+    public HashMap<MobDrop, HashMap<DifficultyIndex, Double>> mobDrops() {
         return new HashMap<>() {{
-            put(MobDrops.ZENITH_STAR, new HashMap<>() {{
+            put(MobDrop.ZENITH_STAR, new HashMap<>() {{
                 put(DifficultyIndex.EASY, .015);
                 put(DifficultyIndex.NORMAL, .025);
                 put(DifficultyIndex.HARD, .05);

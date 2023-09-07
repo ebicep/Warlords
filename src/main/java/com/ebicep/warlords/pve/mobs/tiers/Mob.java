@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.mobs.tiers;
 
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.EpicWeapon;
@@ -30,7 +30,7 @@ public interface Mob {
                 .next();
     }
 
-    default HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops() {
+    default HashMap<MobDrop, HashMap<DifficultyIndex, Double>> mobDrops() {
         return new HashMap<>();
     }
 

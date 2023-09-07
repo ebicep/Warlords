@@ -1,7 +1,7 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.waves;
 
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
@@ -28,20 +28,20 @@ public class SimpleWave implements Wave {
         this.message = message;
     }
 
-    public SimpleWave add(Mobs factory) {
+    public SimpleWave add(Mob factory) {
         return add(randomCollection.getSize() == 0 ? 1 : randomCollection.getTotal() / randomCollection.getSize(), factory);
     }
 
-    public SimpleWave add(Mobs factory, Location customSpawnLocation) {
+    public SimpleWave add(Mob factory, Location customSpawnLocation) {
         return add(randomCollection.getSize() == 0 ? 1 : randomCollection.getTotal() / randomCollection.getSize(), factory, customSpawnLocation);
     }
 
-    public SimpleWave add(double baseWeight, Mobs factory) {
+    public SimpleWave add(double baseWeight, Mob factory) {
         randomCollection.add(baseWeight, new SpawnSettings(baseWeight, factory, null));
         return this;
     }
 
-    public SimpleWave add(double baseWeight, Mobs factory, Location customSpawnLocation) {
+    public SimpleWave add(double baseWeight, Mob factory, Location customSpawnLocation) {
         randomCollection.add(baseWeight, new SpawnSettings(baseWeight, factory, customSpawnLocation));
         return this;
     }
@@ -76,6 +76,6 @@ public class SimpleWave implements Wave {
         return message;
     }
 
-    record SpawnSettings(double weight, Mobs mob, Location location) {
+    record SpawnSettings(double weight, Mob mob, Location location) {
     }
 }

@@ -36,7 +36,7 @@ import org.bukkit.Location;
 
 import java.util.function.Function;
 
-public enum Mobs {
+public enum Mob {
 
     // Basic
     ZOMBIE_LANCER(ZombieLancer.class, ZombieLancer::new),
@@ -136,12 +136,12 @@ public enum Mobs {
 
     ;
 
-    public static final Mobs[] MOBS = values();
-    public static final Mobs[] BOSSES = {BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH, CHESSKING, ILLUMINA, TORMENT, VOID, PHYSIRA};
+    public static final Mob[] MOBS = values();
+    public static final Mob[] BOSSES = {BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH, CHESSKING, ILLUMINA, TORMENT, VOID, PHYSIRA};
     public final Class<?> mobClass;
     public final Function<Location, AbstractMob<?>> createMob;
 
-    Mobs(Class<?> mobClass, Function<Location, AbstractMob<?>> createMob) {
+    Mob(Class<?> mobClass, Function<Location, AbstractMob<?>> createMob) {
         this.createMob = createMob;
         this.mobClass = mobClass;
     }

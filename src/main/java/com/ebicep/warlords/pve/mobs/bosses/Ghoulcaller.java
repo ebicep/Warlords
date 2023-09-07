@@ -9,7 +9,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
@@ -58,7 +58,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 new SpawnMobAbility(
                         "Tormented Soul",
                         20,
-                        Mobs.TORMENTED_SOUL
+                        Mob.TORMENTED_SOUL
                 ) {
                     @Override
                     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {

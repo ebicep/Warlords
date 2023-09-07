@@ -8,7 +8,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.ChakramOfBlades;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -56,7 +56,7 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
                 if (Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
                     return;
                 }
-                if (event.getMobDrop() != MobDrops.ZENITH_STAR) {
+                if (event.getMobDrop() != MobDrop.ZENITH_STAR) {
                     return;
                 }
                 if (ThreadLocalRandom.current().nextDouble() > 0.25) {

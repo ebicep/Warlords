@@ -6,7 +6,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public enum MobDrops implements Spendable {
+public enum MobDrop implements Spendable {
 
     ZENITH_STAR(
             "Zenith Star",
@@ -16,13 +16,13 @@ public enum MobDrops implements Spendable {
 
     ;
 
-    public static final MobDrops[] VALUES = values();
+    public static final MobDrop[] VALUES = values();
 
     public final String name;
     public final NamedTextColor textColor;
     public final ItemStack item;
 
-    MobDrops(String name, NamedTextColor textColor, ItemStack item) {
+    MobDrop(String name, NamedTextColor textColor, ItemStack item) {
         this.name = name;
         this.textColor = textColor;
         this.item = item;

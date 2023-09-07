@@ -14,7 +14,7 @@ import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -193,11 +193,11 @@ public class ItemMichaelMenu {
             put(4, new LinkedHashMap<>() {{
 
                 put(Currencies.LEGEND_FRAGMENTS, 5_000L);
-                put(MobDrops.ZENITH_STAR, 5L);
+                put(MobDrop.ZENITH_STAR, 5L);
             }});
             put(5, new LinkedHashMap<>() {{
 
-                put(MobDrops.ZENITH_STAR, 10L);
+                put(MobDrop.ZENITH_STAR, 10L);
             }});
         }};
         private static final HashMap<Integer, List<Component>> COSTS_LORE = new HashMap<>() {{

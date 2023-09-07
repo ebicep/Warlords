@@ -15,7 +15,7 @@ import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
@@ -51,7 +51,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
     @Field("blessings_found")
     private int blessingsFound;
     @Field("mob_drops_gained")
-    private Map<MobDrops, Long> mobDropsGained = new HashMap<>();
+    private Map<MobDrop, Long> mobDropsGained = new HashMap<>();
     @Field("items_found")
     private List<AbstractItem> itemsFound = new ArrayList<>();
     @Deprecated
@@ -163,7 +163,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
         return blessingsFound;
     }
 
-    public Map<MobDrops, Long> getMobDropsGained() {
+    public Map<MobDrop, Long> getMobDropsGained() {
         return mobDropsGained;
     }
 

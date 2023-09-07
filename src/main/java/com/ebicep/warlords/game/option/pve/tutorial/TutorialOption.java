@@ -20,7 +20,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -334,7 +334,7 @@ public class TutorialOption implements Option {
                                     spawnLocation.clone().left(5)
                             );
                             for (Location loc : locations) {
-                                AbstractMob<?> mob = Mobs.ZOMBIE_LANCER.createMob.apply(loc);
+                                AbstractMob<?> mob = Mob.ZOMBIE_LANCER.createMob.apply(loc);
                                 testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, UUID.randomUUID(), warlordsNPC -> {})));
                                 mob.setTarget(warlordsPlayer);
                             }

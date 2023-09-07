@@ -13,7 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -170,7 +170,7 @@ public enum Quests {
             PlayersCollections.WEEKLY,
             null,
             new LinkedHashMap<>() {{
-                put(MobDrops.ZENITH_STAR, 1L);
+                put(MobDrop.ZENITH_STAR, 1L);
             }}
     ) {
         @Override

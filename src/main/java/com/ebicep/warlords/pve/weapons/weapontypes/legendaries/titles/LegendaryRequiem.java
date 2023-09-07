@@ -12,7 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -46,10 +46,10 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             .add(2, 3)
             .add(1, 4)
             .add(1, 5);
-    public static final HashMap<DifficultyIndex, Mobs> DIFFICULTY_SPAWNS = new HashMap<>() {{
-        put(DifficultyIndex.EASY, Mobs.ZOMBIE_LANCER);
-        put(DifficultyIndex.HARD, Mobs.BAIC_WARRIOR_BERSERKER);
-        put(DifficultyIndex.EXTREME, Mobs.ZOMBIE_SWORDSMAN);
+    public static final HashMap<DifficultyIndex, Mob> DIFFICULTY_SPAWNS = new HashMap<>() {{
+        put(DifficultyIndex.EASY, Mob.ZOMBIE_LANCER);
+        put(DifficultyIndex.HARD, Mob.BAIC_WARRIOR_BERSERKER);
+        put(DifficultyIndex.EXTREME, Mob.ZOMBIE_SWORDSMAN);
     }};
     public static final ItemStack CHESTPLATE = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 200, 0);
     public static final ItemStack LEGGINGS = com.ebicep.warlords.util.warlords.Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 200, 0);
@@ -186,7 +186,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                 HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
-                    AbstractMob<?> mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mobs.PIG_DISCIPLE).createMob.apply(player.getLocation());
+                    AbstractMob<?> mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.PIG_DISCIPLE).createMob.apply(player.getLocation());
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);

@@ -15,8 +15,8 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobDrops;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
@@ -39,7 +39,7 @@ public class MobCommand extends BaseCommand {
     @CommandCompletion("@pvemobs")
     public void spawn(
             @Conditions("requireGame:gamemode=PVE") Player player,
-            Mobs mobType,
+            Mob mobType,
             @Default("1") @Conditions("limits:min=0,max=25") Integer amount
     ) {
         SPAWNED_MOBS.clear();
@@ -59,7 +59,7 @@ public class MobCommand extends BaseCommand {
     @Subcommand("spawntest")
     public void spawnTest(
             @Conditions("requireGame:gamemode=PVE") Player player,
-            Mobs mobType
+            Mob mobType
     ) {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
@@ -219,7 +219,7 @@ public class MobCommand extends BaseCommand {
     public class MobDropCommand extends BaseCommand {
 
         @Subcommand("add")
-        public void add(Player player, MobDrops mobDrop, Integer amount) {
+        public void add(Player player, MobDrop mobDrop, Integer amount) {
             DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
                 databasePlayer.getPveStats().addMobDrops(mobDrop, amount);
             });

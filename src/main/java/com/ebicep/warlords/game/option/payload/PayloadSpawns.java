@@ -3,7 +3,7 @@ package com.ebicep.warlords.game.option.payload;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -50,7 +50,7 @@ public class PayloadSpawns {
             if (spawnLocationsNear == null) {
                 spawnLocationsNear = getSpawnLocationsNear(payloadLocation);
             }
-            List<Pair<Integer, Mobs>> spawns = timedSpawnWave.spawns();
+            List<Pair<Integer, Mob>> spawns = timedSpawnWave.spawns();
             spawnMobs(spawnMethod, spawns, spawnLocationsNear);
         }
     }
@@ -65,14 +65,14 @@ public class PayloadSpawns {
         return locations;
     }
 
-    private static void spawnMobs(BiConsumer<AbstractMob<?>, Team> spawnMethod, List<Pair<Integer, Mobs>> spawns, List<Location> spawnLocationsNear) {
+    private static void spawnMobs(BiConsumer<AbstractMob<?>, Team> spawnMethod, List<Pair<Integer, Mob>> spawns, List<Location> spawnLocationsNear) {
         int size = spawnLocationsNear.size();
         if (size == 0) {
             return;
         }
-        for (Pair<Integer, Mobs> spawn : spawns) {
+        for (Pair<Integer, Mob> spawn : spawns) {
             Integer spawnAmount = spawn.getA();
-            Mobs mobToSpawn = spawn.getB();
+            Mob mobToSpawn = spawn.getB();
             for (int i = 0; i < spawnAmount; i++) {
                 int randomIndex = ThreadLocalRandom.current().nextInt(size);
                 spawnMethod.accept(mobToSpawn.createMob.apply(spawnLocationsNear.get(randomIndex)), Team.RED);
@@ -87,16 +87,16 @@ public class PayloadSpawns {
         }
     }
 
-    public record TimedSpawnWave(int perSecond, List<Pair<Integer, Mobs>> spawns) {
+    public record TimedSpawnWave(int perSecond, List<Pair<Integer, Mob>> spawns) {
         @SafeVarargs
-        public TimedSpawnWave(int perSecond, Pair<Integer, Mobs>... spawns) {
+        public TimedSpawnWave(int perSecond, Pair<Integer, Mob>... spawns) {
             this(perSecond, Arrays.asList(spawns));
         }
     }
 
-    public record PayloadSpawnWave(List<Pair<Integer, Mobs>> spawns) {
+    public record PayloadSpawnWave(List<Pair<Integer, Mob>> spawns) {
         @SafeVarargs
-        public PayloadSpawnWave(Pair<Integer, Mobs>... spawns) {
+        public PayloadSpawnWave(Pair<Integer, Mob>... spawns) {
             this(Arrays.asList(spawns));
         }
     }

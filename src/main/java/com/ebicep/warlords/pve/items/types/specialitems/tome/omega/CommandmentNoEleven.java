@@ -5,7 +5,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,7 +46,7 @@ public class CommandmentNoEleven extends SpecialOmegaTome implements AppliesToWa
                 if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
                     return;
                 }
-                if (event.getMobDrop() != MobDrops.ZENITH_STAR) {
+                if (event.getMobDrop() != MobDrop.ZENITH_STAR) {
                     return;
                 }
                 AtomicDouble dropRate = event.getDropRate();

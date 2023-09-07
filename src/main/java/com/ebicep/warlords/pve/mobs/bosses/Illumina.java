@@ -10,7 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
@@ -61,7 +61,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                 3000,
                 new Bramble(),
                 new BrambleSlowness(),
-                new SpawnMobAbility("Exiled Skeleton", 30, Mobs.SKELETAL_SORCERER) {
+                new SpawnMobAbility("Exiled Skeleton", 30, Mob.SKELETAL_SORCERER) {
                     @Override
                     public int getSpawnAmount() {
                         long playerCount = pveOption.getGame().warlordsPlayers().count();

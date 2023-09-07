@@ -11,7 +11,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class IllusionVendorTrait extends WarlordsTrait {
 
     private static final List<SpendableBuyShop> SHOP = List.of(
-            new SpendableBuyShop(1, MobDrops.ZENITH_STAR, 3, 30),
+            new SpendableBuyShop(1, MobDrop.ZENITH_STAR, 3, 30),
             new SpendableBuyShop(200, Currencies.LEGEND_FRAGMENTS, 1, 20),
             new SpendableBuyShop(1, Currencies.CELESTIAL_BRONZE, 1, 500),
             new SpendableBuyShop(50, Currencies.FAIRY_ESSENCE, 1, 10),
@@ -62,7 +62,7 @@ public class IllusionVendorTrait extends WarlordsTrait {
             int rewardPrice = reward.price();
             String mapName = reward.getMapName();
             Long purchasedAmount = weeklyRewardsPurchased.getOrDefault(mapName, 0L);
-            if (rewardSpendable == MobDrops.ZENITH_STAR) {
+            if (rewardSpendable == MobDrop.ZENITH_STAR) {
                 rewardPrice += purchasedAmount * 10;
             }
 

@@ -7,7 +7,7 @@ import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
@@ -23,11 +23,11 @@ public class OnslaughtRewards extends PveRewards<OnslaughtOption> {
             .add(54.9, new Pair<>(Currencies.COIN, 3000L))
             .add(35, new Pair<>(Currencies.SYNTHETIC_SHARD, 40L))
             .add(10, new Pair<>(Currencies.LEGEND_FRAGMENTS, 30L))
-            .add(.1, new Pair<>(MobDrops.ZENITH_STAR, 1L));
+            .add(.1, new Pair<>(MobDrop.ZENITH_STAR, 1L));
     public static final RandomCollection<Pair<Spendable, Long>> ASPIRANT_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
             .add(65, new Pair<>(Currencies.LEGEND_FRAGMENTS, 100L))
             .add(25, new Pair<>(Currencies.SUPPLY_DROP_TOKEN, 10L))
-            .add(5, new Pair<>(MobDrops.ZENITH_STAR, 1L))
+            .add(5, new Pair<>(MobDrop.ZENITH_STAR, 1L))
             .add(5, new Pair<>(Currencies.LEGENDARY_STAR_PIECE, 1L));
 
     public OnslaughtRewards(OnslaughtOption pveOption) {

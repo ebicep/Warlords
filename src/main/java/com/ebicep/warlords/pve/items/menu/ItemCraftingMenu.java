@@ -16,7 +16,7 @@ import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
@@ -44,7 +44,7 @@ public class ItemCraftingMenu {
         put(ItemTier.DELTA, new TierCostInfo(
                 new LinkedHashMap<>() {{
                     put(Currencies.SYNTHETIC_SHARD, 10_000L);
-                    put(MobDrops.ZENITH_STAR, 2L);
+                    put(MobDrop.ZENITH_STAR, 2L);
                 }},
                 new Pair<>(1, 4),
                 new ArrayList<>() {{
@@ -57,7 +57,7 @@ public class ItemCraftingMenu {
                 new LinkedHashMap<>() {{
                     put(Currencies.SYNTHETIC_SHARD, 25_000L);
                     put(Currencies.LEGEND_FRAGMENTS, 5_000L);
-                    put(MobDrops.ZENITH_STAR, 10L);
+                    put(MobDrop.ZENITH_STAR, 10L);
                     put(Currencies.CELESTIAL_BRONZE, 5L);
                 }},
                 new Pair<>(1, 2),
@@ -69,7 +69,7 @@ public class ItemCraftingMenu {
     private static final LinkedHashMap<Spendable, Long> CELESTIAL_SMELTERY_COST = new LinkedHashMap<>() {{
         put(Currencies.LEGEND_FRAGMENTS, 5000L);
         put(Currencies.SCRAP_METAL, 100L);
-        put(MobDrops.ZENITH_STAR, 3L);
+        put(MobDrop.ZENITH_STAR, 3L);
     }};
 
     public static void openItemCraftingMenu(Player player, DatabasePlayer databasePlayer) {

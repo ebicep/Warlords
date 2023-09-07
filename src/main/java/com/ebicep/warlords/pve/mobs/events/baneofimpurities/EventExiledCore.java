@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -23,11 +23,11 @@ public class EventExiledCore extends AbstractEventCore {
                 ),
                 400000,
                 45,
-                new RandomCollection<Mobs>()
-                        .add(0.2, Mobs.EXTREME_ZEALOT)
-                        .add(0.2, Mobs.ZOMBIE_SWORDSMAN)
-                        .add(0.2, Mobs.SLIME_GUARD)
-                        .add(0.4, Mobs.ZOMBIE_LAMENT)
+                new RandomCollection<Mob>()
+                        .add(0.2, Mob.EXTREME_ZEALOT)
+                        .add(0.2, Mob.ZOMBIE_SWORDSMAN)
+                        .add(0.2, Mob.SLIME_GUARD)
+                        .add(0.4, Mob.ZOMBIE_LAMENT)
         );
     }
 

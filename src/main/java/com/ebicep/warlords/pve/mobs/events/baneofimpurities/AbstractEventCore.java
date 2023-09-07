@@ -7,7 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.mobflags.Unswappable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -31,7 +31,7 @@ import java.util.EnumSet;
 public abstract class AbstractEventCore extends AbstractZombie implements BossMob, Unswappable {
 
     private final int killTime;
-    private final RandomCollection<Mobs> summonList;
+    private final RandomCollection<Mob> summonList;
 
     public AbstractEventCore(
             Location spawnLocation,
@@ -39,7 +39,7 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
             EntityEquipment ee,
             int maxHealth,
             int killTime,
-            RandomCollection<Mobs> summonList
+            RandomCollection<Mob> summonList
     ) {
         super(spawnLocation, name, ee, maxHealth, 0, 0, 0, 0);
         this.killTime = killTime;

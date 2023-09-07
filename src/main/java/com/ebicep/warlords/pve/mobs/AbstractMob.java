@@ -250,7 +250,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public void dropMobDrop(WarlordsEntity killer) {
-        HashMap<MobDrops, HashMap<DifficultyIndex, Double>> mobDrops = mobDrops();
+        HashMap<MobDrop, HashMap<DifficultyIndex, Double>> mobDrops = mobDrops();
         if (mobDrops.isEmpty()) {
             return;
         }

@@ -10,7 +10,7 @@ import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
@@ -108,11 +108,11 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         } else if (playerCount == 4) {
             berserkerSpawnCount = 9;
         }
-        Mobs bersekerToSpawn = switch (currentWave) {
-            case 5 -> Mobs.BAIC_WARRIOR_BERSERKER;
-            case 10, 15 -> Mobs.INTERMEDIATE_WARRIOR_BERSERKER;
-            case 20, 25 -> Mobs.ADVANCED_WARRIOR_BERSERKER;
-            default -> currentWave % 5 == 0 ? Mobs.ADVANCED_WARRIOR_BERSERKER : null;
+        Mob bersekerToSpawn = switch (currentWave) {
+            case 5 -> Mob.BAIC_WARRIOR_BERSERKER;
+            case 10, 15 -> Mob.INTERMEDIATE_WARRIOR_BERSERKER;
+            case 20, 25 -> Mob.ADVANCED_WARRIOR_BERSERKER;
+            default -> currentWave % 5 == 0 ? Mob.ADVANCED_WARRIOR_BERSERKER : null;
         };
         if (bersekerToSpawn != null) {
             for (int i = 0; i < berserkerSpawnCount; i++) {

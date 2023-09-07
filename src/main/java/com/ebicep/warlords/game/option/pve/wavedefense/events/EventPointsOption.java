@@ -18,7 +18,7 @@ import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.text.Component;
@@ -60,7 +60,7 @@ public class EventPointsOption implements Option, Listener {
         return this;
     }
 
-    public EventPointsOption onPerMobKill(Mobs mob, int points) {
+    public EventPointsOption onPerMobKill(Mob mob, int points) {
         perMobKill.put(mob.mobClass, points);
         return this;
     }

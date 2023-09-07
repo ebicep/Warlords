@@ -46,7 +46,7 @@ import com.ebicep.warlords.pve.bountysystem.BountyCommand;
 import com.ebicep.warlords.pve.commands.*;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
 import com.ebicep.warlords.pve.items.ItemsCommand;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -369,8 +369,8 @@ public class CommandManager {
             }
             return null;
         });
-        commandCompletions.registerAsyncCompletion("pvemobs", command -> Arrays.stream(Mobs.values())
-                                                                               .map(Mobs::name)
+        commandCompletions.registerAsyncCompletion("pvemobs", command -> Arrays.stream(Mob.values())
+                                                                               .map(Mob::name)
                                                                                .toList());
         commandCompletions.registerAsyncCompletion("classesalias", command -> Classes.NAMES);
         commandCompletions.registerAsyncCompletion("specsalias", command -> Specializations.NAMES);

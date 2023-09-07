@@ -25,7 +25,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
@@ -678,15 +678,15 @@ public class EndState implements State, TimerDebugAble {
                                  .append(Currencies.LEGEND_FRAGMENTS.getColoredName().append(Component.text(fragmentGain == 1 ? "" : "s")))
                 );
             }
-            HashMap<MobDrops, Long> mobDropsGained = playerPveRewards.getMobDropsGained();
+            HashMap<MobDrop, Long> mobDropsGained = playerPveRewards.getMobDropsGained();
             if (!mobDropsGained.isEmpty()) {
                 if (gotAnyDrops) {
                     ChatUtils.sendCenteredMessage(player, Component.empty());
                 }
                 gotAnyDrops = true;
-                List<MobDrops> mobDrops = new ArrayList<>(mobDropsGained.keySet());
-                mobDrops.sort(Comparator.comparingInt(MobDrops::ordinal));
-                for (MobDrops mobDrop : mobDrops) {
+                List<MobDrop> mobDrops = new ArrayList<>(mobDropsGained.keySet());
+                mobDrops.sort(Comparator.comparingInt(MobDrop::ordinal));
+                for (MobDrop mobDrop : mobDrops) {
                     long amountFound = mobDropsGained.get(mobDrop);
                     ChatUtils.sendCenteredMessage(player, mobDrop.getCostColoredName(amountFound));
                 }

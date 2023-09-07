@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -23,11 +23,11 @@ public class EventIllusionCore extends AbstractEventCore {
                 ),
                 200000,
                 30,
-                new RandomCollection<Mobs>()
-                        .add(0.3, Mobs.ZOMBIE_LANCER)
-                        .add(0.2, Mobs.BAIC_WARRIOR_BERSERKER)
-                        .add(0.2, Mobs.SLIMY_ANOMALY)
-                        .add(0.3, Mobs.PIG_DISCIPLE)
+                new RandomCollection<Mob>()
+                        .add(0.3, Mob.ZOMBIE_LANCER)
+                        .add(0.2, Mob.BAIC_WARRIOR_BERSERKER)
+                        .add(0.2, Mob.SLIMY_ANOMALY)
+                        .add(0.3, Mob.PIG_DISCIPLE)
         );
     }
 

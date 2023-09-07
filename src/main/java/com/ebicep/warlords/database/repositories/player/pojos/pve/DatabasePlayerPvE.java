@@ -35,7 +35,7 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.events.supplydrop.SupplyDropEntry;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
@@ -103,7 +103,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     }};
     //MOB DROPS
     @Field("mob_drops")
-    private Map<MobDrops, Long> mobDrops = new LinkedHashMap<>();
+    private Map<MobDrop, Long> mobDrops = new LinkedHashMap<>();
     @Field("completed_tutorial")
     private boolean completedTutorial = false;
     //OLD
@@ -315,14 +315,14 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         return itemsManager;
     }
 
-    public void addMobDrops(MobDrops mobDrops, long amount) {
+    public void addMobDrops(MobDrop mobDrop, long amount) {
         if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
             return;
         }
-        if (!this.mobDrops.containsKey(mobDrops)) {
-            this.mobDrops.put(mobDrops, amount);
+        if (!this.mobDrops.containsKey(mobDrop)) {
+            this.mobDrops.put(mobDrop, amount);
         } else {
-            this.mobDrops.put(mobDrops, this.mobDrops.get(mobDrops) + amount);
+            this.mobDrops.put(mobDrop, this.mobDrops.get(mobDrop) + amount);
         }
     }
 
@@ -466,14 +466,14 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         return eventStats;
     }
 
-    public long getMobDrops(MobDrops mobDrops) {
+    public long getMobDrops(MobDrop mobDrop) {
         if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
             return Long.MAX_VALUE;
         }
-        return this.mobDrops.getOrDefault(mobDrops, 0L);
+        return this.mobDrops.getOrDefault(mobDrop, 0L);
     }
 
-    public Map<MobDrops, Long> getMobDrops() {
+    public Map<MobDrop, Long> getMobDrops() {
         return mobDrops;
     }
 

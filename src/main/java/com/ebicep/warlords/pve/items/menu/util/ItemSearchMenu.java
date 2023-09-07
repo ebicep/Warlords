@@ -13,7 +13,7 @@ import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.TriConsumer;
 import net.kyori.adventure.text.Component;
@@ -128,7 +128,7 @@ public class ItemSearchMenu extends Menu {
                 new ItemBuilder(Material.ZOMBIE_HEAD)
                         .name(Component.text("Your Drops", NamedTextColor.GREEN))
                         .lore(
-                                MobDrops.ZENITH_STAR.getCostColoredName(MobDrops.ZENITH_STAR.getFromPlayer(databasePlayer)),
+                                MobDrop.ZENITH_STAR.getCostColoredName(MobDrop.ZENITH_STAR.getFromPlayer(databasePlayer)),
                                 Currencies.CELESTIAL_BRONZE.getCostColoredName(Currencies.CELESTIAL_BRONZE.getFromPlayer(databasePlayer)),
                                 Currencies.SCRAP_METAL.getCostColoredName(Currencies.SCRAP_METAL.getFromPlayer(databasePlayer))
                         )

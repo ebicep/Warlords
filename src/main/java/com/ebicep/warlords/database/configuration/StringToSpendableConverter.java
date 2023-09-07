@@ -3,7 +3,7 @@ package com.ebicep.warlords.database.configuration;
 import com.ebicep.warlords.guilds.GuildSpendable;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import org.springframework.core.convert.converter.Converter;
 
 import javax.annotation.Nonnull;
@@ -17,7 +17,7 @@ public class StringToSpendableConverter implements Converter<String, Spendable> 
                 return value;
             }
         }
-        for (MobDrops value : MobDrops.VALUES) {
+        for (MobDrop value : MobDrop.VALUES) {
             if (value.name().equalsIgnoreCase(s)) {
                 return value;
             }

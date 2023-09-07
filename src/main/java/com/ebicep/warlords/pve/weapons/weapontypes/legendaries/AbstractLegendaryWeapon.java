@@ -9,7 +9,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.StarPieces;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.WeaponStats;
@@ -696,26 +696,26 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 cost.put(Currencies.COIN, 500_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 2500L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 1000L);
-                cost.put(MobDrops.ZENITH_STAR, 2L);
+                cost.put(MobDrop.ZENITH_STAR, 2L);
             }
             case 2 -> {
                 cost.put(Currencies.COIN, 1_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 5000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 2000L);
-                cost.put(MobDrops.ZENITH_STAR, 4L);
+                cost.put(MobDrop.ZENITH_STAR, 4L);
             }
             case 3 -> {
                 cost.put(Currencies.COIN, 2_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 7500L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 4000L);
-                cost.put(MobDrops.ZENITH_STAR, 6L);
+                cost.put(MobDrop.ZENITH_STAR, 6L);
                 cost.put(Currencies.LIMIT_BREAKER, 1L);
             }
             case 4 -> {
                 cost.put(Currencies.COIN, 4_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 8000L);
-                cost.put(MobDrops.ZENITH_STAR, 8L);
+                cost.put(MobDrop.ZENITH_STAR, 8L);
                 cost.put(Currencies.LIMIT_BREAKER, 2L);
             }
         }

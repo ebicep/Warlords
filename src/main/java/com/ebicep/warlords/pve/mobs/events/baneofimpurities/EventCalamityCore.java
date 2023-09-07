@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -23,12 +23,12 @@ public class EventCalamityCore extends AbstractEventCore {
                 ),
                 300000,
                 60,
-                new RandomCollection<Mobs>()
-                        .add(0.2, Mobs.OVERGROWN_ZOMBIE)
-                        .add(0.2, Mobs.SKELETAL_SORCERER)
-                        .add(0.2, Mobs.ADVANCED_WARRIOR_BERSERKER)
-                        .add(0.2, Mobs.ZOMBIE_KNIGHT)
-                        .add(0.2, Mobs.INTERMEDIATE_WARRIOR_BERSERKER)
+                new RandomCollection<Mob>()
+                        .add(0.2, Mob.OVERGROWN_ZOMBIE)
+                        .add(0.2, Mob.SKELETAL_SORCERER)
+                        .add(0.2, Mob.ADVANCED_WARRIOR_BERSERKER)
+                        .add(0.2, Mob.ZOMBIE_KNIGHT)
+                        .add(0.2, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
         );
     }
 

@@ -12,7 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.Illumina;
 import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -36,16 +36,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventIllumina extends AbstractZombie implements BossMob {
 
-    private final RandomCollection<Mobs> summonList = new RandomCollection<Mobs>()
-            .add(0.1, Mobs.EXTREME_ZEALOT)
-            .add(0.3, Mobs.SKELETAL_SORCERER)
-            .add(0.2, Mobs.OVERGROWN_ZOMBIE)
-            .add(0.1, Mobs.RIFT_WALKER)
-            .add(0.05, Mobs.NIGHTMARE_ZOMBIE)
-            .add(0.1, Mobs.SLIME_GUARD)
-            .add(0.1, Mobs.ADVANCED_WARRIOR_BERSERKER)
-            .add(0.05, Mobs.ZOMBIE_KNIGHT)
-            .add(0.1, Mobs.FIRE_SPLITTER);
+    private final RandomCollection<Mob> summonList = new RandomCollection<Mob>()
+            .add(0.1, Mob.EXTREME_ZEALOT)
+            .add(0.3, Mob.SKELETAL_SORCERER)
+            .add(0.2, Mob.OVERGROWN_ZOMBIE)
+            .add(0.1, Mob.RIFT_WALKER)
+            .add(0.05, Mob.NIGHTMARE_ZOMBIE)
+            .add(0.1, Mob.SLIME_GUARD)
+            .add(0.1, Mob.ADVANCED_WARRIOR_BERSERKER)
+            .add(0.05, Mob.ZOMBIE_KNIGHT)
+            .add(0.1, Mob.FIRE_SPLITTER);
     private boolean phaseOneTriggered = false;
     private boolean phaseTwoTriggered = false;
     private boolean phaseThreeTriggered = false;

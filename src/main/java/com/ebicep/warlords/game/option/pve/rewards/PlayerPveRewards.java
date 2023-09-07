@@ -2,7 +2,7 @@ package com.ebicep.warlords.game.option.pve.rewards;
 
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
-import com.ebicep.warlords.pve.mobs.MobDrops;
+import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import java.util.*;
 public class PlayerPveRewards {
     private final LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
     private final List<AbstractWeapon> weaponsFound = new ArrayList<>();
-    private final HashMap<MobDrops, Long> mobDropsGained = new HashMap<>();
+    private final HashMap<MobDrop, Long> mobDropsGained = new HashMap<>();
     private final HashMap<Integer, Long> waveDamage = new HashMap<>();
     private long legendFragmentGain = 0;
     private long illusionShardGain = 0;
@@ -24,7 +24,7 @@ public class PlayerPveRewards {
         return weaponsFound;
     }
 
-    public HashMap<MobDrops, Long> getMobDropsGained() {
+    public HashMap<MobDrop, Long> getMobDropsGained() {
         return mobDropsGained;
     }
 
