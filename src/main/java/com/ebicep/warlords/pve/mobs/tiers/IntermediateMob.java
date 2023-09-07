@@ -1,5 +1,8 @@
 package com.ebicep.warlords.pve.mobs.tiers;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+
 public interface IntermediateMob extends Mob {
 
     @Override
@@ -21,4 +24,15 @@ public interface IntermediateMob extends Mob {
     default int epicWeaponDropChance() {
         return 3;
     }
+
+    @Override
+    default int getLevel() {
+        return 2;
+    }
+
+    @Override
+    default TextColor getTextColor() {
+        return NamedTextColor.GOLD;
+    }
+
 }

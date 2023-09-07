@@ -10,9 +10,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
-import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
+import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -44,7 +43,6 @@ public class Void extends AbstractSkeleton implements BossMob {
         super(
                 spawnLocation,
                 "Void",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.END_MONSTER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
@@ -116,7 +114,7 @@ public class Void extends AbstractSkeleton implements BossMob {
             preventArmageddon = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 13000 : 15000, 11);
             for (int i = 0; i < spawnAmount; i++) {
-                option.spawnNewMob(new IronGolem(loc));
+                option.spawnNewMob(new GolemApprentice(loc));
             }
         }
 
@@ -131,7 +129,7 @@ public class Void extends AbstractSkeleton implements BossMob {
             preventArmageddon = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 21000 : 25000, 16);
             for (int i = 0; i < spawnAmount; i++) {
-                option.spawnNewMob(new IronGolem(loc));
+                option.spawnNewMob(new GolemApprentice(loc));
             }
         }
 
@@ -397,7 +395,7 @@ public class Void extends AbstractSkeleton implements BossMob {
 
                 if (countdown.get() <= 0 && damageToDeal.get() > 0) {
                     for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-                        option.spawnNewMob(new IronGolem(spawnLocation));
+                        option.spawnNewMob(new GolemApprentice(spawnLocation));
                     }
 
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()

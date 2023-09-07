@@ -10,7 +10,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.CommandmentNoEleven;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -57,7 +57,7 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
                     return;
                 }
                 if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-                    if (warlordsNPC.getMobTier() == MobTier.ILLUSION) {
+                    if (warlordsNPC.getMob() instanceof IntermediateMob) {
                         event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
                     }
                 }

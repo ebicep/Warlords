@@ -25,9 +25,9 @@ public class EventExiledCore extends AbstractEventCore {
                 45,
                 new RandomCollection<Mobs>()
                         .add(0.2, Mobs.EXTREME_ZEALOT)
-                        .add(0.2, Mobs.ELITE_ZOMBIE)
-                        .add(0.2, Mobs.SLIME_ZOMBIE)
-                        .add(0.4, Mobs.GHOST_ZOMBIE)
+                        .add(0.2, Mobs.ZOMBIE_SWORDSMAN)
+                        .add(0.2, Mobs.SLIME_GUARD)
+                        .add(0.4, Mobs.ZOMBIE_LAMENT)
         );
     }
 

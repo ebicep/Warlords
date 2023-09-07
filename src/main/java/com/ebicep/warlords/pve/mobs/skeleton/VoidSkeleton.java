@@ -8,23 +8,21 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.abilities.AdvancedVoidShred;
-import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
+import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
-public class VoidSkeleton extends AbstractSkeleton implements EliteMob {
+public class VoidSkeleton extends AbstractSkeleton implements ChampionMob {
 
     private static final float voidRadius = 7;
 
     public VoidSkeleton(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Void Mesmer",
-                MobTier.ILLUSION,
+                "Skeletal Mesmer",
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),

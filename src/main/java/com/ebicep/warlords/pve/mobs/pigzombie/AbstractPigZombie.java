@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -23,21 +22,6 @@ public abstract class AbstractPigZombie extends AbstractMob<CustomPigZombie> {
     public AbstractPigZombie(
             Location spawnLocation,
             String name,
-            MobTier mobTier,
-            EntityEquipment ee,
-            int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
-            float maxMeleeDamage
-    ) {
-        super(new CustomPigZombie(spawnLocation.getWorld()), spawnLocation, name, mobTier, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
-    }
-
-    public AbstractPigZombie(
-            Location spawnLocation,
-            String name,
-            MobTier mobTier,
             EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
@@ -46,7 +30,7 @@ public abstract class AbstractPigZombie extends AbstractMob<CustomPigZombie> {
             float maxMeleeDamage,
             AbstractAbility... abilities
     ) {
-        super(new CustomPigZombie(spawnLocation.getWorld()), spawnLocation, name, mobTier, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
+        super(new CustomPigZombie(spawnLocation.getWorld()), spawnLocation, name, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
     }
 
     static class PigZombieHealing extends AbstractAbility {

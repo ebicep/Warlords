@@ -8,8 +8,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Spider;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -21,6 +21,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
+import javax.annotation.Nonnull;
+
 public class EventForsakenCruor extends AbstractZombie implements BossMinionMob, Spider {
 
 
@@ -28,7 +30,6 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
         super(
                 spawnLocation,
                 "Forsaken Respite",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.BLOOD_SPIDER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 20, 20),
@@ -40,7 +41,8 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
                 0.45f,
                 0,
                 300,
-                450
+                450,
+                new WoundAll()
         );
     }
 
@@ -57,9 +59,30 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 140 == 0) {
-            PlayerFilterGeneric.playingGameWarlordsPlayers(option.getGame())
-                               .enemiesOf(warlordsNPC)
+
+    }
+
+    @Override
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+        // Applies wounding to enemies for 3s.
+
+    }
+
+    @Override
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+
+    }
+
+    private static class WoundAll extends AbstractPveAbility {
+
+        public WoundAll() {
+            super("Wound ALl", 7, 50);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            PlayerFilterGeneric.playingGameWarlordsPlayers(pveOption.getGame())
+                               .enemiesOf(wp)
                                .forEach(receiver -> {
                                    receiver.getCooldownManager().removePreviousWounding();
                                    receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -67,7 +90,7 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
                                            "WND",
                                            WoundingStrikeBerserker.class,
                                            new WoundingStrikeBerserker(),
-                                           warlordsNPC,
+                                           wp,
                                            CooldownTypes.DEBUFF,
                                            cooldownManager -> {
                                            },
@@ -88,18 +111,8 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
                                        }
                                    });
                                });
+            return true;
         }
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        // Applies wounding to enemies for 3s.
 
     }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
 }

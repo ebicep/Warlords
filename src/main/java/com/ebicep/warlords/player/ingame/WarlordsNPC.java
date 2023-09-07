@@ -6,9 +6,8 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -68,7 +67,6 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public WarlordsNPC(
             String name,
-            Weapons weapon,
             LivingEntity entity,
             Game game,
             Team team,
@@ -80,73 +78,21 @@ public final class WarlordsNPC extends WarlordsEntity {
         setSpawnGrave(false);
     }
 
-    public WarlordsNPC(
-            String name,
-            Weapons weapon,
-            LivingEntity entity,
-            Game game,
-            Team team,
-            Specializations specClass,
-            int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
-            float maxMeleeDamage
-    ) {
-        super(entity.getUniqueId(), name, entity, game, team, specClass);
-        this.walkSpeed = walkSpeed;
-        this.minMeleeDamage = minMeleeDamage;
-        this.maxMeleeDamage = maxMeleeDamage;
-        this.damageResistance = damageResistance;
-        updateEntity();
-        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        setSpawnGrave(false);
-        setMaxBaseHealth(maxHealth);
-        spec.setDamageResistance(damageResistance);
+    @Nonnull
+    private TextComponent getNameComponent() {
+        return Component.empty()
+                        .append(mobNamePrefix)
+                        .append(Component.text("- "))
+                        .append(Component.text(name, NamedTextColor.GRAY))
+                        .append(Component.text(" - "))
+                        .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD));
     }
 
     public WarlordsNPC(
             String name,
-            Weapons weapon,
             LivingEntity entity,
             Game game,
             Team team,
-            Specializations specClass,
-            int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
-            float maxMeleeDamage,
-            AbstractMob<?> mob
-    ) {
-        super(entity.getUniqueId(), name, entity, game, team, specClass);
-        this.mob = mob;
-        if (mob != null && mob.getMobTier() != null) {
-            mobNamePrefix = Component.textOfChildren(
-                    Component.text("[", NamedTextColor.GRAY),
-                    mob.getMobTier().getSymbol(),
-                    Component.text("] ", NamedTextColor.GRAY)
-            );
-        }
-        this.minMeleeDamage = minMeleeDamage;
-        this.maxMeleeDamage = maxMeleeDamage;
-        this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
-        this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
-        this.damageResistance = damageResistance;
-        updateEntity();
-        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        setSpawnGrave(false);
-        setMaxBaseHealth(maxHealth);
-        spec.setDamageResistance(damageResistance);
-    }
-
-    public WarlordsNPC(
-            String name,
-            Weapons weapon,
-            LivingEntity entity,
-            Game game,
-            Team team,
-            Specializations specClass,
             int maxHealth,
             float walkSpeed,
             int damageResistance,
@@ -155,19 +101,15 @@ public final class WarlordsNPC extends WarlordsEntity {
             AbstractMob<?> mob,
             AbstractPlayerClass playerClass
     ) {
-        super(entity.getUniqueId(), name, entity, game, team, specClass);
+        super(entity.getUniqueId(), name, entity, game, team, playerClass);
         this.mob = mob;
-        if (mob != null && mob.getMobTier() != null) {
+        if (mob != null) {
             mobNamePrefix = Component.textOfChildren(
                     Component.text("[", NamedTextColor.GRAY),
-                    mob.getMobTier().getSymbol(),
+                    Component.text(mob.getLevel(), mob.getTextColor()),
                     Component.text("] ", NamedTextColor.GRAY)
             );
         }
-        this.spec = playerClass;
-        this.maxHealth = this.spec.getMaxHealth();
-        this.health = this.maxHealth;
-        this.maxBaseHealth = this.maxHealth;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         this.damageResistance = damageResistance;
@@ -191,8 +133,8 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
-        if (modifier != -99 && getMobTier() != null) {
-            if (getMobTier() == MobTier.BOSS) {
+        if (modifier != -99) {
+            if (getMob() instanceof BossLike) {
                 if (modifier < 0) {
                     modifier *= .4;
                 }
@@ -242,16 +184,6 @@ public final class WarlordsNPC extends WarlordsEntity {
 
             entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         }
-    }
-
-    @Nonnull
-    private TextComponent getNameComponent() {
-        return Component.empty()
-                        .append(mobNamePrefix)
-                        .append(Component.text("- "))
-                        .append(Component.text(name, NamedTextColor.GRAY))
-                        .append(Component.text(" - "))
-                        .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD));
     }
 
     @Override
@@ -325,12 +257,8 @@ public final class WarlordsNPC extends WarlordsEntity {
         }
     }
 
-    @Nullable
-    public MobTier getMobTier() {
-        if (mob == null) {
-            return null;
-        }
-        return mob.getMobTier() == null ? MobTier.BASE : mob.getMobTier();
+    public AbstractMob<?> getMob() {
+        return mob;
     }
 
     public float getMinMeleeDamage() {
@@ -347,10 +275,6 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public void setMaxMeleeDamage(int maxMeleeDamage) {
         this.maxMeleeDamage = maxMeleeDamage;
-    }
-
-    public AbstractMob<?> getMob() {
-        return mob;
     }
 
     public float getDamageResistancePrefix() {

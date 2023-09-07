@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.slime.AbstractSlime;
@@ -26,7 +25,6 @@ public class Chessking extends AbstractSlime implements BossMob {
     public Chessking(Location spawnLocation) {
         super(spawnLocation,
                 "Chessking",
-                MobTier.BOSS,
                 null,
                 100000,
                 0.3f,
@@ -37,7 +35,7 @@ public class Chessking extends AbstractSlime implements BossMob {
                 new SpawnMobAbility(
                         "Slime Zombies",
                         20,
-                        Mobs.SLIME_ZOMBIE
+                        Mobs.SLIME_GUARD
                 ) {
                     @Override
                     public int getSpawnAmount() {
@@ -47,7 +45,7 @@ public class Chessking extends AbstractSlime implements BossMob {
                 new SpawnMobAbility(
                         "Void Slimes",
                         60,
-                        Mobs.VOID_SLIME
+                        Mobs.SLIMY_CHESS
                 ) {
                     @Override
                     public int getSpawnAmount() {

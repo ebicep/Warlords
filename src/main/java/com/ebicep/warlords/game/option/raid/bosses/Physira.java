@@ -18,10 +18,9 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.AbstractWitherSkeleton;
-import com.ebicep.warlords.pve.mobs.witherskeleton.WitherWarrior;
+import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -58,7 +57,6 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
     public Physira(Location spawnLocation) {
         super(spawnLocation,
                 "Physira",
-                MobTier.RAID_BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.GRADIENT_SOUL),
                         new ItemStack(Material.NETHERITE_CHESTPLATE),
@@ -306,7 +304,7 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
 
                     if (counter % 100 == 0) {
                         for (int i = 0; i < pveOption.playerCount(); i++) {
-                            pveOption.spawnNewMob(new WitherWarrior(warlordsNPC.getLocation()));
+                            pveOption.spawnNewMob(new CelestialOpus(warlordsNPC.getLocation()));
                         }
                     }
 

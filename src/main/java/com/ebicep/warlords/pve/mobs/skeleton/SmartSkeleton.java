@@ -7,21 +7,19 @@ import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
+import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class SmartSkeleton extends AbstractSkeleton implements BasicMob {
+public class SmartSkeleton extends AbstractSkeleton implements ChampionMob {
 
     public SmartSkeleton(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Smart Skeleton",
-                MobTier.BASE,
                 new Utils.SimpleEntityEquipment(
                         null,
                         null,

@@ -10,11 +10,10 @@ import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
+import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -46,7 +45,6 @@ public class EventNarmer extends AbstractZombie implements BossMob {
     public EventNarmer(Location spawnLocation) {
         super(spawnLocation,
                 "Narmer",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
@@ -111,10 +109,10 @@ public class EventNarmer extends AbstractZombie implements BossMob {
             berserkerSpawnCount = 9;
         }
         Mobs bersekerToSpawn = switch (currentWave) {
-            case 5 -> Mobs.BASIC_BERSERK_ZOMBIE;
-            case 10, 15 -> Mobs.ELITE_BERSERK_ZOMBIE;
-            case 20, 25 -> Mobs.ENVOY_BERSERKER_ZOMBIE;
-            default -> currentWave % 5 == 0 ? Mobs.ENVOY_BERSERKER_ZOMBIE : null;
+            case 5 -> Mobs.BAIC_WARRIOR_BERSERKER;
+            case 10, 15 -> Mobs.INTERMEDIATE_WARRIOR_BERSERKER;
+            case 20, 25 -> Mobs.ADVANCED_WARRIOR_BERSERKER;
+            default -> currentWave % 5 == 0 ? Mobs.ADVANCED_WARRIOR_BERSERKER : null;
         };
         if (bersekerToSpawn != null) {
             for (int i = 0; i < berserkerSpawnCount; i++) {
@@ -124,7 +122,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         }
 
         for (int i = 0; i < 8; i++) {
-            option.spawnNewMob(new BasicZombie(location));
+            option.spawnNewMob(new ZombieLancer(location));
         }
 
         listener = new Listener() {

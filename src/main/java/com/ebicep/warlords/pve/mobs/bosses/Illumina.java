@@ -10,15 +10,14 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
-import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
-import com.ebicep.warlords.pve.mobs.skeleton.ExiledSkeleton;
+import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
+import com.ebicep.warlords.pve.mobs.skeleton.SkeletalSorcerer;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.pve.mobs.zombie.ForgottenZombie;
+import com.ebicep.warlords.pve.mobs.zombie.NightmareZombie;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -48,7 +47,6 @@ public class Illumina extends AbstractZombie implements BossMob {
     public Illumina(Location spawnLocation) {
         super(spawnLocation,
                 "Illumina",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
@@ -63,7 +61,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                 3000,
                 new Bramble(),
                 new BrambleSlowness(),
-                new SpawnMobAbility("Exiled Skeleton", 30, Mobs.EXILED_SKELETON) {
+                new SpawnMobAbility("Exiled Skeleton", 30, Mobs.SKELETAL_SORCERER) {
                     @Override
                     public int getSpawnAmount() {
                         long playerCount = pveOption.getGame().warlordsPlayers().count();
@@ -96,7 +94,7 @@ public class Illumina extends AbstractZombie implements BossMob {
         }
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-            option.spawnNewMob(new IronGolem(spawnLocation));
+            option.spawnNewMob(new GolemApprentice(spawnLocation));
         }
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
@@ -143,7 +141,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             phaseTwoTriggered = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 9000 : 11000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
-                option.spawnNewMob(new ExiledSkeleton(loc));
+                option.spawnNewMob(new SkeletalSorcerer(loc));
             }
         }
 
@@ -151,7 +149,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             phaseThreeTriggered = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 11000 : 13000, 11);
             for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
-                option.spawnNewMob(new ForgottenZombie(loc));
+                option.spawnNewMob(new NightmareZombie(loc));
             }
         }
 
@@ -159,7 +157,7 @@ public class Illumina extends AbstractZombie implements BossMob {
             phaseFourTriggered = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 4000 : 5000, 6);
             for (int i = 0; i < ((difficulty == DifficultyIndex.EXTREME ? 1 : 2) * playerCount); i++) {
-                option.spawnNewMob(new IronGolem(loc));
+                option.spawnNewMob(new GolemApprentice(loc));
             }
         }
     }
@@ -254,7 +252,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
                 if (countdown.get() <= 0 && damageToDeal.get() > 0) {
                     for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-                        option.spawnNewMob(new IronGolem(spawnLocation));
+                        option.spawnNewMob(new GolemApprentice(spawnLocation));
                     }
 
                     EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()

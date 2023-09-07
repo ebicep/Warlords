@@ -5,8 +5,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import org.bukkit.Location;
@@ -17,14 +15,13 @@ import org.bukkit.inventory.EntityEquipment;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-public abstract class AbstractBerserkZombie extends AbstractZombie implements BasicMob {
+public abstract class AbstractBerserkZombie extends AbstractZombie {
 
     protected final BerserkerZombieWoundingStrike woundingStrike;
 
     public AbstractBerserkZombie(
             Location spawnLocation,
             String name,
-            MobTier mobTier,
             EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
@@ -36,7 +33,6 @@ public abstract class AbstractBerserkZombie extends AbstractZombie implements Ba
         super(
                 spawnLocation,
                 name,
-                mobTier,
                 ee,
                 maxHealth,
                 walkSpeed,

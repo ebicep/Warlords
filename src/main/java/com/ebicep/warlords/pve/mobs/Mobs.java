@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.game.option.raid.bosses.Physira;
-import com.ebicep.warlords.pve.mobs.blaze.Blaze;
+import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
 import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.*;
@@ -15,74 +15,81 @@ import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjet;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmer;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmerAcolyte;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.*;
-import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
-import com.ebicep.warlords.pve.mobs.magmacube.MagmaCube;
-import com.ebicep.warlords.pve.mobs.pigzombie.BasicPigZombie;
-import com.ebicep.warlords.pve.mobs.pigzombie.ElitePigZombie;
-import com.ebicep.warlords.pve.mobs.pigzombie.EnvoyPigZombie;
-import com.ebicep.warlords.pve.mobs.pigzombie.VoidPigZombie;
+import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
+import com.ebicep.warlords.pve.mobs.magmacube.Illumination;
+import com.ebicep.warlords.pve.mobs.pigzombie.PigAlleviator;
+import com.ebicep.warlords.pve.mobs.pigzombie.PigDisciple;
+import com.ebicep.warlords.pve.mobs.pigzombie.PigParticle;
+import com.ebicep.warlords.pve.mobs.pigzombie.PigShaman;
 import com.ebicep.warlords.pve.mobs.skeleton.*;
-import com.ebicep.warlords.pve.mobs.slime.BasicSlime;
-import com.ebicep.warlords.pve.mobs.slime.VoidSlime;
-import com.ebicep.warlords.pve.mobs.spider.Spider;
-import com.ebicep.warlords.pve.mobs.witch.Witch;
-import com.ebicep.warlords.pve.mobs.witherskeleton.WitherWarrior;
-import com.ebicep.warlords.pve.mobs.wolf.Wolf;
+import com.ebicep.warlords.pve.mobs.slime.SlimyAnomaly;
+import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
+import com.ebicep.warlords.pve.mobs.spider.ArachnoVenari;
+import com.ebicep.warlords.pve.mobs.witch.WitchDeacon;
+import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
+import com.ebicep.warlords.pve.mobs.wolf.Hound;
 import com.ebicep.warlords.pve.mobs.zombie.*;
-import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.BasicBerserkZombie;
-import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.EliteBerserkZombie;
-import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.EnvoyBerserkZombie;
+import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.AdvancedWarriorBerserker;
+import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.BasicWarriorBerserker;
+import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.IntermediateWarriorBerserker;
 import org.bukkit.Location;
 
 import java.util.function.Function;
 
 public enum Mobs {
-    // Base
-    BASIC_ZOMBIE(BasicZombie.class, BasicZombie::new),
-    BASIC_BERSERK_ZOMBIE(BasicBerserkZombie.class, BasicBerserkZombie::new),
-    BASIC_SKELETON(BasicSkeleton.class, BasicSkeleton::new),
-    BASIC_PIG_ZOMBIE(BasicPigZombie.class, BasicPigZombie::new),
-    BASIC_SLIME(BasicSlime.class, BasicSlime::new),
-    SPIDER(Spider.class, Spider::new),
-    WOLF(Wolf.class, Wolf::new),
 
-    // Elite Tier 1 - Elite
-    ELITE_ZOMBIE(EliteZombie.class, EliteZombie::new),
-    GHOST_ZOMBIE(GhostZombie.class, GhostZombie::new),
-    SLIME_ZOMBIE(SlimeZombie.class, SlimeZombie::new),
-    MELEE_ONLY_ZOMBIE(MeleeOnlyZombie.class, MeleeOnlyZombie::new),
-    RANGE_ONLY_SKELETON(RangeOnlySkeleton.class, RangeOnlySkeleton::new),
-    ELITE_BERSERK_ZOMBIE(EliteBerserkZombie.class, EliteBerserkZombie::new),
-    ELITE_SKELETON(EliteSkeleton.class, EliteSkeleton::new),
-    ELITE_PIG_ZOMBIE(ElitePigZombie.class, ElitePigZombie::new),
-    MAGMA_CUBE(MagmaCube.class, MagmaCube::new),
-    IRON_GOLEM(IronGolem.class, IronGolem::new),
-    BLAZE(Blaze.class, Blaze::new),
-    WITCH(Witch.class, Witch::new),
-    WITHER_SKELETON(WitherWarrior.class, WitherWarrior::new),
+    // Basic
+    ZOMBIE_LANCER(ZombieLancer.class, ZombieLancer::new),
+    BAIC_WARRIOR_BERSERKER(BasicWarriorBerserker.class, BasicWarriorBerserker::new),
+    SKELETAL_MAGE(SkeletalMage.class, SkeletalMage::new),
+    PIG_DISCIPLE(PigDisciple.class, PigDisciple::new),
+    SLIMY_ANOMALY(SlimyAnomaly.class, SlimyAnomaly::new),
+    ARACHNO_VENARI(ArachnoVenari.class, ArachnoVenari::new),
 
-    // Elite Tier 2 - Envoy
-    ENVOY_ZOMBIE(EnvoyZombie.class, EnvoyZombie::new),
-    ENVOY_SKELETON(EnvoySkeleton.class, EnvoySkeleton::new),
-    ENVOY_PIG_ZOMBIE(EnvoyPigZombie.class, EnvoyPigZombie::new),
-    ENVOY_BERSERKER_ZOMBIE(EnvoyBerserkZombie.class, EnvoyBerserkZombie::new),
+    // Intermediate
+    HOUND(Hound.class, Hound::new),
+    INTERMEDIATE_WARRIOR_BERSERKER(IntermediateWarriorBerserker.class, IntermediateWarriorBerserker::new),
+    SKELETAL_WARLOCK(SkeletalWarlock.class, SkeletalWarlock::new),
+    PIG_SHAMAN(PigShaman.class, PigShaman::new),
+    ILLUMINATION(Illumination.class, Illumination::new),
+    GOLEM_APPRENTICE(GolemApprentice.class, GolemApprentice::new),
+    WITCH_DEACON(WitchDeacon.class, WitchDeacon::new),
+    SCRUPULOUS_ZOMBIE(ScrupulousZombie.class, ScrupulousZombie::new),
+    BLAZING_KINDLE(BlazingKindle.class, BlazingKindle::new), //TODO
+    WANDER_KNIGHTS(WanderKnights.class, WanderKnights::new),
 
-    // Elite Tier 3 - Void
+    // Advanced
+    ZOMBIE_SWORDSMAN(ZombieSwordsman.class, ZombieSwordsman::new),
+    ZOMBIE_LAMENT(ZombieLament.class, ZombieLament::new),
+    SLIME_GUARD(SlimeGuard.class, SlimeGuard::new),
+    CELESTIAL_BOW_WIELDER(CelestialBowWielder.class, CelestialBowWielder::new),
+    ZOMBIE_VANGUARD(ZombieVanguard.class, ZombieVanguard::new),
+    ADVANCED_WARRIOR_BERSERKER(AdvancedWarriorBerserker.class, AdvancedWarriorBerserker::new),
     VOID_ZOMBIE(VoidZombie.class, VoidZombie::new),
+    ZOMBIE_KNIGHT(ZombieKnight.class, ZombieKnight::new),
+    SLIMY_CHESS(SlimyChess.class, SlimyChess::new),
+    VOID_RAIDER(ZombieRaider.class, ZombieRaider::new),
+    WANDER_WALKER(WanderWalker.class, WanderWalker::new),
+
+    // Elite
+    CELESTIAL_SWORD_WIELDER(CelestialSwordWielder.class, CelestialSwordWielder::new),
+    CELESTIAL_OPUS(CelestialOpus.class, CelestialOpus::new),
+    SKELETAL_ENTROPY(SkeletalEntropy.class, SkeletalEntropy::new),
+    PIG_ALLEVIATOR(PigAlleviator.class, PigAlleviator::new),
+    SKELETAL_SORCERER(SkeletalSorcerer.class, SkeletalSorcerer::new),
+    RIFT_WALKER(RiftWalker.class, RiftWalker::new),
+    FIRE_SPLITTER(FireSplitter.class, FireSplitter::new),
+    OVERGROWN_ZOMBIE(OvergrownZombie.class, OvergrownZombie::new),
+    SKELETAL_PYROMANCER(SkeletalPyromancer.class, SkeletalPyromancer::new),
+    VOID_ANOMALY(VoidAnomaly.class, VoidAnomaly::new),
+
+    // Champion
+    NIGHTMARE_ZOMBIE(NightmareZombie.class, NightmareZombie::new),
     VOID_SKELETON(VoidSkeleton.class, VoidSkeleton::new),
-    VOID_PIG_ZOMBIE(VoidPigZombie.class, VoidPigZombie::new),
-    VOID_SLIME(VoidSlime.class, VoidSlime::new),
+    PIG_PARTICLE(PigParticle.class, PigParticle::new),
+    EXTREME_ZEALOT(ExtremeZealot.class, ExtremeZealot::new),
+    SMART_SKELETON(SmartSkeleton.class, SmartSkeleton::new),
 
-    // Elite Tier 4 - Exiled
-    EXILED_ZOMBIE(ExiledZombie.class, ExiledZombie::new),
-    EXILED_SKELETON(ExiledSkeleton.class, ExiledSkeleton::new),
-    EXILED_VOID_LANCER(NetheriteZombie.class, NetheriteZombie::new),
-    EXILED_ZOMBIE_RIFT(RiftZombie.class, RiftZombie::new),
-    EXILED_ZOMBIE_LAVA(LavaZombie.class, LavaZombie::new),
-
-    // Elite Tier 5 - Forgotten
-    FORGOTTEN_ZOMBIE(ForgottenZombie.class, ForgottenZombie::new),
-    FORGOTTEN_LANCER(OvergrownZombie.class, OvergrownZombie::new),
 
     // Boss
     BOLTARO(Boltaro.class, Boltaro::new),
@@ -94,19 +101,20 @@ public enum Mobs {
     ILLUMINA(Illumina.class, Illumina::new),
     TORMENT(Torment.class, Torment::new),
     VOID(Void.class, Void::new),
+    MAGMATIC_OOZE(MagmaticOoze.class, MagmaticOoze::new),
 
     // Boss minions
     BOLTARO_SHADOW(BoltaroShadow.class, BoltaroShadow::new),
     BOLTARO_EXLIED(BoltaroExiled.class, BoltaroExiled::new),
     TORMENTED_SOUL(TormentedSoul.class, TormentedSoul::new),
     NARMER_ACOLYTE(NarmerAcolyte.class, NarmerAcolyte::new),
-    ENVOY_LEGIONNAIRE(EnvoyLegionnaire.class, EnvoyLegionnaire::new),
+    ZENITH_LEGIONNAIRE(ZenithLegionnaire.class, ZenithLegionnaire::new),
 
     // Raid Boss
     PHYSIRA(Physira.class, Physira::new),
 
     //EVENTS
-    EVENT_BOLTARO_BONANZA(EventBoltaro.class, EventBoltaro::new),
+    EVENT_BOLTARO(EventBoltaro.class, EventBoltaro::new),
     EVENT_NARMER(EventNarmer.class, EventNarmer::new),
     EVENT_NARMER_ACOLYTE(EventNarmerAcolyte.class, EventNarmerAcolyte::new),
     EVENT_NARMER_DJER(EventDjer.class, EventDjer::new),
@@ -125,20 +133,6 @@ public enum Mobs {
     EVENT_EXILED_CORE(EventExiledCore.class, EventExiledCore::new),
     EVENT_CALAMITY_CORE(EventCalamityCore.class, EventCalamityCore::new),
     EVENT_ILLUMINA(EventIllumina.class, EventIllumina::new),
-
-    //EXTREME
-    WANDER_KNIGHTS(WanderKnights.class, WanderKnights::new),
-    VOID_RAIDER(VoidRaider.class, VoidRaider::new),
-    EXTREME_ZEALOT(ExtremeZealot.class, ExtremeZealot::new),
-    WANDER_WALKER(WanderWalker.class, WanderWalker::new),
-    FORGOTTEN_PYROMANCER(ForgottenPyromancer.class, ForgottenPyromancer::new),
-    VOID_ANOMALY(VoidAnomaly.class, VoidAnomaly::new),
-
-
-    //SmartSkeleton
-    SMART_SKELETON(SmartSkeleton.class, SmartSkeleton::new),
-
-    MAGMATIC_OOZE(MagmaticOoze.class, MagmaticOoze::new),
 
     ;
 

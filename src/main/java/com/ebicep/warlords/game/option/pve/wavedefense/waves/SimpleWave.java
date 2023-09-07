@@ -1,8 +1,8 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.waves;
 
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -15,7 +15,6 @@ public class SimpleWave implements Wave {
     private final RandomCollection<SpawnSettings> randomCollection = new RandomCollection<>();
     private final int count;
     private final Component message;
-    private MobTier mobTier;
 
     public SimpleWave(@Nullable Component message) {
         this.delay = 0;
@@ -27,13 +26,6 @@ public class SimpleWave implements Wave {
         this.count = count;
         this.delay = delay;
         this.message = message;
-    }
-
-    public SimpleWave(int count, int delay, @Nullable Component message, MobTier mobTier) {
-        this.count = count;
-        this.delay = delay;
-        this.message = message;
-        this.mobTier = mobTier;
     }
 
     public SimpleWave add(Mobs factory) {
@@ -57,10 +49,11 @@ public class SimpleWave implements Wave {
     @Override
     public AbstractMob<?> spawnRandomMonster(Location loc) {
         SpawnSettings spawnSettings = randomCollection.next();
-        if (mobTier != null && mobTier.equals(MobTier.BOSS)) {
+        AbstractMob<?> mob = spawnSettings.mob().createMob.apply(spawnSettings.location() == null ? loc : spawnSettings.location());
+        if (mob instanceof BossMob) {
             loc.getWorld().spigot().strikeLightningEffect(loc, false);
         }
-        return spawnSettings.mob().createMob.apply(spawnSettings.location() == null ? loc : spawnSettings.location());
+        return mob;
     }
 
     @Override
@@ -81,10 +74,6 @@ public class SimpleWave implements Wave {
     @Override
     public Component getMessage() {
         return message;
-    }
-
-    public MobTier getMobTier() {
-        return mobTier;
     }
 
     record SpawnSettings(double weight, Mobs mob, Location location) {

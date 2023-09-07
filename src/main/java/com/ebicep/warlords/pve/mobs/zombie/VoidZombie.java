@@ -9,9 +9,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.abilities.AdvancedVoidShred;
-import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
+import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -22,15 +21,14 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class VoidZombie extends AbstractZombie implements EliteMob {
+public class VoidZombie extends AbstractZombie implements AdvancedMob {
 
     private static final int voidRadius = 4;
 
     public VoidZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Void Singularity",
-                MobTier.ILLUSION,
+                "Zombie Singularity",
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),

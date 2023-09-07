@@ -6,8 +6,7 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
+import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -15,7 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
-public class WanderWalker extends AbstractZombie implements EliteMob {
+public class WanderWalker extends AbstractZombie implements AdvancedMob {
 
     private boolean recovered = false;
     private float healthRecover = .3f;
@@ -26,8 +25,7 @@ public class WanderWalker extends AbstractZombie implements EliteMob {
     public WanderWalker(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Void Raider",
-                MobTier.ILLUSION,
+                "Zombie Raider",
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SCULK_MONSTER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 204, 204),

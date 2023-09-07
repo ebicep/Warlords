@@ -164,12 +164,23 @@ public abstract class WarlordsEntity {
             @Nonnull Team team,
             @Nonnull Specializations specClass
     ) {
+        this(uuid, name, entity, game, team, specClass.create.get());
+        this.specClass = specClass;
+    }
+
+    public WarlordsEntity(
+            @Nonnull UUID uuid,
+            @Nonnull String name,
+            @Nonnull LivingEntity entity,
+            @Nonnull Game game,
+            @Nonnull Team team,
+            @Nonnull AbstractPlayerClass playerClass
+    ) {
         this.name = name;
         this.uuid = uuid;
         this.game = game;
         this.team = team;
-        this.specClass = specClass;
-        this.spec = specClass.create.get();
+        this.spec = playerClass;
         this.maxHealth = this.spec.getMaxHealth();
         this.health = this.maxHealth;
         this.maxBaseHealth = this.maxHealth;

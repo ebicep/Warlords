@@ -5,7 +5,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -19,7 +18,6 @@ public class VoidAnomaly extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Void Anomaly",
-                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SEEK_DOORS),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 64, 64, 64),

@@ -13,13 +13,12 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractSpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmerAcolyte;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.pve.mobs.zombie.BasicZombie;
+import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -47,7 +46,6 @@ public class Narmer extends AbstractZombie implements BossMob {
     public Narmer(Location spawnLocation) {
         super(spawnLocation,
                 "Narmer",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
@@ -90,7 +88,7 @@ public class Narmer extends AbstractZombie implements BossMob {
 
 
         for (int i = 0; i < 8; i++) {
-            option.spawnNewMob(new BasicZombie(warlordsNPC.getLocation()));
+            option.spawnNewMob(new ZombieLancer(warlordsNPC.getLocation()));
         }
 
         listener = new Listener() {

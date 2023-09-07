@@ -32,7 +32,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -398,7 +398,7 @@ public class WaveDefenseOption implements PveOption {
         double scale = isEndless ? 1200.0 : 600.0;
         int playerCount = playerCount();
         // Flag check whether mob is a boss.
-        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
+        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMob() instanceof BossLike;
         // Reduce base scale by 75/100 for each player after 2 or more players in game instance.
         double modifiedScale = scale - (playerCount > 1 ? (isEndless ? 100 : 75) * playerCount : 0);
         // Divide scale based on wave count.

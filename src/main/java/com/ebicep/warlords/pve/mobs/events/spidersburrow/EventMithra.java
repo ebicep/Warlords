@@ -10,8 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
-import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.mobs.spider.Spider;
+import com.ebicep.warlords.pve.mobs.spider.ArachnoVenari;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -46,7 +45,6 @@ public class EventMithra extends AbstractZombie implements BossMob {
     public EventMithra(Location spawnLocation) {
         super(spawnLocation,
                 "Mithra",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
@@ -67,7 +65,7 @@ public class EventMithra extends AbstractZombie implements BossMob {
         super.onSpawn(option);
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-            option.spawnNewMob(new Spider(spawnLocation));
+            option.spawnNewMob(new ArachnoVenari(spawnLocation));
         }
 
         option.getGame().registerEvents(new Listener() {

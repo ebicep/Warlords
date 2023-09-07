@@ -4,7 +4,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.abilities.RemoveTarget;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -19,7 +18,6 @@ public class NarmerAcolyte extends AbstractZombie implements BossMinionMob {
     public NarmerAcolyte(Location spawnLocation) {
         super(spawnLocation,
                 "Acolyte of Narmer",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.RED_EYE),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),

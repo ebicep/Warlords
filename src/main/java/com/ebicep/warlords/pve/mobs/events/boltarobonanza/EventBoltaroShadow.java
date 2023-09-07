@@ -6,7 +6,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -24,7 +23,6 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMinionMo
     public EventBoltaroShadow(Location spawnLocation, int split) {
         super(spawnLocation,
                 "Shadow Boltaro",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.END_MONSTER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),

@@ -13,8 +13,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.permissions.Permissions;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -42,6 +40,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +56,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final LivingEntity livingEntity;
     protected final Location spawnLocation;
     protected final String name;
-    protected final MobTier mobTier;
     protected final EntityEquipment ee;
     protected final int maxHealth;
     protected final float walkSpeed;
@@ -70,44 +68,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected WarlordsNPC warlordsNPC;
     protected PveOption pveOption;
 
+    @Nonnull
     protected AbstractPlayerClass playerClass;
-
-    public AbstractMob(
-            T entity,
-            Location spawnLocation,
-            String name,
-            MobTier mobTier,
-            EntityEquipment ee,
-            int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
-            float maxMeleeDamage
-    ) {
-        this.entity = entity;
-        this.spawnLocation = spawnLocation;
-        this.name = name;
-        this.mobTier = mobTier;
-        this.ee = ee;
-        this.maxHealth = maxHealth;
-        this.walkSpeed = walkSpeed;
-        this.damageResistance = damageResistance;
-        this.minMeleeDamage = minMeleeDamage;
-        this.maxMeleeDamage = maxMeleeDamage;
-
-        entity.spawn(spawnLocation);
-
-        this.mob = entity.get();
-        this.mob.persist = true;
-
-        this.livingEntity = (LivingEntity) mob.getBukkitEntity();
-
-        updateEquipment();
-
-        if (getDescription() != null) {
-            bossBar.name(Component.text(name, getColor()));
-        }
-    }
 
     public void updateEquipment() {
         EntityEquipment equipment = livingEntity.getEquipment();
@@ -137,7 +99,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             T entity,
             Location spawnLocation,
             String name,
-            MobTier mobTier,
             EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
@@ -149,7 +110,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.entity = entity;
         this.spawnLocation = spawnLocation;
         this.name = name;
-        this.mobTier = mobTier;
         this.ee = ee;
         this.maxHealth = maxHealth;
         this.walkSpeed = walkSpeed;
@@ -173,38 +133,19 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     }
 
     public WarlordsNPC toNPC(Game game, Team team, UUID uuid, Consumer<WarlordsNPC> modifyStats) {
-        if (playerClass != null) {
-            this.warlordsNPC = new WarlordsNPC(
-                    name,
-                    Weapons.ABBADON,
-                    livingEntity,
-                    game,
-                    team,
-                    Specializations.PYROMANCER,
-                    maxHealth,
-                    walkSpeed,
-                    damageResistance,
-                    minMeleeDamage,
-                    maxMeleeDamage,
-                    this,
-                    playerClass
-            );
-        } else {
-            this.warlordsNPC = new WarlordsNPC(
-                    name,
-                    Weapons.ABBADON,
-                    livingEntity,
-                    game,
-                    team,
-                    Specializations.PYROMANCER,
-                    maxHealth,
-                    walkSpeed,
-                    damageResistance,
-                    minMeleeDamage,
-                    maxMeleeDamage,
-                    this
-            );
-        }
+        this.warlordsNPC = new WarlordsNPC(
+                name,
+                livingEntity,
+                game,
+                team,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                this,
+                playerClass
+        );
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
             if (ability instanceof Fireball fireball) {
                 fireball.setMaxDistance(150);
@@ -485,10 +426,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public String getName() {
         return name;
-    }
-
-    public MobTier getMobTier() {
-        return mobTier;
     }
 
     public EntityEquipment getEe() {

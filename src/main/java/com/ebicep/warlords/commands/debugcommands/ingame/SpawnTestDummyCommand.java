@@ -5,7 +5,6 @@ import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -27,7 +26,6 @@ public class SpawnTestDummyCommand extends BaseCommand {
         Game game = warlordsPlayer.getGame();
         WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
                 "testdummy",
-                Weapons.BLUDGEON,
                 WarlordsNPC.spawnZombieNoAI(warlordsPlayer.getLocation(), null),
                 game,
                 team,

@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.AbstractWitherSkeleton;
@@ -32,7 +31,6 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
         super(
                 spawnLocation,
                 "Torment",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEMON_KING),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 230, 60, 60),

@@ -8,7 +8,6 @@ import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.MobDrops;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
@@ -31,7 +30,6 @@ public class Zenith extends AbstractZombie implements BossMob {
     public Zenith(Location spawnLocation) {
         super(spawnLocation,
                 "Zenith",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.PURPLE_ENDERMAN),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
@@ -46,7 +44,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                 2500,
                 new Armageddon(),
                 new Cleanse(),
-                new SpawnMobAbility("Envoy Legionnaire", 30, Mobs.ENVOY_LEGIONNAIRE) {
+                new SpawnMobAbility("Envoy Legionnaire", 30, Mobs.ZENITH_LEGIONNAIRE) {
                     @Override
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();

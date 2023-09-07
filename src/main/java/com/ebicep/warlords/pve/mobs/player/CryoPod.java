@@ -4,19 +4,18 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 
-public class CryoPod extends AbstractZombie {
+public class CryoPod extends AbstractZombie implements BasicMob {
 
     public CryoPod(Location spawnLocation, String playerName) {
         super(
                 spawnLocation,
                 playerName + "'s Cryopod",
-                MobTier.BASE,
                 null,
                 20000,
                 0,

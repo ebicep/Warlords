@@ -4,8 +4,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Spider;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -15,6 +15,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
+import javax.annotation.Nonnull;
+
 public class EventForsakenFrost extends AbstractZombie implements BossMinionMob, Spider {
 
 
@@ -22,7 +24,6 @@ public class EventForsakenFrost extends AbstractZombie implements BossMinionMob,
         super(
                 spawnLocation,
                 "Forsaken Respite",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.WHITE_SPIDER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
@@ -34,7 +35,8 @@ public class EventForsakenFrost extends AbstractZombie implements BossMinionMob,
                 0.45f,
                 0,
                 300,
-                450
+                450,
+                new Frost()
         );
     }
 
@@ -51,12 +53,6 @@ public class EventForsakenFrost extends AbstractZombie implements BossMinionMob,
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        // Slows enemies by 20% every 3s.
-        if (ticksElapsed % 60 == 0) {
-            PlayerFilterGeneric.playingGameWarlordsPlayers(option.getGame())
-                               .enemiesOf(warlordsNPC)
-                               .forEach(warlordsPlayer -> warlordsPlayer.addSpeedModifier(warlordsPlayer, name, -20, 20, "BASE"));
-        }
     }
 
     @Override
@@ -66,6 +62,22 @@ public class EventForsakenFrost extends AbstractZombie implements BossMinionMob,
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+
+    }
+
+    private static class Frost extends AbstractPveAbility {
+
+        public Frost() {
+            super("Frost", 3, 50);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            PlayerFilterGeneric.playingGameWarlordsPlayers(pveOption.getGame())
+                               .enemiesOf(wp)
+                               .forEach(warlordsPlayer -> warlordsPlayer.addSpeedModifier(warlordsPlayer, name, -20, 20, "BASE"));
+            return true;
+        }
 
     }
 

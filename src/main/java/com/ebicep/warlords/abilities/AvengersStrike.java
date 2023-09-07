@@ -8,7 +8,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
+import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengerStrikeBranch;
@@ -76,13 +77,13 @@ public class AvengersStrike extends AbstractStrike {
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
         float multiplier = 1;
         float healthDamage = 0;
-        if (nearPlayer instanceof WarlordsNPC) {
+        if (nearPlayer instanceof WarlordsNPC warlordsNPC) {
             if (pveMasterUpgrade) {
-                if (((WarlordsNPC) nearPlayer).getMobTier() == MobTier.BASE) {
+                if (warlordsNPC.getMob() instanceof BasicMob) {
                     multiplier = 1.4f;
                 }
 
-                if (((WarlordsNPC) nearPlayer).getMobTier() == MobTier.ILLUSION) {
+                if (warlordsNPC.getMob() instanceof IntermediateMob) {
                     healthDamage = nearPlayer.getMaxHealth() * 0.005f;
                 }
             }

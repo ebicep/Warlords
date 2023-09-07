@@ -9,7 +9,6 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
@@ -43,7 +42,6 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     public Ghoulcaller(Location spawnLocation) {
         super(spawnLocation,
                 "Ghoulcaller",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 170, 170, 170),

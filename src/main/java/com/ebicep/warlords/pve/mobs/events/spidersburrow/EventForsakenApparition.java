@@ -4,7 +4,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Spider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -24,7 +23,6 @@ public class EventForsakenApparition extends AbstractZombie implements BossMinio
         super(
                 spawnLocation,
                 "Forsaken Apparition",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.SPIDER_SPIRIT),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 64, 140, 255),

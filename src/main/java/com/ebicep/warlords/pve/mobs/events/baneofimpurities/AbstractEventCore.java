@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.mobflags.Unswappable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -42,7 +41,7 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
             int killTime,
             RandomCollection<Mobs> summonList
     ) {
-        super(spawnLocation, name, MobTier.BOSS, ee, maxHealth, 0, 0, 0, 0);
+        super(spawnLocation, name, ee, maxHealth, 0, 0, 0, 0);
         this.killTime = killTime;
         this.summonList = summonList;
         livingEntity.setGravity(false);

@@ -8,7 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -58,7 +58,7 @@ public class LilithsClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();
                 if (warlordsEntity instanceof WarlordsNPC warlordsNPC) {
-                    if (warlordsNPC.getMobTier() == MobTier.BOSS) {
+                    if (warlordsNPC.getMob() instanceof BossLike) {
                         return;
                     }
                     if (ThreadLocalRandom.current().nextDouble() > 0.01) {

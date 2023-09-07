@@ -8,7 +8,7 @@ import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -23,12 +23,12 @@ import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.List;
 
 public class EventDjer extends AbstractZombie implements BossMinionMob {
 
-    private final int earthQuakeRadius = 12;
     private final HashSet<String> skillsImmuneTo = new HashSet<>() {{
         add("Seismic Wave");
         add("Ground Slam");
@@ -42,7 +42,6 @@ public class EventDjer extends AbstractZombie implements BossMinionMob {
     public EventDjer(Location spawnLocation) {
         super(spawnLocation,
                 "Djer",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.ETHEREAL_WITHER_SKULL),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
@@ -54,7 +53,8 @@ public class EventDjer extends AbstractZombie implements BossMinionMob {
                 0.32f,
                 10,
                 1100,
-                1310
+                1310,
+                new GroundShred()
         );
     }
 
@@ -103,49 +103,6 @@ public class EventDjer extends AbstractZombie implements BossMinionMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        Location loc = warlordsNPC.getLocation();
-
-        if (ticksElapsed % 100 == 0) {
-            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
-            EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
-            List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric
-                    .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
-                    .aliveEnemiesOf(warlordsNPC)
-                    .warlordsPlayers()
-                    .stream()
-                    .toList();
-            for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                Utils.addKnockback(name, loc, warlordsPlayer, -2.5, 0.25);
-                warlordsPlayer.addDamageInstance(
-                        warlordsNPC,
-                        "Ground Shred",
-                        920,
-                        1080,
-                        0,
-                        100
-                );
-            }
-            new GameRunnable(option.getGame()) {
-
-                @Override
-                public void run() {
-                    for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                        warlordsPlayer.stun();
-                    }
-                }
-            }.runTaskLater(30);
-            new GameRunnable(option.getGame()) {
-
-                @Override
-                public void run() {
-                    for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                        warlordsPlayer.unstun();
-                    }
-                }
-            }.runTaskLater(50);
-        }
     }
 
     @Override
@@ -162,4 +119,58 @@ public class EventDjer extends AbstractZombie implements BossMinionMob {
         return !(warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75);
     }
 
+    private static class GroundShred extends AbstractPveAbility {
+
+        private final int earthQuakeRadius = 12;
+
+        public GroundShred() {
+            super("Ground Shred", 5, 50);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            Location loc = wp.getLocation();
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
+            EffectUtils.strikeLightning(loc, false);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
+            List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric
+                    .entitiesAround(wp, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
+                    .aliveEnemiesOf(wp)
+                    .warlordsPlayers()
+                    .stream()
+                    .toList();
+            for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
+                Utils.addKnockback(name, loc, warlordsPlayer, -2.5, 0.25);
+                warlordsPlayer.addDamageInstance(
+                        wp,
+                        "Ground Shred",
+                        920,
+                        1080,
+                        0,
+                        100
+                );
+            }
+            new GameRunnable(pveOption.getGame()) {
+
+                @Override
+                public void run() {
+                    for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
+                        warlordsPlayer.stun();
+                    }
+                }
+            }.runTaskLater(30);
+            new GameRunnable(pveOption.getGame()) {
+
+                @Override
+                public void run() {
+                    for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
+                        warlordsPlayer.unstun();
+                    }
+                }
+            }.runTaskLater(50);
+            return true;
+        }
+
+    }
 }

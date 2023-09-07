@@ -26,7 +26,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
@@ -334,7 +334,7 @@ public class OnslaughtOption implements PveOption {
         double scale = 900.0;
         long playerCount = game.warlordsPlayers().count();
         // Flag check whether mob is a boss.
-        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMobTier() == MobTier.BOSS;
+        boolean bossFlagCheck = playerCount > 1 && warlordsNPC.getMob() instanceof BossLike;
         // Reduce base scale by 50 for each player after 2 or more players in game instance.
         double modifiedScale = scale - (playerCount > 1 ? (100 * playerCount) : 0);
         // Divide scale based on game time.

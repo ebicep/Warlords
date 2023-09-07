@@ -16,7 +16,6 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -335,7 +334,7 @@ public class TutorialOption implements Option {
                                     spawnLocation.clone().left(5)
                             );
                             for (Location loc : locations) {
-                                AbstractMob<?> mob = Mobs.BASIC_ZOMBIE.createMob.apply(loc);
+                                AbstractMob<?> mob = Mobs.ZOMBIE_LANCER.createMob.apply(loc);
                                 testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, UUID.randomUUID(), warlordsNPC -> {})));
                                 mob.setTarget(warlordsPlayer);
                             }
@@ -424,7 +423,6 @@ public class TutorialOption implements Option {
         for (Location location : locations) {
             WarlordsNPC testDummy = game.addNPC(new WarlordsNPC(
                     "TestDummy",
-                    Weapons.BLUDGEON,
                     WarlordsNPC.spawnZombieNoAI(location, null),
                     game,
                     Team.RED,

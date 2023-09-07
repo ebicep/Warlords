@@ -11,7 +11,6 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -49,8 +48,7 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 WarlordsEntity attacker = event.getAttacker();
                 if (attacker instanceof WarlordsNPC warlordsNPC) {
-                    MobTier mobTier = warlordsNPC.getMobTier();
-                    if (mobTier.ordinal() < 1) {
+                    if (warlordsNPC.getMob().getLevel() < 2) {
                         return currentDamageValue * 0.9f;
                     }
                 }

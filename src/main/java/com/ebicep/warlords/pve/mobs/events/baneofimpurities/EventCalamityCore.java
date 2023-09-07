@@ -24,11 +24,11 @@ public class EventCalamityCore extends AbstractEventCore {
                 300000,
                 60,
                 new RandomCollection<Mobs>()
-                        .add(0.2, Mobs.FORGOTTEN_LANCER)
-                        .add(0.2, Mobs.EXILED_SKELETON)
-                        .add(0.2, Mobs.ENVOY_BERSERKER_ZOMBIE)
-                        .add(0.2, Mobs.EXILED_VOID_LANCER)
-                        .add(0.2, Mobs.ELITE_BERSERK_ZOMBIE)
+                        .add(0.2, Mobs.OVERGROWN_ZOMBIE)
+                        .add(0.2, Mobs.SKELETAL_SORCERER)
+                        .add(0.2, Mobs.ADVANCED_WARRIOR_BERSERKER)
+                        .add(0.2, Mobs.ZOMBIE_KNIGHT)
+                        .add(0.2, Mobs.INTERMEDIATE_WARRIOR_BERSERKER)
         );
     }
 

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
 import com.ebicep.warlords.abilities.CripplingStrike;
+import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -8,7 +9,7 @@ import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -18,14 +19,15 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
+import javax.annotation.Nonnull;
+
 public class EventDjet extends AbstractZombie implements BossMinionMob {
 
-    private boolean fireFlameBursts = false;
+    private boolean wentBelowHealthThreshold = false;
 
     public EventDjet(Location spawnLocation) {
         super(spawnLocation,
                 "Djet",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.ETHEREAL_WITHER_SKULL),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
@@ -37,7 +39,9 @@ public class EventDjet extends AbstractZombie implements BossMinionMob {
                 0.32f,
                 10,
                 930,
-                1210
+                1210,
+                new FlameBurst(1200, 1380),
+                new SilenceCrippleAll()
         );
     }
 
@@ -50,24 +54,13 @@ public class EventDjet extends AbstractZombie implements BossMinionMob {
             warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
             warlordsNPC.heal();
         }
-//        AbstractAbility redAbility = warlordsNPC.getRedAbility(); TODO
-//        redAbility.setMinDamageHeal(1200);
-//        redAbility.setMinDamageHeal(1380);
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 60 == 0 && aboveHealthThreshold()) {
-            //warlordsNPC.getRedAbility().onActivate(warlordsNPC, null); TODO
-        }
-        if (ticksElapsed % 100 == 0) {
-            for (WarlordsPlayer warlordsPlayer : PlayerFilterGeneric
-                    .playingGameWarlordsPlayers(warlordsNPC.getGame())
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                SoulShackle.shacklePlayer(warlordsPlayer, warlordsPlayer, 60);
-                CripplingStrike.cripple(warlordsNPC, warlordsPlayer, name, 3 * 20);
-            }
+        if (!aboveHealthThreshold() && !wentBelowHealthThreshold) {
+            wentBelowHealthThreshold = true;
+            playerClass.getAbilities().get(0).setCooldown(Float.MAX_VALUE);
         }
     }
 
@@ -86,6 +79,26 @@ public class EventDjet extends AbstractZombie implements BossMinionMob {
     }
 
     private boolean aboveHealthThreshold() {
-        return !(warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75);
+        return warlordsNPC.getHealth() > warlordsNPC.getMaxBaseHealth() * .75;
+    }
+
+    private static class SilenceCrippleAll extends AbstractPveAbility {
+
+        public SilenceCrippleAll() {
+            super("Djet", 5, 50);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            for (WarlordsPlayer warlordsPlayer : PlayerFilterGeneric
+                    .playingGameWarlordsPlayers(wp.getGame())
+                    .aliveEnemiesOf(wp)
+            ) {
+                SoulShackle.shacklePlayer(warlordsPlayer, warlordsPlayer, 60);
+                CripplingStrike.cripple(wp, warlordsPlayer, name, 3 * 20);
+            }
+            return true;
+        }
+
     }
 }

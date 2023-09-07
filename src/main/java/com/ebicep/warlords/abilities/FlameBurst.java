@@ -32,6 +32,10 @@ public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
         super("Flame Burst", 557, 753, 9.4f, 60, 25, 185, 1.65, 200, false);
     }
 
+    public FlameBurst(float minDamageHeal, int maxDamageHeal, float filler) {
+        super("Flame Burst", minDamageHeal, maxDamageHeal, 9.4f, 60, 25, 185, 1.65, 200, false);
+    }
+
     public FlameBurst(float cooldown) {
         super("Flame Burst", 557, 753, cooldown, 60, 25, 185, 1.65, 200, false);
     }

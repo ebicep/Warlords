@@ -5,7 +5,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Spider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -22,7 +21,6 @@ public class EventForsakenFoliage extends AbstractZombie implements BossMinionMo
         super(
                 spawnLocation,
                 "Forsaken Respite",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.JUNGLE_SPIDER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 14, 87, 9),
@@ -34,7 +32,11 @@ public class EventForsakenFoliage extends AbstractZombie implements BossMinionMo
                 0.45f,
                 0,
                 300,
-                450
+                450,
+                new EarthlivingWeapon() {{ // Attacks are converted into Earth Living with double the proc chance as standard.
+                    setProcChance(getProcChance() * 2);
+                    setTickDuration(18000);
+                }}
         );
     }
 
@@ -47,11 +49,7 @@ public class EventForsakenFoliage extends AbstractZombie implements BossMinionMo
             warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
             warlordsNPC.heal();
         }
-        // Attacks are converted into Earth Living with double the proc chance as standard.
-        EarthlivingWeapon earthlivingWeapon = new EarthlivingWeapon();
-        earthlivingWeapon.setProcChance(earthlivingWeapon.getProcChance() * 2);
-        earthlivingWeapon.setTickDuration(18000);
-        earthlivingWeapon.onActivate(warlordsNPC, null);
+        warlordsNPC.getAbilities().get(0).onActivate(warlordsNPC, null);
     }
 
     @Override

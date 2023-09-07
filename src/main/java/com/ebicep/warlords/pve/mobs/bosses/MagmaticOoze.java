@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.magmacube.AbstractMagmaCube;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -48,7 +47,6 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
         super(10 - (splitNumber * 2),
                 spawnLocation,
                 "Magmatic Ooze",
-                MobTier.ILLUSION,
                 null,
                 (int) (health / (splitNumber + 1)),
                 1f,
@@ -315,7 +313,6 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
     }
 
     public static class HeatAura extends AbstractPveAbility {
-
 
         private final int hitbox;
 

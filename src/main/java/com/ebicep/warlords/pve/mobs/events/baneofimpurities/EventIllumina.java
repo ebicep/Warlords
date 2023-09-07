@@ -12,10 +12,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Mobs;
 import com.ebicep.warlords.pve.mobs.bosses.Illumina;
-import com.ebicep.warlords.pve.mobs.irongolem.IronGolem;
+import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -39,14 +38,14 @@ public class EventIllumina extends AbstractZombie implements BossMob {
 
     private final RandomCollection<Mobs> summonList = new RandomCollection<Mobs>()
             .add(0.1, Mobs.EXTREME_ZEALOT)
-            .add(0.3, Mobs.EXILED_SKELETON)
-            .add(0.2, Mobs.FORGOTTEN_LANCER)
-            .add(0.1, Mobs.EXILED_ZOMBIE_RIFT)
-            .add(0.05, Mobs.FORGOTTEN_ZOMBIE)
-            .add(0.1, Mobs.SLIME_ZOMBIE)
-            .add(0.1, Mobs.ENVOY_BERSERKER_ZOMBIE)
-            .add(0.05, Mobs.EXILED_VOID_LANCER)
-            .add(0.1, Mobs.EXILED_ZOMBIE_LAVA);
+            .add(0.3, Mobs.SKELETAL_SORCERER)
+            .add(0.2, Mobs.OVERGROWN_ZOMBIE)
+            .add(0.1, Mobs.RIFT_WALKER)
+            .add(0.05, Mobs.NIGHTMARE_ZOMBIE)
+            .add(0.1, Mobs.SLIME_GUARD)
+            .add(0.1, Mobs.ADVANCED_WARRIOR_BERSERKER)
+            .add(0.05, Mobs.ZOMBIE_KNIGHT)
+            .add(0.1, Mobs.FIRE_SPLITTER);
     private boolean phaseOneTriggered = false;
     private boolean phaseTwoTriggered = false;
     private boolean phaseThreeTriggered = false;
@@ -58,7 +57,6 @@ public class EventIllumina extends AbstractZombie implements BossMob {
     public EventIllumina(Location spawnLocation) {
         super(spawnLocation,
                 "Illumina",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
@@ -90,7 +88,7 @@ public class EventIllumina extends AbstractZombie implements BossMob {
         super.onSpawn(option);
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-            option.spawnNewMob(new IronGolem(spawnLocation));
+            option.spawnNewMob(new GolemApprentice(spawnLocation));
         }
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
@@ -234,7 +232,7 @@ public class EventIllumina extends AbstractZombie implements BossMob {
 
                 if (countdown.get() <= 0 && damageToDeal.get() > 0) {
                     for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-                        option.spawnNewMob(new IronGolem(spawnLocation));
+                        option.spawnNewMob(new GolemApprentice(spawnLocation));
                     }
 
                     FireWorkEffectPlayer.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()

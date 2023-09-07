@@ -24,10 +24,10 @@ public class EventIllusionCore extends AbstractEventCore {
                 200000,
                 30,
                 new RandomCollection<Mobs>()
-                        .add(0.3, Mobs.BASIC_ZOMBIE)
-                        .add(0.2, Mobs.BASIC_BERSERK_ZOMBIE)
-                        .add(0.2, Mobs.BASIC_SLIME)
-                        .add(0.3, Mobs.BASIC_PIG_ZOMBIE)
+                        .add(0.3, Mobs.ZOMBIE_LANCER)
+                        .add(0.2, Mobs.BAIC_WARRIOR_BERSERKER)
+                        .add(0.2, Mobs.SLIMY_ANOMALY)
+                        .add(0.3, Mobs.PIG_DISCIPLE)
         );
     }
 

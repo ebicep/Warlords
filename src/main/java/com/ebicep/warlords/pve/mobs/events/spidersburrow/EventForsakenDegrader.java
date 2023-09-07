@@ -5,7 +5,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Spider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
@@ -22,7 +21,6 @@ public class EventForsakenDegrader extends AbstractZombie implements BossMinionM
         super(
                 spawnLocation,
                 "Forsaken Respite",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DECAPITATED_SPIDER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 5, 5, 5),

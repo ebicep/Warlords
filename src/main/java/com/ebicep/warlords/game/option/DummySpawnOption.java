@@ -5,7 +5,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
@@ -71,7 +70,6 @@ public class DummySpawnOption implements Option {
 
                 testDummy = game.addNPC(new WarlordsNPC(
                         name,
-                        Weapons.ABBADON,
                         WarlordsNPC.spawnZombieNoAI(loc, null),
                         game,
                         team,

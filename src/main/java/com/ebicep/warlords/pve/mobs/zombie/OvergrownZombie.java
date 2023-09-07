@@ -4,7 +4,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -17,8 +16,7 @@ public class OvergrownZombie extends AbstractZombie implements EliteMob {
     public OvergrownZombie(Location spawnLocation) {
         super(
                 spawnLocation,
-                "Lancer",
-                MobTier.OVERGROWN,
+                "Overgrown Zombie",
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.GREEN_LANCER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 130, 20),

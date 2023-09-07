@@ -1,6 +1,11 @@
 package com.ebicep.warlords.pve.mobs.tiers;
 
-public interface BossMinionMob extends Mob {
+import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
+import com.ebicep.warlords.pve.mobs.mobflags.Unexecutable;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+
+public interface BossMinionMob extends Mob, Unexecutable, BossLike {
 
     @Override
     default double weaponDropRate() {
@@ -21,4 +26,15 @@ public interface BossMinionMob extends Mob {
     default int epicWeaponDropChance() {
         return 9;
     }
+
+    @Override
+    default int getLevel() {
+        return 6;
+    }
+
+    @Override
+    default TextColor getTextColor() {
+        return NamedTextColor.RED;
+    }
+
 }

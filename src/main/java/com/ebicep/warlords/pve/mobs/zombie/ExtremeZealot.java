@@ -4,21 +4,19 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
-import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
+import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-public class ExtremeZealot extends AbstractZombie implements EliteMob {
+public class ExtremeZealot extends AbstractZombie implements ChampionMob {
 
     public ExtremeZealot(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Extreme Zealot",
-                MobTier.ILLUSION,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_2),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 56, 71, 74),

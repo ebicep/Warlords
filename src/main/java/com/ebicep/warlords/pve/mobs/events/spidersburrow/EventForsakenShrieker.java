@@ -4,8 +4,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.Spider;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -17,6 +17,8 @@ import org.bukkit.Material;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import javax.annotation.Nonnull;
+
 public class EventForsakenShrieker extends AbstractZombie implements BossMinionMob, Spider {
 
 
@@ -24,7 +26,6 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMinionM
         super(
                 spawnLocation,
                 "Forsaken Respite",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEEP_DARK_CRAWLER),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 87, 9, 86),
@@ -36,7 +37,8 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMinionM
                 0.45f,
                 0,
                 300,
-                450
+                450,
+                new BlindNear()
         );
     }
 
@@ -53,13 +55,6 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMinionM
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        // Applies Darkness to enemies within a 10 block radius for 1s. Can occur every 5s.
-        if (ticksElapsed % 100 == 0) {
-            PlayerFilterGeneric.entitiesAround(warlordsNPC, 10, 10, 10)
-                               .enemiesOf(warlordsNPC)
-                               .warlordsPlayers()
-                               .forEach(warlordsPlayer -> warlordsPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, true, false)));
-        }
     }
 
     @Override
@@ -69,6 +64,23 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMinionM
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+
+    }
+
+    private static class BlindNear extends AbstractPveAbility {
+
+        public BlindNear() {
+            super("Blind Near", 5, 50);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            PlayerFilterGeneric.entitiesAround(wp, 10, 10, 10)
+                               .enemiesOf(wp)
+                               .warlordsPlayers()
+                               .forEach(warlordsPlayer -> warlordsPlayer.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0, true, false)));
+            return true;
+        }
 
     }
 

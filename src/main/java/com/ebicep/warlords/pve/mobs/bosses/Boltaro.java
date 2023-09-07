@@ -8,7 +8,6 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroShadow;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -34,7 +33,6 @@ public class Boltaro extends AbstractZombie implements BossMob {
     public Boltaro(Location spawnLocation) {
         super(spawnLocation,
                 "Boltaro",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEMON),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),

@@ -6,7 +6,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.MobTier;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -25,7 +24,6 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
     public EventBoltaro(Location spawnLocation) {
         super(spawnLocation,
                 "Boltaro",
-                MobTier.BOSS,
                 new Utils.SimpleEntityEquipment(
                         SkullUtils.getSkullFrom(SkullID.DEMON),
                         Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),

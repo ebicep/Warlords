@@ -9,7 +9,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.NaturesClaws;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.MobTier;
+import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -32,7 +32,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
 
     @Override
     public String getBonus() {
-        return "Increases your chances of finding Items when killing ELITE enemies.";
+        return "Increases your chances of finding Items when killing Intermediate enemies.";
     }
 
     @Override
@@ -52,7 +52,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
             @EventHandler
             public void onItemDrop(WarlordsDropItemEvent event) {
                 AbstractMob<?> deadMob = event.getDeadMob();
-                if (deadMob.getMobTier() != MobTier.ILLUSION) {
+                if (deadMob instanceof IntermediateMob) {
                     return;
                 }
                 event.addModifier(.1);
