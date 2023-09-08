@@ -39,6 +39,10 @@ public class Fireball extends AbstractProjectile {
         super("Fireball", 334.4f, 433.4f, cooldown, 70, 20, 175, 2, 300, false);
     }
 
+    public Fireball(float minDamageHeal, float maxDamageHeal, float cooldown) {
+        super("Fireball", minDamageHeal, maxDamageHeal, cooldown, 70, 20, 175, 2, 300, false);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Shoot a fireball that will explode for ")
