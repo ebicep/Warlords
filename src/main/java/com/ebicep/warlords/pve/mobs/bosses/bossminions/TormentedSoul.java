@@ -3,17 +3,14 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.RemoveTarget;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 
 public class TormentedSoul extends AbstractZombie implements BossMinionMob {
@@ -23,13 +20,6 @@ public class TormentedSoul extends AbstractZombie implements BossMinionMob {
     public TormentedSoul(Location spawnLocation) {
         super(spawnLocation,
                 "Tormented Soul",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FACELESS_MAGE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 140, 140),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 140, 140, 15),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 140, 140, 140),
-                        Weapons.CLAWS.getItem()
-                ),
                 2000,
                 0.38f,
                 0,
@@ -50,13 +40,6 @@ public class TormentedSoul extends AbstractZombie implements BossMinionMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FACELESS_MAGE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 140, 140),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 140, 140, 15),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 140, 140, 140),
-                        Weapons.CLAWS.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -64,6 +47,11 @@ public class TormentedSoul extends AbstractZombie implements BossMinionMob {
                 maxMeleeDamage,
                 new RemoveTarget(20)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.TORMENTED_SOUL;
     }
 
     @Override

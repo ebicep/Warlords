@@ -4,15 +4,16 @@ import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.util.Vector;
 
 public class NightmareZombie extends AbstractZombie implements ChampionMob {
@@ -21,13 +22,6 @@ public class NightmareZombie extends AbstractZombie implements ChampionMob {
         super(
                 spawnLocation,
                 "Nightmare Zombie",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SHADOW_DEMON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 70, 50, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 70, 50, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 70, 50, 20),
-                        Weapons.FABLED_HEROICS_SWORD.getItem()
-                ),
                 1600,
                 0.6f,
                 0,
@@ -48,19 +42,17 @@ public class NightmareZombie extends AbstractZombie implements ChampionMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SHADOW_DEMON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 70, 50, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 70, 50, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 70, 50, 20),
-                        Weapons.FABLED_HEROICS_SWORD.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.NIGHTMARE_ZOMBIE;
     }
 
     @Override

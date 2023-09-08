@@ -10,6 +10,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -30,7 +31,6 @@ public class SlimyAnomaly extends AbstractSlime implements BasicMob {
         super(
                 spawnLocation,
                 "Slimy Anomaly",
-                null,
                 3000,
                 0.5f,
                 20,
@@ -52,7 +52,6 @@ public class SlimyAnomaly extends AbstractSlime implements BasicMob {
         super(
                 spawnLocation,
                 name,
-                null,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -60,6 +59,11 @@ public class SlimyAnomaly extends AbstractSlime implements BasicMob {
                 maxMeleeDamage,
                 new Shimmer()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SLIMY_ANOMALY;
     }
 
     @Override

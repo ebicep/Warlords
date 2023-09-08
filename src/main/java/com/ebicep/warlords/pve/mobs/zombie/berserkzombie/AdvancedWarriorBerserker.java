@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
@@ -66,6 +67,11 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 new BerserkerZombieWoundingStrike(497, 632)
         );
         woundingStrike.multiplyMinMax(1.5f);
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.ADVANCED_WARRIOR_BERSERKER;
     }
 
     @Override

@@ -4,10 +4,13 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class ZombieSwordsman extends AbstractZombie implements IntermediateMob {
 
@@ -15,13 +18,6 @@ public class ZombieSwordsman extends AbstractZombie implements IntermediateMob {
         super(
                 spawnLocation,
                 "Zombie Swordsman",
-                new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.WHITE_CARPET),
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.PRISMARINE_SHARD)
-                ),
                 4000,
                 0.38f,
                 10,
@@ -42,19 +38,17 @@ public class ZombieSwordsman extends AbstractZombie implements IntermediateMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.WHITE_CARPET),
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.PRISMARINE_SHARD)
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 
     @Override

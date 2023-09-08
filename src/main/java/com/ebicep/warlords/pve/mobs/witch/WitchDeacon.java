@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import com.ebicep.warlords.util.java.Pair;
@@ -27,7 +28,6 @@ public class WitchDeacon extends AbstractWitch implements IntermediateMob {
         super(
                 spawnLocation,
                 "Witch Deacon",
-                null,
                 3500,
                 0.05f,
                 10,
@@ -49,7 +49,6 @@ public class WitchDeacon extends AbstractWitch implements IntermediateMob {
         super(
                 spawnLocation,
                 name,
-                null,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -57,6 +56,11 @@ public class WitchDeacon extends AbstractWitch implements IntermediateMob {
                 maxMeleeDamage,
                 new WitchBuff()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.WITCH_DEACON;
     }
 
     @Override

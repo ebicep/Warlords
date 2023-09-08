@@ -7,12 +7,10 @@ import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 public class SmartSkeleton extends AbstractSkeleton implements ChampionMob {
 
@@ -20,13 +18,6 @@ public class SmartSkeleton extends AbstractSkeleton implements ChampionMob {
         super(
                 spawnLocation,
                 "Smart Skeleton",
-                new Utils.SimpleEntityEquipment(
-                        null,
-                        null,
-                        null,
-                        null,
-                        new ItemStack(Material.BOW)
-                ),
                 8000,
                 0.25f,
                 10,
@@ -48,13 +39,6 @@ public class SmartSkeleton extends AbstractSkeleton implements ChampionMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        null,
-                        null,
-                        null,
-                        null,
-                        new ItemStack(Material.BOW)
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -62,6 +46,11 @@ public class SmartSkeleton extends AbstractSkeleton implements ChampionMob {
                 maxMeleeDamage,
                 new Fireball(5.5f)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SMART_SKELETON;
     }
 
     @Override

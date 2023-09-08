@@ -6,23 +6,19 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class SkeletalWarlock extends AbstractSkeleton implements IntermediateMob {
     public SkeletalWarlock(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Skeletal Warlock",
-                new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.ORANGE_CARPET),
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.BOW)
-                ),
                 2200,
                 0.05f,
                 0,
@@ -44,13 +40,6 @@ public class SkeletalWarlock extends AbstractSkeleton implements IntermediateMob
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.ORANGE_CARPET),
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.BOW)
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -58,6 +47,11 @@ public class SkeletalWarlock extends AbstractSkeleton implements IntermediateMob
                 maxMeleeDamage,
                 new Fireball(5.5f)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SKELETAL_WARLOCK;
     }
 
     @Override

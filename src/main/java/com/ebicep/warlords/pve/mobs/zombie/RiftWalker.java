@@ -5,14 +5,15 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -24,13 +25,6 @@ public class RiftWalker extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Rift Walker",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.PURPLE_RIFT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 229, 69, 176),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 229, 69, 176),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 229, 69, 176),
-                        Weapons.VORPAL_SWORD.getItem()
-                ),
                 9000,
                 0.33f,
                 10,
@@ -52,13 +46,6 @@ public class RiftWalker extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.PURPLE_RIFT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 229, 69, 176),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 229, 69, 176),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 229, 69, 176),
-                        Weapons.VORPAL_SWORD.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -66,6 +53,11 @@ public class RiftWalker extends AbstractZombie implements EliteMob {
                 maxMeleeDamage,
                 new RiftSpeed()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.RIFT_WALKER;
     }
 
     @Override

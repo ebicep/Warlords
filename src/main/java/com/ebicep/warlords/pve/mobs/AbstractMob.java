@@ -56,12 +56,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final LivingEntity livingEntity;
     protected final Location spawnLocation;
     protected final String name;
-    protected final EntityEquipment ee;
     protected final int maxHealth;
     protected final float walkSpeed;
     protected final int damageResistance;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
+    protected EntityEquipment equipment;
     @Nullable
     protected Aspect aspect;
     protected BossBar bossBar = BossBar.bossBar(Component.empty(), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
@@ -77,7 +77,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             T entity,
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
             int damageResistance,
@@ -88,7 +87,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.entity = entity;
         this.spawnLocation = spawnLocation;
         this.name = name;
-        this.ee = ee;
+        this.equipment = getMobRegistry().equipment;
         this.maxHealth = maxHealth;
         this.walkSpeed = walkSpeed;
         this.damageResistance = damageResistance;
@@ -114,17 +113,19 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
     }
 
+    public abstract com.ebicep.warlords.pve.mobs.Mob getMobRegistry();
+
     public void updateEquipment() {
         EntityEquipment equipment = livingEntity.getEquipment();
         if (equipment == null) {
             return;
         }
-        if (ee != null) {
-            equipment.setBoots(ee.getBoots());
-            equipment.setLeggings(ee.getLeggings());
-            equipment.setChestplate(ee.getChestplate());
-            equipment.setHelmet(ee.getHelmet());
-            equipment.setItemInMainHand(ee.getItemInMainHand());
+        if (this.equipment != null) {
+            equipment.setBoots(this.equipment.getBoots());
+            equipment.setLeggings(this.equipment.getLeggings());
+            equipment.setChestplate(this.equipment.getChestplate());
+            equipment.setHelmet(this.equipment.getHelmet());
+            equipment.setItemInMainHand(this.equipment.getItemInMainHand());
         } else {
             equipment.setHelmet(new ItemStack(Material.BARRIER));
         }
@@ -440,8 +441,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return name;
     }
 
-    public EntityEquipment getEe() {
-        return ee;
+    public void setEquipment(EntityEquipment equipment) {
+        this.equipment = equipment;
+    }
+
+    public EntityEquipment getEquipment() {
+        return equipment;
     }
 
     public boolean isShowBossBar() {

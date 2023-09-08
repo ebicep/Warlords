@@ -6,7 +6,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -19,8 +18,6 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -57,13 +54,6 @@ public class EventIllumina extends AbstractZombie implements BossMob {
     public EventIllumina(Location spawnLocation) {
         super(spawnLocation,
                 "Illumina",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
-                        Weapons.NEW_LEAF_SCYTHE.getItem()
-                ),
                 525000,
                 0.33f,
                 0,
@@ -84,13 +74,6 @@ public class EventIllumina extends AbstractZombie implements BossMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
-                        Weapons.NEW_LEAF_SCYTHE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -98,6 +81,11 @@ public class EventIllumina extends AbstractZombie implements BossMob {
                 maxMeleeDamage,
                 new Illumina.BrambleSlowness()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_ILLUMINA;
     }
 
     @Override

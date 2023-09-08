@@ -2,18 +2,14 @@ package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.Spider;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.mobflags.Spider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -26,13 +22,6 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMinionM
         super(
                 spawnLocation,
                 "Forsaken Respite",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEEP_DARK_CRAWLER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 87, 9, 86),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 87, 9, 86),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 87, 9, 86),
-                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
-                ),
                 2700,
                 0.45f,
                 0,
@@ -54,13 +43,6 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMinionM
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEEP_DARK_CRAWLER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 87, 9, 86),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 87, 9, 86),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 87, 9, 86),
-                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -68,6 +50,11 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMinionM
                 maxMeleeDamage,
                 new BlindNear()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_MITHRA_FORSAKEN_SHRIEKER;
     }
 
     @Override

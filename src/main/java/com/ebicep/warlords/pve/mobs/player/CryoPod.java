@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -16,13 +17,17 @@ public class CryoPod extends AbstractZombie implements BasicMob {
         super(
                 spawnLocation,
                 playerName + "'s Cryopod",
-                null,
                 20000,
                 0,
                 0,
                 0,
                 0
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 
     @Override

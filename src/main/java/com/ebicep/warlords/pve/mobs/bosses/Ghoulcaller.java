@@ -6,7 +6,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -16,8 +15,6 @@ import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -42,13 +39,6 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     public Ghoulcaller(Location spawnLocation) {
         super(spawnLocation,
                 "Ghoulcaller",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 170, 170, 170),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 170, 170, 170),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 170, 170, 170),
-                        Weapons.ENDERFIST.getItem()
-                ),
                 16000,
                 0.42f,
                 5,
@@ -88,13 +78,6 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 170, 170, 170),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 170, 170, 170),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 170, 170, 170),
-                        Weapons.ENDERFIST.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -121,6 +104,11 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                     }
                 }
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.GHOULCALLER;
     }
 
     @Override

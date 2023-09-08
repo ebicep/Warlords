@@ -2,18 +2,14 @@ package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.Spider;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.mobflags.Spider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 import javax.annotation.Nonnull;
 
@@ -24,13 +20,6 @@ public class EventForsakenFrost extends AbstractZombie implements BossMinionMob,
         super(
                 spawnLocation,
                 "Forsaken Respite",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.WHITE_SPIDER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
-                        Weapons.FROSTBITE.getItem()
-                ),
                 2700,
                 0.45f,
                 0,
@@ -52,13 +41,6 @@ public class EventForsakenFrost extends AbstractZombie implements BossMinionMob,
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.WHITE_SPIDER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
-                        Weapons.FROSTBITE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -66,6 +48,11 @@ public class EventForsakenFrost extends AbstractZombie implements BossMinionMob,
                 maxMeleeDamage,
                 new Frost()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_MITHRA_FORSAKEN_FROST;
     }
 
     @Override

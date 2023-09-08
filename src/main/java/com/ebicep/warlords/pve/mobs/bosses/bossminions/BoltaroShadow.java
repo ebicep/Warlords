@@ -4,27 +4,21 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class BoltaroShadow extends AbstractSkeleton implements BossMinionMob {
 
     public BoltaroShadow(Location spawnLocation) {
         super(spawnLocation,
                 "Shadow Boltaro",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.END_MONSTER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 0),
-                        Weapons.DEMONBLADE.getItem()
-                ),
                 6000,
                 0.42f,
                 10,
@@ -44,19 +38,17 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMinionMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.END_MONSTER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 0),
-                        Weapons.DEMONBLADE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.BOLTARO_SHADOW;
     }
 
     @Override

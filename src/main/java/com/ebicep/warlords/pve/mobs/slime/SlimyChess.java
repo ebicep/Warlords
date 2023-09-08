@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -20,7 +21,6 @@ public class SlimyChess extends AbstractSlime implements AdvancedMob {
         super(
                 spawnLocation,
                 "Slimy Chess",
-                null,
                 10000,
                 0.1f,
                 30,
@@ -42,7 +42,6 @@ public class SlimyChess extends AbstractSlime implements AdvancedMob {
         super(
                 spawnLocation,
                 name,
-                null,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -50,6 +49,11 @@ public class SlimyChess extends AbstractSlime implements AdvancedMob {
                 maxMeleeDamage,
                 new Blob()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SLIMY_CHESS;
     }
 
     @Override

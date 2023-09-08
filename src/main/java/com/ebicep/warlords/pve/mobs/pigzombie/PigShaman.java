@@ -4,12 +4,13 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class PigShaman extends AbstractPigZombie implements IntermediateMob {
 
@@ -17,13 +18,6 @@ public class PigShaman extends AbstractPigZombie implements IntermediateMob {
         super(
                 spawnLocation,
                 "Pig Shaman",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SAMURAI),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
-                        new ItemStack(Material.COOKIE)
-                ),
                 4000,
                 0.25f,
                 10,
@@ -45,13 +39,6 @@ public class PigShaman extends AbstractPigZombie implements IntermediateMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SAMURAI),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
-                        new ItemStack(Material.COOKIE)
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -59,6 +46,11 @@ public class PigShaman extends AbstractPigZombie implements IntermediateMob {
                 maxMeleeDamage,
                 new PigZombieHealing(150, 6)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.PIG_SHAMAN;
     }
 
     @Override

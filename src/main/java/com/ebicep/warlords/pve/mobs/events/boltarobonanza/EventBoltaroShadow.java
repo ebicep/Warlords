@@ -4,14 +4,15 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -23,13 +24,6 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMinionMo
     public EventBoltaroShadow(Location spawnLocation, int split) {
         super(spawnLocation,
                 "Shadow Boltaro",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.END_MONSTER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 0),
-                        Weapons.DEMONBLADE.getItem()
-                ),
                 (int) (6000 * (1 + split * .025)),
                 0.42f,
                 10,
@@ -37,6 +31,48 @@ public class EventBoltaroShadow extends AbstractSkeleton implements BossMinionMo
                 400 * (1 + split * .025f)
         );
         this.split = split;
+    }
+
+    public EventBoltaroShadow(Location spawnLocation) {
+        this(spawnLocation, 0);
+    }
+
+    public EventBoltaroShadow(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            int split
+    ) {
+        super(spawnLocation,
+                name,
+                (int) (maxHealth * (1 + split * .025)),
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage * (1 + split * .025f),
+                maxMeleeDamage * (1 + split * .025f)
+        );
+        this.split = split;
+    }
+
+    public EventBoltaroShadow(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        this(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, 0);
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_BOLTARO_SHADOW;
     }
 
     @Override

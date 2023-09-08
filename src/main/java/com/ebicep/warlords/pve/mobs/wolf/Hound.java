@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.wolf;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import org.bukkit.Location;
 
@@ -12,7 +13,6 @@ public class Hound extends AbstractWolf implements IntermediateMob {
         super(
                 spawnLocation,
                 "Hound",
-                null,
                 900,
                 0.5f,
                 0,
@@ -33,13 +33,17 @@ public class Hound extends AbstractWolf implements IntermediateMob {
         super(
                 spawnLocation,
                 name,
-                null,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.HOUND;
     }
 
     @Override

@@ -3,13 +3,14 @@ package com.ebicep.warlords.pve.mobs.zombie;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class ScrupulousZombie extends AbstractZombie implements AdvancedMob {
 
@@ -17,13 +18,6 @@ public class ScrupulousZombie extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 "Scrupulous Zombie",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 10, 50, 130),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 10, 50, 130),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 10, 50, 130),
-                        Weapons.AMARANTH.getItem()
-                ),
                 8000,
                 0.28f,
                 0,
@@ -44,19 +38,17 @@ public class ScrupulousZombie extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 10, 50, 130),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 10, 50, 130),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 10, 50, 130),
-                        Weapons.AMARANTH.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SCRUPULOUS_ZOMBIE;
     }
 
     @Override

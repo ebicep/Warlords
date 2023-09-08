@@ -26,7 +26,7 @@ public class WarlordsPlayerDisguised extends WarlordsPlayer {
     public WarlordsPlayerDisguised(Player player, WarlordsNPC npc) {
         super(npc.getLocation(), player, npc.getGame(), npc.getTeam());
         this.npc = npc;
-        EntityEquipment ee = npc.getMob().getEe();
+        EntityEquipment ee = npc.getMob().getEquipment();
         AbstractMob<?> mob = npc.getMob();
         this.disguise = new MobDisguise(mob.getEntity().getDisguiseType());
         disguise.getWatcher().setCustomNameVisible(true);

@@ -2,14 +2,10 @@ package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 public class WanderKnights extends AbstractZombie implements IntermediateMob {
 
@@ -17,13 +13,6 @@ public class WanderKnights extends AbstractZombie implements IntermediateMob {
         super(
                 spawnLocation,
                 "Wander Knights",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 105, 147, 158),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 105, 147, 158),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 105, 147, 158),
-                        Weapons.LUNAR_RELIC.getItem()
-                ),
                 5000,
                 0.335f,
                 10,
@@ -44,19 +33,17 @@ public class WanderKnights extends AbstractZombie implements IntermediateMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 105, 147, 158),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 105, 147, 158),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 105, 147, 158),
-                        Weapons.LUNAR_RELIC.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.WANDER_KNIGHTS;
     }
 
     @Override

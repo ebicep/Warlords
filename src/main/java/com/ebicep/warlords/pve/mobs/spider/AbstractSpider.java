@@ -2,22 +2,26 @@ package com.ebicep.warlords.pve.mobs.spider;
 
 import com.ebicep.customentities.nms.pve.CustomSpider;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Spider;
+import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.mobflags.Spider;
 import org.bukkit.Location;
-import org.bukkit.inventory.EntityEquipment;
 
 public abstract class AbstractSpider extends AbstractMob<CustomSpider> implements Spider {
 
     public AbstractSpider(
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
             int damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
-        super(new CustomSpider(spawnLocation.getWorld()), spawnLocation, name, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
+        super(new CustomSpider(spawnLocation.getWorld()), spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 }

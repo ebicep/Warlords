@@ -2,16 +2,12 @@ package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 public class WanderWalker extends AbstractZombie implements AdvancedMob {
@@ -26,13 +22,6 @@ public class WanderWalker extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 "Zombie Raider",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SCULK_MONSTER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 204, 204),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 204, 204),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 204, 204),
-                        Weapons.LUNAR_JUSTICE.getItem()
-                ),
                 8500,
                 0.31f,
                 20,
@@ -53,19 +42,17 @@ public class WanderWalker extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SCULK_MONSTER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 204, 204),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 204, 204),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 204, 204),
-                        Weapons.LUNAR_JUSTICE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.WANDER_WALKER;
     }
 
     @Override

@@ -99,4 +99,9 @@ public class EventCalamityCore extends AbstractEventCore {
                 1
         );
     }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_CALAMITY_CORE;
+    }
 }

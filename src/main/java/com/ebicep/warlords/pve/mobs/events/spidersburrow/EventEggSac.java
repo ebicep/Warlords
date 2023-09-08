@@ -3,10 +3,9 @@ package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -22,13 +21,6 @@ public class EventEggSac extends AbstractZombie implements BossMinionMob {
         super(
                 spawnLocation,
                 "Egg Sac",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.EGG_SAC),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
-                        null
-                ),
                 10000,
                 0,
                 0,
@@ -49,19 +41,17 @@ public class EventEggSac extends AbstractZombie implements BossMinionMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.EGG_SAC),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
-                        null
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_MITHRA_EGG_SAC;
     }
 
     @Override

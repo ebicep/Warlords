@@ -7,16 +7,14 @@ import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -34,13 +32,6 @@ public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
         super(
                 spawnLocation,
                 "Skeletal Sorcerer",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.WHITE_SHEKEL),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
-                        Weapons.SILVER_PHANTASM_SWORD_4.getItem()
-                ),
                 8000,
                 0.3f,
                 10,
@@ -62,13 +53,6 @@ public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.WHITE_SHEKEL),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
-                        Weapons.SILVER_PHANTASM_SWORD_4.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -76,6 +60,11 @@ public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
                 maxMeleeDamage,
                 new Fireball(5.5f), new BlightedScorch()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SKELETAL_SORCERER;
     }
 
     @Override

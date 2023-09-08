@@ -2,16 +2,12 @@ package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 public class ZombieRaider extends AbstractZombie implements AdvancedMob {
@@ -22,13 +18,6 @@ public class ZombieRaider extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 "Zombie Raider",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_2),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 56, 71, 74),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 56, 71, 74),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 56, 71, 74),
-                        Weapons.NETHERSTEEL_KATANA.getItem()
-                ),
                 9500,
                 0.42f,
                 0,
@@ -49,19 +38,17 @@ public class ZombieRaider extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_2),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 56, 71, 74),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 56, 71, 74),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 56, 71, 74),
-                        Weapons.NETHERSTEEL_KATANA.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.ZOMBIE_RAIDER;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -63,6 +64,11 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
                 new BerserkerZombieWoundingStrike(497, 632)
         );
         woundingStrike.multiplyMinMax(1.25f);
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.INTERMEDIATE_WARRIOR_BERSERKER;
     }
 
     @Override

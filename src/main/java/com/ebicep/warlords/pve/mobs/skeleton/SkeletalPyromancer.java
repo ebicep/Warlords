@@ -5,12 +5,9 @@ import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 public class SkeletalPyromancer extends AbstractSkeleton implements EliteMob {
 
@@ -18,13 +15,6 @@ public class SkeletalPyromancer extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Skeletal Pyromancer",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.WITHER_SOUL),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 29, 49, 64),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 29, 49, 64),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 29, 49, 64),
-                        null
-                ),
                 5000,
                 0.05f,
                 20,
@@ -46,13 +36,6 @@ public class SkeletalPyromancer extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.WITHER_SOUL),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 29, 49, 64),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 29, 49, 64),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 29, 49, 64),
-                        null
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -60,6 +43,11 @@ public class SkeletalPyromancer extends AbstractSkeleton implements EliteMob {
                 maxMeleeDamage,
                 new Fireball(5.5f), new FlameBurst(20)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SKELETAL_PYROMANCER;
     }
 
     @Override

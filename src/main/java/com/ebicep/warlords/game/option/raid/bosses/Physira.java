@@ -12,18 +12,16 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.raid.BossAbilityPhase;
 import com.ebicep.warlords.player.general.SpecType;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.witherskeleton.AbstractWitherSkeleton;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -33,7 +31,6 @@ import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -57,13 +54,6 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
     public Physira(Location spawnLocation) {
         super(spawnLocation,
                 "Physira",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.GRADIENT_SOUL),
-                        new ItemStack(Material.NETHERITE_CHESTPLATE),
-                        new ItemStack(Material.NETHERITE_LEGGINGS),
-                        new ItemStack(Material.NETHERITE_BOOTS),
-                        Weapons.VIRIDIAN_BLADE.getItem()
-                ),
                 10000,
                 0,
                 0,
@@ -83,19 +73,17 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.GRADIENT_SOUL),
-                        new ItemStack(Material.NETHERITE_CHESTPLATE),
-                        new ItemStack(Material.NETHERITE_LEGGINGS),
-                        new ItemStack(Material.NETHERITE_BOOTS),
-                        Weapons.VIRIDIAN_BLADE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 
     @Override

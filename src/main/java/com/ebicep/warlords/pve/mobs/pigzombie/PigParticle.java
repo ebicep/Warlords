@@ -5,16 +5,12 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
@@ -27,13 +23,6 @@ public class PigParticle extends AbstractPigZombie implements ChampionMob {
         super(
                 spawnLocation,
                 "Pig Particle",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.HOODED_KNIGHT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
-                        Weapons.NETHERSTEEL_KATANA.getItem()
-                ),
                 8000,
                 0.2f,
                 10,
@@ -55,13 +44,6 @@ public class PigParticle extends AbstractPigZombie implements ChampionMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.HOODED_KNIGHT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
-                        Weapons.NETHERSTEEL_KATANA.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -69,6 +51,11 @@ public class PigParticle extends AbstractPigZombie implements ChampionMob {
                 maxMeleeDamage,
                 new VoidHealing(), new PrismGuard(20)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.PIG_ALLEVIATOR;
     }
 
     @Override

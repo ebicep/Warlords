@@ -2,16 +2,12 @@ package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.mobs.Spider;
+import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.mobflags.Spider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -23,13 +19,6 @@ public class EventForsakenApparition extends AbstractZombie implements BossMinio
         super(
                 spawnLocation,
                 "Forsaken Apparition",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SPIDER_SPIRIT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 64, 140, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 64, 140, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 64, 140, 255),
-                        Weapons.SILVER_PHANTASM_SWORD_4.getItem()
-                ),
                 2700,
                 0.45f,
                 0,
@@ -50,19 +39,17 @@ public class EventForsakenApparition extends AbstractZombie implements BossMinio
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SPIDER_SPIRIT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 64, 140, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 64, 140, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 64, 140, 255),
-                        Weapons.SILVER_PHANTASM_SWORD_4.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_MITHRA_FORSAKEN_APPARITION;
     }
 
     @Override

@@ -3,13 +3,14 @@ package com.ebicep.warlords.pve.mobs.zombie;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class ZombieLament extends AbstractZombie implements IntermediateMob {
 
@@ -17,13 +18,6 @@ public class ZombieLament extends AbstractZombie implements IntermediateMob {
         super(
                 spawnLocation,
                 "Zombie Lament",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BLUE_GHOST),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 69, 176),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 69, 176),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 69, 176),
-                        Weapons.SILVER_PHANTASM_STAFF_2.getItem()
-                ),
                 3500,
                 0.38f,
                 10,
@@ -44,19 +38,17 @@ public class ZombieLament extends AbstractZombie implements IntermediateMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BLUE_GHOST),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 69, 176),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 69, 176),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 69, 176),
-                        Weapons.SILVER_PHANTASM_STAFF_2.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.ZOMBIE_LAMENT;
     }
 
     @Override

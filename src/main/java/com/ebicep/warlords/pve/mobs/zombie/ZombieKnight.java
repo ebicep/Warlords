@@ -4,19 +4,15 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -28,13 +24,6 @@ public class ZombieKnight extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 "Zombie Knight",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.NETHERITE_HELMET),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
-                        Weapons.GEMINI.getItem()
-                ),
                 7000,
                 0.3f,
                 10,
@@ -56,13 +45,6 @@ public class ZombieKnight extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.NETHERITE_HELMET),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
-                        Weapons.GEMINI.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -70,6 +52,11 @@ public class ZombieKnight extends AbstractZombie implements AdvancedMob {
                 maxMeleeDamage,
                 new ReduceWeaponCooldowns()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.ZOMBIE_KNIGHT;
     }
 
     @Override

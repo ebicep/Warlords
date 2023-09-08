@@ -3,15 +3,14 @@ package com.ebicep.warlords.pve.mobs.skeleton;
 import com.ebicep.customentities.nms.pve.CustomSkeleton;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
-import org.bukkit.inventory.EntityEquipment;
 
 public abstract class AbstractSkeleton extends AbstractMob<CustomSkeleton> {
 
     public AbstractSkeleton(
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
             int damageResistance,
@@ -19,6 +18,11 @@ public abstract class AbstractSkeleton extends AbstractMob<CustomSkeleton> {
             float maxMeleeDamage,
             AbstractAbility... abilities
     ) {
-        super(new CustomSkeleton(spawnLocation.getWorld()), spawnLocation, name, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
+        super(new CustomSkeleton(spawnLocation.getWorld()), spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 }

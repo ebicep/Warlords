@@ -7,13 +7,11 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AdvancedVoidShred;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -29,13 +27,6 @@ public class VoidZombie extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 "Zombie Singularity",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
-                        Weapons.VOID_EDGE.getItem()
-                ),
                 11000,
                 0.1f,
                 0,
@@ -58,13 +49,6 @@ public class VoidZombie extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
-                        Weapons.VOID_EDGE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -73,6 +57,11 @@ public class VoidZombie extends AbstractZombie implements AdvancedMob {
                 new VoidShred(),
                 new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 20)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.VOID_ZOMBIE;
     }
 
     @Override

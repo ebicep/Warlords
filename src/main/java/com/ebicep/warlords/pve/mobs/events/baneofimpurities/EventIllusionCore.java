@@ -87,4 +87,9 @@ public class EventIllusionCore extends AbstractEventCore {
                 .2
         );
     }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_ILLUSION_CORE;
+    }
 }

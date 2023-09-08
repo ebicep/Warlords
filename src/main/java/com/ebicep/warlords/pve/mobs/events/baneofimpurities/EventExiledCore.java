@@ -87,4 +87,9 @@ public class EventExiledCore extends AbstractEventCore {
                 .2
         );
     }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_EXILED_CORE;
+    }
 }

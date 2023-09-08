@@ -7,17 +7,17 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.RemoveTarget;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 
@@ -26,13 +26,6 @@ public class SoulOfGradient extends AbstractZombie implements BossMinionMob {
     public SoulOfGradient(Location spawnLocation) {
         super(spawnLocation,
                 "Soul of Gradient",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.GRADIENT_SOUL),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 30, 30),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 30, 30),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 30, 30),
-                        Weapons.TENDERIZER.getItem()
-                ),
                 25000,
                 0.15f,
                 0,
@@ -41,6 +34,32 @@ public class SoulOfGradient extends AbstractZombie implements BossMinionMob {
                 new RemoveTarget(20),
                 new TormentingMark()
         );
+    }
+
+    public SoulOfGradient(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new RemoveTarget(20),
+                new TormentingMark()
+        );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SOUL_OF_GRADIENT;
     }
 
     @Override

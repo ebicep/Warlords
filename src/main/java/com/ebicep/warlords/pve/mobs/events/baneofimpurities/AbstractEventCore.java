@@ -41,7 +41,7 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
             int killTime,
             RandomCollection<Mob> summonList
     ) {
-        super(spawnLocation, name, ee, maxHealth, 0, 0, 0, 0);
+        super(spawnLocation, name, maxHealth, 0, 0, 0, 0);
         this.killTime = killTime;
         this.summonList = summonList;
         livingEntity.setGravity(false);
@@ -60,7 +60,7 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
             int killTime,
             RandomCollection<Mob> summonList
     ) {
-        super(spawnLocation, name, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
+        super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
         this.killTime = killTime;
         this.summonList = summonList;
         livingEntity.setGravity(false);

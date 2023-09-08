@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.magmacube;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import org.bukkit.Location;
 
@@ -12,13 +13,17 @@ public class BabyMagmaCube extends AbstractMagmaCube implements IntermediateMob 
         super(
                 spawnLocation,
                 "Illusion Illuminati",
-                null,
                 3200,
                 0.35f,
                 0,
                 50,
                 100
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 
     @Override

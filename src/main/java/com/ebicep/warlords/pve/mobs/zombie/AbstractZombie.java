@@ -3,15 +3,14 @@ package com.ebicep.warlords.pve.mobs.zombie;
 import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
-import org.bukkit.inventory.EntityEquipment;
 
 public abstract class AbstractZombie extends AbstractMob<CustomZombie> {
 
     public AbstractZombie(
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
             int damageResistance,
@@ -23,7 +22,6 @@ public abstract class AbstractZombie extends AbstractMob<CustomZombie> {
                 new CustomZombie(spawnLocation.getWorld()),
                 spawnLocation,
                 name,
-                ee,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -31,5 +29,10 @@ public abstract class AbstractZombie extends AbstractMob<CustomZombie> {
                 maxMeleeDamage,
                 abilities
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 }

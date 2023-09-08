@@ -2,14 +2,10 @@ package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 public class ExtremeZealot extends AbstractZombie implements ChampionMob {
 
@@ -17,13 +13,6 @@ public class ExtremeZealot extends AbstractZombie implements ChampionMob {
         super(
                 spawnLocation,
                 "Extreme Zealot",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_2),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 56, 71, 74),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 56, 71, 74),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 56, 71, 74),
-                        Weapons.VENOMSTRIKE.getItem()
-                ),
                 6000,
                 0.45f,
                 20,
@@ -44,19 +33,17 @@ public class ExtremeZealot extends AbstractZombie implements ChampionMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_2),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 56, 71, 74),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 56, 71, 74),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 56, 71, 74),
-                        Weapons.VENOMSTRIKE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EXTREME_ZEALOT;
     }
 
     @Override

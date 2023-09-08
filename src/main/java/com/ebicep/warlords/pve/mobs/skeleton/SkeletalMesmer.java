@@ -6,14 +6,15 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AdvancedVoidShred;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class SkeletalMesmer extends AbstractSkeleton implements EliteMob {
 
@@ -23,13 +24,6 @@ public class SkeletalMesmer extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 "Skeletal Mesmer",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
-                        Weapons.ARMBLADE.getItem()
-                ),
                 5500,
                 0.05f,
                 10,
@@ -53,13 +47,6 @@ public class SkeletalMesmer extends AbstractSkeleton implements EliteMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
-                        Weapons.ARMBLADE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -69,6 +56,11 @@ public class SkeletalMesmer extends AbstractSkeleton implements EliteMob {
                 new FlameBurst(20, 0),
                 new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 30)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SKELETAL_MESMER;
     }
 
     @Override

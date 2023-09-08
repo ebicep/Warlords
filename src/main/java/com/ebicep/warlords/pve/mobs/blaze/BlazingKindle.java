@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -27,7 +28,6 @@ public class BlazingKindle extends AbstractBlaze implements IntermediateMob {
         super(
                 spawnLocation,
                 "Blazing Kindle",
-                null,
                 4000,
                 0,
                 10,
@@ -49,7 +49,6 @@ public class BlazingKindle extends AbstractBlaze implements IntermediateMob {
         super(
                 spawnLocation,
                 name,
-                null,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -57,6 +56,11 @@ public class BlazingKindle extends AbstractBlaze implements IntermediateMob {
                 maxMeleeDamage,
                 new KindleWave()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.BLAZING_KINDLE;
     }
 
     @Override

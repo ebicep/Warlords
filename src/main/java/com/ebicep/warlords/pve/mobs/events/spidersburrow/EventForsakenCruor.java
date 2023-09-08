@@ -3,23 +3,19 @@ package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.pve.mobs.Spider;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.mobflags.Spider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 import javax.annotation.Nonnull;
 
@@ -30,13 +26,6 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
         super(
                 spawnLocation,
                 "Forsaken Respite",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BLOOD_SPIDER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 20, 20),
-                        Weapons.ARMBLADE.getItem()
-                ),
                 2700,
                 0.45f,
                 0,
@@ -58,13 +47,6 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BLOOD_SPIDER),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 20, 20),
-                        Weapons.ARMBLADE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -72,6 +54,11 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
                 maxMeleeDamage,
                 new WoundAll()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_MITHRA_FORSAKEN_CRUOR;
     }
 
     @Override

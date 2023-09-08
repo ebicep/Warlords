@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.magmacube.AbstractMagmaCube;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -47,7 +48,6 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
         super(10 - (splitNumber * 2),
                 spawnLocation,
                 "Magmatic Ooze",
-                null,
                 (int) (health / (splitNumber + 1)),
                 1f,
                 40,
@@ -89,7 +89,6 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
         super(10 - (splitNumber * 2),
                 spawnLocation,
                 name,
-                null,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -103,6 +102,11 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
         );
         this.splitNumber = splitNumber;
         this.previousBlocks = previousBlocks;
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.MAGMATIC_OOZE;
     }
 
     @Override

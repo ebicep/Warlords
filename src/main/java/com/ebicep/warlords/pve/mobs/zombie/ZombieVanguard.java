@@ -3,13 +3,14 @@ package com.ebicep.warlords.pve.mobs.zombie;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.ArmorManager;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class ZombieVanguard extends AbstractZombie implements AdvancedMob {
 
@@ -17,13 +18,6 @@ public class ZombieVanguard extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 "Zombie Vanguard",
-                new Utils.SimpleEntityEquipment(
-                        ArmorManager.Helmets.LEGENDARY_PALADIN_HELMET.itemRed,
-                        new ItemStack(Material.DIAMOND_CHESTPLATE),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        new ItemStack(Material.DIAMOND_BOOTS),
-                        Weapons.FELFLAME_BLADE.getItem()
-                ),
                 7000,
                 0.4f,
                 80,
@@ -44,19 +38,17 @@ public class ZombieVanguard extends AbstractZombie implements AdvancedMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        ArmorManager.Helmets.LEGENDARY_PALADIN_HELMET.itemRed,
-                        new ItemStack(Material.DIAMOND_CHESTPLATE),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        new ItemStack(Material.DIAMOND_BOOTS),
-                        Weapons.FELFLAME_BLADE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.ZOMBIE_VANGUARD;
     }
 
     @Override

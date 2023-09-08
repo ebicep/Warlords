@@ -4,12 +4,13 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class PigAlleviator extends AbstractPigZombie implements IntermediateMob {
 
@@ -17,13 +18,6 @@ public class PigAlleviator extends AbstractPigZombie implements IntermediateMob 
         super(
                 spawnLocation,
                 "Pig Alleviator",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SAMURAI),
-                        new ItemStack(Material.DIAMOND_HELMET),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        new ItemStack(Material.DIAMOND_BOOTS),
-                        new ItemStack(Material.BAKED_POTATO)
-                ),
                 6000,
                 0.2f,
                 10,
@@ -45,13 +39,6 @@ public class PigAlleviator extends AbstractPigZombie implements IntermediateMob 
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SAMURAI),
-                        new ItemStack(Material.DIAMOND_HELMET),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        new ItemStack(Material.DIAMOND_BOOTS),
-                        new ItemStack(Material.BAKED_POTATO)
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -59,6 +46,11 @@ public class PigAlleviator extends AbstractPigZombie implements IntermediateMob 
                 maxMeleeDamage,
                 new PigZombieHealing(300, 10)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.PIG_ALLEVIATOR;
     }
 
     @Override

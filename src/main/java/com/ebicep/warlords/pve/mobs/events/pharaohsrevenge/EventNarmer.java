@@ -6,8 +6,6 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.ArmorManager;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -15,8 +13,6 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -45,13 +41,6 @@ public class EventNarmer extends AbstractZombie implements BossMob {
     public EventNarmer(Location spawnLocation) {
         super(spawnLocation,
                 "Narmer",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
-                        ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160),
-                        Weapons.WALKING_STICK.getItem()
-                ),
                 16000,
                 0,
                 20,
@@ -71,13 +60,6 @@ public class EventNarmer extends AbstractZombie implements BossMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
-                        ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160),
-                        Weapons.WALKING_STICK.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -351,6 +333,11 @@ public class EventNarmer extends AbstractZombie implements BossMob {
     @Override
     public NamedTextColor getColor() {
         return NamedTextColor.RED;
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_NARMER;
     }
 
     @Override

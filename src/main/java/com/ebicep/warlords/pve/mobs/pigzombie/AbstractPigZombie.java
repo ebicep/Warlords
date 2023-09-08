@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -12,7 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -22,7 +22,6 @@ public abstract class AbstractPigZombie extends AbstractMob<CustomPigZombie> {
     public AbstractPigZombie(
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
             int damageResistance,
@@ -30,7 +29,12 @@ public abstract class AbstractPigZombie extends AbstractMob<CustomPigZombie> {
             float maxMeleeDamage,
             AbstractAbility... abilities
     ) {
-        super(new CustomPigZombie(spawnLocation.getWorld()), spawnLocation, name, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
+        super(new CustomPigZombie(spawnLocation.getWorld()), spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 
     static class PigZombieHealing extends AbstractAbility {

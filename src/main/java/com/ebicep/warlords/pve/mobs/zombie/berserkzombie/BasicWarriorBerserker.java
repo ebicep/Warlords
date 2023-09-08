@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.player.general.ArmorManager;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -57,4 +58,8 @@ public class BasicWarriorBerserker extends AbstractBerserkZombie implements Basi
         );
     }
 
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.BASIC_WARRIOR_BERSERKER;
+    }
 }

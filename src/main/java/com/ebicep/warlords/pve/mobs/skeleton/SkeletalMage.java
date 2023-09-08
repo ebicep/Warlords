@@ -4,13 +4,9 @@ import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 public class SkeletalMage extends AbstractSkeleton implements BasicMob {
 
@@ -18,13 +14,6 @@ public class SkeletalMage extends AbstractSkeleton implements BasicMob {
         super(
                 spawnLocation,
                 "Skeletal Mage",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FACELESS_MAGE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
-                        new ItemStack(Material.BOW)
-                ),
                 1600,
                 0.05f,
                 0,
@@ -46,13 +35,6 @@ public class SkeletalMage extends AbstractSkeleton implements BasicMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FACELESS_MAGE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
-                        new ItemStack(Material.BOW)
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -60,6 +42,11 @@ public class SkeletalMage extends AbstractSkeleton implements BasicMob {
                 maxMeleeDamage,
                 new Fireball(5.5f)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SKELETAL_MAGE;
     }
 
     @Override

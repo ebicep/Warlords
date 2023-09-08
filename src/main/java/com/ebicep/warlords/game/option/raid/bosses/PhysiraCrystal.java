@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.blaze.AbstractBlaze;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import org.bukkit.Location;
@@ -22,7 +23,6 @@ public class PhysiraCrystal extends AbstractBlaze implements BossMinionMob {
         super(
                 spawnLocation,
                 owner.getName() + " - " + spec.name(),
-                null,
                 1000,
                 0,
                 0,
@@ -31,6 +31,11 @@ public class PhysiraCrystal extends AbstractBlaze implements BossMinionMob {
         );
         this.owner = owner;
         this.spec = spec;
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 
     @Override

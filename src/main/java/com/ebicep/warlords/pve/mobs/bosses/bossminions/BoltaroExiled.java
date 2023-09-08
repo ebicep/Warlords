@@ -2,16 +2,13 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 
 public class BoltaroExiled extends AbstractZombie implements BossMinionMob {
@@ -19,13 +16,6 @@ public class BoltaroExiled extends AbstractZombie implements BossMinionMob {
     public BoltaroExiled(Location spawnLocation) {
         super(spawnLocation,
                 "Exiled Apostate",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.RED_EYE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Weapons.GEMINI.getItem()
-                ),
                 4000,
                 0.3f,
                 0,
@@ -45,19 +35,17 @@ public class BoltaroExiled extends AbstractZombie implements BossMinionMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.RED_EYE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Weapons.GEMINI.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.BOLTARO_EXLIED;
     }
 
     @Override

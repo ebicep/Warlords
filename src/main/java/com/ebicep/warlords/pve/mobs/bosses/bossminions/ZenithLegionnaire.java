@@ -4,14 +4,12 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
@@ -23,13 +21,6 @@ public class ZenithLegionnaire extends AbstractZombie implements BossMinionMob {
     public ZenithLegionnaire(Location spawnLocation) {
         super(spawnLocation,
                 "Zenith Legionnaire",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 100, 0, 80),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 100, 0, 80),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 100, 0, 80),
-                        Weapons.LUNAR_JUSTICE.getItem()
-                ),
                 4400,
                 0.32f,
                 10,
@@ -50,13 +41,6 @@ public class ZenithLegionnaire extends AbstractZombie implements BossMinionMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 100, 0, 80),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 100, 0, 80),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 100, 0, 80),
-                        Weapons.LUNAR_JUSTICE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -64,6 +48,11 @@ public class ZenithLegionnaire extends AbstractZombie implements BossMinionMob {
                 maxMeleeDamage,
                 new Remedy()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.ZENITH_LEGIONNAIRE;
     }
 
     @Override

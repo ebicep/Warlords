@@ -4,20 +4,16 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.ArmorManager;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
@@ -42,13 +38,6 @@ public class EventDjer extends AbstractZombie implements BossMinionMob {
     public EventDjer(Location spawnLocation) {
         super(spawnLocation,
                 "Djer",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.ETHEREAL_WITHER_SKULL),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
-                        ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160),
-                        Weapons.WALKING_STICK.getItem()
-                ),
                 9000,
                 0.32f,
                 10,
@@ -69,13 +58,6 @@ public class EventDjer extends AbstractZombie implements BossMinionMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.ETHEREAL_WITHER_SKULL),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
-                        ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160),
-                        Weapons.WALKING_STICK.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -83,6 +65,11 @@ public class EventDjer extends AbstractZombie implements BossMinionMob {
                 maxMeleeDamage,
                 new GroundShred()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_NARMER_DJER;
     }
 
     @Override

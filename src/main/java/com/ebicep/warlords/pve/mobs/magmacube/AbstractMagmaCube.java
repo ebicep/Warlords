@@ -5,15 +5,14 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
-import org.bukkit.inventory.EntityEquipment;
 
 public abstract class AbstractMagmaCube extends AbstractMob<CustomMagmaCube> {
 
     public AbstractMagmaCube(
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
             int damageResistance,
@@ -25,7 +24,6 @@ public abstract class AbstractMagmaCube extends AbstractMob<CustomMagmaCube> {
                 new CustomMagmaCube(spawnLocation.getWorld()),
                 spawnLocation,
                 name,
-                ee,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -39,7 +37,6 @@ public abstract class AbstractMagmaCube extends AbstractMob<CustomMagmaCube> {
             int size,
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
             int damageResistance,
@@ -51,7 +48,6 @@ public abstract class AbstractMagmaCube extends AbstractMob<CustomMagmaCube> {
                 new CustomMagmaCube(spawnLocation.getWorld(), size),
                 spawnLocation,
                 name,
-                ee,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -59,6 +55,11 @@ public abstract class AbstractMagmaCube extends AbstractMob<CustomMagmaCube> {
                 maxMeleeDamage,
                 abilities
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 
     @Override

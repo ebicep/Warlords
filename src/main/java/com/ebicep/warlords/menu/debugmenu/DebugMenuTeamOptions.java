@@ -85,7 +85,7 @@ public class DebugMenuTeamOptions {
                 if (warlordsEntity instanceof WarlordsNPC) {
                     AbstractMob<?> mob = ((WarlordsNPC) warlordsEntity).getMob();
                     if (mob != null) {
-                        EntityEquipment ee = mob.getEe();
+                        EntityEquipment ee = mob.getEquipment();
                         if (ee != null && ee.getHelmet() != null) {
                             itemStack = ee.getHelmet();
                         } else {

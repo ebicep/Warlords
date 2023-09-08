@@ -2,28 +2,17 @@ package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 public class EventNarmerAcolyte extends AbstractZombie implements BossMinionMob {
 
     public EventNarmerAcolyte(Location spawnLocation) {
         super(spawnLocation,
                 "Acolyte of Narmer",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.RED_EYE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 15),
-                        Weapons.DEMONBLADE.getItem()
-                ),
                 5000,
                 0.35f,
                 0,
@@ -43,19 +32,17 @@ public class EventNarmerAcolyte extends AbstractZombie implements BossMinionMob 
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.RED_EYE),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 15),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 15),
-                        Weapons.DEMONBLADE.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_NARMER_ACOLYTE;
     }
 
     @Override

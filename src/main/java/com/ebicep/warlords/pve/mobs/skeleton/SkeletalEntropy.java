@@ -4,25 +4,20 @@ import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class SkeletalEntropy extends AbstractSkeleton implements AdvancedMob {
     public SkeletalEntropy(Location spawnLocation) {
         super(
                 spawnLocation,
                 "Skeletal Entropy",
-                new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.PINK_CARPET),
-                        new ItemStack(Material.DIAMOND_CHESTPLATE),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        new ItemStack(Material.DIAMOND_BOOTS),
-                        Weapons.VOID_TWIG.getItem()
-                ),
                 3000,
                 0.05f,
                 10,
@@ -44,13 +39,6 @@ public class SkeletalEntropy extends AbstractSkeleton implements AdvancedMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        new ItemStack(Material.PINK_CARPET),
-                        new ItemStack(Material.DIAMOND_CHESTPLATE),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        new ItemStack(Material.DIAMOND_BOOTS),
-                        Weapons.VOID_TWIG.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -58,6 +46,11 @@ public class SkeletalEntropy extends AbstractSkeleton implements AdvancedMob {
                 maxMeleeDamage,
                 new Fireball(5.5f)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.SKELETAL_ENTROPY;
     }
 
     @Override

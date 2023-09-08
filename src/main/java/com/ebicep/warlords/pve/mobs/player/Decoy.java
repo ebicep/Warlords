@@ -4,10 +4,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,13 +16,17 @@ public class Decoy extends AbstractZombie implements BasicMob {
         super(
                 spawnLocation,
                 playerName + "'s Decoy",
-                new Utils.SimpleEntityEquipment(helmet, chestplate, leggings, boots, weapon),
                 5000,
                 0,
                 0,
                 0,
                 0
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return null;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -23,7 +24,6 @@ public class Illumination extends AbstractMagmaCube implements AdvancedMob {
         super(
                 spawnLocation,
                 "Illumination",
-                null,
                 4000,
                 0.5f,
                 20,
@@ -45,7 +45,6 @@ public class Illumination extends AbstractMagmaCube implements AdvancedMob {
         super(
                 spawnLocation,
                 name,
-                null,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -53,6 +52,11 @@ public class Illumination extends AbstractMagmaCube implements AdvancedMob {
                 maxMeleeDamage,
                 new LastStandNear()
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.ILLUMINATION;
     }
 
     @Override

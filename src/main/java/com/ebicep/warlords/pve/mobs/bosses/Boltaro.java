@@ -5,15 +5,13 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroExiled;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroShadow;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -22,7 +20,6 @@ import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 public class Boltaro extends AbstractZombie implements BossMob {
 
@@ -33,13 +30,6 @@ public class Boltaro extends AbstractZombie implements BossMob {
     public Boltaro(Location spawnLocation) {
         super(spawnLocation,
                 "Boltaro",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEMON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        Weapons.DRAKEFANG.getItem()
-                ),
                 12500,
                 0.475f,
                 20,
@@ -59,13 +49,6 @@ public class Boltaro extends AbstractZombie implements BossMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.DEMON),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        Weapons.DRAKEFANG.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -167,6 +150,11 @@ public class Boltaro extends AbstractZombie implements BossMob {
     @Override
     public NamedTextColor getColor() {
         return NamedTextColor.RED;
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.BOLTARO;
     }
 
     @Override

@@ -25,7 +25,6 @@ public class Chessking extends AbstractSlime implements BossMob {
     public Chessking(Location spawnLocation) {
         super(spawnLocation,
                 "Chessking",
-                null,
                 100000,
                 0.3f,
                 30,
@@ -66,7 +65,6 @@ public class Chessking extends AbstractSlime implements BossMob {
     ) {
         super(spawnLocation,
                 name,
-                null,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -94,6 +92,11 @@ public class Chessking extends AbstractSlime implements BossMob {
                     }
                 }
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.CHESSKING;
     }
 
     @Override

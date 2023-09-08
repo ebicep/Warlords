@@ -4,7 +4,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -13,8 +12,6 @@ import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -30,13 +27,6 @@ public class Zenith extends AbstractZombie implements BossMob {
     public Zenith(Location spawnLocation) {
         super(spawnLocation,
                 "Zenith",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.PURPLE_ENDERMAN),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
-                        Weapons.VORPAL_SWORD.getItem()
-                ),
                 26000,
                 0.36f,
                 25,
@@ -64,13 +54,6 @@ public class Zenith extends AbstractZombie implements BossMob {
     ) {
         super(spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.PURPLE_ENDERMAN),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 255),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
-                        Weapons.VORPAL_SWORD.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -165,6 +148,11 @@ public class Zenith extends AbstractZombie implements BossMob {
     @Override
     public NamedTextColor getColor() {
         return NamedTextColor.DARK_PURPLE;
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.ZENITH;
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -33,7 +34,6 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.annotation.Transient;
 
@@ -104,7 +104,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 List<WarlordsNPC> toConvert = PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                                                  .aliveEnemiesOf(player)
                                                                  .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob))
-                                                                 .filter(warlordsNPC -> warlordsNPC.getMob().getEe() != null)
+                                                                 .filter(warlordsNPC -> warlordsNPC.getMob().getEquipment() != null)
                                                                  .limit(spawnAmount)
                                                                  .toList();
                 toConvert.forEach(convertedEnemy -> {
@@ -210,11 +210,13 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     }
 
     private static void updateMobEquipment(AbstractMob<?> mob, WarlordsPlayer player) {
-        EntityEquipment equipment = mob.getEe();
-        equipment.setHelmet(HeadUtils.getHead(player.getUuid()));
-        equipment.setChestplate(CHESTPLATE);
-        equipment.setLeggings(LEGGINGS);
-        equipment.setBoots(BOOTS);
+        mob.setEquipment(new Utils.SimpleEntityEquipment(
+                HeadUtils.getHead(player.getUuid()),
+                CHESTPLATE,
+                LEGGINGS,
+                BOOTS,
+                mob.getEquipment().getItemInMainHand()
+        ));
         mob.updateEquipment();
     }
 

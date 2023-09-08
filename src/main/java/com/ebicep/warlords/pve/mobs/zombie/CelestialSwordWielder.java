@@ -3,16 +3,13 @@ package com.ebicep.warlords.pve.mobs.zombie;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 public class CelestialSwordWielder extends AbstractZombie implements EliteMob {
 
@@ -20,13 +17,6 @@ public class CelestialSwordWielder extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 "Celestial Sword Wielder",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SWORD_HEAD),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
-                        Weapons.DIAMONDSPARK.getItem()
-                ),
                 8000,
                 0.25f,
                 10,
@@ -47,19 +37,17 @@ public class CelestialSwordWielder extends AbstractZombie implements EliteMob {
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.SWORD_HEAD),
-                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
-                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
-                        Weapons.DIAMONDSPARK.getItem()
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.CELESTIAL_SWORD_WIELDER;
     }
 
     @Override
