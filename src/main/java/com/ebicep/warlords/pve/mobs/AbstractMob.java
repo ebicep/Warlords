@@ -73,26 +73,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     @Nonnull
     protected AbstractPlayerClass playerClass;
 
-    public int getMaxHealth() {
-        return maxHealth;
-    }
-
-    public float getWalkSpeed() {
-        return walkSpeed;
-    }
-
-    public int getDamageResistance() {
-        return damageResistance;
-    }
-
-    public float getMinMeleeDamage() {
-        return minMeleeDamage;
-    }
-
-    public float getMaxMeleeDamage() {
-        return maxMeleeDamage;
-    }
-
     public AbstractMob(
             T entity,
             Location spawnLocation,
@@ -245,6 +225,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         bossBar(option.getGame(), false);
+        if (aspect != null) {
+            aspect.onDeath(killer, deathLocation, option);
+        }
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
@@ -469,4 +452,25 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     public Aspect getAspect() {
         return aspect;
     }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public float getWalkSpeed() {
+        return walkSpeed;
+    }
+
+    public int getDamageResistance() {
+        return damageResistance;
+    }
+
+    public float getMinMeleeDamage() {
+        return minMeleeDamage;
+    }
+
+    public float getMaxMeleeDamage() {
+        return maxMeleeDamage;
+    }
+
 }

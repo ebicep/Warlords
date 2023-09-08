@@ -138,22 +138,29 @@ public interface PveOption extends Option {
             }
 
             @EventHandler
-            public void onEvent(WarlordsDamageHealingEvent event) {
+            public void onDamageHeal(WarlordsDamageHealingEvent event) {
                 WarlordsEntity attacker = event.getAttacker();
                 WarlordsEntity receiver = event.getWarlordsEntity();
 
-                if (event.isDamageInstance()) {
-                    if (attacker instanceof WarlordsNPC) {
-                        AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
-                        if (mob != null && getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
-                            mob.onAttack(attacker, receiver, event);
+                if (!event.isDamageInstance()) {
+                    return;
+                }
+                if (attacker instanceof WarlordsNPC) {
+                    AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
+                    if (mob != null && getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
+                        mob.onAttack(attacker, receiver, event);
+                        if (mob.getAspect() != null) {
+                            mob.getAspect().onAttack(attacker, receiver, event);
                         }
                     }
+                }
 
-                    if (receiver instanceof WarlordsNPC) {
-                        AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
-                        if (mob != null && getMobsMap().containsKey(mob)) {
-                            mob.onDamageTaken(receiver, attacker, event);
+                if (receiver instanceof WarlordsNPC) {
+                    AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
+                    if (mob != null && getMobsMap().containsKey(mob)) {
+                        mob.onDamageTaken(receiver, attacker, event);
+                        if (mob.getAspect() != null) {
+                            mob.getAspect().onDamageTaken(receiver, attacker, event);
                         }
                     }
                 }
