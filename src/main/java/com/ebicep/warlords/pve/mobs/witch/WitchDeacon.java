@@ -93,7 +93,7 @@ public class WitchDeacon extends AbstractWitch implements IntermediateMob {
         Utils.playGlobalSound(self.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.7f);
         EffectUtils.playRandomHitEffect(self.getLocation(), 0, 120, 255, 4);
         EffectUtils.playRandomHitEffect(attacker.getLocation(), 0, 120, 255, 4);
-        attacker.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.ABILITY, 5);
+        attacker.getCooldownManager().subtractTicksOnRegularCooldowns(5, CooldownTypes.ABILITY);
     }
 
     private static class WitchBuff extends AbstractPveAbility {

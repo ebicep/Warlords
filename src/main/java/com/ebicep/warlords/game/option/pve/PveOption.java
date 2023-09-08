@@ -57,9 +57,6 @@ public interface PveOption extends Option {
         List<Location> candidates = new ArrayList<>();
         double priority = Double.NEGATIVE_INFINITY;
         for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
-            if (entity == null) {
-                return marker.getLocation();
-            }
             if (candidates.isEmpty()) {
                 candidates.add(marker.getLocation());
                 priority = marker.getPriority(entity);

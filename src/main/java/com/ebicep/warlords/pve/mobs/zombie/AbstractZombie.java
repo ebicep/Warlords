@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.zombie;
 import com.ebicep.customentities.nms.pve.CustomZombie;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
 
 public abstract class AbstractZombie extends AbstractMob<CustomZombie> {
@@ -31,8 +30,4 @@ public abstract class AbstractZombie extends AbstractMob<CustomZombie> {
         );
     }
 
-    @Override
-    public Mob getMobRegistry() {
-        return null;
-    }
 }

@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.witherskeleton;
 
 import com.ebicep.customentities.nms.pve.CustomWitherSkeleton;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
 
 public abstract class AbstractWitherSkeleton extends AbstractMob<CustomWitherSkeleton> {
@@ -27,8 +26,4 @@ public abstract class AbstractWitherSkeleton extends AbstractMob<CustomWitherSke
         );
     }
 
-    @Override
-    public Mob getMobRegistry() {
-        return null;
-    }
 }

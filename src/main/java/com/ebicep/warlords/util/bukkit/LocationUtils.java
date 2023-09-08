@@ -310,4 +310,25 @@ public class LocationUtils {
         }
         return locations;
     }
+
+
+    public static List<Location> getSquare(Location center, float radius) {
+        //X--X
+        //|  |
+        //Y--Y
+        LocationBuilder locationBuilder = new LocationBuilder(center)
+                .pitch(0);
+        List<Location> locations = new ArrayList<>();
+        //X--X
+        LocationBuilder forward = locationBuilder.clone().forward(radius);
+        locations.add(forward.clone().left(radius));
+        locations.add(forward.clone().right(radius));
+        //Y--Y
+        LocationBuilder backwards = locationBuilder.clone().backward(radius);
+        locations.add(backwards.clone().left(radius));
+        locations.add(backwards.clone().right(radius));
+        return locations;
+    }
+
+
 }

@@ -20,23 +20,6 @@ public class SpawnpointOption extends MarkerOption {
 
     public static final int BAD_TEAM_PENALTY = -10000;
 
-    public SpawnpointOption(Location location, ToDoubleFunction<WarlordsEntity> teamCheck, List<TextComponent> debugExtra) {
-        super(new SpawnLocationMarker() {
-                  @Override
-                  public double getPriority(WarlordsEntity player) {
-                      return teamCheck.applyAsDouble(player);
-                  }
-
-                  @Override
-                  public Location getLocation() {
-                      return location;
-                  }
-
-                },
-                DebugLocationMarker.create(Material.BLACK_BED, 0, SpawnpointOption.class, Component.text("Spawnpoint"), location, () -> debugExtra)
-        );
-    }
-
     public static SpawnpointOption forTeam(Location location, Team team) {
         return new SpawnpointOption(
                 location,
@@ -74,6 +57,26 @@ public class SpawnpointOption extends MarkerOption {
                     return distanceToFriendlies - distanceToEnemy;
                 },
                 List.of(Component.text("Type: avoiding-enemy-players"))
+        );
+    }
+
+    public SpawnpointOption(Location location, ToDoubleFunction<WarlordsEntity> teamCheck, List<TextComponent> debugExtra) {
+        super(new SpawnLocationMarker() {
+                  @Override
+                  public double getPriority(WarlordsEntity player) {
+                      if (player == null) {
+                          return 0;
+                      }
+                      return teamCheck.applyAsDouble(player);
+                  }
+
+                  @Override
+                  public Location getLocation() {
+                      return location;
+                  }
+
+              },
+                DebugLocationMarker.create(Material.BLACK_BED, 0, SpawnpointOption.class, Component.text("Spawnpoint"), location, () -> debugExtra)
         );
     }
 }

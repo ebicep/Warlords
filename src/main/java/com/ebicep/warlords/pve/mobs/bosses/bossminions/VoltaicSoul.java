@@ -9,27 +9,21 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.RemoveTarget;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
-public class TormentedSoul extends AbstractZombie implements BossMinionMob {
+public class VoltaicSoul extends AbstractZombie implements BossMinionMob {
 
-    private float reduceCooldown = 0.2f;
+    private float energyRemoved = 5;
+    private int hitBuildUp = 0;
 
-    public TormentedSoul(Location spawnLocation) {
-        super(spawnLocation,
-                "Tormented Soul",
-                2000,
-                0.38f,
-                0,
-                214,
-                338,
-                new RemoveTarget(20)
-        );
+    public VoltaicSoul(Location spawnLocation) {
+        this(spawnLocation, "Voltaic Soul", 3000, 0.43f, 0, 350, 450);
     }
 
-    public TormentedSoul(
+    public VoltaicSoul(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -45,24 +39,27 @@ public class TormentedSoul extends AbstractZombie implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new RemoveTarget(20)
+                new RemoveTarget(10)
         );
     }
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.TORMENTED_SOUL;
+        return Mob.VOLTAIC_SOUL;
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         DifficultyIndex difficulty = option.getDifficulty();
-        reduceCooldown = difficulty == DifficultyIndex.EXTREME ? 0.5f : difficulty == DifficultyIndex.HARD ? 0.4f : 0.2f;
+        energyRemoved = difficulty == DifficultyIndex.EXTREME ? 10f : difficulty == DifficultyIndex.HARD ? 7.5f : 5f;
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
+        if (ticksElapsed % 40 == 0) {
+            hitBuildUp--;
+        }
     }
 
     @Override
@@ -72,10 +69,23 @@ public class TormentedSoul extends AbstractZombie implements BossMinionMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 117, 24, 65, 1);
-        Utils.playGlobalSound(self.getLocation(), Sound.AMBIENT_CAVE, 0.35f, 2);
+        EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 171, 74, 228, 1);
+        Utils.playGlobalSound(self.getLocation(), Sound.BLOCK_GRASS_STEP, 0.35f, 2);
         if (!event.getAbility().isEmpty()) {
-            attacker.getSpec().increaseAllCooldownTimersBy(reduceCooldown);
+            attacker.subtractEnergy(-energyRemoved, true);
+            hitBuildUp++;
         }
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
+
+        int damage = 100 * hitBuildUp;
+        PlayerFilter.entitiesAround(deathLocation, 10, 10, 10)
+                    .aliveEnemiesOf(warlordsNPC)
+                    .forEach(warlordsEntity -> {
+                        warlordsEntity.addDamageInstance(warlordsNPC, "Static Shock", damage, damage, 0, 100);
+                    });
     }
 }

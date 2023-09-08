@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.mobs;
 
-import com.ebicep.warlords.game.option.raid.bosses.Physira;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.blaze.AbstractBlaze;
@@ -389,7 +388,35 @@ public enum Mob {
             Weapons.GEMINI.getItem()
     )),
     TORMENTED_SOUL(TormentedSoul.class, TormentedSoul::new, TormentedSoul::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.FACELESS_MAGE),
+            SkullUtils.getSkullFrom(SkullID.GHOST_RED),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 140, 140),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 140, 140, 15),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 140, 140, 140),
+            Weapons.CLAWS.getItem()
+    )),
+    DEPRESSED_SOUL(DepressedSoul.class, DepressedSoul::new, DepressedSoul::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_BLUE),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 140, 140),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 140, 140, 15),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 140, 140, 140),
+            Weapons.CLAWS.getItem()
+    )),
+    FURIOUS_SOUL(FuriousSoul.class, FuriousSoul::new, FuriousSoul::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_MAGENTA),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 140, 140),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 140, 140, 15),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 140, 140, 140),
+            Weapons.CLAWS.getItem()
+    )),
+    VOLTAIC_SOUL(VoltaicSoul.class, VoltaicSoul::new, VoltaicSoul::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_PURPLE),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 140, 140),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 140, 140, 15),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 140, 140, 140),
+            Weapons.CLAWS.getItem()
+    )),
+    AGONIZED_SOUL(AgonizedSoul.class, AgonizedSoul::new, AgonizedSoul::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.GHOST_GRAY),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 140, 140),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 140, 140, 15),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 140, 140, 140),
@@ -419,13 +446,13 @@ public enum Mob {
 
 
     // Raid Boss
-    PHYSIRA(Physira.class, Physira::new, Physira::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.GRADIENT_SOUL),
-            new ItemStack(Material.NETHERITE_CHESTPLATE),
-            new ItemStack(Material.NETHERITE_LEGGINGS),
-            new ItemStack(Material.NETHERITE_BOOTS),
-            Weapons.VIRIDIAN_BLADE.getItem()
-    )),
+//    PHYSIRA(Physira.class, Physira::new, Physira::new, new Utils.SimpleEntityEquipment(
+//            SkullUtils.getSkullFrom(SkullID.GRADIENT_SOUL),
+//            new ItemStack(Material.NETHERITE_CHESTPLATE),
+//            new ItemStack(Material.NETHERITE_LEGGINGS),
+//            new ItemStack(Material.NETHERITE_BOOTS),
+//            Weapons.VIRIDIAN_BLADE.getItem()
+//    )),
 
     //EVENTS
     EVENT_BOLTARO(EventBoltaro.class, EventBoltaro::new, EventBoltaro::new, new Utils.SimpleEntityEquipment(
@@ -590,13 +617,15 @@ public enum Mob {
             NIGHTMARE_ZOMBIE, PIG_PARTICLE, EXTREME_ZEALOT, SMART_SKELETON
     };
     public static final Mob[] BOSS_MINIONS = {
-            BOLTARO_SHADOW, BOLTARO_EXLIED, TORMENTED_SOUL, NARMER_ACOLYTE, ZENITH_LEGIONNAIRE,
+            BOLTARO_SHADOW, BOLTARO_EXLIED,
+            TORMENTED_SOUL, DEPRESSED_SOUL, FURIOUS_SOUL, VOLTAIC_SOUL, AGONIZED_SOUL,
+            NARMER_ACOLYTE,
+            ZENITH_LEGIONNAIRE,
             SOUL_OF_GRADIENT
     };
     public static final Mob[] BOSSES = {
             BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH,
-            CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE,
-            PHYSIRA
+            CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE
     };
     public final Class<?> mobClass;
     @Deprecated

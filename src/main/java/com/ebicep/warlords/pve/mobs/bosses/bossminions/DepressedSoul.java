@@ -13,23 +13,16 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
-public class TormentedSoul extends AbstractZombie implements BossMinionMob {
+public class DepressedSoul extends AbstractZombie implements BossMinionMob {
 
-    private float reduceCooldown = 0.2f;
+    private int reduceSpeed = -2;
+    private int reduceSpeedTickDuration = 40;
 
-    public TormentedSoul(Location spawnLocation) {
-        super(spawnLocation,
-                "Tormented Soul",
-                2000,
-                0.38f,
-                0,
-                214,
-                338,
-                new RemoveTarget(20)
-        );
+    public DepressedSoul(Location spawnLocation) {
+        this(spawnLocation, "Depressed Soul", 2500, 0.32f, 5, 300, 400);
     }
 
-    public TormentedSoul(
+    public DepressedSoul(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -45,20 +38,21 @@ public class TormentedSoul extends AbstractZombie implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new RemoveTarget(20)
+                new RemoveTarget(30)
         );
     }
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.TORMENTED_SOUL;
+        return Mob.DEPRESSED_SOUL;
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         DifficultyIndex difficulty = option.getDifficulty();
-        reduceCooldown = difficulty == DifficultyIndex.EXTREME ? 0.5f : difficulty == DifficultyIndex.HARD ? 0.4f : 0.2f;
+        reduceSpeed = difficulty == DifficultyIndex.EXTREME ? -6 : difficulty == DifficultyIndex.HARD ? -4 : -2;
+        reduceSpeedTickDuration = difficulty == DifficultyIndex.EXTREME ? 60 : difficulty == DifficultyIndex.HARD ? 50 : 40;
     }
 
     @Override
@@ -72,10 +66,10 @@ public class TormentedSoul extends AbstractZombie implements BossMinionMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 117, 24, 65, 1);
-        Utils.playGlobalSound(self.getLocation(), Sound.AMBIENT_CAVE, 0.35f, 2);
+        EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 35, 25, 122, 1);
+        Utils.playGlobalSound(self.getLocation(), Sound.BLOCK_SNOW_BREAK, 0.35f, 2);
         if (!event.getAbility().isEmpty()) {
-            attacker.getSpec().increaseAllCooldownTimersBy(reduceCooldown);
+            attacker.addSpeedModifier(self, name, reduceSpeed, reduceSpeedTickDuration, "BASE");
         }
     }
 }

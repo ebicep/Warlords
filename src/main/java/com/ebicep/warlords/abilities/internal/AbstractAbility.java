@@ -49,6 +49,10 @@ public abstract class AbstractAbility implements AbilityIcon {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
     }
 
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, boolean startNoCooldown) {
+        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startNoCooldown);
+    }
+
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, false);
     }

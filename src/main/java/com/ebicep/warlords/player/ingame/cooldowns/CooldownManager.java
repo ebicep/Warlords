@@ -19,10 +19,7 @@ import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -103,13 +100,14 @@ public class CooldownManager {
         return totalCooldowns;
     }
 
-    public void subtractTicksOnRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
-        addTicksToRegularCooldowns(cooldownTypes, -ticks);
+    public void subtractTicksOnRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
+        addTicksToRegularCooldowns(-ticks, cooldownTypes);
     }
 
-    public void addTicksToRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
+    public void addTicksToRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
+        List<CooldownTypes> types = Arrays.asList(cooldownTypes);
         abstractCooldowns.stream()
-                         .filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
+                         .filter(abstractCooldown -> types.contains(abstractCooldown.getCooldownType()))
                          .filter(RegularCooldown.class::isInstance)
                          .map(RegularCooldown.class::cast)
                          .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks));

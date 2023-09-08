@@ -56,6 +56,18 @@ public enum SkullID {
     FACELESS_BANDIT("Y2VlZTJjYjQxY2VkZTVhYTQ0MTE3MTYyNGUxZTFlMzg4YjgyNjJhNGEwYmI5ZGZiZmQ4ODljYTAyYzQxY2IifX19="),
     // https://minecraft-heads.com/custom-heads/humanoid/54811-ghost
     FACELESS_MAGE("OGFiOGI2ZDA4YjRhMTdlYjVmMTlkYTNlNTI4MzczYTBkNmQzNjA5ZTEzZmU0OWRjMDIwMDkxNDQ3NWQ4MjNhZiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/humanoid/50029-ghost-lime
+    GHOST_LIME("N2I5N2JlZmJjZTI0YzE3ODVhZjNlYmJkMWIzNzYxZGE1OTJmNWY4ZTI5ZWRhOTlhN2I5ZWQwOWY4MjBmNTc3YiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/humanoid/50028-ghost-magenta
+    GHOST_MAGENTA("OTY5Yjk0Njg5NjQ2OGQwMzVmOWY4NjMxODk1YmM1ODU4ZGE2OGFkNWRhZTIxYjVmMDkwZDM2ZjVhMmUzZjYxZiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/humanoid/50027-ghost-red
+    GHOST_RED("NjRmYjU2MmU3ZGY5OTAxYmI5MTZkZjlmMWViNTcyNTA5ZDgyNzRkZGFjYWM1ZTUyNWU1ZTQ0MjNjYTMyY2YzMSJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/humanoid/50026-ghost-gray
+    GHOST_GRAY("MmQzNDVhNGUxYmI4N2Q4ODVjMGI4NGUxM2EzYjlkNTE3Yjk0NmY2NTQyODQ0ZTlkMGNlNmFjYjdhZWYyYWQ1NiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/humanoid/47952-ghost
+    GHOST_BLUE("YTE0YTZhZmEzNmM5N2M1MzE5ZWFmNTVkZTI0Y2JlN2UwNjc5ZjUwZTJhMTNkY2ZmOWUzZGE0MDg0Mzk3YTBjNiJ9fX0="),
+    // https://minecraft-heads.com/custom-heads/humanoid/48225-ghost
+    GHOST_PURPLE("Nzg1MGM3ODg4N2MyMzAzOGEzMjRmYWRkMGY0YjIyNDgxYTA2OWYwZTgwNGQ3ZWIwOGM1Mjc3ZDg3ZGM3OWEyYyJ9fX0="),
     // https://minecraft-heads.com/custom-heads/humans/54826-purple-knight-helmet
     PURPLE_KNIGHT("MmEwM2IzNWQ0NDg1MGNiNDJiMDAwMTdhZGRiN2Y4NWVhYWMyNGI1NmEwY2Q1MWNhMWNhYzIyYjZlYjQyM2UxMSJ9fX0="),
     // https://minecraft-heads.com/custom-heads/monsters/54991-neon-enderman

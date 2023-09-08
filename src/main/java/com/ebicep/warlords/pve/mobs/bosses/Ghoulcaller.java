@@ -8,12 +8,13 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
-import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractSpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
@@ -24,8 +25,11 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Ghoulcaller extends AbstractZombie implements BossMob {
 
@@ -35,36 +39,11 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         put(3, new Pair<>(1502f, 1599f));
         put(4, new Pair<>(1744f, 1859f));
     }};
+    private static final List<Mob> SOULS = Arrays.asList(Mob.AGONIZED_SOUL, Mob.DEPRESSED_SOUL, Mob.FURIOUS_SOUL, Mob.TORMENTED_SOUL, Mob.VOLTAIC_SOUL);
+    private static final int SPAWN_LIMIT = 75;
 
     public Ghoulcaller(Location spawnLocation) {
-        super(spawnLocation,
-                "Ghoulcaller",
-                16000,
-                0.42f,
-                5,
-                277,
-                416,
-                new GhoulcallersFury(),
-                new SpawnMobAbility(
-                        "Tormented Soul",
-                        20,
-                        Mob.TORMENTED_SOUL
-                ) {
-                    @Override
-                    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-                        boolean activate = super.onActivate(wp, player);
-                        if (activate) {
-                            Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
-                        }
-                        return activate;
-                    }
-
-                    @Override
-                    public int getSpawnAmount() {
-                        return (int) (2 * pveOption.getGame().warlordsPlayers().count());
-                    }
-                }
-        );
+        this(spawnLocation, "Ghoulcaller", 16000, 0.42f, 5, 277, 416);
     }
 
     public Ghoulcaller(
@@ -84,11 +63,11 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new GhoulcallersFury(),
-                new SpawnMobAbility(
-                        "Tormented Soul",
-                        20,
-                        Mob.TORMENTED_SOUL
-                ) {
+                new AbstractSpawnMobAbility("Ghoulcaller Mobs", 7, true) {
+
+                    private List<Location> randomSpawnLocations;
+                    private Mob randomSoulToSpawn;
+
                     @Override
                     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
                         boolean activate = super.onActivate(wp, player);
@@ -99,11 +78,48 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                     }
 
                     @Override
+                    public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+                        if (pveOption.getMobs().stream().filter(abstractMob -> SOULS.contains(abstractMob.getMobRegistry())).count() >= SPAWN_LIMIT) {
+                            return true;
+                        }
+                        randomSoulToSpawn = SOULS.get(ThreadLocalRandom.current().nextInt(SOULS.size()));
+                        randomSpawnLocations = generateSpawnLocations(pveOption);
+                        return super.onPveActivate(wp, pveOption);
+                    }
+
+                    @Override
+                    public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
+                        if (randomSpawnLocations.isEmpty()) {
+                            randomSpawnLocations = generateSpawnLocations(pveOption);
+                        }
+                        return randomSoulToSpawn.createMob(randomSpawnLocations.remove(0));
+                    }
+
+                    @Override
                     public int getSpawnAmount() {
                         return (int) (2 * pveOption.getGame().warlordsPlayers().count());
                     }
                 }
         );
+    }
+
+    private static List<Location> generateSpawnLocations(PveOption pveOption) {
+        List<Location> locations;
+        Location center = pveOption.getRandomSpawnLocation(null);
+        if (center == null) {
+            locations = new ArrayList<>();
+            PlayerFilter.playingGame(pveOption.getGame())
+                        .findAny()
+                        .ifPresent(warlordsEntity -> {
+                            locations.add(warlordsEntity.getLocation());
+                        });
+        } else if (ThreadLocalRandom.current().nextBoolean()) {
+            locations = LocationUtils.getSquare(center, 1.5f);
+        } else {
+            locations = LocationUtils.getCircle(center, 1.5f, 5);
+        }
+        return locations;
+
     }
 
     @Override
@@ -125,7 +141,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        spawnTormentedSouls(option, option.getDifficulty() == DifficultyIndex.EASY ? 5 : 10);
+        spawnRandomSouls(option, option.getDifficulty() == DifficultyIndex.EASY ? 5 : 10);
     }
 
     @Override
@@ -167,10 +183,16 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                                                               .build());
     }
 
-    private void spawnTormentedSouls(PveOption option, int amount) {
+    private void spawnRandomSouls(PveOption option, int amount) {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
+        List<Location> locations = generateSpawnLocations(option);
+        Mob soul = SOULS.get(ThreadLocalRandom.current().nextInt(SOULS.size()));
         for (int i = 0; i < amount; i++) {
-            option.spawnNewMob(new TormentedSoul(getWarlordsNPC().getLocation()));
+            if (locations.isEmpty()) {
+                locations = generateSpawnLocations(option);
+                soul = SOULS.get(ThreadLocalRandom.current().nextInt(SOULS.size()));
+            }
+            option.spawnNewMob(soul.createMob(locations.remove(0)));
         }
     }
 

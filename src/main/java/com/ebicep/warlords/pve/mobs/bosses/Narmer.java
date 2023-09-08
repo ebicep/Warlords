@@ -283,7 +283,7 @@ public class Narmer extends AbstractZombie implements BossMob {
         private final List<WarlordsEntity> selfAcolytes = new ArrayList<>(); // spawned acolytes using this ability
 
         public SpawnNarmerAcolyteAbility(Narmer narmer) {
-            super("Narmer Acolyte", 15);
+            super("Narmer Acolyte", 15, false);
             this.narmer = narmer;
             this.pveOption = narmer.pveOption;
         }

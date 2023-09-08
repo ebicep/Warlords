@@ -87,7 +87,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.entity = entity;
         this.spawnLocation = spawnLocation;
         this.name = name;
-        this.equipment = getMobRegistry().equipment;
+        com.ebicep.warlords.pve.mobs.Mob mobRegistry = getMobRegistry();
+        if (mobRegistry != null) {
+            this.equipment = mobRegistry.equipment;
+        }
         this.maxHealth = maxHealth;
         this.walkSpeed = walkSpeed;
         this.damageResistance = damageResistance;
@@ -441,12 +444,12 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return name;
     }
 
-    public void setEquipment(EntityEquipment equipment) {
-        this.equipment = equipment;
-    }
-
     public EntityEquipment getEquipment() {
         return equipment;
+    }
+
+    public void setEquipment(EntityEquipment equipment) {
+        this.equipment = equipment;
     }
 
     public boolean isShowBossBar() {

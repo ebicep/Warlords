@@ -48,7 +48,7 @@ public class ZombieSwordsman extends AbstractZombie implements IntermediateMob {
 
     @Override
     public Mob getMobRegistry() {
-        return null;
+        return Mob.ZOMBIE_SWORDSMAN;
     }
 
     @Override

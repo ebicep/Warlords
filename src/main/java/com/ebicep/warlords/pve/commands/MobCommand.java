@@ -33,7 +33,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
@@ -245,12 +248,12 @@ public class MobCommand extends BaseCommand {
     }
 
     @Subcommand("tojson")
-    public void toJson(Player player) {
+    public void toJson(Player player, @Optional String fileName) {
         JsonObject jsonObject = new JsonObject();
         Location location = player.getLocation();
         for (Mob value : Mob.VALUES) {
             JsonObject mobObject = new JsonObject();
-            AbstractMob<?> mob = value.createMob(location);
+            AbstractMob<?> mob = value.createMobLegacy.apply(location.add(200, 100, 200));
             mobObject.addProperty("name", mob.getName());
             mobObject.addProperty("max_health", mob.getMaxHealth());
             mobObject.addProperty("walk_speed", mob.getWalkSpeed());
@@ -262,6 +265,15 @@ public class MobCommand extends BaseCommand {
         }
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         System.out.println(gson.toJson(jsonObject));
+        try {
+            FileWriter writer = new FileWriter(new File(Warlords.getInstance().getDataFolder(), (fileName == null ? "mobs" : fileName) + ".json"));
+            gson.toJson(jsonObject, writer);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+            ChatChannels.sendDebugMessage(player, Component.text("There was an error writing file - " + e.getMessage(), NamedTextColor.RED));
+        }
     }
 
     @Subcommand("reloadconfig")

@@ -19,13 +19,13 @@ public class ConfigUtil {
 
 
     public static void loadConfigs(Warlords instance) {
+        readKeysConfig(instance);
+        readBotConfig(instance);
         new BukkitRunnable() {
             @Override
             public void run() {
-                readKeysConfig(instance);
                 readWeaponConfig(instance);
                 saveWeaponConfig(instance);
-                readBotConfig(instance);
                 try {
                     readMobConfig(instance);
                 } catch (Exception e) {
@@ -110,7 +110,7 @@ public class ConfigUtil {
                 mob.damageResistance = mobConfig.get("damage_resistance").getAsInt();
                 mob.minMeleeDamage = mobConfig.get("min_melee_damage").getAsFloat();
                 mob.maxMeleeDamage = mobConfig.get("max_melee_damage").getAsFloat();
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | NullPointerException e) {
                 ChatUtils.MessageType.WARLORDS.sendErrorMessage("Mob " + mobEnumName + " does not exist!");
             }
         }

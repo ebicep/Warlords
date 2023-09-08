@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
 
 public abstract class AbstractMagmaCube extends AbstractMob<CustomMagmaCube> {
@@ -55,11 +54,6 @@ public abstract class AbstractMagmaCube extends AbstractMob<CustomMagmaCube> {
                 maxMeleeDamage,
                 abilities
         );
-    }
-
-    @Override
-    public Mob getMobRegistry() {
-        return null;
     }
 
     @Override

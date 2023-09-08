@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.slime;
 import com.ebicep.customentities.nms.pve.CustomSlime;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
 
 public abstract class AbstractSlime extends AbstractMob<CustomSlime> {
@@ -21,8 +20,4 @@ public abstract class AbstractSlime extends AbstractMob<CustomSlime> {
         super(new CustomSlime(spawnLocation.getWorld()), spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
     }
 
-    @Override
-    public Mob getMobRegistry() {
-        return null;
-    }
 }

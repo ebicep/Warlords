@@ -106,7 +106,7 @@ public class ZombieKnight extends AbstractZombie implements AdvancedMob {
                     .closestFirst(wp)
             ) {
                 EffectUtils.playParticleLinkAnimation(we.getLocation(), wp.getLocation(), 0, 0, 0, 1);
-                we.getCooldownManager().subtractTicksOnRegularCooldowns(CooldownTypes.WEAPON, 20);
+                we.getCooldownManager().subtractTicksOnRegularCooldowns(20, CooldownTypes.WEAPON);
             }
 
             EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder()

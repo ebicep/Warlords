@@ -12,8 +12,8 @@ import java.util.List;
 
 public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
 
-    public AbstractSpawnMobAbility(String mobName, float cooldown) {
-        super("Spawn " + mobName, cooldown, 50);
+    public AbstractSpawnMobAbility(String mobName, float cooldown, boolean startNoCooldown) {
+        super("Spawn " + mobName, cooldown, 50, startNoCooldown);
     }
 
     @Override
