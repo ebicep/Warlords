@@ -102,13 +102,17 @@ public class ConfigUtil {
         for (Map.Entry<String, JsonElement> stringJsonElementEntry : mobJson.entrySet()) {
             String mobEnumName = stringJsonElementEntry.getKey();
             JsonObject mobConfig = stringJsonElementEntry.getValue().getAsJsonObject();
-            Mob mob = Mob.valueOf(mobEnumName);
-            mob.name = mobConfig.get("name").getAsString();
-            mob.maxHealth = mobConfig.get("max_health").getAsInt();
-            mob.walkSpeed = mobConfig.get("walk_speed").getAsFloat();
-            mob.damageResistance = mobConfig.get("damage_resistance").getAsInt();
-            mob.minMeleeDamage = mobConfig.get("min_melee_damage").getAsFloat();
-            mob.maxMeleeDamage = mobConfig.get("max_melee_damage").getAsFloat();
+            try {
+                Mob mob = Mob.valueOf(mobEnumName);
+                mob.name = mobConfig.get("name").getAsString();
+                mob.maxHealth = mobConfig.get("max_health").getAsInt();
+                mob.walkSpeed = mobConfig.get("walk_speed").getAsFloat();
+                mob.damageResistance = mobConfig.get("damage_resistance").getAsInt();
+                mob.minMeleeDamage = mobConfig.get("min_melee_damage").getAsFloat();
+                mob.maxMeleeDamage = mobConfig.get("max_melee_damage").getAsFloat();
+            } catch (IllegalArgumentException e) {
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Mob " + mobEnumName + " does not exist!");
+            }
         }
     }
 

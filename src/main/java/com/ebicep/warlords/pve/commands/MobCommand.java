@@ -17,6 +17,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.mobs.MobMenu;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -42,6 +43,11 @@ import java.util.Set;
 public class MobCommand extends BaseCommand {
 
     public static final Set<AbstractMob<?>> SPAWNED_MOBS = new HashSet<>();
+
+    @Subcommand("menu")
+    public void menu(Player player) {
+        MobMenu.openMobMenu(player);
+    }
 
     @Subcommand("spawn")
     @Description("Spawns mobs, amount is how many")

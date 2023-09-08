@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs;
 import com.ebicep.warlords.game.option.raid.bosses.Physira;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.pve.mobs.blaze.AbstractBlaze;
 import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
 import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.*;
@@ -18,18 +19,22 @@ import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjet;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmer;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmerAcolyte;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.*;
+import com.ebicep.warlords.pve.mobs.irongolem.AbstractIronGolem;
 import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
+import com.ebicep.warlords.pve.mobs.magmacube.AbstractMagmaCube;
 import com.ebicep.warlords.pve.mobs.magmacube.Illumination;
-import com.ebicep.warlords.pve.mobs.pigzombie.PigAlleviator;
-import com.ebicep.warlords.pve.mobs.pigzombie.PigDisciple;
-import com.ebicep.warlords.pve.mobs.pigzombie.PigParticle;
-import com.ebicep.warlords.pve.mobs.pigzombie.PigShaman;
+import com.ebicep.warlords.pve.mobs.pigzombie.*;
 import com.ebicep.warlords.pve.mobs.skeleton.*;
+import com.ebicep.warlords.pve.mobs.slime.AbstractSlime;
 import com.ebicep.warlords.pve.mobs.slime.SlimyAnomaly;
 import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
+import com.ebicep.warlords.pve.mobs.spider.AbstractSpider;
 import com.ebicep.warlords.pve.mobs.spider.ArachnoVenari;
+import com.ebicep.warlords.pve.mobs.witch.AbstractWitch;
 import com.ebicep.warlords.pve.mobs.witch.WitchDeacon;
+import com.ebicep.warlords.pve.mobs.witherskeleton.AbstractWitherSkeleton;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
+import com.ebicep.warlords.pve.mobs.wolf.AbstractWolf;
 import com.ebicep.warlords.pve.mobs.wolf.Hound;
 import com.ebicep.warlords.pve.mobs.zombie.*;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.AdvancedWarriorBerserker;
@@ -39,6 +44,8 @@ import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.mojang.datafixers.util.Function7;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.EntityEquipment;
@@ -582,6 +589,10 @@ public enum Mob {
     public static final Mob[] CHAMPION = {
             NIGHTMARE_ZOMBIE, PIG_PARTICLE, EXTREME_ZEALOT, SMART_SKELETON
     };
+    public static final Mob[] BOSS_MINIONS = {
+            BOLTARO_SHADOW, BOLTARO_EXLIED, TORMENTED_SOUL, NARMER_ACOLYTE, ZENITH_LEGIONNAIRE,
+            SOUL_OF_GRADIENT
+    };
     public static final Mob[] BOSSES = {
             BOLTARO, GHOULCALLER, NARMER, MITHRA, ZENITH,
             CHESSKING, ILLUMINA, TORMENT, VOID, MAGMATIC_OOZE,
@@ -611,23 +622,65 @@ public enum Mob {
         this.equipment = equipment;
     }
 
+    public ItemStack getHead() {
+        if (equipment != null && equipment.getHelmet() != null) {
+            return equipment.getHelmet();
+        } else {
+            if (AbstractZombie.class.isAssignableFrom(mobClass)) {
+                return new ItemStack(Material.ZOMBIE_HEAD);
+            } else if (AbstractSkeleton.class.isAssignableFrom(mobClass)) {
+                return new ItemStack(Material.SKELETON_SKULL);
+            } else if (AbstractSpider.class.isAssignableFrom(mobClass)) {
+                return SkullUtils.getSkullFrom(SkullID.MC_SPIDER);
+            } else if (AbstractSlime.class.isAssignableFrom(mobClass)) {
+                return SkullUtils.getSkullFrom(SkullID.MC_SLIME);
+            } else if (AbstractMagmaCube.class.isAssignableFrom(mobClass)) {
+                return SkullUtils.getSkullFrom(SkullID.MC_MAGMACUBE);
+            } else if (AbstractBlaze.class.isAssignableFrom(mobClass)) {
+                return SkullUtils.getSkullFrom(SkullID.MC_BLAZE);
+            } else if (AbstractWitch.class.isAssignableFrom(mobClass)) {
+                return SkullUtils.getSkullFrom(SkullID.MC_WITCH);
+            } else if (AbstractIronGolem.class.isAssignableFrom(mobClass)) {
+                return SkullUtils.getSkullFrom(SkullID.MC_GOLEM);
+            } else if (AbstractWitherSkeleton.class.isAssignableFrom(mobClass)) {
+                return new ItemStack(Material.WITHER_SKELETON_SKULL);
+            } else if (AbstractPigZombie.class.isAssignableFrom(mobClass)) {
+                return SkullUtils.getSkullFrom(SkullID.MC_PIGLIN);
+            } else if (AbstractWolf.class.isAssignableFrom(mobClass)) {
+                return SkullUtils.getSkullFrom(SkullID.MC_ANGRY_WOLF);
+            }
+            return new ItemStack(Material.BARRIER);
+        }
+    }
+
     public AbstractMob<?> createMob(Location spawnLocation) {
         return createMobFunction.apply(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
     }
 
     public enum MobGroup {
-        BASIC(Mob.BASIC),
-        INTERMEDIATE(Mob.INTERMEDIATE),
-        ADVANCED(Mob.ADVANCED),
-        ELITE(Mob.ELITE),
-        CHAMPION(Mob.CHAMPION),
-        BOSSES(Mob.BOSSES),
-        ALL(Mob.VALUES);
+        BASIC(Mob.BASIC, "Basic", NamedTextColor.YELLOW, SkullUtils.getSkullFrom(SkullID.YELLOW_1)),
+        INTERMEDIATE(Mob.INTERMEDIATE, "Intermediate", NamedTextColor.GOLD, SkullUtils.getSkullFrom(SkullID.GOLD_2)),
+        ADVANCED(Mob.ADVANCED, "Advanced", NamedTextColor.GREEN, SkullUtils.getSkullFrom(SkullID.LIME_3)),
+        ELITE(Mob.ELITE, "Elite", NamedTextColor.DARK_GREEN, SkullUtils.getSkullFrom(SkullID.GREEN_4)),
+        CHAMPION(Mob.CHAMPION, "Champion", NamedTextColor.BLUE, SkullUtils.getSkullFrom(SkullID.BLUE_5)),
+        BOSS_MINIONS(Mob.BOSS_MINIONS, "Boss Minion", NamedTextColor.RED, SkullUtils.getSkullFrom(SkullID.PINK_6)),
+        BOSSES(Mob.BOSSES, "Boss", NamedTextColor.DARK_RED, SkullUtils.getSkullFrom(SkullID.RED_7)),
+        ALL(Mob.VALUES, "All", NamedTextColor.BLACK, SkullUtils.getSkullFrom(SkullID.YELLOW_1)),
+
+        ;
+
+        public static final MobGroup[] VALUES = values();
 
         public final Mob[] mobs;
+        public final String name;
+        public final TextColor textColor;
+        public final ItemStack head;
 
-        MobGroup(Mob[] mobs) {
+        MobGroup(Mob[] mobs, String name, TextColor textColor, ItemStack head) {
             this.mobs = mobs;
+            this.name = name;
+            this.textColor = textColor;
+            this.head = head;
         }
     }
 }
