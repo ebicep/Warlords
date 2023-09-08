@@ -46,6 +46,35 @@ public class VoidZombie extends AbstractZombie implements AdvancedMob {
         );
     }
 
+    public VoidZombie(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
+                        Weapons.VOID_EDGE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new VoidShred(),
+                new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 20)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

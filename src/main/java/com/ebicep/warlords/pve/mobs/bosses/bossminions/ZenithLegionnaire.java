@@ -39,6 +39,33 @@ public class ZenithLegionnaire extends AbstractZombie implements BossMinionMob {
         );
     }
 
+    public ZenithLegionnaire(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 100, 0, 80),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 100, 0, 80),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 100, 0, 80),
+                        Weapons.LUNAR_JUSTICE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Remedy()
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

@@ -77,6 +77,62 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         );
     }
 
+    public Ghoulcaller(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 170, 170, 170),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 170, 170, 170),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 170, 170, 170),
+                        Weapons.ENDERFIST.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new GhoulcallersFury(),
+                new SpawnMobAbility(
+                        "Tormented Soul",
+                        20,
+                        Mob.TORMENTED_SOUL
+                ) {
+                    @Override
+                    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+                        boolean activate = super.onActivate(wp, player);
+                        if (activate) {
+                            Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
+                        }
+                        return activate;
+                    }
+
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) (2 * pveOption.getGame().warlordsPlayers().count());
+                    }
+                }
+        );
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Chained Agony", NamedTextColor.GOLD);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.RED;
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
@@ -103,9 +159,9 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
         }
 
         EffectUtils.playFirework(receiver.getLocation(), FireworkEffect.builder()
-                                                                                .withColor(Color.BLACK)
-                                                                                .with(FireworkEffect.Type.BURST)
-                                                                                .build());
+                                                                       .withColor(Color.BLACK)
+                                                                       .with(FireworkEffect.Type.BURST)
+                                                                       .build());
     }
 
     @Override
@@ -117,20 +173,10 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.GRAY)
-                                                                       .with(FireworkEffect.Type.BALL_LARGE)
-                                                                       .withTrail()
-                                                                       .build());
-    }
-
-    @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.RED;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("Chained Agony", NamedTextColor.GOLD);
+                                                              .withColor(Color.GRAY)
+                                                              .with(FireworkEffect.Type.BALL_LARGE)
+                                                              .withTrail()
+                                                              .build());
     }
 
     private void spawnTormentedSouls(PveOption option, int amount) {

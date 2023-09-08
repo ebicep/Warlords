@@ -32,6 +32,34 @@ public class SkeletalEntropy extends AbstractSkeleton implements AdvancedMob {
         );
     }
 
+    public SkeletalEntropy(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        new ItemStack(Material.PINK_CARPET),
+                        new ItemStack(Material.DIAMOND_CHESTPLATE),
+                        new ItemStack(Material.DIAMOND_LEGGINGS),
+                        new ItemStack(Material.DIAMOND_BOOTS),
+                        Weapons.VOID_TWIG.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Fireball(5.5f)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

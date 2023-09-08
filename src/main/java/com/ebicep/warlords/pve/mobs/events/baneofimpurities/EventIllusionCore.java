@@ -31,6 +31,38 @@ public class EventIllusionCore extends AbstractEventCore {
         );
     }
 
+    public EventIllusionCore(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.ENCHANTMENT_CUBE),
+                        null,
+                        null,
+                        null
+                ),
+                30,
+                new RandomCollection<Mob>()
+                        .add(0.3, Mob.ZOMBIE_LANCER)
+                        .add(0.2, Mob.BASIC_WARRIOR_BERSERKER)
+                        .add(0.2, Mob.SLIMY_ANOMALY)
+                        .add(0.3, Mob.PIG_DISCIPLE)
+        );
+    }
+
     @Override
     public void customDeathAnimation() {
         Location floorLocation = warlordsNPC.getLocation().subtract(0, 3, 0);

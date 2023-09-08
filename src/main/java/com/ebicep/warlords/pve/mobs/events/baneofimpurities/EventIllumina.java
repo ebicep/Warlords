@@ -73,6 +73,33 @@ public class EventIllumina extends AbstractZombie implements BossMob {
         );
     }
 
+    public EventIllumina(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
+                        Weapons.NEW_LEAF_SCYTHE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Illumina.BrambleSlowness()
+        );
+    }
+
     @Override
     public Component getDescription() {
         return Component.text("", NamedTextColor.DARK_GRAY);
@@ -139,7 +166,7 @@ public class EventIllumina extends AbstractZombie implements BossMob {
 
         if (ticksElapsed % 200 == 0) {
             for (int i = 0; i < 5; i++) {
-                option.spawnNewMob(summonList.next().createMob.apply(loc));
+                option.spawnNewMob(summonList.next().createMob(loc));
             }
         }
     }

@@ -49,7 +49,7 @@ public class SimpleWave implements Wave {
     @Override
     public AbstractMob<?> spawnRandomMonster(Location loc) {
         SpawnSettings spawnSettings = randomCollection.next();
-        AbstractMob<?> mob = spawnSettings.mob().createMob.apply(spawnSettings.location() == null ? loc : spawnSettings.location());
+        AbstractMob<?> mob = spawnSettings.mob().createMob(spawnSettings.location() == null ? loc : spawnSettings.location());
         if (mob instanceof BossMob) {
             loc.getWorld().spigot().strikeLightningEffect(loc, false);
         }

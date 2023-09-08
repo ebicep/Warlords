@@ -33,6 +33,33 @@ public class SkeletalAnomaly extends AbstractSkeleton implements EliteMob {
         );
     }
 
+    public SkeletalAnomaly(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SEEK_DOORS),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 64, 64, 64),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 64, 64, 64),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 64, 64, 64),
+                        Weapons.FABLED_HEROICS_SWORD.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

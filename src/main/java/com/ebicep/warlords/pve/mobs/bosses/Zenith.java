@@ -53,6 +53,40 @@ public class Zenith extends AbstractZombie implements BossMob {
         );
     }
 
+    public Zenith(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.PURPLE_ENDERMAN),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 255),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
+                        Weapons.VORPAL_SWORD.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Armageddon(),
+                new Cleanse(),
+                new SpawnMobAbility("Envoy Legionnaire", 30, Mob.ZENITH_LEGIONNAIRE) {
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                }
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

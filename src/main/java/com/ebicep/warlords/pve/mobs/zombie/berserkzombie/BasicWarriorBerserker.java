@@ -29,4 +29,32 @@ public class BasicWarriorBerserker extends AbstractBerserkZombie implements Basi
         );
     }
 
+    public BasicWarriorBerserker(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        ArmorManager.Helmets.SIMPLE_WARRIOR_HELMET.itemRed,
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
+                        new ItemStack(Material.WOODEN_SWORD)
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new BerserkerZombieWoundingStrike(497, 632)
+        );
+    }
+
 }

@@ -32,6 +32,33 @@ public class ScrupulousZombie extends AbstractZombie implements AdvancedMob {
         );
     }
 
+    public ScrupulousZombie(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SCULK_CORRUPTION),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 10, 50, 130),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 10, 50, 130),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 10, 50, 130),
+                        Weapons.AMARANTH.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

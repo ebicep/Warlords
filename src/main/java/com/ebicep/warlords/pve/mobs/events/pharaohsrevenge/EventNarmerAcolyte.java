@@ -32,6 +32,32 @@ public class EventNarmerAcolyte extends AbstractZombie implements BossMinionMob 
         );
     }
 
+    public EventNarmerAcolyte(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.RED_EYE),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 15),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 15),
+                        Weapons.DEMONBLADE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

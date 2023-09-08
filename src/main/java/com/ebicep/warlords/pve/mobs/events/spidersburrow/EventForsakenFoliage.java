@@ -40,6 +40,37 @@ public class EventForsakenFoliage extends AbstractZombie implements BossMinionMo
         );
     }
 
+    public EventForsakenFoliage(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.JUNGLE_SPIDER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 14, 87, 9),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 14, 87, 9),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 14, 87, 9),
+                        Weapons.NEW_LEAF_SPEAR.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new EarthlivingWeapon() {{ // Attacks are converted into Earth Living with double the proc chance as standard.
+                    setProcChance(getProcChance() * 2);
+                    setTickDuration(18000);
+                }}
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

@@ -40,6 +40,34 @@ public class EventForsakenFrost extends AbstractZombie implements BossMinionMob,
         );
     }
 
+    public EventForsakenFrost(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.WHITE_SPIDER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+                        Weapons.FROSTBITE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Frost()
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

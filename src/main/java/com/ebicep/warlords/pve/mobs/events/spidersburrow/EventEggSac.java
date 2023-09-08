@@ -37,6 +37,33 @@ public class EventEggSac extends AbstractZombie implements BossMinionMob {
         );
     }
 
+    public EventEggSac(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.EGG_SAC),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+                        null
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

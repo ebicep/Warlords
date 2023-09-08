@@ -39,6 +39,35 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
         woundingStrike.multiplyMinMax(1.5f);
     }
 
+    public AdvancedWarriorBerserker(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        ArmorManager.Helmets.LEGENDARY_WARRIOR_HELMET.itemRed,
+                        new ItemStack(Material.DIAMOND_CHESTPLATE),
+                        new ItemStack(Material.DIAMOND_LEGGINGS),
+                        new ItemStack(Material.DIAMOND_BOOTS),
+                        new ItemStack(Material.COOKED_SALMON)
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new BerserkerZombieWoundingStrike(497, 632)
+        );
+        woundingStrike.multiplyMinMax(1.5f);
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

@@ -33,6 +33,34 @@ public class PigShaman extends AbstractPigZombie implements IntermediateMob {
         );
     }
 
+    public PigShaman(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SAMURAI),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                        new ItemStack(Material.DIAMOND_LEGGINGS),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
+                        new ItemStack(Material.COOKIE)
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new PigZombieHealing(150, 6)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

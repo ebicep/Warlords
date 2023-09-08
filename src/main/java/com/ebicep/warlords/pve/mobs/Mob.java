@@ -32,6 +32,7 @@ import com.ebicep.warlords.pve.mobs.zombie.*;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.AdvancedWarriorBerserker;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.BasicWarriorBerserker;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.IntermediateWarriorBerserker;
+import com.mojang.datafixers.util.Function7;
 import org.bukkit.Location;
 
 import java.util.function.Function;
@@ -39,104 +40,106 @@ import java.util.function.Function;
 public enum Mob {
 
     // Basic
-    ZOMBIE_LANCER(ZombieLancer.class, ZombieLancer::new),
-    BASIC_WARRIOR_BERSERKER(BasicWarriorBerserker.class, BasicWarriorBerserker::new),
-    SKELETAL_MAGE(SkeletalMage.class, SkeletalMage::new),
-    PIG_DISCIPLE(PigDisciple.class, PigDisciple::new),
-    SLIMY_ANOMALY(SlimyAnomaly.class, SlimyAnomaly::new),
-    ARACHNO_VENARI(ArachnoVenari.class, ArachnoVenari::new),
+    ZOMBIE_LANCER(ZombieLancer.class, ZombieLancer::new, ZombieLancer::new),
+    BASIC_WARRIOR_BERSERKER(BasicWarriorBerserker.class, BasicWarriorBerserker::new, BasicWarriorBerserker::new),
+    SKELETAL_MAGE(SkeletalMage.class, SkeletalMage::new, SkeletalMage::new),
+    PIG_DISCIPLE(PigDisciple.class, PigDisciple::new, PigDisciple::new),
+    SLIMY_ANOMALY(SlimyAnomaly.class, SlimyAnomaly::new, SlimyAnomaly::new),
+    ARACHNO_VENARI(ArachnoVenari.class, ArachnoVenari::new, ArachnoVenari::new),
 
     // Intermediate
-    HOUND(Hound.class, Hound::new),
-    INTERMEDIATE_WARRIOR_BERSERKER(IntermediateWarriorBerserker.class, IntermediateWarriorBerserker::new),
-    SKELETAL_WARLOCK(SkeletalWarlock.class, SkeletalWarlock::new),
-    PIG_SHAMAN(PigShaman.class, PigShaman::new),
-    PIG_ALLEVIATOR(PigAlleviator.class, PigAlleviator::new),
-    WITCH_DEACON(WitchDeacon.class, WitchDeacon::new),
-    BLAZING_KINDLE(BlazingKindle.class, BlazingKindle::new), //TODO
-    WANDER_KNIGHTS(WanderKnights.class, WanderKnights::new),
-    ZOMBIE_SWORDSMAN(ZombieSwordsman.class, ZombieSwordsman::new),
-    ZOMBIE_LAMENT(ZombieLament.class, ZombieLament::new),
+    HOUND(Hound.class, Hound::new, Hound::new),
+    INTERMEDIATE_WARRIOR_BERSERKER(IntermediateWarriorBerserker.class, IntermediateWarriorBerserker::new, IntermediateWarriorBerserker::new),
+    SKELETAL_WARLOCK(SkeletalWarlock.class, SkeletalWarlock::new, SkeletalWarlock::new),
+    PIG_SHAMAN(PigShaman.class, PigShaman::new, PigShaman::new),
+    PIG_ALLEVIATOR(PigAlleviator.class, PigAlleviator::new, PigAlleviator::new),
+    WITCH_DEACON(WitchDeacon.class, WitchDeacon::new, WitchDeacon::new),
+    BLAZING_KINDLE(BlazingKindle.class, BlazingKindle::new, BlazingKindle::new),
+    WANDER_KNIGHTS(WanderKnights.class, WanderKnights::new, WanderKnights::new),
+    ZOMBIE_SWORDSMAN(ZombieSwordsman.class, ZombieSwordsman::new, ZombieSwordsman::new),
+    ZOMBIE_LAMENT(ZombieLament.class, ZombieLament::new, ZombieLament::new),
 
     // Advanced
-    ILLUMINATION(Illumination.class, Illumination::new),
-    GOLEM_APPRENTICE(GolemApprentice.class, GolemApprentice::new),
-    SCRUPULOUS_ZOMBIE(ScrupulousZombie.class, ScrupulousZombie::new),
-    SLIME_GUARD(SlimeGuard.class, SlimeGuard::new),
-    CELESTIAL_BOW_WIELDER(CelestialBowWielder.class, CelestialBowWielder::new),
-    ZOMBIE_VANGUARD(ZombieVanguard.class, ZombieVanguard::new),
-    ADVANCED_WARRIOR_BERSERKER(AdvancedWarriorBerserker.class, AdvancedWarriorBerserker::new),
-    VOID_ZOMBIE(VoidZombie.class, VoidZombie::new),
-    ZOMBIE_KNIGHT(ZombieKnight.class, ZombieKnight::new),
-    SLIMY_CHESS(SlimyChess.class, SlimyChess::new),
-    VOID_RAIDER(ZombieRaider.class, ZombieRaider::new),
-    WANDER_WALKER(WanderWalker.class, WanderWalker::new),
-    SKELETAL_ENTROPY(SkeletalEntropy.class, SkeletalEntropy::new),
-    FIRE_SPLITTER(FireSplitter.class, FireSplitter::new),
+    ILLUMINATION(Illumination.class, Illumination::new, Illumination::new),
+    GOLEM_APPRENTICE(GolemApprentice.class, GolemApprentice::new, GolemApprentice::new),
+    SCRUPULOUS_ZOMBIE(ScrupulousZombie.class, ScrupulousZombie::new, ScrupulousZombie::new),
+    SLIME_GUARD(SlimeGuard.class, SlimeGuard::new, SlimeGuard::new),
+    CELESTIAL_BOW_WIELDER(CelestialBowWielder.class, CelestialBowWielder::new, CelestialBowWielder::new),
+    ZOMBIE_VANGUARD(ZombieVanguard.class, ZombieVanguard::new, ZombieVanguard::new),
+    ADVANCED_WARRIOR_BERSERKER(AdvancedWarriorBerserker.class, AdvancedWarriorBerserker::new, AdvancedWarriorBerserker::new),
+    VOID_ZOMBIE(VoidZombie.class, VoidZombie::new, VoidZombie::new),
+    ZOMBIE_KNIGHT(ZombieKnight.class, ZombieKnight::new, ZombieKnight::new),
+    SLIMY_CHESS(SlimyChess.class, SlimyChess::new, SlimyChess::new),
+    VOID_RAIDER(ZombieRaider.class, ZombieRaider::new, ZombieRaider::new),
+    WANDER_WALKER(WanderWalker.class, WanderWalker::new, WanderWalker::new),
+    SKELETAL_ENTROPY(SkeletalEntropy.class, SkeletalEntropy::new, SkeletalEntropy::new),
+    FIRE_SPLITTER(FireSplitter.class, FireSplitter::new, FireSplitter::new),
 
     // Elite
-    CELESTIAL_SWORD_WIELDER(CelestialSwordWielder.class, CelestialSwordWielder::new),
-    CELESTIAL_OPUS(CelestialOpus.class, CelestialOpus::new),
-    RIFT_WALKER(RiftWalker.class, RiftWalker::new),
-    OVERGROWN_ZOMBIE(OvergrownZombie.class, OvergrownZombie::new),
-    SKELETAL_PYROMANCER(SkeletalPyromancer.class, SkeletalPyromancer::new),
-    SKELETAL_ANOMALY(SkeletalAnomaly.class, SkeletalAnomaly::new),
-    SKELETAL_MESMER(SkeletalMesmer.class, SkeletalMesmer::new),
+    CELESTIAL_SWORD_WIELDER(CelestialSwordWielder.class, CelestialSwordWielder::new, CelestialSwordWielder::new),
+    CELESTIAL_OPUS(CelestialOpus.class, CelestialOpus::new, CelestialOpus::new),
+    RIFT_WALKER(RiftWalker.class, RiftWalker::new, RiftWalker::new),
+    OVERGROWN_ZOMBIE(OvergrownZombie.class, OvergrownZombie::new, OvergrownZombie::new),
+    SKELETAL_PYROMANCER(SkeletalPyromancer.class, SkeletalPyromancer::new, SkeletalPyromancer::new),
+    SKELETAL_ANOMALY(SkeletalAnomaly.class, SkeletalAnomaly::new, SkeletalAnomaly::new),
+    SKELETAL_MESMER(SkeletalMesmer.class, SkeletalMesmer::new, SkeletalMesmer::new),
 
     // Champion
-    NIGHTMARE_ZOMBIE(NightmareZombie.class, NightmareZombie::new),
-    PIG_PARTICLE(PigParticle.class, PigParticle::new),
-    EXTREME_ZEALOT(ExtremeZealot.class, ExtremeZealot::new),
-    SMART_SKELETON(SmartSkeleton.class, SmartSkeleton::new),
-    SKELETAL_SORCERER(SkeletalSorcerer.class, SkeletalSorcerer::new),
+    NIGHTMARE_ZOMBIE(NightmareZombie.class, NightmareZombie::new, NightmareZombie::new),
+    PIG_PARTICLE(PigParticle.class, PigParticle::new, PigParticle::new),
+    EXTREME_ZEALOT(ExtremeZealot.class, ExtremeZealot::new, ExtremeZealot::new),
+    SMART_SKELETON(SmartSkeleton.class, SmartSkeleton::new, SmartSkeleton::new),
+    SKELETAL_SORCERER(SkeletalSorcerer.class, SkeletalSorcerer::new, SkeletalSorcerer::new),
 
 
     // Boss
-    BOLTARO(Boltaro.class, Boltaro::new),
-    GHOULCALLER(Ghoulcaller.class, Ghoulcaller::new),
-    NARMER(Narmer.class, Narmer::new),
-    MITHRA(Mithra.class, Mithra::new),
-    ZENITH(Zenith.class, Zenith::new),
-    CHESSKING(Chessking.class, Chessking::new),
-    ILLUMINA(Illumina.class, Illumina::new),
-    TORMENT(Torment.class, Torment::new),
-    VOID(Void.class, Void::new),
-    MAGMATIC_OOZE(MagmaticOoze.class, MagmaticOoze::new),
+    BOLTARO(Boltaro.class, Boltaro::new, Boltaro::new),
+    GHOULCALLER(Ghoulcaller.class, Ghoulcaller::new, Ghoulcaller::new),
+    NARMER(Narmer.class, Narmer::new, Narmer::new),
+    MITHRA(Mithra.class, Mithra::new, Mithra::new),
+    ZENITH(Zenith.class, Zenith::new, Zenith::new),
+    CHESSKING(Chessking.class, Chessking::new, Chessking::new),
+    ILLUMINA(Illumina.class, Illumina::new, Illumina::new),
+    TORMENT(Torment.class, Torment::new, Torment::new),
+    VOID(Void.class, Void::new, Void::new),
+    MAGMATIC_OOZE(MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new),
+
 
     // Boss minions
-    BOLTARO_SHADOW(BoltaroShadow.class, BoltaroShadow::new),
-    BOLTARO_EXLIED(BoltaroExiled.class, BoltaroExiled::new),
-    TORMENTED_SOUL(TormentedSoul.class, TormentedSoul::new),
-    NARMER_ACOLYTE(NarmerAcolyte.class, NarmerAcolyte::new),
-    ZENITH_LEGIONNAIRE(ZenithLegionnaire.class, ZenithLegionnaire::new),
+    BOLTARO_SHADOW(BoltaroShadow.class, BoltaroShadow::new, BoltaroShadow::new),
+    BOLTARO_EXLIED(BoltaroExiled.class, BoltaroExiled::new, BoltaroExiled::new),
+    TORMENTED_SOUL(TormentedSoul.class, TormentedSoul::new, TormentedSoul::new),
+    NARMER_ACOLYTE(NarmerAcolyte.class, NarmerAcolyte::new, NarmerAcolyte::new),
+    ZENITH_LEGIONNAIRE(ZenithLegionnaire.class, ZenithLegionnaire::new, ZenithLegionnaire::new),
+
 
     // Raid Boss
-    PHYSIRA(Physira.class, Physira::new),
+    PHYSIRA(Physira.class, Physira::new, Physira::new),
 
     //EVENTS
-    EVENT_BOLTARO(EventBoltaro.class, EventBoltaro::new),
-    EVENT_NARMER(EventNarmer.class, EventNarmer::new),
-    EVENT_NARMER_ACOLYTE(EventNarmerAcolyte.class, EventNarmerAcolyte::new),
-    EVENT_NARMER_DJER(EventDjer.class, EventDjer::new),
-    EVENT_NARMER_DJET(EventDjet.class, EventDjet::new),
-    EVENT_MITHRA(EventMithra.class, EventMithra::new),
-    EVENT_MITHRA_FORSAKEN_FROST(EventForsakenFrost.class, EventForsakenFrost::new),
-    EVENT_MITHRA_FORSAKEN_FOLIAGE(EventForsakenFoliage.class, EventForsakenFoliage::new),
-    EVENT_MITHRA_FORSAKEN_SHRIEKER(EventForsakenShrieker.class, EventForsakenShrieker::new),
-    EVENT_MITHRA_FORSAKEN_RESPITE(EventForsakenRespite.class, EventForsakenRespite::new),
-    EVENT_MITHRA_FORSAKEN_CRUOR(EventForsakenCruor.class, EventForsakenCruor::new),
-    EVENT_MITHRA_FORSAKEN_DEGRADER(EventForsakenDegrader.class, EventForsakenDegrader::new),
-    EVENT_MITHRA_FORSAKEN_APPARITION(EventForsakenApparition.class, EventForsakenApparition::new),
-    EVENT_MITHRA_POISONOUS_SPIDER(EventPoisonousSpider.class, EventPoisonousSpider::new),
-    EVENT_MITHRA_EGG_SAC(EventEggSac.class, EventEggSac::new),
-    EVENT_ILLUSION_CORE(EventIllusionCore.class, EventIllusionCore::new),
-    EVENT_EXILED_CORE(EventExiledCore.class, EventExiledCore::new),
-    EVENT_CALAMITY_CORE(EventCalamityCore.class, EventCalamityCore::new),
-    EVENT_ILLUMINA(EventIllumina.class, EventIllumina::new),
+    EVENT_BOLTARO(EventBoltaro.class, EventBoltaro::new, EventBoltaro::new),
+    EVENT_NARMER(EventNarmer.class, EventNarmer::new, EventNarmer::new),
+    EVENT_NARMER_ACOLYTE(EventNarmerAcolyte.class, EventNarmerAcolyte::new, EventNarmerAcolyte::new),
+    EVENT_NARMER_DJER(EventDjer.class, EventDjer::new, EventDjer::new),
+    EVENT_NARMER_DJET(EventDjet.class, EventDjet::new, EventDjet::new),
+    EVENT_MITHRA(EventMithra.class, EventMithra::new, EventMithra::new),
+    EVENT_MITHRA_FORSAKEN_FROST(EventForsakenFrost.class, EventForsakenFrost::new, EventForsakenFrost::new),
+    EVENT_MITHRA_FORSAKEN_FOLIAGE(EventForsakenFoliage.class, EventForsakenFoliage::new, EventForsakenFoliage::new),
+    EVENT_MITHRA_FORSAKEN_SHRIEKER(EventForsakenShrieker.class, EventForsakenShrieker::new, EventForsakenShrieker::new),
+    EVENT_MITHRA_FORSAKEN_RESPITE(EventForsakenRespite.class, EventForsakenRespite::new, EventForsakenRespite::new),
+    EVENT_MITHRA_FORSAKEN_CRUOR(EventForsakenCruor.class, EventForsakenCruor::new, EventForsakenCruor::new),
+    EVENT_MITHRA_FORSAKEN_DEGRADER(EventForsakenDegrader.class, EventForsakenDegrader::new, EventForsakenDegrader::new),
+    EVENT_MITHRA_FORSAKEN_APPARITION(EventForsakenApparition.class, EventForsakenApparition::new, EventForsakenApparition::new),
+    EVENT_MITHRA_POISONOUS_SPIDER(EventPoisonousSpider.class, EventPoisonousSpider::new, EventPoisonousSpider::new),
+    EVENT_MITHRA_EGG_SAC(EventEggSac.class, EventEggSac::new, EventEggSac::new),
+    EVENT_ILLUSION_CORE(EventIllusionCore.class, EventIllusionCore::new, EventIllusionCore::new),
+    EVENT_EXILED_CORE(EventExiledCore.class, EventExiledCore::new, EventExiledCore::new),
+    EVENT_CALAMITY_CORE(EventCalamityCore.class, EventCalamityCore::new, EventCalamityCore::new),
+    EVENT_ILLUMINA(EventIllumina.class, EventIllumina::new, EventIllumina::new),
 
     ;
 
-    public static final Mob[] MOBS = values();
+    public static final Mob[] VALUES = values();
     public static final Mob[] BASIC = {
             ZOMBIE_LANCER, BASIC_WARRIOR_BERSERKER, SKELETAL_MAGE, PIG_DISCIPLE, SLIMY_ANOMALY,
             ARACHNO_VENARI
@@ -163,11 +166,28 @@ public enum Mob {
             PHYSIRA
     };
     public final Class<?> mobClass;
-    public final Function<Location, AbstractMob<?>> createMob;
+    @Deprecated
+    public final Function<Location, AbstractMob<?>> createMobLegacy;
+    public final Function7<Location, String, Integer, Float, Integer, Float, Float, AbstractMob<?>> createMobFunction;
+    public String name;
+    public int maxHealth;
+    public float walkSpeed;
+    public int damageResistance;
+    public float minMeleeDamage;
+    public float maxMeleeDamage;
 
-    Mob(Class<?> mobClass, Function<Location, AbstractMob<?>> createMob) {
-        this.createMob = createMob;
+    Mob(
+            Class<?> mobClass,
+            Function<Location, AbstractMob<?>> createMobLegacy,
+            Function7<Location, String, Integer, Float, Integer, Float, Float, AbstractMob<?>> createMobFunction
+    ) {
+        this.createMobLegacy = createMobLegacy;
+        this.createMobFunction = createMobFunction;
         this.mobClass = mobClass;
+    }
+
+    public AbstractMob<?> createMob(Location spawnLocation) {
+        return createMobFunction.apply(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
     }
 
     public enum MobGroup {
@@ -177,7 +197,7 @@ public enum Mob {
         ELITE(Mob.ELITE),
         CHAMPION(Mob.CHAMPION),
         BOSSES(Mob.BOSSES),
-        ALL(Mob.MOBS);
+        ALL(Mob.VALUES);
 
         public final Mob[] mobs;
 

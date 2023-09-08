@@ -32,6 +32,33 @@ public class ZombieVanguard extends AbstractZombie implements AdvancedMob {
         );
     }
 
+    public ZombieVanguard(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        ArmorManager.Helmets.LEGENDARY_PALADIN_HELMET.itemRed,
+                        new ItemStack(Material.DIAMOND_CHESTPLATE),
+                        new ItemStack(Material.DIAMOND_LEGGINGS),
+                        new ItemStack(Material.DIAMOND_BOOTS),
+                        Weapons.FELFLAME_BLADE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

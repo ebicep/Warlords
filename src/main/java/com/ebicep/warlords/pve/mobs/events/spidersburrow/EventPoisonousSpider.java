@@ -38,6 +38,34 @@ public class EventPoisonousSpider extends AbstractZombie implements BossMinionMo
         );
     }
 
+    public EventPoisonousSpider(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.CAVE_SPIDER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
+                        null
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new PoisonNear()
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

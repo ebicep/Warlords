@@ -58,6 +58,33 @@ public class Void extends AbstractSkeleton implements BossMob {
         );
     }
 
+    public Void(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.END_MONSTER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
+                        Weapons.VOID_EDGE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

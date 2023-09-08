@@ -55,6 +55,47 @@ public class Chessking extends AbstractSlime implements BossMob {
         );
     }
 
+    public Chessking(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                null,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Belch(),
+                new SpawnMobAbility(
+                        "Slime Zombies",
+                        20,
+                        Mob.SLIME_GUARD
+                ) {
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                },
+                new SpawnMobAbility(
+                        "Void Slimes",
+                        60,
+                        Mob.SLIMY_CHESS
+                ) {
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                }
+        );
+    }
+
     @Override
     public Component getDescription() {
         return Component.text("Goblin from the local basement", NamedTextColor.GRAY);

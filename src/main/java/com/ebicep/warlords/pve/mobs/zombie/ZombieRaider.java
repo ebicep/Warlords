@@ -37,6 +37,33 @@ public class ZombieRaider extends AbstractZombie implements AdvancedMob {
         );
     }
 
+    public ZombieRaider(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_2),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 56, 71, 74),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 56, 71, 74),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 56, 71, 74),
+                        Weapons.NETHERSTEEL_KATANA.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

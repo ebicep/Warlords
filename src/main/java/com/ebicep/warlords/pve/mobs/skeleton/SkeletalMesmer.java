@@ -41,6 +41,36 @@ public class SkeletalMesmer extends AbstractSkeleton implements EliteMob {
         );
     }
 
+    public SkeletalMesmer(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.DEMON_SKELETON),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
+                        Weapons.ARMBLADE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Fireball(5.5f),
+                new FlameBurst(20, 0),
+                new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 30)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

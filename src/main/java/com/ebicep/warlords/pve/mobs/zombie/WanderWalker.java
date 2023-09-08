@@ -41,6 +41,33 @@ public class WanderWalker extends AbstractZombie implements AdvancedMob {
         );
     }
 
+    public WanderWalker(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SCULK_MONSTER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 204, 204),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 204, 204),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 204, 204),
+                        Weapons.LUNAR_JUSTICE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

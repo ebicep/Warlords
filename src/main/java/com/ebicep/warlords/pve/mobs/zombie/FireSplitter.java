@@ -32,6 +32,33 @@ public class FireSplitter extends AbstractZombie implements AdvancedMob {
         );
     }
 
+    public FireSplitter(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.LAVA_MONSTER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 252, 170, 53),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 252, 170, 53),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 252, 170, 53),
+                        Weapons.SILVER_PHANTASM_SWORD_2.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

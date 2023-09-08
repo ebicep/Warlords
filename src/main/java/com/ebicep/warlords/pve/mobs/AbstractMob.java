@@ -73,6 +73,26 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     @Nonnull
     protected AbstractPlayerClass playerClass;
 
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public float getWalkSpeed() {
+        return walkSpeed;
+    }
+
+    public int getDamageResistance() {
+        return damageResistance;
+    }
+
+    public float getMinMeleeDamage() {
+        return minMeleeDamage;
+    }
+
+    public float getMaxMeleeDamage() {
+        return maxMeleeDamage;
+    }
+
     public AbstractMob(
             T entity,
             Location spawnLocation,

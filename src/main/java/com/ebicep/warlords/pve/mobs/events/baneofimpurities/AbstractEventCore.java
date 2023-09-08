@@ -48,6 +48,25 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
         entity.resetAI();
     }
 
+    public AbstractEventCore(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            EntityEquipment ee,
+            int killTime,
+            RandomCollection<Mob> summonList
+    ) {
+        super(spawnLocation, name, ee, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
+        this.killTime = killTime;
+        this.summonList = summonList;
+        livingEntity.setGravity(false);
+        entity.resetAI();
+    }
+
     @Override
     public Component getDescription() {
         return Component.text("Bing Bang BOOM..", NamedTextColor.DARK_GRAY);
@@ -129,7 +148,7 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
                 });
             }
 
-            option.spawnNewMob(summonList.next().createMob.apply(pveOption.getRandomSpawnLocation(warlordsNPC)));
+            option.spawnNewMob(summonList.next().createMob(pveOption.getRandomSpawnLocation(warlordsNPC)));
         }
     }
 

@@ -39,6 +39,32 @@ public class EventBoltaro extends AbstractZombie implements BossMob {
         );
     }
 
+    public EventBoltaro(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.DEMON),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),
+                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
+                        new ItemStack(Material.CHAINMAIL_BOOTS),
+                        Weapons.DRAKEFANG.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 100 == 0) {

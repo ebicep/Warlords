@@ -32,6 +32,33 @@ public class PigDisciple extends AbstractPigZombie implements BasicMob {
         );
     }
 
+    public PigDisciple(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SAMURAI),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
+                        Weapons.SILVER_PHANTASM_TRIDENT.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

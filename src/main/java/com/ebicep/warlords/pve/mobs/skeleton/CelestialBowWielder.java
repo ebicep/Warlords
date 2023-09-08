@@ -37,6 +37,34 @@ public class CelestialBowWielder extends AbstractSkeleton implements AdvancedMob
         );
     }
 
+    public CelestialBowWielder(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.BOW_HEAD),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
+                        Weapons.FROSTBITE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Fireball(5.5f)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

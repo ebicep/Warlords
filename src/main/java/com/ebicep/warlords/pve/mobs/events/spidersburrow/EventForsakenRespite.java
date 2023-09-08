@@ -41,6 +41,34 @@ public class EventForsakenRespite extends AbstractZombie implements BossMinionMo
         );
     }
 
+    public EventForsakenRespite(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SPIDER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 120),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 120),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 120),
+                        Weapons.NOMEGUSTA.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new LeechAll()
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

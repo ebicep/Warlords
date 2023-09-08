@@ -60,6 +60,32 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         );
     }
 
+    public EventNarmer(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
+                        ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160),
+                        Weapons.WALKING_STICK.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
@@ -116,7 +142,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         };
         if (bersekerToSpawn != null) {
             for (int i = 0; i < berserkerSpawnCount; i++) {
-                AbstractMob<?> berserker = bersekerToSpawn.createMob.apply(warlordsNPC.getLocation());
+                AbstractMob<?> berserker = bersekerToSpawn.createMob(warlordsNPC.getLocation());
                 option.spawnNewMob(berserker);
             }
         }

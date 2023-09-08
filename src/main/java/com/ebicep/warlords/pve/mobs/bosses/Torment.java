@@ -46,6 +46,33 @@ public class Torment extends AbstractWitherSkeleton implements BossMob {
         );
     }
 
+    public Torment(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.DEMON_KING),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 230, 60, 60),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 230, 60, 60),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 230, 60, 60),
+                        Weapons.SILVER_PHANTASM_TRIDENT.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

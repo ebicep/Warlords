@@ -72,6 +72,42 @@ public class Illumina extends AbstractZombie implements BossMob {
         );
     }
 
+    public Illumina(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
+                        Weapons.NEW_LEAF_SCYTHE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Bramble(),
+                new BrambleSlowness(),
+                new SpawnMobAbility("Exiled Skeleton", 30, Mob.SKELETAL_SORCERER) {
+                    @Override
+                    public int getSpawnAmount() {
+                        long playerCount = pveOption.getGame().warlordsPlayers().count();
+                        DifficultyIndex difficulty = pveOption.getDifficulty();
+                        return (int) (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount);
+                    }
+                }
+        );
+    }
+
     @Override
     public Component getDescription() {
         return Component.text("General of the Illusion Legion", NamedTextColor.DARK_GRAY);

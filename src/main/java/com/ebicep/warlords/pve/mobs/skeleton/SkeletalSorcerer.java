@@ -50,6 +50,34 @@ public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
         );
     }
 
+    public SkeletalSorcerer(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.WHITE_SHEKEL),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+                        Weapons.SILVER_PHANTASM_SWORD_4.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Fireball(5.5f), new BlightedScorch()
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

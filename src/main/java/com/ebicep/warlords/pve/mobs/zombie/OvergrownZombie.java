@@ -32,6 +32,33 @@ public class OvergrownZombie extends AbstractZombie implements EliteMob {
         );
     }
 
+    public OvergrownZombie(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.GREEN_LANCER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 130, 20),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 130, 20),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 130, 20),
+                        Weapons.NEW_LEAF_AXE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

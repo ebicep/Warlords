@@ -31,6 +31,38 @@ public class EventExiledCore extends AbstractEventCore {
         );
     }
 
+    public EventExiledCore(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE_3),
+                        null,
+                        null,
+                        null
+                ),
+                45,
+                new RandomCollection<Mob>()
+                        .add(0.2, Mob.EXTREME_ZEALOT)
+                        .add(0.2, Mob.ZOMBIE_SWORDSMAN)
+                        .add(0.2, Mob.SLIME_GUARD)
+                        .add(0.4, Mob.ZOMBIE_LAMENT)
+        );
+    }
+
     @Override
     public void customDeathAnimation() {
         Location floorLocation = warlordsNPC.getLocation().subtract(0, 3, 0);

@@ -33,6 +33,33 @@ public class SlimeGuard extends AbstractZombie implements AdvancedMob {
         );
     }
 
+    public SlimeGuard(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SLIME_BLOCK),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 106, 255, 106),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 106, 255, 106),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 106, 255, 106),
+                        Weapons.NEW_LEAF_SPEAR.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

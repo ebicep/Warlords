@@ -63,6 +63,34 @@ public class Narmer extends AbstractZombie implements BossMob {
         );
     }
 
+    public Narmer(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.BURNING_WITHER_SKELETON),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 160, 160),
+                        ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 160, 160),
+                        Weapons.WALKING_STICK.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new FlameBurst(15),
+                new GroundShred()
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

@@ -72,6 +72,32 @@ public class Physira extends AbstractWitherSkeleton implements BossMob {
         );
     }
 
+    public Physira(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.GRADIENT_SOUL),
+                        new ItemStack(Material.NETHERITE_CHESTPLATE),
+                        new ItemStack(Material.NETHERITE_LEGGINGS),
+                        new ItemStack(Material.NETHERITE_BOOTS),
+                        Weapons.VIRIDIAN_BLADE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

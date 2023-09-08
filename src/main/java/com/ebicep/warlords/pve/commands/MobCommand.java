@@ -19,11 +19,20 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.ConfigUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.FileNotFoundException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,7 +54,7 @@ public class MobCommand extends BaseCommand {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
             if (option instanceof PveOption pveOption) {
                 for (int i = 0; i < amount; i++) {
-                    AbstractMob<?> mob = mobType.createMob.apply(player.getLocation());
+                    AbstractMob<?> mob = mobType.createMob(player.getLocation());
                     pveOption.spawnNewMob(mob);
                     SPAWNED_MOBS.add(mob);
                 }
@@ -66,7 +75,7 @@ public class MobCommand extends BaseCommand {
             if (option instanceof PveOption pveOption) {
                 ChatChannels.sendDebugMessage(player, Component.text("Spawning " + mobGroup.name() + " mobs", NamedTextColor.GREEN));
                 for (Mob mob : mobGroup.mobs) {
-                    AbstractMob<?> abstractMob = mob.createMob.apply(player.getLocation());
+                    AbstractMob<?> abstractMob = mob.createMob(player.getLocation());
                     pveOption.spawnNewMob(abstractMob);
                     SPAWNED_MOBS.add(abstractMob);
                     ChatChannels.sendDebugMessage(player, Component.text("Spawned " + abstractMob.getName(), NamedTextColor.GREEN));
@@ -84,7 +93,7 @@ public class MobCommand extends BaseCommand {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
             if (option instanceof PveOption pveOption) {
-                AbstractMob<?> mob = mobType.createMob.apply(player.getLocation());
+                AbstractMob<?> mob = mobType.createMob(player.getLocation());
                 pveOption.spawnNewMob(mob, Team.BLUE);
                 SPAWNED_MOBS.add(mob);
                 ChatChannels.sendDebugMessage(player, Component.text("Spawned Test Mob - " + mob.getWarlordsNPC().getUuid(), NamedTextColor.GREEN));
@@ -226,6 +235,58 @@ public class MobCommand extends BaseCommand {
                          });
                 return;
             }
+        }
+    }
+
+    @Subcommand("tojson")
+    public void toJson(Player player) {
+        JsonObject jsonObject = new JsonObject();
+        Location location = player.getLocation();
+        for (Mob value : Mob.VALUES) {
+            JsonObject mobObject = new JsonObject();
+            AbstractMob<?> mob = value.createMob(location);
+            mobObject.addProperty("name", mob.getName());
+            mobObject.addProperty("max_health", mob.getMaxHealth());
+            mobObject.addProperty("walk_speed", mob.getWalkSpeed());
+            mobObject.addProperty("damage_resistance", mob.getDamageResistance());
+            mobObject.addProperty("min_melee_damage", mob.getMinMeleeDamage());
+            mobObject.addProperty("max_melee_damage", mob.getMaxMeleeDamage());
+            jsonObject.add(value.name(), mobObject);
+            mob.getMob().remove(Entity.RemovalReason.DISCARDED);
+        }
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println(gson.toJson(jsonObject));
+    }
+
+    @Subcommand("reloadconfig")
+    public void reloadConfig(CommandIssuer issuer) {
+        ChatChannels.sendDebugMessage(issuer, Component.text("Reloading mob values", NamedTextColor.GREEN));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    ConfigUtil.readMobConfig(Warlords.getInstance());
+                    ChatChannels.sendDebugMessage(issuer, Component.text("Reloaded mob values", NamedTextColor.GREEN));
+                } catch (FileNotFoundException e) {
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+                    ChatChannels.sendDebugMessage(issuer, Component.text("There was an error reloading mob values - " + e.getMessage(), NamedTextColor.RED));
+                }
+            }
+        }.runTaskAsynchronously(Warlords.getInstance());
+    }
+
+    @Subcommand("printvalues")
+    public void printValues(CommandIssuer issuer) {
+        for (Mob value : Mob.VALUES) {
+            ChatChannels.sendDebugMessage(issuer, Component.text(
+                    value.name() + " - " +
+                            value.name + " - " +
+                            value.maxHealth + " - " +
+                            value.walkSpeed + " - " +
+                            value.damageResistance + " - " +
+                            value.minMeleeDamage + " - " +
+                            value.maxMeleeDamage
+                    , NamedTextColor.GREEN));
         }
     }
 

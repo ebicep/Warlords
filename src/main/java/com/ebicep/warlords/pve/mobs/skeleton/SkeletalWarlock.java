@@ -32,6 +32,34 @@ public class SkeletalWarlock extends AbstractSkeleton implements IntermediateMob
         );
     }
 
+    public SkeletalWarlock(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        new ItemStack(Material.ORANGE_CARPET),
+                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
+                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
+                        new ItemStack(Material.CHAINMAIL_BOOTS),
+                        new ItemStack(Material.BOW)
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Fireball(5.5f)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

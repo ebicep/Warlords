@@ -36,6 +36,33 @@ public class NightmareZombie extends AbstractZombie implements ChampionMob {
         );
     }
 
+    public NightmareZombie(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SHADOW_DEMON),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 70, 50, 20),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 70, 50, 20),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 70, 50, 20),
+                        Weapons.FABLED_HEROICS_SWORD.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

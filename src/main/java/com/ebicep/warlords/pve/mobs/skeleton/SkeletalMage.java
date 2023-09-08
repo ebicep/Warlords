@@ -34,6 +34,34 @@ public class SkeletalMage extends AbstractSkeleton implements BasicMob {
         );
     }
 
+    public SkeletalMage(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.FACELESS_MAGE),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 104, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 250, 104, 190),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 190),
+                        new ItemStack(Material.BOW)
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Fireball(5.5f)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

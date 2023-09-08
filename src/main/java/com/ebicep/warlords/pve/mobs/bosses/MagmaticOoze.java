@@ -63,6 +63,48 @@ public class MagmaticOoze extends AbstractMagmaCube implements BossMob {
         this.previousBlocks = previousBlocks;
     }
 
+    public MagmaticOoze(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        this(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, 0, new HashMap<>());
+    }
+
+    public MagmaticOoze(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            int splitNumber,
+            Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks
+    ) {
+        super(10 - (splitNumber * 2),
+                spawnLocation,
+                name,
+                null,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new FieryProjectile(600 - (splitNumber * 10), 700 - (splitNumber * 10)),
+                new FlamingSlam(900 - (splitNumber * 100), 1400 - (splitNumber * 100)),
+                new HeatAura(100 - (splitNumber * 10), 10 - splitNumber),
+                new MoltenFissure(previousBlocks),
+                new Split(splitNumber, (loc, we) -> new MagmaticOoze(loc, we.getHealth(), splitNumber + 1, previousBlocks))
+        );
+        this.splitNumber = splitNumber;
+        this.previousBlocks = previousBlocks;
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

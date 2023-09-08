@@ -44,6 +44,34 @@ public class ZombieKnight extends AbstractZombie implements AdvancedMob {
         );
     }
 
+    public ZombieKnight(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.NETHERITE_HELMET),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
+                        Weapons.GEMINI.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new ReduceWeaponCooldowns()
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

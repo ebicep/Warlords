@@ -21,7 +21,7 @@ public class SpawnMobAbility extends AbstractSpawnMobAbility {
 
     @Override
     public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
-        return mobToSpawn.createMob.apply(wp.getLocation());
+        return mobToSpawn.createMob(wp.getLocation());
     }
 
 }

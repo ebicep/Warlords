@@ -4,19 +4,35 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
+import java.io.*;
+import java.util.Map;
 
 public class ConfigUtil {
 
 
     public static void loadConfigs(Warlords instance) {
-        readKeysConfig(instance);
-        readWeaponConfig(instance);
-        saveWeaponConfig(instance);
-        readBotConfig(instance);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                readKeysConfig(instance);
+                readWeaponConfig(instance);
+                saveWeaponConfig(instance);
+                readBotConfig(instance);
+                try {
+                    readMobConfig(instance);
+                } catch (Exception e) {
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+                }
+            }
+        }.runTaskAsynchronously(instance);
     }
 
     public static void readKeysConfig(Warlords instance) {
@@ -79,4 +95,32 @@ public class ConfigUtil {
             ChatUtils.MessageType.DISCORD_BOT.sendErrorMessage(e);
         }
     }
+
+    public static void readMobConfig(Warlords instance) throws FileNotFoundException {
+        File file = new File(instance.getDataFolder(), "mobs.json");
+        JsonObject mobJson = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
+        for (Map.Entry<String, JsonElement> stringJsonElementEntry : mobJson.entrySet()) {
+            String mobEnumName = stringJsonElementEntry.getKey();
+            JsonObject mobConfig = stringJsonElementEntry.getValue().getAsJsonObject();
+            Mob mob = Mob.valueOf(mobEnumName);
+            mob.name = mobConfig.get("name").getAsString();
+            mob.maxHealth = mobConfig.get("max_health").getAsInt();
+            mob.walkSpeed = mobConfig.get("walk_speed").getAsFloat();
+            mob.damageResistance = mobConfig.get("damage_resistance").getAsInt();
+            mob.minMeleeDamage = mobConfig.get("min_melee_damage").getAsFloat();
+            mob.maxMeleeDamage = mobConfig.get("max_melee_damage").getAsFloat();
+        }
+    }
+
+    public static void saveMobConfig(Warlords instance) {
+        try {
+            File file = new File(instance.getDataFolder(), "mobs.json");
+            PrintWriter printWriter = new PrintWriter(new FileWriter(file));
+            //TODO
+        } catch (Exception e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+        }
+    }
+
+
 }

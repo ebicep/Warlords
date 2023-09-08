@@ -30,6 +30,33 @@ public class ZombieSwordsman extends AbstractZombie implements IntermediateMob {
         );
     }
 
+    public ZombieSwordsman(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        new ItemStack(Material.WHITE_CARPET),
+                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
+                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
+                        new ItemStack(Material.CHAINMAIL_BOOTS),
+                        new ItemStack(Material.PRISMARINE_SHARD)
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

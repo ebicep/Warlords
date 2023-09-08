@@ -38,6 +38,33 @@ public class EventForsakenApparition extends AbstractZombie implements BossMinio
         );
     }
 
+    public EventForsakenApparition(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SPIDER_SPIRIT),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 64, 140, 255),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 64, 140, 255),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 64, 140, 255),
+                        Weapons.SILVER_PHANTASM_SWORD_4.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

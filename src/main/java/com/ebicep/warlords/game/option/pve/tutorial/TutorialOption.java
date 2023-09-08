@@ -337,7 +337,7 @@ public class TutorialOption implements Option {
                                     spawnLocation.clone().left(5)
                             );
                             for (Location loc : locations) {
-                                AbstractMob<?> mob = Mob.ZOMBIE_LANCER.createMob.apply(loc);
+                                AbstractMob<?> mob = Mob.ZOMBIE_LANCER.createMob(loc);
                                 testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, warlordsNPC -> {})));
                                 mob.setTarget(warlordsPlayer);
                             }

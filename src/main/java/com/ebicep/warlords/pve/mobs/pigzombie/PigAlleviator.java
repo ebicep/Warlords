@@ -33,6 +33,34 @@ public class PigAlleviator extends AbstractPigZombie implements IntermediateMob 
         );
     }
 
+    public PigAlleviator(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.SAMURAI),
+                        new ItemStack(Material.DIAMOND_HELMET),
+                        new ItemStack(Material.DIAMOND_LEGGINGS),
+                        new ItemStack(Material.DIAMOND_BOOTS),
+                        new ItemStack(Material.BAKED_POTATO)
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new PigZombieHealing(300, 10)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

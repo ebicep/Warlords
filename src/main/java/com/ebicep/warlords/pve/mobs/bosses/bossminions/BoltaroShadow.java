@@ -33,6 +33,32 @@ public class BoltaroShadow extends AbstractSkeleton implements BossMinionMob {
         );
     }
 
+    public BoltaroShadow(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.END_MONSTER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 0),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 0),
+                        Weapons.DEMONBLADE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

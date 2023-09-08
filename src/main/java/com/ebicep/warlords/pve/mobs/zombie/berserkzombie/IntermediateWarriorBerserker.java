@@ -36,6 +36,35 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
         woundingStrike.multiplyMinMax(1.25f);
     }
 
+    public IntermediateWarriorBerserker(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        ArmorManager.Helmets.GREATER_WARRIOR_HELMET.itemRed,
+                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
+                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
+                        new ItemStack(Material.CHAINMAIL_BOOTS),
+                        new ItemStack(Material.PRISMARINE_SHARD)
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new BerserkerZombieWoundingStrike(497, 632)
+        );
+        woundingStrike.multiplyMinMax(1.25f);
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

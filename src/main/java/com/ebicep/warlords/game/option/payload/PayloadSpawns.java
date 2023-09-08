@@ -75,7 +75,7 @@ public class PayloadSpawns {
             Mob mobToSpawn = spawn.getB();
             for (int i = 0; i < spawnAmount; i++) {
                 int randomIndex = ThreadLocalRandom.current().nextInt(size);
-                spawnMethod.accept(mobToSpawn.createMob.apply(spawnLocationsNear.get(randomIndex)), Team.RED);
+                spawnMethod.accept(mobToSpawn.createMob(spawnLocationsNear.get(randomIndex)), Team.RED);
             }
         }
     }

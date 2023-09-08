@@ -34,6 +34,34 @@ public class SkeletalPyromancer extends AbstractSkeleton implements EliteMob {
         );
     }
 
+    public SkeletalPyromancer(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.WITHER_SOUL),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 29, 49, 64),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 29, 49, 64),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 29, 49, 64),
+                        null
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new Fireball(5.5f), new FlameBurst(20)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

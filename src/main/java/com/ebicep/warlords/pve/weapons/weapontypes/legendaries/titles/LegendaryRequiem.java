@@ -186,7 +186,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                 HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
-                    AbstractMob<?> mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.PIG_DISCIPLE).createMob.apply(player.getLocation());
+                    AbstractMob<?> mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.PIG_DISCIPLE).createMob(player.getLocation());
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);

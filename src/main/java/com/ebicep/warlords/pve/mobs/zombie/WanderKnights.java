@@ -32,6 +32,33 @@ public class WanderKnights extends AbstractZombie implements IntermediateMob {
         );
     }
 
+    public WanderKnights(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.FANCY_CUBE),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 105, 147, 158),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 105, 147, 158),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 105, 147, 158),
+                        Weapons.LUNAR_RELIC.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

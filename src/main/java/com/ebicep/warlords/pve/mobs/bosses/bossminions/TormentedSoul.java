@@ -39,6 +39,33 @@ public class TormentedSoul extends AbstractZombie implements BossMinionMob {
         );
     }
 
+    public TormentedSoul(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.FACELESS_MAGE),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 140, 140, 140),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 140, 140, 15),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 140, 140, 140),
+                        Weapons.CLAWS.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new RemoveTarget(20)
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

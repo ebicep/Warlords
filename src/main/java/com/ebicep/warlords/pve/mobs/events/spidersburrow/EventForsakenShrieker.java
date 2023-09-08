@@ -42,6 +42,34 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMinionM
         );
     }
 
+    public EventForsakenShrieker(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.DEEP_DARK_CRAWLER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 87, 9, 86),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 87, 9, 86),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 87, 9, 86),
+                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new BlindNear()
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

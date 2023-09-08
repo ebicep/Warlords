@@ -32,6 +32,33 @@ public class CelestialOpus extends AbstractWitherSkeleton implements EliteMob {
         );
     }
 
+    public CelestialOpus(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.CELESTIAL_GOLDOR),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 40, 40, 40),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 40, 40, 40),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 40, 40, 40),
+                        Weapons.SILVER_PHANTASM_SAWBLADE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

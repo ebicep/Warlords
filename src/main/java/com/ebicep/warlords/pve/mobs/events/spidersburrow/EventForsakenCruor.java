@@ -46,6 +46,34 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
         );
     }
 
+    public EventForsakenCruor(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.BLOOD_SPIDER),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 20, 20),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 20, 20),
+                        Weapons.ARMBLADE.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new WoundAll()
+        );
+    }
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);

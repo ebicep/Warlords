@@ -47,6 +47,33 @@ public class Mithra extends AbstractZombie implements BossMob {
         );
     }
 
+    public Mithra(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(spawnLocation,
+                name,
+                new Utils.SimpleEntityEquipment(
+                        SkullUtils.getSkullFrom(SkullID.IRON_QUEEN),
+                        Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 200, 200, 200),
+                        Utils.applyColorTo(Material.LEATHER_LEGGINGS, 200, 200, 200),
+                        Utils.applyColorTo(Material.LEATHER_BOOTS, 200, 200, 200),
+                        Weapons.SILVER_PHANTASM_SWORD_3.getItem()
+                ),
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new FlameBurst(1000)
+        );
+    }
+
     @Override
     public Component getDescription() {
         return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
