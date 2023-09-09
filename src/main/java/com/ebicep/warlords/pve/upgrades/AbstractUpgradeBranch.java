@@ -73,8 +73,9 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
         addBranchToMenu(menu, treeA, 2, 4);
         addBranchToMenu(menu, treeB, 6, 4);
+        boolean hasSecondMaster = !masterUpgrade2.getName().equals("Name Placeholder");
         menu.setItem(
-                4,
+                hasSecondMaster ? 2 : 4,
                 0,
                 masterBranchItem(masterUpgrade),
                 (m, e) -> {
@@ -85,18 +86,21 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     }
                 }
         );
-//        menu.setItem(
-//                6,
-//                0,
-//                masterBranchItem(masterUpgrade2),
-//                (m, e) -> {
-//                    if (e.isLeftClick()) {
-//                        purchaseMasterUpgrade(player, masterUpgrade2, false);
-//                    } else if (!masterUpgrade2.isUnlocked()) {
-//                        onAutoUpgrade(AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2, 0);
-//                    }
-//                }
-//        );
+        if (hasSecondMaster) {
+            menu.setItem(
+                    6,
+                    0,
+                    masterBranchItem(masterUpgrade2),
+                    (m, e) -> {
+                        if (e.isLeftClick()) {
+                            purchaseMasterUpgrade(player, masterUpgrade2, false);
+                        } else if (!masterUpgrade2.isUnlocked()) {
+                            onAutoUpgrade(AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType.MASTER2, 0);
+                        }
+                    }
+            );
+        }
+
 
         menu.setItem(4, 3,
                 new ItemBuilder(Material.DIAMOND)
@@ -135,7 +139,11 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         if (upgradesRequiredForMaster <= 0) {
             upgrade.getOnUpgrade().run();
             upgrade.setUnlocked(true);
-            ability.setPveMasterUpgrade(true);
+            if (masterUpgrade.equals(upgrade)) {
+                ability.setPveMasterUpgrade(true);
+            } else if (masterUpgrade2.equals(upgrade)) {
+                ability.setPveMasterUpgrade2(true);
+            }
 
             player.getAbilityTree().setMaxMasterUpgrades(abilityTree.getMaxMasterUpgrades() - 1);
             player.subtractCurrency(upgrade.getCurrencyCost());

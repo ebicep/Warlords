@@ -44,6 +44,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     //pve
     protected boolean inPve = false;
     protected boolean pveMasterUpgrade = false;
+    protected boolean pveMasterUpgrade2 = false;
 
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
@@ -374,6 +375,14 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public void setPveMasterUpgrade(boolean pveMasterUpgrade) {
         this.pveMasterUpgrade = pveMasterUpgrade;
+    }
+
+    public boolean isPveMasterUpgrade2() {
+        return pveMasterUpgrade2;
+    }
+
+    public void setPveMasterUpgrade2(boolean pveMasterUpgrade2) {
+        this.pveMasterUpgrade2 = pveMasterUpgrade2;
     }
 
     public record SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove) {

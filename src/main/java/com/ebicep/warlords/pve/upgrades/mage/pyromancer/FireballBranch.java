@@ -102,5 +102,18 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
 
                 }
         );
+
+        masterUpgrade2 = new Upgrade(
+                "Volatile Flames",
+                "Fireball - Master Upgrade",
+                """
+                        Fires 2 projectiles. Direct-hits apply the SCORCHED status.
+                                                
+                        SCORCHED: Enemies will take an additional instance of damage after 2 seconds dealing 0.25% of their max health.""",
+                50000,
+                () -> {
+                    ability.setShotsFiredAtATime(2);
+                }
+        );
     }
 }

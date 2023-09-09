@@ -106,42 +106,9 @@ public class Fireball extends AbstractProjectile {
             );
 
             if (pveMasterUpgrade) {
-                hit.getCooldownManager().removeCooldown(Fireball.class, false);
-                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        name,
-                        "BRN",
-                        Fireball.class,
-                        new Fireball(),
-                        shooter,
-                        CooldownTypes.DEBUFF,
-                        cooldownManager -> {
-                        },
-                        5 * 20,
-                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksLeft % 20 == 0) {
-                                float healthDamage = hit.getMaxHealth() * 0.005f;
-                                if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                    healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                }
-                                if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                    healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                }
-                                hit.addDamageInstance(
-                                        shooter,
-                                        "Burn",
-                                        healthDamage,
-                                        healthDamage,
-                                        0,
-                                        100
-                                );
-                            }
-                        })
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 1.2f;
-                    }
-                });
+                applyBurnEffect(hit, shooter);
+            } else if (pveMasterUpgrade2) {
+                applyScorchedEffect(hit, shooter);
             }
         }
 
@@ -167,6 +134,71 @@ public class Fireball extends AbstractProjectile {
         }
 
         return playersHit;
+    }
+
+    private void applyBurnEffect(@Nonnull WarlordsEntity hit, WarlordsEntity shooter) {
+        hit.getCooldownManager().removeCooldownByName("Burn");
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Burn",
+                "BRN",
+                Fireball.class,
+                new Fireball(),
+                shooter,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                5 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksLeft % 20 == 0) {
+                        float healthDamage = hit.getMaxHealth() * 0.005f;
+                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                        }
+                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                        }
+                        hit.addDamageInstance(
+                                shooter,
+                                "Burn",
+                                healthDamage,
+                                healthDamage,
+                                0,
+                                100
+                        );
+                    }
+                })
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 1.2f;
+            }
+        });
+    }
+
+    private void applyScorchedEffect(@Nonnull WarlordsEntity hit, WarlordsEntity shooter) {
+        //hit.getCooldownManager().removeCooldownByName("Scorched");
+        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Scorched",
+                "SCH",
+                Fireball.class,
+                new Fireball(),
+                shooter,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                    float damage = hit.getMaxBaseHealth() * 0.0025f;
+                    hit.addDamageInstance(
+                            shooter,
+                            "Scorched",
+                            damage,
+                            damage,
+                            0,
+                            100
+                    );
+                },
+                40,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                })
+        ));
     }
 
     @Override
