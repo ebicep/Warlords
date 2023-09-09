@@ -112,48 +112,49 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
 
         SpawnNarmerAcolyteAbility spawnNarmerAcolyteAbility = new SpawnNarmerAcolyteAbility(this);
-        SpawnMobAbility spawnMobAbility = new SpawnMobAbility(7, Mob.UNDEAD_ACOLYTE, 10) {
+        this.playerClass.addAbility(spawnNarmerAcolyteAbility);
+        if (option.playerCount() >= 3) {
+            this.playerClass.addAbility(new SpawnMobAbility(7, Mob.UNDEAD_ACOLYTE, 10) {
 
-            private WarlordsEntity customTarget;
+                private WarlordsEntity customTarget;
 
-            @Override
-            public int getSpawnAmount() {
-                if (acolyteSpawnTickWindow > 0) {
-                    return 0;
-                }
-                if (acolyteDeathTickWindow > 0) {
-                    return 1;
-                }
+                @Override
+                public int getSpawnAmount() {
+                    if (acolyteSpawnTickWindow > 0) {
+                        return 0;
+                    }
+                    if (acolyteDeathTickWindow > 0) {
+                        return 1;
+                    }
 //                List<Float> sortedHealths = acolytes.stream().map(WarlordsEntity::getHealth)
 //                                                    .sorted(Float::compareTo)
 //                                                    .toList();
-                if (acolytes.size() > 1) {
-                    for (WarlordsEntity firstAcolyte : acolytes) {
-                        float firstHealth = firstAcolyte.getHealth();
-                        Location firstLocation = firstAcolyte.getLocation();
-                        for (WarlordsEntity secondAcolyte : acolytes) {
-                            if (firstAcolyte.equals(secondAcolyte)) {
-                                continue;
-                            }
-                            float secondHealth = secondAcolyte.getHealth();
-                            Location secondLocation = secondAcolyte.getLocation();
-                            if (Math.abs(firstHealth - secondHealth) < 5000 && firstLocation.distanceSquared(secondLocation) < 4) {
-                                customTarget = firstAcolyte;
-                                return 1;
+                    if (acolytes.size() > 1) {
+                        for (WarlordsEntity firstAcolyte : acolytes) {
+                            float firstHealth = firstAcolyte.getHealth();
+                            Location firstLocation = firstAcolyte.getLocation();
+                            for (WarlordsEntity secondAcolyte : acolytes) {
+                                if (firstAcolyte.equals(secondAcolyte)) {
+                                    continue;
+                                }
+                                float secondHealth = secondAcolyte.getHealth();
+                                Location secondLocation = secondAcolyte.getLocation();
+                                if (Math.abs(firstHealth - secondHealth) < 5000 && firstLocation.distanceSquared(secondLocation) < 4) {
+                                    customTarget = firstAcolyte;
+                                    return 1;
+                                }
                             }
                         }
                     }
+                    return 0;
                 }
-                return 0;
-            }
 
-            @Override
-            public void onMobCreate(AbstractMob<?> mobSpawned) {
-                mobSpawned.setTarget(customTarget);
-            }
-        };
-        this.playerClass.addAbility(spawnNarmerAcolyteAbility);
-        this.playerClass.addAbility(spawnMobAbility);
+                @Override
+                public void onMobCreate(AbstractMob<?> mobSpawned) {
+                    mobSpawned.setTarget(customTarget);
+                }
+            });
+        }
 
         float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
 
