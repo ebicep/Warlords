@@ -97,5 +97,16 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Backfire",
+                "Flame Burst - Master Upgrade",
+                """
+                        Converts the burst into a flaming boomerang that can pierce multiple targets.
+                        """,
+                50000,
+                () -> {
+                    ability.setHitbox(ability.getHitbox() - 2);
+                }
+        );
     }
 }

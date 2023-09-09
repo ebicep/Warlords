@@ -419,6 +419,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         private final Vector speed;
         private final WarlordsEntity shooter;
         private int ticksLived = 0;
+        private double blocksTravelled = 0;
 
         private InternalProjectile(WarlordsEntity shooter, Location startingLocation) {
             this.currentLocation = getProjectileStartingLocation(shooter, startingLocation);
@@ -444,6 +445,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         public void run() {
             if (!shooter.getGame().isFrozen()) {
                 updateSpeed(this);
+                currentLocation.setDirection(speed);
                 HitResult hitResult = checkCollisionAndMove(this, currentLocation, speed, shooter);
                 if (hitResult != null) {
                     int hitBySplash = onHit(this, hitResult instanceof EntityHitResult entityHitResult ?
@@ -463,6 +465,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
                 } else {
                     playEffect(this);
                     ticksLived++;
+                    blocksTravelled += speed.length();
                     //cancel after 15 seconds
                     if (ticksLived > 15 * 20) {
                         cancel();
@@ -519,5 +522,8 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
             return tasks;
         }
 
+        public double getBlocksTravelled() {
+            return blocksTravelled;
+        }
     }
 }

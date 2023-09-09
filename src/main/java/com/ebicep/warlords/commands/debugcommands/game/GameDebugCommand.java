@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.debugcommands.game;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 @CommandAlias("gamedebug|gd")
 @CommandPermission("group.administrator")
@@ -40,6 +42,19 @@ public class GameDebugCommand extends BaseCommand {
                         pveOption.setPauseMobSpawn(true);
                     }
                 }
+                new BukkitRunnable() {
+
+                    @Override
+                    public void run() {
+                        game.warlordsPlayers().forEach(warlordsPlayer -> {
+                            warlordsPlayer.setTakeDamage(false);
+                            warlordsPlayer.setDisableCooldowns(true);
+                            warlordsPlayer.setNoEnergyConsumption(true);
+                            warlordsPlayer.addCurrency(1000000);
+                        });
+                    }
+                }.runTaskLater(Warlords.getInstance(), 40);
+
             });
         });
     }

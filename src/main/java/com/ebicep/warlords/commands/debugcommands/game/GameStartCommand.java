@@ -106,7 +106,7 @@ public class GameStartCommand {
         }
 
         Pair<GameManager.QueueResult, Game> resultGamePair = entryBuilder.queueNow();
-        entryBuilder.getOnResult().accept(resultGamePair.getA(), resultGamePair.getB());
+        //entryBuilder.getOnResult().accept(resultGamePair.getA(), resultGamePair.getB());
     }
 
     public static void startGamePvERaid(Player player, Consumer<GameManager.QueueEntryBuilder> entryEditor) {

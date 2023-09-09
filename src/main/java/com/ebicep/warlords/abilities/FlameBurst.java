@@ -1,12 +1,13 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractProjectile;
+import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FlameburstBranch;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -15,14 +16,17 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
+public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon {
 
     private float hitbox = 5;
     private double acceleration = 1.0275;
@@ -66,7 +70,37 @@ public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FlameburstBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
+        if (pveMasterUpgrade2) {
+            if (ticksLived % 2 == 0) {
+                return;
+            }
+            for (Location location : Arrays.asList(
+                    currentLocation,
+                    new LocationBuilder(currentLocation).backward(.25f).left(.25f),
+                    new LocationBuilder(currentLocation).backward(.5f).left(.5f),
+                    new LocationBuilder(currentLocation).backward(.75f).left(.75f),
+                    new LocationBuilder(currentLocation).backward(.25f).right(.25f),
+                    new LocationBuilder(currentLocation).backward(.5f).right(.5f),
+                    new LocationBuilder(currentLocation).backward(.75f).right(.75f)
+            )) {
+                EffectUtils.displayParticle(
+                        Particle.FLAME,
+                        location,
+                        5,
+                        .05,
+                        .05,
+                        .05,
+                        0
+                );
+            }
+            return;
+        }
         Matrix4d center = new Matrix4d(currentLocation);
 
         for (float i = 0; i < 4; i++) {
@@ -92,6 +126,10 @@ public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
         EffectUtils.displayParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 2);
         EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1);
 
+        return hit(projectile, shooter, startingLocation, currentLocation);
+    }
+
+    private int hit(@Nonnull InternalProjectile projectile, WarlordsEntity shooter, Location startingLocation, Location currentLocation) {
         int playersHit = 0;
         for (WarlordsEntity nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
@@ -105,37 +143,101 @@ public class FlameBurst extends AbstractProjectile implements RedAbilityIcon {
             }
 
             if (pveMasterUpgrade) {
+                int damageIncrease = (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685);
                 nearEntity.addDamageInstance(
                         shooter,
                         name,
-                        minDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685),
-                        maxDamageHeal + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685),
-                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685),
-                        critMultiplier + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685)
+                        minDamageHeal + damageIncrease,
+                        maxDamageHeal + damageIncrease,
+                        critChance + damageIncrease,
+                        critMultiplier + damageIncrease
                 );
             } else {
+                float blocksTravelled = (float) projectile.getBlocksTravelled();
+                if (pveMasterUpgrade2) {
+                    blocksTravelled = Math.min(30, blocksTravelled);
+                }
                 nearEntity.addDamageInstance(
                         shooter,
                         name,
                         minDamageHeal,
                         maxDamageHeal,
-                        critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.5),
+                        critChance + blocksTravelled,
                         critMultiplier
                 );
             }
         }
-
         return playersHit;
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FlameburstBranch(abilityTree, this);
+    protected void updateSpeed(InternalProjectile projectile) {
+        int ticksLived = projectile.getTicksLived();
+        Vector vector = new Vector(0, 1, 0).normalize();
+        if (!pveMasterUpgrade2) {
+            projectile.getSpeed().multiply(acceleration);
+            return;
+        }
+        if (ticksLived % 2 == 0) {
+            projectile.getSpeed().multiply(acceleration);
+        }
+        //TODO bezier curve
+        if (ticksLived > 30) {
+            return;
+        }
+        if (ticksLived > 26) {
+            projectile.getSpeed().rotateAroundAxis(vector, .07);
+        } else if (ticksLived > 22) {
+            projectile.getSpeed().rotateAroundAxis(vector, .225);
+        } else if (ticksLived > 18) {
+            projectile.getSpeed().rotateAroundAxis(vector, .22);
+        } else if (ticksLived > 15) {
+            projectile.getSpeed().rotateAroundAxis(vector, .25);
+        } else if (ticksLived > 13) {
+            projectile.getSpeed().rotateAroundAxis(vector, .3);
+        } else if (ticksLived > 8) {
+            projectile.getSpeed().rotateAroundAxis(vector, .17);
+        } else if (ticksLived == 8) {
+            projectile.getSpeed().rotateAroundAxis(vector, .15);
+        }
     }
 
     @Override
-    protected void updateSpeed(InternalProjectile projectile) {
-        projectile.getSpeed().multiply(acceleration);
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
+        return !pveMasterUpgrade2;
+    }
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
+        return true;
+    }
+
+    @Override
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        if (!pveMasterUpgrade2) {
+            return;
+        }
+        hit(projectile, projectile.getShooter(), projectile.getStartingLocation(), impactLocation);
+    }
+
+    @Override
+    protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+        if (pveMasterUpgrade2) {
+            Location location = super.getProjectileStartingLocation(shooter, startingLocation);
+            location.setPitch(0);
+            return location;
+        }
+        return super.getProjectileStartingLocation(shooter, startingLocation);
+    }
+
+    @Override
+    protected Vector getProjectileStartingSpeed(WarlordsEntity shooter, Location startingLocation) {
+        if (pveMasterUpgrade2) {
+            Vector vector = super.getProjectileStartingSpeed(shooter, startingLocation);
+            vector.setY(0);
+            return vector.normalize();
+        }
+        return super.getProjectileStartingSpeed(shooter, startingLocation);
     }
 
     @Override
