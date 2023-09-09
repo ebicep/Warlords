@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 
 public class VoltaicSoul extends AbstractZombie implements BossMinionMob {
@@ -87,5 +89,6 @@ public class VoltaicSoul extends AbstractZombie implements BossMinionMob {
                     .forEach(warlordsEntity -> {
                         warlordsEntity.addDamageInstance(warlordsNPC, "Static Shock", damage, damage, 0, 100);
                     });
+        new FallingBlockWaveEffect(warlordsNPC.getLocation().add(0, .75, 0), 9, 1.4, Material.OAK_SAPLING).play();
     }
 }
