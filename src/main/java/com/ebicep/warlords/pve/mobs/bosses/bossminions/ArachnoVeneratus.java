@@ -1,27 +1,20 @@
-package com.ebicep.warlords.pve.mobs.events.spidersburrow;
+package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.spider.AbstractSpider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
-import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.inventory.ItemStack;
 
-public class EventEggSac extends AbstractZombie implements BossMinionMob {
+public class ArachnoVeneratus extends AbstractSpider implements BossMinionMob {
 
-    public static boolean ARMOR_STAND = true;
-
-    public EventEggSac(Location spawnLocation) {
-        this(spawnLocation, "Egg Sac", 10000, 0, 0, 0, 0);
+    public ArachnoVeneratus(Location spawnLocation) {
+        this(spawnLocation, "Arachno Veneratus", 3000, 0.45f, 5, 350, 500);
     }
 
-    public EventEggSac(
+    public ArachnoVeneratus(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -43,21 +36,13 @@ public class EventEggSac extends AbstractZombie implements BossMinionMob {
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.EVENT_MITHRA_EGG_SAC;
+        return Mob.ARACHNO_VENERATUS;
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        if (ARMOR_STAND) {
-            warlordsNPC.getEntity().remove();
-            ArmorStand eggSac = Utils.spawnArmorStand(warlordsNPC.getLocation().clone().add(0, -1.3, 0), armorStand -> {
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.DRAGON_EGG));
-                armorStand.customName(Component.text(name));
-            });
-            warlordsNPC.setEntity(eggSac);
-            warlordsNPC.updateEntity();
-        }
+
     }
 
     @Override
@@ -74,4 +59,5 @@ public class EventEggSac extends AbstractZombie implements BossMinionMob {
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
     }
+
 }

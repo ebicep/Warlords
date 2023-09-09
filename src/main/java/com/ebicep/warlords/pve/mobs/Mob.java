@@ -450,6 +450,14 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 30, 30),
             Weapons.TENDERIZER.getItem()
     )),
+    MITHRA_EGG_SAC(EggSac.class, EggSac::new, EggSac::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.EGG_SAC),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+            null
+    )),
+    ARACHNO_VENERATUS(ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
 
 
     // Raid Boss

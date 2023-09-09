@@ -50,11 +50,15 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, boolean startNoCooldown) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startNoCooldown);
+        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startNoCooldown ? 0 : cooldown);
+    }
+
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float startCooldown) {
+        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startCooldown);
     }
 
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, false);
+        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 0);
     }
 
     public AbstractAbility(
@@ -65,15 +69,13 @@ public abstract class AbstractAbility implements AbilityIcon {
             float energyCost,
             float critChance,
             float critMultiplier,
-            boolean startNoCooldown
+            float startCooldown
     ) {
         this.name = name;
         this.minDamageHeal = minDamageHeal;
         this.maxDamageHeal = maxDamageHeal;
         this.cooldown = cooldown;
-        if (startNoCooldown) {
-            this.currentCooldown = cooldown;
-        }
+        this.currentCooldown = startCooldown;
         this.energyCost = new FloatModifiable(energyCost);
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
@@ -85,7 +87,11 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public AbstractAbility(String name, float cooldown, float energyCost, boolean startNoCooldown) {
-        this(name, 0, 0, cooldown, energyCost, 0, 0, startNoCooldown);
+        this(name, 0, 0, cooldown, energyCost, 0, 0, startNoCooldown ? 0 : cooldown);
+    }
+
+    public AbstractAbility(String name, float cooldown, float energyCost, float startCooldown) {
+        this(name, 0, 0, cooldown, energyCost, 0, 0, startCooldown);
     }
 
     public abstract void updateDescription(Player player);

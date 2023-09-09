@@ -205,12 +205,14 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void updateEntity() {
-        nameDisplay = Utils.spawnArmorStand(getLocation(), armorStand -> {
-            armorStand.setGravity(true);
-            armorStand.setMarker(true);
-            armorStand.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
-            armorStand.setCustomNameVisible(true);
-        });
+        if (nameDisplay == null) {
+            nameDisplay = Utils.spawnArmorStand(getLocation(), armorStand -> {
+                armorStand.setGravity(true);
+                armorStand.setMarker(true);
+                armorStand.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+                armorStand.setCustomNameVisible(true);
+            });
+        }
 
         nameDisplay.customName(getNameComponent());
         nameDisplay.teleport(entity.getLocation().clone().add(0, entity.getHeight() + 0.275, 0));

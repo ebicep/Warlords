@@ -1,9 +1,10 @@
-package com.ebicep.warlords.pve.mobs.events.spidersburrow;
+package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -13,15 +14,17 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 
-public class EventEggSac extends AbstractZombie implements BossMinionMob {
+public class EggSac extends AbstractZombie implements BossMinionMob {
 
-    public static boolean ARMOR_STAND = true;
-
-    public EventEggSac(Location spawnLocation) {
+    public EggSac(Location spawnLocation) {
         this(spawnLocation, "Egg Sac", 10000, 0, 0, 0, 0);
     }
 
-    public EventEggSac(
+    public EggSac(Location spawnLocation, int maxHealth) {
+        this(spawnLocation, "Egg Sac", maxHealth, 0, 0, 0, 0);
+    }
+
+    public EggSac(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -43,13 +46,13 @@ public class EventEggSac extends AbstractZombie implements BossMinionMob {
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.EVENT_MITHRA_EGG_SAC;
+        return Mob.MITHRA_EGG_SAC;
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        if (ARMOR_STAND) {
+        if (EventEggSac.ARMOR_STAND) {
             warlordsNPC.getEntity().remove();
             ArmorStand eggSac = Utils.spawnArmorStand(warlordsNPC.getLocation().clone().add(0, -1.3, 0), armorStand -> {
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.DRAGON_EGG));

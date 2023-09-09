@@ -1,14 +1,20 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalPredictTargetFutureLocationGoal;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.FlameBurst;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.spider.ArachnoVenari;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.ArachnoVeneratus;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.EggSac;
+import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -18,7 +24,12 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nonnull;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Mithra extends AbstractZombie implements BossMob {
 
@@ -27,15 +38,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     private boolean preventBarrage = false;
 
     public Mithra(Location spawnLocation) {
-        super(spawnLocation,
-                "Mithra",
-                20000,
-                0.28f,
-                20,
-                1200,
-                1600,
-                new FlameBurst(1000)
-        );
+        this(spawnLocation, "Mithra", 20000, 0.28f, 20, 1200, 1600);
     }
 
     public Mithra(
@@ -54,7 +57,14 @@ public class Mithra extends AbstractZombie implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst(1000)
+                new FlameBurst(1000),
+                new SpawnMobAbility(1000, Mob.ARACHNO_VENERATUS) {
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                },
+                new HibernatingEggSac()
         );
     }
 
@@ -77,8 +87,10 @@ public class Mithra extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
+        entity.addGoalAI(2, new PathfinderGoalPredictTargetFutureLocationGoal(mob));
+
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-            option.spawnNewMob(new ArachnoVenari(spawnLocation));
+            option.spawnNewMob(new ArachnoVeneratus(spawnLocation));
         }
     }
 
@@ -96,7 +108,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                     .closestFirst(warlordsNPC)
             ) {
                 EffectUtils.strikeLightning(knockTarget.getLocation(), false);
-                knockTarget.setVelocity(name, new Vector(0, 1, 0), false);
+                knockTarget.setVelocity(name, new Vector(0, .75, 0), false);
                 knockTarget.addDamageInstance(
                         warlordsNPC,
                         "Virtue Strike",
@@ -153,10 +165,10 @@ public class Mithra extends AbstractZombie implements BossMob {
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.BLACK)
-                                                                       .withColor(Color.WHITE)
-                                                                       .with(FireworkEffect.Type.BALL_LARGE)
-                                                                       .build());
+                                                              .withColor(Color.BLACK)
+                                                              .withColor(Color.WHITE)
+                                                              .with(FireworkEffect.Type.BALL_LARGE)
+                                                              .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 
@@ -172,11 +184,9 @@ public class Mithra extends AbstractZombie implements BossMob {
                 }
 
                 counter++;
-                for (AbstractAbility ability : warlordsNPC.getAbilities()) {
-                    if (ability instanceof FlameBurst) {
-                        ability.setCurrentCooldown(0);
-                        warlordsNPC.addEnergy(warlordsNPC, "Flame Burst Barrage", ability.getEnergyCost());
-                    }
+                for (FlameBurst flameBurst : warlordsNPC.getAbilitiesMatching(FlameBurst.class)) {
+                    flameBurst.setCurrentCooldown(0);
+                    warlordsNPC.addEnergy(warlordsNPC, "Flame Burst Barrage", flameBurst.getEnergyCost());
                 }
 
                 if (counter == amountOfShots) {
@@ -224,7 +234,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -0.2, 0.06f);
+                    Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -0.2, 0.07f);
                     flameTarget.addDamageInstance(
                             warlordsNPC,
                             "Immolation",
@@ -244,12 +254,84 @@ public class Mithra extends AbstractZombie implements BossMob {
                     );
                 }
 
-                if (counter == 50) {
+                if (counter == 40) {
                     preventBarrage = false;
                     this.cancel();
                     warlordsNPC.getSpeed().addBaseModifier(20);
+                    for (SpawnMobAbility spawnMobAbility : warlordsNPC.getAbilitiesMatching(SpawnMobAbility.class)) {
+                        spawnMobAbility.setCurrentCooldown(0);
+                    }
                 }
             }
         }.runTaskTimer(40, 5);
+    }
+
+    private static class HibernatingEggSac extends AbstractPveAbility {
+
+        public HibernatingEggSac() {
+            super("Hibernating Egg Sac", 20, 50, 7);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            Location loc = pveOption.getRandomSpawnLocation(null);
+            if (loc == null) {
+                return false;
+            }
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
+            EggSac eggSac = new EggSac(loc, (int) Math.pow(1500, 1 + ((pveOption.playerCount() - 1) * .04)));
+            pveOption.spawnNewMob(eggSac);
+            new GameRunnable(wp.getGame()) {
+                final Location particleToLocation = loc.clone().add(0, -.5, 0);
+                int counter = 0;
+
+                @Override
+                public void run() {
+                    if (wp.isDead() || eggSac.getWarlordsNPC().isDead()) {
+                        this.cancel();
+                        return;
+                    }
+                    if (counter++ == 10) {
+                        this.cancel();
+                        if (!pveOption.getMobs().contains(eggSac)) {
+                            return;
+                        }
+                        WarlordsNPC eggSacWarlordsNPC = eggSac.getWarlordsNPC();
+                        eggSacWarlordsNPC.die(eggSacWarlordsNPC);
+                        Location location = eggSacWarlordsNPC.getLocation();
+                        if (EventEggSac.ARMOR_STAND) {
+                            location.add(0, 1.31, 0);
+                        }
+                        for (int i = 0; i < pveOption.playerCount() * 1.5; i++) {
+                            Location spawnLocation = location.clone().add(ThreadLocalRandom.current().nextDouble(), 0, ThreadLocalRandom.current().nextDouble());
+                            pveOption.spawnNewMob(new ArachnoVeneratus(spawnLocation));
+                        }
+                        Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_DEATH, 2, 3f);
+                        new BukkitRunnable() {
+
+                            @Override
+                            public void run() {
+                                for (Player p : loc.getWorld().getPlayers()) {
+                                    p.stopSound(Sound.ENTITY_ENDER_DRAGON_DEATH);
+                                }
+                            }
+                        }.runTaskLater(Warlords.getInstance(), 14);
+                    } else {
+                        EffectUtils.playParticleLinkAnimation(
+                                particleToLocation,
+                                wp.getLocation(),
+                                175,
+                                175,
+                                175,
+                                2
+                        );
+                        for (int i = 0; i < Math.pow(1.5, counter / 2f); i++) {
+                            Utils.playGlobalSound(loc, Sound.ENTITY_SPIDER_AMBIENT, 500, 2);
+                        }
+                    }
+                }
+            }.runTaskTimer(0, 20);
+            return true;
+        }
     }
 }

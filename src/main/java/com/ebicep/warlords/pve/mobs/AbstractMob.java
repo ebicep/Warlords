@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
-import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -160,8 +159,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 playerClass
         );
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
-            if (ability instanceof Fireball fireball) {
-                fireball.setMaxDistance(150);
+            System.out.println(ability.getName() + " - " + ability.getCooldown() + " - " + ability.getCurrentCooldown());
+            if (ability.getCurrentCooldown() < ability.getCooldown()) {
+                warlordsNPC.setEnergy(warlordsNPC.getEnergy() + ability.getEnergyCost());
             }
         }
 
