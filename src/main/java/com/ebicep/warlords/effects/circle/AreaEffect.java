@@ -26,13 +26,17 @@ public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
         this(yOffset, new TeamBasedEffect(own, other));
     }
 
+    public AreaEffect(double yOffset, @Nonnull TeamBasedEffect effect) {
+        this.yOffset = yOffset;
+        this.effect = effect;
+    }
+
     public AreaEffect(double yOffset, Particle effect) {
         this(yOffset, new TeamBasedEffect(effect));
     }
 
-    public AreaEffect(double yOffset, @Nonnull TeamBasedEffect effect) {
-        this.yOffset = yOffset;
-        this.effect = effect;
+    public AreaEffect(double yOffset, Particle effect, Object data) {
+        this(yOffset, new TeamBasedEffect(effect, data));
     }
 
     @Override

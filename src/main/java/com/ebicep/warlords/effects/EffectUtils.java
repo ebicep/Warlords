@@ -6,10 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -314,9 +311,19 @@ public class EffectUtils {
     }
 
     public static void strikeLightning(Location location, boolean isSilent) {
-        //location.getWorld().spigot().strikeLightning(location, isSilent);
-        LightningStrike lightningStrike = (LightningStrike) location.getWorld().spawnEntity(location, EntityType.LIGHTNING);
-        lightningStrike.setSilent(isSilent);
+        location.getWorld().spawn(location, LightningStrike.class, lightningStrike -> {
+            //lightningStrike.setSilent(isSilent);
+        });
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                location.getWorld().getNearbyPlayers(location, 50).forEach(player -> {
+                    player.stopSound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER);
+                });
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
+
     }
 
     public static void strikeLightningTicks(Location location, boolean isSilent, int ticksLived) {

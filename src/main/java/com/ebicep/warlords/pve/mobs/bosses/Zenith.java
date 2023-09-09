@@ -1,10 +1,13 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.circle.AreaEffect;
+import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.MobDrop;
@@ -20,9 +23,15 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Zenith extends AbstractZombie implements BossMob {
+
+    private List<ThunderCloud> thunderClouds = new ArrayList<>();
 
     public Zenith(Location spawnLocation) {
         super(spawnLocation,
@@ -71,68 +80,6 @@ public class Zenith extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public void onSpawn(PveOption option) {
-        super.onSpawn(option);
-        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
-    }
-
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
-
-        if (!(event.getAbility().equals("Uppercut") || event.getAbility().equals("Armageddon") || event.getAbility().equals("Intervene"))) {
-            new GameRunnable(attacker.getGame()) {
-                int counter = 0;
-
-                @Override
-                public void run() {
-                    if (warlordsNPC.isDead()) {
-                        this.cancel();
-                    }
-
-                    counter++;
-                    EffectUtils.playFirework(
-                            receiver.getLocation(),
-                            FireworkEffect.builder()
-                                          .withColor(Color.WHITE)
-                                          .with(FireworkEffect.Type.BURST)
-                                          .build()
-                    );
-                    Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
-                    receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100);
-
-                    if (counter == 3 || receiver.isDead()) {
-                        this.cancel();
-                    }
-                }
-            }.runTaskTimer(8, 2);
-        }
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        super.onDeath(killer, deathLocation, option);
-        for (int i = 0; i < 3; i++) {
-            EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                                           .withColor(Color.WHITE)
-                                                                           .with(FireworkEffect.Type.BALL_LARGE)
-                                                                           .build());
-        }
-
-        EffectUtils.strikeLightning(deathLocation, false, 5);
-    }
-
-    @Override
     public HashMap<MobDrop, HashMap<DifficultyIndex, Double>> mobDrops() {
         return new HashMap<>() {{
             put(MobDrop.ZENITH_STAR, new HashMap<>() {{
@@ -146,11 +93,6 @@ public class Zenith extends AbstractZombie implements BossMob {
     }
 
     @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.DARK_PURPLE;
-    }
-
-    @Override
     public Mob getMobRegistry() {
         return Mob.ZENITH;
     }
@@ -160,6 +102,86 @@ public class Zenith extends AbstractZombie implements BossMob {
         return Component.text("Leader of the Illusion Vanguard", NamedTextColor.LIGHT_PURPLE);
     }
 
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_PURPLE;
+    }
+
+    @Override
+    public void onSpawn(PveOption option) {
+        super.onSpawn(option);
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
+    }
+
+    @Override
+    public void whileAlive(int ticksElapsed, PveOption option) {
+        if (ticksElapsed % 40 == 0) {
+            Location randomSpawnLocation = option.getRandomSpawnLocation(null);
+            if (randomSpawnLocation == null) {
+                return;
+            }
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+            randomSpawnLocation.add(random.nextDouble(10) - 5, 0, random.nextDouble(10) - 5);
+            thunderClouds.add(new ThunderCloud(option.getGame(), randomSpawnLocation));
+        }
+        thunderClouds.removeIf(thunderCloud -> thunderCloud.tick(warlordsNPC));
+    }
+
+    @Override
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+        EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
+
+        if (event.getAbility().equals("Uppercut") ||
+                event.getAbility().equals("Armageddon") ||
+                event.getAbility().equals("Intervene") ||
+                event.getAbility().equals("Thunder Strike")
+        ) {
+            return;
+        }
+        new GameRunnable(attacker.getGame()) {
+            int counter = 0;
+
+            @Override
+            public void run() {
+                if (warlordsNPC.isDead()) {
+                    this.cancel();
+                }
+
+                counter++;
+                EffectUtils.playFirework(
+                        receiver.getLocation(),
+                        FireworkEffect.builder()
+                                      .withColor(Color.WHITE)
+                                      .with(FireworkEffect.Type.BURST)
+                                      .build()
+                );
+                Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
+                receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100);
+
+                if (counter == 3 || receiver.isDead()) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(8, 2);
+    }
+
+    @Override
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+        Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
+        for (int i = 0; i < 3; i++) {
+            EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
+                                                                  .withColor(Color.WHITE)
+                                                                  .with(FireworkEffect.Type.BALL_LARGE)
+                                                                  .build());
+        }
+
+        EffectUtils.strikeLightning(deathLocation, false, 5);
+    }
 
     private static class Armageddon extends AbstractPveAbility {
 
@@ -294,6 +316,80 @@ public class Zenith extends AbstractZombie implements BossMob {
                 EffectUtils.strikeLightning(we.getLocation(), false);
             }
             return true;
+        }
+    }
+
+    private static class ThunderCloud {
+
+        private static final int[] CLOUD_COLORS = {150, 200, 250};
+        private final Location floorLocation;
+        private final int ticksToLive = ThreadLocalRandom.current().nextInt(7, 12) * 20;
+        private final int size = ThreadLocalRandom.current().nextInt(5, 10);
+        private final List<CircleEffect> effects = new ArrayList<>();
+        private int ticksElapsed = ThreadLocalRandom.current().nextInt(15);
+        private int startDamageTick = 30;
+
+        private ThunderCloud(Game game, Location floorLocation) {
+            this.floorLocation = floorLocation.clone();
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+            int startingYOffset = random.nextInt(5, 8);
+            for (int i = 0; i < 3; i++) {
+                double yOffset = startingYOffset + i * .35;
+                int cloudColor = CLOUD_COLORS[i];
+                AreaEffect areaEffect = new AreaEffect(
+                        yOffset,
+                        Particle.REDSTONE,
+                        new Particle.DustOptions(Color.fromRGB(cloudColor, cloudColor, cloudColor), 1)
+                ).particlesPerSurface(1.15 - (i * 0.05));
+                effects.add(new CircleEffect(
+                        game,
+                        null,
+                        floorLocation,
+                        size - i,
+                        areaEffect
+                ));
+                if (i == 0) {
+                    floorLocation.add(random.nextDouble(1) - .5, 0, random.nextDouble(1) - .5);
+                }
+            }
+        }
+
+        public boolean tick(WarlordsEntity warlordsEntity) {
+            ticksElapsed++;
+            startDamageTick--;
+            if (ticksElapsed % 5 == 0) {
+                effects.forEach(CircleEffect::playEffects);
+            }
+            if (ticksElapsed % 20 == 0 && startDamageTick <= 0) {
+                ThreadLocalRandom random = ThreadLocalRandom.current();
+                EffectUtils.strikeLightning(
+                        floorLocation.clone().add(random.nextDouble(4) - 2, -1, random.nextDouble(4) - 2),
+                        true
+                );
+                PlayerFilter.entitiesAround(floorLocation, size, size, size)
+                            .excluding(warlordsEntity)
+                            .forEach(entity -> {
+                                float minDamage;
+                                float maxDamage;
+                                if (entity.isTeammate(warlordsEntity)) {
+                                    minDamage = 150;
+                                    maxDamage = 300;
+                                } else {
+                                    minDamage = 800;
+                                    maxDamage = 1000;
+                                }
+                                entity.addDamageInstance(
+                                        warlordsEntity,
+                                        "Thunder Strike",
+                                        minDamage,
+                                        maxDamage,
+                                        0,
+                                        100,
+                                        size > 8 ? EnumSet.of(InstanceFlags.PIERCE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class)
+                                );
+                            });
+            }
+            return ticksElapsed >= ticksToLive;
         }
     }
 }
