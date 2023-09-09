@@ -14,7 +14,9 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractSpawnMobAbility;
+import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmerAcolyte;
+import com.ebicep.warlords.pve.mobs.mobflags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
@@ -35,22 +37,13 @@ import java.util.List;
 public class Narmer extends AbstractZombie implements BossMob {
 
     private final int executeRadius = 80;
-    private int timesMegaEarthQuakeActivated = 0;
     private final List<WarlordsEntity> acolytes = new ArrayList<>();
+    private int timesMegaEarthQuakeActivated = 0;
     private Listener listener;
     private int acolyteDeathTickWindow = 0;
 
     public Narmer(Location spawnLocation) {
-        super(spawnLocation,
-                "Narmer",
-                16000,
-                0.16f,
-                20,
-                1600,
-                2000,
-                new FlameBurst(15),
-                new GroundShred()
-        );
+        this(spawnLocation, "Narmer", 16000, 0.16f, 20, 1600, 2000);
     }
 
     public Narmer(
@@ -70,8 +63,37 @@ public class Narmer extends AbstractZombie implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new FlameBurst(15),
-                new GroundShred()
+                new GroundShred(),
+                new SpawnMobAbility(6, Mob.ZOMBIE_LANCER, true) {
+
+                    @Override
+                    public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
+                        AbstractMob<?> spawnedMob = super.createMob(wp);
+                        spawnedMob.getDynamicFlags().add(DynamicFlags.NO_INSIGNIA);
+                        return spawnedMob;
+                    }
+
+                    @Override
+                    public int getSpawnAmount() {
+                        return (int) pveOption.getGame().warlordsPlayers().count();
+                    }
+                }
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.NARMER;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Unifier of Worlds", NamedTextColor.YELLOW);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.RED;
     }
 
     @Override
@@ -89,14 +111,23 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
 
         SpawnNarmerAcolyteAbility spawnNarmerAcolyteAbility = new SpawnNarmerAcolyteAbility(this);
+        SpawnMobAbility spawnMobAbility = new SpawnMobAbility(2, Mob.UNDEAD_ACOLYTE, true) {
+            @Override
+            public int getSpawnAmount() {
+                if (acolyteDeathTickWindow > 0) {
+                    return 1;
+                }
+                return 0;
+            }
+        };
         this.warlordsNPC.getAbilities().add(spawnNarmerAcolyteAbility);
+        this.warlordsNPC.getAbilities().add(spawnMobAbility);
 
         float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
 
         for (int i = 0; i < (multiplier * option.playerCount()); i++) {
             spawnNarmerAcolyteAbility.spawnMob(warlordsNPC);
         }
-
 
         for (int i = 0; i < 8; i++) {
             option.spawnNewMob(new ZombieLancer(warlordsNPC.getLocation()));
@@ -244,10 +275,10 @@ public class Narmer extends AbstractZombie implements BossMob {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORKS_SPARK, 3, 20);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.WHITE)
-                                                                       .with(FireworkEffect.Type.STAR)
-                                                                       .withTrail()
-                                                                       .build());
+                                                              .withColor(Color.WHITE)
+                                                              .with(FireworkEffect.Type.STAR)
+                                                              .withTrail()
+                                                              .build());
 
         if (timesMegaEarthQuakeActivated >= 2) {
             ChallengeAchievements.checkForAchievement(killer, ChallengeAchievements.NEAR_DEATH_EXPERIENCE);
@@ -256,21 +287,6 @@ public class Narmer extends AbstractZombie implements BossMob {
         if (listener != null) {
             HandlerList.unregisterAll(listener);
         }
-    }
-
-    @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.RED;
-    }
-
-    @Override
-    public Mob getMobRegistry() {
-        return Mob.NARMER;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("Unifier of Worlds", NamedTextColor.YELLOW);
     }
 
     public List<WarlordsEntity> getAcolytes() {

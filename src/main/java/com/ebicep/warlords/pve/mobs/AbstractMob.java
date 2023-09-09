@@ -20,6 +20,7 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.mobs.mobflags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -43,6 +44,7 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -69,6 +71,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     protected WarlordsNPC warlordsNPC;
     protected PveOption pveOption;
+    protected EnumSet<DynamicFlags> dynamicFlags = EnumSet.noneOf(DynamicFlags.class);
 
     @Nonnull
     protected AbstractPlayerClass playerClass;
@@ -481,4 +484,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return maxMeleeDamage;
     }
 
+    public EnumSet<DynamicFlags> getDynamicFlags() {
+        return dynamicFlags;
+    }
 }

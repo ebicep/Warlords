@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractSpawnMobAbility;
+import com.ebicep.warlords.pve.mobs.mobflags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
@@ -92,7 +93,9 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                         if (randomSpawnLocations.isEmpty()) {
                             randomSpawnLocations = generateSpawnLocations(pveOption);
                         }
-                        return randomSoulToSpawn.createMob(randomSpawnLocations.remove(0));
+                        AbstractMob<?> spawnedMob = randomSoulToSpawn.createMob(randomSpawnLocations.remove(0));
+                        spawnedMob.getDynamicFlags().add(DynamicFlags.NO_INSIGNIA);
+                        return spawnedMob;
                     }
 
                     @Override
@@ -192,7 +195,8 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 locations = generateSpawnLocations(option);
                 soul = SOULS.get(ThreadLocalRandom.current().nextInt(SOULS.size()));
             }
-            option.spawnNewMob(soul.createMob(locations.remove(0)));
+            AbstractMob<?> spawnedMob = soul.createMob(locations.remove(0));
+            option.spawnNewMob(spawnedMob);
         }
     }
 

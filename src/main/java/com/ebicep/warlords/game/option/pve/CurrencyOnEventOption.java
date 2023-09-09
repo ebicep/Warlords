@@ -9,7 +9,9 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.mobflags.DynamicFlags;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
@@ -109,14 +111,18 @@ public class CurrencyOnEventOption implements Option, Listener {
                 .playingGame(mob.getGame())
                 .aliveEnemiesOf(mob)
         ) {
-            if (player instanceof WarlordsPlayer && !player.isDead() && !mob.getName().equals("Tormented Soul")) {
-                int playerCount = (int) player.getGame().warlordsPlayers().count();
-                if (scaleWithPlayerCount && playerCount > 2) {
-                    int finalCurrency = currencyOnKill - (20 * playerCount);
-                    player.addCurrency(finalCurrency);
-                } else {
-                    player.addCurrency(currencyOnKill);
-                }
+            if (!(player instanceof WarlordsPlayer) || player.isDead()) {
+                continue;
+            }
+            if (mob instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getDynamicFlags().contains(DynamicFlags.NO_INSIGNIA)) {
+                continue;
+            }
+            int playerCount = (int) player.getGame().warlordsPlayers().count();
+            if (scaleWithPlayerCount && playerCount > 2) {
+                int finalCurrency = currencyOnKill - (20 * playerCount);
+                player.addCurrency(finalCurrency);
+            } else {
+                player.addCurrency(currencyOnKill);
             }
         }
     }

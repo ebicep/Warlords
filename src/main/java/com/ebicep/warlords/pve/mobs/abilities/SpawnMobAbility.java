@@ -11,21 +11,19 @@ public class SpawnMobAbility extends AbstractSpawnMobAbility {
     private final Mob mobToSpawn;
 
     public SpawnMobAbility(
-            String mobName,
             float cooldown,
             Mob mobToSpawn,
             boolean startNoCooldown
     ) {
-        super(mobName, cooldown, startNoCooldown);
+        super(mobToSpawn.name, cooldown, startNoCooldown);
         this.mobToSpawn = mobToSpawn;
     }
 
     public SpawnMobAbility(
-            String mobName,
             float cooldown,
             Mob mobToSpawn
     ) {
-        this(mobName, cooldown, mobToSpawn, false);
+        this(cooldown, mobToSpawn, false);
     }
 
     @Override

@@ -12,15 +12,7 @@ import org.bukkit.Location;
 public class NarmerAcolyte extends AbstractZombie implements BossMinionMob {
 
     public NarmerAcolyte(Location spawnLocation) {
-        super(spawnLocation,
-                "Acolyte of Narmer",
-                5000,
-                0.35f,
-                0,
-                540,
-                765,
-                new RemoveTarget(20)
-        );
+        this(spawnLocation, "Acolyte of Narmer", 5000, 0.35f, 0, 540, 765);
     }
 
     public NarmerAcolyte(
@@ -39,7 +31,7 @@ public class NarmerAcolyte extends AbstractZombie implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new RemoveTarget(20)
+                new RemoveTarget(10)
         );
     }
 

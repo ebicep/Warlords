@@ -32,7 +32,6 @@ public class Chessking extends AbstractSlime implements BossMob {
                 0,
                 new Belch(),
                 new SpawnMobAbility(
-                        "Slime Zombies",
                         20,
                         Mob.SLIME_GUARD
                 ) {
@@ -42,7 +41,6 @@ public class Chessking extends AbstractSlime implements BossMob {
                     }
                 },
                 new SpawnMobAbility(
-                        "Void Slimes",
                         60,
                         Mob.SLIMY_CHESS
                 ) {
@@ -72,7 +70,6 @@ public class Chessking extends AbstractSlime implements BossMob {
                 maxMeleeDamage,
                 new Belch(),
                 new SpawnMobAbility(
-                        "Slime Zombies",
                         20,
                         Mob.SLIME_GUARD
                 ) {
@@ -82,7 +79,6 @@ public class Chessking extends AbstractSlime implements BossMob {
                     }
                 },
                 new SpawnMobAbility(
-                        "Void Slimes",
                         60,
                         Mob.SLIMY_CHESS
                 ) {

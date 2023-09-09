@@ -429,6 +429,13 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 15),
             Weapons.DEMONBLADE.getItem()
     )),
+    UNDEAD_ACOLYTE(UndeadAcolyte.class, UndeadAcolyte::new, UndeadAcolyte::new, new Utils.SimpleEntityEquipment(
+            new ItemStack(Material.TNT),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 15),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 15),
+            Weapons.DEMONBLADE.getItem()
+    )),
     ZENITH_LEGIONNAIRE(ZenithLegionnaire.class, ZenithLegionnaire::new, ZenithLegionnaire::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.FACELESS_BANDIT),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 100, 0, 80),

@@ -51,7 +51,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                 3000,
                 new Bramble(),
                 new BrambleSlowness(),
-                new SpawnMobAbility("Exiled Skeleton", 30, Mob.SKELETAL_SORCERER) {
+                new SpawnMobAbility(30, Mob.SKELETAL_SORCERER) {
                     @Override
                     public int getSpawnAmount() {
                         long playerCount = pveOption.getGame().warlordsPlayers().count();
@@ -80,7 +80,7 @@ public class Illumina extends AbstractZombie implements BossMob {
                 maxMeleeDamage,
                 new Bramble(),
                 new BrambleSlowness(),
-                new SpawnMobAbility("Exiled Skeleton", 30, Mob.SKELETAL_SORCERER) {
+                new SpawnMobAbility(30, Mob.SKELETAL_SORCERER) {
                     @Override
                     public int getSpawnAmount() {
                         long playerCount = pveOption.getGame().warlordsPlayers().count();

@@ -46,7 +46,7 @@ public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
     }
 
     public int getSpawnAmount() {
-        return 0;
+        return 1;
     }
 
     public void onMobCreate(AbstractMob<?> mobSpawned) {
