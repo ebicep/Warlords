@@ -51,7 +51,7 @@ public class GuildManager {
                             for (Player player : guild.getOnlinePlayers()) {
                                 Guild.sendGuildMessage(player,
                                         Component.text("Your guild upgrade ", NamedTextColor.RED)
-                                                 .append(Component.text(upgrade.getUpgrade().getName(), NamedTextColor.GREEN))
+                                                 .append(Component.text(upgrade.getUpgrade().getName(), NamedTextColor.YELLOW))
                                                  .append(Component.text(" has expired!"))
                                 );
                             }

@@ -171,14 +171,7 @@ public class WarlordsEvents implements Listener {
         player.setScoreboard(customScoreboard.getScoreboard());
         joinInteraction(player, false);
 
-        Bukkit.getOnlinePlayers().forEach(p -> {
-            p.sendPlayerListHeaderAndFooter(
-                    Component.text("Welcome to ", NamedTextColor.AQUA)
-                             .append(Component.text("Warlords 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD)),
-                    Component.text("Players Online: ", NamedTextColor.GREEN)
-                             .append(Component.text(Bukkit.getOnlinePlayers().size(), NamedTextColor.GRAY))
-            );
-        });
+        sendHeaderFooterToAll(false);
         Warlords.getGameManager().dropPlayerFromQueueOrGames(e.getPlayer());
     }
 
@@ -305,6 +298,24 @@ public class WarlordsEvents implements Listener {
         Warlords.getInstance().hideAndUnhidePeople(player);
     }
 
+    private static void sendHeaderFooterToAll(boolean left) {
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            p.sendPlayerListHeaderAndFooter(
+                    Component.textOfChildren(
+
+                            Component.text("Welcome to ", NamedTextColor.AQUA),
+                            Component.text("Warlords 2.0", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                    ),
+                    Component.textOfChildren(
+                            Component.text("COMPWL.APEXMC.CO", NamedTextColor.RED, TextDecoration.BOLD),
+                            Component.newline(),
+                            Component.text("Players Online: ", NamedTextColor.GREEN),
+                            Component.text(Bukkit.getOnlinePlayers().size() - (left ? 1 : 0), NamedTextColor.GRAY)
+                    )
+            );
+        });
+    }
+
     @EventHandler
     public static void onPlayerQuit(PlayerQuitEvent e) {
         WarlordsEntity wp1 = Warlords.getPlayer(e.getPlayer());
@@ -312,8 +323,8 @@ public class WarlordsEvents implements Listener {
         if (wp != null) {
             wp.updatePlayerReference(null);
             e.quitMessage(Component.textOfChildren(
-                            wp.getColoredNameBold(),
-                            Component.text(" left the game!", NamedTextColor.GOLD)
+                    wp.getColoredNameBold(),
+                    Component.text(" left the game!", NamedTextColor.GOLD)
                     )
             );
         } else {
@@ -328,14 +339,7 @@ public class WarlordsEvents implements Listener {
         //removing player position boards
         StatsLeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
 
-        Bukkit.getOnlinePlayers().forEach(p -> {
-            p.sendPlayerListHeaderAndFooter(
-                    Component.text("     Welcome to ", NamedTextColor.AQUA)
-                             .append(Component.text("Warlords 2.0     ", NamedTextColor.YELLOW, TextDecoration.BOLD)),
-                    Component.text("Players Online: ", NamedTextColor.GREEN)
-                             .append(Component.text(Bukkit.getOnlinePlayers().size() - 1, NamedTextColor.GRAY))
-            );
-        });
+        sendHeaderFooterToAll(true);
 
         for (GameManager.GameHolder holder : Warlords.getGameManager().getGames()) {
             Game game = holder.getGame();
@@ -714,7 +718,8 @@ public class WarlordsEvents implements Listener {
         }
 
         ChatChannels channel = ChatChannels.PLAYER_CHAT_CHANNELS.getOrDefault(uuid, ChatChannels.ALL);
-        channel.onPlayerChatEvent(e, prefixWithColor);
+        ChatChannels.playerSendMessage(player, channel, e.message());
+        e.setCancelled(true);
     }
 
     @EventHandler
