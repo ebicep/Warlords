@@ -132,14 +132,20 @@ public class Narmer extends AbstractZombie implements BossMob {
                     if (acolytes.size() > 1) {
                         for (WarlordsEntity firstAcolyte : acolytes) {
                             float firstHealth = firstAcolyte.getHealth();
+                            if (firstHealth > 5000) {
+                                continue;
+                            }
                             Location firstLocation = firstAcolyte.getLocation();
                             for (WarlordsEntity secondAcolyte : acolytes) {
                                 if (firstAcolyte.equals(secondAcolyte)) {
                                     continue;
                                 }
                                 float secondHealth = secondAcolyte.getHealth();
+                                if (secondHealth > 5000) {
+                                    continue;
+                                }
                                 Location secondLocation = secondAcolyte.getLocation();
-                                if (Math.abs(firstHealth - secondHealth) < 5000 && firstLocation.distanceSquared(secondLocation) < 4) {
+                                if (firstLocation.distanceSquared(secondLocation) < 4) {
                                     customTarget = firstAcolyte;
                                     return 1;
                                 }

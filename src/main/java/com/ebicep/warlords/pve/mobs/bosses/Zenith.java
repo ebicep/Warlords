@@ -43,7 +43,7 @@ public class Zenith extends AbstractZombie implements BossMob {
                 2500,
                 new Armageddon(),
                 new Cleanse(),
-                new SpawnMobAbility(30, Mob.ZENITH_LEGIONNAIRE) {
+                new SpawnMobAbility(20, Mob.ZENITH_LEGIONNAIRE) {
                     @Override
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();
