@@ -16,6 +16,14 @@ public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
         super("Spawn " + mobName, cooldown, 50, startNoCooldown);
     }
 
+    public AbstractSpawnMobAbility(String mobName, float cooldown, float energyCost, boolean startNoCooldown) {
+        super("Spawn " + mobName, cooldown, energyCost, startNoCooldown);
+    }
+
+    public AbstractSpawnMobAbility(String mobName, float cooldown, float energyCost, float startCooldown) {
+        super("Spawn " + mobName, cooldown, energyCost, startCooldown);
+    }
+
     @Override
     public void updateDescription(Player player) {
 

@@ -71,7 +71,15 @@ public class FuriousSoul extends AbstractZombie implements BossMinionMob {
         Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.35f, 2);
         if (!event.getAbility().isEmpty()) {
             float damage = attacker.getMaxBaseHealth() * maxHPPercent;
-            attacker.addDamageInstance(self, "Outrage", damage, damage, 0, 100, EnumSet.of(InstanceFlags.TRUE_DAMAGE));
+            attacker.addDamageInstance(
+                    self,
+                    "Outrage",
+                    damage,
+                    damage,
+                    0,
+                    100,
+                    EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.RECURSIVE)
+            );
         }
     }
 }

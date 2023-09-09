@@ -50,6 +50,7 @@ public enum Aspect {
     INFERNAL("Infernal", NamedTextColor.RED) {
         @Override
         public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+            receiver.getCooldownManager().removeCooldownByName("Aspect - Burn");
             receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Aspect - Burn",
                     "BRN",

@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -73,7 +72,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected EnumSet<DynamicFlags> dynamicFlags = EnumSet.noneOf(DynamicFlags.class);
 
     @Nonnull
-    protected AbstractPlayerClass playerClass;
+    protected MobPlayerClass playerClass;
 
     public AbstractMob(
             T entity,

@@ -5,8 +5,8 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.abilities.RemoveTarget;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -16,12 +16,13 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 
+import java.util.List;
 import java.util.Objects;
 
 public class UndeadAcolyte extends AbstractZombie implements BossMinionMob {
 
     public UndeadAcolyte(Location spawnLocation) {
-        this(spawnLocation, "Undead Acolyte", 2000, 0.4f, 0, 0, 0);
+        this(spawnLocation, "Undead Acolyte", 2000, 0.55f, 0, 0, 0);
     }
 
     public UndeadAcolyte(
@@ -39,8 +40,7 @@ public class UndeadAcolyte extends AbstractZombie implements BossMinionMob {
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
-                maxMeleeDamage,
-                new RemoveTarget(10)
+                maxMeleeDamage
         );
     }
 
@@ -57,18 +57,28 @@ public class UndeadAcolyte extends AbstractZombie implements BossMinionMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        PlayerFilter.entitiesAround(warlordsNPC, 1.5, 1, 1.5)
-                    .filter(warlordsEntity -> {
-                        LivingEntity target = mob.getTarget();
-                        return target != null && Objects.equals(warlordsEntity.getEntity(), target.getBukkitEntity());
-                    })
-                    .findAny()
-                    .ifPresent(warlordsEntity -> {
-                        Utils.playGlobalSound(warlordsEntity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 500, 1);
-                        EffectUtils.displayParticle(Particle.EXPLOSION_NORMAL, warlordsEntity.getLocation(), 1, 0, 0, 0, 0.5);
-                        warlordsEntity.addDamageInstance(warlordsNPC, "Undead Blast", 5000, 5000, 0, 100);
-                        warlordsNPC.die(warlordsNPC);
-                    });
+        if (warlordsNPC.isDead()) {
+            return;
+        }
+        List<WarlordsEntity> warlordsEntities = PlayerFilter.entitiesAround(warlordsNPC, 2, 1, 2).toList();
+        if (warlordsEntities.stream().noneMatch(warlordsEntity -> {
+            LivingEntity target = mob.getTarget();
+            return target != null && Objects.equals(warlordsEntity.getEntity(), target.getBukkitEntity());
+        })) {
+            return;
+        }
+        warlordsEntities.forEach(warlordsEntity -> {
+            if (warlordsEntity instanceof WarlordsNPC npc && !(npc.getMob() instanceof NarmerAcolyte)) {
+                return;
+            }
+            int damage = warlordsEntity instanceof WarlordsNPC ? 5000 : 1500;
+            warlordsEntity.addDamageInstance(warlordsNPC, "Undead Blast", damage, damage, 0, 100);
+        });
+        if (!warlordsEntities.isEmpty()) {
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 500, 1);
+            EffectUtils.displayParticle(Particle.EXPLOSION_NORMAL, warlordsNPC.getLocation(), 1, 0, 0, 0, 0.5);
+            warlordsNPC.die(warlordsNPC);
+        }
     }
 
     @Override

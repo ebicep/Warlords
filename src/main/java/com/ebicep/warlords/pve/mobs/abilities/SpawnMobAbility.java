@@ -12,18 +12,45 @@ public class SpawnMobAbility extends AbstractSpawnMobAbility {
 
     public SpawnMobAbility(
             float cooldown,
+            Mob mobToSpawn
+    ) {
+        this(cooldown, mobToSpawn, false);
+    }
+
+    public SpawnMobAbility(
+            float cooldown,
             Mob mobToSpawn,
             boolean startNoCooldown
     ) {
-        super(mobToSpawn.name, cooldown, startNoCooldown);
+        this(cooldown, 50, mobToSpawn, startNoCooldown);
+    }
+
+    public SpawnMobAbility(
+            float cooldown,
+            Mob mobToSpawn,
+            float startCooldown
+    ) {
+        this(cooldown, 50, mobToSpawn, startCooldown);
+    }
+
+    public SpawnMobAbility(
+            float cooldown,
+            float energyCost,
+            Mob mobToSpawn,
+            boolean startNoCooldown
+    ) {
+        super(mobToSpawn.name, cooldown, energyCost, startNoCooldown);
         this.mobToSpawn = mobToSpawn;
     }
 
     public SpawnMobAbility(
             float cooldown,
-            Mob mobToSpawn
+            float energyCost,
+            Mob mobToSpawn,
+            float startCooldown
     ) {
-        this(cooldown, mobToSpawn, false);
+        super(mobToSpawn.name, cooldown, energyCost, startCooldown);
+        this.mobToSpawn = mobToSpawn;
     }
 
     @Override

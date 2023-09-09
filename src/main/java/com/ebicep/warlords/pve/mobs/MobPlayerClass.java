@@ -51,4 +51,21 @@ public class MobPlayerClass extends AbstractPlayerClass {
         );
     }
 
+    public void addAbility(AbstractAbility abilityToAdd) {
+        abilities.add(abilityToAdd);
+        maxEnergy = (int) Math.round(abilities
+                .stream()
+                .mapToDouble(AbstractAbility::getEnergyCost)
+                .sum());
+        energyPerSec = (int) Math.round(abilities
+                .stream()
+                .mapToDouble(ability -> {
+                    if (ability.getCooldown() == 0) {
+                        return ability.getEnergyCost();
+                    }
+                    return ability.getEnergyCost() / ability.getCooldown();
+                })
+                .sum());
+    }
+
 }
