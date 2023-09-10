@@ -92,7 +92,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
             player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
             capacitorTotem.pulseDamage();
-            capacitorTotem.pulseDamage();
             if (capacitorTotem.isPveMasterUpgrade()) {
                 capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.5);
             }
