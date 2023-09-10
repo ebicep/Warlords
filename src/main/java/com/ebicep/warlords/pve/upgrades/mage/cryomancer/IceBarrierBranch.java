@@ -90,5 +90,16 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Ice Wall",
+                "Ice Barrier - Master Upgrade",
+                """
+                        Ice Barrier has been converted into a projected wall of ice. Enemies that pass through this wall will be slowed by 50% and take 15% more damage from all sources for the duration of Ice Barrier.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }

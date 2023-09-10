@@ -72,7 +72,8 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                         @Override
                         public void run() {
                             PlayerFilter.playingGame(wp.getGame())
-                                        .aliveEnemiesOf(wp).forEach(warlordsEntity -> {
+                                        .aliveEnemiesOf(wp)
+                                        .forEach(warlordsEntity -> {
                                             if (warlordsEntity instanceof WarlordsNPC) {
                                                 ((WarlordsNPC) warlordsEntity).getMob().setTarget(wp);
                                             }

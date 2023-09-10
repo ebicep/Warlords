@@ -49,60 +49,13 @@ public class LocationUtils {
         return locations;
     }
 
-    public record TimedLocationBlockHolder(LocationBlockHolder locationBlockHolder, long time) {
-        public TimedLocationBlockHolder(LocationBlockHolder locationBlockHolder) {
-            this(locationBlockHolder, System.currentTimeMillis());
-        }
-    }
-
-    public record LocationBlockHolder(World world, int x, int y, int z) {
-        public LocationBlockHolder(Location location) {
-            this(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        }
-
-        public Block getBlock() {
-            return world.getBlockAt(x, y, z);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final LocationBlockHolder other = (LocationBlockHolder) obj;
-
-            if (!Objects.equals(this.world, other.world)) {
-                return false;
-            }
-            if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {
-                return false;
-            }
-            if (Double.doubleToLongBits(this.y) != Double.doubleToLongBits(other.y)) {
-                return false;
-            }
-            if (Double.doubleToLongBits(this.z) != Double.doubleToLongBits(other.z)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-
-            hash = 19 * hash + (world != null ? world.hashCode() : 0);
-            hash = 19 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
-            hash = 19 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
-            hash = 19 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
-            return hash;
-        }
-    }
-
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease), player2.getEyeLocation());
+    }
+
+    public static double getDotToLocation(Location location1, Location location2) {
+        Vector toEntity = location2.toVector().subtract(location1.toVector());
+        return toEntity.normalize().dot(location1.getDirection());
     }
 
     public static double getDotToPlayerEye(LivingEntity player1, LivingEntity player2) {
@@ -111,11 +64,6 @@ public class LocationUtils {
 
     public static double getDotToPlayerCenter(LivingEntity player1, LivingEntity player2) {
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(.7), player2.getEyeLocation());
-    }
-
-    public static double getDotToLocation(Location location1, Location location2) {
-        Vector toEntity = location2.toVector().subtract(location1.toVector());
-        return toEntity.normalize().dot(location1.getDirection());
     }
 
     public static boolean isLookingAt(LivingEntity player1, LivingEntity player2) {
@@ -200,10 +148,6 @@ public class LocationUtils {
         return radiusAround(Entity::getLocation, loc, x, y, z);
     }
 
-    public static <T> Predicate<T> radiusAround(BiConsumer<T, Location> map, Location loc, double radius) {
-        return radiusAround(map, loc, radius, radius, radius);
-    }
-
     public static <T> Predicate<T> radiusAround(BiConsumer<T, Location> map, Location loc, double x, double y, double z) {
         return entity -> {
             map.accept(entity, LOCATION_CACHE_DISTANCE);
@@ -212,6 +156,10 @@ public class LocationUtils {
             double zDif = (loc.getZ() - LOCATION_CACHE_DISTANCE.getZ()) / z;
             return xDif * xDif + yDif * yDif + zDif * zDif <= 1;
         };
+    }
+
+    public static <T> Predicate<T> radiusAround(BiConsumer<T, Location> map, Location loc, double radius) {
+        return radiusAround(map, loc, radius, radius, radius);
     }
 
     public static Vector getRightDirection(Location location) {
@@ -228,10 +176,6 @@ public class LocationUtils {
         return getDistance(e.getLocation(), accuracy);
     }
 
-    public static double getDistance(Entity e, double accuracy) {
-        return getDistance(e.getLocation(), accuracy);
-    }
-
     public static double getDistance(Location original, double accuracy) {
         Location loc = original.clone();
         double distance = 0;
@@ -244,6 +188,10 @@ public class LocationUtils {
         }
         distance -= accuracy;
         return distance;
+    }
+
+    public static double getDistance(Entity e, double accuracy) {
+        return getDistance(e.getLocation(), accuracy);
     }
 
     public static boolean blocksInFrontOfLocation(Location location) {
@@ -336,7 +284,6 @@ public class LocationUtils {
         return locations;
     }
 
-
     public static List<Location> getSquare(Location center, float radius) {
         //X--X
         //|  |
@@ -355,5 +302,75 @@ public class LocationUtils {
         return locations;
     }
 
+    public static List<Location> getVerticalRectangle(Location bottomCenter, float radius, float height) {
+        //X---------X
+        //|         |
+        //|         |
+        //X----S----X
+        List<Location> locations = new ArrayList<>();
+        // start bottom left
+        LocationBuilder start = new LocationBuilder(bottomCenter)
+                .pitch(0)
+                .left(radius);
+        for (int i = 0; i < radius * 2 + 1; i++) {
+            for (int j = 0; j < height; j++) {
+                locations.add(start.clone().addY(j));
+            }
+            start.right(1);
+        }
+        return locations;
+    }
+
+    public record TimedLocationBlockHolder(LocationBlockHolder locationBlockHolder, long time) {
+        public TimedLocationBlockHolder(LocationBlockHolder locationBlockHolder) {
+            this(locationBlockHolder, System.currentTimeMillis());
+        }
+    }
+
+    public record LocationBlockHolder(World world, int x, int y, int z) {
+        public LocationBlockHolder(Location location) {
+            this(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        }
+
+        public Block getBlock() {
+            return world.getBlockAt(x, y, z);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final LocationBlockHolder other = (LocationBlockHolder) obj;
+
+            if (!Objects.equals(this.world, other.world)) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.y) != Double.doubleToLongBits(other.y)) {
+                return false;
+            }
+            if (Double.doubleToLongBits(this.z) != Double.doubleToLongBits(other.z)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+
+            hash = 19 * hash + (world != null ? world.hashCode() : 0);
+            hash = 19 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
+            hash = 19 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+            hash = 19 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
+            return hash;
+        }
+    }
 
 }

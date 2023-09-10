@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.IceBarrierBranch;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -68,6 +69,14 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Utils.playGlobalSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
 
+        Location castLocation = wp.getLocation();
+        List<Location> verticalRectangle;
+        if (pveMasterUpgrade2) {
+            verticalRectangle = LocationUtils.getVerticalRectangle(castLocation.add(0, -1, 0), 4, 5);
+        } else {
+            verticalRectangle = new ArrayList<>();
+        }
+
         IceBarrier tempIceBarrier = new IceBarrier(damageReductionPercent);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -80,7 +89,45 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 5 == 0) {
+                    if (ticksElapsed % 5 != 0) {
+                        return;
+                    }
+                    if (pveMasterUpgrade2) {
+                        for (Location location : verticalRectangle) {
+                            EffectUtils.displayParticle(
+                                    Particle.CLOUD,
+                                    location,
+                                    5,
+                                    .25,
+                                    .25,
+                                    .25,
+                                    0
+                            );
+                            PlayerFilter.entitiesAround(location, 1, 1, 1)
+                                        .aliveEnemiesOf(wp)
+                                        .filter(enemy -> !enemy.getCooldownManager().hasCooldownFromName("Ice Wall"))
+                                        .forEach(enemy -> {
+                                            enemy.addSpeedModifier(wp, "Ice Wall", -50, ticksLeft);
+                                            enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                    "Ice Wall",
+                                                    "WALL",
+                                                    IceBarrier.class,
+                                                    new IceBarrier(),
+                                                    wp,
+                                                    CooldownTypes.ABILITY,
+                                                    cooldownManager -> {
+
+                                                    },
+                                                    ticksLeft
+                                            ) {
+                                                @Override
+                                                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                    return currentDamageValue * 1.15f;
+                                                }
+                                            });
+                                        });
+                        }
+                    } else {
                         Location particleLoc = wp.getLocation().add(0, 1.5, 0);
 
                         particleLoc.getWorld().spawnParticle(Particle.CLOUD, particleLoc, 1, 0.2, 0.2, 0.2, 0.001, null, true);
@@ -123,6 +170,9 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade2) {
+                    return currentDamageValue;
+                }
                 float newDamageValue = currentDamageValue * getDamageReduction();
                 event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
