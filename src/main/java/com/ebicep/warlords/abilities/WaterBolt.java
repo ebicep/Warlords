@@ -101,13 +101,14 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
         }
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+            float cc = pveMasterUpgrade2 ? 100 : critChance;
             if (hit.isTeammate(shooter)) {
                 teammatesHit++;
                 hit.addHealingInstance(shooter,
                         name,
                         (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                         (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                        critChance,
+                        cc,
                         critMultiplier
                 );
                 if (hit != shooter) {
@@ -136,7 +137,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                         name,
                         (float) (minDamage * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                         (float) (maxDamage * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                        critChance,
+                        cc,
                         critMultiplier
                 );
             }

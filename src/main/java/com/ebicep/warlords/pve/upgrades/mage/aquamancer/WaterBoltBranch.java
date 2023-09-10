@@ -104,5 +104,18 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                     ability.setProjectileSpeed(ability.getProjectileSpeed() * 2);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Hydro Shot",
+                "Water Bolt - Master Upgrade",
+                """
+                        Projectile speed +100%.
+                                                
+                        Water Bolt direct-hits on enemies and allies are guaranteed crits.
+                        """,
+                50000,
+                () -> {
+                    ability.setProjectileSpeed(ability.getProjectileSpeed() * 2);
+                }
+        );
     }
 }

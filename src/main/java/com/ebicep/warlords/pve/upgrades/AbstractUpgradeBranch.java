@@ -117,26 +117,32 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     }
 
     public void purchaseMasterUpgrade(WarlordsPlayer player, Upgrade upgrade, boolean autoUpgraded) {
-        if (masterUpgrade.equals(upgrade) && masterUpgrade2.isUnlocked() ||
-                masterUpgrade2.equals(upgrade) && masterUpgrade.isUnlocked()
-        ) {
-            player.sendMessage(Component.text("You already unlocked a master upgrade for this ability.", NamedTextColor.RED));
-            return;
-        }
-        if (player.getAbilityTree().getMaxMasterUpgrades() <= 0) {
-            player.sendMessage(Component.text("You cannot unlock this master upgrade, maximum master upgrades reached.", NamedTextColor.RED));
-            return;
-        }
-        if (player.getCurrency() < upgrade.getCurrencyCost()) {
-            player.sendMessage(Component.text("You do not have enough Insignia (❂) to buy this upgrade!", NamedTextColor.RED));
-            return;
-        }
-        if (upgrade.isUnlocked()) {
-            player.sendMessage(Component.text("You already unlocked this upgrade.", NamedTextColor.RED));
-            return;
+        purchaseMasterUpgrade(player, upgrade, autoUpgraded, false);
+    }
+
+    public void purchaseMasterUpgrade(WarlordsPlayer player, Upgrade upgrade, boolean autoUpgraded, boolean force) {
+        if (!force) {
+            if (masterUpgrade.equals(upgrade) && masterUpgrade2.isUnlocked() ||
+                    masterUpgrade2.equals(upgrade) && masterUpgrade.isUnlocked()
+            ) {
+                player.sendMessage(Component.text("You already unlocked a master upgrade for this ability.", NamedTextColor.RED));
+                return;
+            }
+            if (player.getAbilityTree().getMaxMasterUpgrades() <= 0) {
+                player.sendMessage(Component.text("You cannot unlock this master upgrade, maximum master upgrades reached.", NamedTextColor.RED));
+                return;
+            }
+            if (player.getCurrency() < upgrade.getCurrencyCost()) {
+                player.sendMessage(Component.text("You do not have enough Insignia (❂) to buy this upgrade!", NamedTextColor.RED));
+                return;
+            }
+            if (upgrade.isUnlocked()) {
+                player.sendMessage(Component.text("You already unlocked this upgrade.", NamedTextColor.RED));
+                return;
+            }
         }
 
-        if (upgradesRequiredForMaster <= 0) {
+        if (force || upgradesRequiredForMaster <= 0) {
             upgrade.getOnUpgrade().run();
             upgrade.setUnlocked(true);
             if (masterUpgrade.equals(upgrade)) {

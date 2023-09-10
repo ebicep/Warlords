@@ -9,6 +9,9 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
+import com.ebicep.warlords.player.general.SkillBoosts;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -30,7 +33,7 @@ public class GameDebugCommand extends BaseCommand {
 
     @CommandAlias("gamedebug2|gd2")
     @Description("Auto starts game in wave defense with mobs not spawning")
-    public void gameDebug2(@Conditions("outsideGame") Player player) {
+    public void gameDebug2(@Conditions("outsideGame") Player player, @Optional Integer branch) {
         GameStartCommand.startGame(player, false, queueEntryBuilder -> {
             queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
             queueEntryBuilder.setGameMode(GameMode.WAVE_DEFENSE);
@@ -42,6 +45,7 @@ public class GameDebugCommand extends BaseCommand {
                         pveOption.setPauseMobSpawn(true);
                     }
                 }
+                Integer branchNumber = branch;
                 new BukkitRunnable() {
 
                     @Override
@@ -51,6 +55,11 @@ public class GameDebugCommand extends BaseCommand {
                             warlordsPlayer.setDisableCooldowns(true);
                             warlordsPlayer.setNoEnergyConsumption(true);
                             warlordsPlayer.addCurrency(1000000);
+                            warlordsPlayer.setSpec(Specializations.AQUAMANCER, SkillBoosts.WATER_BOLT);
+                            if (branchNumber != null) {
+                                AbstractUpgradeBranch<?> branch = warlordsPlayer.getAbilityTree().getUpgradeBranches().get(branchNumber);
+                                branch.purchaseMasterUpgrade(warlordsPlayer, branch.getMasterUpgrade2(), false, true);
+                            }
                         });
                     }
                 }.runTaskLater(Warlords.getInstance(), 40);
