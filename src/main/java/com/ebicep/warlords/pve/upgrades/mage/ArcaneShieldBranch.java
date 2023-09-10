@@ -91,5 +91,16 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Arcane Energy",
+                "Arcane Shield - Master Upgrade",
+                """
+                        If the shield breaks, gain the ARC status for 5s reducing the energy cost of Right-Click attacks by 15%.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }

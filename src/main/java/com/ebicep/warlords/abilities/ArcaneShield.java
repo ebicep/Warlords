@@ -9,6 +9,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.ArcaneShieldBranch;
@@ -39,6 +40,14 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         super("Arcane Shield", 0, 0, 31.32f, 40);
     }
 
+    public void addTimesBroken() {
+        timesBroken++;
+    }
+
+    public int getTimesBroken() {
+        return timesBroken;
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Surround yourself with arcane energy, creating a shield that will absorb up to ")
@@ -48,6 +57,14 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                                .append(Component.text(" of your maximum health) incoming damage. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
+    }
+
+    public float getShieldHealth() {
+        return shieldHealth;
+    }
+
+    public void addShieldHealth(float amount) {
+        this.shieldHealth += amount;
     }
 
     @Override
@@ -60,15 +77,26 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     }
 
     @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
 
+        Shield shield = new Shield(name, maxShieldHealth);
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "ARCA",
                 Shield.class,
-                new Shield(name, maxShieldHealth),
+                shield,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -83,6 +111,27 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                         ) {
                             we.setStunTicks(6 * 20);
                         }
+                    } else if (pveMasterUpgrade2 && shield.getShieldHealth() <= 0) {
+                        List<AbstractAbility> abilities = wp.getAbilities();
+                        if (abilities.size() == 0) {
+                            return;
+                        }
+                        AbstractAbility rightClick = abilities.get(0);
+                        rightClick.setEnergyCostMultiplicative(rightClick.getEnergyCostMultiplicative() - .15f);
+                        wp.updateItem(rightClick);
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Arcane Energy",
+                                "ARC",
+                                ArcaneShield.class,
+                                new ArcaneShield(),
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager2 -> {
+                                    rightClick.setEnergyCostMultiplicative(rightClick.getEnergyCostMultiplicative() + .15f);
+                                    wp.updateItem(rightClick);
+                                },
+                                100
+                        ));
                     }
                 },
                 cooldownManager -> {
@@ -102,10 +151,12 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         return true;
     }
 
+
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ArcaneShieldBranch(abilityTree,this);
+        return new ArcaneShieldBranch(abilityTree, this);
     }
+
 
     @Override
     public void updateCustomStats(AbstractPlayerClass apc) {
@@ -115,6 +166,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
             updateDescription(null);
         }
     }
+
 
     public void setMaxShieldHealth(int maxShieldHealth) {
         this.maxShieldHealth = maxShieldHealth;
@@ -128,29 +180,5 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         this.shieldPercentage = shieldPercentage;
     }
 
-    public void addTimesBroken() {
-        timesBroken++;
-    }
 
-    public int getTimesBroken() {
-        return timesBroken;
-    }
-
-    public float getShieldHealth() {
-        return shieldHealth;
-    }
-
-    public void addShieldHealth(float amount) {
-        this.shieldHealth += amount;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
 }
