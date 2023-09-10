@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FreezingBreathBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -19,15 +20,23 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class FreezingBreath extends AbstractAbility implements RedAbilityIcon {
+public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon {
 
     public int playersHit = 0;
 
@@ -37,7 +46,7 @@ public class FreezingBreath extends AbstractAbility implements RedAbilityIcon {
     private int maxAnimationTime = 12;
 
     public FreezingBreath() {
-        super("Freezing Breath", 422, 585, 6.3f, 60, 20, 175);
+        super("Freezing Breath", 422, 585, 6.3f, 60, 20, 175, 1.25, 100, false);
     }
 
     @Override
@@ -62,7 +71,118 @@ public class FreezingBreath extends AbstractAbility implements RedAbilityIcon {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FreezingBreathBranch(abilityTree, this);
+    }
+
+    @Override
+    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
+
+    }
+
+    @Override
+    protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
+        if (!pveMasterUpgrade2) {
+            return 0;
+        }
+
+        WarlordsEntity shooter = projectile.getShooter();
+        Location startingLocation = projectile.getStartingLocation();
+        Location currentLocation = projectile.getCurrentLocation();
+
+        Utils.playGlobalSound(currentLocation, "shaman.boulder.impact", 2, .5f);
+
+        int playersHit = 0;
+        for (WarlordsEntity nearEntity : PlayerFilter
+                .entitiesAround(currentLocation, 5, 5, 5)
+                .aliveEnemiesOf(shooter)
+                .excluding(projectile.getHit())
+        ) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
+            playersHit++;
+            if (nearEntity.onHorse()) {
+                numberOfDismounts++;
+            }
+            nearEntity.addSpeedModifier(shooter, name, -50, 3 * 20);
+            double damageIncrease = Math.min(1 + projectile.getBlocksTravelled() * .08, 2);
+            nearEntity.addDamageInstance(
+                    shooter,
+                    name,
+                    (float) (minDamageHeal * damageIncrease),
+                    (float) (maxDamageHeal * damageIncrease),
+                    critChance,
+                    critMultiplier
+            );
+        }
+
+        return playersHit;
+    }
+
+    @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        if (!pveMasterUpgrade2) {
+            return;
+        }
+        Utils.playGlobalSound(projectile.getShooter().getLocation(), "shaman.boulder.activation", 2, .8f);
+        List<ArmorStand> ball = new ArrayList<>();
+        Location startingLocation = projectile.getStartingLocation();
+        List<Location> sphereLocations = LocationUtils.getSphereLocations(startingLocation.clone().add(0, -1.2, 0), .2, 3);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        for (Location sphereLocation : sphereLocations) {
+            Material material = switch (random.nextInt(5)) {
+                case 0 -> Material.ICE;
+                case 1 -> Material.BLUE_ICE;
+                case 2 -> Material.PACKED_ICE;
+                case 3 -> Material.SNOW_BLOCK;
+                default -> Material.PODZOL;
+            };
+            ball.add(Utils.spawnArmorStand(sphereLocation, armorStand -> {
+                armorStand.setMarker(true);
+                armorStand.setSmall(true);
+                armorStand.getEquipment().setHelmet(new ItemStack(material));
+                armorStand.setHeadPose(new EulerAngle(
+                                Math.toRadians(random.nextInt(90)),
+                                Math.toRadians(random.nextInt(90)),
+                                Math.toRadians(random.nextInt(90))
+                        )
+                );
+            }));
+        }
+        projectile.addTask(new InternalProjectileTask() {
+            @Override
+            public void run(InternalProjectile projectile) {
+                Vector vector = new LocationBuilder(startingLocation).getVectorTowards(projectile.getCurrentLocation());
+                for (ArmorStand armorStand : ball) {
+                    Location currentLoc = armorStand.getLocation();
+                    armorStand.teleport(currentLoc.add(vector), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                }
+            }
+
+            @Override
+            public void onDestroy(InternalProjectile projectile) {
+                ball.forEach(Entity::remove);
+                LocationBuilder impactLocation = new LocationBuilder(projectile.getCurrentLocation()).backward(1.5f);
+                Utils.spawnFallingBlocks(
+                        impactLocation,
+                        1,
+                        15,
+                        Material.ICE,
+                        Material.BLUE_ICE,
+                        Material.PACKED_ICE,
+                        Material.SNOW_BLOCK,
+                        Material.PODZOL
+                );
+                EffectUtils.displayParticle(Particle.CLOUD, impactLocation, 15, 0.5, 0.5, 0.5, .5);
+            }
+        });
+    }
+
+    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        if (pveMasterUpgrade2) {
+            return super.onActivate(wp, player);
+        }
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.freezingbreath.activation", 2, 1);
 
@@ -147,6 +267,22 @@ public class FreezingBreath extends AbstractAbility implements RedAbilityIcon {
         return true;
     }
 
+    @Nullable
+    @Override
+    protected String getActivationSound() {
+        return null;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 0;
+    }
+
     private void damageReductionOnHit(WarlordsEntity we, int counter) {
         we.getCooldownManager().removeCooldown(FreezingBreath.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -165,11 +301,6 @@ public class FreezingBreath extends AbstractAbility implements RedAbilityIcon {
                 return currentDamageValue * (1 - (0.05f * counter));
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FreezingBreathBranch(abilityTree, this);
     }
 
     public float getHitbox() {

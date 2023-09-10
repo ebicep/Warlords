@@ -20,9 +20,34 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
+import static java.lang.Math.cos;
+
 public class LocationUtils {
     private static final Location LOCATION_CACHE_SORT = new Location(null, 0, 0, 0);
     private static final Location LOCATION_CACHE_DISTANCE = new Location(null, 0, 0, 0);
+
+    public static List<Location> getSphereLocations(Location center, double sphereRadius) {
+        return getSphereLocations(center, sphereRadius, 10);
+    }
+
+    public static List<Location> getSphereLocations(Location center, double sphereRadius, double density) {
+        center = center.clone();
+        List<Location> locations = new ArrayList<>();
+        //center.add(0, 1, 0);
+        for (double i = 0; i <= Math.PI; i += Math.PI / density) {
+            double radius = Math.sin(i) * sphereRadius + 0.5;
+            double y = cos(i) * sphereRadius;
+            for (double a = 0; a < Math.PI * 2; a += Math.PI / density) {
+                double x = cos(a) * radius;
+                double z = Math.sin(a) * radius;
+
+                center.add(x, y, z);
+                locations.add(center.clone());
+                center.subtract(x, y, z);
+            }
+        }
+        return locations;
+    }
 
     public record TimedLocationBlockHolder(LocationBlockHolder locationBlockHolder, long time) {
         public TimedLocationBlockHolder(LocationBlockHolder locationBlockHolder) {

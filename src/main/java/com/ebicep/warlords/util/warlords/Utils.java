@@ -24,9 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -397,9 +396,18 @@ public class Utils {
         spawnFallingBlocks(impactLocation, initialCircleRadius, amount, -.5, .25);
     }
 
-    public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount, double vectorMultiply, double vectorY) {
-        double angle = 0;
+    public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount, Material... materials) {
+        spawnFallingBlocks(impactLocation, initialCircleRadius, amount, -.5, .25, materials);
+    }
 
+    public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount, double vectorMultiply, double vectorY) {
+        spawnFallingBlocks(impactLocation, initialCircleRadius, amount, vectorMultiply, vectorY, Material.DIRT, Material.STONE, Material.PODZOL);
+    }
+
+    public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount, double vectorMultiply, double vectorY, Material... materials) {
+        List<Material> materialList = Arrays.asList(materials);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        double angle = 0;
         for (int i = 0; i < amount; i++) {
             FallingBlock fallingBlock;
             Location spawnLoc = impactLocation.clone();
@@ -410,13 +418,7 @@ public class Utils {
             spawnLoc.add(x, 1, z);
 
             if (spawnLoc.getWorld().getBlockAt(spawnLoc).getType() == Material.AIR) {
-                fallingBlock = switch ((int) (Math.random() * 3)) {
-                    case 0 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT.createBlockData());
-                    case 1 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.STONE.createBlockData());
-                    case 2 -> impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.PODZOL.createBlockData());
-                    default -> throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
-                };
-
+                fallingBlock = impactLocation.getWorld().spawnFallingBlock(spawnLoc, (materialList.get(random.nextInt(materialList.size())).createBlockData()));
                 fallingBlock.setVelocity(impactLocation.toVector().subtract(spawnLoc.toVector()).normalize().multiply(vectorMultiply).setY(vectorY));
                 fallingBlock.setDropItem(false);
                 WarlordsEvents.addEntityUUID(fallingBlock);
