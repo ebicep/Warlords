@@ -89,5 +89,18 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Accursed Leap",
+                "Time Warp - Master Upgrade",
+                """
+                        While Time Warp is active, enemies you run into will become linked.
+                        When warping back, all linked enemies will combust dealing 5% of their max hp as damage.
+                        For every linked enemy that dies prior to completing the warp will reduce Time Warp cooldown by .25s.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }

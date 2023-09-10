@@ -1,23 +1,25 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.TimeWarpBranchPyromancer;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TimeWarpPyromancer extends AbstractTimeWarp {
 
@@ -33,6 +35,9 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
         int startingBlocksTravelled = wp.getBlocksTravelled();
+
+        // pveMasterUpgrade2
+        Set<WarlordsEntity> linkedPlayers = new HashSet<>();
         RegularCooldown<TimeWarpPyromancer> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
@@ -59,6 +64,34 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
 
                     wp.getEntity().teleport(warpLocation);
                     warpTrail.clear();
+
+                    if (pveMasterUpgrade2) {
+                        float cooldownReduction = 0;
+                        for (WarlordsEntity linkedPlayer : linkedPlayers) {
+                            if (linkedPlayer.isDead()) {
+                                cooldownReduction += .25;
+                                continue;
+                            }
+                            float healthDamage = linkedPlayer.getMaxBaseHealth() * .05f;
+                            if (linkedPlayer instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
+                                if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                }
+                                if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                    healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                }
+                            }
+                            linkedPlayer.addDamageInstance(
+                                    wp,
+                                    "Accursed Leap",
+                                    healthDamage,
+                                    healthDamage,
+                                    0,
+                                    100
+                            );
+                        }
+                        subtractCurrentCooldown(cooldownReduction);
+                    }
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -106,7 +139,12 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                                     null,
                                     true
                             );
+                        }
 
+                        if (pveMasterUpgrade2) {
+                            PlayerFilter.entitiesAround(wp, 3, 3, 3)
+                                        .aliveEnemiesOf(wp)
+                                        .forEach(linkedPlayers::add);
                         }
                     }
                 })
