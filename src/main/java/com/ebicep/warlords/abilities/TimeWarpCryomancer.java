@@ -72,11 +72,11 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                         @Override
                         public void run() {
                             PlayerFilter.playingGame(wp.getGame())
-                                    .aliveEnemiesOf(wp).forEach(warlordsEntity -> {
-                                        if (warlordsEntity instanceof WarlordsNPC) {
-                                            ((WarlordsNPC) warlordsEntity).getMob().setTarget(wp);
-                                        }
-                                    });
+                                        .aliveEnemiesOf(wp).forEach(warlordsEntity -> {
+                                            if (warlordsEntity instanceof WarlordsNPC) {
+                                                ((WarlordsNPC) warlordsEntity).getMob().setTarget(wp);
+                                            }
+                                        });
                         }
                     }.runTaskLater(5);
                 }
@@ -84,6 +84,31 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
             pveOption.spawnNewMob(cryoPod, Team.BLUE);
         } else {
             cryoPod = null;
+            if (pveMasterUpgrade2) {
+                PlayerFilter.entitiesAround(wp, 30, 30, 30)
+                            .aliveEnemiesOf(wp)
+                            .forEach(enemy -> {
+                                int duration = 100;
+                                enemy.addSpeedModifier(wp, "Freezing Cold", -80, duration);
+                                enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                        "Freezing Cold",
+                                        "COLD",
+                                        TimeWarpCryomancer.class,
+                                        new TimeWarpCryomancer(),
+                                        wp,
+                                        CooldownTypes.ABILITY,
+                                        cooldownManager -> {
+
+                                        },
+                                        duration
+                                ) {
+                                    @Override
+                                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                        return currentDamageValue * 1.15f;
+                                    }
+                                });
+                            });
+            }
         }
 
         RegularCooldown<TimeWarpCryomancer> timeWarpCooldown = new RegularCooldown<>(
