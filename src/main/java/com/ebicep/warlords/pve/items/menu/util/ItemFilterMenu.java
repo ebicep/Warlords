@@ -140,7 +140,6 @@ public class ItemFilterMenu {
                         .name(Component.text("Modifier", NamedTextColor.GREEN))
                         .lore(
                                 Component.text("None", !addonFilter ? NamedTextColor.AQUA : NamedTextColor.GRAY),
-                                Component.empty(),
                                 Component.text("Selected Spec (" + lastSpec.name + ")", !addonFilter ? NamedTextColor.GRAY : NamedTextColor.AQUA),
                                 Component.empty(),
                                 Component.textOfChildren(
@@ -162,7 +161,6 @@ public class ItemFilterMenu {
                         .name(Component.text("Modifier", NamedTextColor.GREEN))
                         .lore(
                                 Component.text("None", !favoriteFilter ? NamedTextColor.AQUA : NamedTextColor.GRAY),
-                                Component.empty(),
                                 Component.text("Favorites", !favoriteFilter ? NamedTextColor.GRAY : NamedTextColor.AQUA),
                                 Component.empty(),
                                 Component.textOfChildren(
