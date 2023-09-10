@@ -93,7 +93,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
 
             @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                if (event.getAbility().isEmpty()) {
                     return currentCritChance;
                 }
                 hitsAmplified++;
@@ -101,11 +101,30 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
             }
 
             @Override
+            public float setCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                if (pveMasterUpgrade2) {
+                    WarlordsEntity victim = event.getWarlordsEntity();
+                    if (victim.getHealth() <= victim.getMaxHealth() * .3) {
+                        return 100;
+                    }
+                }
+                return currentCritChance;
+            }
+
+            @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                if (event.getAbility().isEmpty()) {
                     return currentCritMultiplier;
                 }
                 return currentCritMultiplier + critMultiplierIncrease;
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade2) {
+                    return currentDamageValue * 1.1f;
+                }
+                return currentDamageValue;
             }
 
             @Override

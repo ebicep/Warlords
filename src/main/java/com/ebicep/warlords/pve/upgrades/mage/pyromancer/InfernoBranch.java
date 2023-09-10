@@ -87,6 +87,17 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Promethean Gaze",
+                "Inferno - Master Upgrade",
+                """
+                        Damage is increased by 10% while Inferno is active. Critical hits are guaranteed on enemies with less than 30% health.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 
 }
