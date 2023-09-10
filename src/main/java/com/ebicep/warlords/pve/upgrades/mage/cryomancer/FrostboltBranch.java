@@ -99,5 +99,16 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Splintered Ice",
+                "Frostbolt - Master Upgrade",
+                """
+                        Now fires Icicles, becoming piercing shots, all enemies hit have their movement and attack speed reduced by 25% for 2 seconds.
+                        """,
+                50000,
+                () -> {
+                    ability.setHitbox(ability.getHitbox() + 1.5f);
+                }
+        );
     }
 }

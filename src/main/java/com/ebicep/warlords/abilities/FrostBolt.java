@@ -1,6 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractProjectile;
+import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FrostboltBranch;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -18,14 +19,20 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
+public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon {
 
     private int maxFullDistance = 30;
     private float directHitMultiplier = 15;
@@ -66,7 +73,15 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FrostboltBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
+        if (pveMasterUpgrade2) {
+            return;
+        }
         EffectUtils.displayParticle(
                 Particle.CLOUD,
                 currentLocation,
@@ -76,6 +91,9 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
+        if (pveMasterUpgrade2) {
+            return 0;
+        }
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
@@ -117,29 +135,101 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
-            playersHit++;
-            if (nearEntity.onHorse()) {
-                numberOfDismounts++;
-            }
-            nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
-            nearEntity.addDamageInstance(
-                    shooter,
-                    name,
-                    (float) (minDamageHeal * toReduceBy),
-                    (float) (maxDamageHeal * toReduceBy),
-                    critChance,
-                    critMultiplier
-            );
+            playersHit = hit(projectile, shooter, toReduceBy, playersHit, nearEntity);
         }
 
         return playersHit;
+    }
+
+    private int hit(@Nonnull InternalProjectile projectile, WarlordsEntity shooter, double toReduceBy, int playersHit, WarlordsEntity nearEntity) {
+        getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
+        playersHit++;
+        if (nearEntity.onHorse()) {
+            numberOfDismounts++;
+        }
+        nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
+        nearEntity.addDamageInstance(
+                shooter,
+                name,
+                (float) (minDamageHeal * toReduceBy),
+                (float) (maxDamageHeal * toReduceBy),
+                critChance,
+                critMultiplier
+        );
+        return playersHit;
+    }
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
+        return !pveMasterUpgrade2;
+    }
+
+    @Override
+    protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
+        return true;
+    }
+
+    @Override
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        if (!pveMasterUpgrade2) {
+            return;
+        }
+        WarlordsEntity shooter = projectile.getShooter();
+        Location startingLocation = projectile.getStartingLocation();
+        Location currentLocation = projectile.getCurrentLocation();
+
+        double distanceSquared = currentLocation.distanceSquared(startingLocation);
+        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+        if (toReduceBy < .2) {
+            toReduceBy = .2;
+        }
+        hit(projectile, shooter, toReduceBy, playersHit, hit);
+        hit.addSpeedModifier(shooter, "Splintered Ice", -25, 40);
     }
 
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
         this.playEffect(projectile);
+        if (!pveMasterUpgrade2) {
+            return;
+        }
+        List<ArmorStand> icicles = new ArrayList<>();
+        LocationBuilder startLocation = new LocationBuilder(projectile.getStartingLocation().clone().add(0, -1.1, 0));
+        for (int i = 0; i < 4; i++) {
+            icicles.add(Utils.spawnArmorStand(startLocation, armorStand -> {
+                armorStand.setMarker(true);
+                armorStand.setSmall(true);
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.ICE));
+                armorStand.setHeadPose(new EulerAngle(-Math.atan2(
+                        projectile.getSpeed().getY(),
+                        Math.sqrt(
+                                Math.pow(projectile.getSpeed().getX(), 2) +
+                                        Math.pow(projectile.getSpeed().getZ(), 2)
+                        )
+                ), 0, Math.toRadians(45)));
+            }));
+            startLocation.forward(.75);
+        }
+
+        projectile.addTask(new InternalProjectileTask() {
+            @Override
+            public void run(InternalProjectile projectile) {
+                for (int i = 0; i < icicles.size(); i++) {
+                    ArmorStand armorStand = icicles.get(i);
+                    LocationBuilder location = new LocationBuilder(projectile.getCurrentLocation().clone().add(0, -1.1, 0));
+                    location.forward(.75 * i);
+                    armorStand.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
+                }
+            }
+
+            @Override
+            public void onDestroy(InternalProjectile projectile) {
+                icicles.forEach(Entity::remove);
+                EffectUtils.displayParticle(Particle.CLOUD, icicles.get(3).getLocation(), 10, 0.3, 0.3, 0.3, 1);
+            }
+        });
     }
 
     @Override
@@ -154,7 +244,7 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
 
     @Override
     protected float getSoundPitch() {
-        return 1;
+        return pveMasterUpgrade2 ? 2f : 1;
     }
 
     private void freezeExplodeOnHit(WarlordsEntity giver, WarlordsEntity hit) {
@@ -172,11 +262,6 @@ public class FrostBolt extends AbstractProjectile implements WeaponAbilityIcon {
                 }
             }
         }.runTaskLater(30);
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FrostboltBranch(abilityTree, this);
     }
 
     public int getMaxFullDistance() {

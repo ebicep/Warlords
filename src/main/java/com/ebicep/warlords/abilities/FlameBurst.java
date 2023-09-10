@@ -116,6 +116,9 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
+        if (pveMasterUpgrade2) {
+            return 0;
+        }
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();

@@ -1,18 +1,26 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.Utils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -168,26 +176,26 @@ public class OldTestCommand implements CommandExecutor {
 //            );
 
 
-//            ArmorStand stand = Utils.spawnArmorStand(player.getLocation(), armorStand -> {
-//                armorStand.getEquipment().setHelmet(new ItemStack(Material.SPRUCE_FENCE_GATE));
-//                armorStand.setMarker(true);
-//                Warlords.getInstance().getLogger().info(armorStand.isVisualFire() + " - " + armorStand.getFireTicks());
-//            });
-//
-//            new BukkitRunnable() {
-//
-//                int counter = 0;
-//
-//                @Override
-//                public void run() {
-//                    counter++;
-//                    stand.setRotation(counter, 0);
-//                    if (counter == 100) {
-//                        stand.remove();
-//                        cancel();
-//                    }
-//                }
-//            }.runTaskTimer(Warlords.getInstance(), 0, 0);
+            ArmorStand stand = Utils.spawnArmorStand(player.getLocation(), armorStand -> {
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.PACKED_ICE));
+                armorStand.setMarker(true);
+            });
+            Location location = player.getLocation();
+            new BukkitRunnable() {
+
+                int counter = 0;
+                LocationBuilder locationBuilder = new LocationBuilder(location);
+
+                @Override
+                public void run() {
+                    counter++;
+                    stand.teleport(locationBuilder.forward(1));
+                    if (counter == 50) {
+                        stand.remove();
+                        cancel();
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, 10);
 
 
 //            for (int i = 0; i < 10_000; i++) {
