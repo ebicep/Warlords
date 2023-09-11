@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.IceBarrierBranch;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -69,14 +70,6 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         Utils.playGlobalSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
 
-        Location castLocation = wp.getLocation();
-        List<Location> verticalRectangle;
-        if (pveMasterUpgrade2) {
-            verticalRectangle = LocationUtils.getVerticalRectangle(castLocation.add(0, -1, 0), 4, 5);
-        } else {
-            verticalRectangle = new ArrayList<>();
-        }
-
         IceBarrier tempIceBarrier = new IceBarrier(damageReductionPercent);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -93,14 +86,19 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                         return;
                     }
                     if (pveMasterUpgrade2) {
+                        LocationBuilder locationBuilder = new LocationBuilder(wp.getLocation())
+                                .addY(-1)
+                                .pitch(0)
+                                .forward(3);
+                        List<Location> verticalRectangle = LocationUtils.getVerticalRectangle(locationBuilder, 4, 5);
                         for (Location location : verticalRectangle) {
                             EffectUtils.displayParticle(
                                     Particle.CLOUD,
                                     location,
                                     5,
-                                    .25,
-                                    .25,
-                                    .25,
+                                    .2,
+                                    .2,
+                                    .2,
                                     0
                             );
                             PlayerFilter.entitiesAround(location, 1, 1, 1)
