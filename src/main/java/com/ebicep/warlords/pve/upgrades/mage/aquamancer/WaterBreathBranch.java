@@ -106,5 +106,21 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Typhoon",
+                "Water Breath - Master Upgrade",
+                """
+                        Additional cone range +100%.
+                                                
+                        All allies hit by Breath are healed by 2% of their max hp per second for 5s. Enemies pushed by breath will have all active buffs/abilities removed and be unable to receive/use them for 3s.
+                        """,
+                50000,
+                () -> {
+                    ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
+                    ability.setHitbox(ability.getHitbox() * 2);
+                    ability.setMaxAnimationEffects(8);
+
+                }
+        );
     }
 }

@@ -391,6 +391,11 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         getSpec().setDamageResistance(damageResistance);
     }
 
+    @Override
+    public int getBaseHitCooldownValue() {
+        return 12;
+    }
+
     public void applySkillBoost(Player player) {
         for (AbstractAbility ability : spec.getAbilities()) {
             if (ability.getClass() == skillBoost.ability) {

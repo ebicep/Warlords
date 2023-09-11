@@ -371,11 +371,11 @@ public class WarlordsEvents implements Listener {
         if (wpAttacker == null || wpVictim == null || !wpAttacker.isEnemyAlive(wpVictim) || wpAttacker.getGame().isFrozen()) {
             return;
         }
-        if ((attacker instanceof Player && ((Player) attacker).getInventory().getHeldItemSlot() != 0) || wpAttacker.getHitCooldown() != 0) {
+        if ((attacker instanceof Player && ((Player) attacker).getInventory().getHeldItemSlot() != 0) || wpAttacker.getHitCooldown() > 0) {
             return;
         }
 
-        wpAttacker.setHitCooldown(12);
+        wpAttacker.setHitCooldown(wpAttacker.getBaseHitCooldown().getCalculatedValue());
         wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyPerHit(), false);
         wpAttacker.getMinuteStats().addMeleeHits();
 
@@ -391,7 +391,6 @@ public class WarlordsEvents implements Listener {
                             100
                     );
                 }
-                wpAttacker.setHitCooldown(20);
             }
         } else {
             if (wpAttacker instanceof WarlordsPlayer && ((WarlordsPlayer) wpAttacker).getWeapon() != null) {

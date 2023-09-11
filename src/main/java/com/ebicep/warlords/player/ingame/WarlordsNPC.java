@@ -149,6 +149,11 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
+    public int getBaseHitCooldownValue() {
+        return 20;
+    }
+
+    @Override
     public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
         if (modifier != -99) {
             if (getMob() instanceof BossLike) {

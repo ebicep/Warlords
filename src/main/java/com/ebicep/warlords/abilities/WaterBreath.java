@@ -4,8 +4,13 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Overheal;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBreathBranch;
@@ -20,6 +25,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -154,21 +161,20 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
         for (WarlordsEntity breathTarget : PlayerFilter
                 .entitiesAroundRectangle(playerLoc, hitbox - 2.5, hitbox, hitbox - 2.5)
                 .excluding(wp)
+                .isAlive()
         ) {
-            if (breathTarget.isDead()) {
-                continue;
-            }
             Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
             if (!(viewDirection.dot(direction) > .68)) {
                 continue;
             }
-            if (wp.isTeammateAlive(breathTarget)) {
+            CooldownManager breathTargetCooldownManager = breathTarget.getCooldownManager();
+            if (wp.isTeammate(breathTarget)) {
                 playersHealed++;
-                debuffsRemoved += breathTarget.getCooldownManager().removeDebuffCooldowns();
+                debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
                 breathTarget.getSpeed().removeSlownessModifiers();
                 breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                breathTarget.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
-                breathTarget.getCooldownManager().addRegularCooldown(
+                breathTargetCooldownManager.removeCooldownByObject(Overheal.OVERHEAL_MARKER);
+                breathTargetCooldownManager.addRegularCooldown(
                         "Overheal",
                         "OVERHEAL",
                         Overheal.class,
@@ -179,13 +185,17 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
                         },
                         Overheal.OVERHEAL_DURATION * 20
                 );
-                if (pveMasterUpgrade) {
+                if (pveMasterUpgrade || pveMasterUpgrade2) {
                     regenOnHit(wp, breathTarget);
                 }
             } else {
                 final Location loc = breathTarget.getLocation();
                 final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
                 breathTarget.setVelocity(name, v, false);
+
+                if (pveMasterUpgrade2) {
+                    giveMaliciousMist(wp, breathTarget);
+                }
             }
         }
         int totalDebuffsRemoved = debuffsRemoved - previousDebuffsRemoved;
@@ -194,6 +204,55 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
         }
 
         return true;
+    }
+
+    private static void giveMaliciousMist(@Nonnull WarlordsEntity wp, WarlordsEntity breathTarget) {
+        CooldownManager breathTargetCooldownManager = breathTarget.getCooldownManager();
+        breathTargetCooldownManager.removeBuffCooldowns();
+        breathTargetCooldownManager.removeCooldownByName("Malicious Mist");
+        breathTargetCooldownManager.addCooldown(new RegularCooldown<>(
+                "Malicious Mist",
+                "MIST",
+                WaterBreath.class,
+                new WaterBreath(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                3 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksLeft % 5 == 0) {
+                        EffectUtils.displayParticle(
+                                Particle.WATER_SPLASH,
+                                breathTarget.getLocation().add(0, 1.25, 0),
+                                10,
+                                0.4f,
+                                0.4f,
+                                0.4f,
+                                0
+                        );
+                    }
+                })
+        ) {
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+                    @EventHandler
+                    public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
+                        if (event.getWarlordsEntity().equals(breathTarget)) {
+                            event.setCancelled(true);
+                        }
+                    }
+
+                    @EventHandler
+                    public void onBuffAdd(WarlordsAddCooldownEvent event) {
+                        if (event.getWarlordsEntity().equals(breathTarget) && event.getAbstractCooldown().getCooldownType() == CooldownTypes.BUFF) {
+                            event.setCancelled(true);
+                        }
+                    }
+                };
+            }
+        });
     }
 
     private void regenOnHit(WarlordsEntity giver, WarlordsEntity hit) {
