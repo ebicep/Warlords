@@ -141,24 +141,6 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         return playersHit;
     }
 
-    private int hit(@Nonnull InternalProjectile projectile, WarlordsEntity shooter, double toReduceBy, int playersHit, WarlordsEntity nearEntity) {
-        getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
-        playersHit++;
-        if (nearEntity.onHorse()) {
-            numberOfDismounts++;
-        }
-        nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
-        nearEntity.addDamageInstance(
-                shooter,
-                name,
-                (float) (minDamageHeal * toReduceBy),
-                (float) (maxDamageHeal * toReduceBy),
-                critChance,
-                critMultiplier
-        );
-        return playersHit;
-    }
-
     @Override
     protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
         return !pveMasterUpgrade2;
@@ -183,6 +165,9 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
                             1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
         if (toReduceBy < .2) {
             toReduceBy = .2;
+        }
+        if (projectile.getHit().size() == 0) {
+            toReduceBy += .15;
         }
         hit(projectile, shooter, toReduceBy, playersHit, hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -25, 40);
@@ -262,6 +247,24 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
                 }
             }
         }.runTaskLater(30);
+    }
+
+    private int hit(@Nonnull InternalProjectile projectile, WarlordsEntity shooter, double damageModifier, int playersHit, WarlordsEntity nearEntity) {
+        getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
+        playersHit++;
+        if (nearEntity.onHorse()) {
+            numberOfDismounts++;
+        }
+        nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
+        nearEntity.addDamageInstance(
+                shooter,
+                name,
+                (float) (minDamageHeal * damageModifier),
+                (float) (maxDamageHeal * damageModifier),
+                critChance,
+                critMultiplier
+        );
+        return playersHit;
     }
 
     public int getMaxFullDistance() {

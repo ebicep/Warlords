@@ -103,7 +103,8 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
                 "Splintered Ice",
                 "Frostbolt - Master Upgrade",
                 """
-                        Now fires Icicles, becoming piercing shots, all enemies hit have their movement and attack speed reduced by 25% for 2 seconds.
+                        Now fires Icicles, becoming piercing shots, all enemies hit have their movement speed reduced by 25% for 2 seconds.
+                        Additionally, the first enemy hit by an icicle will take 15% more damage.
                         """,
                 50000,
                 () -> {
