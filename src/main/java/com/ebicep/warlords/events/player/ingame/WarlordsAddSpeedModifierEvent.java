@@ -17,15 +17,16 @@ public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent {
 
     private final WarlordsEntity from;
     private final AtomicReference<String> name;
-    private final AtomicInteger modifier;
+    private final AtomicReference<Float> modifier;
     private final AtomicInteger duration;
     private final AtomicReference<String[]> toDisable;
     private boolean enhanced = false;
 
     public WarlordsAddSpeedModifierEvent(
             WarlordsEntity warlordsEntity,
-            WarlordsEntity from, AtomicReference<String> name,
-            AtomicInteger modifier,
+            WarlordsEntity from,
+            AtomicReference<String> name,
+            AtomicReference<Float> modifier,
             AtomicInteger duration,
             AtomicReference<String[]> toDisable
     ) {
@@ -45,7 +46,7 @@ public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent {
         return name;
     }
 
-    public AtomicInteger getModifier() {
+    public AtomicReference<Float> getModifier() {
         return modifier;
     }
 

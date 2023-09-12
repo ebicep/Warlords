@@ -1,9 +1,16 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
 import com.ebicep.warlords.abilities.AvengersStrike;
+import com.ebicep.warlords.player.ingame.CalculateSpeed;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+
+import java.util.Collections;
 
 public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
@@ -15,7 +22,8 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
     public AvengerStrikeBranch(AbilityTree abilityTree, AvengersStrike ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
+        WarlordsPlayer warlordsPlayer = abilityTree.getWarlordsPlayer();
+        if (warlordsPlayer.isInPve()) {
             ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
             ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
         }
@@ -108,11 +116,62 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
                         Avenger's Strike hits 2 additional enemies for 50% of the original strike damage.
 
-                        Deal 40% more damage against BASIC enemies and deal 0.5% max health damage against ELITE enemies.""",
+                        Deal 40% more damage against level 3 enemies or below and deal 0.5% max health damage against level 4 and 5 enemies.""",
                 50000,
                 () -> {
-
                     ability.setEnergyCost(ability.getEnergyCost() - 5);
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Avenging Strike",
+                "Avenger's Strike - Master Upgrade",
+                """
+                        Strike crit chance is increased by 15%.
+                                                
+                        If there are at least 2 enemies within 20 blocks, strike damage is increased by 25% and movement speed is increased by 20%.
+                                                
+                        If there are fewer, strike damage is further increased by 50%.
+                        """,
+                50000,
+                () -> {
+                    ability.setCritChance(ability.getCritChance() + 15);
+                    CalculateSpeed calculateSpeed = warlordsPlayer.getSpeed();
+                    CalculateSpeed.Modifier modifier = new CalculateSpeed.Modifier(
+                            warlordsPlayer,
+                            "Avenging Strike",
+                            0,
+                            Integer.MAX_VALUE,
+                            Collections.emptyList(),
+                            false
+                    );
+                    warlordsPlayer.addSpeedModifier(modifier);
+                    warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Avenging Strike",
+                            null,
+                            AvengerStrikeBranch.class,
+                            null,
+                            warlordsPlayer,
+                            CooldownTypes.MASTERY,
+                            cooldownManager -> {
+                            },
+                            false,
+                            (cooldown, ticksElapsed) -> {
+                                if (ticksElapsed % 20 == 0) {
+                                    long enemiesNearBy = PlayerFilter.entitiesAround(warlordsPlayer, 20, 20, 20)
+                                                                     .aliveEnemiesOf(warlordsPlayer)
+                                                                     .stream()
+                                                                     .count();
+                                    float oldModifier = modifier.modifier;
+                                    if (enemiesNearBy >= 2 && oldModifier != 20) {
+                                        modifier.setModifier(20);
+                                        calculateSpeed.setChanged(true);
+                                    } else if (oldModifier != 0) {
+                                        modifier.setModifier(0);
+                                        calculateSpeed.setChanged(true);
+                                    }
+                                }
+                            }
+                    ));
                 }
         );
     }

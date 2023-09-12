@@ -2096,19 +2096,28 @@ public abstract class WarlordsEntity {
         return this.game;
     }
 
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
         if (modifier < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
             return () -> {
             };
         }
         AtomicReference<String> nameRef = new AtomicReference<>(name);
-        AtomicInteger modifierRef = new AtomicInteger(modifier);
+        AtomicReference<Float> modifierRef = new AtomicReference<>(modifier);
         AtomicInteger durationRef = new AtomicInteger(duration);
         AtomicReference<String[]> toDisableRef = new AtomicReference<>(toDisable);
 
         Bukkit.getPluginManager().callEvent(new WarlordsAddSpeedModifierEvent(this, from, nameRef, modifierRef, durationRef, toDisableRef));
 
         return this.speed.addSpeedModifier(from, nameRef.get(), modifierRef.get(), durationRef.get(), toDisableRef.get());
+    }
+
+    public Runnable addSpeedModifier(CalculateSpeed.Modifier modifier) {
+        if (modifier.modifier < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
+            return () -> {
+            };
+        }
+        // TODO event stuff?
+        return this.speed.addSpeedModifier(modifier);
     }
 
     public Location getDeathLocation() {

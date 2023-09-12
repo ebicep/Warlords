@@ -154,7 +154,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
         if (modifier != -99) {
             if (getMob() instanceof BossLike) {
                 if (modifier < 0) {

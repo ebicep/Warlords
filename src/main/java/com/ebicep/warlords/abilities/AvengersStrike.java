@@ -8,8 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
-import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengerStrikeBranch;
@@ -59,6 +58,11 @@ public class AvengersStrike extends AbstractStrike {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new AvengerStrikeBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
@@ -79,12 +83,18 @@ public class AvengersStrike extends AbstractStrike {
         float healthDamage = 0;
         if (nearPlayer instanceof WarlordsNPC warlordsNPC) {
             if (pveMasterUpgrade) {
-                if (warlordsNPC.getMob() instanceof BasicMob) {
-                    multiplier = 1.4f;
-                }
-
-                if (warlordsNPC.getMob() instanceof IntermediateMob) {
+                AbstractMob<?> mob = warlordsNPC.getMob();
+                if (mob.getLevel() <= 3) {
+                    multiplier += 0.4f;
+                } else if (mob.getLevel() == 4 || mob.getLevel() == 5) {
                     healthDamage = nearPlayer.getMaxHealth() * 0.005f;
+                }
+            } else if (pveMasterUpgrade2) {
+                int enemiesNearBy = Math.toIntExact(PlayerFilter.entitiesAround(wp, 20, 20, 20).aliveEnemiesOf(wp).stream().count());
+                if (enemiesNearBy >= 2) {
+                    multiplier += 0.25f;
+                } else {
+                    multiplier += 0.5f;
                 }
             }
         }
@@ -143,11 +153,6 @@ public class AvengersStrike extends AbstractStrike {
 
         energyStole += nearPlayer.subtractEnergy(energySteal, true);
         return true;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new AvengerStrikeBranch(abilityTree, this);
     }
 
     public float getEnergySteal() {

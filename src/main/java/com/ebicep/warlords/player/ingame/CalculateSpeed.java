@@ -132,26 +132,29 @@ public class CalculateSpeed {
      * @param toDisable The modifiers this should override for as long as it is active
      * @return A runnable that can be used to manually remove this entry
      */
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, String... toDisable) {
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
         return addSpeedModifier(from, name, modifier, duration, Arrays.asList(toDisable));
     }
 
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, Collection<String> toDisable) {
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, Collection<String> toDisable) {
         return addSpeedModifier(from, name, modifier, duration, false, toDisable);
     }
 
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, int modifier, int duration, boolean afterLimit, Collection<String> toDisable) {
-        Modifier mod = new Modifier(from,
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, boolean afterLimit, Collection<String> toDisable) {
+        return addSpeedModifier(new Modifier(from,
                 name,
                 modifier,
-                duration == 0 ? 0 : duration + 1,
+                duration,
                 toDisable,
                 afterLimit
-        ); // add 1 tick to deal with effects lasting exactly as long
+        ));
+    }
+
+    public Runnable addSpeedModifier(Modifier mod) {
         ListIterator<Modifier> iterator = this.modifiers.listIterator();
         while (iterator.hasNext()) {
             Modifier next = iterator.next();
-            if (Objects.equals(next.name, name)) {
+            if (Objects.equals(next.name, mod.name)) {
                 iterator.set(mod);
                 return () -> modifiers.remove(mod);
             }
@@ -192,6 +195,10 @@ public class CalculateSpeed {
         return modifiers;
     }
 
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+    }
+
     public static class Modifier {
         public final WarlordsEntity from;
         public final String name;
@@ -206,7 +213,7 @@ public class CalculateSpeed {
             this.name = name;
             this.modifier = modifier;
             this.calculatedModifier = 1 + modifier / 100f;
-            this.duration = duration;
+            this.duration = duration == 0 ? 0 : duration + 1; // add 1 tick to deal with effects lasting exactly as long
             this.afterLimit = afterLimit;
             this.toDisable = toDisable;
         }
