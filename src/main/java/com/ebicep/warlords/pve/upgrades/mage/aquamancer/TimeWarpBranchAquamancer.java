@@ -94,7 +94,7 @@ public class TimeWarpBranchAquamancer extends AbstractUpgradeBranch<TimeWarpAqua
                 "Time Warp - Master Upgrade",
                 """
                         Time Warp forms a cyclone of water around you as you walk, enemies that are within 3 blocks of you while the ability is active are knocked back.
-                        After warping back, outgoing healing is increased by 15% 5s.
+                        After warping back, outgoing healing is increased by 15% for 5s.
                         """,
                 50000,
                 () -> {

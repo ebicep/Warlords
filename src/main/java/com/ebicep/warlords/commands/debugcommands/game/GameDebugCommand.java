@@ -9,7 +9,6 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import org.bukkit.entity.Player;
@@ -45,6 +44,24 @@ public class GameDebugCommand extends BaseCommand {
                         pveOption.setPauseMobSpawn(true);
                     }
                 }
+            });
+        });
+    }
+
+    @CommandAlias("gamedebug22|gd22")
+    @Description("Auto starts game in wave defense with mobs not spawning")
+    public void gameDebug2(@Conditions("outsideGame") Player player, Specializations spec, @Optional Integer branch) {
+        GameStartCommand.startGame(player, false, queueEntryBuilder -> {
+            queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
+            queueEntryBuilder.setGameMode(GameMode.WAVE_DEFENSE);
+            queueEntryBuilder.setMap(GameMap.ILLUSION_CROSSFIRE);
+            queueEntryBuilder.setOnResult((queueResult, game) -> {
+                game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
+                for (Option option : game.getOptions()) {
+                    if (option instanceof PveOption pveOption) {
+                        pveOption.setPauseMobSpawn(true);
+                    }
+                }
                 Integer branchNumber = branch;
                 new BukkitRunnable() {
 
@@ -55,14 +72,19 @@ public class GameDebugCommand extends BaseCommand {
                             warlordsPlayer.setDisableCooldowns(true);
                             warlordsPlayer.setNoEnergyConsumption(true);
                             warlordsPlayer.addCurrency(1000000);
-                            warlordsPlayer.setSpec(Specializations.AQUAMANCER, SkillBoosts.WATER_BOLT);
+                            warlordsPlayer.setSpec(spec, spec.skillBoosts.get(0));
                             if (branchNumber != null) {
                                 AbstractUpgradeBranch<?> branch = warlordsPlayer.getAbilityTree().getUpgradeBranches().get(branchNumber);
-                                branch.purchaseMasterUpgrade(warlordsPlayer, branch.getMasterUpgrade2(), false, true);
+                                branch.purchaseMasterUpgrade(warlordsPlayer, branch.getMasterUpgrade2(), true, true);
+                            } else {
+                                for (int i = 0; i < 5; i++) {
+                                    AbstractUpgradeBranch<?> branch = warlordsPlayer.getAbilityTree().getUpgradeBranches().get(i);
+                                    branch.purchaseMasterUpgrade(warlordsPlayer, branch.getMasterUpgrade2(), true, true);
+                                }
                             }
                         });
                     }
-                }.runTaskLater(Warlords.getInstance(), 40);
+                }.runTaskLater(Warlords.getInstance(), 30);
 
             });
         });

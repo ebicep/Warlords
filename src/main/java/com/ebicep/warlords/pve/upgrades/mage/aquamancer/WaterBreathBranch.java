@@ -107,7 +107,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Typhoon",
+                "Malicious Mist",
                 "Water Breath - Master Upgrade",
                 """
                         Additional cone range +100%.

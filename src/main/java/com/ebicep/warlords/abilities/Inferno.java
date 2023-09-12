@@ -120,7 +120,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
             }
 
             @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade2) {
                     return currentDamageValue * 1.1f;
                 }
