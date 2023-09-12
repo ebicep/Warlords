@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -9,6 +11,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.TimeWarpBranchAquamancer;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -103,12 +106,58 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
 
                     wp.getEntity().teleport(warpLocation);
                     warpTrail.clear();
+
+                    if (pveMasterUpgrade2) {
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Cyclone",
+                                "CYC",
+                                TimeWarpAquamancer.class,
+                                new TimeWarpAquamancer(),
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager1 -> {
+                                },
+                                5 * 20
+                        ) {
+                            @Override
+                            public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                return currentHealValue * 1.15f;
+                            }
+                        });
+                    }
                 },
                 cooldownManager -> {
                     altarsBlocks.forEach(Entity::remove);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (pveMasterUpgrade2) {
+                        if (ticksElapsed % 2 == 0) {
+                            PlayerFilter.entitiesAround(wp, 3, 3, 3)
+                                        .aliveEnemiesOf(wp)
+                                        .forEach(enemy -> {
+                                            Utils.addKnockback(name, wp.getLocation(), enemy, -1.2, 0.2);
+                                        });
+                        }
+                        if (ticksElapsed % 8 == 0) {
+                            EffectUtils.playSpiralAnimation(
+                                    true,
+                                    wp,
+                                    new LocationBuilder(wp.getLocation()).pitch(0),
+                                    4,
+                                    16,
+                                    (matrix4d, integer) -> {},
+                                    List.of(
+                                            new Pair<>(Particle.BLOCK_DUST, Material.MOSSY_COBBLESTONE.createBlockData()),
+                                            new Pair<>(Particle.BLOCK_DUST, Material.BLUE_CONCRETE.createBlockData())
+                                    ),
+                                    Particle.DRIP_WATER, Particle.ENCHANTMENT_TABLE
+                            );
+                        }
+                        if (ticksElapsed % 20 == 0) {
+                            Utils.playGlobalSound(player.getLocation(), "mage.waterbreath.activation", 2, .5f);
+                        }
+                    }
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
                             location.getWorld().spawnParticle(

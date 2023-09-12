@@ -158,7 +158,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 playerClass
         );
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
-            System.out.println(ability.getName() + " - " + ability.getCooldown() + " - " + ability.getCurrentCooldown());
             if (ability.getCurrentCooldown() < ability.getCooldown()) {
                 warlordsNPC.setEnergy(warlordsNPC.getEnergy() + ability.getEnergyCost());
             }

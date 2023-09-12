@@ -15,9 +15,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBreathBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -91,64 +89,16 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
         Location playerLoc = new LocationBuilder(player.getLocation())
                 .pitch(0)
                 .add(0, 1.7, 0);
-        new GameRunnable(wp.getGame()) {
 
-            final Matrix4d center = new Matrix4d(playerLoc);
-            int animationTimer = 0;
+        EffectUtils.playSpiralAnimation(
+                wp,
+                playerLoc,
+                maxAnimationEffects,
+                maxAnimationTime,
+                (center, animationTimer) -> {},
+                Particle.DRIP_WATER, Particle.ENCHANTMENT_TABLE, Particle.VILLAGER_HAPPY
+        );
 
-            @Override
-            public void run() {
-                this.playEffect();
-                this.playEffect();
-            }
-
-            public void playEffect() {
-
-                if (animationTimer > maxAnimationTime) {
-                    this.cancel();
-                }
-
-                for (int i = 0; i < maxAnimationEffects; i++) {
-                    double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
-                    double width = animationTimer * 0.3;
-                    wp.getWorld().spawnParticle(
-                            Particle.DRIP_WATER,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width),
-                            1,
-                            0,
-                            0,
-                            0,
-                            0,
-                            null,
-                            true
-                    );
-                    wp.getWorld().spawnParticle(
-                            Particle.ENCHANTMENT_TABLE,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width),
-                            1,
-                            0,
-                            0,
-                            0,
-                            0,
-                            null,
-                            true
-                    );
-                    wp.getWorld().spawnParticle(
-                            Particle.VILLAGER_HAPPY,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width),
-                            1,
-                            0,
-                            0,
-                            0,
-                            0,
-                            null,
-                            true
-                    );
-                }
-
-                animationTimer++;
-            }
-        }.runTaskTimer(0, 1);
         int previousDebuffsRemoved = debuffsRemoved;
         debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
@@ -206,6 +156,39 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
         return true;
     }
 
+    private void regenOnHit(WarlordsEntity giver, WarlordsEntity hit) {
+        boolean hasPreviousCooldown = hit.getCooldownManager().hasCooldown(WaterBreath.class);
+        hit.getCooldownManager().removeCooldown(WaterBreath.class, false);
+        hit.getCooldownManager().addRegularCooldown(
+                name,
+                "BREATH RGN",
+                WaterBreath.class,
+                new WaterBreath(),
+                giver,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                5 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksLeft % 20 == 0) {
+                        float healing = hit.getMaxHealth() * 0.02f;
+                        hit.addHealingInstance(
+                                giver,
+                                name,
+                                healing,
+                                healing,
+                                0,
+                                100
+                        );
+                    }
+                })
+        );
+        if (!hasPreviousCooldown) {
+            hit.getSpec().decreaseAllCooldownTimersBy(1.5f);
+            hit.updateItems();
+        }
+    }
+
     private static void giveMaliciousMist(@Nonnull WarlordsEntity wp, WarlordsEntity breathTarget) {
         CooldownManager breathTargetCooldownManager = breathTarget.getCooldownManager();
         breathTargetCooldownManager.removeBuffCooldowns();
@@ -253,39 +236,6 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
                 };
             }
         });
-    }
-
-    private void regenOnHit(WarlordsEntity giver, WarlordsEntity hit) {
-        boolean hasPreviousCooldown = hit.getCooldownManager().hasCooldown(WaterBreath.class);
-        hit.getCooldownManager().removeCooldown(WaterBreath.class, false);
-        hit.getCooldownManager().addRegularCooldown(
-                name,
-                "BREATH RGN",
-                WaterBreath.class,
-                new WaterBreath(),
-                giver,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                5 * 20,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksLeft % 20 == 0) {
-                        float healing = hit.getMaxHealth() * 0.02f;
-                        hit.addHealingInstance(
-                                giver,
-                                name,
-                                healing,
-                                healing,
-                                0,
-                                100
-                        );
-                    }
-                })
-        );
-        if (!hasPreviousCooldown) {
-            hit.getSpec().decreaseAllCooldownTimersBy(1.5f);
-            hit.updateItems();
-        }
     }
 
     @Override

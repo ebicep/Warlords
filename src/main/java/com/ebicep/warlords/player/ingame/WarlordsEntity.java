@@ -2484,12 +2484,9 @@ public abstract class WarlordsEntity {
         }
 
         // Melee Cooldown
-        if (this instanceof WarlordsNPC && !name.contains("TestDummy")) {
-            Bukkit.broadcast(Component.text(getHitCooldown()));
+        if (getHitCooldown() > 0) {
+            setHitCooldown(getHitCooldown() - 1);
         }
-        //if (getHitCooldown() > 0) {
-        setHitCooldown(getHitCooldown() - 1);
-        //}
     }
 
     private boolean checkUndyingArmy(float newHealth) {

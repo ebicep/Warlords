@@ -12,9 +12,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FreezingBreathBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -190,45 +188,24 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
                 .pitch(0)
                 .add(0, 1.7, 0);
 
-        new GameRunnable(wp.getGame()) {
-
-            final Matrix4d center = new Matrix4d(playerLoc);
-            int animationTimer = 0;
-
-            @Override
-            public void run() {
-                this.playEffect();
-                this.playEffect();
-            }
-
-            public void playEffect() {
-                if (animationTimer > maxAnimationTime) {
-                    this.cancel();
-                }
-
-                EffectUtils.displayParticle(
-                        Particle.CLOUD,
-                        center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0),
-                        5,
-                        0,
-                        0,
-                        0,
-                        0.6f
-                );
-
-                for (int i = 0; i < 4; i++) {
-                    double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
-                    double width = animationTimer * 0.3;
+        EffectUtils.playSpiralAnimation(
+                wp,
+                playerLoc,
+                4,
+                maxAnimationTime,
+                (center, animationTimer) -> {
                     EffectUtils.displayParticle(
-                            Particle.FIREWORKS_SPARK,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width),
-                            1
+                            Particle.CLOUD,
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0),
+                            5,
+                            0,
+                            0,
+                            0,
+                            0.6f
                     );
-                }
-
-                animationTimer++;
-            }
-        }.runTaskTimer(0, 1);
+                },
+                Particle.FIREWORKS_SPARK
+        );
 
         Location playerEyeLoc = new LocationBuilder(wp.getLocation())
                 .pitch(0)

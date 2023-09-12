@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
@@ -14,9 +15,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.BiConsumer;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -24,7 +27,7 @@ import static java.lang.Math.sin;
 public class EffectUtils {
 
     /**
-     * @param loc  what location should the sphere be around.
+     * @param loc          what location should the sphere be around.
      * @param sphereRadius is how big the sphere should be.
      * @param red          is the RGB assigned color for the particles.
      * @param green        is the RGB assigned color for the particles.
@@ -48,7 +51,22 @@ public class EffectUtils {
     }
 
     /**
-     * @param loc   what location should the sphere be around.
+     * @param particle which particle to display
+     * @param loc      location of the particle
+     * @param count    particle count
+     * @param data     optional extra data for the particle (e.g. DustOptions)
+     */
+    public static <T> void displayParticle(
+            Particle particle,
+            Location loc,
+            int count,
+            T data
+    ) {
+        loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, data, true);
+    }
+
+    /**
+     * @param loc           what location should the sphere be around.
      * @param sphereRadius  is how big the sphere should be.
      * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
@@ -69,7 +87,20 @@ public class EffectUtils {
     }
 
     /**
-     * @param loc    what location should the helix be around.
+     * @param particle which particle to display
+     * @param loc      location of the particle
+     * @param count    particle count
+     */
+    public static void displayParticle(
+            Particle particle,
+            Location loc,
+            int count
+    ) {
+        loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
+    }
+
+    /**
+     * @param loc         what location should the helix be around.
      * @param helixRadius is how big the helix should be.
      * @param red         is the RGB assigned color for the particles.
      * @param green       is the RGB assigned color for the particles.
@@ -95,7 +126,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param loc      what location should the helix be around.
+     * @param loc           what location should the helix be around.
      * @param helixRadius   is how big the helix should be.
      * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
@@ -118,7 +149,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param loc       what location should the cylinder be around.
+     * @param loc            what location should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
      * @param red            which particle effect should be displayed.
      * @param green          the amount of particles that should be displayed.
@@ -153,7 +184,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param loc       what location should the cylinder be around.
+     * @param loc            what location should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
      * @param effect         which particle effect should be displayed.
      * @param particleCount  the amount of particles that should be displayed.
@@ -173,7 +204,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param loc   what location should the star be around.
+     * @param loc        what location should the star be around.
      * @param starRadius is how big the star should be.
      * @param effect     which particle effect should be displayed.
      */
@@ -384,6 +415,7 @@ public class EffectUtils {
         Location loc = location.clone();
         new GameRunnable(game) {
             double t = 0;
+
             @Override
             public void run() {
                 t++;
@@ -391,7 +423,7 @@ public class EffectUtils {
                 double x = radius * cos(t);
                 double y = yAxisElevation * t;
                 double z = radius * sin(t);
-                loc.add(x, y ,z);
+                loc.add(x, y, z);
                 loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
                 loc.subtract(x, y, z);
 
@@ -418,6 +450,7 @@ public class EffectUtils {
         Location loc = location.clone();
         new GameRunnable(game) {
             double t = counter;
+
             @Override
             public void run() {
                 t++;
@@ -428,7 +461,7 @@ public class EffectUtils {
                 if (y > yLimit) {
                     y = yLimit;
                 }
-                loc.add(x, y ,z);
+                loc.add(x, y, z);
                 displayParticle(effect, loc, particleCount);
                 loc.subtract(x, y, z);
 
@@ -472,12 +505,12 @@ public class EffectUtils {
 
     /**
      * @param location
-     * @param particle particle effect of outer circle
-     * @param innerParticle particle effect of inner circle
-     * @param amountOfCircles amount of circles to spawn
-     * @param circleRadius how big the circle has to be
+     * @param particle          particle effect of outer circle
+     * @param innerParticle     particle effect of inner circle
+     * @param amountOfCircles   amount of circles to spawn
+     * @param circleRadius      how big the circle has to be
      * @param innerCricleRadius how big the inner circle has to be
-     * @param distance how far away from the location the circles have to be
+     * @param distance          how far away from the location the circles have to be
      */
     public static void playCircularShieldAnimationWithInnerCircle(
             Location location,
@@ -532,41 +565,12 @@ public class EffectUtils {
 
     /**
      * @param particle which particle to display
-     * @param loc location of the particle
-     * @param count particle count
-     */
-    public static void displayParticle(
-            Particle particle,
-            Location loc,
-            int count
-    ) {
-        loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, null, true);
-    }
-
-    /**
-     *
-     * @param particle which particle to display
-     * @param loc location of the particle
-     * @param count particle count
-     * @param data optional extra data for the particle (e.g. DustOptions)
-     */
-    public static <T> void displayParticle(
-            Particle particle,
-            Location loc,
-            int count,
-            T data
-    ) {
-        loc.getWorld().spawnParticle(particle, loc, count, 0, 0, 0, 0, data, true);
-    }
-
-    /**
-     * @param particle which particle to display
-     * @param loc location of the particle
-     * @param count particle count
-     * @param offsetX particle X axis offset
-     * @param offsetY particle Y axis offset
-     * @param offsetZ particle Z axis offset
-     * @param speed speed of the particle animation
+     * @param loc      location of the particle
+     * @param count    particle count
+     * @param offsetX  particle X axis offset
+     * @param offsetY  particle Y axis offset
+     * @param offsetZ  particle Z axis offset
+     * @param speed    speed of the particle animation
      */
     public static void displayParticle(
             Particle particle,
@@ -582,13 +586,13 @@ public class EffectUtils {
 
     /**
      * @param particle which particle to display
-     * @param loc location of the particle
-     * @param count particle count
-     * @param offsetX particle X axis offset
-     * @param offsetY particle Y axis offset
-     * @param offsetZ particle Z axis offset
-     * @param speed speed of the particle animation
-     * @param data optional extra data for the particle (e.g. DustOptions)
+     * @param loc      location of the particle
+     * @param count    particle count
+     * @param offsetX  particle X axis offset
+     * @param offsetY  particle Y axis offset
+     * @param offsetZ  particle Z axis offset
+     * @param speed    speed of the particle animation
+     * @param data     optional extra data for the particle (e.g. DustOptions)
      */
     public static <T> void displayParticle(
             Particle particle,
@@ -605,7 +609,7 @@ public class EffectUtils {
 
     /**
      * @param loc at what location should the firework be played at,
-     * @param fe which effects should the firework have.
+     * @param fe  which effects should the firework have.
      */
     public static void playFirework(Location loc, FireworkEffect fe) {
         Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
@@ -617,8 +621,8 @@ public class EffectUtils {
     }
 
     /**
-     * @param loc at what location should the firework be played at,
-     * @param fe which effects should the firework have.
+     * @param loc        at what location should the firework be played at,
+     * @param fe         which effects should the firework have.
      * @param flightTime 1 = 0.5 seconds of flight time.
      */
     public static void playFirework(Location loc, FireworkEffect fe, int flightTime) {
@@ -629,4 +633,81 @@ public class EffectUtils {
         firework.setFireworkMeta(fireworkMeta);
         firework.detonate();
     }
+
+    public static void playSpiralAnimation(
+            @Nonnull WarlordsEntity wp,
+            Location playerLoc,
+            final int maxAnimationEffects,
+            final int maxAnimationTime,
+            BiConsumer<Matrix4d, Integer> playAdditionalEffects,
+            Particle... particles
+    ) {
+        playSpiralAnimation(false, wp, playerLoc, maxAnimationEffects, maxAnimationTime, playAdditionalEffects, new ArrayList<>(), particles);
+    }
+
+    public static void playSpiralAnimation(
+            @Nonnull WarlordsEntity wp,
+            Location playerLoc,
+            final int maxAnimationEffects,
+            final int maxAnimationTime,
+            BiConsumer<Matrix4d, Integer> playAdditionalEffects,
+            List<Pair<Particle, Object>> customParticles,
+            Particle... particles
+    ) {
+        playSpiralAnimation(false, wp, playerLoc, maxAnimationEffects, maxAnimationTime, playAdditionalEffects, customParticles, particles);
+    }
+
+    public static void playSpiralAnimation(
+            boolean vertical,
+            @Nonnull WarlordsEntity wp,
+            Location playerLoc,
+            final int maxAnimationEffects,
+            final int maxAnimationTime,
+            BiConsumer<Matrix4d, Integer> playAdditionalEffects,
+            List<Pair<Particle, Object>> customParticles,
+            Particle... particles
+    ) {
+        List<Pair<Particle, Object>> particlesList = new ArrayList<>(customParticles);
+        for (Particle particle : particles) {
+            particlesList.add(new Pair<>(particle, null));
+        }
+        new GameRunnable(wp.getGame()) {
+
+            final Matrix4d center = new Matrix4d(playerLoc);
+            int animationTimer = 0;
+
+            @Override
+            public void run() {
+                this.playEffect();
+                this.playEffect();
+            }
+
+            public void playEffect() {
+
+                if (animationTimer > maxAnimationTime) {
+                    this.cancel();
+                }
+
+                playAdditionalEffects.accept(center, animationTimer);
+                for (int i = 0; i < maxAnimationEffects; i++) {
+                    double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
+                    double width = animationTimer * 0.3;
+                    for (Pair<Particle, Object> customParticle : particlesList) {
+                        double x = vertical ? sin(angle) * width : animationTimer / 2D;
+                        double y = vertical ? animationTimer / 2D : sin(angle) * width;
+                        double z = cos(angle) * width;
+                        EffectUtils.displayParticle(
+                                customParticle.getA(),
+                                center.translateVector(wp.getWorld(), x, y, z),
+                                1,
+                                customParticle.getB()
+                        );
+                    }
+                }
+
+                animationTimer++;
+            }
+        }.runTaskTimer(0, 1);
+    }
+
 }
