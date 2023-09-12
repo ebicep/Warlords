@@ -32,6 +32,7 @@ import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
@@ -388,7 +389,8 @@ public class WarlordsEvents implements Listener {
                             warlordsNPC.getMinMeleeDamage(),
                             warlordsNPC.getMaxMeleeDamage(),
                             0,
-                            100
+                            100,
+                            EnumSet.of(InstanceFlags.NO_HIT_SOUND)
                     );
                 }
             }
@@ -401,7 +403,8 @@ public class WarlordsEvents implements Listener {
                         weapon.getMeleeDamageMin(),
                         weapon.getMeleeDamageMax(),
                         weapon.getCritChance(),
-                        weapon.getCritMultiplier()
+                        weapon.getCritMultiplier(),
+                        EnumSet.of(InstanceFlags.NO_HIT_SOUND)
                 );
             } else {
                 wpVictim.addDamageInstance(
@@ -410,7 +413,8 @@ public class WarlordsEvents implements Listener {
                         132,
                         179,
                         25,
-                        200
+                        200,
+                        EnumSet.of(InstanceFlags.NO_HIT_SOUND)
                 );
             }
         }

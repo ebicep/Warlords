@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBreathBranch;
@@ -30,6 +31,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
@@ -122,7 +124,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
                 playersHealed++;
                 debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
                 breathTarget.getSpeed().removeSlownessModifiers();
-                breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, EnumSet.of(InstanceFlags.CAN_OVERHEAL));
                 breathTargetCooldownManager.removeCooldownByObject(Overheal.OVERHEAL_MARKER);
                 breathTargetCooldownManager.addRegularCooldown(
                         "Overheal",
@@ -178,7 +180,8 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
                                 healing,
                                 healing,
                                 0,
-                                100
+                                100,
+                                EnumSet.of(InstanceFlags.CAN_OVERHEAL)
                         );
                     }
                 })

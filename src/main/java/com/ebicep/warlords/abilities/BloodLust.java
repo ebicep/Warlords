@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
@@ -132,7 +133,8 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                         healAmount,
                         healAmount,
                         0,
-                        100
+                        100,
+                        EnumSet.of(InstanceFlags.NO_HIT_SOUND)
                 );
             }
         });

@@ -5,6 +5,7 @@ public enum InstanceFlags {
     STRIKE_IN_CONS,
     AVENGER_WRATH_STRIKE,
     LAST_STAND_FROM_SHIELD, // for last stand healing from absorbing from players with shield
+    CAN_OVERHEAL,
     RECURSIVE,
 
     IGNORE_SELF_RES,
@@ -15,5 +16,6 @@ public enum InstanceFlags {
     PIERCE_DAMAGE, // ignores shield/vene, and victim dmg reductions
 
     NO_MESSAGE, // doesnt send dmg/heal message to any player
+    NO_HIT_SOUND,
 
 }

@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBoltBranch;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
@@ -109,7 +111,8 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                         (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                         (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                         cc,
-                        critMultiplier
+                        critMultiplier,
+                        EnumSet.of(InstanceFlags.CAN_OVERHEAL)
                 );
                 if (hit != shooter) {
                     hit.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
@@ -159,7 +162,8 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                         (float) (minDamageHeal * toReduceBy),
                         (float) (maxDamageHeal * toReduceBy),
                         critChance,
-                        critMultiplier
+                        critMultiplier,
+                        EnumSet.of(InstanceFlags.CAN_OVERHEAL)
                 );
                 if (nearEntity != shooter) {
                     nearEntity.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);

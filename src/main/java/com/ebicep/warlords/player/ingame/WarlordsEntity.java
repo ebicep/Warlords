@@ -752,7 +752,7 @@ public abstract class WarlordsEntity {
 
                 playHurtAnimation(this.entity, attacker);
 
-                if (!isMeleeHit) {
+                if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
                     playHitSound(attacker);
                 }
                 if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
@@ -907,7 +907,7 @@ public abstract class WarlordsEntity {
                     ));
                     die(attacker);
                 } else {
-                    if (!isMeleeHit && this != attacker && damageValue != 0) {
+                    if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && this != attacker && damageValue != 0) {
                         playHitSound(attacker);
                     }
                 }
@@ -991,7 +991,8 @@ public abstract class WarlordsEntity {
         float max = event.getMax();
         float critChance = event.getCritChance();
         float critMultiplier = event.getCritMultiplier();
-        boolean isLastStandFromShield = event.getFlags().contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
+        EnumSet<InstanceFlags> flags = event.getFlags();
+        boolean isLastStandFromShield = flags.contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
         boolean isMeleeHit = ability.isEmpty();
 
         WarlordsDamageHealingFinalEvent finalEvent;
@@ -1054,14 +1055,14 @@ public abstract class WarlordsEntity {
             health += healValue;
             addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
 
-            if (!isMeleeHit && !ability.equals("Healing Rain") && !ability.equals("Blood Lust")) {
+            if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
                 playHitSound(attacker);
             }
         } else {
             // Teammate Healing
             if (isTeammate(attacker)) {
                 float maxHealth = this.maxHealth;
-                if (ability.equals("Water Bolt") || ability.equals("Water Breath") || ability.equals("Healing Rain")) {
+                if (flags.contains(InstanceFlags.CAN_OVERHEAL)) {
                     maxHealth *= 1.1;
                 }
 
@@ -1079,7 +1080,7 @@ public abstract class WarlordsEntity {
                 health += healValue;
                 attacker.addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
 
-                if (!isMeleeHit && !ability.equals("Healing Rain")) {
+                if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
                     playHitSound(attacker);
                 }
             }
