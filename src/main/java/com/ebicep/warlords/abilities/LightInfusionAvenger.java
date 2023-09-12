@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.LightInfusionBranchAvenger;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -15,10 +16,10 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LightInfusionAvenger extends AbstractLightInfusion {
-
-    private int strikesUsed = 0;
 
     public LightInfusionAvenger(float cooldown) {
         super(cooldown);
@@ -26,7 +27,9 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        strikesUsed = 0;
+        // pveMasterUpgrade
+        AtomicInteger strikesUsed = new AtomicInteger();
+
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
@@ -42,7 +45,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (pveMasterUpgrade) {
-                        wp.addEnergy(wp, name, 30 * strikesUsed);
+                        wp.addEnergy(wp, name, 30 * strikesUsed.get());
                         wp.playSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 0.9f);
                     }
                 },
@@ -70,11 +73,36 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (pveMasterUpgrade) {
                     if (event.getAbility().equals("Avenger's Strike")) {
-                        strikesUsed++;
+                        strikesUsed.getAndIncrement();
                     }
                 }
             }
         });
+
+        if (pveMasterUpgrade2) {
+            List<WarlordsEntity> teammates = PlayerFilter.entitiesAround(wp, 5, 5, 5)
+                                                         .aliveTeammatesOf(wp)
+                                                         .toList();
+            int duration = (5 + teammates.size()) * 20;
+            for (WarlordsEntity teammate : teammates) {
+                teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Stellar Light",
+                        "STELLAR",
+                        LightInfusionAvenger.class,
+                        tempLightInfusion,
+                        wp,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                        },
+                        duration
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 1.1f;
+                    }
+                });
+            }
+        }
 
         for (int i = 0; i < 10; i++) {
             wp.getWorld().spawnParticle(

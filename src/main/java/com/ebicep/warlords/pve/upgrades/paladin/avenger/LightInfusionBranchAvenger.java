@@ -90,5 +90,16 @@ public class LightInfusionBranchAvenger extends AbstractUpgradeBranch<LightInfus
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Stellar Light",
+                "Light Infusion - Master Upgrade",
+                """
+                        Casting Light Infusion near allies in a 5 block radius, will grant them a 10% damage bonus for 5s and for every ally you grant this buff, increase the duration by 1s.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }
