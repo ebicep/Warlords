@@ -1,17 +1,15 @@
-package com.ebicep.warlords.abilities;
+package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.paladin.ConsecrateBranch;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -28,23 +26,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Consecrate extends AbstractAbility implements RedAbilityIcon, Duration {
+public abstract class AbstractConsecrate extends AbstractAbility implements RedAbilityIcon, Duration {
 
     public int strikesBoosted = 0;
     public int playersHit = 0;
 
-    private int strikeDamageBoost;
-    private float radius;
-    private Location location;
-    private int tickDuration = 100;
+    protected int strikeDamageBoost;
+    protected float radius;
+    protected Location location;
+    protected int tickDuration = 100;
 
-    public Consecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float radius) {
+    public AbstractConsecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float radius) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
         this.strikeDamageBoost = strikeDamageBoost;
         this.radius = radius;
     }
 
-    public Consecrate(
+    public AbstractConsecrate(
             float minDamageHeal,
             float maxDamageHeal,
             float energyCost,
@@ -100,11 +98,11 @@ public class Consecrate extends AbstractAbility implements RedAbilityIcon, Durat
         );
         BukkitTask effectTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
 
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 null,
-                Consecrate.class,
-                new Consecrate(minDamageHeal, maxDamageHeal, energyCost.getCurrentValue(), critChance, critMultiplier, strikeDamageBoost, radius, location),
+                AbstractConsecrate.class,
+                createConsecrate(),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -131,15 +129,26 @@ public class Consecrate extends AbstractAbility implements RedAbilityIcon, Durat
                                     });
                     }
                 })
-        );
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (!event.getAbility().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
+                    return currentDamageValue;
+                }
+                event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
+                addStrikesBoosted();
+                return currentDamageValue * convertToMultiplicationDecimal(strikeDamageBoost);
+            }
+        });
 
         return true;
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ConsecrateBranch(abilityTree, this);
-    }
+    @Nonnull
+    public abstract String getStrikeName();
+
+    @Nonnull
+    public abstract AbstractConsecrate createConsecrate();
 
     public void addStrikesBoosted() {
         strikesBoosted++;

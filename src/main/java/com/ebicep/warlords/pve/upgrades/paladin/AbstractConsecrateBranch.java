@@ -1,18 +1,18 @@
 package com.ebicep.warlords.pve.upgrades.paladin;
 
-import com.ebicep.warlords.abilities.Consecrate;
+import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class ConsecrateBranch extends AbstractUpgradeBranch<Consecrate> {
+public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> extends AbstractUpgradeBranch<T> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
     float radius = ability.getRadius();
     float cooldown = ability.getCooldown();
 
-    public ConsecrateBranch(AbilityTree abilityTree, Consecrate ability) {
+    public AbstractConsecrateBranch(AbilityTree abilityTree, T ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.abilities.Consecrate;
 import com.ebicep.warlords.abilities.HammerOfLight;
 import com.ebicep.warlords.abilities.ProtectorsStrike;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
@@ -19,18 +18,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AbstractStrike extends AbstractAbility implements WeaponAbilityIcon {
-
-    public static Optional<Consecrate> getStandingOnConsecrate(WarlordsEntity owner, WarlordsEntity standing) {
-        return new CooldownFilter<>(owner, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Consecrate.class)
-                .filter(consecrate -> consecrate.getLocation().distanceSquared(standing.getLocation()) < consecrate.getRadius() * consecrate.getRadius())
-                .max(Comparator.comparingInt(Consecrate::getStrikeDamageBoost));
-    }
 
     private double hitbox = 4.8;
 

@@ -7,7 +7,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -24,10 +23,8 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class AvengersStrike extends AbstractStrike {
 
@@ -104,22 +101,14 @@ public class AvengersStrike extends AbstractStrike {
         if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
             healthDamage = DamageCheck.MAXIMUM_DAMAGE;
         }
-        AtomicReference<Float> minDamage = new AtomicReference<>(minDamageHeal);
-        AtomicReference<Float> maxDamage = new AtomicReference<>(maxDamageHeal);
-        Optional<Consecrate> consecrate = getStandingOnConsecrate(wp, nearPlayer);
-        consecrate.ifPresent(cons -> {
-            wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-            minDamage.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
-            maxDamage.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
-        });
+
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
-                (minDamage.get() * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
-                (maxDamage.get() * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
+                (minDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
+                (maxDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
                 critChance,
-                critMultiplier,
-                consecrate.isPresent() ? EnumSet.of(InstanceFlags.STRIKE_IN_CONS) : EnumSet.noneOf(InstanceFlags.class)
+                critMultiplier
         );
 
         if (pveMasterUpgrade) {
@@ -130,22 +119,13 @@ public class AvengersStrike extends AbstractStrike {
                     .excluding(nearPlayer)
                     .limit(2)
             ) {
-                AtomicReference<Float> minDamageSlash = new AtomicReference<>(minDamageHeal);
-                AtomicReference<Float> maxDamageSlash = new AtomicReference<>(maxDamageHeal);
-                Optional<Consecrate> consecrateSlash = getStandingOnConsecrate(wp, we);
-                consecrateSlash.ifPresent(cons -> {
-                    wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-                    minDamageSlash.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
-                    maxDamageSlash.getAndUpdate(value -> value * (1 + cons.getStrikeDamageBoost() / 100f));
-                });
                 we.addDamageInstance(
                         wp,
                         "Avenger's Slash",
-                        ((minDamageSlash.get() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
-                        ((maxDamageSlash.get() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
+                        ((minDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
+                        ((maxDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
                         critChance,
-                        critMultiplier,
-                        consecrateSlash.isPresent() ? EnumSet.of(InstanceFlags.STRIKE_IN_CONS) : EnumSet.noneOf(InstanceFlags.class)
+                        critMultiplier
                 );
                 Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
             }

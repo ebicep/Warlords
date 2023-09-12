@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -457,9 +458,9 @@ public enum SkillBoosts {
             Component.text("Increase the damage of Consecrate by ", NamedTextColor.GREEN)
                      .append(Component.text("35%", NamedTextColor.RED))
                      .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
-            Consecrate.class,
+            AbstractConsecrate.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Consecrate) {
+                if (abstractAbility instanceof AbstractConsecrate) {
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
                     abstractAbility.multiplyMinMax(1.35f);
                 }
@@ -527,9 +528,9 @@ public enum SkillBoosts {
             Component.text("Increase the damage of Consecrate by ", NamedTextColor.GREEN)
                      .append(Component.text("35%", NamedTextColor.RED))
                      .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
-            Consecrate.class,
+            AbstractConsecrate.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Consecrate) {
+                if (abstractAbility instanceof AbstractConsecrate) {
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
                     abstractAbility.multiplyMinMax(1.35f);
                 }
@@ -608,9 +609,9 @@ public enum SkillBoosts {
                      .append(Component.text("blocks and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("30%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            Consecrate.class,
+            AbstractConsecrate.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Consecrate consecrate) {
+                if (abstractAbility instanceof AbstractConsecrate consecrate) {
                     consecrate.setRadius(consecrate.getRadius() + 2);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 }

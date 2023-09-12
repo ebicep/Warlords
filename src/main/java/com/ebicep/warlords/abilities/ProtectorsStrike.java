@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.ebicep.warlords.util.bukkit.LocationUtils.lerp;
 
@@ -78,18 +77,11 @@ public class ProtectorsStrike extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        AtomicReference<Float> minDamage = new AtomicReference<>(minDamageHeal);
-        AtomicReference<Float> maxDamage = new AtomicReference<>(maxDamageHeal);
-        getStandingOnConsecrate(wp, nearPlayer).ifPresent(consecrate -> {
-            wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-            minDamage.getAndUpdate(value -> value * (1 + consecrate.getStrikeDamageBoost() / 100f));
-            maxDamage.getAndUpdate(value -> value * (1 + consecrate.getStrikeDamageBoost() / 100f));
-        });
         nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamage.get() * (wp.isInPve() ? 1.25f : 1),
-                maxDamage.get() * (wp.isInPve() ? 1.25f : 1),
+                minDamageHeal,
+                maxDamageHeal,
                 critChance,
                 critMultiplier
         ).ifPresent(warlordsDamageHealingFinalEvent -> {

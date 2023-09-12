@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -24,7 +23,10 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 
 public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -95,44 +97,35 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility().equals("Avenger's Strike") && !event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
+                if (!event.getAbility().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
+                    return;
+                }
+                tempAvengersWrath.addPlayersStruckDuringWrath();
+                for (WarlordsEntity wrathTarget : PlayerFilter
+                        .entitiesAround(event.getWarlordsEntity(), hitRadius, hitRadius, hitRadius)
+                        .aliveEnemiesOf(wp)
+                        .closestFirst(event.getWarlordsEntity())
+                        .excluding(event.getWarlordsEntity())
+                        .limit(maxTargets)
+                ) {
+                    addExtraPlayersStruck();
                     tempAvengersWrath.addPlayersStruckDuringWrath();
-                    for (WarlordsEntity wrathTarget : PlayerFilter
-                            .entitiesAround(event.getWarlordsEntity(), hitRadius, hitRadius, hitRadius)
-                            .aliveEnemiesOf(wp)
-                            .closestFirst(event.getWarlordsEntity())
-                            .excluding(event.getWarlordsEntity())
-                            .limit(maxTargets)
-                    ) {
-                        wp.doOnStaticAbility(AvengersWrath.class, AvengersWrath::addExtraPlayersStruck);
-                        tempAvengersWrath.addPlayersStruckDuringWrath();
 
-                        Optional<Consecrate> standingOnConsecrate = AbstractStrike.getStandingOnConsecrate(wp, wrathTarget);
-                        if (standingOnConsecrate.isPresent() && !event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
-                            wp.doOnStaticAbility(Consecrate.class, Consecrate::addStrikesBoosted);
-                            wrathTarget.addDamageInstance(
-                                    wp,
-                                    "Avenger's Strike",
-                                    event.getMin() * (1 + standingOnConsecrate.get().getStrikeDamageBoost() / 100f),
-                                    event.getMax() * (1 + standingOnConsecrate.get().getStrikeDamageBoost() / 100f),
-                                    event.getCritChance(),
-                                    event.getCritMultiplier(),
-                                    EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE)
-                            );
-                        } else {
-                            wrathTarget.addDamageInstance(
-                                    wp,
-                                    "Avenger's Strike",
-                                    event.getMin(),
-                                    event.getMax(),
-                                    event.getCritChance(),
-                                    event.getCritMultiplier(),
-                                    EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE)
-                            );
-                        }
-                        Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
-                        wrathTarget.subtractEnergy(10, true);
+                    EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE);
+                    if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
+                        flags.add(InstanceFlags.STRIKE_IN_CONS);
                     }
+                    wrathTarget.addDamageInstance(
+                            wp,
+                            "Avenger's Strike",
+                            event.getMin(),
+                            event.getMax(),
+                            event.getCritChance(),
+                            event.getCritMultiplier(),
+                            flags
+                    );
+                    Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
+                    wrathTarget.subtractEnergy(10, true);
                 }
             }
 
