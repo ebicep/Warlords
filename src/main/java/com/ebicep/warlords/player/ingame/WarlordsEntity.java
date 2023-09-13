@@ -2421,12 +2421,6 @@ public abstract class WarlordsEntity {
 
         updateHealth();
         getSpeed().updateSpeed();
-        for (AbstractAbility ability : getSpec().getAbilities()) {
-            if (ability.getCooldown() > 0) {
-                ability.subtractCurrentCooldown(.05f);
-            }
-            ability.checkSecondaryAbilities();
-        }
         updateItems();
         getCooldownManager().reduceCooldowns();
 

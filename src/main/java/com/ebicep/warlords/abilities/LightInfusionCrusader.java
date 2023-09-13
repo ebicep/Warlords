@@ -94,6 +94,13 @@ public class LightInfusionCrusader extends AbstractLightInfusion {
                         })
                 );
             }
+        } else if (pveMasterUpgrade2) {
+            for (WarlordsEntity infusionTarget : PlayerFilter
+                    .entitiesAround(wp, 6, 6, 6)
+                    .aliveTeammatesOfExcludingSelf(wp)
+            ) {
+                infusionTarget.getSpec().decreaseAllCooldownTimersBy(2);
+            }
         }
 
         for (int i = 0; i < 10; i++) {

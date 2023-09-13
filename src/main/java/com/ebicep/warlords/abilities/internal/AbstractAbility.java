@@ -50,14 +50,6 @@ public abstract class AbstractAbility implements AbilityIcon {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
     }
 
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, boolean startNoCooldown) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startNoCooldown ? 0 : cooldown);
-    }
-
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float startCooldown) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startCooldown);
-    }
-
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 0);
     }
@@ -81,6 +73,14 @@ public abstract class AbstractAbility implements AbilityIcon {
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         boosted = false;
+    }
+
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, boolean startNoCooldown) {
+        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startNoCooldown ? 0 : cooldown);
+    }
+
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float startCooldown) {
+        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startCooldown);
     }
 
     public AbstractAbility(String name, float cooldown, float energyCost) {
@@ -166,16 +166,6 @@ public abstract class AbstractAbility implements AbilityIcon {
             this.currentCooldown = 0;
         } else {
             this.currentCooldown = currentCooldown;
-        }
-    }
-
-    public void subtractCurrentCooldown(float cooldown) {
-        if (currentCooldown != 0) {
-            if (currentCooldown - cooldown < 0) {
-                currentCooldown = 0;
-            } else {
-                currentCooldown -= cooldown;
-            }
         }
     }
 
@@ -359,6 +349,27 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public void runEveryTick() {
+        if (getCooldown() > 0) {
+            subtractCurrentCooldown0(.05f);
+        }
+        checkSecondaryAbilities();
+    }
+
+    public void subtractCurrentCooldown0(float cooldown) {
+        if (currentCooldown != 0) {
+            if (currentCooldown - cooldown < 0) {
+                currentCooldown = 0;
+            } else {
+                currentCooldown -= cooldown;
+            }
+        }
+    }
+
+    public void subtractCurrentCooldown(float cooldown) {
+        if (this instanceof CanReduceCooldowns canReduceCooldowns && canReduceCooldowns.canReduceCooldowns()) {
+            return;
+        }
+        subtractCurrentCooldown0(cooldown);
     }
 
     public boolean isInPve() {

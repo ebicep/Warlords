@@ -93,5 +93,17 @@ public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfu
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Holy Imbusion",
+                "Light Infusion - Master Upgrade",
+                """
+                        +2s Duration. Casting Light Infusion near allies will reduce their cooldowns by 2s.
+                        """,
+                50000,
+                () -> {
+                    ability.setTickDuration(ability.getTickDuration() + 40);
+
+                }
+        );
     }
 }
