@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -70,6 +71,11 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
 
+        List<WarlordsEntity> teammatesNear = PlayerFilter
+                .entitiesAround(wp, radius, radius, radius)
+                .aliveTeammatesOfExcludingSelf(wp)
+                .toList();
+
         InspiringPresence tempPresence = new InspiringPresence();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -99,16 +105,21 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                 tempPresence.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
                 return energyGainPerTick + energyPerSecond / 20f;
             }
+
+            @Override
+            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (pveMasterUpgrade2) {
+                    wp.addEnergy(wp, "Resilient Presence", 15);
+                    teammatesNear.forEach(teammate -> teammate.addEnergy(teammate, "Resilient Presence", 15));
+                }
+            }
         });
 
         if (pveMasterUpgrade) {
             resetCooldowns(wp);
         }
 
-        for (WarlordsEntity presenceTarget : PlayerFilter
-                .entitiesAround(wp, radius, radius, radius)
-                .aliveTeammatesOfExcludingSelf(wp)
-        ) {
+        for (WarlordsEntity presenceTarget : teammatesNear) {
             playersHit++;
             tempPresence.getPlayersAffected().add(presenceTarget);
             if (pveMasterUpgrade) {
@@ -165,13 +176,13 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         we.updateItems();
     }
 
+    public List<WarlordsEntity> getPlayersAffected() {
+        return playersAffected;
+    }
+
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new InspiringPresenceBranch(abilityTree, this);
-    }
-
-    public List<WarlordsEntity> getPlayersAffected() {
-        return playersAffected;
     }
 
     @Override
