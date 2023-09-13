@@ -102,7 +102,20 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
                 50000,
                 () -> {
                     ability.setEnergyRadius(ability.getEnergyRadius() * 2);
-
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Crusading Strike",
+                "Crusader's Strike - Master Upgrade",
+                """
+                        -10 Energy cost
+                                                
+                        Strike crit chance is increased by 5%. Crit hits grant an additional 5 energy from strike while also providing a 10% speed increase to nearby allies for 2s.
+                        """,
+                50000,
+                () -> {
+                    ability.setEnergyCost(ability.getEnergyCost() - 10);
+                    ability.setCritChance(ability.getCritChance() + 5);
                 }
         );
     }

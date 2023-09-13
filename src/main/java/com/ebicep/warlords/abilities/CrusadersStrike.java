@@ -65,6 +65,11 @@ public class CrusadersStrike extends AbstractStrike {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new CrusadersStrikeBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
@@ -81,6 +86,7 @@ public class CrusadersStrike extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+        boolean crit = false;
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
@@ -89,9 +95,19 @@ public class CrusadersStrike extends AbstractStrike {
                 critChance,
                 critMultiplier
         );
+        if (finalEvent.isPresent()) {
+            crit = finalEvent.get().isCrit();
+        }
 
         if (pveMasterUpgrade) {
             tripleHit(wp, nearPlayer);
+        } else if (pveMasterUpgrade2) {
+            PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .limit(2)
+                        .forEach(teammate -> {
+                            teammate.addSpeedModifier(wp, "Crusading Strike", 10, 40);
+                        });
         }
 
         int previousEnergyGiven = energyGivenToPlayers;
@@ -108,7 +124,7 @@ public class CrusadersStrike extends AbstractStrike {
                 energyTarget.addSpeedModifier(wp, "CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
             }
 
-            energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven);
+            energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));
         }
 
         new CooldownFilter<>(wp, RegularCooldown.class)
@@ -117,11 +133,6 @@ public class CrusadersStrike extends AbstractStrike {
                 .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(energyGivenToPlayers - previousEnergyGiven));
 
         return true;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new CrusadersStrikeBranch(abilityTree, this);
     }
 
     public int getEnergyGiven() {
