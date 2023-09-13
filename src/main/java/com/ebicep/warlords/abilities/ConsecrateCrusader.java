@@ -1,12 +1,26 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.effects.circle.DoubleLineEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.ConsecrateBranchCrusader;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConsecrateCrusader extends AbstractConsecrate {
 
@@ -28,8 +42,80 @@ public class ConsecrateCrusader extends AbstractConsecrate {
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ConsecrateBranchCrusader(abilityTree, this);
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        if (!pveMasterUpgrade2) {
+            return super.onActivate(wp, player);
+        }
+        wp.subtractEnergy(energyCost, false);
+
+        Location location = player.getLocation().clone();
+
+        Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
+        CircleEffect circleEffect = new CircleEffect(
+                wp.getGame(),
+                wp.getTeam(),
+                location,
+                radius,
+                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
+                new DoubleLineEffect(Particle.SPELL)
+        );
+
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                null,
+                AbstractConsecrate.class,
+                createConsecrate(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                },
+                false,
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    Location updatedLocation = wp.getLocation();
+                    circleEffect.setCenter(updatedLocation);
+                    circleEffect.playEffects();
+                    if (ticksElapsed % 30 == 0) {
+                        AtomicInteger energyGiven = new AtomicInteger();
+                        PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(enemy -> {
+                                        playersHit++;
+                                        enemy.addDamageInstance(
+                                                wp,
+                                                name,
+                                                minDamageHeal,
+                                                maxDamageHeal,
+                                                critChance,
+                                                critMultiplier
+                                        );
+                                        if (energyGiven.get() > 105) {
+                                            energyGiven.addAndGet(15);
+                                            wp.addEnergy(wp, "Sanctifying Ring", 15);
+                                        }
+                                    });
+                    }
+                })
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
+                    return currentDamageValue;
+                }
+                event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
+                addStrikesBoosted();
+                return currentDamageValue * convertToMultiplicationDecimal(strikeDamageBoost);
+            }
+        });
+        return true;
+    }
+
+    @Nonnull
+    @Override
+    public AbstractConsecrate createConsecrate() {
+        return new ConsecrateCrusader(minDamageHeal, maxDamageHeal, energyCost.getCurrentValue(), critChance, critMultiplier, strikeDamageBoost, radius, location);
     }
 
     @Nonnull
@@ -38,9 +124,8 @@ public class ConsecrateCrusader extends AbstractConsecrate {
         return "Crusader's Strike";
     }
 
-    @Nonnull
     @Override
-    public AbstractConsecrate createConsecrate() {
-        return new ConsecrateCrusader(minDamageHeal, maxDamageHeal, energyCost.getCurrentValue(), critChance, critMultiplier, strikeDamageBoost, radius, location);
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ConsecrateBranchCrusader(abilityTree, this);
     }
 }

@@ -102,7 +102,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
                 "Healing Rain - Master Upgrade",
                 """
                         Allies within the radius of Healing Rain are instead, granted a personal rain cloud that heals the same as the original, additionally increases EPS by 5 for the duration.
-                        The single clouds can follow allies up to 40 blocks away from the caster.
+                        The single clouds can follow allies up to 40 blocks away from you.
                         """,
                 50000,
                 () -> {

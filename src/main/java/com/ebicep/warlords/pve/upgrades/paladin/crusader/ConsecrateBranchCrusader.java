@@ -14,8 +14,8 @@ public class ConsecrateBranchCrusader extends AbstractConsecrateBranch<Consecrat
                 "Sanctifying Ring",
                 "Consecrate - Master Upgrade",
                 """
-                        Creates a ring around the Crusader that deals 158.4 - 213.6 damage to nearby enemies every 1.5s in a 4 block radius, the ring travels with the Avenger. 
-                        Enemies hit by Sanctifying Ring will grant the Crusader 15 energy.
+                        Transform consecrate into a mobile ring that travels with you, damaging nearby enemies every 1.5s in a 4 block radius.
+                        Enemies hit by Sanctifying Ring will grant the you 15 energy, max 100 per proc.
                         """,
                 50000,
                 () -> {

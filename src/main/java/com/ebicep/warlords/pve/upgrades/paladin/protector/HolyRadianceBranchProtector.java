@@ -99,7 +99,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
                 "Unrivalled Radiance",
                 "Holy Radiance - Master Upgrade",
                 """
-                        Every 1 second for 3 seconds, Holy Radiance will emit additional mini radiances giving 150-350 health to all allies within 10 blocks of the caster.
+                        Every 1 second for 3 seconds, Holy Radiance will emit additional mini radiances giving 150-350 health to all allies within 10 blocks of you.
                         """,
                 50000,
                 () -> {
