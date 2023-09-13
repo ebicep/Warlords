@@ -23,7 +23,7 @@ public enum Aspect {
     ARMOURED("Armoured", NamedTextColor.DARK_GRAY) {
         @Override
         public void apply(WarlordsEntity warlordsEntity) {
-            warlordsEntity.getSpec().setDamageResistance(warlordsEntity.getSpec().getDamageResistance() + 20);
+            warlordsEntity.setDamageResistance(warlordsEntity.getSpec().getDamageResistance() + 20);
         }
     },
     CHILLING("Chilling", NamedTextColor.AQUA) {
