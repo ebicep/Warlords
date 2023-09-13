@@ -383,10 +383,10 @@ public abstract class WarlordsEntity {
                 critChance = abstractCooldown.addCritChanceFromAttacker(event, critChance);
                 critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
                 if (previousCC != critChance) {
-                    appendDebugMessage(debugMessage, 2, "Crit Chance", critChance, abstractCooldown);
+                    appendDebugMessage(debugMessage, 2, "Crit Chance", previousCC, critChance, abstractCooldown);
                 }
                 if (previousCM != critMultiplier) {
-                    appendDebugMessage(debugMessage, 2, "Crit Multiplier", critMultiplier, abstractCooldown);
+                    appendDebugMessage(debugMessage, 2, "Crit Multiplier", previousCM, critMultiplier, abstractCooldown);
                 }
                 previousCC = critChance;
                 previousCM = critMultiplier;
@@ -395,10 +395,10 @@ public abstract class WarlordsEntity {
                 critChance = abstractCooldown.setCritChanceFromAttacker(event, critChance);
                 critMultiplier = abstractCooldown.setCritMultiplierFromAttacker(event, critMultiplier);
                 if (previousCC != critChance) {
-                    appendDebugMessage(debugMessage, 2, "Crit Chance", critChance, abstractCooldown);
+                    appendDebugMessage(debugMessage, 2, "Crit Chance", critChance, critChance, abstractCooldown);
                 }
                 if (previousCM != critMultiplier) {
-                    appendDebugMessage(debugMessage, 2, "Crit Multiplier", critMultiplier, abstractCooldown);
+                    appendDebugMessage(debugMessage, 2, "Crit Multiplier", previousCM, critMultiplier, abstractCooldown);
                 }
                 previousCC = critChance;
                 previousCM = critMultiplier;
@@ -497,7 +497,7 @@ public abstract class WarlordsEntity {
                 }
                 damageValue = newDamageValue;
                 if (previousDamageValue != damageValue) {
-                    appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                    appendDebugMessage(debugMessage, 2, "Damage Value", previousDamageValue, damageValue, abstractCooldown);
                 }
                 previousDamageValue = damageValue;
             }
@@ -506,7 +506,7 @@ public abstract class WarlordsEntity {
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                 damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
                 if (previousDamageValue != damageValue) {
-                    appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                    appendDebugMessage(debugMessage, 2, "Damage Value", previousDamageValue, damageValue, abstractCooldown);
                 }
                 previousDamageValue = damageValue;
             }
@@ -611,7 +611,7 @@ public abstract class WarlordsEntity {
                     }
                     damageValue = newDamageValue;
                     if (previousDamageValue != damageValue) {
-                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                        appendDebugMessage(debugMessage, 2, "Damage Value", previousDamageValue, damageValue, abstractCooldown);
                     }
                     previousDamageValue = damageValue;
                 }
@@ -620,7 +620,7 @@ public abstract class WarlordsEntity {
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
                     damageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
                     if (previousDamageValue != damageValue) {
-                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                        appendDebugMessage(debugMessage, 2, "Damage Value", previousDamageValue, damageValue, abstractCooldown);
                     }
                     previousDamageValue = damageValue;
                 }
@@ -789,7 +789,7 @@ public abstract class WarlordsEntity {
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                     damageValue = abstractCooldown.modifyDamageAfterAllFromSelf(event, damageValue, isCrit);
                     if (previousDamageValue != damageValue) {
-                        appendDebugMessage(debugMessage, 2, "Damage Value", damageValue, abstractCooldown);
+                        appendDebugMessage(debugMessage, 2, "Damage Value", previousDamageValue, damageValue, abstractCooldown);
                     }
                     previousDamageValue = damageValue;
                 }
@@ -1026,7 +1026,7 @@ public abstract class WarlordsEntity {
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
             healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
             if (previousHealValue != healValue) {
-                appendDebugMessage(debugMessage, 2, "Heal Value", healValue, abstractCooldown);
+                appendDebugMessage(debugMessage, 2, "Heal Value", previousHealValue, healValue, abstractCooldown);
             }
             previousHealValue = healValue;
         }
@@ -1035,7 +1035,7 @@ public abstract class WarlordsEntity {
         for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
             healValue = abstractCooldown.doBeforeHealFromAttacker(event, healValue);
             if (previousHealValue != healValue) {
-                appendDebugMessage(debugMessage, 2, "Heal Value", healValue, abstractCooldown);
+                appendDebugMessage(debugMessage, 2, "Heal Value", previousHealValue, healValue, abstractCooldown);
             }
             previousHealValue = healValue;
         }
@@ -1418,17 +1418,20 @@ public abstract class WarlordsEntity {
         appendDebugMessage(debugMessage, title, NumberFormat.addCommaAndRoundHundredths(value), separator);
     }
 
-    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, String value, AbstractCooldown<?> cooldown) {
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, String value, String diffValue, AbstractCooldown<?> cooldown) {
         appendDebugMessage(debugMessage, level, NamedTextColor.GREEN, title);
         debugMessage.append(Component.text(": "))
                     .append(Component.text(value, NamedTextColor.GOLD))
+                    .append(Component.text(" (", NamedTextColor.DARK_GRAY))
+                    .append(Component.text(diffValue + "x", NamedTextColor.RED))
+                    .append(Component.text(")", NamedTextColor.DARK_GRAY))
                     .append(Component.text(" (", NamedTextColor.DARK_GRAY))
                     .append(Component.text(cooldown.getName(), NamedTextColor.GRAY))
                     .append(Component.text(")", NamedTextColor.DARK_GRAY));
     }
 
-    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, float value, AbstractCooldown<?> cooldown) {
-        appendDebugMessage(debugMessage, level, title, NumberFormat.addCommaAndRoundHundredths(value), cooldown);
+    private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, float previousValue, float value, AbstractCooldown<?> cooldown) {
+        appendDebugMessage(debugMessage, level, title, NumberFormat.addCommaAndRoundHundredths(value), NumberFormat.formatOptionalHundredths(value / previousValue), cooldown);
     }
 
     private void appendDebugMessage(TextComponent.Builder debugMessage, int level, String title, String value) {
@@ -1869,6 +1872,10 @@ public abstract class WarlordsEntity {
         return spec.getMaxEnergy();
     }
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
     @Nonnull
     public LivingEntity getEntity() {
         return this.entity;
@@ -1876,14 +1883,6 @@ public abstract class WarlordsEntity {
 
     public void setEntity(LivingEntity entity) {
         this.entity = entity;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
     }
 
     public void sendMessage(Component component) {
@@ -1903,6 +1902,10 @@ public abstract class WarlordsEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public float subtractEnergy(FloatModifiable amount, boolean fromAttacker) {
@@ -2120,6 +2123,10 @@ public abstract class WarlordsEntity {
         return this.speed.addSpeedModifier(modifier);
     }
 
+    public CooldownManager getCooldownManager() {
+        return cooldownManager;
+    }
+
     public Location getDeathLocation() {
         return deathLocation;
     }
@@ -2287,10 +2294,6 @@ public abstract class WarlordsEntity {
         livingEntity.removePotionEffect(potionEffect.getType());
         livingEntity.addPotionEffect(potionEffect);
         return true;
-    }
-
-    public CooldownManager getCooldownManager() {
-        return cooldownManager;
     }
 
     public World getWorld() {
@@ -2535,9 +2538,9 @@ public abstract class WarlordsEntity {
             }
 
             EffectUtils.playFirework(getLocation(), FireworkEffect.builder()
-                                                                           .withColor(Color.LIME)
-                                                                           .with(FireworkEffect.Type.BALL)
-                                                                           .build());
+                                                                  .withColor(Color.LIME)
+                                                                  .with(FireworkEffect.Type.BALL)
+                                                                  .build());
 
             heal();
 

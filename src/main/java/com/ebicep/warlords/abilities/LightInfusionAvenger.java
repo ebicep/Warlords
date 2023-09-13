@@ -81,7 +81,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
 
         if (pveMasterUpgrade2) {
             List<WarlordsEntity> teammates = PlayerFilter.entitiesAround(wp, 5, 5, 5)
-                                                         .aliveTeammatesOf(wp)
+                                                         .aliveTeammatesOfExcludingSelf(wp)
                                                          .toList();
             int duration = (5 + teammates.size()) * 20;
             for (WarlordsEntity teammate : teammates) {

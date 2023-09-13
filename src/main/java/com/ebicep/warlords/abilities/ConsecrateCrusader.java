@@ -91,7 +91,7 @@ public class ConsecrateCrusader extends AbstractConsecrate {
                                                 critChance,
                                                 critMultiplier
                                         );
-                                        if (energyGiven.get() > 105) {
+                                        if (energyGiven.get() < 105) {
                                             energyGiven.addAndGet(15);
                                             wp.addEnergy(wp, "Sanctifying Ring", 15);
                                         }

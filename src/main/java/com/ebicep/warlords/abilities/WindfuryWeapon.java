@@ -139,7 +139,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                                 if (pveMasterUpgrade) {
                                     victim.setDamageResistance(victim.getSpec().getDamageResistance() - 2);
                                     if (victim instanceof WarlordsNPC npc) {
-                                        npc.setDamageResistancePrefix((int) (npc.getDamageResistancePrefix() - 2));
+                                        npc.setDamageResistance(npc.getSpec().getDamageResistance() - 2);
                                     }
                                 }
 

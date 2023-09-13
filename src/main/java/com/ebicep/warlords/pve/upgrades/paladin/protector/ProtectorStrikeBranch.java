@@ -101,5 +101,17 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
                     ability.setStrikeRadius(ability.getStrikeRadius() * 2);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Protecting Strike",
+                "Protector's Strike - Master Upgrade",
+                """
+                        Increase the damage dealt by strike by 10% and strike crit chance by 15%. Crit strikes will heal for 80% of damage dealt.
+                        """,
+                50000,
+                () -> {
+                    ability.multiplyMinMax(1.1f);
+                    ability.setCritChance(ability.getCritChance() + 15);
+                }
+        );
     }
 }

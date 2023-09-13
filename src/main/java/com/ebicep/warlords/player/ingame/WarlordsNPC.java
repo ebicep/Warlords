@@ -100,7 +100,7 @@ public final class WarlordsNPC extends WarlordsEntity {
 
         builder.append(Component.text(name, nameColor))
                .append(Component.text(" - "))
-               .append(Component.text(NumberFormat.formatOptionalTenths(damageResistance) + "% ⛊", NamedTextColor.GOLD));
+               .append(Component.text(NumberFormat.formatOptionalTenths(spec.getDamageResistance()) + "% ⛊", NamedTextColor.GOLD));
 
         return builder.build();
     }
@@ -238,6 +238,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void setDamageResistance(int damageResistance) {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
+        nameDisplay.customName(getNameComponent());
     }
 
     public int getStunTicks() {

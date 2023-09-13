@@ -59,6 +59,11 @@ public class ProtectorsStrike extends AbstractStrike {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ProtectorStrikeBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
@@ -100,6 +105,11 @@ public class ProtectorsStrike extends AbstractStrike {
 
             float allyHealing = (minConvert / 100f) + healthFraction * 0.25f;
             float ownHealing = ((maxConvert / 100f) / 2f) + (1 - healthFraction) * 0.25f;
+
+            if (pveMasterUpgrade2) {
+                allyHealing = .8f;
+                ownHealing = .8f;
+            }
             // Self Heal
             wp.addHealingInstance(
                     wp,
@@ -179,11 +189,6 @@ public class ProtectorsStrike extends AbstractStrike {
             }
         });
         return true;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ProtectorStrikeBranch(abilityTree, this);
     }
 
     public int getMinConvert() {

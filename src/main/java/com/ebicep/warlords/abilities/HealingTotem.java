@@ -216,7 +216,7 @@ public class HealingTotem extends AbstractTotem implements Duration {
                                             enemy.addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
                                             enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
                                             if (enemy instanceof WarlordsNPC npc) {
-                                                npc.setDamageResistancePrefix(npc.getDamageResistancePrefix() - 5);
+                                                npc.setDamageResistance(npc.getSpec().getDamageResistance() - 5);
                                             }
                                             EffectUtils.playParticleLinkAnimation(enemy.getLocation(), totemStand.getLocation(), 255, 255, 255, 1);
                                             enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
