@@ -18,6 +18,7 @@ public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implemen
     }
 
     public void setCenter(@Nonnull Location center) {
+        center.setY(center.getBlockY() + 0.01);
         this.center = center;
     }
 

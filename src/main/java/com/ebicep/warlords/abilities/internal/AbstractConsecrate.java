@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -15,11 +14,9 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -96,7 +93,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
                 new DoubleLineEffect(Particle.SPELL)
         );
-        BukkitTask effectTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -108,11 +104,11 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-                    effectTask.cancel();
                 },
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    circleEffect.playEffects();
                     if (ticksElapsed % 20 == 0) {
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
                                     .aliveEnemiesOf(wp)
@@ -135,6 +131,10 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 if (!event.getAbility().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                     return currentDamageValue;
                 }
+                boolean insideCons = location.distanceSquared(event.getWarlordsEntity().getLocation()) < radius * radius;
+                if (!insideCons) {
+                    return currentDamageValue;
+                }
                 event.getFlags().add(InstanceFlags.STRIKE_IN_CONS);
                 addStrikesBoosted();
                 return currentDamageValue * convertToMultiplicationDecimal(strikeDamageBoost);
@@ -145,10 +145,10 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     }
 
     @Nonnull
-    public abstract String getStrikeName();
+    public abstract AbstractConsecrate createConsecrate();
 
     @Nonnull
-    public abstract AbstractConsecrate createConsecrate();
+    public abstract String getStrikeName();
 
     public void addStrikesBoosted() {
         strikesBoosted++;

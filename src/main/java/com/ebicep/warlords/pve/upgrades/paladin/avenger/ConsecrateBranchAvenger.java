@@ -15,11 +15,12 @@ public class ConsecrateBranchAvenger extends AbstractConsecrateBranch<Consecrate
                 "Consecrate - Master Upgrade",
                 """
                         Transform consecrate into a mobile ring damaging nearby enemies every 1.5s in a 4 block radius, the ring travels with the Avenger.
-                        Enemies hit by Sanctifying Ring take 15% more damage from Avengers attacks while the ring is active.
+                        Enemies hit by Sanctifying Ring take 30% more damage from Avengers attacks while the ring is active.
                         """,
                 50000,
                 () -> {
-
+                    ability.setRadius(4);
+                    ability.setStrikeDamageBoost(30);
                 }
         );
     }
