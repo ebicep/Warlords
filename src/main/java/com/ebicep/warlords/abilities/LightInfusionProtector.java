@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.LightInfusionBranchProtector;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -92,7 +93,47 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                     return currentDamageValue * 0.1f;
                 }
             });
+        } else if (pveMasterUpgrade2) {
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Chiron Light",
+                    "CHIRON",
+                    LightInfusionProtector.class,
+                    tempLightInfusion,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    tickDuration
+            ) {
+                @Override
+                public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                    if (event.getAbility().equals("Protector's Strike")) {
+                        return currentHealValue * 1.25f;
+                    }
+                    return currentHealValue;
+                }
+            });
+            for (WarlordsEntity infusionTarget : PlayerFilter
+                    .entitiesAround(wp, 5, 5, 5)
+                    .aliveTeammatesOfExcludingSelf(wp)
+            ) {
+                infusionTarget.getSpeed().removeSlownessModifiers();
+                infusionTarget.getCooldownManager().removeDebuffCooldowns();
+                infusionTarget.addSpeedModifier(wp, "Chiron Light", speedBuff, tickDuration);
+                infusionTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Debuff Immunity",
+                        "CHIRON",
+                        LightInfusionProtector.class,
+                        tempLightInfusion,
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                        },
+                        4 * 20
+                ));
+            }
         }
+
 
         for (int i = 0; i < 10; i++) {
             wp.getWorld().spawnParticle(
