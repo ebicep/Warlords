@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -66,6 +67,11 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HolyRadianceBranchCrusader(abilityTree, this);
+    }
+
+    @Override
     public boolean chain(WarlordsEntity wp, Player player) {
         for (WarlordsEntity markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
@@ -73,89 +79,99 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (LocationUtils.isLookingAtMark(player, markTarget.getEntity()) && LocationUtils.hasLineOfSight(player, markTarget.getEntity())) {
-                Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
-                // chain particles
-                EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 255, 170, 0, 1);
-                EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.PUMPKIN), 20);
+            if (!LocationUtils.isLookingAtMark(player, markTarget.getEntity()) || !LocationUtils.hasLineOfSight(player, markTarget.getEntity())) {
+                player.sendMessage(Component.text("Your mark was out of range or you did not target a player!", NamedTextColor.RED));
+                continue;
+            }
+            Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
+            // chain particles
+            EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 255, 170, 0, 1);
+            EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.PUMPKIN), 20);
 
-                HolyRadianceCrusader tempMark = new HolyRadianceCrusader(
-                        minDamageHeal,
-                        maxDamageHeal,
-                        cooldown,
-                        energyCost.getCurrentValue(),
-                        critChance,
-                        critMultiplier
-                );
-                markTarget.addSpeedModifier(wp, "Crusader Mark Speed", markSpeed, 20 * markDuration, "BASE");
-                markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        name,
-                        "CRUS MARK",
-                        HolyRadianceCrusader.class,
-                        tempMark,
-                        wp,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {
-                        },
-                        markDuration * 20,
-                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksElapsed % 10 == 0) {
-                                Location playerLoc = markTarget.getLocation();
-                                Location particleLoc = playerLoc.clone();
-                                for (int i = 0; i < 4; i++) {
-                                    for (int j = 0; j < 10; j++) {
-                                        double angle = j / 8D * Math.PI * 2;
-                                        double width = 1;
-                                        particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                        particleLoc.setY(playerLoc.getY() + i / 6D);
-                                        particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                        particleLoc.getWorld().spawnParticle(
-                                                Particle.REDSTONE,
-                                                particleLoc,
-                                                1,
-                                                0,
-                                                0,
-                                                0,
-                                                0,
-                                                new Particle.DustOptions(Color.fromRGB(255, 170, 0), 1),
-                                                true
-                                        );
-                                    }
+            List<AbstractAbility> abilities = markTarget.getAbilities();
+            if (pveMasterUpgrade2) {
+                for (AbstractAbility ability : abilities) {
+                    ability.setEnergyCostAdditive(ability.getEnergyCostAdditive() - 10);
+                }
+            }
+
+            HolyRadianceCrusader tempMark = new HolyRadianceCrusader(
+                    minDamageHeal,
+                    maxDamageHeal,
+                    cooldown,
+                    energyCost.getCurrentValue(),
+                    critChance,
+                    critMultiplier
+            );
+            markTarget.addSpeedModifier(wp, "Crusader Mark Speed", markSpeed, 20 * markDuration, "BASE");
+            markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "CRUS MARK",
+                    HolyRadianceCrusader.class,
+                    tempMark,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    cooldownManager -> {
+                        if (pveMasterUpgrade2) {
+                            for (AbstractAbility ability : abilities) {
+                                ability.setEnergyCostAdditive(ability.getEnergyCostAdditive() + 10);
+                            }
+                        }
+                    },
+                    markDuration * 20,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 10 == 0) {
+                            Location playerLoc = markTarget.getLocation();
+                            Location particleLoc = playerLoc.clone();
+                            for (int i = 0; i < 4; i++) {
+                                for (int j = 0; j < 10; j++) {
+                                    double angle = j / 8D * Math.PI * 2;
+                                    double width = 1;
+                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                    particleLoc.setY(playerLoc.getY() + i / 6D);
+                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                    particleLoc.getWorld().spawnParticle(
+                                            Particle.REDSTONE,
+                                            particleLoc,
+                                            1,
+                                            0,
+                                            0,
+                                            0,
+                                            0,
+                                            new Particle.DustOptions(Color.fromRGB(255, 170, 0), 1),
+                                            true
+                                    );
                                 }
                             }
-                        })
-                ) {
-                    @Override
-                    public float addEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick + energyPerSecond / 20f;
-                    }
-                });
+                        }
+                    })
+            ) {
+                @Override
+                public float addEnergyGainPerTick(float energyGainPerTick) {
+                    return energyGainPerTick + energyPerSecond / 20f;
+                }
+            });
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                        .append(Component.text(" You have marked ", NamedTextColor.GRAY))
-                        .append(Component.text(markTarget.getName(), NamedTextColor.YELLOW))
-                        .append(Component.text("!", NamedTextColor.GRAY))
-                );
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You have marked ", NamedTextColor.GRAY))
+                    .append(Component.text(markTarget.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
 
-                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                        .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
-                        .append(Component.text("Crusader's Mark", NamedTextColor.YELLOW))
-                        .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
-                );
+            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                    .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
+                    .append(Component.text("Crusader's Mark", NamedTextColor.YELLOW))
+                    .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
+            );
 
-                return true;
-            } else {
-                player.sendMessage("§cYour mark was out of range or you did not target a player!");
-            }
+            return true;
         }
 
         return false;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HolyRadianceBranchCrusader(abilityTree, this);
     }
 
     public int getMarkDuration() {

@@ -94,5 +94,16 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
                     ability.setEnergyCost(ability.getEnergyCost() * 3);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Unrivalled Radiance",
+                "Holy Radiance - Master Upgrade",
+                """
+                        Crusader's Holy Mark provides 10 more energy per second and will have the energy cost of their abilities decreased by 10.
+                        """,
+                50000,
+                () -> {
+                    ability.setEnergyPerSecond(ability.getEnergyPerSecond() + 10);
+                }
+        );
     }
 }
