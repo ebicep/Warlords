@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -156,35 +154,19 @@ public class ProtectorsStrike extends AbstractStrike {
                                           .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
                         .limit(maxAllies)
                 ) {
-                    if (PlayerSettings.getPlayerSettings(wp.getUuid()).getSkillBoostForClass() == SkillBoosts.PROTECTOR_STRIKE) {
-                        ally.addHealingInstance(
-                                wp,
-                                name,
-                                currentDamageValue * allyHealing * 1.2f,
-                                currentDamageValue * allyHealing * 1.2f,
-                                isCrit ? 100 : 0,
-                                100
-                        ).ifPresent(event -> {
-                            new CooldownFilter<>(wp, RegularCooldown.class)
-                                    .filterCooldownFrom(wp)
-                                    .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                    .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
-                        });
-                    } else {
-                        ally.addHealingInstance(
-                                wp,
-                                name,
-                                currentDamageValue * allyHealing,
-                                currentDamageValue * allyHealing,
-                                isCrit ? 100 : 0,
-                                100
-                        ).ifPresent(event -> {
-                            new CooldownFilter<>(wp, RegularCooldown.class)
-                                    .filterCooldownFrom(wp)
-                                    .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                    .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
-                        });
-                    }
+                    ally.addHealingInstance(
+                            wp,
+                            name,
+                            currentDamageValue * allyHealing,
+                            currentDamageValue * allyHealing,
+                            isCrit ? 100 : 0,
+                            100
+                    ).ifPresent(event -> {
+                        new CooldownFilter<>(wp, RegularCooldown.class)
+                                .filterCooldownFrom(wp)
+                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
+                    });
                 }
             }
         });
