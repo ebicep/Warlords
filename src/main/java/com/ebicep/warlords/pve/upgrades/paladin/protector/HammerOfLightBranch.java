@@ -106,7 +106,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Hammer of Illusion",
+                "Hammer of Disillusion",
                 "Hammer of Light - Master Upgrade",
                 """
                         -20% Cooldown Reduction

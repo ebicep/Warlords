@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.HolyRadianceBranchProtector;
@@ -48,7 +49,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                                .append(Component.text(" of the original healing amount after the mark ends."))
                                .append(Component.text("\n\nMark has an optimal range of "))
                                .append(Component.text(markRadius, NamedTextColor.YELLOW))
-                                .append(Component.text(" blocks."));
+                               .append(Component.text(" blocks."));
     }
 
     @Override
@@ -59,6 +60,11 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
         info.add(new Pair<>("Players Marked", "" + playersMarked));
 
         return info;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HolyRadianceBranchProtector(abilityTree, this);
     }
 
     @Override
@@ -80,33 +86,61 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (pveMasterUpgrade) {
-                return true;
+            if (!LocationUtils.isLookingAtMark(player, markTarget.getEntity()) || !LocationUtils.hasLineOfSight(player, markTarget.getEntity())) {
+                player.sendMessage(Component.text("Your mark was out of range or you did not target a player!", NamedTextColor.RED));
+                continue;
             }
-            if (LocationUtils.isLookingAtMark(player, markTarget.getEntity()) && LocationUtils.hasLineOfSight(player, markTarget.getEntity())) {
-                Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
-                // chain particles
-                EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 0, 255, 70, 1);
-                EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), new ItemStack(Material.POPPY), 8);
-                emitMarkRadiance(wp, markTarget);
+            Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
+            // chain particles
+            EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 0, 255, 70, 1);
+            EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), new ItemStack(Material.POPPY), 8);
+            emitMarkRadiance(wp, markTarget);
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                        .append(Component.text(" You have marked ", NamedTextColor.GRAY))
-                        .append(Component.text(markTarget.getName(), NamedTextColor.GREEN))
-                        .append(Component.text("!", NamedTextColor.GRAY))
-                );
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You have marked ", NamedTextColor.GRAY))
+                    .append(Component.text(markTarget.getName(), NamedTextColor.GREEN))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
 
-                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                        .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
-                        .append(Component.text("Protector's Mark", NamedTextColor.GREEN))
-                        .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
-                );
+            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                    .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
+                    .append(Component.text("Protector's Mark", NamedTextColor.GREEN))
+                    .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
+            );
 
-                return true;
-            } else {
-                player.sendMessage("§cYour mark was out of range or you did not target a player!");
-            }
+            return true;
         }
+
+        if (pveMasterUpgrade2) {
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Unrivalled Radiance",
+                    "RAD",
+                    HolyRadianceProtector.class,
+                    null,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    61,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 20 == 0 && ticksElapsed != 0) {
+                            PlayerFilter.entitiesAround(wp, 10, 10, 10)
+                                        .aliveTeammatesOf(wp)
+                                        .forEach(warlordsEntity -> {
+                                            warlordsEntity.addHealingInstance(
+                                                    wp,
+                                                    "Unrivalled Radiance",
+                                                    150,
+                                                    350,
+                                                    0,
+                                                    100
+                                            );
+                                        });
+                        }
+                    })
+            ));
+        }
+
         return false;
     }
 
@@ -184,15 +218,6 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
         );
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HolyRadianceBranchProtector(abilityTree, this);
-    }
-
-    public void setMarkDuration(int markDuration) {
-        this.markDuration = markDuration;
-    }
-
     public float getMarkHealing() {
         return markHealing;
     }
@@ -203,5 +228,9 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
 
     public int getMarkDuration() {
         return markDuration;
+    }
+
+    public void setMarkDuration(int markDuration) {
+        this.markDuration = markDuration;
     }
 }
