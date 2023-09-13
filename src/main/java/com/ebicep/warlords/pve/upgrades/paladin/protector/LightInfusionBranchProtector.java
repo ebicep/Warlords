@@ -92,7 +92,7 @@ public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInf
                 "Chiron Light",
                 "Light Infusion - Master Upgrade",
                 """
-                        Casting Light Infusion near allies, in a 5 block radius, will grant them infusion's speed buff and immunity to all debuffs for 4s. Strike healing during the duration of Light Infusion is increased by 25%.
+                        Casting Light Infusion near allies in a 5 block radius, will grant them infusion's speed buff and immunity to all debuffs for 4s. Strike healing during the duration of Light Infusion is increased by 25%.
                         """,
                 50000,
                 () -> {

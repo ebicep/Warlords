@@ -94,5 +94,16 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Unrivalled Radiance",
+                "Holy Radiance - Master Upgrade",
+                """
+                        Avenger's Mark is now an AoE. Additionally, marked targets that are defeated will now reduce the cooldown of Avenger's Wrath by .5s at a max reduction of 5s. Marked targets receive strike priority.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }

@@ -29,6 +29,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
     private int markRadius = 15;
     private int energyDrainPerSecond = 8;
 
+    protected int timesWrathReduced = 0;
+
     public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
     }
@@ -60,8 +62,13 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HolyRadianceBranchAvenger(abilityTree, this);
+    }
+
+    @Override
     public boolean chain(WarlordsEntity wp, Player player) {
-        if (pveMasterUpgrade) {
+        if (pveMasterUpgrade || pveMasterUpgrade2) {
             for (WarlordsEntity circleTarget : PlayerFilter
                     .entitiesAround(wp, 8, 8, 8)
                     .aliveEnemiesOf(wp)
@@ -78,75 +85,72 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (pveMasterUpgrade) {
-                return true;
+            if (!LocationUtils.isLookingAtMark(player, markTarget.getEntity()) || !LocationUtils.hasLineOfSight(player, markTarget.getEntity())) {
+                player.sendMessage(Component.text("Your mark was out of range or you did not target a player!", NamedTextColor.RED));
+                continue;
             }
-            if (LocationUtils.isLookingAtMark(player, markTarget.getEntity()) && LocationUtils.hasLineOfSight(player, markTarget.getEntity())) {
-                Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
+            Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
-                // chain particles
-                EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
-                EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
+            // chain particles
+            EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
+            EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
 
-                HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
-                        minDamageHeal,
-                        maxDamageHeal,
-                        cooldown,
-                        energyCost.getCurrentValue(),
-                        critChance,
-                        critMultiplier
-                );
+            HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
+                    minDamageHeal,
+                    maxDamageHeal,
+                    cooldown,
+                    energyCost.getCurrentValue(),
+                    critChance,
+                    critMultiplier
+            );
 
-                markTarget.getCooldownManager().removeCooldown(HolyRadianceAvenger.class, false);
-                markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        name,
-                        "AVE MARK",
-                        HolyRadianceAvenger.class,
-                        tempMark,
-                        wp,
-                        CooldownTypes.DEBUFF,
-                        cooldownManager -> {
-                        },
-                        markDuration * 20,
-                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksElapsed % 10 == 0) {
-                                EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
-                            }
-                        })
-                ) {
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        if (pveMasterUpgrade) {
-                            if (event.getAbility().equals("Avenger's Strike")) {
-                                return currentDamageValue * 1.4f;
-                            }
-                            return currentDamageValue;
+            markTarget.getCooldownManager().removeCooldown(HolyRadianceAvenger.class, false);
+            markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "AVE MARK",
+                    HolyRadianceAvenger.class,
+                    tempMark,
+                    wp,
+                    CooldownTypes.DEBUFF,
+                    cooldownManager -> {
+                    },
+                    markDuration * 20,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 10 == 0) {
+                            EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
+                        }
+                    })
+            ) {
+                @Override
+                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    if (pveMasterUpgrade) {
+                        if (event.getAbility().equals("Avenger's Strike")) {
+                            return currentDamageValue * 1.4f;
                         }
                         return currentDamageValue;
                     }
+                    return currentDamageValue;
+                }
 
-                    @Override
-                    public float addEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick - energyDrainPerSecond / 20f;
-                    }
-                });
+                @Override
+                public float addEnergyGainPerTick(float energyGainPerTick) {
+                    return energyGainPerTick - energyDrainPerSecond / 20f;
+                }
+            });
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                        .append(Component.text(" You have marked ", NamedTextColor.GRAY))
-                        .append(Component.text(markTarget.getName(), NamedTextColor.GOLD))
-                        .append(Component.text("!", NamedTextColor.GRAY))
-                );
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You have marked ", NamedTextColor.GRAY))
+                    .append(Component.text(markTarget.getName(), NamedTextColor.GOLD))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
 
-                markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                        .append(Component.text(" You have been cursed with ", NamedTextColor.GRAY))
-                        .append(Component.text("Avenger's Mark", NamedTextColor.GOLD))
-                        .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
-                );
+            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                    .append(Component.text(" You have been cursed with ", NamedTextColor.GRAY))
+                    .append(Component.text("Avenger's Mark", NamedTextColor.GOLD))
+                    .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
+            );
 
-                return true;
-            } else {
-                player.sendMessage("§cYour mark was out of range or you did not target a player!");
-            }
+            return true;
         }
         return false;
     }
@@ -169,6 +173,10 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                 giver,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
+                    if (pveMasterUpgrade2 && target.isDead() && tempMark.timesWrathReduced < 10) {
+                        tempMark.timesWrathReduced++;
+                        giver.getAbilitiesMatching(AvengersWrath.class).forEach(avengersWrath -> avengersWrath.subtractCurrentCooldown(.5f));
+                    }
                 },
                 markDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -188,11 +196,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                 return currentDamageValue;
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HolyRadianceBranchAvenger(abilityTree, this);
     }
 
     public int getMarkRadius() {
