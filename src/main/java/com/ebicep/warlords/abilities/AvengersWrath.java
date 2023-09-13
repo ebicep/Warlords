@@ -115,15 +115,18 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                         flags.add(InstanceFlags.STRIKE_IN_CONS);
                     }
-                    wrathTarget.addDamageInstance(
-                            wp,
-                            "Avenger's Strike",
-                            event.getMin(),
-                            event.getMax(),
-                            event.getCritChance(),
-                            event.getCritMultiplier(),
-                            flags
-                    );
+                    for (int i = 0; i < (pveMasterUpgrade2 ? 2 : 1); i++) {
+                        wrathTarget.addDamageInstance(
+                                wp,
+                                "Avenger's Strike",
+                                event.getMin(),
+                                event.getMax(),
+                                event.getCritChance(),
+                                event.getCritMultiplier(),
+                                flags
+                        );
+                    }
+
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
                     wrathTarget.subtractEnergy(10, true);
                 }

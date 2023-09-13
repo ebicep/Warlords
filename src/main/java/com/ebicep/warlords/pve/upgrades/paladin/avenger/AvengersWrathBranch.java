@@ -91,5 +91,16 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                     ability.setCooldown(ability.getCooldown() * 0.9f);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Avenger's Vexation",
+                "Avenger's Wrath - Master Upgrade",
+                """
+                        -10% Cooldown Reduction. Strikes cast during Avenger's Wrath hit twice per opponent.
+                        """,
+                50000,
+                () -> {
+                    ability.setCooldown(ability.getCooldown() * 0.9f);
+                }
+        );
     }
 }
