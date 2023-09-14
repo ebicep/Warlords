@@ -99,5 +99,17 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                     ability.setStunTimeInTicks(60);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Reverberation",
+                "Reckless Charge - Master Upgrade",
+                """
+                        +75% Additional damage to CRIPPLED enemies.
+                                                
+                        Reduce the cooldown of Undying Army by 1s for each enemy killed with Reckless Charge. Additionally, allies you charge through receive 100% more healing for 8 seconds.
+                        """,
+                50000,
+                () -> {
+                }
+        );
     }
 }

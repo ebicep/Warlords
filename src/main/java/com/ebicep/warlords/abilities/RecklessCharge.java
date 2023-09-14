@@ -130,17 +130,22 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
                                 if (otherPlayer.isEnemyAlive(wp)) {
                                     playersCharged++;
-                                    otherPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                                    float damageMultiplier = pveMasterUpgrade2 && otherPlayer.getCooldownManager().hasCooldown(CripplingStrike.class) ? 1.75f : 1;
+                                    otherPlayer.addDamageInstance(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier)
+                                               .ifPresent(finalEvent -> {
+                                                   if (pveMasterUpgrade2 && finalEvent.isDead()) {
+                                                       wp.getAbilitiesMatching(UndyingArmy.class).forEach(ability -> ability.subtractCurrentCooldown(1f));
+                                                   }
+                                               });
 
-                                    if (otherPlayer instanceof WarlordsNPC) {
-                                        ((WarlordsNPC) otherPlayer).setStunTicks(getStunTimeInTicks());
-                                        //otherPlayer.addSpeedModifier(wp, "Charge Stun", -99, getStunTimeInTicks(), "BASE");
-                                    } else if (otherPlayer instanceof WarlordsPlayer) {
-                                        ((WarlordsPlayer) otherPlayer).stun();
+                                    if (otherPlayer instanceof WarlordsNPC warlordsNPC) {
+                                        warlordsNPC.setStunTicks(getStunTimeInTicks());
+                                    } else if (otherPlayer instanceof WarlordsPlayer warlordsPlayer) {
+                                        warlordsPlayer.stun();
                                         new GameRunnable(wp.getGame()) {
                                             @Override
                                             public void run() {
-                                                ((WarlordsPlayer) otherPlayer).unstun();
+                                                warlordsPlayer.unstun();
                                             }
                                         }.runTaskLater(getStunTimeInTicks());
                                         otherPlayer.getEntity().showTitle(Title.title(
@@ -150,7 +155,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                         ));
 
                                     }
-                                } else if (pveMasterUpgrade && otherPlayer.isTeammateAlive(wp)) {
+                                } else if ((pveMasterUpgrade || pveMasterUpgrade2) && otherPlayer.isTeammateAlive(wp)) {
                                     otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                                             "Probiotic",
                                             "PROBIO",
