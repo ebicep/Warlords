@@ -86,11 +86,20 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
         masterUpgrade = new Upgrade(
                 "Orbs of Relics",
                 "Orbs of Life - Master Upgrade",
-                "Spawn 1 additional orb on active, double healing increase over time orbs last twice as long.",
+                "Spawn 1 additional orb on active, double healing increase over time, and orbs last twice as long.",
                 50000,
                 () -> {
-
                     ability.setOrbTickMultiplier(2);
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Orbs of Time",
+                "Orbs of Life - Master Upgrade",
+                """
+                        Orbs of Life can now Overheal, and last twice as long.
+                        """,
+                50000,
+                () -> {
                 }
         );
     }

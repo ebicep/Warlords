@@ -3,12 +3,14 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.OrbPassenger;
+import com.ebicep.warlords.abilities.internal.Overheal;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.OrbsOfLifeBranch;
@@ -134,7 +136,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                 orbHeal *= 1 + orb.getTicksLived() / 325f;
                             }
 
-                            teammateToHeal.addHealingInstance(wp, "Orbs of Life", orbHeal, orbHeal, 0, 100);
+                            healPlayer(teammateToHeal, wp, orbHeal);
                             Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
 
                             for (WarlordsEntity nearPlayer : PlayerFilter
@@ -143,7 +145,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                     .leastAliveFirst()
                                     .limit(2)
                             ) {
-                                nearPlayer.addHealingInstance(wp, "Orbs of Life", orbHeal, orbHeal, 0, 100);
+                                healPlayer(nearPlayer, wp, orbHeal);
                                 Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
                             }
                         } else {
@@ -267,6 +269,32 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     public List<OrbOfLife> getSpawnedOrbs() {
         return spawnedOrbs;
+    }
+
+    private void healPlayer(WarlordsEntity teammateToHeal, @Nonnull WarlordsEntity wp, float orbHeal) {
+        teammateToHeal.addHealingInstance(
+                wp,
+                "Orbs of Life",
+                orbHeal,
+                orbHeal,
+                0,
+                100,
+                pveMasterUpgrade2 ? EnumSet.of(InstanceFlags.CAN_OVERHEAL) : EnumSet.noneOf(InstanceFlags.class)
+        );
+        if (pveMasterUpgrade2) {
+            teammateToHeal.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
+            teammateToHeal.getCooldownManager().addRegularCooldown(
+                    "Overheal",
+                    "OVERHEAL",
+                    Overheal.class,
+                    Overheal.OVERHEAL_MARKER,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    Overheal.OVERHEAL_DURATION * 20
+            );
+        }
     }
 
     public void spawnOrbs(WarlordsEntity owner, WarlordsEntity victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
