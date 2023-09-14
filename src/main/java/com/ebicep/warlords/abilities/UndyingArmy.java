@@ -1,12 +1,18 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.UndyingArmyBranch;
@@ -150,9 +156,10 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         tempUndyingArmy.setInPve(inPve);
         tempUndyingArmy.setPveMasterUpgrade(pveMasterUpgrade);
         int numberOfPlayersWithArmy = 0;
-        for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
-                                                   .aliveTeammatesOf(wp)
-                                                   .closestWarlordPlayersFirst(wp.getLocation())
+        for (WarlordsEntity teammate : PlayerFilter
+                .entitiesAround(wp, radius, radius, radius)
+                .aliveTeammatesOf(wp)
+                .closestWarlordPlayersFirst(wp.getLocation())
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate, false);
             if (teammate != wp) {
@@ -220,6 +227,44 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
             if (numberOfPlayersWithArmy >= maxArmyAllies) {
                 break;
+            }
+        }
+
+        if (pveMasterUpgrade2) {
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveEnemiesOf(wp)
+            ) {
+                enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Vengeful Army",
+                        null,
+                        UndyingArmy.class,
+                        null,
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                            if (enemy.isAlive()) {
+                                float healthDamage = enemy.getHealth() * .10f;
+                                if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
+                                    if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                                        healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                                    }
+                                    if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                                        healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                                    }
+                                }
+                                float damage = 1000 + healthDamage;
+                                enemy.addDamageInstance(wp, "Vengeful Army", damage, damage, 0, 100);
+                            } else {
+                                new CooldownFilter<>(wp, PersistentCooldown.class)
+                                        .filterCooldownClass(OrbsOfLife.class)
+                                        .forEach(persistentCooldown -> {
+                                            OrbsOfLife.spawnOrbs(wp, enemy, "Vengeful Army", persistentCooldown);
+                                        });
+                            }
+                        },
+                        10 * 20
+                ));
             }
         }
 

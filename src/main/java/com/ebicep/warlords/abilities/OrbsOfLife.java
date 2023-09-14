@@ -161,9 +161,13 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
-                spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
-                if (event.getAbility().equals("Crippling Strike")) {
-                    spawnOrbs(wp, event.getWarlordsEntity(), event.getAbility(), this);
+                String ability = event.getAbility();
+                if (ability.equals("Vengeful Army")) {
+                    return;
+                }
+                spawnOrbs(wp, event.getWarlordsEntity(), ability, this);
+                if (ability.equals("Crippling Strike")) {
+                    spawnOrbs(wp, event.getWarlordsEntity(), ability, this);
                 }
             }
 
@@ -297,7 +301,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         }
     }
 
-    public void spawnOrbs(WarlordsEntity owner, WarlordsEntity victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
+    public static void spawnOrbs(WarlordsEntity owner, WarlordsEntity victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
         if (ability.isEmpty() || ability.equals("Intervene")) {
             return;
         }
@@ -310,7 +314,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         Location location = victim.getLocation();
         Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
 
-        OrbOfLife orb = new OrbOfLife(spawnLocation, cooldown.getFrom(), orbTickMultiplier, orbsOfLife);
+        OrbOfLife orb = new OrbOfLife(spawnLocation, cooldown.getFrom(), orbsOfLife.getOrbTickMultiplier(), orbsOfLife);
         orbsOfLife.getSpawnedOrbs().add(orb);
 
         orbsOfLife.addOrbProduced(1);
@@ -338,6 +342,10 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return spawnLocation;
     }
 
+    public int getOrbTickMultiplier() {
+        return orbTickMultiplier;
+    }
+
     public int getOrbsProduced() {
         return orbsProduced;
     }
@@ -356,13 +364,13 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return false;
     }
 
+    public void setOrbTickMultiplier(int orbTickMultiplier) {
+        this.orbTickMultiplier = orbTickMultiplier;
+    }
+
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new OrbsOfLifeBranch(abilityTree, this);
-    }
-
-    public void setOrbTickMultiplier(int orbTickMultiplier) {
-        this.orbTickMultiplier = orbTickMultiplier;
     }
 
     @Override
