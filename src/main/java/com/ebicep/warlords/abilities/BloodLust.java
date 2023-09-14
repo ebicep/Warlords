@@ -100,6 +100,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 )
         ) {
             private final Set<UUID> abilitiesHit = new HashSet<>();
+            private int timesBerserkReduced = 0;
 
             @Override
             public boolean distinct() {
@@ -136,6 +137,14 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                         100,
                         EnumSet.of(InstanceFlags.NO_HIT_SOUND)
                 );
+            }
+
+            @Override
+            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+                if (pveMasterUpgrade2 && isKiller && timesBerserkReduced < 10) {
+                    timesBerserkReduced++;
+                    wp.getAbilitiesMatching(Berserk.class).forEach(berserk -> berserk.subtractCurrentCooldown(.5f));
+                }
             }
         });
 

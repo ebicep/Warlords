@@ -89,5 +89,19 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Blood Thirsty",
+                "Blood Lust - Master Upgrade",
+                """
+                        +5s Duration
+                                                
+                        While Blood Lust is active, each kill will reduce the cooldown of Berserk by 0.5s. Max reduction of 5s.
+                        """,
+                50000,
+                () -> {
+                    ability.setTickDuration(ability.getTickDuration() + 100);
+
+                }
+        );
     }
 }
