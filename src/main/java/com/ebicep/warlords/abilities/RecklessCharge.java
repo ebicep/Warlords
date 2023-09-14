@@ -92,6 +92,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         new GameRunnable(wp.getGame()) {
             //safety precaution
             int maxChargeDuration = 5;
+            int timesArmyReduced = 0;
 
             @Override
             public void run() {
@@ -133,7 +134,8 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                     float damageMultiplier = pveMasterUpgrade2 && otherPlayer.getCooldownManager().hasCooldown(CripplingStrike.class) ? 1.75f : 1;
                                     otherPlayer.addDamageInstance(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier)
                                                .ifPresent(finalEvent -> {
-                                                   if (pveMasterUpgrade2 && finalEvent.isDead()) {
+                                                   if (pveMasterUpgrade2 && finalEvent.isDead() && timesArmyReduced < 5) {
+                                                       timesArmyReduced++;
                                                        wp.getAbilitiesMatching(UndyingArmy.class).forEach(ability -> ability.subtractCurrentCooldown(1f));
                                                    }
                                                });
