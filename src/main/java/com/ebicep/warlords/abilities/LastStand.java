@@ -137,7 +137,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 if (standTarget instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                     continue;
                 }
-                wp.setDamageResistance(wp.getSpec().getDamageResistance() - 15);
+                standTarget.setDamageResistance(standTarget.getSpec().getDamageResistance() - 15);
             } else if (standTarget.isTeammateAlive(wp)) {
                 playersLastStanded++;
 

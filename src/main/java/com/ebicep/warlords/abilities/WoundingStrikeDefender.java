@@ -75,7 +75,10 @@ public class WoundingStrikeDefender extends AbstractStrike {
                 minDamageHeal,
                 maxDamageHeal,
                 critChance,
-                critMultiplier
+                critMultiplier,
+                wp.getCooldownManager().hasCooldown(Intervene.class) && nearPlayer instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)
+                ? EnumSet.of(InstanceFlags.PIERCE_DAMAGE) :
+                EnumSet.noneOf(InstanceFlags.class)
         ).ifPresent(event -> onFinalEvent(wp, nearPlayer, event));
 
         if (pveMasterUpgrade2) {

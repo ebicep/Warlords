@@ -95,7 +95,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 """
                         +5s Duration
                                                 
-                        While Blood Lust is active, each kill will reduce the cooldown of Berserk by 0.5s. Max reduction of 5s.
+                        While Blood Lust is active, each kill will reduce the cooldown of Berserk by 0.5, max 5s.
                         """,
                 50000,
                 () -> {

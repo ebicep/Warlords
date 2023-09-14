@@ -101,7 +101,15 @@ public class SeismicWave extends AbstractAbility implements RedAbilityIcon {
                     } else if (pveMasterUpgrade2) {
                         multiplier = waveTarget.getCooldownManager().hasCooldownFromName("Wounding Strike") ? 1.3f : 1;
                         if (waveTarget instanceof WarlordsNPC warlordsNPC) {
-                            warlordsNPC.setStunTicks(20);
+                            new GameRunnable(wp.getGame()) {
+                                @Override
+                                public void run() {
+                                    if (warlordsNPC.getEntity().isOnGround()) {
+                                        warlordsNPC.setStunTicks(20);
+                                        this.cancel();
+                                    }
+                                }
+                            }.runTaskTimer(5, 0);
                         }
                     }
                     waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, abilityUUID);

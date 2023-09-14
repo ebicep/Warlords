@@ -14,8 +14,7 @@ public class GroundSlamBranchBerserker extends AbstractGroundSlamBranch<GroundSl
                 "Reverberation",
                 "Ground Slam - Master Upgrade",
                 """
-                        Casting Ground Slam will leap you in the air for a short duration. Upon landing, activate a second Ground Slam that will increase your damage based on the number of enemies hit.
-                        Max being 25% at 5 enemies hit for a duration of 5s.
+                        Casting Ground Slam will leap you in the air for a short duration. Upon landing, activate a second Ground Slam that will increase your damage by 5% per enemy hit for 5 seconds, max 25%.
                         """,
                 50000,
                 () -> {

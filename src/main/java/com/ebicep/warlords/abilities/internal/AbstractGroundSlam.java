@@ -58,7 +58,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
 
         UUID abilityUUID = UUID.randomUUID();
-        activateAbility(wp, 1, abilityUUID);
+        activateAbility(wp, 1, abilityUUID, false);
 
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             wp.setVelocity(name, new Vector(0, 1.2, 0), true);
@@ -85,7 +85,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_IRON_GOLEM_DEATH, 2, 0.2f);
                         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 0.8f);
-                        activateAbility(wp, pveMasterUpgrade ? 1.5f : 1f, abilityUUID);
+                        activateAbility(wp, pveMasterUpgrade ? 1.5f : 1f, abilityUUID, true);
                         this.cancel();
                     }
                 }
@@ -94,11 +94,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         return true;
     }
 
-    protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
-
-    }
-
-    protected void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier, UUID abilityUUID) {
+    protected void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier, UUID abilityUUID, boolean second) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
         Set<WarlordsEntity> currentPlayersHit = new HashSet<>();
@@ -158,7 +154,9 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                 }
 
                 if (fallingBlockLocations.isEmpty()) {
-                    onSecondSlamHit(wp, currentPlayersHit);
+                    if (second) {
+                        onSecondSlamHit(wp, currentPlayersHit);
+                    }
                     this.cancel();
                 }
             }
@@ -186,6 +184,10 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
             }
 
         }.runTaskTimer(0, 0);
+    }
+
+    protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
+
     }
 
     public int getSlamSize() {

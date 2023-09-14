@@ -105,7 +105,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 """
                         +75% Additional damage to CRIPPLED enemies.
                                                 
-                        Reduce the cooldown of Undying Army by 1s for each enemy killed with Reckless Charge. Additionally, allies you charge through receive 100% more healing for 8 seconds.
+                        Reduce the cooldown of Undying Army by 1s for each enemy killed with Reckless Charge, max 5s. Additionally, allies you charge through receive 100% more healing for 8 seconds.
                         """,
                 50000,
                 () -> {

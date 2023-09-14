@@ -14,8 +14,7 @@ public class GroundSlamBranchRevenant extends AbstractGroundSlamBranch<GroundSla
                 "Reverberation",
                 "Ground Slam - Master Upgrade",
                 """
-                        Casting Ground Slam will leap you in the air for a short duration. Upon Landing, active a second Ground Slam that will increase your healing output based on number of enemies hit.
-                        Max being 25% at 5 enemies hit for a duration of 5s.
+                        Casting Ground Slam will leap you in the air for a short duration. Upon Landing, active a second Ground Slam that will increase your healing output by 5% per enemy hit for 5 seconds, max 25%.
                         """,
                 50000,
                 () -> {

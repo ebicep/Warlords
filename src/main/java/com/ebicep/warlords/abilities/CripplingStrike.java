@@ -145,11 +145,12 @@ public class CripplingStrike extends AbstractStrike {
 
     private void onFinalEvent(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer, WarlordsDamageHealingFinalEvent finalEvent) {
         if (finalEvent.isDead()) {
+            if (pveMasterUpgrade2) {
+                wp.getAbilitiesMatching(OrbsOfLife.class).forEach(ability -> ability.subtractCurrentCooldown(.25f));
+            }
             return;
         }
-        if (pveMasterUpgrade2) {
-            wp.getAbilitiesMatching(OrbsOfLife.class).forEach(ability -> ability.subtractCurrentCooldown(.25f));
-        }
+
         Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
                 .findAny();

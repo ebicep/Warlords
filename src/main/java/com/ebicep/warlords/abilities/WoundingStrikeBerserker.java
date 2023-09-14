@@ -84,7 +84,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
             tripleHit(
                     wp,
                     nearPlayer,
-                    1.3f,
+                    lustDamageBoost,
                     null,
                     finalEvent -> finalEvent.ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event))
             );

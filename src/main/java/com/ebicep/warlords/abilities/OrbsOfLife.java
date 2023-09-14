@@ -93,6 +93,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife(minDamageHeal, maxDamageHeal);
+        tempOrbsOfLight.setPveMasterUpgrade2(pveMasterUpgrade2);
         PersistentCooldown<OrbsOfLife> orbsOfLifeCooldown = new PersistentCooldown<>(
                 name,
                 "ORBS",
