@@ -97,8 +97,20 @@ public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike
                 "Crippling Strike deals damage to 2 additional targets, the cripple status now reduces enemy damage dealt by 50%",
                 50000,
                 () -> {
-
                     ability.setCripple(50);
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Productive Strike",
+                "Crippling Strike - Master Upgrade",
+                """
+                        -20 Energy cost
+                                                
+                        Crippling Strikes deals damage to 2 additional targets, Strike kills will reduce the cooldown of Orbs of Life by 0.5s.
+                        """,
+                50000,
+                () -> {
+                    ability.setEnergyCost(ability.getEnergyCost() - 20);
                 }
         );
     }

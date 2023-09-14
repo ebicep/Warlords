@@ -103,7 +103,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Final Stand",
+                "Enduring Defense",
                 "Last Stand - Master Upgrade",
                 """
                         -20% Cooldown reduction

@@ -69,21 +69,43 @@ public class WoundingStrikeDefender extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
+        nearPlayer.addDamageInstance(
                 wp,
                 name,
                 minDamageHeal,
                 maxDamageHeal,
                 critChance,
                 critMultiplier
-        );
+        ).ifPresent(event -> onFinalEvent(wp, nearPlayer, event));
 
-        finalEvent.ifPresent(event -> {
-            if (event.isCrit() && pveMasterUpgrade) {
-                damageReductionOnCrit(wp, nearPlayer);
-            }
-        });
+        if (pveMasterUpgrade2) {
+            tripleHit(
+                    wp,
+                    nearPlayer,
+                    1,
+                    warlordsEntity -> {
+                        if (!wp.getCooldownManager().hasCooldown(Intervene.class)) {
+                            return EnumSet.noneOf(InstanceFlags.class);
+                        }
+                        if (warlordsEntity instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)) {
+                            return EnumSet.of(InstanceFlags.PIERCE_DAMAGE);
+                        }
+                        return EnumSet.noneOf(InstanceFlags.class);
+                    },
+                    finalEvent -> finalEvent.ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event))
+            );
+        }
 
+        return true;
+    }
+
+    private void onFinalEvent(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer, WarlordsDamageHealingFinalEvent event) {
+        if (event.isDead()) {
+            return;
+        }
+        if (event.isCrit() && pveMasterUpgrade) {
+            damageReductionOnCrit(wp, nearPlayer);
+        }
         if (!(nearPlayer.getCooldownManager().hasCooldownFromName("Wounding Strike"))) {
             nearPlayer.sendMessage(
                     Component.text("You are ", NamedTextColor.GRAY)
@@ -126,20 +148,6 @@ public class WoundingStrikeDefender extends AbstractStrike {
                 }
             });
         }
-
-        if (pveMasterUpgrade2) {
-            tripleHit(wp, nearPlayer, 1, warlordsEntity -> {
-                if (!wp.getCooldownManager().hasCooldown(Intervene.class)) {
-                    return EnumSet.noneOf(InstanceFlags.class);
-                }
-                if (warlordsEntity instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)) {
-                    return EnumSet.of(InstanceFlags.PIERCE_DAMAGE);
-                }
-                return EnumSet.noneOf(InstanceFlags.class);
-            });
-        }
-
-        return true;
     }
 
     private void damageReductionOnCrit(WarlordsEntity we, WarlordsEntity nearPlayer) {

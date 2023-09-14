@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -127,36 +128,47 @@ public class CripplingStrike extends AbstractStrike {
                 maxDamageHeal,
                 critChance,
                 critMultiplier
-        ).ifPresent(finalEvent -> {
-            if (finalEvent.isDead()) {
-                return;
-            }
-            Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
-                    .findAny();
-            if (optionalCripplingStrike.isPresent()) {
-                CripplingStrike cripplingStrike = optionalCripplingStrike.get();
-                nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class, true);
-                cripple(wp,
-                        nearPlayer,
-                        name,
-                        new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
-                        crippleDuration * 20,
-                        convertToDivisionDecimal(cripple) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(cripplePerStrike)
-                );
-            } else {
-                nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
-                                                .append(Component.text("crippled", NamedTextColor.RED))
-                                                .append(Component.text(".", NamedTextColor.GRAY)));
-                cripple(wp, nearPlayer, name, crippleDuration * 20, convertToDivisionDecimal(cripple));
-            }
-        });
+        ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
 
-        if (pveMasterUpgrade) {
-            tripleHit(wp, nearPlayer, 1, null);
+        if (pveMasterUpgrade || pveMasterUpgrade2) {
+            tripleHit(
+                    wp,
+                    nearPlayer,
+                    1,
+                    null,
+                    finalEvent -> finalEvent.ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event))
+            );
         }
 
         return true;
+    }
+
+    private void onFinalEvent(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer, WarlordsDamageHealingFinalEvent finalEvent) {
+        if (finalEvent.isDead()) {
+            return;
+        }
+        if (pveMasterUpgrade2) {
+            wp.getAbilitiesMatching(OrbsOfLife.class).forEach(ability -> ability.subtractCurrentCooldown(.25f));
+        }
+        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
+                .findAny();
+        if (optionalCripplingStrike.isPresent()) {
+            CripplingStrike cripplingStrike = optionalCripplingStrike.get();
+            nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class, true);
+            cripple(wp,
+                    nearPlayer,
+                    name,
+                    new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
+                    crippleDuration * 20,
+                    convertToDivisionDecimal(cripple) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(cripplePerStrike)
+            );
+        } else {
+            nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
+                                            .append(Component.text("crippled", NamedTextColor.RED))
+                                            .append(Component.text(".", NamedTextColor.GRAY)));
+            cripple(wp, nearPlayer, name, crippleDuration * 20, convertToDivisionDecimal(cripple));
+        }
     }
 
     public int getConsecutiveStrikeCounter() {

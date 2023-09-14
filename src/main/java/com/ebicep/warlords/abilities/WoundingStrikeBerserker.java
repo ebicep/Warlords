@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -77,12 +78,29 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                 maxDamageHeal * lustDamageBoost,
                 critChance,
                 critMultiplier
-        );
-        if (pveMasterUpgrade) {
-            bleedOnHit(wp, nearPlayer);
-            return true;
+        ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
+
+        if (pveMasterUpgrade2) {
+            tripleHit(
+                    wp,
+                    nearPlayer,
+                    1.3f,
+                    null,
+                    finalEvent -> finalEvent.ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event))
+            );
         }
 
+        return true;
+    }
+
+    private void onFinalEvent(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer, WarlordsDamageHealingFinalEvent finalEvent) {
+        if (finalEvent.isDead()) {
+            return;
+        }
+        if (pveMasterUpgrade) {
+            bleedOnHit(wp, nearPlayer);
+            return;
+        }
         if (!(nearPlayer.getCooldownManager().hasCooldownFromName("Wounding Strike"))) {
             nearPlayer.sendMessage(
                     Component.text("You are ", NamedTextColor.GRAY)
@@ -123,12 +141,6 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                 );
             }
         });
-
-        if (pveMasterUpgrade2) {
-            tripleHit(wp, nearPlayer, 1.3f, null);
-        }
-
-        return true;
     }
 
     private void bleedOnHit(WarlordsEntity giver, WarlordsEntity hit) {

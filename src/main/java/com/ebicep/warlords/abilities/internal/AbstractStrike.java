@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.HammerOfLight;
 import com.ebicep.warlords.abilities.ProtectorsStrike;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -22,6 +23,7 @@ import javax.annotation.Nonnull;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class AbstractStrike extends AbstractAbility implements WeaponAbilityIcon {
@@ -36,33 +38,33 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         AtomicBoolean hitPlayer = new AtomicBoolean(false);
         PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
-                .aliveEnemiesOf(wp)
-                .closestFirst(wp)
-                .requireLineOfSight(wp)
-                .lookingAtFirst(wp)
-                .first((nearPlayer) -> {
-                    if (LocationUtils.isLookingAt(wp.getEntity(), nearPlayer.getEntity()) && LocationUtils.hasLineOfSight(wp.getEntity(), nearPlayer.getEntity())) {
-                        addTimesUsed();
-                        AbstractPlayerClass.sendRightClickPacket(player);
-                        playSoundAndEffect(nearPlayer.getLocation());
+                    .aliveEnemiesOf(wp)
+                    .closestFirst(wp)
+                    .requireLineOfSight(wp)
+                    .lookingAtFirst(wp)
+                    .first((nearPlayer) -> {
+                        if (LocationUtils.isLookingAt(wp.getEntity(), nearPlayer.getEntity()) && LocationUtils.hasLineOfSight(wp.getEntity(), nearPlayer.getEntity())) {
+                            addTimesUsed();
+                            AbstractPlayerClass.sendRightClickPacket(player);
+                            playSoundAndEffect(nearPlayer.getLocation());
 
-                        boolean successfulStrike = onHit(wp, player, nearPlayer);
-                        Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, nearPlayer));
-                        if (this instanceof ProtectorsStrike) {
-                            Optional<HammerOfLight> optionalHammerOfLight = new CooldownFilter<>(wp, RegularCooldown.class)
-                                    .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                    .findAny();
-                            if (optionalHammerOfLight.isPresent()) {
-                                wp.subtractEnergy(energyCost.getCurrentValue() - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
+                            boolean successfulStrike = onHit(wp, player, nearPlayer);
+                            Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, nearPlayer));
+                            if (this instanceof ProtectorsStrike) {
+                                Optional<HammerOfLight> optionalHammerOfLight = new CooldownFilter<>(wp, RegularCooldown.class)
+                                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                        .findAny();
+                                if (optionalHammerOfLight.isPresent()) {
+                                    wp.subtractEnergy(energyCost.getCurrentValue() - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
+                                } else {
+                                    wp.subtractEnergy(energyCost, false);
+                                }
                             } else {
                                 wp.subtractEnergy(energyCost, false);
                             }
-                        } else {
-                            wp.subtractEnergy(energyCost, false);
+                            hitPlayer.set(successfulStrike);
                         }
-                        hitPlayer.set(successfulStrike);
-                    }
-                });
+                    });
 
         return hitPlayer.get();
     }
@@ -77,7 +79,13 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
         kbTarget.setVelocity(name, v, false);
     }
 
-    public void tripleHit(WarlordsEntity giver, WarlordsEntity initialTarget, float damageModifier, Function<WarlordsEntity, EnumSet<InstanceFlags>> getFlags) {
+    public void tripleHit(
+            WarlordsEntity giver,
+            WarlordsEntity initialTarget,
+            float damageModifier,
+            Function<WarlordsEntity, EnumSet<InstanceFlags>> getFlags,
+            Consumer<Optional<WarlordsDamageHealingFinalEvent>> onFinalEvent
+    ) {
         for (WarlordsEntity we : PlayerFilter
                 .entitiesAround(initialTarget, 4, 4, 4)
                 .aliveEnemiesOf(giver)
@@ -86,7 +94,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                 .limit(2)
         ) {
             EnumSet<InstanceFlags> flags = getFlags != null ? getFlags.apply(we) : EnumSet.noneOf(InstanceFlags.class);
-            we.addDamageInstance(
+            onFinalEvent.accept(we.addDamageInstance(
                     giver,
                     name,
                     minDamageHeal * damageModifier,
@@ -94,7 +102,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                     critChance,
                     critMultiplier,
                     flags
-            );
+            ));
         }
     }
 
