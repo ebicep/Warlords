@@ -1,17 +1,17 @@
 package com.ebicep.warlords.pve.upgrades.warrior;
 
-import com.ebicep.warlords.abilities.GroundSlam;
+import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class GroundSlamBranch extends AbstractUpgradeBranch<GroundSlam> {
+public class AbstractGroundSlamBranch<T extends AbstractGroundSlam> extends AbstractUpgradeBranch<T> {
 
     int slamSize = ability.getSlamSize();
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
-    public GroundSlamBranch(AbilityTree abilityTree, GroundSlam ability) {
+    public AbstractGroundSlamBranch(AbilityTree abilityTree, T ability) {
         super(abilityTree, ability);
         treeA.add(new Upgrade(
                 "Impair - Tier I",

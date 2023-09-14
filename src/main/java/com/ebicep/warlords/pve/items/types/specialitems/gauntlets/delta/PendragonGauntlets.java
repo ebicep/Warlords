@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
-import com.ebicep.warlords.abilities.GroundSlam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -44,7 +44,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-            if (ability instanceof GroundSlam) {
+            if (ability instanceof AbstractGroundSlam) {
                 ability.setCritChance(ability.getCritChance() + 20);
             }
         }

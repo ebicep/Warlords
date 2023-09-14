@@ -13,7 +13,7 @@ public class Revenant extends AbstractWarrior {
                 0,
                 new CripplingStrike(),
                 new RecklessCharge(),
-                new GroundSlam(326, 441, 9.32f, 30, 35, 200),
+                new GroundSlamRevenant(),
                 new OrbsOfLife(),
                 new UndyingArmy()
         );

@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general;
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
+import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -253,9 +254,9 @@ public enum SkillBoosts {
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            GroundSlam.class,
+            AbstractGroundSlam.class,
             abstractAbility -> {
-                if (abstractAbility instanceof GroundSlam) {
+                if (abstractAbility instanceof AbstractGroundSlam) {
                     abstractAbility.multiplyMinMax(1.35f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 }
@@ -329,9 +330,9 @@ public enum SkillBoosts {
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            GroundSlam.class,
+            AbstractGroundSlam.class,
             abstractAbility -> {
-                if (abstractAbility instanceof GroundSlam groundSlam) {
+                if (abstractAbility instanceof AbstractGroundSlam groundSlam) {
                     groundSlam.setVelocity(1.35f);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 }
@@ -404,9 +405,9 @@ public enum SkillBoosts {
             Component.text("Reduce the cooldown of Ground Slam by ", NamedTextColor.GREEN)
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            GroundSlam.class,
+            AbstractGroundSlam.class,
             abstractAbility -> {
-                if (abstractAbility instanceof GroundSlam) {
+                if (abstractAbility instanceof AbstractGroundSlam) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 }
             }

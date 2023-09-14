@@ -1,15 +1,11 @@
-package com.ebicep.warlords.abilities;
+package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.customentities.nms.CustomFallingBlock;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.GroundSlamBranch;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -24,11 +20,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
+public abstract class AbstractGroundSlam extends AbstractAbility implements PurpleAbilityIcon {
 
     public int playersHit = 0;
     public int carrierHit = 0;
@@ -38,7 +32,7 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
     private float velocity = 1.25f;
     private boolean trueDamage = false;
 
-    public GroundSlam(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+    public AbstractGroundSlam(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super("Ground Slam", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
@@ -66,7 +60,7 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
         UUID abilityUUID = UUID.randomUUID();
         activateAbility(wp, 1, abilityUUID);
 
-        if (pveMasterUpgrade) {
+        if (pveMasterUpgrade || pveMasterUpgrade2) {
             wp.setVelocity(name, new Vector(0, 1.2, 0), true);
             new GameRunnable(wp.getGame()) {
                 boolean wasOnGround = true;
@@ -91,7 +85,7 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
 
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_IRON_GOLEM_DEATH, 2, 0.2f);
                         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 0.8f);
-                        activateAbility(wp, 1.5f, abilityUUID);
+                        activateAbility(wp, pveMasterUpgrade ? 1.5f : 1f, abilityUUID);
                         this.cancel();
                     }
                 }
@@ -100,10 +94,14 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
         return true;
     }
 
-    private void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier, UUID abilityUUID) {
+    protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
+
+    }
+
+    protected void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier, UUID abilityUUID) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
-        List<WarlordsEntity> currentPlayersHit = new ArrayList<>();
+        Set<WarlordsEntity> currentPlayersHit = new HashSet<>();
         Location location = wp.getLocation();
 
         for (int i = 0; i < slamSize; i++) {
@@ -119,7 +117,7 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
                     for (Location location : fallingBlockLocation) {
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                             FallingBlock fallingBlock = Utils.addFallingBlock(location.clone());
-                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, GroundSlam.this));
+                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, AbstractGroundSlam.this));
                             WarlordsEvents.addEntityUUID(fallingBlock);
                         }
                         // Damage
@@ -149,6 +147,7 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
                                     maxDamageHeal * damageMultiplier,
                                     critChance,
                                     critMultiplier,
+                                    trueDamage ? EnumSet.of(InstanceFlags.TRUE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class),
                                     abilityUUID
                             );
                         }
@@ -159,6 +158,7 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
                 }
 
                 if (fallingBlockLocations.isEmpty()) {
+                    onSecondSlamHit(wp, currentPlayersHit);
                     this.cancel();
                 }
             }
@@ -188,11 +188,6 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
         }.runTaskTimer(0, 0);
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new GroundSlamBranch(abilityTree, this);
-    }
-
     public int getSlamSize() {
         return slamSize;
     }
@@ -200,7 +195,6 @@ public class GroundSlam extends AbstractAbility implements PurpleAbilityIcon {
     public void setSlamSize(int slamSize) {
         this.slamSize = slamSize;
     }
-
 
     public float getVelocity() {
         return velocity;
