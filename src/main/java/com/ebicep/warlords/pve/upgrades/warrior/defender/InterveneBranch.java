@@ -88,7 +88,20 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
                 "Remove the damage, cast and break range limit on Intervene. Additionally, reduce damage taken by 30%",
                 50000,
                 () -> {
-                    ability.setDamageReduction(20);
+                    ability.setDamageReduction(ability.getDamageReduction() - 30);
+                    ability.setMaxDamagePrevented(10000000);
+                    ability.setRadius(300);
+                    ability.setBreakRadius(300);
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Interference",
+                "Intervene - Master Upgrade",
+                """
+                        Remove the damage, cast and break range limit on Intervene. Additionally, Intervene gives a 20% speed increase to the caster and person intervened.
+                        """,
+                50000,
+                () -> {
                     ability.setMaxDamagePrevented(10000000);
                     ability.setRadius(300);
                     ability.setBreakRadius(300);

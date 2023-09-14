@@ -138,6 +138,16 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     .append(Component.text("!", NamedTextColor.GRAY))
             );
 
+            Runnable wpInterference;
+            Runnable veneTargetInterference;
+            if (pveMasterUpgrade2) {
+                wpInterference = wp.addSpeedModifier(wp, "Interference", 20, tickDuration);
+                veneTargetInterference = veneTarget.addSpeedModifier(wp, "Interference", 20, tickDuration);
+            } else {
+                wpInterference = null;
+                veneTargetInterference = null;
+            }
+
             LinkedCooldown<Intervene> interveneCooldown = new LinkedCooldown<>(
                     name,
                     "VENE",
@@ -150,6 +160,11 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     cooldownManager -> {
                         if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
                             return;
+                        }
+
+                        if (wpInterference != null && veneTargetInterference != null) {
+                            wpInterference.run();
+                            veneTargetInterference.run();
                         }
 
                         wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
