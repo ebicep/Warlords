@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -99,19 +100,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
             int multiplier = 0;
 
             @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                hitsTakenAmplified++;
-                return currentDamageValue * convertToMultiplicationDecimal(damageTakenIncrease);
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                hitsDoneAmplified++;
-                multiplier++;
-                return currentDamageValue * convertToMultiplicationDecimal(damageIncrease);
-            }
-
-            @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
                 if (pveMasterUpgrade) {
                     if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
@@ -139,6 +127,34 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     return currentCritMultiplier + critBoost;
                 }
                 return currentCritMultiplier;
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                hitsTakenAmplified++;
+                return currentDamageValue * convertToMultiplicationDecimal(damageTakenIncrease);
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                hitsDoneAmplified++;
+                multiplier++;
+                float increase = damageIncrease;
+                if (pveMasterUpgrade2) {
+                    CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
+                    if (cooldownManager.hasCooldownFromName("Bleed") || cooldownManager.hasCooldownFromName("Wounding Strike")) {
+                        increase += 40;
+                    }
+                }
+                return currentDamageValue * convertToMultiplicationDecimal(increase);
+            }
+
+            @Override
+            public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
+                if (pveMasterUpgrade2 && !(ability instanceof Berserk)) {
+                    return 0.80f;
+                }
+                return 1;
             }
         });
 

@@ -8,6 +8,7 @@ public enum CooldownTypes {
     WEAPON("WEAPON"),
     ITEM("ITEM"),
     MASTERY("MASTERY"),
+    ADDON("ADDON"),
 
     ;
 

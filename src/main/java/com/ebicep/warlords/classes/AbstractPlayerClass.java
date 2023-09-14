@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -195,7 +196,17 @@ public abstract class AbstractPlayerClass {
             if (shouldApplyCooldown) {
                 ability.addTimesUsed();
                 if (!wp.isDisableCooldowns()) {
-                    ability.setCurrentCooldown((float) (ability.getCooldown() * wp.getCooldownModifier()));
+                    float cooldown = ability.getCooldown();
+                    float cooldownModifier = 1;
+                    List<AbstractCooldown<?>> cooldownsDistinct = wp.getCooldownManager().getCooldownsDistinct();
+                    for (AbstractCooldown<?> abstractCooldown : cooldownsDistinct) {
+                        cooldown += abstractCooldown.getAbilityMultiplicativeCooldownAdd(ability);
+                        cooldownModifier += abstractCooldown.getAbilityMultiplicativeCooldownAdd(ability);
+                    }
+                    for (AbstractCooldown<?> abstractCooldown : cooldownsDistinct) {
+                        cooldownModifier *= abstractCooldown.getAbilityMultiplicativeCooldownMult(ability);
+                    }
+                    ability.setCurrentCooldown(cooldown * cooldownModifier);
                 }
                 sendRightClickPacket(player);
             }

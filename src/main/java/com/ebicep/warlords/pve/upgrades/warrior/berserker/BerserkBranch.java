@@ -97,5 +97,15 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Maniacal Rage",
+                "Berserk - Master Upgrade",
+                """
+                        While Berserk is active, cooldowns for abilities (excluding Berserk) will be reduced by 20% and enemies that are affected by BLEED or WOUNDING will take 40% more damage.
+                        """,
+                50000,
+                () -> {
+                }
+        );
     }
 }

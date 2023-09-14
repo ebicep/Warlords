@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.option.PreGameItemOption;
 import com.ebicep.warlords.game.option.freeze.AFKDetectionOption;
 import com.ebicep.warlords.game.option.freeze.GameFreezeWhenOfflineOption;
@@ -10,6 +11,8 @@ import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -95,7 +98,22 @@ public enum GameAddon {
         @Override
         public void warlordsEntityCreated(@Nonnull Game game, @Nonnull WarlordsEntity player) {
             player.setEnergyModifier(player.getEnergyModifier() * 0.25);
-            player.setCooldownModifier(player.getCooldownModifier() * 0.25);
+            player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    "Cooldown Mode",
+                    null,
+                    GameAddon.class,
+                    COOLDOWN_MODE,
+                    player,
+                    CooldownTypes.ADDON,
+                    cooldownManager -> {
+                    },
+                    false
+            ) {
+                @Override
+                public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
+                    return 0.25f;
+                }
+            });
         }
     },
     TRIPLE_HEALTH(

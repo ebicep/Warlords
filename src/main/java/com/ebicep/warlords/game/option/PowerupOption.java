@@ -412,23 +412,26 @@ public class PowerupOption implements Option {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(CooldownPowerup.class, false);
-                we.getCooldownManager().addRegularCooldown(
+                we.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Cooldown",
                         "CDR",
                         CooldownPowerup.class,
                         CooldownPowerup.COOLDOWN_POWERUP,
-                        null,
+                        we,
                         CooldownTypes.BUFF,
                         cooldownManager -> {
 
                         },
                         cooldownManager -> {
-                            we.setCooldownModifier(1);
                             we.sendMessage(getWornOffMessage());
                         },
                         option.getDuration() * 20
-                );
-                we.setCooldownModifier(0.75);
+                ) {
+                    @Override
+                    public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
+                        return 0.75f;
+                    }
+                });
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text("COOLDOWN", NamedTextColor.AQUA, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))

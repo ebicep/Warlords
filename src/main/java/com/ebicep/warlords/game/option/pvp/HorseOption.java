@@ -107,7 +107,8 @@ public class HorseOption implements Option, Listener {
                 player.playSound(player.getLocation(), "mountup", 1, 1);
                 CustomHorse customHorse = activateHorseForPlayer(wp);
                 if (!wp.isDisableCooldowns()) {
-                    wp.setHorseCooldown((float) (customHorse.getCooldown() * wp.getCooldownModifier()));
+                    float cooldown = customHorse.getCooldown();
+                    wp.setHorseCooldown(cooldown);
                 }
             }
         }

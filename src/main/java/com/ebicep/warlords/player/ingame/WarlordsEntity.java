@@ -124,7 +124,6 @@ public abstract class WarlordsEntity {
     private boolean noEnergyConsumption;
     private boolean disableCooldowns;
     private double energyModifier = 1;
-    private double cooldownModifier = 1;
     private boolean takeDamage = true;
     private boolean canCrit = true;
     private boolean teamFlagCompass = true;
@@ -2314,14 +2313,6 @@ public abstract class WarlordsEntity {
 
     public void setEnergyModifier(double energyModifier) {
         this.energyModifier = energyModifier;
-    }
-
-    public double getCooldownModifier() {
-        return cooldownModifier;
-    }
-
-    public void setCooldownModifier(double cooldownModifier) {
-        this.cooldownModifier = cooldownModifier;
     }
 
     public boolean isTakeDamage() {

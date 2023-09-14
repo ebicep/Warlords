@@ -14,6 +14,7 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -218,7 +219,17 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             if (shouldApplyCooldown) {
                 ability.addTimesUsed();
                 if (!warlordsNPC.isDisableCooldowns()) {
-                    ability.setCurrentCooldown((float) (ability.getCooldown() * warlordsNPC.getCooldownModifier()));
+                    float cooldown = ability.getCooldown();
+                    float cooldownModifier = 1;
+                    List<AbstractCooldown<?>> cooldownsDistinct = warlordsNPC.getCooldownManager().getCooldownsDistinct();
+                    for (AbstractCooldown<?> abstractCooldown : cooldownsDistinct) {
+                        cooldown += abstractCooldown.getAbilityMultiplicativeCooldownAdd(ability);
+                        cooldownModifier += abstractCooldown.getAbilityMultiplicativeCooldownAdd(ability);
+                    }
+                    for (AbstractCooldown<?> abstractCooldown : cooldownsDistinct) {
+                        cooldownModifier *= abstractCooldown.getAbilityMultiplicativeCooldownMult(ability);
+                    }
+                    ability.setCurrentCooldown(cooldown * cooldownModifier);
                 }
             }
         });

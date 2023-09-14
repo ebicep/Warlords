@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, KnockbackInstance, PlayerNameInstance {
+public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, KnockbackInstance, PlayerNameInstance, AbilityCooldownInstance {
 
     protected String name;
     protected String nameAbbreviation;
