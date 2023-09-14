@@ -91,10 +91,27 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
         masterUpgrade = new Upgrade(
                 "Final Stand",
                 "Last Stand - Master Upgrade",
-                "Doubles the radius of Last Stand and enemies within half the radius will target you on cast, can be re-casted once. Reduce cooldown by 20%.",
+                """
+                        -20% Cooldown reduction
+                                                
+                        Double the radius of Last Stand and take 50% less knockback while active.
+                        """,
                 50000,
                 () -> {
-
+                    ability.setCooldown(ability.getCooldown() * 0.8f);
+                    ability.setRadius(ability.getRadius() * 2);
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Final Stand",
+                "Last Stand - Master Upgrade",
+                """
+                        -20% Cooldown reduction
+                                                
+                        Double the radius of Last Stand and shred 15% of all enemies damage resistance when activated (excluding bosses).
+                        """,
+                50000,
+                () -> {
                     ability.setCooldown(ability.getCooldown() * 0.8f);
                     ability.setRadius(ability.getRadius() * 2);
                 }
