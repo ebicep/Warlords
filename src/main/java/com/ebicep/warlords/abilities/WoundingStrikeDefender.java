@@ -5,10 +5,13 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.WoundingStrikeBranchDefender;
@@ -51,6 +54,11 @@ public class WoundingStrikeDefender extends AbstractStrike {
         info.add(new Pair<>("Players Stuck", "" + timesUsed));
 
         return info;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new WoundingStrikeBranchDefender(abilityTree, this);
     }
 
     @Override
@@ -119,6 +127,18 @@ public class WoundingStrikeDefender extends AbstractStrike {
             });
         }
 
+        if (pveMasterUpgrade2) {
+            tripleHit(wp, nearPlayer, 1, warlordsEntity -> {
+                if (!wp.getCooldownManager().hasCooldown(Intervene.class)) {
+                    return EnumSet.noneOf(InstanceFlags.class);
+                }
+                if (warlordsEntity instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)) {
+                    return EnumSet.of(InstanceFlags.PIERCE_DAMAGE);
+                }
+                return EnumSet.noneOf(InstanceFlags.class);
+            });
+        }
+
         return true;
     }
 
@@ -155,11 +175,6 @@ public class WoundingStrikeDefender extends AbstractStrike {
             teammate.getCooldownManager().removeCooldownByName(name + " Resistance");
             teammate.getCooldownManager().addCooldown(linkedCooldown);
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new WoundingStrikeBranchDefender(abilityTree, this);
     }
 
     public int getWounding() {

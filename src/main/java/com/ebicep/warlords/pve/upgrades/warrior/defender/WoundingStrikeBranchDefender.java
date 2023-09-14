@@ -99,5 +99,18 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                     ability.setCritChance(100);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Shredding Strike",
+                "Wounding Strike - Master Upgrade",
+                """
+                        -20 Energy cost
+                                                
+                        Wounding Strike now hits up to 3 enemies. Strikes will ignore 100% of enemies resistance while Intervene is in use (except for bosses).	
+                        """,
+                50000,
+                () -> {
+                    ability.setEnergyCost(ability.getEnergyCost() - 20);
+                }
+        );
     }
 }

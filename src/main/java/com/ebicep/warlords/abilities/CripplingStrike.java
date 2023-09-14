@@ -153,7 +153,7 @@ public class CripplingStrike extends AbstractStrike {
         });
 
         if (pveMasterUpgrade) {
-            tripleHit(wp, nearPlayer, 1);
+            tripleHit(wp, nearPlayer, 1, null);
         }
 
         return true;

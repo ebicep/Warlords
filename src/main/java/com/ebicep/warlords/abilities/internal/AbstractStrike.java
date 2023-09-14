@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Bukkit;
@@ -18,8 +19,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 public abstract class AbstractStrike extends AbstractAbility implements WeaponAbilityIcon {
 
@@ -74,7 +77,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
         kbTarget.setVelocity(name, v, false);
     }
 
-    public void tripleHit(WarlordsEntity giver, WarlordsEntity initialTarget, float damageModifier) {
+    public void tripleHit(WarlordsEntity giver, WarlordsEntity initialTarget, float damageModifier, Function<WarlordsEntity, EnumSet<InstanceFlags>> getFlags) {
         for (WarlordsEntity we : PlayerFilter
                 .entitiesAround(initialTarget, 4, 4, 4)
                 .aliveEnemiesOf(giver)
@@ -82,13 +85,15 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                 .excluding(initialTarget)
                 .limit(2)
         ) {
+            EnumSet<InstanceFlags> flags = getFlags != null ? getFlags.apply(we) : EnumSet.noneOf(InstanceFlags.class);
             we.addDamageInstance(
                     giver,
                     name,
                     minDamageHeal * damageModifier,
                     maxDamageHeal * damageModifier,
                     critChance,
-                    critMultiplier
+                    critMultiplier,
+                    flags
             );
         }
     }

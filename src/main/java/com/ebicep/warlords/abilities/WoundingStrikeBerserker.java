@@ -125,7 +125,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
         });
 
         if (pveMasterUpgrade2) {
-            tripleHit(wp, nearPlayer, 1.3f);
+            tripleHit(wp, nearPlayer, 1.3f, null);
         }
 
         return true;
