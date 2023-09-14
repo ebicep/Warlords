@@ -5,13 +5,13 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class WoundingStrikeBranchDef extends AbstractUpgradeBranch<WoundingStrikeDefender> {
+public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<WoundingStrikeDefender> {
 
     float minDamage;
     float maxDamage;
     float energyCost = ability.getEnergyCost();
 
-    public WoundingStrikeBranchDef(AbilityTree abilityTree, WoundingStrikeDefender ability) {
+    public WoundingStrikeBranchDefender(AbilityTree abilityTree, WoundingStrikeDefender ability) {
         super(abilityTree, ability);
         if (abilityTree.getWarlordsPlayer().isInPve()) {
             ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);

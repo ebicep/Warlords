@@ -11,7 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.defender.WoundingStrikeBranchDef;
+import com.ebicep.warlords.pve.upgrades.warrior.defender.WoundingStrikeBranchDefender;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -160,7 +160,7 @@ public class WoundingStrikeDefender extends AbstractStrike {
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new WoundingStrikeBranchDef(abilityTree, this);
+        return new WoundingStrikeBranchDefender(abilityTree, this);
     }
 
     public int getWounding() {

@@ -5,14 +5,14 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 
-public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStrikeBerserker> {
+public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<WoundingStrikeBerserker> {
 
     float minDamage;
     float maxDamage;
     float energyCost = ability.getEnergyCost();
     int woundDuration = ability.getWoundingDuration();
 
-    public WoundingStrikeBranchBers(AbilityTree abilityTree, WoundingStrikeBerserker ability) {
+    public WoundingStrikeBranchBerserker(AbilityTree abilityTree, WoundingStrikeBerserker ability) {
         super(abilityTree, ability);
         if (abilityTree.getWarlordsPlayer().isInPve()) {
             ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
@@ -105,6 +105,19 @@ public class WoundingStrikeBranchBers extends AbstractUpgradeBranch<WoundingStri
                 50000,
                 () -> {
 
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Lacerating Strike",
+                "Wounding Strike - Master Upgrade",
+                """
+                        -20 Energy cost
+                         
+                        Wounding Strike now hits up to 3 enemies. Strikes deal 30% more damage while Blood Lust is active.
+                        """,
+                50000,
+                () -> {
+                    ability.setEnergyCost(energyCost - 20);
                 }
         );
 

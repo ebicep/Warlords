@@ -74,7 +74,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
         kbTarget.setVelocity(name, v, false);
     }
 
-    public void tripleHit(WarlordsEntity giver, WarlordsEntity initialTarget) {
+    public void tripleHit(WarlordsEntity giver, WarlordsEntity initialTarget, float damageModifier) {
         for (WarlordsEntity we : PlayerFilter
                 .entitiesAround(initialTarget, 4, 4, 4)
                 .aliveEnemiesOf(giver)
@@ -85,8 +85,8 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
             we.addDamageInstance(
                     giver,
                     name,
-                    minDamageHeal,
-                    maxDamageHeal,
+                    minDamageHeal * damageModifier,
+                    maxDamageHeal * damageModifier,
                     critChance,
                     critMultiplier
             );

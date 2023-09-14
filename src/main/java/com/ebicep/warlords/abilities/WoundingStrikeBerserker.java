@@ -10,7 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.berserker.WoundingStrikeBranchBers;
+import com.ebicep.warlords.pve.upgrades.warrior.berserker.WoundingStrikeBranchBerserker;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -57,6 +57,11 @@ public class WoundingStrikeBerserker extends AbstractStrike {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new WoundingStrikeBranchBerserker(abilityTree, this);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
         randomHitEffect(location, 7, 255, 0, 0);
@@ -64,61 +69,66 @@ public class WoundingStrikeBerserker extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        boolean lustDamageBoost = pveMasterUpgrade && wp.getCooldownManager().hasCooldown(BloodLust.class);
+        float lustDamageBoost = wp.getCooldownManager().hasCooldown(BloodLust.class) ? pveMasterUpgrade ? 2 : pveMasterUpgrade2 ? 1.3f : 1 : 1;
         nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamageHeal * (lustDamageBoost ? 2 : 1),
-                maxDamageHeal * (lustDamageBoost ? 2 : 1),
+                minDamageHeal * lustDamageBoost,
+                maxDamageHeal * lustDamageBoost,
                 critChance,
                 critMultiplier
         );
-//        if(finalEvent.isPresent()) {
         if (pveMasterUpgrade) {
             bleedOnHit(wp, nearPlayer);
-        } else {
-            if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager()
-                                                                                                          .hasCooldown(WoundingStrikeDefender.class))) {
-                nearPlayer.sendMessage(
-                        Component.text("You are ", NamedTextColor.GRAY)
-                                 .append(Component.text("wounded", NamedTextColor.RED))
-                                 .append(Component.text(".", NamedTextColor.GRAY))
+            return true;
+        }
+
+        if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager()
+                                                                                                      .hasCooldown(WoundingStrikeDefender.class))) {
+            nearPlayer.sendMessage(
+                    Component.text("You are ", NamedTextColor.GRAY)
+                             .append(Component.text("wounded", NamedTextColor.RED))
+                             .append(Component.text(".", NamedTextColor.GRAY))
+            );
+        }
+        nearPlayer.getCooldownManager().removePreviousWounding();
+        nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "WND",
+                WoundingStrikeBerserker.class,
+                new WoundingStrikeBerserker(),
+                wp,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
+                        nearPlayer.sendMessage(
+                                Component.text("You are no longer ", NamedTextColor.GRAY)
+                                         .append(Component.text("wounded", NamedTextColor.RED))
+                                         .append(Component.text(".", NamedTextColor.GRAY))
+                        );
+                    }
+                },
+                woundingDuration * 20
+        ) {
+            @Override
+            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                return currentHealValue * .6f;
+            }
+
+            @Override
+            public PlayerNameData addSuffixFromOther() {
+                return new PlayerNameData(Component.text("WND", NamedTextColor.RED),
+                        we -> we == wp || (we.isTeammate(nearPlayer) && we.getSpecClass().specType == SpecType.HEALER)
                 );
             }
-            nearPlayer.getCooldownManager().removePreviousWounding();
-            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "WND",
-                    WoundingStrikeBerserker.class,
-                    new WoundingStrikeBerserker(),
-                    wp,
-                    CooldownTypes.DEBUFF,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                        if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                            nearPlayer.sendMessage(
-                                    Component.text("You are no longer ", NamedTextColor.GRAY)
-                                             .append(Component.text("wounded", NamedTextColor.RED))
-                                             .append(Component.text(".", NamedTextColor.GRAY))
-                            );
-                        }
-                    },
-                    woundingDuration * 20
-            ) {
-                @Override
-                public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                    return currentHealValue * .6f;
-                }
+        });
 
-                @Override
-                public PlayerNameData addSuffixFromOther() {
-                    return new PlayerNameData(Component.text("WND", NamedTextColor.RED),
-                            we -> we == wp || (we.isTeammate(nearPlayer) && we.getSpecClass().specType == SpecType.HEALER)
-                    );
-                }
-            });
+        if (pveMasterUpgrade2) {
+            tripleHit(wp, nearPlayer, 1.3f);
         }
+
         return true;
     }
 
@@ -159,11 +169,6 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                 return currentHealValue * .2f;
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new WoundingStrikeBranchBers(abilityTree, this);
     }
 
     public int getWoundingDuration() {
