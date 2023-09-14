@@ -7,6 +7,7 @@ import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.SeismicWaveBranch;
@@ -34,7 +35,7 @@ public class SeismicWave extends AbstractAbility implements RedAbilityIcon {
     public int warpsKnockbacked = 0;
 
     private float velocity = 1.25f;
-    private int waveSize = 8; // foward amount
+    private int waveLength = 8; // foward amount
     private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
 
     public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
@@ -68,7 +69,7 @@ public class SeismicWave extends AbstractAbility implements RedAbilityIcon {
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
 
         Location location = player.getLocation();
-        for (int i = 0; i < waveSize; i++) {
+        for (int i = 0; i < waveLength; i++) {
             fallingBlockLocations.add(getWave(location, i));
         }
 
@@ -94,12 +95,16 @@ public class SeismicWave extends AbstractAbility implements RedAbilityIcon {
                     playersHit.add(waveTarget);
                     final Vector v = player.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
                     waveTarget.setVelocity(name, v, false, false);
+                    float multiplier = 1;
                     if (pveMasterUpgrade) {
-                        float multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
-                        waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, abilityUUID);
-                    } else {
-                        waveTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, abilityUUID);
+                        multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
+                    } else if (pveMasterUpgrade2) {
+                        multiplier = waveTarget.getCooldownManager().hasCooldownFromName("Wounding Strike") ? 1.3f : 1;
+                        if (waveTarget instanceof WarlordsNPC warlordsNPC) {
+                            warlordsNPC.setStunTicks(20);
+                        }
                     }
+                    waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, abilityUUID);
                 }
             }
         }
@@ -188,12 +193,12 @@ public class SeismicWave extends AbstractAbility implements RedAbilityIcon {
         this.velocity = velocity;
     }
 
-    public int getWaveSize() {
-        return waveSize;
+    public int getWaveLength() {
+        return waveLength;
     }
 
-    public void setWaveSize(int waveSize) {
-        this.waveSize = waveSize;
+    public void setWaveLength(int waveLength) {
+        this.waveLength = waveLength;
     }
 
     public int getWaveWidth() {

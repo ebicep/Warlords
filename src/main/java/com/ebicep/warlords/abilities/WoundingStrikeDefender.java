@@ -76,8 +76,7 @@ public class WoundingStrikeDefender extends AbstractStrike {
             }
         });
 
-        if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager()
-                .hasCooldown(WoundingStrikeDefender.class))) {
+        if (!(nearPlayer.getCooldownManager().hasCooldownFromName("Wounding Strike"))) {
             nearPlayer.sendMessage(
                     Component.text("You are ", NamedTextColor.GRAY)
                              .append(Component.text("wounded", NamedTextColor.RED))
@@ -85,7 +84,7 @@ public class WoundingStrikeDefender extends AbstractStrike {
             );
         }
         if (!nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
-            nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class, true);
+            nearPlayer.getCooldownManager().removeCooldownByName("Wounding Strike", true);
             nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "WND",

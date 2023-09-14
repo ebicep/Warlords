@@ -3,8 +3,6 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.UndyingArmy;
-import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
-import com.ebicep.warlords.abilities.WoundingStrikeDefender;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.state.PlayingState;
@@ -443,9 +441,13 @@ public class CooldownManager {
     }
 
     public void removeCooldownByName(String cooldownName) {
+        removeCooldownByName(cooldownName, false);
+    }
+
+    public void removeCooldownByName(String cooldownName, boolean noForce) {
         new ArrayList<>(abstractCooldowns).forEach(cd -> {
             if (abstractCooldowns.contains(cd) && Objects.equals(cd.getName(), cooldownName)) {
-                removeCooldown(cd);
+                removeCooldown(cd, noForce);
             }
         });
     }
@@ -482,8 +484,7 @@ public class CooldownManager {
     }
 
     public void removePreviousWounding() {
-        removeCooldown(WoundingStrikeBerserker.class, true);
-        removeCooldown(WoundingStrikeDefender.class, true);
+        removeCooldownByName("Wounding Strike", true);
     }
 
     public void removeCooldown(Class<?> cooldownClass, boolean noForce) {

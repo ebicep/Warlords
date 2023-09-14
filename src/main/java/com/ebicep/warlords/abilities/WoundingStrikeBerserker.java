@@ -83,8 +83,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
             return true;
         }
 
-        if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager()
-                                                                                                      .hasCooldown(WoundingStrikeDefender.class))) {
+        if (!(nearPlayer.getCooldownManager().hasCooldownFromName("Wounding Strike"))) {
             nearPlayer.sendMessage(
                     Component.text("You are ", NamedTextColor.GRAY)
                              .append(Component.text("wounded", NamedTextColor.RED))

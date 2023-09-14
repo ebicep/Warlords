@@ -108,7 +108,7 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Lacerating Strike",
+                "Lustful Strike",
                 "Wounding Strike - Master Upgrade",
                 """
                         -20 Energy cost

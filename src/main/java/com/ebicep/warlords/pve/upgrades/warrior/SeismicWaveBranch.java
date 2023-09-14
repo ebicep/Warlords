@@ -90,7 +90,19 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
                 50000,
                 () -> {
 
-                    ability.setWaveSize((int) (ability.getWaveSize() * 2.5f));
+                    ability.setWaveLength((int) (ability.getWaveLength() * 2.5f));
+                    ability.setWaveWidth((int) (ability.getWaveWidth() * 2.5f));
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Wild Wave",
+                "Seismic Wave - Master Upgrade",
+                """
+                        Increase the size of Seismic Wave by 150%. Enemies hit will be stunned for 1s. Enemies that are WOUNDED will take 30% more damage.
+                        """,
+                50000,
+                () -> {
+                    ability.setWaveLength((int) (ability.getWaveLength() * 2.5f));
                     ability.setWaveWidth((int) (ability.getWaveWidth() * 2.5f));
                 }
         );

@@ -109,7 +109,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade) {
-                    if (event.getWarlordsEntity().getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
+                    if (event.getWarlordsEntity().getCooldownManager().hasCooldownFromName("Wounding Strike")) {
                         return currentDamageValue * 1.4f;
                     }
                 }
