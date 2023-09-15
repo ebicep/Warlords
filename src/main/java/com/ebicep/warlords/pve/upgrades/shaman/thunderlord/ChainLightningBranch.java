@@ -100,8 +100,19 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                 "Increase max damage reduction cap by 10%. Additionally, Chain Lightning now deals 10% more damage per bounce instead of less.",
                 50000,
                 () -> {
-
                     ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 10);
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Aftershock",
+                "Chain Lightning - Master Upgrade",
+                """
+                        Chain Lightning will now give enemies hit the SHOCKED status.
+                                                
+                        SHOCKED: Enemies that are shocked have their movement speed slowed by 25% and their incoming healing reduced by 50% for 3s.
+                        """,
+                50000,
+                () -> {
                 }
         );
     }

@@ -26,26 +26,17 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration, Comparable<ChainLightning> {
+public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration {
+
 
     public int numberOfDismounts = 0;
 
-    private int damageReduction = 0;
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 30;
     private int damageReductionTickDuration = 90;
 
     public ChainLightning() {
         super("Chain Lightning", 370, 499, 9.4f, 40, 20, 175, 20, 10, 3);
-    }
-
-    public ChainLightning(int damageReduction) {
-        super("Chain Lightning", 370, 499, 9.4f, 40, 20, 175, 20, 10, 3);
-        this.damageReduction = damageReduction;
-    }
-
-    public int getDamageReduction() {
-        return damageReduction;
     }
 
     @Override
@@ -80,6 +71,11 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ChainLightningBranch(abilityTree, this);
+    }
+
+    @Override
     protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player player) {
         return partOfChainLightning(wp, new HashSet<>(), wp.getEntity(), false);
     }
@@ -94,7 +90,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 name,
                 "CHAIN",
                 ChainLightning.class,
-                new ChainLightning(hitCounter),
+                new ChainLightning(),
                 wp,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
@@ -114,11 +110,6 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 return newDamageValue;
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ChainLightningBranch(abilityTree, this);
     }
 
     @Override
@@ -157,12 +148,13 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
             }
         } // no else
 
-        PlayerFilter filter = firstCheck ? PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
-                .filter(e ->
-                        LocationUtils.isLookingAtChain(wp.getEntity(), e.getEntity()) &&
-                                LocationUtils.hasLineOfSight(wp.getEntity(), e.getEntity())
-                ) : PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange)
-                .lookingAtFirst(wp);
+        PlayerFilter filter = firstCheck ?
+                              PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
+                                          .filter(e -> LocationUtils.isLookingAtChain(wp.getEntity(), e.getEntity()) && LocationUtils.hasLineOfSight(wp.getEntity(),
+                                                  e.getEntity()
+                                          )) :
+                              PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange)
+                                          .lookingAtFirst(wp);
 
         Optional<WarlordsEntity> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
@@ -187,6 +179,10 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                     critChance,
                     critMultiplier
             );
+
+            if (pveMasterUpgrade2) {
+                giveShockedEffect(wp, hit);
+            }
 
             return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
         } else {
@@ -215,9 +211,24 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 .findFirst();
     }
 
-    @Override
-    public int compareTo(ChainLightning chainLightning) {
-        return Integer.compare(this.damageReduction, chainLightning.damageReduction);
+    public void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver) {
+        receiver.addSpeedModifier(giver, "SHOCKED", -30, 3 * 20);
+        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Aftershock",
+                "SHOCKED",
+                ChainLightning.class,
+                new ChainLightning(),
+                giver,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                3 * 20
+        ) {
+            @Override
+            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                return currentHealValue * .5f;
+            }
+        });
     }
 
     public float getDamageReductionPerBounce() {
