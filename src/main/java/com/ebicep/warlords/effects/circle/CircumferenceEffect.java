@@ -25,6 +25,10 @@ public class CircumferenceEffect extends AbstractEffectPlayer<CircleEffect> {
         this(new TeamBasedEffect(own, other));
     }
 
+    public CircumferenceEffect(Particle own, Object data) {
+        this(new TeamBasedEffect(own, data));
+    }
+
     public CircumferenceEffect(Particle effect) {
         this(new TeamBasedEffect(effect));
     }

@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.ConsecrateBranchCrusader;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -56,8 +57,8 @@ public class ConsecrateCrusader extends AbstractConsecrate {
                 wp.getTeam(),
                 location,
                 radius,
-                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
-                new DoubleLineEffect(Particle.SPELL)
+                new CircumferenceEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 215, 0), 1)),
+                new DoubleLineEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 255, 100), 1))
         );
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(

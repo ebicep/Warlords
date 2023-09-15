@@ -26,6 +26,10 @@ public class DoubleLineEffect extends AbstractEffectPlayer<CircleEffect> {
         this(new TeamBasedEffect(own, other));
     }
 
+    public DoubleLineEffect(Particle own, Object data) {
+        this(new TeamBasedEffect(own, data));
+    }
+
     public DoubleLineEffect(Particle effect) {
         this(new TeamBasedEffect(effect));
     }
