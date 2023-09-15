@@ -74,13 +74,17 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
                 critMultiplier
         );
 
-        for (WarlordsEntity knockbackTarget : PlayerFilter
+        List<WarlordsEntity> hit = PlayerFilter
                 .entitiesAround(player, knockbackRadius, knockbackRadius, knockbackRadius)
                 .aliveEnemiesOf(wp)
-        ) {
+                .toList();
+        for (WarlordsEntity knockbackTarget : hit) {
             final Location loc = knockbackTarget.getLocation();
             final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
             knockbackTarget.setVelocity(name, v, false);
+        }
+        if (pveMasterUpgrade2) {
+            giveCallOfThunderEffect(wp, hit);
         }
 
         // pulsedamage
@@ -129,6 +133,46 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new LightningRodBranch(abilityTree, this);
+    }
+
+    private void giveCallOfThunderEffect(WarlordsEntity from, List<WarlordsEntity> hit) {
+        LightningRod tempRod = new LightningRod();
+        for (WarlordsEntity warlordsEntity : hit) {
+            warlordsEntity.getCooldownManager().removeCooldownByName("Call of Thunder Debuff");
+            warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Call of Thunder Debuff",
+                    "THUN",
+                    LightningRod.class,
+                    tempRod,
+                    from,
+                    CooldownTypes.DEBUFF,
+                    cooldownManager -> {
+                    },
+                    8 * 20
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * 1.25f;
+                }
+            });
+        }
+        from.getCooldownManager().removeCooldownByName("Call of Thunder Buff");
+        from.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Call of Thunder Buff",
+                "THUN",
+                LightningRod.class,
+                tempRod,
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                8 * 20
+        ) {
+            @Override
+            public float addEnergyGainPerTick(float energyGainPerTick) {
+                return energyGainPerTick + 15 / 20f;
+            }
+        });
     }
 
     public int getHealthRestore() {

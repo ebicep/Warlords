@@ -93,6 +93,17 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Call of Thunder",
+                "Lightning Rod - Master Upgrade",
+                """
+                        All enemies pushed away from Lightning Rod take 25% increased incoming damage from all sources. Additionally, the caster will gain +15 EPS for 8s.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 
 
