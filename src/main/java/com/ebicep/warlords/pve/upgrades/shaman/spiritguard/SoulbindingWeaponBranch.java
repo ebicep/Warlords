@@ -89,7 +89,7 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Remembrance",
+                "Free Spirit",
                 "Soulbinding Weapon - Master Upgrade",
                 """
                         The range of Soulbinding buffs is doubled, and increases the amount of allies affected by 2.
