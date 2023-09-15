@@ -420,14 +420,14 @@ public abstract class WarlordsEntity {
             debugMessage.append(Component.newline())
                         .append(Component.text("Spec Damage Reduction: ", NamedTextColor.AQUA))
                         .append(Component.text(spec.getDamageResistance(), NamedTextColor.BLUE));
-            addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
+            addAbsorbed(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f));
             appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
         }
 
         if (attacker == this && (isFallDamage || isMeleeHit)) {
             if (isMeleeHit) {
                 // True damage
-                sendTookDamageMessage(min, "melee damage");
+                sendTookDamageMessage(debugMessage, min, "melee damage");
                 resetRegenTimer();
                 if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     entity.showTitle(Title.title(
@@ -445,7 +445,7 @@ public abstract class WarlordsEntity {
                 }
             } else {
                 // Fall Damage
-                sendTookDamageMessage(damageValue, "fall damage");
+                sendTookDamageMessage(debugMessage, damageValue, "fall damage");
                 resetRegenTimer();
                 if (health - damageValue <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     entity.showTitle(Title.title(
@@ -468,8 +468,6 @@ public abstract class WarlordsEntity {
                 ) {
                     orderOfEviscerate.addAndCheckDamageThreshold(damageValue, attacker);
                 }
-
-                addAbsorbed(Math.abs(damageValue * spec.getDamageResistance() / 100));
             }
 
             cancelHealingPowerUp();
@@ -924,17 +922,18 @@ public abstract class WarlordsEntity {
         return Optional.ofNullable(finalEvent.get());
     }
 
-    private void sendTookDamageMessage(float damage, String from) {
-        if (getEntity() instanceof Player) {
-            DatabaseManager.getPlayer(uuid, databasePlayer -> {
-                if (databasePlayer.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
-                    sendMessage(RECEIVE_ARROW_RED
-                            .append(Component.text(" You took ", NamedTextColor.GRAY))
-                            .append(Component.text(Math.round(damage), NamedTextColor.RED))
-                            .append(Component.text(" " + from + ".", NamedTextColor.GRAY))
-                    );
-                }
-            });
+    private void sendTookDamageMessage(TextComponent.Builder debugMessage, float damage, String from) {
+        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(getUuid(), getEntity() instanceof Player);
+        if (databasePlayer.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
+            Component component = RECEIVE_ARROW_RED
+                    .append(Component.text(" You took ", NamedTextColor.GRAY))
+                    .append(Component.text(Math.round(damage), NamedTextColor.RED))
+                    .append(Component.text(" " + from + ".", NamedTextColor.GRAY));
+            if (showDebugMessage) {
+                sendMessage(component.hoverEvent(HoverEvent.showText(debugMessage)));
+            } else {
+                sendMessage(component);
+            }
         }
     }
 

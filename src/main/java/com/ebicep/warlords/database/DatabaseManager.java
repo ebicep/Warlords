@@ -67,6 +67,7 @@ public class DatabaseManager {
             put(value, new ConcurrentHashMap<>());
         }
     }};
+    private static DatabasePlayer CACHED_MOB_DATABASEPLAYER = new DatabasePlayer();
     public static MongoClient mongoClient;
     public static MongoDatabase warlordsDatabase;
     public static PlayerService playerService;
@@ -311,7 +312,7 @@ public class DatabaseManager {
             if (isAPlayer) {
                 return concurrentHashMap.computeIfAbsent(uuid, k -> new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
             } else {
-                return concurrentHashMap.getOrDefault(uuid, new DatabasePlayer(uuid, Bukkit.getOfflinePlayer(uuid).getName()));
+                return CACHED_MOB_DATABASEPLAYER;
             }
         }
         ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Getting player " + uuid + " in " + playersCollections + " - cached = " + inCache(uuid,
