@@ -101,5 +101,16 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Puppet Strings",
+                "Spirit Link - Master Upgrade",
+                """
+                        Spirit Link now pulls the aggro of targets hit. Additionally, Spirit Link will bounce 4 more times instead of 2, and Soulbound targets no longer count as a bounce.
+                        """,
+                50000,
+                () -> {
+                    ability.setAdditionalBounces(ability.getAdditionalBounces() + 2);
+                }
+        );
     }
 }

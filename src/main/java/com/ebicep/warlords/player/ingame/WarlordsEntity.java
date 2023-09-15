@@ -1599,12 +1599,7 @@ public abstract class WarlordsEntity {
      * @param <T>          The type of the ability.
      */
     public <T extends AbstractAbility> void doOnStaticAbility(Class<T> abilityClass, Consumer<T> consumer) {
-        for (AbstractAbility ability : spec.getAbilities()) {
-            if (ability.getClass().equals(abilityClass)) {
-                consumer.accept(abilityClass.cast(ability));
-                break;
-            }
-        }
+        getAbilitiesMatching(abilityClass).forEach(consumer);
     }
 
     public void updateArmor() {

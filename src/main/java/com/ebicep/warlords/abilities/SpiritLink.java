@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
@@ -65,6 +66,11 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SpiritLinkBranch(abilityTree, this);
+    }
+
+    @Override
     protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player player) {
         Set<WarlordsEntity> hitCounter = new HashSet<>();
         for (WarlordsEntity nearPlayer : PlayerFilter
@@ -93,37 +99,6 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
             }
         }
         return hitCounter;
-    }
-
-    private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {
-        float bounceDamageReduction = Math.max(0, 1 - (bounceCount + 1) * .2f);
-        if (bounceCount >= additionalBounces || bounceDamageReduction == 0) {
-            return;
-        }
-        for (WarlordsEntity bounceTarget : PlayerFilter
-                .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
-                .aliveEnemiesOf(wp)
-                .excluding(toExclude)
-                .soulBindedFirst(wp)
-        ) {
-            playersHit++;
-            if (bounceTarget.onHorse()) {
-                numberOfDismounts++;
-            }
-            chain(chainTarget.getLocation(), bounceTarget.getLocation());
-            bounceTarget.addDamageInstance(wp, name, minDamageHeal * bounceDamageReduction, maxDamageHeal * bounceDamageReduction, critChance, critMultiplier);
-            hitCounter.add(bounceTarget);
-
-            int numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
-            for (int i = 0; i < numberOfHeals; i++) {
-                healNearPlayers(wp, bounceTarget);
-            }
-
-            toExclude.add(bounceTarget);
-            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + 1);
-
-            break;
-        }
     }
 
     @Override
@@ -165,6 +140,41 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
         return new ItemStack(Material.SPRUCE_FENCE_GATE);
     }
 
+    private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {
+        float bounceDamageReduction = Math.max(0, 1 - (bounceCount + 1) * .2f);
+        if (bounceCount >= additionalBounces || bounceDamageReduction == 0) {
+            return;
+        }
+        for (WarlordsEntity bounceTarget : PlayerFilter
+                .entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
+                .aliveEnemiesOf(wp)
+                .excluding(toExclude)
+                .soulBindedFirst(wp)
+        ) {
+            playersHit++;
+            if (bounceTarget.onHorse()) {
+                numberOfDismounts++;
+            }
+            chain(chainTarget.getLocation(), bounceTarget.getLocation());
+            bounceTarget.addDamageInstance(wp, name, minDamageHeal * bounceDamageReduction, maxDamageHeal * bounceDamageReduction, critChance, critMultiplier);
+            hitCounter.add(bounceTarget);
+
+            int numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
+            for (int i = 0; i < numberOfHeals; i++) {
+                healNearPlayers(wp, bounceTarget);
+            }
+
+            toExclude.add(bounceTarget);
+            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + (pveMasterUpgrade2 && numberOfHeals > 0 ? 0 : 1));
+
+            if (pveMasterUpgrade2 && bounceTarget instanceof WarlordsNPC warlordsNPC) {
+                warlordsNPC.getMob().setTarget(wp);
+            }
+
+            break;
+        }
+    }
+
     private void healNearPlayers(WarlordsEntity warlordsPlayer, WarlordsEntity hitPlayer) {
         //adding .25 to totem, cap 6 sec
 //        new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
@@ -191,11 +201,6 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
                         warlordsPlayer.addEnergy(warlordsPlayer, "Soulbinding Weapon", 1);
                     }
                 });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SpiritLinkBranch(abilityTree, this);
     }
 
     public double getSpeedDuration() {
