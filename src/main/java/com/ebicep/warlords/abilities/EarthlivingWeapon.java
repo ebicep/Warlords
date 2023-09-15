@@ -25,9 +25,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration {
@@ -76,7 +74,6 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
 
         EarthlivingWeapon tempEarthlivingWeapon = new EarthlivingWeapon();
-        final boolean[] firstProc = {true};
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "EARTH",
@@ -101,67 +98,86 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                     }
                 })
         ) {
+
+            private boolean firstProc = true;
+            private Set<WarlordsEntity> alreadyProcd = new HashSet<>();
+
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility().isEmpty()) {
-                    WarlordsEntity victim = event.getWarlordsEntity();
-                    WarlordsEntity attacker = event.getAttacker();
+                if (!event.getAbility().isEmpty()) {
+                    return;
+                }
+                WarlordsEntity victim = event.getWarlordsEntity();
+                WarlordsEntity attacker = event.getAttacker();
 
-                    double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
-                    if (firstProc[0]) {
-                        firstProc[0] = false;
-                        earthlivingActivate = 0;
-                    }
-                    if (earthlivingActivate < procChance) {
-                        if (pveMasterUpgrade) {
-                            energyPulseOnHit(attacker, victim);
+                double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
+                if (firstProc) {
+                    firstProc = false;
+                    earthlivingActivate = 0;
+                }
+                if (!(earthlivingActivate < procChance)) {
+                    return;
+                }
+
+                boolean previosulyProcd = alreadyProcd.contains(victim);
+                if (pveMasterUpgrade) {
+                    energyPulseOnHit(attacker, victim);
+                } else if (pveMasterUpgrade2) {
+                    alreadyProcd.add(victim);
+                }
+
+                new GameRunnable(victim.getGame()) {
+                    final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                            warlordsPlayer.getWeapon().getMeleeDamageMin() : 132;
+                    final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                            warlordsPlayer.getWeapon().getMeleeDamageMax() : 179;
+                    int counter = 0;
+
+                    @Override
+                    public void run() {
+                        timesProcd++;
+                        Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
+
+                        float cc = pveMasterUpgrade2 && previosulyProcd ? 100 : critChance;
+                        attacker.addHealingInstance(
+                                attacker,
+                                name,
+                                minDamage * convertToPercent(weaponDamage),
+                                maxDamage * convertToPercent(weaponDamage),
+                                cc,
+                                critMultiplier
+                        );
+
+                        for (WarlordsEntity nearPlayer : PlayerFilter
+                                .entitiesAround(attacker, 6, 6, 6)
+                                .aliveTeammatesOfExcludingSelf(attacker)
+                                .limit(maxAllies)
+                        ) {
+                            playersHealed++;
+                            nearPlayer.addHealingInstance(
+                                    attacker,
+                                    name,
+                                    minDamage * convertToPercent(weaponDamage),
+                                    maxDamage * convertToPercent(weaponDamage),
+                                    cc,
+                                    critMultiplier
+                            );
                         }
 
-                        new GameRunnable(victim.getGame()) {
-                            final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
-                            final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
-                            int counter = 0;
-
-                            @Override
-                            public void run() {
-                                timesProcd++;
-                                Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
-
-                                attacker.addHealingInstance(
-                                        attacker,
-                                        name,
-                                        minDamage * convertToPercent(weaponDamage),
-                                        maxDamage * convertToPercent(weaponDamage),
-                                        critChance,
-                                        critMultiplier
-                                );
-
-                                for (WarlordsEntity nearPlayer : PlayerFilter
-                                        .entitiesAround(attacker, 6, 6, 6)
-                                        .aliveTeammatesOfExcludingSelf(attacker)
-                                        .limit(maxAllies)
-                                ) {
-                                    playersHealed++;
-                                    nearPlayer.addHealingInstance(
-                                            attacker,
-                                            name,
-                                            minDamage * convertToPercent(weaponDamage),
-                                            maxDamage * convertToPercent(weaponDamage),
-                                            critChance,
-                                            critMultiplier
-                                    );
-                                }
-
-                                counter++;
-                                if (counter == maxHits) {
-                                    this.cancel();
-                                }
-                            }
-                        }.runTaskTimer(3, 8);
+                        counter++;
+                        if (counter == maxHits) {
+                            this.cancel();
+                        }
                     }
+                }.runTaskTimer(3, 8);
+            }
+
+            @Override
+            public float addEnergyGainPerTick(float energyGainPerTick) {
+                if (pveMasterUpgrade2) {
+                    return energyGainPerTick + .5f;
                 }
+                return energyGainPerTick;
             }
         });
 

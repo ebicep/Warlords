@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration {
 
@@ -69,7 +68,6 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         Utils.playGlobalSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
 
         WindfuryWeapon tempWindfuryWeapon = new WindfuryWeapon();
-        AtomicBoolean firstProc = new AtomicBoolean(true);
         wp.getCooldownManager().removeCooldown(WindfuryWeapon.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -98,6 +96,9 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                     }
                 })
         ) {
+
+            private boolean firstProc = true;
+
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (!event.getAbility().isEmpty()) {
@@ -107,8 +108,8 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 WarlordsEntity attacker = event.getAttacker();
 
                 double windfuryActivate = ThreadLocalRandom.current().nextDouble(100);
-                if (firstProc.get()) {
-                    firstProc.set(false);
+                if (firstProc) {
+                    firstProc = false;
                     windfuryActivate = 0;
                 }
                 if (!(windfuryActivate < procChance)) {
@@ -116,10 +117,10 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 }
                 timesProcd++;
                 new GameRunnable(victim.getGame()) {
-                    final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                            ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
-                    final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                            ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
+                    final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                            warlordsPlayer.getWeapon().getMeleeDamageMin() : 132;
+                    final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                            warlordsPlayer.getWeapon().getMeleeDamageMax() : 179;
                     int counter = 0;
 
                     @Override
