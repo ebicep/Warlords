@@ -106,6 +106,16 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                     ability.setShotsFiredAtATime(3);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Electric Bolt",
+                "Lightning Bolt - Master Upgrade",
+                """
+                        Each additional enemy hit takes 20% more damage. Max of 5 additional enemies will receive this increase in damage, further enemies will be hit the same as the first.
+                        """,
+                50000,
+                () -> {
+                }
+        );
     }
 
 

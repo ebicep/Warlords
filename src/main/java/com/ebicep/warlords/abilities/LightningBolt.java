@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -25,6 +26,7 @@ import org.bukkit.util.EulerAngle;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class LightningBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon {
 
@@ -55,6 +57,11 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
         info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new LightningBoltBranch(abilityTree, this);
     }
 
     @Override
@@ -90,7 +97,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
             Utils.playGlobalSound(enemy.getLocation(), "shaman.lightningbolt.impact", 2, 1);
 
             //hitting player
-            enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            hit(enemy, wp, projectile);
 
             //reducing chain cooldown
             if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
@@ -125,7 +132,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
             }
             Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
 
-            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            hit(hit, wp, projectile);
 
             //reducing chain cooldown
             if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
@@ -171,11 +178,6 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new LightningBoltBranch(abilityTree, this);
-    }
-
-    @Override
     protected String getActivationSound() {
         return "shaman.lightningbolt.activation";
     }
@@ -188,6 +190,24 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     @Override
     protected float getSoundPitch() {
         return 1;
+    }
+
+    private Optional<WarlordsDamageHealingFinalEvent> hit(@Nonnull WarlordsEntity hit, WarlordsEntity wp, InternalProjectile projectile) {
+        int playersHit = projectile.getHit().size();
+        float damageMultiplier = 1;
+        if (pveMasterUpgrade2) {
+            if (playersHit >= 2 && playersHit <= 6) {
+                damageMultiplier = 1.2f;
+            }
+        }
+        return hit.addDamageInstance(
+                wp,
+                name,
+                minDamageHeal * damageMultiplier,
+                maxDamageHeal * damageMultiplier,
+                critChance,
+                critMultiplier
+        );
     }
 
     public double getHitbox() {
