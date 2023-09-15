@@ -99,13 +99,15 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                 "Elemental Fury",
                 "Windfury - Master Upgrade",
                 """
-                        Chance to proc is increased from 35%-50% and enemies damaged by Windfury are now SHOCKED for 3s.
+                        +15% Proc chance
+                         
+                        Enemies damaged by Windfury are now SHOCKED for 3s.
                                                 
                         SHOCKED: Enemies that are shocked have their movement speed slowed by 25% and their incoming healing reduced by 50%.
                         """,
                 50000,
                 () -> {
-                    ability.setProcChance(ability.getProcChance() + 35);
+                    ability.setProcChance(ability.getProcChance() + 15);
                 }
         );
     }
