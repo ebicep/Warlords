@@ -4,8 +4,10 @@ import com.ebicep.warlords.abilities.internal.AbstractTotem;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.CapacitorTotemBranch;
@@ -23,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class CapacitorTotem extends AbstractTotem implements Duration {
@@ -31,6 +34,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
 
     protected int numberOfProcsAfterCarrierPassed = 0;
     protected int playersKilledWithFinalHit = 0;
+    protected int playersHit = 0;
 
     private Runnable pulseDamage;
     private boolean teamCarrierPassedThrough = false;
@@ -66,6 +70,11 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new CapacitorTotemBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playSound(Player player, Location location) {
         Utils.playGlobalSound(location, "shaman.totem.activation", 2, 1);
     }
@@ -80,43 +89,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
         Location totemLocation = wp.getLocation().clone();
 
         CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand, wp);
-        tempCapacitorTotem.setPulseDamage(() -> {
-            PlayerFilter.entitiesAround(totemStand.getLocation(),
-                            tempCapacitorTotem.getRadius(),
-                            tempCapacitorTotem.getRadius(),
-                            tempCapacitorTotem.getRadius()
-                    )
-                    .aliveEnemiesOf(wp)
-                    .forEach(warlordsPlayer -> {
-                        warlordsPlayer.addDamageInstance(
-                                wp,
-                                name,
-                                minDamageHeal,
-                                maxDamageHeal,
-                                critChance,
-                                critMultiplier
-                        ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                            if (warlordsDamageHealingFinalEvent.isDead()) {
-                                tempCapacitorTotem.addPlayersKilledWithFinalHit();
-                                if (tempCapacitorTotem.getPlayersKilledWithFinalHit() >= 15) {
-                                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIGHTNING_EXECUTION);
-                                }
-                            }
-                        });
-
-                        if (pveMasterUpgrade) {
-                            int damageResistance = warlordsPlayer.getSpec().getDamageResistance();
-                            warlordsPlayer.setDamageResistance(damageResistance - 20);
-                        }
-                    });
-
-            if (pveMasterUpgrade) {
-                tempCapacitorTotem.setRadius(tempCapacitorTotem.getRadius() + 0.5);
-            }
-
-            new FallingBlockWaveEffect(totemStand.getLocation().add(0, .75, 0), tempCapacitorTotem.getRadius(), 1.2, Material.OAK_SAPLING).play();
-        });
-        wp.getCooldownManager().addRegularCooldown(
+        RegularCooldown<CapacitorTotem> totemCooldown = new RegularCooldown<>(
                 name,
                 "TOTEM",
                 CapacitorTotem.class,
@@ -141,33 +114,87 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
                         }
                     }
                 })
-        );
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (!pveMasterUpgrade2) {
+                    return currentDamageValue;
+                }
+                return currentDamageValue * Math.max(.85f, 1 - (playersHit * .01f));
+            }
+        };
+        AtomicInteger timesTotemIncreased = new AtomicInteger();
+        tempCapacitorTotem.setPulseDamage(() -> {
+            double totemRadius = tempCapacitorTotem.getRadius();
+            PlayerFilter.entitiesAround(totemStand.getLocation(), totemRadius, totemRadius, totemRadius)
+                        .aliveEnemiesOf(wp)
+                        .forEach(warlordsPlayer -> {
+                            playersHit++;
+                            tempCapacitorTotem.setPlayersHit(tempCapacitorTotem.getPlayersHit() + 1);
+                            warlordsPlayer.addDamageInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier
+                            ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                if (warlordsDamageHealingFinalEvent.isDead()) {
+                                    tempCapacitorTotem.addPlayersKilledWithFinalHit();
+                                    if (tempCapacitorTotem.getPlayersKilledWithFinalHit() >= 15) {
+                                        ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIGHTNING_EXECUTION);
+                                    }
+                                }
+                            });
 
-    }
+                            if (pveMasterUpgrade) {
+                                int damageResistance = warlordsPlayer.getSpec().getDamageResistance();
+                                warlordsPlayer.setDamageResistance(damageResistance - 20);
+                            }
+                        });
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new CapacitorTotemBranch(abilityTree, this);
-    }
+            if (pveMasterUpgrade) {
+                tempCapacitorTotem.setRadius(totemRadius + 0.5);
+            } else if (pveMasterUpgrade2 && timesTotemIncreased.get() < 10) {
+                timesTotemIncreased.getAndIncrement();
+                totemCooldown.setTicksLeft(totemCooldown.getTicksLeft() + 10);
+            }
 
-    public double getRadius() {
-        return radius;
-    }
-
-    public void addPlayersKilledWithFinalHit() {
-        playersKilledWithFinalHit++;
+            new FallingBlockWaveEffect(totemStand.getLocation().add(0, .75, 0), totemRadius, 1.2, Material.OAK_SAPLING).play();
+        });
+        wp.getCooldownManager().addCooldown(totemCooldown);
     }
 
     public boolean isTeamCarrierPassedThrough() {
         return teamCarrierPassedThrough;
     }
 
-    public void setTeamCarrierPassedThrough(boolean teamCarrierPassedThrough) {
-        this.teamCarrierPassedThrough = teamCarrierPassedThrough;
+    public double getRadius() {
+        return radius;
     }
 
     public void setRadius(double radius) {
         this.radius = radius;
+    }
+
+    public int getPlayersHit() {
+        return playersHit;
+    }
+
+    public void addPlayersKilledWithFinalHit() {
+        playersKilledWithFinalHit++;
+    }
+
+    public int getPlayersKilledWithFinalHit() {
+        return playersKilledWithFinalHit;
+    }
+
+    public void setPlayersHit(int playersHit) {
+        this.playersHit = playersHit;
+    }
+
+    public void setTeamCarrierPassedThrough(boolean teamCarrierPassedThrough) {
+        this.teamCarrierPassedThrough = teamCarrierPassedThrough;
     }
 
     public void pulseDamage() {
@@ -210,10 +237,5 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
 
     public int getNumberOfProcsAfterCarrierPassed() {
         return numberOfProcsAfterCarrierPassed;
-    }
-
-
-    public int getPlayersKilledWithFinalHit() {
-        return playersKilledWithFinalHit;
     }
 }
