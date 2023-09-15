@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -88,12 +89,12 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
                 nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 hitCounter.add(nearPlayer);
 
-                int numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
-                for (int i = 0; i < numberOfHeals; i++) {
-                    healNearPlayers(wp, nearPlayer);
+                List<CooldownManager.LinkInformation> linkInformation = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
+                for (CooldownManager.LinkInformation information : linkInformation) {
+                    healNearPlayers(wp, nearPlayer, information);
                 }
 
-                additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), 0);
+                additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), pveMasterUpgrade2 && linkInformation.size() > 0 ? -1 : 0);
 
                 break;
             }
@@ -105,13 +106,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
     protected void onHit(WarlordsEntity we, Player player, int hitCounter) {
         player.playSound(player.getLocation(), "mage.firebreath.activation", 1, 1);
         if (we.isInPve()) {
-            List<RegularCooldown> currentSpiritLinks = new CooldownFilter<>(we, RegularCooldown.class)
-                    .filterCooldownClass(SpiritLink.class)
-                    .stream()
-                    .toList();
-            if (currentSpiritLinks.size() >= 4) {
-                we.getCooldownManager().removeCooldown(currentSpiritLinks.get(0));
-            }
+            we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, 4);
         }
         // speed buff
         we.addSpeedModifier(we, "Spirit Link", 40, (int) (speedDuration * 20)); // 30 is ticks
@@ -159,13 +154,13 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
             bounceTarget.addDamageInstance(wp, name, minDamageHeal * bounceDamageReduction, maxDamageHeal * bounceDamageReduction, critChance, critMultiplier);
             hitCounter.add(bounceTarget);
 
-            int numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
-            for (int i = 0; i < numberOfHeals; i++) {
-                healNearPlayers(wp, bounceTarget);
+            List<CooldownManager.LinkInformation> linkInformation = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
+            for (CooldownManager.LinkInformation information : linkInformation) {
+                healNearPlayers(wp, bounceTarget, information);
             }
 
             toExclude.add(bounceTarget);
-            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + (pveMasterUpgrade2 && numberOfHeals > 0 ? 0 : 1));
+            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + (pveMasterUpgrade2 && linkInformation.size() > 0 ? 0 : 1));
 
             if (pveMasterUpgrade2 && bounceTarget instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.getMob().setTarget(wp);
@@ -175,7 +170,9 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
         }
     }
 
-    private void healNearPlayers(WarlordsEntity warlordsPlayer, WarlordsEntity hitPlayer) {
+    private void healNearPlayers(WarlordsEntity warlordsPlayer, WarlordsEntity hitPlayer, CooldownManager.LinkInformation linkInformation) {
+        float radius = linkInformation.radius();
+        int limit = linkInformation.limit();
         //adding .25 to totem, cap 6 sec
 //        new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
 //                .filterName("Spirits Respite")
@@ -185,10 +182,10 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
 //                });
         warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 400, 400, 0, 100);
         for (WarlordsEntity nearPlayer : PlayerFilter
-                .entitiesAround(warlordsPlayer, 8, 8, 8)
+                .entitiesAround(warlordsPlayer, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .closestWarlordPlayersFirst(warlordsPlayer.getLocation())
-                .limit(2)
+                .limit(limit)
         ) {
             warlordsPlayer.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkTeammatesHealed);
             nearPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 200, 200, 0, 100);

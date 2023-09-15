@@ -40,6 +40,8 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private int tickDuration = 240;
     private float selfCooldownReduction = 1.5f;
     private int bindDuration = 40;
+    private int radius = 8;
+    private int maxAlliesHit = 2;
 
     public Soulbinding() {
         super("Soulbinding Weapon", 0, 0, 21.92f, 30, 0, 100);
@@ -56,13 +58,13 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                                .append(Component.text(" targets, your next Spirit Link will heal you for "))
                                .append(Component.text("400", NamedTextColor.GREEN))
                                .append(Component.text(" health (half for "))
-                               .append(Component.text("2", NamedTextColor.YELLOW))
+                               .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
                                .append(Component.text(" nearby allies). Your next Fallen Souls will reduce the cooldown of all abilities by "))
                                .append(Component.text(format(selfCooldownReduction), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. ("))
                                .append(Component.text("1", NamedTextColor.GOLD))
                                .append(Component.text(" second for "))
-                               .append(Component.text("2", NamedTextColor.YELLOW))
+                               .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
                                .append(Component.text(" nearby allies). Both buffs may be activated for every melee hit. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."))
@@ -70,8 +72,8 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                                .append(Component.text("Successful soulbind procs will grant you "))
                                .append(Component.text("25%", NamedTextColor.GOLD))
                                .append(Component.text(" knockback resistance for "))
-                               .append(Component.text("1.2 seconds", NamedTextColor.GOLD))
-                               .append(Component.text(" (Max "))
+                               .append(Component.text("1.2", NamedTextColor.GOLD))
+                               .append(Component.text(" seconds (Max "))
                                .append(Component.text("3.6 ", NamedTextColor.GOLD))
                                .append(Component.text("seconds)."));
     }
@@ -97,6 +99,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         Soulbinding tempSoulBinding = new Soulbinding();
         tempSoulBinding.setInPve(inPve);
         tempSoulBinding.setPveMasterUpgrade(pveMasterUpgrade);
+        tempSoulBinding.setPveMasterUpgrade2(pveMasterUpgrade2);
         if (wp.isInPve()) {
             wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.class, 2);
         }
@@ -292,6 +295,22 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     public void setSelfCooldownReduction(float selfCooldownReduction) {
         this.selfCooldownReduction = selfCooldownReduction;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public int getMaxAlliesHit() {
+        return maxAlliesHit;
+    }
+
+    public void setMaxAlliesHit(int maxAlliesHit) {
+        this.maxAlliesHit = maxAlliesHit;
     }
 
     public static class SoulBoundPlayer {

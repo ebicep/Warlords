@@ -249,12 +249,13 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                     }
                     wp.updateItems();
 
+                    int radius = soulbinding.getRadius();
                     for (WarlordsEntity teammate : PlayerFilter
-                            .entitiesAround(wp.getLocation(), 8, 8, 8)
+                            .entitiesAround(wp.getLocation(), radius, radius, radius)
                             .aliveTeammatesOfExcludingSelf(wp)
                             .filter(warlordsEntity -> warlordsEntity.getSpecClass() != Specializations.SPIRITGUARD)
                             .closestWarlordPlayersFirst(wp.getLocation())
-                            .limit(2)
+                            .limit(soulbinding.getMaxAlliesHit())
                     ) {
                         wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
 

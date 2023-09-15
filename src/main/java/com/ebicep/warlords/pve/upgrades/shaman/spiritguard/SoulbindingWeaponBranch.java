@@ -88,5 +88,17 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                     ability.setSelfCooldownReduction(ability.getSelfCooldownReduction() + 0.25f);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Remembrance",
+                "Soulbinding Weapon - Master Upgrade",
+                """
+                        The range of Soulbinding buffs is doubled, and increases the amount of allies affected by 2.
+                        """,
+                50000,
+                () -> {
+                    ability.setRadius(ability.getRadius() * 2);
+                    ability.setMaxAlliesHit(ability.getMaxAlliesHit() + 2);
+                }
+        );
     }
 }
