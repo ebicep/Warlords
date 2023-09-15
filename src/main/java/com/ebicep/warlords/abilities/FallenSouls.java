@@ -4,9 +4,13 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -30,6 +34,7 @@ import org.bukkit.util.EulerAngle;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbilityIcon {
 
@@ -51,7 +56,8 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                                .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text(" seconds.\n\nHas a maximum range of "))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));;
+                               .append(Component.text(" blocks."));
+        ;
     }
 
     @Override
@@ -62,6 +68,11 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
         info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FallenSoulsBranch(abilityTree, this);
     }
 
     @Override
@@ -92,7 +103,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
             if (enemy.onHorse()) {
                 numberOfDismounts++;
             }
-            enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            hit(wp, enemy);
 
             for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
                 spiritLink.subtractCurrentCooldown(2);
@@ -101,6 +112,34 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
         }
 
         return playersHit;
+    }
+
+    private Optional<WarlordsDamageHealingFinalEvent> hit(WarlordsEntity wp, WarlordsEntity enemy) {
+        if (pveMasterUpgrade2) {
+            if (enemy.getCooldownManager().hasCooldown(FallenSoulsBranch.SoulFeast.class)) {
+                new CooldownFilter<>(enemy, PermanentCooldown.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(FallenSoulsBranch.SoulFeast.class)
+                        .forEach(FallenSoulsBranch.SoulFeast::reduce);
+            } else {
+                FallenSoulsBranch.SoulFeast soulFeast = new FallenSoulsBranch.SoulFeast();
+                enemy.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                        "Soul Feast",
+                        "FEAST",
+                        FallenSoulsBranch.SoulFeast.class,
+                        soulFeast,
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {},
+                        false
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * soulFeast.getDamageMultiplier();
+                    }
+                });
+            }
+        }
+        return enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
     }
 
     @Override
@@ -124,7 +163,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
             }
             Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
 
-            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            hit(wp, hit);
 
             for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
                 spiritLink.subtractCurrentCooldown(2);
@@ -180,11 +219,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                 );
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FallenSoulsBranch(abilityTree, this);
     }
 
     @Override

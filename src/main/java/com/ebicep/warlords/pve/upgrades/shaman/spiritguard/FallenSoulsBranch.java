@@ -93,5 +93,27 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
                     ability.setShotsFiredAtATime(5);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Soul Feast",
+                "Fallen Souls - Master Upgrade",
+                """
+                        Enemies struck by Fallen Souls will have their damage dealt permanently reduced by 1.5%, stacking up to 15%.
+                        """,
+                50000,
+                () -> {
+                }
+        );
+    }
+
+    public static class SoulFeast {
+        private float damageMultiplier = 0.985f;
+
+        public float getDamageMultiplier() {
+            return damageMultiplier;
+        }
+
+        public void reduce() {
+            damageMultiplier = Math.max(0.85f, damageMultiplier - 0.015f);
+        }
     }
 }
