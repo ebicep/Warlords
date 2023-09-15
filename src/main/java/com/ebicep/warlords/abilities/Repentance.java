@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.RepentanceBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -59,6 +60,8 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
         EffectUtils.playCylinderAnimation(wp.getLocation(), 1, 255, 255, 255);
 
         pool += 2000;
+        AtomicDouble healthAdded = new AtomicDouble();
+        AtomicDouble energyAdded = new AtomicDouble();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name, "REPE",
                 Repentance.class,
@@ -66,6 +69,12 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    if (pveMasterUpgrade2) {
+                        float healing = (float) (healthAdded.get() * .4f);
+                        float energy = (float) (energyAdded.get() * .4f);
+                        wp.addHealingInstance(wp, "Remembrance", healing, healing, 0, 100);
+                        wp.addEnergy(wp, "Remembrance", energy);
+                    }
                 },
                 tickDuration
         ) {
@@ -86,8 +95,10 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                         Math.min(500, healthToAdd),
                         0,
                         100
-                );
-                attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f));
+                ).ifPresent(finalEvent -> {
+                    healthAdded.addAndGet(finalEvent.getValue());
+                });
+                energyAdded.addAndGet(attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f)));
                 pool *= .5;
             }
         });
@@ -96,16 +107,16 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new RepentanceBranch(abilityTree, this);
+    }
+
+    @Override
     public void runEverySecond() {
         if (pool > 0) {
             float newPool = pool * .8f - poolDecay;
             pool = Math.max(newPool, 0);
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new RepentanceBranch(abilityTree, this);
     }
 
     public float getDamageConvertPercent() {

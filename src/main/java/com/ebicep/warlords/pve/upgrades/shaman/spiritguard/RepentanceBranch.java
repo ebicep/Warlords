@@ -89,5 +89,16 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                     ability.setEnergyConvertPercent(ability.getEnergyConvertPercent() * 1.25f);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Remembrance",
+                "Repentance - Master Upgrade",
+                """
+                        After Repentance ends, you regain an amount of health and energy equivalent to 40% of the total health and energy regained during the duration.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }
