@@ -66,7 +66,8 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                                .append(Component.text(teammateDamageReductionPercent + "%", NamedTextColor.RED))
                                .append(Component.text(" for "))
                                .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. You are healed for the amount of damage prevented on allies." + (inPve ? "Additionally, constantly take agro of nearby mobs." : "")))
+                               .append(Component.text(" seconds. You are healed for the amount of damage prevented on allies." +
+                                       (inPve ? "Additionally, constantly take aggro of nearby mobs." : "")))
                                .append(Component.text("\n\nHas a maximum range of "))
                                .append(Component.text(radius, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));

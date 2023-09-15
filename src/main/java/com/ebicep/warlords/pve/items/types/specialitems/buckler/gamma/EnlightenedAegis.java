@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class EnlightenedAegis extends SpecialGammaBuckler implements DamageReductionandAgroPrio, CraftsInto.CraftsCrossNecklaceCharm {
+public class EnlightenedAegis extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsCrossNecklaceCharm {
 
     @Override
     public String getName() {

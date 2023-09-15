@@ -7,7 +7,7 @@ import com.ebicep.warlords.pve.items.types.BonusStats;
 
 import java.util.HashMap;
 
-public interface DamageReductionandAgroPrio extends BonusStats {
+public interface DamageReductionandAggroPrio extends BonusStats {
 
     HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
         put(SpecialStatPool.DAMAGE_RESISTANCE, 5);

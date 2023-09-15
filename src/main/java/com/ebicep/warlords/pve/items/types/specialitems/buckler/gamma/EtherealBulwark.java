@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class EtherealBulwark extends SpecialGammaBuckler implements DamageReductionandAgroPrio, CraftsInto.CraftsAerialAegis {
+public class EtherealBulwark extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsAerialAegis {
 
     @Override
     public String getName() {

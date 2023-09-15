@@ -112,7 +112,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     convertedEnemy.setTeam(Team.BLUE);
                     AbstractMob<?> mob = convertedEnemy.getMob();
                     updateMobEquipment(mob, player);
-                    //removing teammate mobs that are agroed on converted target
+                    //removing teammate mobs that are aggroed on converted target
                     PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                        .aliveTeammatesOf(player)
                                        .filter(teammate -> {

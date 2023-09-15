@@ -132,7 +132,7 @@ public abstract class WarlordsEntity {
     private boolean active = true;
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
-    private float bonusAgroWeight = 0;
+    private float bonusAggroWeight = 0;
 
 
     public WarlordsEntity(Player player, Specializations specialization) {
@@ -2865,12 +2865,12 @@ public abstract class WarlordsEntity {
         this.showDebugMessage = showDebugMessage;
     }
 
-    public float getBonusAgroWeight() {
-        return bonusAgroWeight;
+    public float getBonusAggroWeight() {
+        return bonusAggroWeight;
     }
 
-    public void setBonusAgroWeight(float agroWeight) {
-        this.bonusAgroWeight = agroWeight * agroWeight; // squared because values in PathfinderGoalTargetAgroWarlordsEntity are squared
+    public void setBonusAggroWeight(float aggroWeight) {
+        this.bonusAggroWeight = aggroWeight * aggroWeight; // squared because values in PathfinderGoalTargetAgroWarlordsEntity are squared
     }
 
     public abstract void setDamageResistance(int damageResistance);

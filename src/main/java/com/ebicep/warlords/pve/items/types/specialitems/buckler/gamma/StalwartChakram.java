@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class StalwartChakram extends SpecialGammaBuckler implements DamageReductionandAgroPrio, CraftsInto.CraftsPridwensBulwark {
+public class StalwartChakram extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsPridwensBulwark {
 
     @Override
     public String getName() {

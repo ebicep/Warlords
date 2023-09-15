@@ -17,27 +17,27 @@ import java.util.EnumSet;
 import java.util.List;
 
 /**
- * Agro system
+ * Aggro system
  * <p>
- * All warlords players have an extra agro weight
+ * All warlords players have an extra aggro weight
  * <p>
- * Closest player weight = 100 + agro bonus
+ * Closest player weight = 100 + aggro bonus
  * <p>
  * Block distance to the closest player is x
  * <p>
- * All other players have 100 + agro bonus - 10(distance - x). So every block away from distance to closest player is 10 agro less
+ * All other players have 100 + aggro bonus - 10(distance - x). So every block away from distance to closest player is 10 aggro less
  * <p>
  * ex. (w=100,d=20), (w=50,d=25), (w=0,d>=30)
  * Random target is chosen from weighted list
  */
-public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
+public class PathfinderGoalTargetAggroWarlordsEntity extends TargetGoal {
     protected LivingEntity targetEntity;
 
-    public PathfinderGoalTargetAgroWarlordsEntity(Mob entitycreature) {
+    public PathfinderGoalTargetAggroWarlordsEntity(Mob entitycreature) {
         this(entitycreature, false, true);
     }
 
-    public PathfinderGoalTargetAgroWarlordsEntity(Mob entitycreature, boolean checkSight, boolean onlyNearby) {
+    public PathfinderGoalTargetAggroWarlordsEntity(Mob entitycreature, boolean checkSight, boolean onlyNearby) {
         super(entitycreature, checkSight, onlyNearby);
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
     }
@@ -69,8 +69,8 @@ public class PathfinderGoalTargetAgroWarlordsEntity extends TargetGoal {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
             if (warlordsEntity != null) {
                 randomCollection.add(entity == closestEntity ?
-                                     1000 + warlordsEntity.getBonusAgroWeight() :
-                                     1000 + warlordsEntity.getBonusAgroWeight() - 10 * (this.mob.distanceToSqr(entity) - distanceToClosest),
+                                     1000 + warlordsEntity.getBonusAggroWeight() :
+                                     1000 + warlordsEntity.getBonusAggroWeight() - 10 * (this.mob.distanceToSqr(entity) - distanceToClosest),
                         entity
                 );
             }

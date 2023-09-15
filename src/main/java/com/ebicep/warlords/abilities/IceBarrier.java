@@ -53,7 +53,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                                .append(Component.text(slownessOnMeleeHit + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" for "))
                                .append(Component.text("2", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds " + (inPve ? " and take agro of nearby mobs" : "") + ". Lasts "))
+                               .append(Component.text(" seconds " + (inPve ? " and take aggro of nearby mobs" : "") + ". Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
     }

@@ -95,7 +95,7 @@ public enum BasicStatPool implements StatPool {
     AGGRO_PRIO("Aggression Priority") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            warlordsPlayer.setBonusAgroWeight(warlordsPlayer.getBonusAgroWeight() + value);
+            warlordsPlayer.setBonusAggroWeight(warlordsPlayer.getBonusAggroWeight() + value);
         }
 
         @Override
