@@ -97,7 +97,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                 "Call of Thunder",
                 "Lightning Rod - Master Upgrade",
                 """
-                        All enemies pushed away from Lightning Rod take 25% increased incoming damage from all sources. Additionally, the caster will gain +15 EPS for 8s.
+                        All enemies pushed away from Lightning Rod take 25% increased incoming damage from all sources and the caster will gain +15 EPS for 8s.
                         """,
                 50000,
                 () -> {
