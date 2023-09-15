@@ -98,5 +98,15 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
                     ability.setRadius(ability.getRadius() + 5);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Chains of Blessings",
+                "Chain Heal - Master Upgrade",
+                """
+                        Allies healed by chain will be connected to the caster for 5 seconds. All connected players gain 10 energy per second and are healed every second for 2.5% of the caster max HP.
+                        """,
+                50000,
+                () -> {
+                }
+        );
     }
 }

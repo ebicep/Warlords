@@ -56,6 +56,11 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ChainHealBranch(abilityTree, this);
+    }
+
+    @Override
     protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player p) {
         Set<WarlordsEntity> hitCounter = new HashSet<>();
         for (WarlordsEntity chainTarget : PlayerFilter
@@ -63,36 +68,75 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (LocationUtils.isLookingAtChain(p, chainTarget.getEntity())) {
-                wp.addHealingInstance(
+            if (!LocationUtils.isLookingAtChain(p, chainTarget.getEntity())) {
+                continue;
+            }
+            wp.addHealingInstance(
+                    wp,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier
+            );
+
+            chainTarget.addHealingInstance(
+                    wp,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier
+            );
+
+            if (pveMasterUpgrade) {
+                critStatsOnHit(wp);
+                critStatsOnHit(chainTarget);
+            }
+
+            chain(p.getLocation(), chainTarget.getLocation());
+            hitCounter.add(chainTarget);
+
+            additionalBounce(wp, hitCounter, chainTarget, new ArrayList<>(Arrays.asList(wp, chainTarget)), 0);
+
+            break;
+        }
+
+        if (pveMasterUpgrade2) {
+            for (WarlordsEntity warlordsEntity : hitCounter) {
+                warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Chains of Blessings",
+                        "CHAINS",
+                        ChainHeal.class,
+                        new ChainHeal(),
                         wp,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
-                );
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+                        },
+                        5 * 20,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksLeft % 20 != 0) {
+                                return;
+                            }
+                            float healing = 0.025f * wp.getMaxHealth();
+                            warlordsEntity.addHealingInstance(wp, "Chains of Blessings", healing, healing, 0, 100);
+                            EffectUtils.displayParticle(
+                                    Particle.VILLAGER_HAPPY,
+                                    warlordsEntity.getLocation().add(0, 1.2, 0),
+                                    4,
+                                    0.5,
+                                    0.3,
+                                    0.5,
+                                    0.01
+                            );
 
-                chainTarget.addHealingInstance(
-                        wp,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
-                );
-
-                if (pveMasterUpgrade) {
-                    critStatsOnHit(wp);
-                    critStatsOnHit(chainTarget);
-                }
-
-                chain(p.getLocation(), chainTarget.getLocation());
-                hitCounter.add(chainTarget);
-
-                additionalBounce(wp, hitCounter, chainTarget, new ArrayList<>(Arrays.asList(wp, chainTarget)), 0);
-
-                break;
+                        })
+                ) {
+                    @Override
+                    public float addEnergyGainPerTick(float energyGainPerTick) {
+                        return energyGainPerTick + 0.5f;
+                    }
+                });
             }
         }
 
@@ -112,11 +156,6 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
             }
             wp.updateItem(boulder);
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ChainHealBranch(abilityTree, this);
     }
 
     @Override
