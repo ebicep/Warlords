@@ -97,5 +97,15 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                     ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.2f);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Death Parade",
+                "Death's Debt - Master Upgrade",
+                """
+                        All enemies struck by Death's Debt are afflicted with Soulbinding, max 6. For every enemy Soulbound by Death's Debt, gain 2.5% damage reduction for 5 seconds.
+                        """,
+                50000,
+                () -> {
+                }
+        );
     }
 }

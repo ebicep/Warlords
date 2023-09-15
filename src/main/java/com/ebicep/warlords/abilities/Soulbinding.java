@@ -153,30 +153,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 if (!event.getAbility().isEmpty() || wpAttacker == wpVictim) {
                     return;
                 }
-                addPlayersBinded();
-                if (tempSoulBinding.hasBoundPlayer(wpVictim)) {
-                    tempSoulBinding.getSoulBindedPlayers()
-                                   .stream()
-                                   .filter(p -> p.getBoundPlayer() == wpVictim)
-                                   .forEach(boundPlayer -> {
-                                       boundPlayer.setHitWithSoul(false);
-                                       boundPlayer.setHitWithLink(false);
-                                       boundPlayer.setTicksLeft(bindDuration);
-                                   });
-                } else {
-                    wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                            .append(Component.text(" You have been bound by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
-                            .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
-                            .append(Component.text("!", NamedTextColor.GRAY))
-                    );
-                    wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                            .append(Component.text(" Your ", NamedTextColor.GRAY))
-                            .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
-                            .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY))
-                    );
-                    tempSoulBinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, bindDuration));
-                    Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-                }
+                tempSoulBinding.bindPlayer(wpAttacker, wpVictim);
             }
 
             @Override
@@ -196,6 +173,33 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         }
 
         return true;
+    }
+
+    public void bindPlayer(WarlordsEntity wpAttacker, WarlordsEntity wpVictim) {
+        addPlayersBinded();
+        if (hasBoundPlayer(wpVictim)) {
+            getSoulBindedPlayers()
+                    .stream()
+                    .filter(p -> p.getBoundPlayer() == wpVictim)
+                    .forEach(boundPlayer -> {
+                        boundPlayer.setHitWithSoul(false);
+                        boundPlayer.setHitWithLink(false);
+                        boundPlayer.setTicksLeft(bindDuration);
+                    });
+        } else {
+            wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                    .append(Component.text(" You have been bound by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
+                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
+            wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                    .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY))
+            );
+            getSoulBindedPlayers().add(new SoulBoundPlayer(wpVictim, bindDuration));
+            Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+        }
     }
 
     @Override

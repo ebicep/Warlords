@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -104,6 +105,11 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new DeathsDebtBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playSound(Player player, Location location) {
         //TODO find the right sound - this aint right chief
         Utils.playGlobalSound(location, "shaman.chainlightning.impact", 2, 2);
@@ -185,10 +191,11 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                 wp.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
                                 // Final enemy damage tick
                                 AtomicInteger over5000DamageInstances = new AtomicInteger();
-                                for (WarlordsEntity totemTarget : PlayerFilter
+                                List<WarlordsEntity> enemies = PlayerFilter
                                         .entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                                         .aliveEnemiesOf(wp)
-                                ) {
+                                        .toList();
+                                for (WarlordsEntity totemTarget : enemies) {
                                     playersDamaged++;
                                     totemTarget.addDamageInstance(
                                             wp,
@@ -200,6 +207,33 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                         if (warlordsDamageHealingFinalEvent.getValue() > 5000) {
                                             over5000DamageInstances.getAndIncrement();
+                                        }
+                                    });
+                                }
+                                if (pveMasterUpgrade2) {
+                                    List<Soulbinding> soulbindings = new CooldownFilter<>(wp, PersistentCooldown.class)
+                                            .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                                            .toList();
+                                    float damageReduction = 1;
+                                    for (int i = 0; i < enemies.size() && i < 6; i++) {
+                                        WarlordsEntity enemy = enemies.get(i);
+                                        soulbindings.forEach(soulbinding -> soulbinding.bindPlayer(wp, enemy));
+                                        damageReduction -= .025;
+                                    }
+                                    float finalDamageReduction = damageReduction;
+                                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            "Death Parade",
+                                            "PARADE",
+                                            DeathsDebt.class,
+                                            null,
+                                            wp,
+                                            CooldownTypes.BUFF,
+                                            cooldownManager -> {},
+                                            5 * 20
+                                    ) {
+                                        @Override
+                                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                            return currentDamageValue * finalDamageReduction;
                                         }
                                     });
                                 }
@@ -334,11 +368,6 @@ public class DeathsDebt extends AbstractTotem implements Duration {
         for (Repentance repentance : wp.getAbilitiesMatching(Repentance.class)) {
             repentance.addToPool(debtTrueDamage);
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new DeathsDebtBranch(abilityTree, this);
     }
 
     public boolean isInDebt() {
