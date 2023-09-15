@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration {
 
@@ -68,7 +69,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         Utils.playGlobalSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
 
         WindfuryWeapon tempWindfuryWeapon = new WindfuryWeapon();
-        final boolean[] firstProc = {true};
+        AtomicBoolean firstProc = new AtomicBoolean(true);
         wp.getCooldownManager().removeCooldown(WindfuryWeapon.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -99,57 +100,68 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         ) {
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility().isEmpty()) {
-                    WarlordsEntity victim = event.getWarlordsEntity();
-                    WarlordsEntity attacker = event.getAttacker();
+                if (!event.getAbility().isEmpty()) {
+                    return;
+                }
+                WarlordsEntity victim = event.getWarlordsEntity();
+                WarlordsEntity attacker = event.getAttacker();
 
-                    double windfuryActivate = ThreadLocalRandom.current().nextDouble(100);
-                    if (firstProc[0]) {
-                        firstProc[0] = false;
-                        windfuryActivate = 0;
-                    }
-                    if (windfuryActivate < procChance) {
-                        timesProcd++;
-                        new GameRunnable(victim.getGame()) {
-                            final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
-                            final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
-                                                    ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
-                            int counter = 0;
+                double windfuryActivate = ThreadLocalRandom.current().nextDouble(100);
+                if (firstProc.get()) {
+                    firstProc.set(false);
+                    windfuryActivate = 0;
+                }
+                if (!(windfuryActivate < procChance)) {
+                    return;
+                }
+                timesProcd++;
+                new GameRunnable(victim.getGame()) {
+                    final float minDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
+                                            ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMin() : 132;
+                    final float maxDamage = wp instanceof WarlordsPlayer && ((WarlordsPlayer) wp).getWeapon() != null ?
+                                            ((WarlordsPlayer) wp).getWeapon().getMeleeDamageMax() : 179;
+                    int counter = 0;
 
-                            @Override
-                            public void run() {
-                                Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-                                float healthDamage = victim.getMaxHealth() * 0.01f;
-                                if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                    healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                }
-                                if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                    healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                }
-                                victim.addDamageInstance(
-                                        attacker,
-                                        name,
-                                        minDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
-                                        maxDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
-                                        critChance,
-                                        critMultiplier
-                                );
+                    @Override
+                    public void run() {
+                        Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
+                        float healthDamage = victim.getMaxHealth() * 0.01f;
+                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
+                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
+                        }
+                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
+                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
+                        }
+                        victim.addDamageInstance(
+                                attacker,
+                                name,
+                                minDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
+                                maxDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
+                                critChance,
+                                critMultiplier
+                        );
 
-                                if (pveMasterUpgrade) {
-                                    victim.setDamageResistance(victim.getSpec().getDamageResistance() - 2);
-                                    if (victim instanceof WarlordsNPC npc) {
-                                        npc.setDamageResistance(npc.getSpec().getDamageResistance() - 2);
-                                    }
-                                }
-
-                                counter++;
-                                if (counter == maxHits) {
-                                    this.cancel();
-                                }
+                        if (pveMasterUpgrade) {
+                            victim.setDamageResistance(victim.getSpec().getDamageResistance() - 2);
+                            if (victim instanceof WarlordsNPC npc) {
+                                npc.setDamageResistance(npc.getSpec().getDamageResistance() - 2);
                             }
-                        }.runTaskTimer(3, 3);
+                        }
+
+                        counter++;
+                        if (counter == maxHits) {
+                            this.cancel();
+                        }
                     }
+                }.runTaskTimer(3, 3);
+
+                if (pveMasterUpgrade2) {
+                    ChainLightning.giveShockedEffect(
+                            attacker,
+                            victim,
+                            WindfuryWeapon.class,
+                            new WindfuryWeapon()
+                    );
                 }
             }
         });

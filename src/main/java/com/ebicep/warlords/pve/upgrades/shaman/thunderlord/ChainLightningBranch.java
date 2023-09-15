@@ -107,9 +107,9 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                 "Aftershock",
                 "Chain Lightning - Master Upgrade",
                 """
-                        Chain Lightning will now give enemies hit the SHOCKED status.
+                        Chain Lightning will now give enemies hit the SHOCKED status for 3s.
                                                 
-                        SHOCKED: Enemies that are shocked have their movement speed slowed by 25% and their incoming healing reduced by 50% for 3s.
+                        SHOCKED: Enemies that are shocked have their movement speed slowed by 25% and their incoming healing reduced by 50%.
                         """,
                 50000,
                 () -> {

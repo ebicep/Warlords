@@ -28,9 +28,27 @@ import java.util.*;
 
 public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration {
 
+    public static <T> void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver, Class<T> clazz, T object) {
+        receiver.addSpeedModifier(giver, "SHOCKED", -30, 3 * 20);
+        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Aftershock",
+                "SHOCKED",
+                clazz,
+                object,
+                giver,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                3 * 20
+        ) {
+            @Override
+            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                return currentHealValue * .5f;
+            }
+        });
+    }
 
     public int numberOfDismounts = 0;
-
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 30;
     private int damageReductionTickDuration = 90;
@@ -181,7 +199,12 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
             );
 
             if (pveMasterUpgrade2) {
-                giveShockedEffect(wp, hit);
+                giveShockedEffect(
+                        wp,
+                        hit,
+                        ChainLightning.class,
+                        new ChainLightning()
+                );
             }
 
             return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
@@ -209,26 +232,6 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 .filter(totem -> totem.getTotem().getLocation().distanceSquared(warlordsPlayer.getLocation()) <= radius * radius
                         && totem.isPlayerLookingAtTotem(warlordsPlayer))
                 .findFirst();
-    }
-
-    public void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver) {
-        receiver.addSpeedModifier(giver, "SHOCKED", -30, 3 * 20);
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Aftershock",
-                "SHOCKED",
-                ChainLightning.class,
-                new ChainLightning(),
-                giver,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                3 * 20
-        ) {
-            @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .5f;
-            }
-        });
     }
 
     public float getDamageReductionPerBounce() {
