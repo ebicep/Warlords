@@ -111,7 +111,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                 """
                         -20% Cooldown Reduction
                                                 
-                        Hammer of Light/Crown of Light now grants debuff immunity. Additionally, enemies within the radius will have their damage resistance reduced by 10% every second.
+                        Hammer of Light/Crown of Light now grants debuff immunity. Additionally, enemies within the radius will take 10% more damage.
                         """,
                 50000,
                 () -> {

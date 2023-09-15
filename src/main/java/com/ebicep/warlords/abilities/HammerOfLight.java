@@ -198,7 +198,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 });
                             } else {
                                 if (pveMasterUpgrade2) {
-                                    crownTarget.setDamageResistance(crownTarget.getSpec().getDamageResistance() - 10);
+                                    giveHammerOfDisillusionEffect(crownTarget, wp);
                                 }
                             }
                         }
@@ -230,7 +230,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                         critMultiplier
                                 );
                                 if (pveMasterUpgrade2) {
-                                    hammerTarget.setDamageResistance(hammerTarget.getSpec().getDamageResistance() - 10);
+                                    giveHammerOfDisillusionEffect(hammerTarget, wp);
                                 }
                             }
                         }
@@ -320,6 +320,26 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         );
 
         return true;
+    }
+
+    private static void giveHammerOfDisillusionEffect(WarlordsEntity hammerTarget, @Nonnull WarlordsEntity wp) {
+        hammerTarget.getCooldownManager().removeCooldownByName("Hammer of Disillusion");
+        hammerTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Hammer of Disillusion",
+                null,
+                HammerOfLight.class,
+                null,
+                wp,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                20
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 1.1f;
+            }
+        });
     }
 
     public ArmorStand spawnHammer(Location location) {
