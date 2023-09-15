@@ -263,7 +263,37 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                         });
                             }
                         },
-                        10 * 20
+                        10 * 20,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 20 == 0) {
+                                // Particles
+                                Location playerLoc = enemy.getLocation();
+                                playerLoc.add(0, 2.1, 0);
+                                Location particleLoc = playerLoc.clone();
+                                for (int i = 0; i < 1; i++) {
+                                    for (int j = 0; j < 10; j++) {
+                                        double angle = j / 10D * Math.PI * 2;
+                                        double width = 0.5;
+                                        particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                        particleLoc.setY(playerLoc.getY() + i / 5D);
+                                        particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                        particleLoc.getWorld().spawnParticle(
+                                                Particle.REDSTONE,
+                                                particleLoc,
+                                                1,
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                new Particle.DustOptions(Color.fromRGB(113, 13, 12), 1),
+                                                true
+                                        );
+                                    }
+                                }
+
+                            }
+                        })
                 ));
             }
         }
