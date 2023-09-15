@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -100,44 +101,52 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
                 (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, "shaman.boulder.impact", 2, 1);
 
+                    // this was previously delayed by a tick idk why, if something breaks, you know why
+                    for (WarlordsEntity p : PlayerFilter
+                            .entitiesAround(newLoc, hitbox, hitbox, hitbox)
+                            .aliveEnemiesOf(wp)
+                    ) {
+                        playersHit++;
+                        if (p.hasFlag()) {
+                            carrierHit++;
+                        }
+                        if (p.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(p)) {
+                            warpsKnockbacked++;
+                        }
+                        Vector v;
+                        if (p == directHit) {
+                            v = initialCastLocation.toVector().subtract(p.getLocation().toVector()).normalize().multiply(-velocity).setY(0.2);
+                        } else {
+                            v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
+                        }
+                        p.setVelocity(name, v, false, false);
+                        p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    }
+
+                    newLoc.setPitch(-12);
+                    Location impactLocation = newLoc.clone().subtract(speed);
+                    Utils.spawnFallingBlocks(impactLocation, 3, 10);
+
                     new GameRunnable(wp.getGame()) {
+
                         @Override
                         public void run() {
-                            for (WarlordsEntity p : PlayerFilter
-                                    .entitiesAround(newLoc, hitbox, hitbox, hitbox)
-                                    .aliveEnemiesOf(wp)
-                            ) {
-                                playersHit++;
-                                if (p.hasFlag()) {
-                                    carrierHit++;
-                                }
-                                if (p.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(p)) {
-                                    warpsKnockbacked++;
-                                }
-                                Vector v;
-                                if (p == directHit) {
-                                    v = initialCastLocation.toVector().subtract(p.getLocation().toVector()).normalize().multiply(-velocity).setY(0.2);
-                                } else {
-                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
-                                }
-                                p.setVelocity(name, v, false, false);
-                                p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                            }
-
-                            newLoc.setPitch(-12);
-                            Location impactLocation = newLoc.clone().subtract(speed);
-                            Utils.spawnFallingBlocks(impactLocation, 3, 10);
-
-                            new GameRunnable(wp.getGame()) {
-
-                                @Override
-                                public void run() {
-                                    Utils.spawnFallingBlocks(impactLocation, 3.5, 20);
-                                }
-
-                            }.runTaskLater(1);
+                            Utils.spawnFallingBlocks(impactLocation, 3.5, 20);
                         }
+
                     }.runTaskLater(1);
+
+                    if (pveMasterUpgrade2) {
+                        new FallingBlockWaveEffect(impactLocation, 4, 1.2, Material.COARSE_DIRT).play();
+                        for (WarlordsEntity enemy : PlayerFilter
+                                .entitiesAround(impactLocation, 5, 5, 5)
+                                .aliveEnemiesOf(wp)
+                        ) {
+                            Utils.playGlobalSound(impactLocation, "arcanist.beacon.impact", 1f, .1f);
+                            enemy.addDamageInstance(wp, "Earthquake", 450, 630, 0, 100);
+                        }
+                    }
+
                 }
         );
 

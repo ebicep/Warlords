@@ -236,11 +236,11 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         new GameRunnable(giver.getGame()) {
             @Override
             public void run() {
+                new FallingBlockWaveEffect(hit.getLocation(), 3, 1.1, Material.PACKED_ICE).play();
                 for (WarlordsEntity freezeTarget : PlayerFilter
                         .entitiesAround(hit, 3, 3, 3)
                         .aliveEnemiesOf(giver)
                 ) {
-                    new FallingBlockWaveEffect(freezeTarget.getLocation(), 3, 1.1, Material.PACKED_ICE).play();
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 2, 0.7f);
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
                     freezeTarget.addDamageInstance(giver, name, 409, 554, -1, 100);

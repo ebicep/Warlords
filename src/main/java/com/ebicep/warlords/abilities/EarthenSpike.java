@@ -295,6 +295,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
             spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
         }
         if (pveMasterUpgrade2) {
+            spikeTarget.getCooldownManager().removeCooldownByName("Earthen Verdancy");
             spikeTarget.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     "Earthen Verdancy",
                     "ROOTED",
