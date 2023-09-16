@@ -147,14 +147,14 @@ public enum Aspect {
                             EffectUtils.displayParticle(
                                     Particle.REDSTONE,
                                     warlordsEntity.getLocation().add(
-                                            (Math.random() - 0.5) * 1,
+                                            0,
                                             1.2,
-                                            (Math.random() - 0.5) * 1
+                                            0
                                     ),
                                     1,
-                                    0,
-                                    0,
-                                    0,
+                                    .5,
+                                    .5,
+                                    .5,
                                     0,
                                     new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
                             );

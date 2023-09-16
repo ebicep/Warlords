@@ -4,12 +4,13 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -83,7 +84,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        Location location = wp.getLocation();
+        List<WarlordsEntity> spiked = new ArrayList<>();
         for (WarlordsEntity spikeTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveEnemiesOf(wp)
@@ -92,14 +93,20 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
             if (!LocationUtils.isLookingAt(player, spikeTarget.getEntity()) || !LocationUtils.hasLineOfSight(player, spikeTarget.getEntity())) {
                 continue;
             }
-            addTimesUsed();
-            AbstractPlayerClass.sendRightClickPacket(player);
 
-            for (int i = 0; i < (pveMasterUpgrade2 ? 3 : 1); i++) {
-                spikeTarget(wp, spikeTarget);
+            spiked.add(spikeTarget);
+            spikeTarget(wp, spikeTarget);
+
+            if (!pveMasterUpgrade2 || spiked.size() >= 3) {
+                addTimesUsed();
+                AbstractPlayerClass.sendRightClickPacket(player);
+                break;
             }
-
-            break;
+        }
+        if (pveMasterUpgrade2 && spiked.size() < 3 && !spiked.isEmpty()) {
+            for (int i = 0; i < 3 - spiked.size(); i++) {
+                spikeTarget(wp, spiked.get(0));
+            }
         }
         return true;
     }
@@ -172,11 +179,15 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
                 } else {
                     //impact
                     Location targetLocation = target.getLocation();
-                    for (WarlordsEntity spikeTarget : PlayerFilter
-                            .entitiesAround(targetLocation, spikeHitbox, spikeHitbox, spikeHitbox)
-                            .aliveEnemiesOf(wp)
-                    ) {
+                    if (pveMasterUpgrade2) {
                         onSpikeTarget(caster, spikeTarget);
+                    } else {
+                        for (WarlordsEntity spikeTarget : PlayerFilter
+                                .entitiesAround(targetLocation, spikeHitbox, spikeHitbox, spikeHitbox)
+                                .aliveEnemiesOf(wp)
+                        ) {
+                            onSpikeTarget(caster, spikeTarget);
+                        }
                     }
 
                     if (pveMasterUpgrade) {
@@ -296,7 +307,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
         }
         if (pveMasterUpgrade2) {
             spikeTarget.getCooldownManager().removeCooldownByName("Earthen Verdancy");
-            spikeTarget.getCooldownManager().addCooldown(new PermanentCooldown<>(
+            spikeTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Earthen Verdancy",
                     "ROOTED",
                     EarthenSpike.class,
@@ -304,7 +315,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
                     caster,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {},
-                    true
+                    5 * 20
             ) {
                 @Override
                 public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
@@ -319,7 +330,16 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
                     PlayerFilter.playingGame(victim.getGame())
                                 .aliveTeammatesOf(victim)
                                 .filter(warlordsEntity -> warlordsEntity.getCooldownManager().hasCooldownFromActionBarName("ROOTED"))
+                                .filter(warlordsEntity -> !warlordsEntity.equals(victim))
                                 .forEach(warlordsEntity -> {
+                                    EffectUtils.playParticleLinkAnimation(
+                                            warlordsEntity.getLocation().add(0, .25, 0),
+                                            victim.getLocation().add(0, .25, 0),
+                                            139,
+                                            69,
+                                            19,
+                                            2
+                                    );
                                     warlordsEntity.addDamageInstance(
                                             event.getAttacker(),
                                             event.getAbility(),
@@ -327,7 +347,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
                                             damage,
                                             0,
                                             100,
-                                            EnumSet.of(InstanceFlags.RECURSIVE)
+                                            EnumSet.of(InstanceFlags.RECURSIVE, InstanceFlags.ROOTED)
                                     );
                                 });
                 }

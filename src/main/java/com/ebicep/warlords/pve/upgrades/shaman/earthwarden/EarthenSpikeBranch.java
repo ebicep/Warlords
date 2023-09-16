@@ -100,6 +100,8 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 "Earthen Verdancy",
                 "Earthen Spike - Master Upgrade",
                 """
+                        +30 Energy cost
+                                                
                         Earthen Spike will now release 3 spikes, enemies hit will be ROOTED.
                                                 
                         ROOTED: Enemies effected by this are connected to each other. Damage dealt to a rooted enemy, will damage all other rooted enemies for 30% of the damage taken.

@@ -804,7 +804,7 @@ public abstract class WarlordsEntity {
                 doOnStaticAbility(Repentance.class, repentance -> repentance.addToPool(finalDamageValue));
 
                 if (!flags.contains(InstanceFlags.NO_MESSAGE)) {
-                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit);
+                    sendDamageMessage(debugMessage, attacker, this, ability, damageValue, isCrit, isMeleeHit, flags);
                 }
                 //debugMessage.append("\n").append(ChatColor.AQUA).append("On Damage");
                 //appendDebugMessage(debugMessage, 1, ChatColor.DARK_GREEN, "Self Cooldowns");
@@ -1297,6 +1297,7 @@ public abstract class WarlordsEntity {
      * @param damageValue what is the damage value.
      * @param isCrit      whether if it's a critical hit message.
      * @param isMeleeHit  whether if it's a melee hit.
+     * @param flags
      */
     private void sendDamageMessage(
             TextComponent.Builder debugMessage,
@@ -1305,7 +1306,8 @@ public abstract class WarlordsEntity {
             String ability,
             float damageValue,
             boolean isCrit,
-            boolean isMeleeHit
+            boolean isMeleeHit,
+            EnumSet<InstanceFlags> flags
     ) {
         TextComponent.Builder secondHalf = Component.text().color(NamedTextColor.GRAY);
         TextComponent.Builder damageBuilder = Component.text().color(NamedTextColor.RED);
@@ -1322,6 +1324,9 @@ public abstract class WarlordsEntity {
         }
         if (isMeleeHit) {
             secondHalf.append(Component.text(" melee"));
+        }
+        if (flags.contains(InstanceFlags.ROOTED)) {
+            secondHalf.append(Component.text(" rooted"));
         }
         secondHalf.append(Component.text(" damage."));
 
