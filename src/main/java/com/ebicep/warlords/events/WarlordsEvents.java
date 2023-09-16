@@ -32,6 +32,7 @@ import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
@@ -377,7 +378,11 @@ public class WarlordsEvents implements Listener {
         }
 
         wpAttacker.setHitCooldown(wpAttacker.getBaseHitCooldown().getCalculatedValue());
-        wpAttacker.subtractEnergy(-wpAttacker.getSpec().getEnergyPerHit(), false);
+        float energyPerHit = wpAttacker.getSpec().getEnergyPerHit();
+        for (AbstractCooldown<?> abstractCooldown : wpAttacker.getCooldownManager().getCooldownsDistinct()) {
+            energyPerHit = abstractCooldown.addEnergyPerHit(energyPerHit);
+        }
+        wpAttacker.subtractEnergy(-energyPerHit, false);
         wpAttacker.getMinuteStats().addMeleeHits();
 
         if (wpAttacker instanceof WarlordsNPC warlordsNPC) {

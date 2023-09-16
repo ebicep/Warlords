@@ -105,7 +105,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWe
                         """,
                 50000,
                 () -> {
-
+                    ability.setTickDuration(ability.getTickDuration() + 100);
                 }
         );
     }

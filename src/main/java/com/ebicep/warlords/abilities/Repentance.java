@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.RepentanceBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -62,13 +63,36 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
         EffectUtils.playCylinderAnimation(wp.getLocation(), 1, 255, 255, 255);
 
         pool += 2000;
+        AtomicDouble energyGained = new AtomicDouble();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name, "REPE",
+                name,
+                "REPE",
                 Repentance.class,
                 new Repentance(),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                    if (pveMasterUpgrade2) {
+                        //TODO message
+                        float energyGain = (float) energyGained.get() / 10 / 20;
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Remembrance",
+                                "REME",
+                                Repentance.class,
+                                new Repentance(),
+                                wp,
+                                CooldownTypes.BUFF,
+                                cooldownManager1 -> {
+
+                                },
+                                5 * 20
+                        ) {
+                            @Override
+                            public float addEnergyGainPerTick(float energyGainPerTick) {
+                                return energyGainPerTick + energyGain;
+                            }
+                        });
+                    }
                 },
                 tickDuration
         ) {
@@ -89,12 +113,12 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                         Math.min(500, healthToAdd),
                         0,
                         100,
-                        pveMasterUpgrade2 ? EnumSet.of(InstanceFlags.CAN_OVERHEAL) : EnumSet.noneOf(InstanceFlags.class)
+                        pveMasterUpgrade2 ? EnumSet.of(InstanceFlags.CAN_OVERHEAL_SELF) : EnumSet.noneOf(InstanceFlags.class)
                 );
                 if (pveMasterUpgrade2) {
                     Overheal.giveOverHeal(wp, wp);
                 }
-                attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f));
+                energyGained.addAndGet(attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f)));
                 pool *= .5;
             }
         });

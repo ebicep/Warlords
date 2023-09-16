@@ -93,7 +93,7 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                 "Remembrance",
                 "Repentance - Master Upgrade",
                 """
-                        Repentance can now Overheal.
+                        Repentance can now Overheal. Additionally, after Repentance ends, you gain an EPS buff equivalent to 1 EPS per 10 energy gained during Repentance for 5 seconds.
                         """,
                 50000,
                 () -> {

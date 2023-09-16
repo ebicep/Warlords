@@ -261,7 +261,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 maxDamageHeal,
                 critChance,
                 critMultiplier,
-                EnumSet.of(InstanceFlags.CAN_OVERHEAL, InstanceFlags.NO_HIT_SOUND)
+                EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS, InstanceFlags.NO_HIT_SOUND)
         );
 
         if (teammateInRain != wp) {

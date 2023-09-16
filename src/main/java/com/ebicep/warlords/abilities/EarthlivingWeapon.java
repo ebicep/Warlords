@@ -138,7 +138,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                         timesProcd++;
                         Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
 
-                        float cc = pveMasterUpgrade2 && previosulyProcd ? 100 : critChance;
+                        float cc = pveMasterUpgrade2 && !previosulyProcd ? 100 : critChance;
                         attacker.addHealingInstance(
                                 attacker,
                                 name,
@@ -173,11 +173,8 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
             }
 
             @Override
-            public float addEnergyGainPerTick(float energyGainPerTick) {
-                if (pveMasterUpgrade2) {
-                    return energyGainPerTick + .5f;
-                }
-                return energyGainPerTick;
+            public float addEnergyPerHit(float energyPerHit) {
+                return energyPerHit + 10f;
             }
         });
 

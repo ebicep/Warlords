@@ -104,6 +104,8 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
 
         Soulbinding tempSoulBinding = new Soulbinding();
+        tempSoulBinding.setMaxAlliesHit(maxAlliesHit);
+        tempSoulBinding.setRadius(radius);
         tempSoulBinding.setInPve(inPve);
         tempSoulBinding.setPveMasterUpgrade(pveMasterUpgrade);
         tempSoulBinding.setPveMasterUpgrade2(pveMasterUpgrade2);

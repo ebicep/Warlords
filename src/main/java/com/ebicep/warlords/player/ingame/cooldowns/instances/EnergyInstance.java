@@ -16,4 +16,8 @@ public interface EnergyInstance extends Instance {
         return energyGainPerTick;
     }
 
+    default float addEnergyPerHit(float energyPerHit) {
+        return energyPerHit;
+    }
+
 }

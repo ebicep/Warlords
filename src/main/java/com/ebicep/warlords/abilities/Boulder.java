@@ -137,12 +137,14 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
                     }.runTaskLater(1);
 
                     if (pveMasterUpgrade2) {
-                        new FallingBlockWaveEffect(impactLocation, 4, 1.2, Material.COARSE_DIRT).play();
+                        new FallingBlockWaveEffect(impactLocation.clone().add(0, 1, 0), 4, 1.2, Material.COARSE_DIRT).play();
+                        Utils.playGlobalSound(impactLocation, "arcanist.beacon.impact", 2, .1f);
+                        Utils.playGlobalSound(impactLocation, "arcanist.beacon.impact", 2, .1f);
+                        Utils.playGlobalSound(impactLocation, "arcanist.beacon.impact", 2, .1f);
                         for (WarlordsEntity enemy : PlayerFilter
                                 .entitiesAround(impactLocation, 5, 5, 5)
                                 .aliveEnemiesOf(wp)
                         ) {
-                            Utils.playGlobalSound(impactLocation, "arcanist.beacon.impact", 1f, .1f);
                             enemy.addDamageInstance(wp, "Earthquake", 450, 630, 0, 100);
                         }
                     }

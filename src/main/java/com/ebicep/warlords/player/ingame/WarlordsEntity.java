@@ -1040,16 +1040,21 @@ public abstract class WarlordsEntity {
 
         // Self Healing
         if (this == attacker) {
-            if (this.health + healValue > this.maxHealth) {
-                healValue = this.maxHealth - this.health;
+            float maxHealth = this.maxHealth;
+            if (flags.contains(InstanceFlags.CAN_OVERHEAL_SELF)) {
+                maxHealth *= 1.1;
+            }
+            if (this.health + healValue > maxHealth) {
+                healValue = maxHealth - this.health;
             }
 
             if (healValue <= 0) {
                 return Optional.empty();
             }
 
-            // Displays the healing message.
-            sendHealingMessage(debugMessage, this, healValue, ability, isCrit, isLastStandFromShield, false);
+            boolean isOverheal = maxHealth > this.maxHealth && healValue + this.health > this.maxHealth;
+            sendHealingMessage(debugMessage, this, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
+
             health += healValue;
             addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
 
@@ -1060,7 +1065,7 @@ public abstract class WarlordsEntity {
             // Teammate Healing
             if (isTeammate(attacker)) {
                 float maxHealth = this.maxHealth;
-                if (flags.contains(InstanceFlags.CAN_OVERHEAL)) {
+                if (flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS)) {
                     maxHealth *= 1.1;
                 }
 

@@ -96,6 +96,10 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
 
                 additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), pveMasterUpgrade2 && linkInformation.size() > 0 ? -1 : 0);
 
+                if (pveMasterUpgrade2 && nearPlayer instanceof WarlordsNPC warlordsNPC) {
+                    warlordsNPC.getMob().setTarget(wp);
+                }
+
                 break;
             }
         }

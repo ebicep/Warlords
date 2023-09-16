@@ -6,7 +6,8 @@ public enum InstanceFlags {
     AVENGER_WRATH_STRIKE,
     LAST_STAND_FROM_SHIELD, // for last stand healing from absorbing from players with shield
     ROOTED,
-    CAN_OVERHEAL,
+    CAN_OVERHEAL_OTHERS,
+    CAN_OVERHEAL_SELF,
     RECURSIVE,
 
     IGNORE_SELF_RES,

@@ -284,7 +284,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 orbHeal,
                 0,
                 100,
-                pveMasterUpgrade2 ? EnumSet.of(InstanceFlags.CAN_OVERHEAL) : EnumSet.noneOf(InstanceFlags.class)
+                pveMasterUpgrade2 ? EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS) : EnumSet.noneOf(InstanceFlags.class)
         );
         if (pveMasterUpgrade2) {
             teammateToHeal.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
