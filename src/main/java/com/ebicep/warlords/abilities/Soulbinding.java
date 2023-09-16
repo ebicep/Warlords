@@ -94,7 +94,14 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
+
+        activeSoulbinding(wp);
+
+        return true;
+    }
+
+    public Soulbinding activeSoulbinding(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
 
         Soulbinding tempSoulBinding = new Soulbinding();
         tempSoulBinding.setInPve(inPve);
@@ -165,14 +172,20 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             }
         });
 
-        ItemStack item = player.getInventory().getItem(0);
-        if (item != null) {
-            ItemMeta newItemMeta = item.getItemMeta();
-            newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
-            item.setItemMeta(newItemMeta);
+        if (wp.getEntity() instanceof Player player) {
+            ItemStack item = player.getInventory().getItem(0);
+            if (item != null) {
+                ItemMeta newItemMeta = item.getItemMeta();
+                newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+                item.setItemMeta(newItemMeta);
+            }
         }
 
-        return true;
+        return tempSoulBinding;
+    }
+
+    public List<SoulBoundPlayer> getSoulBindedPlayers() {
+        return soulBindedPlayers;
     }
 
     public void bindPlayer(WarlordsEntity wpAttacker, WarlordsEntity wpVictim) {
@@ -202,15 +215,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         }
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SoulbindingWeaponBranch(abilityTree, this);
-    }
-
-    public List<SoulBoundPlayer> getSoulBindedPlayers() {
-        return soulBindedPlayers;
-    }
-
     public void addPlayersBinded() {
         playersBinded++;
     }
@@ -222,6 +226,11 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             }
         }
         return false;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoulbindingWeaponBranch(abilityTree, this);
     }
 
     public void addSoulProcs() {

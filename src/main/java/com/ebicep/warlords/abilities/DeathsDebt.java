@@ -12,7 +12,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -37,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class DeathsDebt extends AbstractTotem implements Duration {
 
@@ -211,9 +211,14 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                     });
                                 }
                                 if (pveMasterUpgrade2) {
-                                    List<Soulbinding> soulbindings = new CooldownFilter<>(wp, PersistentCooldown.class)
-                                            .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                                            .toList();
+                                    List<Soulbinding> soulbindings = wp.getAbilitiesMatching(Soulbinding.class);
+                                    if (soulbindings.isEmpty()) {
+                                        soulbindings.add(new Soulbinding());
+                                    }
+                                    soulbindings = soulbindings
+                                            .stream()
+                                            .map(soulbinding -> soulbinding.activeSoulbinding(wp))
+                                            .collect(Collectors.toList());
                                     float damageReduction = 1;
                                     for (int i = 0; i < enemies.size() && i < 6; i++) {
                                         WarlordsEntity enemy = enemies.get(i);
