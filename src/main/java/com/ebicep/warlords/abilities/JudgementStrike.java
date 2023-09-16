@@ -54,6 +54,11 @@ public class JudgementStrike extends AbstractStrike {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new JudgementStrikeBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "warrior.revenant.orbsoflife", 2, 1.7f);
         Utils.playGlobalSound(location, "mage.frostbolt.activation", 2, 2);
@@ -62,55 +67,51 @@ public class JudgementStrike extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
-        attacksDone++;
-        float critChance = this.critChance;
-        if (attacksDone == strikeCritInterval) {
-            attacksDone = 0;
-            critChance = 100;
-        }
-        nearPlayer.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier
-        ).ifPresent(finalEvent -> {
-            if (finalEvent.isCrit()) {
-                wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
+        for (int i = 0; i < (pveMasterUpgrade2 ? 2 : 1); i++) {
+            attacksDone++;
+            float critChance = this.critChance;
+            if (attacksDone == strikeCritInterval) {
+                attacksDone = 0;
+                critChance = 100;
             }
-            if (pveMasterUpgrade) {
-                if (
-                        nearPlayer instanceof WarlordsNPC warlordsNPC &&
-                                finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .3) &&
-                                !(warlordsNPC.getMob() instanceof Unexecutable)
-                ) {
-                    nearPlayer.addDamageInstance(
-                            wp,
-                            "Execute",
-                            nearPlayer.getHealth() + 1,
-                            nearPlayer.getHealth() + 1,
-                            0,
-                            100,
-                            EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
-                    ).ifPresent(finalEvent2 -> {
-                        if (strikeHeal != 0 && finalEvent2.isDead()) {
-                            wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
-                        }
-                    });
+            nearPlayer.addDamageInstance(
+                    wp,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier
+            ).ifPresent(finalEvent -> {
+                if (finalEvent.isCrit()) {
+                    wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
                 }
-            }
-            if (strikeHeal != 0 && finalEvent.isDead()) {
-                wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
-            }
-        });
+                if (pveMasterUpgrade) {
+                    if (nearPlayer instanceof WarlordsNPC warlordsNPC &&
+                            finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .3) &&
+                            !(warlordsNPC.getMob() instanceof Unexecutable)
+                    ) {
+                        nearPlayer.addDamageInstance(
+                                wp,
+                                "Execute",
+                                nearPlayer.getHealth() + 1,
+                                nearPlayer.getHealth() + 1,
+                                0,
+                                100,
+                                EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
+                        ).ifPresent(finalEvent2 -> {
+                            if (strikeHeal != 0 && finalEvent2.isDead()) {
+                                wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
+                            }
+                        });
+                    }
+                }
+                if (strikeHeal != 0 && finalEvent.isDead()) {
+                    wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
+                }
+            });
+        }
 
         return true;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new JudgementStrikeBranch(abilityTree, this);
     }
 
     public int getSpeedOnCrit() {
