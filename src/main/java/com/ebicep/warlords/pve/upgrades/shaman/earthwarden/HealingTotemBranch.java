@@ -96,5 +96,20 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Resurgent Artifact",
+                "Healing Totem - Master Upgrade",
+                """
+                        Healing Totem's crit chance is increased by 25% and has double the duration and radius.
+                                                
+                        Allies within the range of totem have their own weapons imbued with Earthliving Weapon for the duration totem is active.
+                        """,
+                50000,
+                () -> {
+                    ability.setCritChance(ability.getCritChance() + 25);
+                    ability.setTickDuration(ability.getTickDuration() * 2);
+                    ability.setRadius(ability.getRadius() * 2);
+                }
+        );
     }
 }

@@ -10,12 +10,14 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.HealingTotemBranch;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -31,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HealingTotem extends AbstractTotem implements Duration {
@@ -82,6 +85,11 @@ public class HealingTotem extends AbstractTotem implements Duration {
         info.add(new Pair<>("Players Crippled", "" + playersCrippled));
 
         return info;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HealingTotemBranch(abilityTree, this);
     }
 
     @Override
@@ -279,11 +287,111 @@ public class HealingTotem extends AbstractTotem implements Duration {
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingTotemCooldown) || wp.isDead()
         );
-    }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HealingTotemBranch(abilityTree, this);
+        if (pveMasterUpgrade2) {
+            PlayerFilter.playingGame(wp.getGame())
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .forEach(warlordsEntity -> {
+                            EarthlivingWeapon earthlivingWeapon = new EarthlivingWeapon();
+
+                            warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    earthlivingWeapon.getName(),
+                                    null,
+                                    EarthlivingWeapon.class,
+                                    earthlivingWeapon,
+                                    wp,
+                                    CooldownTypes.ABILITY,
+                                    cooldownManager -> {
+                                    },
+                                    tickDuration,
+                                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                        if (ticksElapsed % 4 == 0) {
+                                            if (!tempHealingTotem.playerInsideTotem(warlordsEntity, radius)) {
+                                                return;
+                                            }
+                                            EffectUtils.displayParticle(
+                                                    Particle.VILLAGER_HAPPY,
+                                                    wp.getLocation().add(0, 1.2, 0),
+                                                    2,
+                                                    0.3,
+                                                    0.3,
+                                                    0.3,
+                                                    0.1
+                                            );
+                                        }
+                                    })
+                            ) {
+
+                                private float procChance = 40;
+                                private boolean firstProc = true;
+
+                                @Override
+                                public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                                    if (!event.getAbility().isEmpty()) {
+                                        return;
+                                    }
+                                    if (!tempHealingTotem.playerInsideTotem(warlordsEntity, radius)) {
+                                        return;
+                                    }
+                                    WarlordsEntity victim = event.getWarlordsEntity();
+                                    WarlordsEntity attacker = event.getAttacker();
+
+                                    double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
+                                    if (firstProc) {
+                                        firstProc = false;
+                                        earthlivingActivate = 0;
+                                    }
+                                    if (!(earthlivingActivate < procChance)) {
+                                        return;
+                                    }
+
+                                    new GameRunnable(victim.getGame()) {
+                                        final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                                                warlordsPlayer.getWeapon().getMeleeDamageMin() : 132;
+                                        final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                                                warlordsPlayer.getWeapon().getMeleeDamageMax() : 179;
+                                        int counter = 0;
+
+                                        @Override
+                                        public void run() {
+                                            Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
+
+                                            attacker.addHealingInstance(
+                                                    attacker,
+                                                    earthlivingWeapon.getName(),
+                                                    minDamage,
+                                                    maxDamage,
+                                                    earthlivingWeapon.getCritChance(),
+                                                    earthlivingWeapon.getCritMultiplier()
+                                            );
+
+                                            for (WarlordsEntity nearPlayer : PlayerFilter
+                                                    .entitiesAround(attacker, 6, 6, 6)
+                                                    .aliveTeammatesOfExcludingSelf(attacker)
+                                                    .limit(earthlivingWeapon.getMaxAllies())
+                                            ) {
+                                                playersHealed++;
+                                                nearPlayer.addHealingInstance(
+                                                        attacker,
+                                                        earthlivingWeapon.getName(),
+                                                        minDamage * convertToPercent(earthlivingWeapon.getWeaponDamage()),
+                                                        maxDamage * convertToPercent(earthlivingWeapon.getWeaponDamage()),
+                                                        earthlivingWeapon.getCritChance(),
+                                                        earthlivingWeapon.getCritMultiplier()
+                                                );
+                                            }
+
+                                            counter++;
+                                            if (counter == earthlivingWeapon.getMaxHits()) {
+                                                this.cancel();
+                                            }
+                                        }
+                                    }.runTaskTimer(3, 8);
+                                }
+                            });
+                        });
+
+        }
     }
 
     public void addAmountHealed(float amount) {
@@ -292,6 +400,10 @@ public class HealingTotem extends AbstractTotem implements Duration {
 
     public float getAmountHealed() {
         return amountHealed;
+    }
+
+    private boolean playerInsideTotem(WarlordsEntity warlordsEntity, float radius) {
+        return warlordsEntity.getLocation().distanceSquared(totem.getLocation()) <= radius * radius;
     }
 
     public int getRadius() {
