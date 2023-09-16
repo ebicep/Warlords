@@ -265,18 +265,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         );
 
         if (teammateInRain != wp) {
-            teammateInRain.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
-            teammateInRain.getCooldownManager().addRegularCooldown(
-                    "Overheal",
-                    "OVERHEAL",
-                    Overheal.class,
-                    Overheal.OVERHEAL_MARKER,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {
-                    },
-                    Overheal.OVERHEAL_DURATION * 20
-            );
+            Overheal.giveOverHeal(wp, teammateInRain);
         }
     }
 

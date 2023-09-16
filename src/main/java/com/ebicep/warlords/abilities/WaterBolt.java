@@ -115,18 +115,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                         EnumSet.of(InstanceFlags.CAN_OVERHEAL)
                 );
                 if (hit != shooter) {
-                    hit.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
-                    hit.getCooldownManager().addRegularCooldown(
-                            "Overheal",
-                            "OVERHEAL",
-                            Overheal.class,
-                            Overheal.OVERHEAL_MARKER,
-                            shooter,
-                            CooldownTypes.BUFF,
-                            cooldownManager -> {
-                            },
-                            Overheal.OVERHEAL_DURATION * 20
-                    );
+                    Overheal.giveOverHeal(shooter, hit);
                 }
                 if (pveMasterUpgrade) {
                     increaseDamageOnHit(shooter, hit);
@@ -166,18 +155,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
                         EnumSet.of(InstanceFlags.CAN_OVERHEAL)
                 );
                 if (nearEntity != shooter) {
-                    nearEntity.getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
-                    nearEntity.getCooldownManager().addRegularCooldown(
-                            "Overheal",
-                            "OVERHEAL",
-                            Overheal.class,
-                            Overheal.OVERHEAL_MARKER,
-                            shooter,
-                            CooldownTypes.BUFF,
-                            cooldownManager -> {
-                            },
-                            Overheal.OVERHEAL_DURATION * 20
-                    );
+                    Overheal.giveOverHeal(shooter, nearEntity);
                 }
                 if (pveMasterUpgrade) {
                     increaseDamageOnHit(shooter, nearEntity);

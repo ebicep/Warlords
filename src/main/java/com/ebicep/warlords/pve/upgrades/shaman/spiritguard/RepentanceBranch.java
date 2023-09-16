@@ -93,7 +93,7 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                 "Remembrance",
                 "Repentance - Master Upgrade",
                 """
-                        After Repentance ends, you regain an amount of health and energy equivalent to 40% of the total health and energy regained during the duration.
+                        Repentance can now Overheal.
                         """,
                 50000,
                 () -> {

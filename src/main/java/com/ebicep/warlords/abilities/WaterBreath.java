@@ -125,18 +125,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
                 debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
                 breathTarget.getSpeed().removeSlownessModifiers();
                 breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, EnumSet.of(InstanceFlags.CAN_OVERHEAL));
-                breathTargetCooldownManager.removeCooldownByObject(Overheal.OVERHEAL_MARKER);
-                breathTargetCooldownManager.addRegularCooldown(
-                        "Overheal",
-                        "OVERHEAL",
-                        Overheal.class,
-                        Overheal.OVERHEAL_MARKER,
-                        wp,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {
-                        },
-                        Overheal.OVERHEAL_DURATION * 20
-                );
+                Overheal.giveOverHeal(wp, breathTarget);
                 if (pveMasterUpgrade || pveMasterUpgrade2) {
                     regenOnHit(wp, breathTarget);
                 }

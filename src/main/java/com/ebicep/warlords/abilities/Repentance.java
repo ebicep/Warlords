@@ -2,24 +2,26 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Overheal;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.RepentanceBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class Repentance extends AbstractAbility implements BlueAbilityIcon, Duration {
@@ -60,8 +62,6 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
         EffectUtils.playCylinderAnimation(wp.getLocation(), 1, 255, 255, 255);
 
         pool += 2000;
-        AtomicDouble healthAdded = new AtomicDouble();
-        AtomicDouble energyAdded = new AtomicDouble();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name, "REPE",
                 Repentance.class,
@@ -69,12 +69,6 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (pveMasterUpgrade2) {
-                        float healing = (float) (healthAdded.get() * .4f);
-                        float energy = (float) (energyAdded.get() * .4f);
-                        wp.addHealingInstance(wp, "Remembrance", healing, healing, 0, 100);
-                        wp.addEnergy(wp, "Remembrance", energy);
-                    }
                 },
                 tickDuration
         ) {
@@ -94,11 +88,13 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                         Math.min(500, healthToAdd),
                         Math.min(500, healthToAdd),
                         0,
-                        100
-                ).ifPresent(finalEvent -> {
-                    healthAdded.addAndGet(finalEvent.getValue());
-                });
-                energyAdded.addAndGet(attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f)));
+                        100,
+                        pveMasterUpgrade2 ? EnumSet.of(InstanceFlags.CAN_OVERHEAL) : EnumSet.noneOf(InstanceFlags.class)
+                );
+                if (pveMasterUpgrade2) {
+                    Overheal.giveOverHeal(wp, wp);
+                }
+                attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f));
                 pool *= .5;
             }
         });
