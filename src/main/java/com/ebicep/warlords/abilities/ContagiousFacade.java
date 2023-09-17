@@ -119,11 +119,11 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     );
                     if (pveMasterUpgrade) {
                         PlayerFilter.entitiesAround(wp, 4, 4, 4)
-                                .aliveEnemiesOf(wp)
-                                .forEach(enemy -> {
-                                    enemy.addDamageInstance(wp, name, shieldHealth, shieldHealth, 0, 100);
-                                    enemy.addSpeedModifier(wp, name, -50, 60, "BASE");
-                                });
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(enemy -> {
+                                        enemy.addDamageInstance(wp, name, shieldHealth, shieldHealth, 0, 100);
+                                        enemy.addSpeedModifier(wp, name, -50, 60, "BASE");
+                                    });
                     }
                 },
                 tickDuration,
@@ -151,7 +151,11 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float afterValue = currentDamageValue * convertToDivisionDecimal(damageAbsorption);
-                totalAbsorbed.addAndGet(currentDamageValue - afterValue);
+                float absorbedAmount = currentDamageValue - afterValue;
+                if (pveMasterUpgrade2 && totalAbsorbed.get() + absorbedAmount >= wp.getMaxHealth()) {
+                    return currentDamageValue;
+                }
+                totalAbsorbed.addAndGet(absorbedAmount);
                 return afterValue;
             }
         };

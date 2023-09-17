@@ -93,6 +93,19 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Polluting Guise",
+                "Contagious Facade - Master Upgrade",
+                """
+                        2x Absorb Damage
+                                                
+                        Total damage absorbed is capped at the user's max hp.
+                        """,
+                50000,
+                () -> {
+                    ability.setDamageAbsorption(ability.getDamageAbsorption() * 2);
+                }
+        );
     }
 
 }
