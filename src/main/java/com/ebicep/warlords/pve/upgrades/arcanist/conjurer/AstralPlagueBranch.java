@@ -90,6 +90,16 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Crimson Catastrophe",
+                "Astral Plague - Master Upgrade",
+                """
+                        For the duration of Astral Plague, reduce the cooldown of Soulfire Beam by 33% and increase the damage of Soulfire Beam by 20%.
+                        """,
+                50000,
+                () -> {
+                }
+        );
     }
 
 }

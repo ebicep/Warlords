@@ -90,6 +90,22 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
             }
 
             @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade2 && event.getAbility().equals("Soulfire Beam")) {
+                    return currentDamageValue * 1.2f;
+                }
+                return currentDamageValue;
+            }
+
+            @Override
+            public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
+                if (pveMasterUpgrade2 && ability instanceof SoulfireBeam) {
+                    return 1 - .33f;
+                }
+                return super.getAbilityMultiplicativeCooldownMult(ability);
+            }
+
+            @Override
             protected Listener getListener() {
                 return new Listener() {
 
