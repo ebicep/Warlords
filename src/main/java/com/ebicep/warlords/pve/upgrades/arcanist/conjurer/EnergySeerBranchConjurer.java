@@ -91,6 +91,17 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
                     ability.setEnergyRestore(ability.getEnergyRestore() * 3);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Replicating Sight",
+                "Energy Seer - Master Upgrade",
+                """
+                        When nearby allies within a 10 block radius expend energy while Energy Seer is active, gain 10% of their energy spent when Energy Seer ends. Increase the duration of the damage buff by 7s.
+                        """,
+                50000,
+                () -> {
+                    ability.setBonusDuration(ability.getBonusDuration() + 140);
+                }
+        );
     }
 
 }

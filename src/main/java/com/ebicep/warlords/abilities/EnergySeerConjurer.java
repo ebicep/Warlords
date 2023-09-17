@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUsedEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -52,6 +53,22 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
                 return currentDamageValue * convertToMultiplicationDecimal(damageIncrease);
             }
         };
+    }
+
+    @Override
+    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUsedEvent event) {
+        if (!pveMasterUpgrade2) {
+            return;
+        }
+        WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+        if (warlordsEntity.isEnemy(wp) || warlordsEntity.equals(wp)) {
+            return;
+        }
+        float energyUsed = event.getEnergyUsed();
+        if (energyUsed <= 0) {
+            return;
+        }
+        wp.addEnergy(wp, "Replicating Sight", energyUsed * .1f);
     }
 
     @Override

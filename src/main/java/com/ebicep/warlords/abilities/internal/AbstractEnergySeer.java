@@ -105,6 +105,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                 return new Listener() {
                     @EventHandler
                     public void onEnergyUsed(WarlordsEnergyUsedEvent event) {
+                        AbstractEnergySeer.this.onEnergyUsed(wp, event);
                         if (!Objects.equals(event.getWarlordsEntity(), wp)) {
                             return;
                         }
@@ -134,6 +135,10 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     public abstract T getObject();
 
     public abstract RegularCooldown<T> getBonusCooldown(@Nonnull WarlordsEntity wp);
+
+    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUsedEvent event) {
+
+    }
 
     @Override
     public int getTickDuration() {
