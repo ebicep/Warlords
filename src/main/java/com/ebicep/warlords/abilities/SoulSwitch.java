@@ -38,6 +38,8 @@ import java.util.List;
 public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
 
     private int radius = 13;
+    private int blindnessTicks = 30;
+    private int decoyMaxTicksLived = 60;
 
     public SoulSwitch() {
         super("Soul Switch", 0, 0, 30, 40, -1, 50);
@@ -87,147 +89,151 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
         ) {
             if (swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(Component.text(" You cannot Soul Switch with a player holding the flag!", NamedTextColor.RED));
-            } else if (swapTarget instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof Unswappable) {
-                wp.sendMessage(Component.text(" You cannot Soul Switch with that mob!", NamedTextColor.RED));
-            } else {
-                wp.subtractEnergy(energyCost, false);
-                Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
-
-                Location swapLocation = swapTarget.getLocation();
-                Location ownLocation = wp.getLocation();
-
-                EffectUtils.playCylinderAnimation(swapLocation, 1.05, Particle.CLOUD, 1);
-                EffectUtils.playCylinderAnimation(ownLocation, 1.05, Particle.CLOUD, 1);
-
-                swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0, true, false));
-                swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                        .append(Component.text(" You've been Soul Swapped by ", NamedTextColor.GRAY))
-                        .append(Component.text(wp.getName(), NamedTextColor.YELLOW))
-                        .append(Component.text("!", NamedTextColor.GRAY))
-                );
-                swapTarget.teleport(new Location(
-                        wp.getWorld(),
-                        ownLocation.getX(),
-                        ownLocation.getY(),
-                        ownLocation.getZ(),
-                        swapLocation.getYaw(),
-                        swapLocation.getPitch()
-                ));
-
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                        .append(Component.text(" You swapped with ", NamedTextColor.GRAY))
-                        .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
-                        .append(Component.text("!", NamedTextColor.GRAY))
-                );
-                wp.teleport(new Location(
-                        swapLocation.getWorld(),
-                        swapLocation.getX(),
-                        swapLocation.getY(),
-                        swapLocation.getZ(),
-                        ownLocation.getYaw(),
-                        ownLocation.getPitch()
-                ));
-
-                if (swapTarget instanceof WarlordsNPC) {
-                    PveOption pveOption = wp.getGame()
-                                            .getOptions()
-                                            .stream()
-                                            .filter(PveOption.class::isInstance)
-                                            .map(PveOption.class::cast)
-                                            .findFirst()
-                                            .orElse(null);
-                    Decoy decoy;
-                    if (pveOption != null) {
-                        PlayerInventory inventory = player.getInventory();
-                        decoy = new Decoy(ownLocation,
-                                wp.getName(),
-                                HeadUtils.getHead(player.getUniqueId()),
-                                inventory.getChestplate(),
-                                inventory.getLeggings(),
-                                inventory.getBoots(),
-                                inventory.getItem(0)
-                        ) {
-                            @Override
-                            public Mob getMobRegistry() {
-                                return null;
-                            }
-
-                            @Override
-                            public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-                                PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
-                                            .aliveEnemiesOf(wp)
-                                            .forEach(hit -> {
-                                                hit.addDamageInstance(
-                                                        wp,
-                                                        "Decoy",
-                                                        782 * (pveMasterUpgrade ? 2 : 1),
-                                                        1034 * (pveMasterUpgrade ? 2 : 1),
-                                                        0,
-                                                        100
-                                                );
-                                                if (pveMasterUpgrade) {
-                                                    hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                                            "Switch Crippling",
-                                                            "CRIP",
-                                                            SoulSwitch.class,
-                                                            new SoulSwitch(),
-                                                            wp,
-                                                            CooldownTypes.DEBUFF,
-                                                            cooldownManager -> {
-                                                            },
-                                                            20 * 5
-                                                    ) {
-                                                        @Override
-                                                        public float modifyDamageBeforeInterveneFromAttacker(
-                                                                WarlordsDamageHealingEvent event,
-                                                                float currentDamageValue
-                                                        ) {
-                                                            return currentDamageValue * .5f;
-                                                        }
-                                                    });
-                                                }
-                                            });
-
-                                ownLocation.getWorld().spawnParticle(
-                                        Particle.EXPLOSION_LARGE,
-                                        ownLocation.add(0, 1, 0),
-                                        5,
-                                        0,
-                                        0,
-                                        0,
-                                        0.5,
-                                        null,
-                                        true
-                                );
-                            }
-                        };
-                        pveOption.spawnNewMob(decoy, Team.BLUE);
-                    } else {
-                        decoy = null;
-                    }
-                    if (pveMasterUpgrade) {
-                        float healing = (wp.getMaxHealth() - wp.getHealth()) * 0.1f;
-                        wp.addHealingInstance(
-                                wp,
-                                name,
-                                healing,
-                                healing,
-                                -1,
-                                100
-                        );
-                    }
-                    new GameRunnable(wp.getGame()) {
-                        @Override
-                        public void run() {
-                            if (pveOption != null && pveOption.getMobs().contains(decoy)) {
-                                decoy.getWarlordsNPC().die(decoy.getWarlordsNPC());
-                            }
-                        }
-                    }.runTaskLater(60);
-                }
-
-                return true;
+                continue;
             }
+            if (swapTarget instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof Unswappable) {
+                wp.sendMessage(Component.text(" You cannot Soul Switch with that mob!", NamedTextColor.RED));
+                continue;
+            }
+            wp.subtractEnergy(energyCost, false);
+            Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
+
+            Location swapLocation = swapTarget.getLocation();
+            Location ownLocation = wp.getLocation();
+
+            EffectUtils.playCylinderAnimation(swapLocation, 1.05, Particle.CLOUD, 1);
+            EffectUtils.playCylinderAnimation(ownLocation, 1.05, Particle.CLOUD, 1);
+
+            swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindnessTicks, 0, true, false));
+            swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                    .append(Component.text(" You've been Soul Swapped by ", NamedTextColor.GRAY))
+                    .append(Component.text(wp.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
+            swapTarget.teleport(new Location(
+                    wp.getWorld(),
+                    ownLocation.getX(),
+                    ownLocation.getY(),
+                    ownLocation.getZ(),
+                    swapLocation.getYaw(),
+                    swapLocation.getPitch()
+            ));
+
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You swapped with ", NamedTextColor.GRAY))
+                    .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
+            wp.teleport(new Location(
+                    swapLocation.getWorld(),
+                    swapLocation.getX(),
+                    swapLocation.getY(),
+                    swapLocation.getZ(),
+                    ownLocation.getYaw(),
+                    ownLocation.getPitch()
+            ));
+
+            if (swapTarget instanceof WarlordsNPC) {
+                PveOption pveOption = wp.getGame()
+                                        .getOptions()
+                                        .stream()
+                                        .filter(PveOption.class::isInstance)
+                                        .map(PveOption.class::cast)
+                                        .findFirst()
+                                        .orElse(null);
+                Decoy decoy;
+                if (pveOption != null) {
+                    wp.addSpeedModifier(wp, "Tricky Switch", 30, decoyMaxTicksLived);
+                    PlayerInventory inventory = player.getInventory();
+                    decoy = new Decoy(ownLocation,
+                            wp.getName(),
+                            HeadUtils.getHead(player.getUniqueId()),
+                            inventory.getChestplate(),
+                            inventory.getLeggings(),
+                            inventory.getBoots(),
+                            inventory.getItem(0)
+                    ) {
+                        @Override
+                        public Mob getMobRegistry() {
+                            return null;
+                        }
+
+                        @Override
+                        public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+                            wp.getSpeed().removeModifier("Tricky Switch");
+                            PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
+                                        .aliveEnemiesOf(wp)
+                                        .forEach(hit -> {
+                                            hit.addDamageInstance(
+                                                    wp,
+                                                    "Decoy",
+                                                    782 * (pveMasterUpgrade ? 2 : 1),
+                                                    1034 * (pveMasterUpgrade ? 2 : 1),
+                                                    0,
+                                                    100
+                                            );
+                                            if (pveMasterUpgrade) {
+                                                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                        "Switch Crippling",
+                                                        "CRIP",
+                                                        SoulSwitch.class,
+                                                        new SoulSwitch(),
+                                                        wp,
+                                                        CooldownTypes.DEBUFF,
+                                                        cooldownManager -> {
+                                                        },
+                                                        20 * 5
+                                                ) {
+                                                    @Override
+                                                    public float modifyDamageBeforeInterveneFromAttacker(
+                                                            WarlordsDamageHealingEvent event,
+                                                            float currentDamageValue
+                                                    ) {
+                                                        return currentDamageValue * .5f;
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                            ownLocation.getWorld().spawnParticle(
+                                    Particle.EXPLOSION_LARGE,
+                                    ownLocation.add(0, 1, 0),
+                                    5,
+                                    0,
+                                    0,
+                                    0,
+                                    0.5,
+                                    null,
+                                    true
+                            );
+                        }
+                    };
+                    pveOption.spawnNewMob(decoy, Team.BLUE);
+                } else {
+                    decoy = null;
+                }
+                if (pveMasterUpgrade) {
+                    float healing = (wp.getMaxHealth() - wp.getHealth()) * 0.1f;
+                    wp.addHealingInstance(
+                            wp,
+                            name,
+                            healing,
+                            healing,
+                            -1,
+                            100
+                    );
+                }
+                new GameRunnable(wp.getGame()) {
+                    @Override
+                    public void run() {
+                        if (pveOption != null && pveOption.getMobs().contains(decoy)) {
+                            decoy.getWarlordsNPC().die(decoy.getWarlordsNPC());
+                        }
+                    }
+                }.runTaskLater(decoyMaxTicksLived);
+            }
+
+            return true;
         }
         return false;
     }
@@ -243,5 +249,21 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
 
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+
+    public int getBlindnessTicks() {
+        return blindnessTicks;
+    }
+
+    public void setBlindnessTicks(int blindnessTicks) {
+        this.blindnessTicks = blindnessTicks;
+    }
+
+    public int getDecoyMaxTicksLived() {
+        return decoyMaxTicksLived;
+    }
+
+    public void setDecoyMaxTicksLived(int decoyMaxTicksLived) {
+        this.decoyMaxTicksLived = decoyMaxTicksLived;
     }
 }
