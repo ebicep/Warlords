@@ -186,10 +186,11 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
 
                     }.runTaskTimer(20, pveMasterUpgrade ? 10 : 20);
 
-                    for (WarlordsEntity nearEntity : PlayerFilter
+                    List<WarlordsEntity> enemiesHit = PlayerFilter
                             .entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
                             .aliveEnemiesOf(wp)
-                    ) {
+                            .toList();
+                    for (WarlordsEntity nearEntity : enemiesHit) {
                         Utils.playGlobalSound(nearEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 0.5f);
                         nearEntity.addDamageInstance(
                                 wp,
@@ -214,7 +215,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                     }
 
                     if (pveMasterUpgrade2) {
-                        float healthBoost = (float) (wp.getMaxHealth() * Math.max(.25, teammatesHit.size() * .015f));
+                        float healthBoost = (float) (wp.getMaxHealth() * Math.max(.25, (teammatesHit.size() + enemiesHit.size()) * .015f));
                         wp.setMaxHealth(wp.getMaxHealth() + healthBoost);
                         new GameRunnable(wp.getGame()) {
 

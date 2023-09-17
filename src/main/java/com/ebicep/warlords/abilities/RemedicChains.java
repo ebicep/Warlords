@@ -216,7 +216,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!pveMasterUpgrade2 || ticksElapsed > 5 * 20) {
+                if (!pveMasterUpgrade2) {
                     return;
                 }
                 if (!event.getAbility().contains("Strike")) {
@@ -239,7 +239,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
             @Override
             public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
-                if (!pveMasterUpgrade2 || ticksElapsed > 5 * 20) {
+                if (!pveMasterUpgrade2) {
                     return energyPerHit;
                 }
                 return switch (Specializations.getClass(we.getSpecClass())) {
