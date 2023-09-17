@@ -213,6 +213,25 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                     orderOfEviscerate.subtractCurrentCooldown(reduction);
                                     wp.updateItem(orderOfEviscerate);
                                 }
+                                if (pveMasterUpgrade2) {
+                                    wp.getCooldownManager().limitCooldowns(RegularCooldown.class, "Cloaked Engagement", 2);
+                                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            "Cloaked Engagement",
+                                            "ENGAGE",
+                                            OrderOfEviscerate.class,
+                                            new OrderOfEviscerate(),
+                                            wp,
+                                            CooldownTypes.BUFF,
+                                            cooldownManager -> {
+                                            },
+                                            5 * 20
+                                    ) {
+                                        @Override
+                                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                            return currentDamageValue * 1.45f;
+                                        }
+                                    });
+                                }
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                         .append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
@@ -343,11 +362,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         return orderOfEviscerateCooldown;
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new OrderOfEviscerateBranch(abilityTree, this);
-    }
-
     public void addToDamageThreshold(float damageThreshold) {
         this.damageThreshold += damageThreshold;
     }
@@ -358,6 +372,11 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     public void setMarkedPlayer(WarlordsEntity markedPlayer) {
         this.markedPlayer = markedPlayer;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new OrderOfEviscerateBranch(abilityTree, this);
     }
 
     @Override

@@ -213,6 +213,16 @@ public class CooldownManager {
         }
     }
 
+    public <T extends AbstractCooldown<T>> void limitCooldowns(Class<T> cooldownClass, String name, int limit) {
+        List<T> matchingCooldowns = new CooldownFilter<>(this, cooldownClass)
+                .filterCooldownName(name)
+                .stream()
+                .toList();
+        if (matchingCooldowns.size() >= limit) {
+            removeCooldown(matchingCooldowns.get(0));
+        }
+    }
+
     public final <T> void addRegularCooldown(
             String name,
             String actionBarName,

@@ -95,7 +95,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "Cloaked Engagement",
                 "Order of Eviscerate - Master Upgrade",
                 """
-                        Enemies within a 10 block radius are immediately marked upon casting Order of Eviscerate. Additionally, invisibility is ruled by duration, not kills or damage taken.
+                        Killing your mark will now increase your damage by 45% for 5s, max 2 stacks.
                         """,
                 50000,
                 () -> {

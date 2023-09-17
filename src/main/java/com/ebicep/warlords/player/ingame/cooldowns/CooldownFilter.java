@@ -57,6 +57,10 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
         return new CooldownFilter<>(stream.filter(cd -> Objects.equals(warlordsPlayer, cd.getFrom())));
     }
 
+    public CooldownFilter<T> filterCooldownName(String name) {
+        return new CooldownFilter<>(stream.filter(cd -> Objects.equals(name, cd.getName())));
+    }
+
     public CooldownFilter<T> filter(Predicate<T> predicate) {
         return new CooldownFilter<>(stream.filter(predicate));
     }
