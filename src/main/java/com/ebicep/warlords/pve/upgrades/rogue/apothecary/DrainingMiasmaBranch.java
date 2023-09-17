@@ -93,13 +93,24 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 4);
                     ability.setLeechDuration(ability.getLeechDuration() * 4);
-                    ability.setEnemyHitRadius(ability.getEnemyHitRadius() * 4);
+                    ability.setRadius(ability.getRadius() * 4);
 
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
                     ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.25f);
                     ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.25f);
-
-
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Toxic Immunity",
+                "Draining Miasma - Master Upgrade",
+                """
+                        Draining Miasma no longer deals damage but range and duration have been quadrupled. Allies within the radius will be for 5% of their max HP every second. Additionally, the healing from Miasma can Overheal.
+                        """,
+                50000,
+                () -> {
+                    ability.setTickDuration(ability.getTickDuration() * 4);
+                    ability.setLeechDuration(ability.getLeechDuration() * 4);
+                    ability.setRadius(ability.getRadius() * 4);
                 }
         );
     }

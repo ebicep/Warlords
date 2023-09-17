@@ -224,7 +224,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 }
                 switch (Specializations.getClass(event.getAttacker().getSpecClass())) {
                     case WARRIOR, PALADIN, ROGUE -> ImpalingStrike.giveLeechCooldown(
-                            wp,
+                            event.getAttacker(),
                             event.getWarlordsEntity(),
                             impalingStrike.getLeechDuration(),
                             impalingStrike.getLeechSelfAmount() / 100f,

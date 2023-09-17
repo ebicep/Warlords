@@ -141,7 +141,9 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         }
 
         return Component.textOfChildren(
-                Component.text(nameAbbreviation, cooldownType == CooldownTypes.DEBUFF || nameAbbreviation.equals("MIAS") ? NamedTextColor.RED : NamedTextColor.GREEN),
+                Component.text(nameAbbreviation,
+                        cooldownType == CooldownTypes.DEBUFF ? NamedTextColor.RED : customActionBarColor() != null ? customActionBarColor() : NamedTextColor.GREEN
+                ),
                 Component.text(":", NamedTextColor.GRAY),
                 Component.text(ticksLeft / 20 + 1, NamedTextColor.GOLD)
         );

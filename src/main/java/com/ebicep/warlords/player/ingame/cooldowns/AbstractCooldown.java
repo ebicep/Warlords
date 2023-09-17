@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.*;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
@@ -110,6 +111,10 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     public abstract void onTick(WarlordsEntity from);
 
     public abstract boolean removeCheck();
+
+    public TextColor customActionBarColor() {
+        return null;
+    }
 
     public String getName() {
         return name;
