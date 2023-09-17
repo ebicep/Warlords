@@ -93,5 +93,16 @@ public class HeartToHeartBranch extends AbstractUpgradeBranch<HeartToHeart> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Heart in Hearts",
+                "Heart To Heart - Master Upgrade",
+                """
+                        For every block traveled, gain a 3% damage reduction for 6s. Additionally, increase the range to 20 blocks max.
+                        """,
+                50000,
+                () -> {
+                    ability.setRadius(20);
+                }
+        );
     }
 }

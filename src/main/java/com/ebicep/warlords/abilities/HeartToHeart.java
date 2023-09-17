@@ -4,8 +4,11 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.HeartToHeartBranch;
@@ -141,6 +144,25 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon {
                 timer++;
 
                 if (timer >= 8 || (heartTarget.isDead() || wp.isDead())) {
+                    if (pveMasterUpgrade2) {
+                        double distanceTravelled = playerLoc.distance(wp.getLocation());
+                        float damageMultiplier = (float) (1 - distanceTravelled * .03);
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Heart in Hearts",
+                                "HEART",
+                                HeartToHeart.class,
+                                new HeartToHeart(),
+                                wp,
+                                CooldownTypes.BUFF,
+                                cooldownManager -> {},
+                                6 * 20
+                        ) {
+                            @Override
+                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                return currentDamageValue * damageMultiplier;
+                            }
+                        });
+                    }
                     this.cancel();
                 }
 
@@ -186,7 +208,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon {
                     ) {
                         playersHit.add(we);
                         we.setStunTicks(GameRunnable.SECOND);
-                        //we.addSpeedModifier(wp, "Heart Slowness", -99, GameRunnable.SECOND, "BASE");
                         we.addDamageInstance(
                                 wp,
                                 name,
