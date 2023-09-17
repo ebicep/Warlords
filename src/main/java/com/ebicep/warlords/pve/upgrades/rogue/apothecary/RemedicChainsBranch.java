@@ -93,5 +93,18 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
                     ability.setAllyDamageIncrease(20);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Counterstrike",
+                "Remedic Chains - Master Upgrade",
+                """
+                        Warriors', Paladins', and Rogues' linked have their strikes infused with LEECH application capability for 5s.
+                                                
+                        Mages', Shamans', and Arcanists' linked have their EPH doubled for 5s.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }

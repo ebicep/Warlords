@@ -173,7 +173,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
             }
 
             @Override
-            public float addEnergyPerHit(float energyPerHit) {
+            public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
                 return energyPerHit + 10f;
             }
         });

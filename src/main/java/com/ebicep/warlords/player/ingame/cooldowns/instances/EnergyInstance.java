@@ -1,5 +1,7 @@
 package com.ebicep.warlords.player.ingame.cooldowns.instances;
 
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+
 public interface EnergyInstance extends Instance {
 
     /**
@@ -16,7 +18,7 @@ public interface EnergyInstance extends Instance {
         return energyGainPerTick;
     }
 
-    default float addEnergyPerHit(float energyPerHit) {
+    default float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
         return energyPerHit;
     }
 

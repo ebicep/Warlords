@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
@@ -206,9 +207,45 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 }),
                 teammatesNear
         ) {
+            private final ImpalingStrike impalingStrike = new ImpalingStrike();
+
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * (1 + allyDamageIncrease / 100f);
+            }
+
+            @Override
+            public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (!pveMasterUpgrade2 || ticksElapsed > 5 * 20) {
+                    return;
+                }
+                if (!event.getAbility().contains("Strike")) {
+                    return;
+                }
+                switch (Specializations.getClass(event.getAttacker().getSpecClass())) {
+                    case WARRIOR, PALADIN, ROGUE -> ImpalingStrike.giveLeechCooldown(
+                            wp,
+                            event.getWarlordsEntity(),
+                            impalingStrike.getLeechDuration(),
+                            impalingStrike.getLeechSelfAmount() / 100f,
+                            impalingStrike.getLeechAllyAmount() / 100f,
+                            warlordsDamageHealingFinalEvent -> {
+                            }
+                    );
+                    default -> {
+                    }
+                }
+            }
+
+            @Override
+            public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
+                if (!pveMasterUpgrade2 || ticksElapsed > 5 * 20) {
+                    return energyPerHit;
+                }
+                return switch (Specializations.getClass(we.getSpecClass())) {
+                    case MAGE, SHAMAN, ARCANIST -> energyPerHit * 2;
+                    default -> energyPerHit;
+                };
             }
         };
         wp.getCooldownManager().removeCooldown(RemedicChains.class, false);

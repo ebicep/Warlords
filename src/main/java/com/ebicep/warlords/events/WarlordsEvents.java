@@ -380,7 +380,7 @@ public class WarlordsEvents implements Listener {
         wpAttacker.setHitCooldown(wpAttacker.getBaseHitCooldown().getCalculatedValue());
         float energyPerHit = wpAttacker.getSpec().getEnergyPerHit();
         for (AbstractCooldown<?> abstractCooldown : wpAttacker.getCooldownManager().getCooldownsDistinct()) {
-            energyPerHit = abstractCooldown.addEnergyPerHit(energyPerHit);
+            energyPerHit = abstractCooldown.addEnergyPerHit(wpAttacker, energyPerHit);
         }
         wpAttacker.subtractEnergy(-energyPerHit, false);
         wpAttacker.getMinuteStats().addMeleeHits();
