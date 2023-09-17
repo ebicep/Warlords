@@ -100,6 +100,20 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                 () -> {
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Volatile Beam",
+                "Soulfire Beam - Master Upgrade",
+                """
+                        +5 Block hit radius
+                                                
+                        Soulfire Beam fires two additional beams.
+                        """,
+                50000,
+                () -> {
+                    ability.setPlayerHitbox(ability.getPlayerHitbox() + 3f);
+                    ability.setShotsFiredAtATime(3);
+                }
+        );
     }
 
 }
