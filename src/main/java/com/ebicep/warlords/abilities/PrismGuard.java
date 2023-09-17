@@ -25,6 +25,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -270,6 +273,36 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                 float afterReduction = currentDamageValue * (100 - totalReduction) / 100f;
                 tempPrismGuard.addDamageReduced(currentDamageValue - afterReduction);
                 return afterReduction;
+            }
+
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                if (pveMasterUpgrade2) {
+                    currentVector.multiply(.001);
+                }
+            }
+
+            @Override
+            protected Listener getListener() {
+                if (!pveMasterUpgrade2) {
+                    return super.getListener();
+                }
+                return new Listener() {
+                    @EventHandler
+                    public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                        WarlordsEntity attacker = event.getAttacker();
+                        if (attacker.isTeammate(wp)) {
+                            return;
+                        }
+                        if (attacker.getLocation().distanceSquared(wp.getLocation()) > bubbleRadius * bubbleRadius) {
+                            return;
+                        }
+                        if (event.getAbility().isEmpty()) {
+                            event.setMin(event.getMin() * .75f);
+                            event.setMax(event.getMax() * .75f);
+                        }
+                    }
+                };
             }
         });
 

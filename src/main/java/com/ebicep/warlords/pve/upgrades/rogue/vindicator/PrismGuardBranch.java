@@ -99,5 +99,16 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                     ability.setBubbleRadius(ability.getBubbleRadius() * 2);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Alacrity",
+                "Prism Guard - Master Upgrade",
+                """
+                        Double the radius of Prism Guard and reduce the melee damage of enemies in the radius by 25%. Additionally, gain knockback immunity while protected by Prism Guard.
+                        """,
+                50000,
+                () -> {
+                    ability.setBubbleRadius(ability.getBubbleRadius() * 2);
+                }
+        );
     }
 }
