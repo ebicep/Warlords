@@ -8,6 +8,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -35,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
 
@@ -124,48 +126,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         hitProjectile(projectile, hit);
     }
 
-    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
-        if (projectile.getHit().contains(hit)) {
-            return false;
-        }
-        WarlordsEntity wp = projectile.getShooter();
-        Location currentLocation = projectile.getCurrentLocation();
-        Location startingLocation = projectile.getStartingLocation();
-
-        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-        List<WarlordsEntity> hits = projectile.getHit();
-        if (hit.isTeammate(wp)) {
-            int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
-            if (teammatesHit > maxAlliesHit) {
-                return false;
-            }
-            giveFortifyingHex(wp, hit);
-        } else {
-            int enemiesHit = (int) hits.stream().filter(we -> !we.isTeammate(wp)).count();
-            if (enemiesHit > maxEnemiesHit) {
-                return false;
-            }
-            double distanceSquared = startingLocation.distanceSquared(currentLocation);
-            double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
-            if (toReduceBy < .2) {
-                toReduceBy = .2;
-            }
-            hit.addDamageInstance(
-                    wp,
-                    name,
-                    (float) (minDamageHeal * toReduceBy),
-                    (float) (maxDamageHeal * toReduceBy),
-                    critChance,
-                    critMultiplier
-            );
-        }
-        if (hits.size() == 1) {
-            giveFortifyingHex(wp, wp);
-        }
-        return true;
-    }
-
     @Override
     protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
@@ -235,6 +195,50 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         return 1.4f;
     }
 
+    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
+        if (projectile.getHit().contains(hit)) {
+            return false;
+        }
+        WarlordsEntity wp = projectile.getShooter();
+        Location currentLocation = projectile.getCurrentLocation();
+        Location startingLocation = projectile.getStartingLocation();
+
+        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+        List<WarlordsEntity> hits = projectile.getHit();
+        if (hit.isTeammate(wp)) {
+            int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
+            if (teammatesHit > maxAlliesHit) {
+                return false;
+            }
+            giveFortifyingHex(wp, hit);
+        } else {
+            int enemiesHit = (int) hits.stream().filter(we -> !we.isTeammate(wp)).count();
+            if (enemiesHit > maxEnemiesHit) {
+                return false;
+            }
+            double distanceSquared = startingLocation.distanceSquared(currentLocation);
+            double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+            if (toReduceBy < .2) {
+                toReduceBy = .2;
+            }
+            hitEnemy(hit, wp, toReduceBy);
+            if (pveMasterUpgrade2) {
+                for (WarlordsEntity warlordsEntity : PlayerFilter
+                        .entitiesAround(hit, 3, 3, 3)
+                        .aliveTeammatesOfExcludingSelf(hit)
+                        .toList()
+                ) {
+                    hitEnemy(warlordsEntity, wp, toReduceBy);
+                }
+            }
+        }
+        if (hits.size() == 1) {
+            giveFortifyingHex(wp, wp);
+        }
+        return true;
+    }
+
     public static void giveFortifyingHex(WarlordsEntity from, WarlordsEntity to) {
         FortifyingHex fromHex = getFromHex(from);
         String hexName = fromHex.getName();
@@ -266,6 +270,45 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
     }
 
+    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, double toReduceBy) {
+        hit.addDamageInstance(
+                wp,
+                name,
+                (float) (minDamageHeal * toReduceBy),
+                (float) (maxDamageHeal * toReduceBy),
+                critChance,
+                critMultiplier
+        );
+        if (pveMasterUpgrade2) {
+            Optional<RegularCooldown> weakeningHexCooldown = new CooldownFilter<>(hit, RegularCooldown.class)
+                    .filterCooldownClass(WeakeningHex.class)
+                    .findFirst();
+            if (weakeningHexCooldown.isPresent()) {
+                RegularCooldown regularCooldown = weakeningHexCooldown.get();
+                WeakeningHex weakeningHex = (WeakeningHex) regularCooldown.getCooldownObject();
+                weakeningHex.setStacks(weakeningHex.getStacks() + 1);
+                regularCooldown.setTicksLeft(tickDuration);
+            } else {
+                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Weakening Hex",
+                        "WHEX",
+                        WeakeningHex.class,
+                        new WeakeningHex(),
+                        wp,
+                        CooldownTypes.DEBUFF,
+                        cooldownManager -> {
+                        },
+                        6 * 20
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * (1 + 0.05f * cooldownObject.getStacks());
+                    }
+                });
+            }
+        }
+    }
+
     @Nonnull
     public static FortifyingHex getFromHex(WarlordsEntity from) {
         return from.getSpec().getAbilities().stream()
@@ -293,6 +336,10 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         this.tickDuration = tickDuration;
     }
 
+    public void setDamageReduction(int damageReduction) {
+        this.damageReduction = damageReduction;
+    }
+
     public int getMaxEnemiesHit() {
         return maxEnemiesHit;
     }
@@ -307,10 +354,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     public void setMaxAlliesHit(int maxAlliesHit) {
         this.maxAlliesHit = maxAlliesHit;
-    }
-
-    public void setDamageReduction(int damageReduction) {
-        this.damageReduction = damageReduction;
     }
 
     static class FortifyingHexShield extends Shield {
@@ -333,6 +376,18 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
         public int getMaxStacks() {
             return maxStacks;
+        }
+    }
+
+    static class WeakeningHex {
+        private int stacks = 1;
+
+        public int getStacks() {
+            return stacks;
+        }
+
+        public void setStacks(int stacks) {
+            this.stacks = stacks;
         }
     }
 }

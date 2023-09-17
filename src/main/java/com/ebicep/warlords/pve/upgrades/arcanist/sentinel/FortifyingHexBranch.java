@@ -118,6 +118,16 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                     ability.setDamageReduction(ability.getDamageReduction() + 3);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Augmenting Hex",
+                "Fortifying Hex - Master Upgrade",
+                """
+                        Fortifying Hex now explodes on contact, targets hit receive a Weakening Hex stack. Each stack of Weakening Hex on enemies increases damage taken by 5%.
+                        """,
+                50000,
+                () -> {
+                }
+        );
     }
 
 }
