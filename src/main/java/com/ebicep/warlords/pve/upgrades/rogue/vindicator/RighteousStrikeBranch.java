@@ -90,12 +90,22 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
                 }
         ));
 
-
         masterUpgrade = new Upgrade(
                 "Righteous Slash",
                 "Righteous Strike - Master Upgrade",
                 "Righteous Strike hits 4 additional enemies. Additionally, your initial strike target will be silenced for 6 seconds" +
                         " when struck, additional targets will be silenced for 4 seconds instead.",
+                50000,
+                () -> {
+
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Righteous Assault",
+                "Righteous Strike - Master Upgrade",
+                """
+                        Righteous Strike hits 4 additional enemies. Every enemy hit, refund yourself 2.5 energy. Every 5 enemies, will reduce the cooldown of Soul Shackle by 0.5 seconds.
+                        """,
                 50000,
                 () -> {
 

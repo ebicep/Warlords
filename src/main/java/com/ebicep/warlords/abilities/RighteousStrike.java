@@ -25,6 +25,7 @@ public class RighteousStrike extends AbstractStrike {
     public int silencedTargetStruck = 0;
 
     private int abilityReductionInTicks = 10;
+    private int targetsStruck = 0;
 
     public RighteousStrike() {
         super("Righteous Strike", 391, 497, 0, 90, 20, 175);
@@ -54,6 +55,11 @@ public class RighteousStrike extends AbstractStrike {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new RighteousStrikeBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "rogue.vindicatorstrike.activation", 2, 0.7f);
         Utils.playGlobalSound(location, "shaman.earthenspike.impact", 2, 2);
@@ -62,6 +68,7 @@ public class RighteousStrike extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+        targetsStruck++;
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
@@ -82,8 +89,10 @@ public class RighteousStrike extends AbstractStrike {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks, CooldownTypes.ABILITY);
         }
 
-        if (pveMasterUpgrade) {
-            SoulShackle.shacklePlayer(wp, nearPlayer, 120);
+        if (pveMasterUpgrade || pveMasterUpgrade2) {
+            if (pveMasterUpgrade) {
+                SoulShackle.shacklePlayer(wp, nearPlayer, 120);
+            }
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(nearPlayer, 4, 4, 4)
                     .aliveEnemiesOf(wp)
@@ -91,7 +100,10 @@ public class RighteousStrike extends AbstractStrike {
                     .excluding(nearPlayer)
                     .limit(4)
             ) {
-                SoulShackle.shacklePlayer(wp, we, 80);
+                targetsStruck++;
+                if (pveMasterUpgrade) {
+                    SoulShackle.shacklePlayer(wp, we, 80);
+                }
                 we.addDamageInstance(
                         wp,
                         name,
@@ -100,15 +112,13 @@ public class RighteousStrike extends AbstractStrike {
                         critChance,
                         critMultiplier
                 );
+                if (pveMasterUpgrade2 && targetsStruck % 5 == 0) {
+                    wp.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> soulShackle.subtractCurrentCooldown(.5f));
+                }
             }
         }
 
         return true;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new RighteousStrikeBranch(abilityTree, this);
     }
 
     public int getAbilityReductionInTicks() {
