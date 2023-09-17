@@ -3,8 +3,10 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.SoulShackleBranch;
@@ -73,7 +75,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         boolean hasShackled = false;
-        if (pveMasterUpgrade) {
+        if (pveMasterUpgrade || pveMasterUpgrade2) {
             Location playerLoc = new LocationBuilder(wp.getLocation())
                     .pitch(0)
                     .add(0, 1.7, 0);
@@ -130,9 +132,9 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
         EffectUtils.playFirework(
                 shackleTarget.getLocation(),
                 FireworkEffect.builder()
-                     .withColor(Color.YELLOW)
-                     .with(FireworkEffect.Type.BALL)
-                     .build(),
+                              .withColor(Color.YELLOW)
+                              .with(FireworkEffect.Type.BALL)
+                              .build(),
                 1
         );
 
@@ -145,6 +147,25 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
 
         shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         shacklePlayer(wp, shackleTarget, silenceDuration);
+
+        if (pveMasterUpgrade2) {
+            shackleTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Oppressive Chains",
+                    "OPP",
+                    SoulShackle.class,
+                    new SoulShackle(),
+                    wp,
+                    CooldownTypes.DEBUFF,
+                    cooldownManager -> {
+                    },
+                    3 * 20
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * 1.25f;
+                }
+            });
+        }
     }
 
     public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
@@ -199,16 +220,16 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoulShackleBranch(abilityTree, this);
+    }
+
+    @Override
     public void runEverySecond() {
         if (shacklePool > 0) {
             float newPool = shacklePool - 200;
             shacklePool = Math.max(newPool, 0);
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SoulShackleBranch(abilityTree, this);
     }
 
     public float getShacklePool() {

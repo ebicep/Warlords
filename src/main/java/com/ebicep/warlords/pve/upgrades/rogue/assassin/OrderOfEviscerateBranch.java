@@ -91,5 +91,16 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Cloaked Engagement",
+                "Order of Eviscerate - Master Upgrade",
+                """
+                        Enemies within a 10 block radius are immediately marked upon casting Order of Eviscerate. Additionally, invisibility is ruled by duration, not kills or damage taken.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }
