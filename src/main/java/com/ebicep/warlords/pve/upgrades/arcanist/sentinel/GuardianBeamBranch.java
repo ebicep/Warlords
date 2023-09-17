@@ -104,6 +104,16 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                     ability.setShieldPercentAlly(ability.getShieldPercentAlly() + 25);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Conservator Beam",
+                "Guardian Beam - Master Upgrade",
+                """
+                        When Guardian Beam hits an enemy, reduce their speed by 25% for 5s. Additionally, when Guardian Beam hits an ally, increase their speed by 25% for 7s.
+                        """,
+                50000,
+                () -> {
+                }
+        );
     }
 
 }

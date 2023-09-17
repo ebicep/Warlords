@@ -63,6 +63,11 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new GuardianBeamBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
 
     }
@@ -74,31 +79,35 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
         if (hit.isEnemy(wp)) {
             hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            if (pveMasterUpgrade2) {
+                hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
+            }
         } else {
-            giveShield(hit, hasSanctuary, shieldPercentAlly);
+            giveShield(wp, hit, hasSanctuary, shieldPercentAlly);
+            hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
         }
         if (projectile.getHit().isEmpty()) {
-            giveShield(wp, hasSanctuary, shieldPercentSelf);
+            giveShield(wp, wp, hasSanctuary, shieldPercentSelf);
         }
         projectile.getHit().add(hit);
     }
 
-    private void giveShield(WarlordsEntity wp, boolean hasSanctuary, int percent) {
-        int selfHexStacks = (int) new CooldownFilter<>(wp, RegularCooldown.class)
+    private void giveShield(WarlordsEntity from, WarlordsEntity to, boolean hasSanctuary, int percent) {
+        int selfHexStacks = (int) new CooldownFilter<>(to, RegularCooldown.class)
                 .filterCooldownClass(FortifyingHex.class)
                 .stream()
                 .count();
         if (selfHexStacks >= 3) {
             if (!hasSanctuary) {
-                wp.getCooldownManager().removeCooldown(FortifyingHex.class, false);
+                to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
             }
-            Utils.playGlobalSound(wp.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+            Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
+            to.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "SHIELD",
                     Shield.class,
-                    new Shield(name, wp.getMaxHealth() * convertToPercent(percent)),
-                    wp,
+                    new Shield(name, to.getMaxHealth() * convertToPercent(percent)),
+                    from,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
@@ -107,7 +116,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                     tickDuration,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 4 == 0) {
-                            Location location = wp.getLocation();
+                            Location location = to.getLocation();
                             location.add(0, 1.5, 0);
                             EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
                             EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
@@ -116,22 +125,6 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                     })
             ));
         }
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
-        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
-        return super.onActivate(shooter, player);
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new GuardianBeamBranch(abilityTree, this);
-    }
-
-    @Override
-    public ItemStack getBeamItem() {
-        return new ItemStack(Material.WARPED_SLAB);
     }
 
     @Nullable
@@ -148,6 +141,17 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     @Override
     protected float getSoundPitch() {
         return 1;
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
+        return super.onActivate(shooter, player);
+    }
+
+    @Override
+    public ItemStack getBeamItem() {
+        return new ItemStack(Material.WARPED_SLAB);
     }
 
     @Override
