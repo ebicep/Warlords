@@ -6,8 +6,10 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
@@ -21,13 +23,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -87,6 +88,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         EffectUtils.playHelixAnimation(wp.getLocation(), radius, 230, 130, 5);
 
         Vindicate tempVindicate = new Vindicate();
+        tempVindicate.setPveMasterUpgrade2(pveMasterUpgrade2);
         for (WarlordsEntity vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
@@ -142,6 +144,32 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                     return currentDamageValue * getCalculatedVindicateDamageReduction();
                 }
             }
+
+            @Override
+            protected Listener getListener() {
+                if (!pveMasterUpgrade2) {
+                    return super.getListener();
+                }
+                return new Listener() {
+                    @EventHandler
+                    public void onCooldownAdd(WarlordsAddCooldownEvent event) {
+                        WarlordsEntity eventPlayer = event.getWarlordsEntity();
+                        if (eventPlayer.isTeammate(wp)) {
+                            return;
+                        }
+                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+                        if (!Objects.equals(cooldown.getFrom(), wp)) {
+                            return;
+                        }
+                        if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
+                            return;
+                        }
+                        if (cooldown.getActionBarName().equals("SILENCE")) {
+                            regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + 20);
+                        }
+                    }
+                };
+            }
         });
 
         return true;
@@ -167,16 +195,24 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
             public void multiplyKB(Vector currentVector) {
                 currentVector.multiply(knockbackResistance / 100f);
             }
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (cooldownObject instanceof Vindicate vindicate && vindicate.pveMasterUpgrade2) {
+                    return currentDamageValue * .85f;
+                }
+                return currentDamageValue;
+            }
         });
+    }
+
+    public float getCalculatedVindicateDamageReduction() {
+        return (100 - vindicateDamageReduction) / 100f;
     }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new VindicateBranch(abilityTree, this);
-    }
-
-    public float getCalculatedVindicateDamageReduction() {
-        return (100 - vindicateDamageReduction) / 100f;
     }
 
     public float getVindicateDamageReduction() {

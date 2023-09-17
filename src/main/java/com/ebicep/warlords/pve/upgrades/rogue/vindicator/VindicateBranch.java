@@ -93,5 +93,16 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Liberation",
+                "Vindicate - Master Upgrade",
+                """
+                        Allies are granted 15% damage reduction when they are within the radius of Vindicate. Additionally, enemies within the radius of Vindicate are silenced for 1 additional second when silenced by the Vindicators strike.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }
