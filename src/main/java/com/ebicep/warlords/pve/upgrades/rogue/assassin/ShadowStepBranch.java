@@ -93,5 +93,18 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Shadow Dash",
+                "Shadow Step - Master Upgrade",
+                """
+                        -10% Cooldown reduction
+                         
+                        Instead of leaping forward, instantly dash forward +8 blocks, dealing damage to enemies passed through.
+                        """,
+                50000,
+                () -> {
+                    ability.setCooldown(ability.getCooldown() * 0.9f);
+                }
+        );
     }
 }

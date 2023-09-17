@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.ShadowStepBranch;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -19,12 +20,16 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
 
@@ -63,26 +68,76 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
         Utils.playGlobalSound(playerLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 2);
 
         wp.setFlagPickCooldown(2);
-        if (wp.getCarriedFlag() != null) {
-            player.setVelocity(playerLoc.getDirection().multiply(1).setY(0.35));
-            player.setFallDistance(-fallDamageNegation);
-        } else {
-            player.setVelocity(playerLoc.getDirection().multiply(1.5).setY(0.7));
-            player.setFallDistance(-fallDamageNegation);
-        }
 
         EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder()
-                .withColor(Color.BLACK)
-                .with(FireworkEffect.Type.BALL)
-                .build());
+                                                                 .withColor(Color.BLACK)
+                                                                 .with(FireworkEffect.Type.BALL)
+                                                                 .build());
 
         if (wp.onHorse()) {
             wp.removeHorse();
         }
 
+        if (pveMasterUpgrade2) {
+            doShadowDash(wp);
+        } else {
+            if (wp.getCarriedFlag() != null) {
+                player.setVelocity(playerLoc.getDirection().multiply(1).setY(0.35));
+                player.setFallDistance(-fallDamageNegation);
+            } else {
+                player.setVelocity(playerLoc.getDirection().multiply(1.5).setY(0.7));
+                player.setFallDistance(-fallDamageNegation);
+            }
+
+            doShadowStep(wp, playerLoc);
+        }
+
+        return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ShadowStepBranch(abilityTree, this);
+    }
+
+    private void doShadowDash(@Nonnull WarlordsEntity wp) {
+        Set<WarlordsEntity> hit = new HashSet<>();
+        LocationBuilder locationBuilder = new LocationBuilder(wp.getEyeLocation());
+        for (Block ignored : Utils.getTargetBlockInBetween(wp.getEyeLocation(), 8)) {
+            if (!Utils.getTargetBlock(locationBuilder, 1).getType().isAir() || !locationBuilder.getBlock().getType().isAir() || !locationBuilder.clone()
+                                                                                                                                                .addY(1)
+                                                                                                                                                .getBlock()
+                                                                                                                                                .getType()
+                                                                                                                                                .isAir()) {
+                locationBuilder.centerXZ();
+                boolean isSlab = locationBuilder.clone().addY(-1).getBlock().getBlockData() instanceof Slab;
+                locationBuilder.addY(isSlab ? -0.5 : 0);
+                break;
+            }
+            PlayerFilter.entitiesAround(locationBuilder.clone().addY(-1), 2, 2, 2)
+                        .aliveEnemiesOf(wp)
+                        .excluding(hit)
+                        .forEach(warlordsEntity -> {
+                            hit.add(warlordsEntity);
+                            warlordsEntity.addDamageInstance(
+                                    wp,
+                                    "Shadow Dash",
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier
+                            );
+                        });
+            locationBuilder = locationBuilder.forward(1);
+        }
+        wp.teleportLocationOnly(locationBuilder);
+    }
+
+
+    private void doShadowStep(@Nonnull WarlordsEntity wp, Location playerLoc) {
         List<WarlordsEntity> playersHit = new ArrayList<>();
         for (WarlordsEntity assaultTarget : PlayerFilter
-                .entitiesAround(player, 5, 5, 5)
+                .entitiesAround(wp, 5, 5, 5)
                 .aliveEnemiesOf(wp)
         ) {
             totalPlayersHit++;
@@ -105,7 +160,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                 }
 
                 wp.getLocation(playerLoc);
-                boolean hitGround = player.isOnGround() || wp.onHorse();
+                boolean hitGround = wp.getEntity().isOnGround() || wp.onHorse();
                 y = playerLoc.getY();
 
                 if (wasOnGround && !hitGround) {
@@ -116,7 +171,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                     wasOnGround = true;
 
                     for (WarlordsEntity landingTarget : PlayerFilter
-                            .entitiesAround(player, 5, 5, 5)
+                            .entitiesAround(wp, 5, 5, 5)
                             .aliveEnemiesOf(wp)
                             .excluding(playersHit)
                     ) {
@@ -130,16 +185,14 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                     }
 
                     FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
-                            .withColor(Color.BLACK)
-                            .with(FireworkEffect.Type.BALL)
-                            .build());
+                                                                                      .withColor(Color.BLACK)
+                                                                                      .with(FireworkEffect.Type.BALL)
+                                                                                      .build());
 
                     this.cancel();
                 }
             }
         }.runTaskTimer(0, 0);
-
-        return true;
     }
 
     private void buffOnLanding(WarlordsEntity we) {
@@ -161,11 +214,6 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                 currentVector.multiply(0.2);
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ShadowStepBranch(abilityTree, this);
     }
 
     public void setFallDamageNegation(int fallDamageNegation) {

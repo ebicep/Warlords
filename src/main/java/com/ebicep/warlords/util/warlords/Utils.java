@@ -128,6 +128,43 @@ public class Utils {
         return blocks.get(0);
     }
 
+    public static Block getTargetBlock(Location location, int maxDistance) {
+        if (maxDistance > 120) {
+            maxDistance = 120;
+        }
+        ArrayList<Block> blocks = new ArrayList<>();
+        Iterator<Block> itr = new BlockIterator(location, 0, maxDistance);
+        while (itr.hasNext()) {
+            Block block = itr.next();
+            blocks.add(block);
+            if (blocks.size() > 1) {
+                blocks.remove(0);
+            }
+            Material material = block.getType();
+            if (!TRANSPARENT.contains(material) && !Tag.BANNERS.isTagged(material)) {
+                break;
+            }
+        }
+        return blocks.get(0);
+    }
+
+    public static List<Block> getTargetBlockInBetween(Location location, int maxDistance) {
+        if (maxDistance > 120) {
+            maxDistance = 120;
+        }
+        ArrayList<Block> blocks = new ArrayList<>();
+        Iterator<Block> itr = new BlockIterator(location, 0, maxDistance);
+        while (itr.hasNext()) {
+            Block block = itr.next();
+            blocks.add(block);
+            Material material = block.getType();
+            if (!TRANSPARENT.contains(material) && !Tag.BANNERS.isTagged(material)) {
+                break;
+            }
+        }
+        return blocks;
+    }
+
     public static boolean isProjectile(String ability) {
         return ability.equals("Fireball") ||
                 ability.equals("Frostbolt") ||
@@ -396,10 +433,6 @@ public class Utils {
         spawnFallingBlocks(impactLocation, initialCircleRadius, amount, -.5, .25);
     }
 
-    public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount, Material... materials) {
-        spawnFallingBlocks(impactLocation, initialCircleRadius, amount, -.5, .25, materials);
-    }
-
     public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount, double vectorMultiply, double vectorY) {
         spawnFallingBlocks(impactLocation, initialCircleRadius, amount, vectorMultiply, vectorY, Material.DIRT, Material.STONE, Material.PODZOL);
     }
@@ -424,6 +457,10 @@ public class Utils {
                 WarlordsEvents.addEntityUUID(fallingBlock);
             }
         }
+    }
+
+    public static void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount, Material... materials) {
+        spawnFallingBlocks(impactLocation, initialCircleRadius, amount, -.5, .25, materials);
     }
 
     public static class SimpleEntityEquipment implements EntityEquipment {

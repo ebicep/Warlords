@@ -130,6 +130,20 @@ public class LocationBuilder extends Location {
         return this;
     }
 
+    public LocationBuilder center() {
+        this.setX(this.getBlockX() + 0.5);
+        this.setY(this.getBlockY() + 0.5);
+        this.setZ(this.getBlockZ() + 0.5);
+        return this;
+    }
+
+    public LocationBuilder centerXZ() {
+        this.setX(this.getBlockX() + 0.5);
+        this.setY(this.getBlockY());
+        this.setZ(this.getBlockZ() + 0.5);
+        return this;
+    }
+
     @Nonnull
     @Override
     public LocationBuilder clone() {
