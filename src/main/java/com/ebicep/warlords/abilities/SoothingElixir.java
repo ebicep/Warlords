@@ -8,6 +8,8 @@ import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.SoothingElixirBranch;
@@ -128,10 +130,11 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                                                                    .with(FireworkEffect.Type.BURST)
                                                                    .build());
 
-                    for (WarlordsEntity nearEntity : PlayerFilter
+                    List<WarlordsEntity> teammatesHit = PlayerFilter
                             .entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
                             .aliveTeammatesOf(wp)
-                    ) {
+                            .toList();
+                    for (WarlordsEntity nearEntity : teammatesHit) {
                         playersHealed++;
                         nearEntity.addHealingInstance(
                                 wp,
@@ -141,6 +144,20 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                                 critChance,
                                 critMultiplier
                         );
+
+                        if (pveMasterUpgrade2 && !nearEntity.equals(wp)) {
+                            nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    "Debuff Immunity",
+                                    "ELIXIR",
+                                    SoothingElixir.class,
+                                    new SoothingElixir(),
+                                    wp,
+                                    CooldownTypes.BUFF,
+                                    cooldownManager -> {
+                                    },
+                                    4 * 20
+                            ));
+                        }
                     }
 
                     new GameRunnable(wp.getGame()) {
@@ -194,6 +211,18 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                                     }
                             );
                         }
+                    }
+
+                    if (pveMasterUpgrade2) {
+                        float healthBoost = (float) (wp.getMaxHealth() * Math.max(.25, teammatesHit.size() * .015f));
+                        wp.setMaxHealth(wp.getMaxHealth() + healthBoost);
+                        new GameRunnable(wp.getGame()) {
+
+                            @Override
+                            public void run() {
+                                wp.setMaxHealth(wp.getMaxHealth() - healthBoost);
+                            }
+                        }.runTaskLater(4 * 20);
                     }
                 }
         );

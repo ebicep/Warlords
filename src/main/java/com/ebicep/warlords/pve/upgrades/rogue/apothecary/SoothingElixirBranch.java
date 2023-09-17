@@ -93,5 +93,16 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
 
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Healing Elixir",
+                "Soothing Elixir - Master Upgrade",
+                """
+                        Allies hit by Soothing Elixir are immune to debuffs for 4s. Additionally, for every target hit, increase the users max HP by 1.5% (max 25%) for 4s.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 }
