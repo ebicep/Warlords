@@ -110,5 +110,16 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
                     ability.setDuration(ability.getDuration() * 2);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Medicinal Brew",
+                "Vitality Liquor - Master Upgrade",
+                """
+                        Allies healed by Vitality, including the Apothecary, are given 30% speed and double energy duration.
+                        """,
+                50000,
+                () -> {
+                    ability.setDuration(ability.getDuration() * 2);
+                }
+        );
     }
 }

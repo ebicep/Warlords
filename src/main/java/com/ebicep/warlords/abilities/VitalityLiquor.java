@@ -83,11 +83,11 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                 critMultiplier
         );
 
-        for (WarlordsEntity acuTarget : PlayerFilter
+        for (WarlordsEntity teammate : PlayerFilter
                 .entitiesAround(player, vitalityRange, vitalityRange, vitalityRange)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            acuTarget.addHealingInstance(
+            teammate.addHealingInstance(
                     wp,
                     name,
                     minDamageHeal,
@@ -95,33 +95,36 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                     critChance,
                     critMultiplier
             );
+            if (pveMasterUpgrade2) {
+                teammate.addSpeedModifier(wp, "Medicinal Brew", 30, duration * 20);
+            }
         }
 
-        for (WarlordsEntity enemyTarget : PlayerFilter
+        for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(player, vitalityRange, vitalityRange, vitalityRange)
                 .aliveEnemiesOf(wp)
         ) {
             if (pveMasterUpgrade) {
-                enemyTarget.addSpeedModifier(wp, "Vitality Slowness", -30, 20 * 3);
+                enemy.addSpeedModifier(wp, "Vitality Slowness", -30, 20 * 3);
             }
-            new CooldownFilter<>(enemyTarget, RegularCooldown.class)
+            new CooldownFilter<>(enemy, RegularCooldown.class)
                     .filterCooldownClass(ImpalingStrike.class)
                     .filterCooldownFrom(wp)
                     .findAny()
                     .ifPresent(regularCooldown -> {
-                        Utils.playGlobalSound(enemyTarget.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.6f);
-                        EffectUtils.playFirework(enemyTarget.getLocation(), FireworkEffect.builder()
-                                                                                                   .withColor(Color.ORANGE)
-                                                                                                   .with(FireworkEffect.Type.STAR)
-                                                                                                   .build());
+                        Utils.playGlobalSound(enemy.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.6f);
+                        EffectUtils.playFirework(enemy.getLocation(), FireworkEffect.builder()
+                                                                                    .withColor(Color.ORANGE)
+                                                                                    .with(FireworkEffect.Type.STAR)
+                                                                                    .build());
 
                         new GameRunnable(wp.getGame()) {
                             @Override
                             public void run() {
                                 for (WarlordsEntity allyTarget : PlayerFilter
-                                        .entitiesAround(enemyTarget, 6, 6, 6)
+                                        .entitiesAround(enemy, 6, 6, 6)
                                         .aliveTeammatesOf(wp)
-                                        .closestFirst(enemyTarget)
+                                        .closestFirst(enemy)
                                         .limit(2)
                                 ) {
                                     numberOfAdditionalWaves++;
