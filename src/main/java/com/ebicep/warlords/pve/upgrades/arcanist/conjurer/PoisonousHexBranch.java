@@ -102,6 +102,20 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                     ability.setMaxEnemiesHit(200);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Baneful Hex",
+                "Poisonous Hex - Master Upgrade",
+                """
+                        +20% Damage
+                                                
+                        Poisonous Hex now pierces through 4 enemies.
+                        """,
+                50000,
+                () -> {
+                    ability.multiplyMinMax(1.2f);
+                    ability.setMaxEnemiesHit(4);
+                }
+        );
     }
 
 }
