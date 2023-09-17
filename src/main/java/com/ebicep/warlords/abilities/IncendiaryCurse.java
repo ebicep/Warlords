@@ -12,19 +12,15 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCurseBranch;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -68,92 +64,39 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
         wp.subtractEnergy(energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
-        Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(SPEED);
-        ArmorStand stand = Utils.spawnArmorStand(location, armorStand -> {
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
-        });
-
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(true);
-            }
-
-            private void quarterStep(boolean last) {
-
-                if (!stand.isValid()) {
-                    this.cancel();
-                    return;
-                }
-
-                speed.add(new Vector(0, GRAVITY * SPEED, 0));
-                Location newLoc = stand.getLocation();
-                newLoc.add(speed);
-                stand.teleport(newLoc);
-                newLoc.add(0, 1.75, 0);
-
-                stand.setHeadPose(new EulerAngle(-speed.getY() * 3, 0, 0));
-
-                boolean shouldExplode;
-
-                if (last) {
-                    EffectUtils.displayParticle(
-                            Particle.FIREWORKS_SPARK,
-                            newLoc.clone().add(0, -1, 0),
-                            1,
-                            0.1,
-                            0.1,
-                            0.1,
-                            0.1
-                    );
-
-                }
-
-                WarlordsEntity directHit;
-                if (
-                        !newLoc.getBlock().isEmpty()
-                                && newLoc.getBlock().getType() != Material.GRASS
-                                && newLoc.getBlock().getType() != Material.BARRIER
-                                && newLoc.getBlock().getType() != Material.VINE
-                ) {
-                    // Explode based on collision
-                    shouldExplode = true;
-                } else {
-                    directHit = PlayerFilter
-                            .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                            .aliveEnemiesOf(wp)
-                            .findFirstOrNull();
-                    shouldExplode = directHit != null;
-                }
-
-                if (shouldExplode) {
-                    stand.remove();
-
+        Utils.spawnThrowableProjectile(
+                wp.getGame(),
+                Utils.spawnArmorStand(wp.getLocation(), armorStand -> {
+                    armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
+                }),
+                player.getLocation().getDirection().multiply(SPEED),
+                GRAVITY,
+                SPEED,
+                (newLoc, integer) -> {},
+                newLoc -> PlayerFilter
+                        .entitiesAroundRectangle(newLoc, 1, 2, 1)
+                        .aliveEnemiesOf(wp)
+                        .findFirstOrNull(),
+                (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.1f);
 
                     EffectUtils.playFirework(
-                        newLoc,
-                        FireworkEffect.builder()
-                            .withColor(Color.ORANGE)
-                            .withColor(Color.RED)
-                            .with(FireworkEffect.Type.BURST)
-                            .build(),
-                        1
+                            newLoc,
+                            FireworkEffect.builder()
+                                          .withColor(Color.ORANGE)
+                                          .withColor(Color.RED)
+                                          .with(FireworkEffect.Type.BURST)
+                                          .build(),
+                            1
                     );
 
                     EffectUtils.displayParticle(Particle.SMOKE_NORMAL, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
 
-                    for (WarlordsEntity nearEntity : PlayerFilter
+                    List<WarlordsEntity> enemies = PlayerFilter
                             .entitiesAround(newLoc, hitbox, hitbox, hitbox)
                             .aliveEnemiesOf(wp)
-                    ) {
+                            .toList();
+                    for (WarlordsEntity nearEntity : enemies) {
                         playersHit++;
 
                         nearEntity.addDamageInstance(
@@ -171,11 +114,12 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
                             EffectUtils.playFirework(
                                     newLoc,
                                     FireworkEffect.builder()
-                                        .withColor(Color.RED)
-                                        .withColor(Color.BLACK)
-                                        .with(FireworkEffect.Type.BALL_LARGE)
-                                        .build(),
-                                    1);
+                                                  .withColor(Color.RED)
+                                                  .withColor(Color.BLACK)
+                                                  .with(FireworkEffect.Type.BALL_LARGE)
+                                                  .build(),
+                                    1
+                            );
 
                             nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
                             nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -196,12 +140,11 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
                             });
                         }
                     }
-
-                    this.cancel();
+                    if (pveMasterUpgrade2) {
+                        wp.addEnergy(wp, "Unforseen Curse", enemies.size() * 5);
+                    }
                 }
-            }
-
-        }.runTaskTimer(0, 1);
+        );
 
         return true;
     }
