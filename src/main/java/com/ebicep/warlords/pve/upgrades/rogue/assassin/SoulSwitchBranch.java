@@ -91,7 +91,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
                 }
         );
-        masterUpgrade = new Upgrade(
+        masterUpgrade2 = new Upgrade(
                 "Tricky Switch",
                 "Soul Switch - Master Upgrade",
                 """

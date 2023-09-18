@@ -16,10 +16,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Player;
@@ -104,11 +101,14 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
         Set<WarlordsEntity> hit = new HashSet<>();
         LocationBuilder locationBuilder = new LocationBuilder(wp.getEyeLocation());
         for (Block ignored : Utils.getTargetBlockInBetween(wp.getEyeLocation(), 8)) {
-            if (!Utils.getTargetBlock(locationBuilder, 1).getType().isAir() || !locationBuilder.getBlock().getType().isAir() || !locationBuilder.clone()
-                                                                                                                                                .addY(1)
-                                                                                                                                                .getBlock()
-                                                                                                                                                .getType()
-                                                                                                                                                .isAir()) {
+            if (!Utils.getTargetBlock(locationBuilder, 1).getType().isAir() ||
+                    !locationBuilder.getBlock().getType().isAir() ||
+                    !locationBuilder.clone()
+                                    .addY(1)
+                                    .getBlock()
+                                    .getType()
+                                    .isAir()
+            ) {
                 locationBuilder.centerXZ();
                 boolean isSlab = locationBuilder.clone().addY(-1).getBlock().getBlockData() instanceof Slab;
                 locationBuilder.addY(isSlab ? -0.5 : 0);
@@ -129,7 +129,17 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                             );
                         });
             locationBuilder = locationBuilder.forward(1);
+            EffectUtils.displayParticle(
+                    Particle.SMOKE_NORMAL,
+                    locationBuilder.clone().addY(0),
+                    10,
+                    .1,
+                    .1,
+                    .1,
+                    0
+            );
         }
+        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
         wp.teleportLocationOnly(locationBuilder);
     }
 

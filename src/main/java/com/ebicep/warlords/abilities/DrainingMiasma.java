@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Overheal;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -255,6 +256,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                         100,
                                         EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS)
                                 );
+                                Overheal.giveOverHeal(wp, miasmaTarget);
                             })
                     ));
                 }
