@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -74,7 +75,8 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         Utils.playGlobalSound(wp.getLocation(), "arcanist.divineblessing.activation", 2, 1.2f);
         Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.6f);
         EffectUtils.strikeLightning(wp.getLocation(), true);
-        new GameRunnable(wp.getGame()) {
+        Game game = wp.getGame();
+        new GameRunnable(game) {
             double interval = 3;
 
             @Override
@@ -126,7 +128,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     }
 
                     if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
-                        PlayerFilter.playingGame(wp.getGame())
+                        PlayerFilter.playingGame(game)
                                     .teammatesOfExcludingSelf(wp)
                                     .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class)
                                             .filterCooldownFrom(wp)
@@ -211,6 +213,15 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             }
 
             @Override
+            public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
+                if (pveMasterUpgrade2 && ability instanceof RayOfLight) {
+                    return 1 - .33f;
+                }
+                return super.getAbilityMultiplicativeCooldownMult(ability);
+            }
+
+
+            @Override
             protected Listener getListener() {
                 return new Listener() {
                     @EventHandler(priority = EventPriority.LOWEST)
@@ -226,7 +237,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 };
             }
         });
-        PlayerFilter.playingGame(wp.getGame())
+        PlayerFilter.playingGame(game)
                     .teammatesOf(wp)
                     .forEach(enemy -> {
                         new CooldownFilter<>(enemy, RegularCooldown.class)
@@ -234,13 +245,27 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 .filterCooldownFrom(wp)
                                 .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease));
                     });
-        new GameRunnable(wp.getGame()) {
+        new GameRunnable(game) {
 
             @Override
             public void run() {
                 healAllies(wp);
             }
         }.runTaskLater(postHealthTickDelay);
+
+
+        if (pveMasterUpgrade2) {
+            PlayerFilter.entitiesAround(wp, 10, 10, 10)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .forEach(warlordsEntity -> {
+                            new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                                    .filterCooldownClass(MercifulHex.class)
+                                    .forEach(regularCooldown -> {
+                                        regularCooldown.setTicksLeft(regularCooldown.getStartingTicks() + hexTickDurationIncrease);
+                                    });
+                        });
+        }
+
         return true;
     }
 

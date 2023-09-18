@@ -128,7 +128,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
         if (pveMasterUpgrade2 && ticksElapsed % 20 == 0) {
             Map<WarlordsEntity, Integer> gotCooldown = beacon.getAlliesGotCooldown();
             PlayerFilter.entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
-                        .aliveTeammatesOfExcludingSelf(wp)
+                        .aliveTeammatesOf(wp)
                         .excluding(gotCooldown.keySet())
                         .forEach(warlordsEntity -> gotCooldown.put(warlordsEntity, ticksElapsed));
             gotCooldown.forEach((warlordsEntity, integer) -> {
