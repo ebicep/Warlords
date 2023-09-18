@@ -6,10 +6,8 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
@@ -23,12 +21,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 
 public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -92,7 +91,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         for (WarlordsEntity vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
-                .closestFirst(wp)
         ) {
             if (vindicateTarget != wp) {
                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
@@ -144,33 +142,16 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                     return currentDamageValue * getCalculatedVindicateDamageReduction();
                 }
             }
-
-            @Override
-            protected Listener getListener() {
-                if (!pveMasterUpgrade2) {
-                    return super.getListener();
-                }
-                return new Listener() {
-                    @EventHandler
-                    public void onCooldownAdd(WarlordsAddCooldownEvent event) {
-                        WarlordsEntity eventPlayer = event.getWarlordsEntity();
-                        if (eventPlayer.isTeammate(wp)) {
-                            return;
-                        }
-                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (!Objects.equals(cooldown.getFrom(), wp)) {
-                            return;
-                        }
-                        if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {
-                            return;
-                        }
-                        if (cooldown.getActionBarName().equals("SILENCE")) {
-                            regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + 20);
-                        }
-                    }
-                };
-            }
         });
+
+        if (pveMasterUpgrade2) {
+            for (WarlordsEntity vindicateTarget : PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveEnemiesOf(wp)
+            ) {
+                SoulShackle.shacklePlayer(wp, vindicateTarget, 10 * 20);
+            }
+        }
 
         return true;
     }

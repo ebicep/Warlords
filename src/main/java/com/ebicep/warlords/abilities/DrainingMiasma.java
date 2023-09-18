@@ -246,7 +246,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                 if (ticksElapsed % 20 != 0) {
                                     return;
                                 }
-                                float healing = miasmaTarget.getMaxHealth() * .05f;
+                                float healing = miasmaTarget.getMaxHealth() * .02f;
                                 miasmaTarget.addHealingInstance(
                                         wp,
                                         "Toxic Immunity",

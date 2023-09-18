@@ -104,7 +104,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                 "Toxic Immunity",
                 "Draining Miasma - Master Upgrade",
                 """
-                        Draining Miasma no longer deals damage but range and duration have been quadrupled. Allies within the radius will be for 5% of their max HP every second. Additionally, the healing from Miasma can Overheal.
+                        Draining Miasma no longer deals damage but range and duration have been quadrupled. Allies within the radius will be for 2% of their max HP every second. Additionally, the healing from Miasma can Overheal.
                         """,
                 50000,
                 () -> {
