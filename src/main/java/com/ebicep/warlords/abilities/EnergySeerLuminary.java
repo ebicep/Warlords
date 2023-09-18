@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.EnergySeerBranchLuminary;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -66,8 +67,14 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new EnergySeerBranchLuminary(abilityTree, this);
+    protected void onEnd(WarlordsEntity wp) {
+        if (pveMasterUpgrade2) {
+            PlayerFilter.entitiesAround(wp, 10, 10, 10)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .forEach(warlordsEntity -> {
+                            MercifulHex.giveMercifulHex(wp, warlordsEntity);
+                        });
+        }
     }
 
     public int getTickDuration() {
@@ -78,19 +85,24 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
         this.tickDuration = tickDuration;
     }
 
-    public int getHealingIncrease() {
-        return healingIncrease;
-    }
-
-    public void setHealingIncrease(int healingIncrease) {
-        this.healingIncrease = healingIncrease;
-    }
-
     public int getEnergyRestore() {
         return energyRestore;
     }
 
     public void setEnergyRestore(int energyRestore) {
         this.energyRestore = energyRestore;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new EnergySeerBranchLuminary(abilityTree, this);
+    }
+
+    public int getHealingIncrease() {
+        return healingIncrease;
+    }
+
+    public void setHealingIncrease(int healingIncrease) {
+        this.healingIncrease = healingIncrease;
     }
 }

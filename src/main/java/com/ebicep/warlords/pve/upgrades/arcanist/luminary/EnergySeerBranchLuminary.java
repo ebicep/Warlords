@@ -91,6 +91,19 @@ public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLu
                     ability.setEnergyRestore(ability.getEnergyRestore() * 3);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Benevolent Gaze",
+                "Energy Seer - Master Upgrade",
+                """
+                        -20% Cooldown reduction
+                                                
+                        When Energy Seer expires, all allies within a 10 block radius gain 1 stack of Merciful Hex.
+                        """,
+                50000,
+                () -> {
+                    ability.setCooldown(ability.getCooldown() * 0.8f);
+                }
+        );
     }
 
 }
