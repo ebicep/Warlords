@@ -87,13 +87,25 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
                 "Transcendent Barrier",
                 "Mystical Barrier - Master Upgrade",
                 """
-                        -20% Cooldown reduction. Increase max shield health by 2000 and increase amount of shield granted for each damage instance by 120.
+                        -20% Cooldown reduction
+                                                
+                        Increase max shield health by 2000 and increase amount of shield granted for each damage instance by 120.
                         """,
                 50000,
                 () -> {
                     ability.setCooldown(ability.getCooldown() * 0.8f);
                     ability.setShieldMaxHealth(ability.getShieldMaxHealth() + 2000);
                     ability.setShieldIncrease(ability.getShieldIncrease() + 120);
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Illusory Barrier",
+                "Mystical Barrier - Master Upgrade",
+                """
+                        Reactivating Mystical Barrier, will now grant yourself and all nearby allies the shield. Not reactivating the ability will reduce its cooldown by 35%.
+                        """,
+                50000,
+                () -> {
                 }
         );
     }
