@@ -141,6 +141,20 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                     ability.setSubsequentReduction(ability.getSubsequentReduction() + 20);
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Rainbow Hex",
+                "Merciful Hex - Master Upgrade",
+                """
+                        -15 Energy cost
+                                                
+                        Merciful Hex healing occurs every .5s instead of 2s.
+                        """,
+                50000,
+                () -> {
+                    ability.setEnergyCost(ability.getEnergyCost() - 15);
+                    ability.setTicksBetweenDot(10);
+                }
+        );
     }
 
 }

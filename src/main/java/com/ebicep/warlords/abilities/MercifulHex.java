@@ -54,6 +54,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     private float maxSelfHeal = 310;
     private float dotMinHeal = 20;
     private float dotMaxHeal = 30;
+    private int ticksBetweenDot = 40;
     private int maxStacks = 3;
     private int tickDuration = 60;
 
@@ -195,6 +196,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         int tickDuration = fromHex.getTickDuration();
         float dotMinHeal = fromHex.getDotMinHeal();
         float dotMaxHeal = fromHex.getDotMaxHeal();
+        int ticksBetweenDot = fromHex.getTicksBetweenDot();
         String name = fromHex.getName();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, MercifulHex.class, 3);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -216,7 +218,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 },
                 tickDuration * 2, // base add 20 to delay damage by a second
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 40 == 0 && ticksElapsed != 0) {
+                    if (ticksElapsed % ticksBetweenDot == 0 && ticksElapsed != 0) {
                         to.addHealingInstance(
                                 from,
                                 name,
@@ -390,5 +392,13 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     public void setSubsequentReduction(int subsequentReduction) {
         this.subsequentReduction = subsequentReduction;
+    }
+
+    public int getTicksBetweenDot() {
+        return ticksBetweenDot;
+    }
+
+    public void setTicksBetweenDot(int ticksBetweenDot) {
+        this.ticksBetweenDot = ticksBetweenDot;
     }
 }
