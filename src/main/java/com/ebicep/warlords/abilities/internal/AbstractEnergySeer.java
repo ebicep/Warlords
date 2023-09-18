@@ -81,6 +81,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                     if (timesHealed.get() >= 4 && wp.isAlive()) {
                         wp.addEnergy(wp, name, energyRestore);
                         wp.getCooldownManager().addCooldown(getBonusCooldown(wp));
+                        onEnd(wp);
                     }
                 },
                 bonusDuration,
@@ -135,6 +136,10 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     public abstract T getObject();
 
     public abstract RegularCooldown<T> getBonusCooldown(@Nonnull WarlordsEntity wp);
+
+    protected void onEnd(WarlordsEntity wp) {
+
+    }
 
     protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUsedEvent event) {
 

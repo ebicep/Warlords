@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.EnergySeerBranchSentinel;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -53,6 +54,17 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
                 return currentDamageValue * (1 - damageResistance / 100f);
             }
         };
+    }
+
+    @Override
+    protected void onEnd(WarlordsEntity wp) {
+        if (pveMasterUpgrade2) {
+            PlayerFilter.entitiesAround(wp, 10, 10, 10)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .forEach(warlordsEntity -> {
+                            warlordsEntity.getCooldownManager().addCooldown(getBonusCooldown(wp));
+                        });
+        }
     }
 
     @Override
