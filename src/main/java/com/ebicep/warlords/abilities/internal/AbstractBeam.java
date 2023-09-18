@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public abstract class AbstractBeam extends AbstractPiercingProjectile implements RedAbilityIcon {
 
@@ -47,8 +48,11 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
-        Location location = Utils.getTargetLocation(player, (int) maxDistance).clone().add(.5, .85, .5).clone();
-        AbstractChain.spawnChain(shooter.getLocation(), location, getBeamItem());
+        List<Location> locationsToFireShots = getLocationsToFireShots(player);
+        for (Location locationsToFireShot : locationsToFireShots) {
+            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, .85, .5).clone();
+            AbstractChain.spawnChain(shooter.getLocation(), location, getBeamItem());
+        }
         return super.onActivate(shooter, player);
     }
 

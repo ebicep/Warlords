@@ -98,7 +98,7 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                         """,
                 50000,
                 () -> {
-
+                    ability.setRadius(ability.getRadius() * 2);
                 }
         );
     }

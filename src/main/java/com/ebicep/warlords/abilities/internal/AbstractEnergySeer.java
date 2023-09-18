@@ -84,7 +84,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                         onEnd(wp);
                     }
                 },
-                bonusDuration,
+                tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();

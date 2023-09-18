@@ -100,7 +100,7 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
                     ability.setHealingIncrease(ability.getHealingIncrease() + 25);
                 }
         );
-        masterUpgrade = new Upgrade(
+        masterUpgrade2 = new Upgrade(
                 "Volatile Rays",
                 "Ray of Light - Master Upgrade",
                 """

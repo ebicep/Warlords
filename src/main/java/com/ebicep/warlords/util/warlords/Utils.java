@@ -97,6 +97,10 @@ public class Utils {
         return getTargetBlock(player, maxDistance).getLocation();
     }
 
+    public static Location getTargetLocation(Location location, int maxDistance) {
+        return getTargetBlock(location, maxDistance).getLocation();
+    }
+
     /**
      * see org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity#getLineOfSight(Set, int, int)}
      * this accounts for banners

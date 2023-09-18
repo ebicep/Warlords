@@ -132,7 +132,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                         .excluding(gotCooldown.keySet())
                         .forEach(warlordsEntity -> gotCooldown.put(warlordsEntity, ticksElapsed));
             gotCooldown.forEach((warlordsEntity, integer) -> {
-                if (ticksElapsed - integer > 10) {
+                if (ticksElapsed - integer > 10 * 20) {
                     return;
                 }
                 float healing = warlordsEntity.getMaxHealth() * .025f;

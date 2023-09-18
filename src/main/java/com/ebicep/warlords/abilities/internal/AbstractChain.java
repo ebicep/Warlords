@@ -77,6 +77,7 @@ public abstract class AbstractChain extends AbstractAbility {
     }
 
     public static List<ArmorStand> spawnChain(Location from, Location to, ItemStack chainItem) {
+        from.setDirection(to.toVector().subtract(from.toVector()).normalize());
         List<ArmorStand> chains = new ArrayList<>();
         int maxDistance = (int) Math.round(to.distance(from));
         for (int i = 0; i < maxDistance; i++) {
