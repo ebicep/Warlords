@@ -106,7 +106,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                     name,
                     "SHIELD",
                     Shield.class,
-                    new Shield(name, to.getMaxHealth() * convertToPercent(percent)),
+                    new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent),
                     from,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -186,5 +186,18 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     public void setRuneTimerIncrease(float runeTimerIncrease) {
         this.runeTimerIncrease = runeTimerIncrease;
+    }
+
+    public static class GuardianBeamShield extends Shield {
+        private final float shieldPercent;
+
+        public GuardianBeamShield(float maxShieldHealth, float shieldPercent) {
+            super("Guardian Beam", maxShieldHealth);
+            this.shieldPercent = shieldPercent;
+        }
+
+        public float getShieldPercent() {
+            return shieldPercent;
+        }
     }
 }

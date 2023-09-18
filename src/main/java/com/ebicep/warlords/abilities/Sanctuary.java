@@ -86,6 +86,14 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                 tickDuration
         ) {
             @Override
+            public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
+                if (pveMasterUpgrade2 && ability instanceof GuardianBeam) {
+                    return 1 - .33f;
+                }
+                return super.getAbilityMultiplicativeCooldownMult(ability);
+            }
+
+            @Override
             protected Listener getListener() {
                 return new Listener() {
 
@@ -133,11 +141,24 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                     @EventHandler(priority = EventPriority.LOWEST)
                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
                         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (Objects.equals(cooldown.getFrom(), wp) &&
-                                cooldown instanceof RegularCooldown<?> regularCooldown &&
-                                cooldown.getCooldownObject() instanceof FortifyingHex
+                        if (!Objects.equals(cooldown.getFrom(), wp) ||
+                                !(cooldown instanceof RegularCooldown<?> regularCooldown)
                         ) {
+                            return;
+                        }
+                        Object cdObject = cooldown.getCooldownObject();
+                        if (!(cdObject instanceof FortifyingHex)) {
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
+                        }
+                        if (pveMasterUpgrade2 &&
+                                !event.getWarlordsEntity().equals(wp) &&
+                                cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield
+                        ) {
+                            float oldShieldPercent = guardianBeamShield.getShieldPercent() / 100;
+                            float newShieldPercent = oldShieldPercent + .15f;
+                            float newShieldHealth = guardianBeamShield.getMaxShieldHealth() / oldShieldPercent * newShieldPercent;
+                            guardianBeamShield.setMaxShieldHealth(newShieldHealth);
+                            guardianBeamShield.setShieldHealth(newShieldHealth);
                         }
                     }
                 };
