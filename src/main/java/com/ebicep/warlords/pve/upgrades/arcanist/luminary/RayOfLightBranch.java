@@ -100,6 +100,17 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
                     ability.setHealingIncrease(ability.getHealingIncrease() + 25);
                 }
         );
+        masterUpgrade = new Upgrade(
+                "Volatile Rays",
+                "Ray of Light - Master Upgrade",
+                """
+                        Ray of Light fires two additional beams.
+                        """,
+                50000,
+                () -> {
+                    ability.setShotsFiredAtATime(3);
+                }
+        );
     }
 
 }
