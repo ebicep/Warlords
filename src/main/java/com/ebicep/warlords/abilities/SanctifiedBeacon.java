@@ -23,15 +23,18 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> implements BlueAbilityIcon {
 
+    protected Map<WarlordsEntity, Integer> alliesGotCooldown = new HashMap<>(); // not static
+    private final int maxAllies = 2;
     private int critMultiplierReducedTo = 100;
     private ArmorStand crystal;
     private int hexIntervalTicks = 80;
     private float damageReductionPve = 30;
-    private final int maxAllies = 2;
 
     public SanctifiedBeacon() {
         this(null, null);
@@ -122,6 +125,28 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                 }
             }
         }
+        if (pveMasterUpgrade2 && ticksElapsed % 20 == 0) {
+            Map<WarlordsEntity, Integer> gotCooldown = beacon.getAlliesGotCooldown();
+            PlayerFilter.entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
+                        .aliveTeammatesOfExcludingSelf(wp)
+                        .excluding(gotCooldown.keySet())
+                        .forEach(warlordsEntity -> gotCooldown.put(warlordsEntity, ticksElapsed));
+            gotCooldown.forEach((warlordsEntity, integer) -> {
+                if (ticksElapsed - integer > 10) {
+                    return;
+                }
+                float healing = warlordsEntity.getMaxHealth() * .025f;
+                warlordsEntity.addHealingInstance(
+                        wp,
+                        "Shadow Garden",
+                        healing,
+                        healing,
+                        0,
+                        100
+                );
+            });
+        }
+
 
         int yawIncrease = ticksElapsed % hexIntervalTicks == 0 ? 120 : 10;
         if (ticksElapsed % 2 == 0) {
@@ -175,6 +200,10 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     @Override
     public ArmorStand getCrystal() {
         return crystal;
+    }
+
+    public Map<WarlordsEntity, Integer> getAlliesGotCooldown() {
+        return alliesGotCooldown;
     }
 
     @Override

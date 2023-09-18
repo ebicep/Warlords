@@ -90,6 +90,17 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                     ability.setHexIntervalTicks((int) (ability.getHexIntervalTicks() * 0.5f));
                 }
         );
+        masterUpgrade2 = new Upgrade(
+                "Shadow Garden",
+                "Sanctified Beacon - Master Upgrade",
+                """
+                        Sanctified Beacon's radius is doubled. Additionally, allies within range will be healed 2.5% of their max hp every second for 10s.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
     }
 
 }
