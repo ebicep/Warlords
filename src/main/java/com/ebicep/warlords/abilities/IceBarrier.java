@@ -20,6 +20,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -89,17 +90,18 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                         LocationBuilder locationBuilder = new LocationBuilder(wp.getLocation())
                                 .addY(-1)
                                 .pitch(0)
-                                .forward(3);
+                                .forward(3.5);
                         List<Location> verticalRectangle = LocationUtils.getVerticalRectangle(locationBuilder, 4, 5);
                         for (Location location : verticalRectangle) {
                             EffectUtils.displayParticle(
-                                    Particle.CLOUD,
+                                    Particle.BLOCK_DUST,
                                     location,
-                                    5,
-                                    .2,
-                                    .2,
-                                    .2,
-                                    0
+                                    10,
+                                    .1,
+                                    .1,
+                                    .1,
+                                    0,
+                                    Material.BLUE_ICE.createBlockData()
                             );
                             PlayerFilter.entitiesAround(location, 1, 1, 1)
                                         .aliveEnemiesOf(wp)

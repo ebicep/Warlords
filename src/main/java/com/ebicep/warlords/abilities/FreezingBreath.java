@@ -125,7 +125,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
         Utils.playGlobalSound(projectile.getShooter().getLocation(), "shaman.boulder.activation", 2, .8f);
         List<ArmorStand> ball = new ArrayList<>();
         Location startingLocation = projectile.getStartingLocation();
-        List<Location> sphereLocations = LocationUtils.getSphereLocations(startingLocation.clone().add(0, -1.2, 0), .2, 3);
+        List<Location> sphereLocations = LocationUtils.getSphereLocations(startingLocation.clone().add(0, -1, 0), .2, 3);
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (Location sphereLocation : sphereLocations) {
             Material material = switch (random.nextInt(5)) {

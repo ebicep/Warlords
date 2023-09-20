@@ -109,6 +109,15 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                                     }
                                 });
                             });
+                EffectUtils.displayParticle(
+                        Particle.SNOWFLAKE,
+                        wp.getLocation().add(0, .2, 0),
+                        1700,
+                        15,
+                        0,
+                        15,
+                        0
+                );
             }
         }
 
