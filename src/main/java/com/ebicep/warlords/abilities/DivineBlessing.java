@@ -256,7 +256,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
         if (pveMasterUpgrade2) {
             PlayerFilter.entitiesAround(wp, 10, 10, 10)
-                        .aliveTeammatesOfExcludingSelf(wp)
+                        .aliveTeammatesOf(wp)
                         .forEach(warlordsEntity -> {
                             new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                                     .filterCooldownClass(MercifulHex.class)
