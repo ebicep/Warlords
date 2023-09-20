@@ -48,6 +48,10 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         return timesBroken;
     }
 
+    public float getShieldHealth() {
+        return shieldHealth;
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Surround yourself with arcane energy, creating a shield that will absorb up to ")
@@ -59,21 +63,8 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                                .append(Component.text(" seconds."));
     }
 
-    public float getShieldHealth() {
-        return shieldHealth;
-    }
-
     public void addShieldHealth(float amount) {
         this.shieldHealth += amount;
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Broken", "" + timesBroken));
-
-        return info;
     }
 
     @Override
@@ -85,6 +76,16 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
+    @Override
+    public List<Pair<String, String>> getAbilityInfo() {
+        List<Pair<String, String>> info = new ArrayList<>();
+        info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Broken", "" + timesBroken));
+
+        return info;
+    }
+
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
@@ -130,7 +131,20 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                                     rightClick.setEnergyCostMultiplicative(rightClick.getEnergyCostMultiplicative() + .15f);
                                     wp.updateItem(rightClick);
                                 },
-                                100
+                                100,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksElapsed % 3 == 0) {
+                                        EffectUtils.displayParticle(
+                                                Particle.ELECTRIC_SPARK,
+                                                wp.getLocation().add(0, 1, 0),
+                                                10,
+                                                .4,
+                                                .4,
+                                                .4,
+                                                0
+                                        );
+                                    }
+                                })
                         ));
                     }
                 },
