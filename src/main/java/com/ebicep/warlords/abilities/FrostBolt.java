@@ -171,6 +171,15 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         }
         hit(projectile, shooter, toReduceBy, playersHit, hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -25, 40);
+        EffectUtils.displayParticle(
+                Particle.SNOWBALL,
+                hit.getLocation().add(0, 1, 0),
+                10,
+                .2,
+                .2,
+                .2,
+                0
+        );
     }
 
     @Override
@@ -212,7 +221,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
             @Override
             public void onDestroy(InternalProjectile projectile) {
                 icicles.forEach(Entity::remove);
-                EffectUtils.displayParticle(Particle.CLOUD, icicles.get(3).getLocation(), 10, 0.3, 0.3, 0.3, 1);
+                EffectUtils.displayParticle(Particle.CLOUD, icicles.get(3).getLocation(), 10, 0.2, 0.2, 0.2, 0);
             }
         });
     }
