@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -12,14 +13,23 @@ import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.TimeWarpBranchPyromancer;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.minecraft.sounds.SoundSource;
+import org.bukkit.Instrument;
 import org.bukkit.Location;
+import org.bukkit.Note;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 public class TimeWarpPyromancer extends AbstractTimeWarp {
 
@@ -37,7 +47,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
         int startingBlocksTravelled = wp.getBlocksTravelled();
 
         // pveMasterUpgrade2
-        Set<WarlordsEntity> linkedPlayers = new HashSet<>();
+        List<WarlordsEntity> linkedPlayers = new ArrayList<>();
         RegularCooldown<TimeWarpPyromancer> timeWarpCooldown = new RegularCooldown<>(
                 name,
                 "TIME",
@@ -144,7 +154,51 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         if (pveMasterUpgrade2) {
                             PlayerFilter.entitiesAround(wp, 3, 3, 3)
                                         .aliveEnemiesOf(wp)
-                                        .forEach(linkedPlayers::add);
+                                        .excluding(linkedPlayers)
+                                        .forEach(warlordsEntity -> {
+                                            linkedPlayers.add(warlordsEntity);
+                                            wp.playSound(
+                                                    warlordsEntity.getLocation().add(0, 1, 0),
+                                                    Instrument.PIANO,
+                                                    new Note(0, Note.Tone.G, true),
+                                                    SoundSource.MASTER
+                                            );
+                                        });
+                        }
+                    }
+                    if (pveMasterUpgrade2 && ticksElapsed % 8 == 0) {
+                        double rad = 0.7d;
+                        for (int i = 0; i < linkedPlayers.size(); i++) {
+                            WarlordsEntity linked = linkedPlayers.get(i);
+                            // play circle particle effect after linked then chain particle effect from linked to linkedAfter
+                            // chain will be the closest possible to linkedAfter
+                            LocationBuilder linkedLocation = new LocationBuilder(linked.getLocation())
+                                    .addY(1);
+                            for (int j = 0; j < 12; j++) {
+                                double x = rad * cos(j);
+                                double z = rad * sin(j);
+                                Location location = linkedLocation
+                                        .clone()
+                                        .add(x, 0, z);
+                                EffectUtils.displayParticle(
+                                        Particle.SPELL_WITCH,
+                                        location,
+                                        1
+                                );
+                            }
+                            if (i < linkedPlayers.size() - 1) {
+                                WarlordsEntity linkedNext = linkedPlayers.get(i + 1);
+                                LocationBuilder linkedNextLocation = new LocationBuilder(linkedNext.getLocation())
+                                        .addY(1);
+                                EffectUtils.playParticleLinkAnimation(
+                                        linkedNextLocation.faceTowards(linkedLocation)
+                                                          .forward(rad),
+                                        linkedLocation.faceTowards(linkedNextLocation)
+                                                      .forward(rad),
+                                        Particle.SPELL_WITCH,
+                                        0
+                                );
+                            }
                         }
                     }
                 })

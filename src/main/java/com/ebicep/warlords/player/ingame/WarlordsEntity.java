@@ -43,12 +43,16 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.sounds.SoundSource;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
@@ -60,6 +64,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -1945,6 +1950,38 @@ public abstract class WarlordsEntity {
     public void playSound(Location location, String soundString, float volume, float pitch) {
         if (this.entity instanceof Player) {
             ((Player) this.entity).playSound(location, soundString, volume, pitch);
+        }
+    }
+
+    public void playSound(@NotNull Location loc, @NotNull Instrument instrument, @NotNull Note note) {
+        playSound(loc, instrument, note, SoundSource.RECORDS);
+    }
+
+    public void playSound(@NotNull Location loc, @NotNull Instrument instrument, @NotNull Note note, SoundSource category) {
+        if (this.entity instanceof Player player) {
+//            ((Player) this.entity).playNote(loc, instrument, note);
+            CraftPlayer craftPlayer = (CraftPlayer) player;
+            ServerGamePacketListenerImpl connection = craftPlayer.getHandle().connection;
+            net.minecraft.world.level.block.state.properties.NoteBlockInstrument nms = CraftBlockData.toNMS(instrument,
+                    net.minecraft.world.level.block.state.properties.NoteBlockInstrument.class
+            );
+            float f;
+            if (nms.isTunable()) {
+                f = (float) Math.pow(2.0D, (note.getId() - 12.0D) / 12.0D);
+            } else {
+                f = 1.0f;
+            }
+            if (!nms.hasCustomSound()) {
+                connection.send(new ClientboundSoundPacket(nms.getSoundEvent(),
+                        category,
+                        loc.getBlockX(),
+                        loc.getBlockY(),
+                        loc.getBlockZ(),
+                        3.0f,
+                        f,
+                        craftPlayer.getHandle().getRandom().nextLong()
+                ));
+            }
         }
     }
 

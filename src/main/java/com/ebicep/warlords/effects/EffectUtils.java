@@ -3,6 +3,7 @@ package com.ebicep.warlords.effects;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -295,13 +296,18 @@ public class EffectUtils {
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, Particle effect) {
+        playParticleLinkAnimation(to, from, effect, 1);
+    }
+
+    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset) {
         to = to.clone();
         from = from.clone();
-        Location lineLocation = to.add(0, 1, 0).clone();
-        lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));
+        LocationBuilder lineLocation = new LocationBuilder(to)
+                .addY(yOffset)
+                .faceTowards(from);
         for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
             displayParticle(effect, lineLocation, 1);
-            lineLocation.add(lineLocation.getDirection().multiply(.5));
+            lineLocation.forward(.5);
         }
     }
 
