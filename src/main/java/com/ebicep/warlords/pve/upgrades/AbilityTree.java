@@ -67,6 +67,8 @@ public class AbilityTree {
                             .addLore(getUpgradeTreeInfo(upgradeBranch, upgradeBranch.getTreeB()))
                             .addLore(Component.empty())
                             .addLore(getMasterUpgradeTreeInfo(upgradeBranch, upgradeBranch.getMasterUpgrade()))
+                            .addLore(Component.empty())
+                            .addLore(getMasterUpgradeTreeInfo(upgradeBranch, upgradeBranch.getMasterUpgrade2()))
                             .addLore(
                                     Component.empty(),
                                     Component.text(">> Click to open ability upgrade tree. <<", NamedTextColor.GRAY)
