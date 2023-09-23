@@ -144,6 +144,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 if (pveMasterUpgrade2 && isKiller && timesBerserkReduced < 10) {
                     timesBerserkReduced++;
                     wp.getAbilitiesMatching(Berserk.class).forEach(berserk -> berserk.subtractCurrentCooldown(.5f));
+                    playCooldownReductionEffect(event.getWarlordsEntity());
                 }
             }
         });

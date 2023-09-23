@@ -300,14 +300,17 @@ public class EffectUtils {
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset) {
-        to = to.clone();
-        from = from.clone();
+        playParticleLinkAnimation(to, from, effect, yOffset, .5);
+    }
+
+    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset, double forwardAmount) {
+        to = to.clone().add(0, yOffset, 0);
+        from = from.clone().add(0, yOffset, 0);
         LocationBuilder lineLocation = new LocationBuilder(to)
-                .addY(yOffset)
                 .faceTowards(from);
-        for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
+        for (int i = 0; i < Math.floor(to.distance(from)) / forwardAmount; i++) {
             displayParticle(effect, lineLocation, 1);
-            lineLocation.forward(.5);
+            lineLocation.forward(forwardAmount);
         }
     }
 

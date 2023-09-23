@@ -138,6 +138,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 if (standTarget instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                     continue;
                 }
+                EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.FALLING_HONEY, .75, 1);
                 standTarget.setDamageResistance(standTarget.getSpec().getDamageResistance() - 15);
             } else if (standTarget.isTeammateAlive(wp)) {
                 playersLastStanded++;
@@ -209,13 +210,13 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         loc.setPitch(0);
         loc.setYaw(0);
         Matrix4d matrix = new Matrix4d();
-        for (int i = 0; i < 3; i++) {
-            loc.setYaw(loc.getYaw() + 360F / 3F);
+        int distance = radius / 2;
+        for (int i = 0; i < distance; i++) {
+            loc.setYaw(loc.getYaw() + 360F / distance);
             matrix.updateFromLocation(loc);
             for (int c = 0; c < 20; c++) {
                 double angle = c / 20D * Math.PI * 2;
                 double width = 1.2;
-                double distance = 3;
 
                 loc.getWorld().spawnParticle(
                         Particle.FLAME,
@@ -231,9 +232,8 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
             }
 
             for (int c = 0; c < 10; c++) {
-                double angle = c / 10D * Math.PI * 2;
                 double width = 0.6;
-                double distance = 3;
+                double angle = c / 10D * Math.PI * 2;
 
                 loc.getWorld().spawnParticle(
                         Particle.REDSTONE,

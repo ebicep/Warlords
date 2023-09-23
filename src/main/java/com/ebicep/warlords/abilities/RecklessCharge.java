@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -137,6 +138,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                                    if (pveMasterUpgrade2 && finalEvent.isDead() && timesArmyReduced < 5) {
                                                        timesArmyReduced++;
                                                        wp.getAbilitiesMatching(UndyingArmy.class).forEach(ability -> ability.subtractCurrentCooldown(1f));
+                                                       playCooldownReductionEffect(otherPlayer);
                                                    }
                                                });
 
@@ -174,6 +176,15 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                             return currentHealValue * 2;
                                         }
                                     });
+                                    EffectUtils.displayParticle(
+                                            Particle.HEART,
+                                            otherPlayer.getLocation().add(0, 2, 0),
+                                            10,
+                                            .5,
+                                            .25,
+                                            .5,
+                                            0
+                                    );
                                 }
                             });
 

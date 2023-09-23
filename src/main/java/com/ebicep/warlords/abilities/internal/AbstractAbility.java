@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -11,10 +12,12 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,6 +30,24 @@ import java.util.function.Predicate;
 public abstract class AbstractAbility implements AbilityIcon {
 
     protected static final int DESCRIPTION_WIDTH = 165;
+
+    protected static void playCooldownReductionEffect(WarlordsEntity warlordsEntity) {
+        new GameRunnable(warlordsEntity.getGame()) {
+            @Override
+            public void run() {
+                EffectUtils.displayParticle(
+                        Particle.BUBBLE_POP,
+                        warlordsEntity.getLocation().add(0, 1.5, 0),
+                        10,
+                        .5,
+                        .25,
+                        .5,
+                        0
+                );
+            }
+        }.runTaskLater(2);
+
+    }
 
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
@@ -211,10 +232,6 @@ public abstract class AbstractAbility implements AbilityIcon {
         }
     }
 
-    public void checkSecondaryAbilities() {
-        secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility));
-    }
-
     public ItemStack getItem() {
         return getItem(getAbilityIcon());
     }
@@ -252,17 +269,8 @@ public abstract class AbstractAbility implements AbilityIcon {
         return cooldown.getCalculatedValue();
     }
 
-    public FloatModifiable getCooldown() {
-        return cooldown;
-    }
-
     public float getEnergyCostValue() {
         return energyCost.getCalculatedValue();
-    }
-
-    @Deprecated
-    public void setEnergyCost(float energyCost) {
-        this.energyCost.setCurrentValue(energyCost);
     }
 
     public float getCritChance() {
@@ -285,8 +293,17 @@ public abstract class AbstractAbility implements AbilityIcon {
         return WordWrap.wrap(Component.empty().color(NamedTextColor.GRAY).append(description), DESCRIPTION_WIDTH);
     }
 
+    public FloatModifiable getCooldown() {
+        return cooldown;
+    }
+
     public FloatModifiable getEnergyCost() {
         return energyCost;
+    }
+
+    @Deprecated
+    public void setEnergyCost(float energyCost) {
+        this.energyCost.setCurrentValue(energyCost);
     }
 
     public Component formatRangeDamage(float min, float max) {
@@ -354,6 +371,10 @@ public abstract class AbstractAbility implements AbilityIcon {
                 currentCooldown -= cooldown;
             }
         }
+    }
+
+    public void checkSecondaryAbilities() {
+        secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility));
     }
 
     public void subtractCurrentCooldown(float cooldown) {
