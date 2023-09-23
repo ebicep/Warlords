@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -21,6 +22,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -39,7 +41,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
+public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox {
 
     private static final String[] REPEATING_SOUND = new String[]{
             "shaman.earthenspike.animation.a",
@@ -51,7 +53,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
     public int playersSpiked = 0;
     public int carrierSpiked = 0;
 
-    private int radius = 10;
+    private FloatModifiable radius = new FloatModifiable(10);
     private float speed = 1;
     private double spikeHitbox = 2.5;
     private double verticalVelocity = .625;
@@ -67,7 +69,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
                                .append(Component.text(" damage to any nearby enemies and launches them up into the air."))
                                .append(Component.text("\n\nHas an initial cast range of "))
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
 
     }
@@ -85,8 +87,9 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         List<WarlordsEntity> spiked = new ArrayList<>();
+        float rad = radius.getCalculatedValue();
         for (WarlordsEntity spikeTarget : PlayerFilter
-                .entitiesAround(wp, radius, radius, radius)
+                .entitiesAround(wp, rad, rad, rad)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
         ) {
@@ -385,12 +388,15 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon {
         this.spikeHitbox = spikeHitbox;
     }
 
-    public int getRadius() {
-        return radius;
+    @Override
+    public void runEveryTick() {
+        radius.tick();
+        super.runEveryTick();
     }
 
-    public void setRadius(int radius) {
-        this.radius = radius;
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
     }
 
     public static class EarthenSpikeBlock {

@@ -86,12 +86,12 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                .append(Component.text(format(damagePercent) + "%", NamedTextColor.RED))
                                .append(Component.text(" of the damage delayed to nearby enemies in a "))
                                .append(Component.text(debtRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius."))
-                               .append(Component.text("\n\nSuccessful Soulbind procs on enemies add "))
-                               .append(Component.text("0.5", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds to your totem duration. (Cap of "))
-                               .append(Component.text("6", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds)"));
+                               .append(Component.text(" block radius."));
+//                               .append(Component.text("\n\nSuccessful Soulbind procs on enemies add "))
+//                               .append(Component.text("0.5", NamedTextColor.GOLD))
+//                               .append(Component.text(" seconds to your totem duration. (Cap of "))
+//                               .append(Component.text("6", NamedTextColor.GOLD))
+//                               .append(Component.text(" seconds)"));
     }
 
     @Override

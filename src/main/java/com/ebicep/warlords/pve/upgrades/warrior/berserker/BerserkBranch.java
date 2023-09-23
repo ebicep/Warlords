@@ -1,88 +1,48 @@
 package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
 import com.ebicep.warlords.abilities.Berserk;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
 
     float damageBoost = ability.getDamageIncrease();
     int speedBuff = ability.getSpeedBuff();
-    int duration = ability.getTickDuration();
 
     public BerserkBranch(AbilityTree abilityTree, Berserk ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+7.5% Damage increase",
-                5000,
-                () -> {
-                    ability.setDamageIncrease(damageBoost + 7.5f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+15% Damage increase",
-                10000,
-                () -> {
-                    ability.setDamageIncrease(damageBoost + 15);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+22.5% Damage increase",
-                15000,
-                () -> {
-                    ability.setDamageIncrease(damageBoost + 22.5f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+30% Damage increase",
-                20000,
-                () -> {
-                    ability.setDamageIncrease(damageBoost + 30);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+3% Speed\n+1s Duration",
-                5000,
-                () -> {
-                    ability.setSpeedBuff(speedBuff + 3);
-                    ability.setTickDuration(duration + 20);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+6% Speed\n+2s Duration",
-                10000,
-                () -> {
-                    ability.setSpeedBuff(speedBuff + 6);
-                    ability.setTickDuration(duration + 40);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+9% Speed\n+3s Duration",
-                15000,
-                () -> {
-                    ability.setSpeedBuff(speedBuff + 9);
-                    ability.setTickDuration(duration + 60);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+12% Speed\n+4s Duration",
-                20000,
-                () -> {
-                    ability.setSpeedBuff(speedBuff + 12);
-                    ability.setTickDuration(duration + 80);
-                }
-        ));
+                    @Override
+                    public String getDescription0(String value) {
+                        return UpgradeTypes.DamageUpgradeType.super.getDescription0(value) + " Increase";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setDamageIncrease(damageBoost + value);
+                    }
+                }, 7.5f)
+                .addTo(treeA);
+
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.SpeedUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Speed";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setSpeedBuff((int) (speedBuff + value));
+                    }
+                }, 3f)
+                .addUpgradeDuration(ability)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Maniacal Rage",

@@ -14,7 +14,6 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -159,8 +158,8 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                 playerClass
         );
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
-            if (ability.getCurrentCooldown() < ability.getCooldown()) {
-                warlordsNPC.setEnergy(warlordsNPC.getEnergy() + ability.getEnergyCost());
+            if (ability.getCurrentCooldown() < ability.getCooldownValue()) {
+                warlordsNPC.setEnergy(warlordsNPC.getEnergy() + ability.getEnergyCostValue());
             }
         }
 
@@ -204,10 +203,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             return;
         }
         warlordsNPC.getAbilities().forEach(ability -> {
-            if (ability.getCooldown() != 0 && ability.getCurrentCooldown() != 0) {
+            if (ability.getCooldownValue() != 0 && ability.getCurrentCooldown() != 0) {
                 return;
             }
-            if (warlordsNPC.getEnergy() < ability.getEnergyCost() * warlordsNPC.getEnergyModifier()) {
+            if (warlordsNPC.getEnergy() < ability.getEnergyCostValue() * warlordsNPC.getEnergyModifier()) {
                 return;
             }
             WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(warlordsNPC, null, ability);
@@ -219,17 +218,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             if (shouldApplyCooldown) {
                 ability.addTimesUsed();
                 if (!warlordsNPC.isDisableCooldowns()) {
-                    float cooldown = ability.getCooldown();
-                    float cooldownModifier = 1;
-                    List<AbstractCooldown<?>> cooldownsDistinct = warlordsNPC.getCooldownManager().getCooldownsDistinct();
-                    for (AbstractCooldown<?> abstractCooldown : cooldownsDistinct) {
-                        cooldown += abstractCooldown.getAbilityMultiplicativeCooldownAdd(ability);
-                        cooldownModifier += abstractCooldown.getAbilityMultiplicativeCooldownAdd(ability);
-                    }
-                    for (AbstractCooldown<?> abstractCooldown : cooldownsDistinct) {
-                        cooldownModifier *= abstractCooldown.getAbilityMultiplicativeCooldownMult(ability);
-                    }
-                    ability.setCurrentCooldown(cooldown * cooldownModifier);
+                    ability.setCurrentCooldown(ability.getCurrentCooldown());
                 }
             }
         });

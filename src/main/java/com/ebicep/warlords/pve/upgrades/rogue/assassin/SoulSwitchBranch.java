@@ -4,82 +4,23 @@ import com.ebicep.warlords.abilities.SoulSwitch;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
-    int radius = ability.getRadius();
-    float cooldown;
-
     public SoulSwitchBranch(AbilityTree abilityTree, SoulSwitch ability) {
         super(abilityTree, ability);
-        ability.setCooldown(ability.getCooldown() * 0.75f);
-        cooldown = ability.getCooldown();
+        ability.getCooldown().addMultiplicativeModifierMult("Soul Switch Branch", 0.75f);
 
-        treeA.add(new Upgrade(
-                "Zeal - Tier I",
-                "-10% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier II",
-                "-20% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier III",
-                "-30% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.7f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-40% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.6f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability, .1f)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Scope - Tier I",
-                "+3 Blocks cast range",
-                5000,
-                () -> {
-                    ability.setRadius(radius + 3);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Scope - Tier II",
-                "+6 Blocks cast range",
-                10000,
-                () -> {
-                    ability.setRadius(radius + 6);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Scope - Tier III",
-                "+9 Blocks cast range",
-                15000,
-                () -> {
-                    ability.setRadius(radius + 9);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Scope - Tier IV",
-                "+12 Blocks cast range",
-                20000,
-                () -> {
-                    ability.setRadius(radius + 12);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeHitBox(ability, 3f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Soul Burst",

@@ -26,7 +26,7 @@ import java.util.List;
 
 public class WoundingStrikeBerserker extends AbstractStrike {
 
-    private int woundingDuration = 3;
+    private int woundingTickDuration = 60;
 
     public WoundingStrikeBerserker() {
         super("Wounding Strike", 497, 632, 0, 100, 20, 175);
@@ -43,7 +43,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                                .append(Component.text(" damage and "))
                                .append(Component.text("wounding", NamedTextColor.RED))
                                .append(Component.text(" them for "))
-                               .append(Component.text(woundingDuration, NamedTextColor.GOLD))
+                               .append(Component.text(format(woundingTickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. A wounded player receives "))
                                .append(Component.text("40%", NamedTextColor.RED))
                                .append(Component.text(" less healing for the duration of the effect."));
@@ -127,7 +127,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                         );
                     }
                 },
-                woundingDuration * 20
+                woundingTickDuration
         ) {
             @Override
             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
@@ -154,7 +154,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
                 },
-                woundingDuration * 20,
+                woundingTickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.005f;
@@ -182,12 +182,12 @@ public class WoundingStrikeBerserker extends AbstractStrike {
         });
     }
 
-    public int getWoundingDuration() {
-        return woundingDuration;
+    public int getWoundingTickDuration() {
+        return woundingTickDuration;
     }
 
-    public void setWoundingDuration(int woundingDuration) {
-        this.woundingDuration = woundingDuration;
+    public void setWoundingTickDuration(int woundingTickDuration) {
+        this.woundingTickDuration = woundingTickDuration;
     }
 
 

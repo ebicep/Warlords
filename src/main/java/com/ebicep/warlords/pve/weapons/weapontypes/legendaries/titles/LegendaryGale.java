@@ -1,19 +1,17 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 import org.springframework.data.annotation.Transient;
 
@@ -49,26 +47,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
                         .append(formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()))
                         .append(Component.text(", and gain "))
                         .append(formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(), "%"))
-                        .append(Component.text(" knockback resistance. Can be triggered every 30 seconds."));
-    }
-
-    @Override
-    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
-                        formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()),
-                        formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevelUpgraded())
-                ),
-                new Pair<>(
-                        formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevelUpgraded(), "%"
-                        )
-                )
-        );
-    }
-
-    @Override
-    protected float getMeleeDamageMaxValue() {
-        return 170;
+                        .append(Component.text(" knockback resistance for 10 seconds. Can be triggered every 30 seconds."));
     }
 
     @Override
@@ -94,6 +73,21 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     }
 
     @Override
+    protected float getHealthBonusValue() {
+        return 500;
+    }
+
+    @Override
+    protected float getSpeedBonusValue() {
+        return 20;
+    }
+
+    @Override
+    protected float getMeleeDamageMaxValue() {
+        return 170;
+    }
+
+    @Override
     protected float getCritChanceValue() {
         return 20;
     }
@@ -104,13 +98,17 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     }
 
     @Override
-    protected float getHealthBonusValue() {
-        return 500;
-    }
-
-    @Override
-    protected float getSpeedBonusValue() {
-        return 20;
+    public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
+        return Arrays.asList(new Pair<>(
+                        formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()),
+                        formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevelUpgraded())
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(ABILITY_ANTI_KB + ABILITY_ANTI_KB_PER_UPGRADE * getTitleLevelUpgraded(), "%"
+                        )
+                )
+        );
     }
 
     static class LegendaryGaleAbility extends AbstractAbility {
@@ -132,7 +130,9 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
                                    .append(Component.text(DECIMAL_FORMAT_TITLE.format(abilityEnergyDecrease), NamedTextColor.YELLOW))
                                    .append(Component.text(" and gain "))
                                    .append(Component.text(DECIMAL_FORMAT_TITLE.format(knockbackResistance) + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text(" knockback resistance.", NamedTextColor.GRAY));
+                                   .append(Component.text(" knockback resistance for "))
+                                   .append(Component.text("10", NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds."));
         }
 
         @Override
@@ -142,37 +142,32 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-            passive(wp, 1);
-            Listener listener = new Listener() {
-                @EventHandler
-                public void onVelocity(WarlordsAddVelocityEvent event) {
-                    if (event.getWarlordsEntity().equals(wp)) {
-                        Vector vector = event.getVector();
-                        vector.multiply(1 - knockbackResistance / 100);
-                    }
-                }
-            };
-            wp.getGame().registerEvents(listener);
-            new GameRunnable(wp.getGame()) {
+            List<FloatModifiable.FloatModifier> modifiers = wp
+                    .getAbilities()
+                    .stream()
+                    .map(a -> a.getEnergyCost().addAdditiveModifier("Gale", -abilityEnergyDecrease))
+                    .toList();
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "GALE",
+                    LegendaryGale.class,
+                    new LegendaryGale(),
+                    wp,
+                    CooldownTypes.WEAPON,
+                    cooldownManager -> {
+                    },
+                    cooldownManager -> {
+                        modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                    },
+                    10 * 20
+            ) {
                 @Override
-                public void run() {
-                    passive(wp, -1);
-                    HandlerList.unregisterAll(listener);
+                public void multiplyKB(Vector currentVector) {
+                    currentVector.multiply(1 - knockbackResistance / 100);
                 }
-            }.runTaskLater(10 * 20);
+            });
 
             return true;
         }
-
-        public void passive(WarlordsEntity player, int multiplier) {
-            player.getSpeed().addBaseModifier(50 * multiplier);
-            for (AbstractAbility ability : player.getSpec().getAbilities()) {
-                if (ability.getEnergyCost() > 0) {
-                    ability.setEnergyCost(ability.getEnergyCost() - abilityEnergyDecrease * multiplier);
-                }
-            }
-            player.updateItems();
-        }
-
     }
 }

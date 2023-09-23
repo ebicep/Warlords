@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
 
 import com.ebicep.warlords.abilities.SpiritLink;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
+import org.jetbrains.annotations.Nullable;
 
 public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
 
+    int bounceRange = ability.getBounceRange();
     float minDamage;
     float maxDamage;
 
@@ -19,75 +19,44 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+10% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+20% Damage",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.2f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+30% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+40% Damage",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.4f);
-                    ability.setMaxDamageHeal(maxDamage * 1.4f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 10f)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Scope - Tier I",
-                "+4 Blocks hit radius",
-                5000,
-                () -> {
-                    ability.setBounceRange(ability.getBounceRange() + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Scope - Tier II",
-                "+6 Blocks hit radius",
-                10000,
-                () -> {
-                    ability.setBounceRange(ability.getBounceRange() + 2);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Scope - Tier III",
-                "+8 Blocks hit radius",
-                15000,
-                () -> {
-                    ability.setBounceRange(ability.getBounceRange() + 2);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Scope - Tier IV",
-                "+10 Blocks hit radius",
-                20000,
-                () -> {
-                    ability.setBounceRange(ability.getBounceRange() + 2);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
+
+                    @Override
+                    public String getName() {
+                        return "Scope";
+                    }
+
+                    @Nullable
+                    @Override
+                    public String getDescription(double value) {
+                        return UpgradeTypes.NamedUpgradeType.super.getDescription(value + 2);
+                    }
+
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + " Bounce Block Radius";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setBounceRange((int) (bounceRange + value + 2));
+                    }
+                }, 2f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Phantasmic Bond",

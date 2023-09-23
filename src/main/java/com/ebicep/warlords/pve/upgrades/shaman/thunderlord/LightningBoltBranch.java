@@ -1,101 +1,49 @@
 package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
 import com.ebicep.warlords.abilities.LightningBolt;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
+
+import javax.annotation.Nonnull;
 
 public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
     double projectileSpeed = ability.getProjectileSpeed();
-    float energyCost = ability.getEnergyCost();
-    double hitbox = ability.getHitbox();
 
     public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+7.5% Damage\n+20% Projectile speed",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
-                    ability.setProjectileSpeed(projectileSpeed * 1.2);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+15% Damage\n+40% Projectile speed",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
-                    ability.setProjectileSpeed(projectileSpeed * 1.4);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+22.5% Damage\n+60% Projectile speed",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
-                    ability.setProjectileSpeed(projectileSpeed * 1.6);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+30% Damage\n+80% Projectile speed",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                    ability.setProjectileSpeed(projectileSpeed * 1.8);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 7.5f)
+                .addUpgrade(new UpgradeTypes.UpgradeType() {
+                    @Nonnull
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Projectile Speed";
+                    }
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "-2.5 Energy cost\n+0.25 Block hit radius",
-                5000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 2.5f);
-                    ability.setHitbox(hitbox + 0.25);
-                }
-        ));
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setProjectileSpeed(projectileSpeed * v);
+                    }
+                }, 20f)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "-5 Energy cost\n+0.5 Block hit radius",
-                10000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 5);
-                    ability.setHitbox(hitbox + 0.5);
-                }
-        ));
-
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "-7.5 Energy cost\n+0.75 Block hit radius",
-                15000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 7.5f);
-                    ability.setHitbox(hitbox + 0.75);
-                }
-        ));
-
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "-10 Energy cost\n+1 Block hit radius",
-                20000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 10);
-                    ability.setHitbox(hitbox + 1);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeEnergy(ability, 2.5f)
+                .addUpgradeHitBox(ability, .25f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Lightning Volley",

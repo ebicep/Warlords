@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.abilities.internal.Overheal;
+import com.ebicep.warlords.abilities.internal.Splash;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,6 +15,7 @@ import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBoltBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -27,14 +29,14 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
+public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, Splash {
 
     public int teammatesHit = 0;
     public int enemiesHit = 0;
 
     private int maxFullDistance = 40;
     private float directHitMultiplier = 15;
-    private float hitbox = 4;
+    private FloatModifiable splashRadius = new FloatModifiable(4);
     private float minDamage = 231;
     private float maxDamage = 299;
 
@@ -72,6 +74,11 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
         info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
 
         return info;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new WaterBoltBranch(abilityTree, this);
     }
 
     @Override
@@ -136,8 +143,9 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
         }
 
         int playersHit = 0;
+        float radius = splashRadius.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
+                .entitiesAround(currentLocation, radius, radius, radius)
                 .isAlive()
                 .excluding(projectile.getHit())
         ) {
@@ -200,6 +208,12 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
         return 1;
     }
 
+    @Override
+    public void runEveryTick() {
+        splashRadius.tick();
+        super.runEveryTick();
+    }
+
     private void increaseDamageOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         hit.getCooldownManager().removeCooldown(WaterBolt.class, false);
         hit.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -220,11 +234,6 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
         });
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new WaterBoltBranch(abilityTree, this);
-    }
-
     public int getMaxFullDistance() {
         return maxFullDistance;
     }
@@ -239,14 +248,6 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
 
     public void setDirectHitMultiplier(float directHitMultiplier) {
         this.directHitMultiplier = directHitMultiplier;
-    }
-
-    public float getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(float hitbox) {
-        this.hitbox = hitbox;
     }
 
     public float getMinDamage() {
@@ -266,4 +267,8 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon {
     }
 
 
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splashRadius;
+    }
 }

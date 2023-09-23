@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.AreaEffect;
@@ -18,6 +20,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -30,7 +33,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
+public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, Duration, HitBox {
 
     private static final double SPEED = 0.220;
     private static final double GRAVITY = -0.008;
@@ -39,8 +42,8 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
 
     private final int puddleMinDamage = 235;
     private final int puddleMaxDamage = 342;
-    private float puddleRadius = 5;
-    private int puddleDuration = 4;
+    private FloatModifiable puddleRadius = new FloatModifiable(5);
+    private int puddleTickDuration = 80;
     private int puddleMinHealing = 158;
     private int puddleMaxHealing = 204;
 
@@ -57,7 +60,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                                .append(Component.text(" damage. The projectile will form a small puddle that heals allies for "))
                                .append(formatRangeHealing(puddleMinHealing, puddleMaxHealing))
                                .append(Component.text(" health per second. Lasts "))
-                               .append(Component.text(puddleDuration, NamedTextColor.GOLD))
+                               .append(Component.text(format(puddleTickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
 
     }
@@ -114,11 +117,12 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                     Utils.playGlobalSound(newLoc, Sound.BLOCK_GLASS_BREAK, 1.5f, 0.7f);
                     Utils.playGlobalSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
 
+                    float radius = puddleRadius.getCalculatedValue();
                     CircleEffect circleEffect = new CircleEffect(
                             wp.getGame(),
                             wp.getTeam(),
                             newLoc,
-                            puddleRadius,
+                            radius,
                             new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
                             new AreaEffect(1, Particle.DRIP_WATER).particlesPerSurface(0.025)
                     );
@@ -131,7 +135,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                                                                    .build());
 
                     List<WarlordsEntity> teammatesHit = PlayerFilter
-                            .entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
+                            .entitiesAround(newLoc, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .toList();
                     for (WarlordsEntity nearEntity : teammatesHit) {
@@ -161,11 +165,11 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                     }
 
                     new GameRunnable(wp.getGame()) {
-                        int timeLeft = puddleDuration;
+                        int timeLeft = puddleTickDuration / 20;
 
                         @Override
                         public void run() {
-                            PlayerFilter.entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
+                            PlayerFilter.entitiesAround(newLoc, radius, radius, radius)
                                         .aliveTeammatesOf(wp)
                                         .forEach((ally) -> ally.addHealingInstance(
                                                 wp,
@@ -187,7 +191,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
                     }.runTaskTimer(20, pveMasterUpgrade ? 10 : 20);
 
                     List<WarlordsEntity> enemiesHit = PlayerFilter
-                            .entitiesAround(newLoc, puddleRadius, puddleRadius, puddleRadius)
+                            .entitiesAround(newLoc, radius, radius, radius)
                             .aliveEnemiesOf(wp)
                             .toList();
                     for (WarlordsEntity nearEntity : enemiesHit) {
@@ -238,12 +242,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
         return new SoothingElixirBranch(abilityTree, this);
     }
 
-    public float getPuddleRadius() {
-        return puddleRadius;
-    }
-
-    public void setPuddleRadius(float puddleRadius) {
-        this.puddleRadius = puddleRadius;
+    @Override
+    public void runEveryTick() {
+        puddleRadius.tick();
+        super.runEveryTick();
     }
 
     public int getPuddleMinHealing() {
@@ -262,11 +264,18 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon {
         this.puddleMaxHealing = puddleMaxHealing;
     }
 
-    public int getPuddleDuration() {
-        return puddleDuration;
+    @Override
+    public int getTickDuration() {
+        return puddleTickDuration;
     }
 
-    public void setPuddleDuration(int puddleDuration) {
-        this.puddleDuration = puddleDuration;
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.puddleTickDuration = tickDuration;
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return puddleRadius;
     }
 }

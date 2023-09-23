@@ -50,7 +50,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         this.shotsFiredAtATime = 2;
         this.maxAngleOfShots = 26;
         this.forwardTeleportAmount = 1.6f;
-        this.playerHitbox += .4;
+        this.hitboxInflation.setCurrentValue(hitboxInflation.getCurrentValue() + .4f);
     }
 
     @Override

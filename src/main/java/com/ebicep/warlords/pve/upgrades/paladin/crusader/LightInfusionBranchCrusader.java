@@ -1,87 +1,46 @@
 package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 
 import com.ebicep.warlords.abilities.LightInfusionCrusader;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfusionCrusader> {
 
-    float cooldown = ability.getCooldown();
     int speedBuff = ability.getSpeedBuff();
     int energyGiven = ability.getEnergyGiven();
 
     public LightInfusionBranchCrusader(AbilityTree abilityTree, LightInfusionCrusader ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+5% Speed\n+5 Energy given",
-                5000,
-                () -> {
-                    ability.setSpeedBuff(speedBuff + 5);
-                    ability.setEnergyGiven(energyGiven + 5);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+10% Speed\n+10 Energy given",
-                10000,
-                () -> {
-                    ability.setSpeedBuff(speedBuff + 10);
-                    ability.setEnergyGiven(energyGiven + 10);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+15% Speed\n+15 Energy given",
-                15000,
-                () -> {
-                    ability.setSpeedBuff(speedBuff + 15);
-                    ability.setEnergyGiven(energyGiven + 15);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+20% Speed\n+20 Energy given",
-                20000,
-                () -> {
-                    ability.setSpeedBuff(speedBuff + 20);
-                    ability.setEnergyGiven(energyGiven + 20);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-20% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.EnergyUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + " Energy Given";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setEnergyGiven((int) (energyGiven + value));
+                    }
+                }, 5f)
+                .addUpgrade(new UpgradeTypes.UpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Speed";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setSpeedBuff(speedBuff + 20);
+                    }
+                }, 5f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Holy Imbusion",

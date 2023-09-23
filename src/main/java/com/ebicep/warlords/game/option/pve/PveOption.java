@@ -12,7 +12,6 @@ import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.WeaponOption;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -340,13 +339,6 @@ public interface PveOption extends Option {
 
     @Override
     default void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        AbstractWeapon weapon = warlordsPlayer.getWeapon();
-        if (weapon == null) {
-            WeaponOption.showWeaponStats(warlordsPlayer, player);
-        } else {
-            WeaponOption.showPvEWeapon(warlordsPlayer, player);
-        }
-
         player.getInventory().setItem(7, new ItemBuilder(Material.GOLD_NUGGET).name(Component.text("Upgrade Talisman", NamedTextColor.GREEN)).get());
         if (warlordsPlayer.getWeapon() instanceof AbstractLegendaryWeapon) {
             ((AbstractLegendaryWeapon) warlordsPlayer.getWeapon()).updateAbilityItem(warlordsPlayer, player);
@@ -355,8 +347,11 @@ public interface PveOption extends Option {
 
     @Override
     default void onSpecChange(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            ((WarlordsPlayer) player).resetAbilityTree();
+        if (player instanceof WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.resetAbilityTree();
+            for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
+                ability.setInPve(true);
+            }
         }
     }
 

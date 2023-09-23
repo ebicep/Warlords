@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiConsumer;
@@ -122,7 +123,7 @@ public class WeaponOption implements Option {
                 .unbreakable();
 
         itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)
-                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getEnergyCost()), NamedTextColor.YELLOW)));
+                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getEnergyCostValue()), NamedTextColor.YELLOW)));
         itemBuilder.addLore(Component.text("Crit Chance: ", NamedTextColor.GRAY)
                                      .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getCritChance()) + "%", NamedTextColor.RED)));
         itemBuilder.addLore(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
@@ -171,13 +172,25 @@ public class WeaponOption implements Option {
 
     @Override
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        leftClick.accept(warlordsPlayer, player);
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                rightClick.accept(warlordsPlayer, player);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
     }
 
     @Override
     public void onSpecChange(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer && player.getEntity() instanceof Player) {
-            leftClick.accept((WarlordsPlayer) player, (Player) player.getEntity());
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    rightClick.accept((WarlordsPlayer) player, (Player) player.getEntity());
+                }
+            }.runTaskLater(Warlords.getInstance(), 1);
         }
     }
 }

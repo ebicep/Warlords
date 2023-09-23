@@ -50,7 +50,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     public FortifyingHex() {
         super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 40, true);
-        this.playerHitbox += .4;
+        this.hitboxInflation.setCurrentValue(hitboxInflation.getCurrentValue() + .4f);
     }
 
     @Override

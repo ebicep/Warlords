@@ -34,7 +34,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
         description = Component.text("Place a stationary beacon on the ground that lasts ")
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. All allies within a "))
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(radius.getCalculatedValue(), NamedTextColor.YELLOW))
                                .append(Component.text(" block radius restore "))
                                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                                .append(Component.text("  health every 2 seconds." +
@@ -44,7 +44,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     @Override
     public Component getBonusDescription() {
         return Component.text("All allies within a ")
-                        .append(Component.text(radius, NamedTextColor.YELLOW))
+                        .append(Component.text(radius.getCalculatedValue(), NamedTextColor.YELLOW))
                         .append(Component.text(" block radius restore "))
                         .append(Component.text(minDamageHeal, NamedTextColor.GREEN))
                         .append(Component.text("  health every 2 seconds."));
@@ -74,8 +74,9 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfLight> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         if (ticksElapsed % 40 == 0) {
             BeaconOfLight beacon = cooldown.getCooldownObject();
+            float rad = radius.getCalculatedValue();
             for (WarlordsEntity allyTarget : PlayerFilter
-                    .entitiesAround(beacon.getGroundLocation(), radius, radius, radius)
+                    .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
                     .aliveTeammatesOf(wp)
             ) {
                 allyTarget.addHealingInstance(

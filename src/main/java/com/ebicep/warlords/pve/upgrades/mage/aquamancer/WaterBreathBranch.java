@@ -1,13 +1,10 @@
 package com.ebicep.warlords.pve.upgrades.mage.aquamancer;
 
 import com.ebicep.warlords.abilities.WaterBreath;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
-    float cooldown = ability.getCooldown();
     double velocity = ability.getVelocity();
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
@@ -16,83 +13,42 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
     public WaterBreathBranch(AbilityTree abilityTree, WaterBreath ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+7.5% Healing",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.075f);
-                    ability.setMaxDamageHeal(maxHealing * 1.075f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+15% Healing",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.15f);
-                    ability.setMaxDamageHeal(maxHealing * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+22.5% Healing",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.225f);
-                    ability.setMaxDamageHeal(maxHealing * 1.225f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+30% Healing",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.3f);
-                    ability.setMaxDamageHeal(maxHealing * 1.3f);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "+15% Knockback\n+15% Cone range",
-                5000,
-                () -> {
-                    ability.setVelocity(velocity * 1.15);
-                    ability.setHitbox(hitbox + 2);
-                    ability.setMaxAnimationTime(coneRange + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "+30% Knockback\n+30% Cone range",
-                10000,
-                () -> {
-                    ability.setVelocity(velocity * 1.3);
-                    ability.setHitbox(hitbox + 4);
-                    ability.setMaxAnimationTime(coneRange + 8);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "+45% Knockback\n+45% Cone range",
-                15000,
-                () -> {
-                    ability.setVelocity(velocity * 1.45);
-                    ability.setHitbox(hitbox + 6);
-                    ability.setMaxAnimationTime(coneRange + 12);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "+60% Knockback\n+60% Cone range",
-                20000,
-                () -> {
-                    ability.setVelocity(velocity * 1.6);
-                    ability.setHitbox(hitbox + 8);
-                    ability.setMaxAnimationTime(coneRange + 16);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        value = 1 + value / 100;
+                        ability.setMinDamageHeal(minHealing * value);
+                        ability.setMaxDamageHeal(maxHealing * value);
+                    }
+                }, 7.5f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
+                    @Override
+                    public String getName() {
+                        return "Force";
+                    }
+
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Knockback\n" +
+                                "+" + value + "% Cone range";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setVelocity(velocity * (1 + value / 100));
+                        int level = Math.round(value / 15);
+                        ability.setHitbox(hitbox + level * 2);
+                        ability.setMaxAnimationTime(coneRange + level * 4);
+                    }
+                }, 15f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Typhoon",

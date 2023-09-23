@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -23,20 +24,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractConsecrate extends AbstractAbility implements RedAbilityIcon, Duration {
+public abstract class AbstractConsecrate extends AbstractAbility implements RedAbilityIcon, Duration, HitBox {
 
     public int strikesBoosted = 0;
     public int playersHit = 0;
 
     protected int strikeDamageBoost;
-    protected float radius;
+    protected FloatModifiable hitBox;
     protected Location location;
     protected int tickDuration = 100;
 
-    public AbstractConsecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float radius) {
+    public AbstractConsecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float hitBox) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
         this.strikeDamageBoost = strikeDamageBoost;
-        this.radius = radius;
+        this.hitBox = new FloatModifiable(hitBox);
     }
 
     public AbstractConsecrate(
@@ -46,12 +47,12 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
             float critChance,
             float critMultiplier,
             int strikeDamageBoost,
-            float radius,
+            float hitBox,
             Location location
     ) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
         this.strikeDamageBoost = strikeDamageBoost;
-        this.radius = radius;
+        this.hitBox = new FloatModifiable(hitBox);
         this.location = location;
     }
 
@@ -62,7 +63,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                                .append(Component.text(" damage per second and take "))
                                .append(Component.text(strikeDamageBoost + "%", NamedTextColor.RED))
                                .append(Component.text(" increased damage from your paladin strikes. Has a radius of "))
-                               .append(Component.text(format(radius), NamedTextColor.YELLOW))
+                               .append(Component.text(format(hitBox.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
@@ -85,6 +86,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         Location location = player.getLocation().clone();
 
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
+        float radius = hitBox.getCalculatedValue();
         CircleEffect circleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
@@ -150,16 +152,19 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     @Nonnull
     public abstract String getStrikeName();
 
+    @Override
+    public void runEveryTick() {
+        hitBox.tick();
+        super.runEveryTick();
+    }
+
     public void addStrikesBoosted() {
         strikesBoosted++;
     }
 
-    public float getRadius() {
-        return radius;
-    }
-
-    public void setRadius(float radius) {
-        this.radius = radius;
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hitBox;
     }
 
     public Location getLocation() {

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Splash;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -26,9 +28,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon {
+public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon, Splash {
 
-    private float hitbox = 5;
+    private FloatModifiable splash = new FloatModifiable(5);
     private double acceleration = 1.0275;
     private double projectileWidth = 0.24D;
 
@@ -134,8 +136,9 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
 
     private int hit(@Nonnull InternalProjectile projectile, WarlordsEntity shooter, Location startingLocation, Location currentLocation) {
         int playersHit = 0;
+        float splashRadius = splash.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
+                .entitiesAround(currentLocation, splashRadius, splashRadius, splashRadius)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
@@ -258,14 +261,11 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
         return 1;
     }
 
-    public float getHitbox() {
-        return hitbox;
+    @Override
+    public void runEveryTick() {
+        splash.tick();
+        super.runEveryTick();
     }
-
-    public void setHitbox(float hitbox) {
-        this.hitbox = hitbox;
-    }
-
 
     public double getAcceleration() {
         return acceleration;
@@ -281,5 +281,10 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
 
     public void setProjectileWidth(double projectileWidth) {
         this.projectileWidth = projectileWidth;
+    }
+
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splash;
     }
 }

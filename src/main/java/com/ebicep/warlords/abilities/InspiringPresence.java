@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.paladin.crusader.InspiringPresenceBranch
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -27,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class InspiringPresence extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class InspiringPresence extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox {
 
     public int playersHit = 0;
 
@@ -35,7 +37,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     protected double energyGivenFromStrikeAndPresence = 0;
 
     private int speedBuff = 30;
-    private double radius = 10;
+    private FloatModifiable radius = new FloatModifiable(10);
     private int tickDuration = 240;
     private int energyPerSecond = 10;
 
@@ -52,7 +54,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                                .append(Component.text(" for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds.\n\nHas a maximum range of "))
-                               .append(Component.text(format(radius), NamedTextColor.YELLOW))
+                               .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
 
@@ -71,8 +73,9 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
 
+        float rad = radius.getCalculatedValue();
         List<WarlordsEntity> teammatesNear = PlayerFilter
-                .entitiesAround(wp, radius, radius, radius)
+                .entitiesAround(wp, rad, rad, rad)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .toList();
 
@@ -209,15 +212,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         this.energyPerSecond = energyPerSecond;
     }
 
-
-    public double getRadius() {
-        return radius;
-    }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
-    }
-
     public double getEnergyGivenFromStrikeAndPresence() {
         return energyGivenFromStrikeAndPresence;
     }
@@ -228,5 +222,16 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
     public void setSpeedBuff(int speedBuff) {
         this.speedBuff = speedBuff;
+    }
+
+    @Override
+    public void runEveryTick() {
+        radius.tick();
+        super.runEveryTick();
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
     }
 }

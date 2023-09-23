@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,14 +29,14 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 
-public abstract class AbstractPiercingProjectile extends AbstractAbility implements ProjectileAbility {
+public abstract class AbstractPiercingProjectile extends AbstractAbility implements ProjectileAbility, HitBox {
 
     public int playersHit = 0;
     public int playersHitBySplash = 0;
     public int directHits = 0;
     public int numberOfDismounts = 0;
     protected final boolean hitTeammates;
-    protected double playerHitbox = 0.75;
+    protected FloatModifiable hitboxInflation = new FloatModifiable(0.75f);
     protected int maxTicks;
     protected double maxDistance;
     protected float forwardTeleportAmount = 0;
@@ -129,7 +130,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
             // This logic does not properly deal with an EnderDragon entity, as it has a complex hitbox
             assert entity instanceof CraftEntity;
             net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-            AABB aabb = nmsEntity.getBoundingBox().inflate(playerHitbox);
+            AABB aabb = nmsEntity.getBoundingBox().inflate(hitboxInflation.getCalculatedValue());
             Optional<Vec3> vec3 = aabb.clip(currentPosition, nextPosition);
             if (vec3.isEmpty()) {
                 continue;
@@ -379,12 +380,15 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }
 
-    public double getPlayerHitbox() {
-        return playerHitbox;
+    @Override
+    public void runEveryTick() {
+        hitboxInflation.tick();
+        super.runEveryTick();
     }
 
-    public void setPlayerHitbox(double playerHitbox) {
-        this.playerHitbox = playerHitbox;
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hitboxInflation;
     }
 
     public interface InternalProjectileTask {

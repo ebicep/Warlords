@@ -274,11 +274,11 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                         .append(Component.text("!", NamedTextColor.GRAY))
                                 );
                                 for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
-                                    shadowStep.setCurrentCooldown(shadowStep.getCooldown() / 2);
+                                    shadowStep.setCurrentCooldown(shadowStep.getCooldownValue() / 2);
                                     wp.updateItem(shadowStep);
                                 }
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.setCurrentCooldown(orderOfEviscerate.getCooldown() / 2);
+                                    orderOfEviscerate.setCurrentCooldown(orderOfEviscerate.getCooldownValue() / 2);
                                     wp.updateItem(orderOfEviscerate);
                                 }
                                 wp.addEnergy(wp, name, energyCost.getCurrentValue() / 2f);

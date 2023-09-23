@@ -52,6 +52,7 @@ public class ConsecrateCrusader extends AbstractConsecrate {
         Location location = player.getLocation().clone();
 
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
+        float radius = hitBox.getCalculatedValue();
         CircleEffect circleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
@@ -116,7 +117,15 @@ public class ConsecrateCrusader extends AbstractConsecrate {
     @Nonnull
     @Override
     public AbstractConsecrate createConsecrate() {
-        return new ConsecrateCrusader(minDamageHeal, maxDamageHeal, energyCost.getCurrentValue(), critChance, critMultiplier, strikeDamageBoost, radius, location);
+        return new ConsecrateCrusader(minDamageHeal,
+                maxDamageHeal,
+                energyCost.getCurrentValue(),
+                critChance,
+                critMultiplier,
+                strikeDamageBoost,
+                hitBox.getCurrentValue(),
+                location
+        );
     }
 
     @Nonnull

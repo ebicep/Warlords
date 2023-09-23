@@ -1,87 +1,42 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
 import com.ebicep.warlords.abilities.DrainingMiasma;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> {
 
-    float cooldown = ability.getCooldown();
     float selfLeech = ability.getLeechSelfAmount();
     float allyLeech = ability.getLeechAllyAmount();
 
     public DrainingMiasmaBranch(AbilityTree abilityTree, DrainingMiasma ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+0.25% Leech Heal",
-                5000,
-                () -> {
-                    ability.setLeechSelfAmount(selfLeech + 0.25f);
-                    ability.setLeechAllyAmount(allyLeech + 0.25f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+0.5% Leech Heal",
-                10000,
-                () -> {
-                    ability.setLeechSelfAmount(selfLeech + 0.5f);
-                    ability.setLeechAllyAmount(allyLeech + 0.5f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+0.75% Leech Heal",
-                15000,
-                () -> {
-                    ability.setLeechSelfAmount(selfLeech + 0.75f);
-                    ability.setLeechAllyAmount(allyLeech + 0.75f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+1% Leech Heal",
-                20000,
-                () -> {
-                    ability.setLeechSelfAmount(selfLeech + 1);
-                    ability.setLeechAllyAmount(allyLeech + 1);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-20% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
+
+                    @Override
+                    public String getName() {
+                        return "Alleviate";
+                    }
+
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Leech Heal";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setLeechSelfAmount(selfLeech + value);
+                        ability.setLeechAllyAmount(allyLeech + value);
+                    }
+                }, .25f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Liquidizing Miasma",

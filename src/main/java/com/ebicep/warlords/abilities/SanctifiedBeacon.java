@@ -47,7 +47,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     @Override
     public Component getBonusDescription() {
         return Component.text("All enemies within a ")
-                        .append(Component.text(format(radius), NamedTextColor.YELLOW))
+                        .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                         .append(Component.text(" block radius have their Crit Multiplier reduced to "))
                         .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
                         .append(Component.text(". The beacon will emit a wave of energy that grants "))
@@ -88,7 +88,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     @Override
     public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<SanctifiedBeacon> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         SanctifiedBeacon beacon = cooldown.getCooldownObject();
-        float rad = beacon.getRadius();
+        float rad = beacon.getHitBoxRadius().getCalculatedValue();
         if (ticksElapsed % 5 == 0) {
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)

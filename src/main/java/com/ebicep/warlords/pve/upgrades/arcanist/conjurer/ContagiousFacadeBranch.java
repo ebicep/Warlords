@@ -1,86 +1,52 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
 
 import com.ebicep.warlords.abilities.ContagiousFacade;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+
+import javax.annotation.Nullable;
 
 public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFacade> {
-
-    float cooldown = ability.getCooldown();
-    int shieldTickDuration = ability.getShieldTickDuration();
-    float damageAbsorption = ability.getDamageAbsorption();
-
 
     public ContagiousFacadeBranch(AbilityTree abilityTree, ContagiousFacade ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Zeal - Tier I",
-                "-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier II",
-                "-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier III",
-                "-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-20% Cooldown reduction\n+2.5s Shield duration",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                    ability.setShieldTickDuration(shieldTickDuration + 50);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability)
+                .addUpgrade(new UpgradeTypes.UpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+2.5s Shield Duration";
+                    }
 
-        treeB.add(new Upgrade(
-                "Impair - Tier I",
-                "+2.5% Absorb damage",
-                5000,
-                () -> {
-                    ability.setDamageAbsorption(damageAbsorption + 2.5f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Impair - Tier II",
-                "+5% Absorb damage",
-                10000,
-                () -> {
-                    ability.setDamageAbsorption(damageAbsorption + 5);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Impair - Tier III",
-                "+7.5% Absorb damage",
-                15000,
-                () -> {
-                    ability.setDamageAbsorption(damageAbsorption + 7.5f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Impair - Tier IV",
-                "+10% Absorb damage",
-                20000,
-                () -> {
-                    ability.setDamageAbsorption(damageAbsorption + 10);
-                }
-        ));
+                    @Override
+                    public void run(float value) {
+                        ability.setShieldTickDuration(ability.getShieldTickDuration() + 50);
+                    }
+                }, 4)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
+                    @Override
+                    public String getName() {
+                        return "Impair";
+                    }
+
+                    @Nullable
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Absorb Damage";
+                    }
+
+                    @Override
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
+                    }
+                }, ability.getDamageAbsorption().addAdditiveModifier("Upgrade Branch", 0), 2.5f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Corrosive Facade",
@@ -103,7 +69,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
                         """,
                 50000,
                 () -> {
-                    ability.setDamageAbsorption(ability.getDamageAbsorption() * 2);
+                    ability.getDamageAbsorption().addMultiplicativeModifierMult("Master Upgrade Branch", 2);
                 }
         );
     }

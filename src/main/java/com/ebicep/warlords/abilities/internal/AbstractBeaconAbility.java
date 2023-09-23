@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -23,11 +24,11 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> extends AbstractAbility implements Duration {
+public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> extends AbstractAbility implements Duration, HitBox {
 
     protected Location groundLocation; // not static
     protected CircleEffect effect; // not static
-    protected float radius; // not static
+    protected FloatModifiable radius; // not static
     protected int tickDuration;
 
     public AbstractBeaconAbility(
@@ -39,13 +40,13 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
             float critChance,
             float critMultiplier,
             Location groundLocation,
-            int radius,
+            float radius,
             int secondDuration,
             CircleEffect effect
     ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.groundLocation = groundLocation;
-        this.radius = radius;
+        this.radius = new FloatModifiable(radius);
         this.tickDuration = secondDuration * 20;
         this.effect = effect;
     }
@@ -73,7 +74,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 wp.getGame(),
                 wp.getTeam(),
                 groundLocation,
-                radius,
+                radius.getCalculatedValue(),
                 new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
                 getLineEffect(groundLocation)
         );
@@ -130,6 +131,12 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         return true;
     }
 
+    @Override
+    public void runEveryTick() {
+        radius.tick();
+        super.runEveryTick();
+    }
+
     public abstract LineEffect getLineEffect(Location target);
 
     public abstract String getAbbreviation();
@@ -156,14 +163,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         return groundLocation;
     }
 
-    public float getRadius() {
+    public FloatModifiable getHitBoxRadius() {
         return radius;
-    }
-
-    public void setRadius(float radius) {
-        this.radius = radius;
-        if (effect != null) {
-            effect.setRadius(radius);
-        }
     }
 }

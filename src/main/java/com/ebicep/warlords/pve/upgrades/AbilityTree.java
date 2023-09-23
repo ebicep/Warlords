@@ -284,7 +284,7 @@ public class AbilityTree {
                         .addLore(
                                 Component.empty(),
                                 Component.textOfChildren(
-                                        Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                         Component.text(" to clear the queue.", NamedTextColor.GRAY)
                                 )
                         )

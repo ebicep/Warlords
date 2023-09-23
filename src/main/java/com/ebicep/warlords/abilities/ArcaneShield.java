@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.mage.ArcaneShieldBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -52,6 +53,10 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         return shieldHealth;
     }
 
+    public void addShieldHealth(float amount) {
+        this.shieldHealth += amount;
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Surround yourself with arcane energy, creating a shield that will absorb up to ")
@@ -63,10 +68,6 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                                .append(Component.text(" seconds."));
     }
 
-    public void addShieldHealth(float amount) {
-        this.shieldHealth += amount;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -76,6 +77,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
@@ -118,7 +120,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                             return;
                         }
                         AbstractAbility rightClick = abilities.get(0);
-                        rightClick.setEnergyCostMultiplicative(rightClick.getEnergyCostMultiplicative() - .15f);
+                        FloatModifiable.FloatModifier modifier = rightClick.getEnergyCost().addMultiplicativeModifierAdd("Arcane Energy", -.15f);
                         wp.updateItem(rightClick);
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Arcane Energy",
@@ -128,7 +130,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                                 wp,
                                 CooldownTypes.ABILITY,
                                 cooldownManager2 -> {
-                                    rightClick.setEnergyCostMultiplicative(rightClick.getEnergyCostMultiplicative() + .15f);
+                                    modifier.forceEnd();
                                     wp.updateItem(rightClick);
                                 },
                                 100,

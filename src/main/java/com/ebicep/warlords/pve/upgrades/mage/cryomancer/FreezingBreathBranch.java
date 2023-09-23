@@ -1,92 +1,52 @@
 package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 
 import com.ebicep.warlords.abilities.FreezingBreath;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
+
+import javax.annotation.Nullable;
 
 public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> {
 
-    float cooldown = ability.getCooldown();
     int slowness = ability.getSlowness();
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
     public FreezingBreathBranch(AbilityTree abilityTree, FreezingBreath ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+7.5% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+15% Damage",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+22.5% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+30% Damage",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 7.5f)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "-5% Cooldown reduction\n+4% Slowness",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.95f);
-                    ability.setSlowness(slowness + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "-10% Cooldown reduction\n+6% Slowness",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                    ability.setSlowness(slowness + 6);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "-15% Cooldown reduction\n+8% Slowness",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                    ability.setSlowness(slowness + 7);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-20% Cooldown reduction\n+10% Slowness",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                    ability.setSlowness(slowness + 10);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability)
+                .addUpgrade(new UpgradeTypes.UpgradeType() {
+
+                    @Nullable
+                    @Override
+                    public String getDescription(double value) {
+                        return UpgradeTypes.UpgradeType.super.getDescription(value + 2);
+                    }
+
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Slowness";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setSlowness(slowness + (int) value + 2);
+                    }
+                }, 2f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Blizzard",

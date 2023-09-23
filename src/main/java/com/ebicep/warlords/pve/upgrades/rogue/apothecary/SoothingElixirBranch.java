@@ -1,88 +1,33 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
 import com.ebicep.warlords.abilities.SoothingElixir;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> {
 
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
-    float puddleRadius = ability.getPuddleRadius();
 
     public SoothingElixirBranch(AbilityTree abilityTree, SoothingElixir ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+7.5% Healing",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.075f);
-                    ability.setMaxDamageHeal(maxHealing * 1.075f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+15% Healing",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.15f);
-                    ability.setMaxDamageHeal(maxHealing * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+22.5% Healing",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.225f);
-                    ability.setMaxDamageHeal(maxHealing * 1.225f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+30% Healing",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.3f);
-                    ability.setMaxDamageHeal(maxHealing * 1.3f);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+1.5 Blocks puddle radius",
-                5000,
-                () -> {
-                    ability.setPuddleRadius(puddleRadius + 1.5f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+3 Blocks puddle radius",
-                10000,
-                () -> {
-                    ability.setPuddleRadius(puddleRadius + 3);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+4.5 Blocks puddle radius",
-                15000,
-                () -> {
-                    ability.setPuddleRadius(puddleRadius + 4.5f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+6 Blocks puddle radius\n+2s Duration",
-                20000,
-                () -> {
-                    ability.setPuddleRadius(puddleRadius + 6);
-                    ability.setPuddleDuration(ability.getPuddleDuration() + 2);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        value = 1 + value / 100;
+                        ability.setMinDamageHeal(minHealing * value);
+                        ability.setMaxDamageHeal(maxHealing * value);
+                    }
+                }, 7.5f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeHitBox(ability, 1.5f)
+                .addUpgradeDuration(ability, 40f, 4)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Alleviating Elixir",

@@ -27,7 +27,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion {
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
 
-        LightInfusionCrusader tempLightInfusion = new LightInfusionCrusader(cooldown);
+        LightInfusionCrusader tempLightInfusion = new LightInfusionCrusader(cooldown.getCurrentValue());
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "INF",

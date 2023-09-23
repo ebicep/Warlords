@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -186,7 +185,7 @@ public abstract class AbstractPlayerClass {
             }
             return;
         }
-        if (player.getLevel() >= ability.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
+        if (player.getLevel() >= ability.getEnergyCostValue() * wp.getEnergyModifier() && abilityCD) {
             WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, player, ability);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
@@ -196,17 +195,7 @@ public abstract class AbstractPlayerClass {
             if (shouldApplyCooldown) {
                 ability.addTimesUsed();
                 if (!wp.isDisableCooldowns()) {
-                    float cooldown = ability.getCooldown();
-                    float cooldownModifier = 1;
-                    List<AbstractCooldown<?>> cooldownsDistinct = wp.getCooldownManager().getCooldownsDistinct();
-                    for (AbstractCooldown<?> abstractCooldown : cooldownsDistinct) {
-                        cooldown += abstractCooldown.getAbilityMultiplicativeCooldownAdd(ability);
-                        cooldownModifier += abstractCooldown.getAbilityMultiplicativeCooldownAdd(ability);
-                    }
-                    for (AbstractCooldown<?> abstractCooldown : cooldownsDistinct) {
-                        cooldownModifier *= abstractCooldown.getAbilityMultiplicativeCooldownMult(ability);
-                    }
-                    ability.setCurrentCooldown(cooldown * cooldownModifier);
+                    ability.setCurrentCooldown(ability.getCooldownValue());
                 }
                 sendRightClickPacket(player);
             }

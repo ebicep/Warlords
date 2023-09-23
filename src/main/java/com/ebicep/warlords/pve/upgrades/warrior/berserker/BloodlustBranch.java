@@ -1,83 +1,35 @@
 package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
 import com.ebicep.warlords.abilities.BloodLust;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
 
-    float cooldown = ability.getCooldown();
     float healReductionPercent = ability.getHealReductionPercent();
 
     public BloodlustBranch(AbilityTree abilityTree, BloodLust ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "-3.75% Multi hit health reduction",
-                5000,
-                () -> {
-                    ability.setHealReductionPercent(healReductionPercent + 3.75f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "-7.5% Multi hit health reduction",
-                10000,
-                () -> {
-                    ability.setHealReductionPercent(healReductionPercent + 7.5f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "-11.25% Multi hit health reduction",
-                15000,
-                () -> {
-                    ability.setHealReductionPercent(healReductionPercent + 11.25f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "-15% Multi hit health reduction",
-                20000,
-                () -> {
-                    ability.setHealReductionPercent(healReductionPercent + 15);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
 
-        treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "-3.75% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9725f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "-7.5% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.925f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "-11.25% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8875f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-15% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
+                    @Override
+                    public String getDescription0(String value) {
+                        return "-" + value + "% AOE Healing Reduction";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setHealReductionPercent(healReductionPercent + value);
+                    }
+                }, 3.75f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability, 0.0375f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Sanguineous",

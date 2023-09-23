@@ -186,7 +186,7 @@ public class Mithra extends AbstractZombie implements BossMob {
                 counter++;
                 for (FlameBurst flameBurst : warlordsNPC.getAbilitiesMatching(FlameBurst.class)) {
                     flameBurst.setCurrentCooldown(0);
-                    warlordsNPC.addEnergy(warlordsNPC, "Flame Burst Barrage", flameBurst.getEnergyCost());
+                    warlordsNPC.addEnergy(warlordsNPC, "Flame Burst Barrage", flameBurst.getEnergyCostValue());
                 }
 
                 if (counter == amountOfShots) {

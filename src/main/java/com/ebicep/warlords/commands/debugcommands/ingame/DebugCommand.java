@@ -12,6 +12,8 @@ import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;
+import com.ebicep.warlords.menu.debugmenu.DebugMenuPlayerOptions;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -191,6 +193,14 @@ public class DebugCommand extends BaseCommand {
         sendDebugMessage(issuer, Component.empty()
                                           .append(target.getColoredName())
                                           .append(Component.text(" will " + (!enable ? "no longer see" : "start seeing") + " debug messages!", NamedTextColor.GREEN)));
+    }
+
+    @Subcommand("resetspec")
+    @CommandCompletion("@warlordsplayers")
+    @Description("Resets player spec to their spec again")
+    public void resetSpec(Player player, @Optional WarlordsPlayer target) {
+        Specializations spec = target.getSpecClass();
+        DebugMenuPlayerOptions.setSpec(player, target, spec, spec.skillBoosts.get(0));
     }
 
     @HelpCommand

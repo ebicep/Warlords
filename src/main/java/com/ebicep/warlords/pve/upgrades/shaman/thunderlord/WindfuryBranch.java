@@ -1,87 +1,50 @@
 package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
 import com.ebicep.warlords.abilities.WindfuryWeapon;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
 
     float weaponDamage = ability.getWeaponDamage();
-    float cooldown = ability.getCooldown();
-    int maxHits = ability.getMaxHits();
 
     public WindfuryBranch(AbilityTree abilityTree, WindfuryWeapon ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+25% Weapon damage\n-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setWeaponDamage(weaponDamage + 25);
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+50% Weapon damage\n-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setWeaponDamage(weaponDamage + 50);
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+75% Weapon damage\n-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setWeaponDamage(weaponDamage + 75);
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+100% Weapon Damage\n-20% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setWeaponDamage(weaponDamage + 100);
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+4% Proc chance",
-                5000,
-                () -> {
-                    ability.setProcChance(ability.getProcChance() + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+8% Proc chance",
-                10000,
-                () -> {
-                    ability.setProcChance(ability.getProcChance() + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+12% Proc chance",
-                15000,
-                () -> {
-                    ability.setProcChance(ability.getProcChance() + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+16% Proc chance",
-                20000,
-                () -> {
-                    ability.setProcChance(ability.getProcChance() + 4);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Weapon Damage";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setWeaponDamage(weaponDamage + value);
+                    }
+                }, 25f)
+                .addUpgradeCooldown(ability)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.LuckUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Proc Chance";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setProcChance(ability.getProcChance() + value);
+                    }
+
+                    @Override
+                    public boolean autoScaleEffect() {
+                        return false;
+                    }
+                }, 4f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Shredding Fury",

@@ -35,7 +35,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected float minDamageHeal;
     protected float maxDamageHeal;
     protected float currentCooldown;
-    protected float cooldown;
+    protected FloatModifiable cooldown;
     protected FloatModifiable energyCost;
     protected float critChance;
     protected float critMultiplier;
@@ -67,7 +67,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         this.name = name;
         this.minDamageHeal = minDamageHeal;
         this.maxDamageHeal = maxDamageHeal;
-        this.cooldown = cooldown;
+        this.cooldown = new FloatModifiable(cooldown);
         this.currentCooldown = startCooldown;
         this.energyCost = new FloatModifiable(energyCost);
         this.critChance = critChance;
@@ -224,13 +224,13 @@ public abstract class AbstractAbility implements AbilityIcon {
                 .name(Component.text(getName(), NamedTextColor.GOLD))
                 .unbreakable();
 
-        if (getCooldown() != 0) {
+        if (getCooldownValue() != 0) {
             itemBuilder.addLore(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                                         .append(Component.text(NumberFormat.formatOptionalTenths(getCooldown()) + " seconds", NamedTextColor.AQUA)));
+                                         .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.AQUA)));
         }
-        if (getEnergyCost() != 0) {
+        if (getEnergyCostValue() != 0) {
             itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)
-                                         .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCost()), NamedTextColor.YELLOW)));
+                                         .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCostValue()), NamedTextColor.YELLOW)));
         }
         if (getCritChance() != 0 && getCritChance() != -1 && getCritMultiplier() != 100) {
             itemBuilder.addLore(Component.text("Crit Chance: ", NamedTextColor.GRAY)
@@ -248,18 +248,19 @@ public abstract class AbstractAbility implements AbilityIcon {
         return name;
     }
 
-    public float getCooldown() {
+    public float getCooldownValue() {
+        return cooldown.getCalculatedValue();
+    }
+
+    public FloatModifiable getCooldown() {
         return cooldown;
     }
 
-    public void setCooldown(float cooldown) {
-        this.cooldown = cooldown;
-    }
-
-    public float getEnergyCost() {
+    public float getEnergyCostValue() {
         return energyCost.getCalculatedValue();
     }
 
+    @Deprecated
     public void setEnergyCost(float energyCost) {
         this.energyCost.setCurrentValue(energyCost);
     }
@@ -284,20 +285,8 @@ public abstract class AbstractAbility implements AbilityIcon {
         return WordWrap.wrap(Component.empty().color(NamedTextColor.GRAY).append(description), DESCRIPTION_WIDTH);
     }
 
-    public float getEnergyCostAdditive() {
-        return energyCost.getAdditiveModifier();
-    }
-
-    public void setEnergyCostAdditive(float energyCost) {
-        this.energyCost.setAdditiveModifier(energyCost);
-    }
-
-    public float getEnergyCostMultiplicative() {
-        return energyCost.getMultiplicativeModifier();
-    }
-
-    public void setEnergyCostMultiplicative(float energyCost) {
-        this.energyCost.setMultiplicativeModifier(energyCost);
+    public FloatModifiable getEnergyCost() {
+        return energyCost;
     }
 
     public Component formatRangeDamage(float min, float max) {
@@ -349,7 +338,9 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public void runEveryTick() {
-        if (getCooldown() > 0) {
+        cooldown.tick();
+        energyCost.tick();
+        if (getCooldownValue() > 0) {
             subtractCurrentCooldown0(.05f);
         }
         checkSecondaryAbilities();
