@@ -70,18 +70,19 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
         }
         wp.addSpeedModifier(wp, name, 30, tickDuration);
         AtomicInteger timesHealed = new AtomicInteger();
+        T cooldownObject = getObject();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "SEER",
                 getEnergySeerClass(),
-                getObject(),
+                cooldownObject,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (timesHealed.get() >= 4 && wp.isAlive()) {
                         wp.addEnergy(wp, name, energyRestore);
                         wp.getCooldownManager().addCooldown(getBonusCooldown(wp));
-                        onEnd(wp);
+                        onEnd(wp, cooldownObject);
                     }
                 },
                 tickDuration,
@@ -106,12 +107,12 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                 return new Listener() {
                     @EventHandler
                     public void onEnergyUsed(WarlordsEnergyUsedEvent event) {
-                        AbstractEnergySeer.this.onEnergyUsed(wp, event);
-                        if (!Objects.equals(event.getWarlordsEntity(), wp)) {
-                            return;
-                        }
                         float energyUsed = event.getEnergyUsed();
                         if (energyUsed <= 0) {
+                            return;
+                        }
+                        AbstractEnergySeer.this.onEnergyUsed(wp, event, cooldownObject);
+                        if (!Objects.equals(event.getWarlordsEntity(), wp)) {
                             return;
                         }
                         float healAmount = energyUsed * healingMultiplier;
@@ -137,11 +138,11 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
 
     public abstract RegularCooldown<T> getBonusCooldown(@Nonnull WarlordsEntity wp);
 
-    protected void onEnd(WarlordsEntity wp) {
+    protected void onEnd(WarlordsEntity wp, T cooldownObject) {
 
     }
 
-    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUsedEvent event) {
+    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUsedEvent event, T cooldownObject) {
 
     }
 

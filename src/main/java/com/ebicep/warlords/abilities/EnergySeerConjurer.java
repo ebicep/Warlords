@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUsedEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -11,11 +12,14 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.EnergySeerBranchConjurer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Color;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 
 public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
 
+    protected int energyUsed = 0;
     private int damageIncrease = 10;
 
     @Override
@@ -56,7 +60,22 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
     }
 
     @Override
-    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUsedEvent event) {
+    protected void onEnd(WarlordsEntity wp, EnergySeerConjurer cooldownObject) {
+        wp.addEnergy(wp, "Replicating Sight", cooldownObject.energyUsed);
+        EffectUtils.displayParticle(
+                Particle.REDSTONE,
+                wp.getLocation().add(0, 1.2, 0),
+                3,
+                0.3,
+                0.2,
+                0.3,
+                0,
+                new Particle.DustOptions(Color.fromRGB(255, 255, 0), 2)
+        );
+    }
+
+    @Override
+    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUsedEvent event, EnergySeerConjurer cooldownObjet) {
         if (!pveMasterUpgrade2) {
             return;
         }
@@ -64,11 +83,9 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
         if (warlordsEntity.isEnemy(wp) || warlordsEntity.equals(wp)) {
             return;
         }
-        float energyUsed = event.getEnergyUsed();
-        if (energyUsed <= 0) {
-            return;
-        }
-        wp.addEnergy(wp, "Replicating Sight", energyUsed * .1f);
+        float amount = event.getEnergyUsed() * .1f;
+        cooldownObjet.energyUsed += amount;
+
     }
 
     @Override

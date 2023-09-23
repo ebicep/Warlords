@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -13,6 +14,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -67,12 +69,13 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
     }
 
     @Override
-    protected void onEnd(WarlordsEntity wp) {
+    protected void onEnd(WarlordsEntity wp, EnergySeerLuminary cooldownObject) {
         if (pveMasterUpgrade2) {
             PlayerFilter.entitiesAround(wp, 10, 10, 10)
                         .aliveTeammatesOfExcludingSelf(wp)
                         .forEach(warlordsEntity -> {
                             MercifulHex.giveMercifulHex(wp, warlordsEntity);
+                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY, 1, 1.25);
                         });
         }
     }

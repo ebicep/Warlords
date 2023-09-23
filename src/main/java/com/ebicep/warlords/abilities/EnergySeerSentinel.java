@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.EnergySeerBranchSentin
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 
@@ -57,12 +59,13 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
     }
 
     @Override
-    protected void onEnd(WarlordsEntity wp) {
+    protected void onEnd(WarlordsEntity wp, EnergySeerSentinel cooldownObject) {
         if (pveMasterUpgrade2) {
             PlayerFilter.entitiesAround(wp, 10, 10, 10)
                         .aliveTeammatesOfExcludingSelf(wp)
                         .forEach(warlordsEntity -> {
                             warlordsEntity.getCooldownManager().addCooldown(getBonusCooldown(wp));
+                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.FALLING_HONEY, 1, 1);
                         });
         }
     }

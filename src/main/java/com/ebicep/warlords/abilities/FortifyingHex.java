@@ -231,6 +231,15 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                 ) {
                     hitEnemy(warlordsEntity, wp, toReduceBy);
                 }
+                EffectUtils.displayParticle(
+                        Particle.EXPLOSION_LARGE,
+                        hit.getLocation().add(0, 1, 0),
+                        1,
+                        .1,
+                        .1,
+                        .1,
+                        0
+                );
             }
         }
         if (hits.size() == 1) {
