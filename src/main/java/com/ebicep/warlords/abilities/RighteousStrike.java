@@ -114,6 +114,7 @@ public class RighteousStrike extends AbstractStrike {
                 );
                 if (pveMasterUpgrade2 && targetsStruck % 5 == 0) {
                     wp.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> soulShackle.subtractCurrentCooldown(.5f));
+                    playCooldownReductionEffect(we);
                 }
             }
         }

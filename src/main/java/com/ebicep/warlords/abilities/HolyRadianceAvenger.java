@@ -176,6 +176,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                     if (pveMasterUpgrade2 && target.isDead() && tempMark.timesWrathReduced < 10) {
                         tempMark.timesWrathReduced++;
                         giver.getAbilitiesMatching(AvengersWrath.class).forEach(avengersWrath -> avengersWrath.subtractCurrentCooldown(.5f));
+                        playCooldownReductionEffect(target);
                     }
                 },
                 markDuration * 20,

@@ -159,6 +159,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
         // remove other instances of vindicate buff to override
         target.getCooldownManager().removeCooldownByName("Debuff Immunity");
+        boolean vindPveMaster2 = cooldownObject instanceof Vindicate vindicate && vindicate.pveMasterUpgrade2;
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Debuff Immunity",
                 "VIND",
@@ -179,12 +180,15 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (cooldownObject instanceof Vindicate vindicate && vindicate.pveMasterUpgrade2) {
+                if (vindPveMaster2) {
                     return currentDamageValue * .85f;
                 }
                 return currentDamageValue;
             }
         });
+        if (vindPveMaster2) {
+            EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1);
+        }
     }
 
     public float getCalculatedVindicateDamageReduction() {

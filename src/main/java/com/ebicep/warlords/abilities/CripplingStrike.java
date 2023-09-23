@@ -147,6 +147,7 @@ public class CripplingStrike extends AbstractStrike {
         if (finalEvent.isDead()) {
             if (pveMasterUpgrade2) {
                 wp.getAbilitiesMatching(OrbsOfLife.class).forEach(ability -> ability.subtractCurrentCooldown(.25f));
+                playCooldownReductionEffect(finalEvent.getWarlordsEntity());
             }
             return;
         }

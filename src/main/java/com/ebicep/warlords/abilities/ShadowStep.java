@@ -66,10 +66,13 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
 
         wp.setFlagPickCooldown(2);
 
-        EffectUtils.playFirework(wp.getLocation(), FireworkEffect.builder()
-                                                                 .withColor(Color.BLACK)
-                                                                 .with(FireworkEffect.Type.BALL)
-                                                                 .build());
+        EffectUtils.playFirework(
+                wp.getLocation().add(0, pveMasterUpgrade2 ? 1 : 0, 0),
+                FireworkEffect.builder()
+                              .withColor(Color.BLACK)
+                              .with(FireworkEffect.Type.BALL)
+                              .build()
+        );
 
         if (wp.onHorse()) {
             wp.removeHorse();
@@ -131,7 +134,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
             locationBuilder = locationBuilder.forward(1);
             EffectUtils.displayParticle(
                     Particle.SMOKE_NORMAL,
-                    locationBuilder.clone().addY(0),
+                    locationBuilder.clone().addY(-.5),
                     10,
                     .1,
                     .1,

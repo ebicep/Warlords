@@ -138,6 +138,17 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
                                     return currentDamageValue * 1.5f;
                                 }
                             });
+                        } else if (pveMasterUpgrade2) {
+                            EffectUtils.displayParticle(
+                                    Particle.REDSTONE,
+                                    nearEntity.getLocation().add(0, 1.2, 0),
+                                    3,
+                                    0.3,
+                                    0.2,
+                                    0.3,
+                                    0,
+                                    new Particle.DustOptions(Color.fromRGB(255, 255, 0), 2)
+                            );
                         }
                     }
                     if (pveMasterUpgrade2) {
