@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,10 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -134,12 +132,12 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                     if (shiftTickTime == 20) {
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
                         player.getCooldownManager().removeCooldown(cooldown.get());
+                        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
-                            if (ability.getEnergyCost() > 0) {
-                                abilityEnergyCostReduction.put(ability, 0.4f);
+                            if (ability.getEnergyCostValue() > 0) {
+                                modifiers.add(ability.getEnergyCost().addMultiplicativeModifierAdd("Divine", -.4f));
                             }
                         }
-                        abilityEnergyCost(-1);
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Divine Ability",
                                 "DIVINE",
@@ -150,7 +148,8 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                 cooldownManager -> {
                                 },
                                 cooldownManager -> {
-                                    abilityEnergyCost(1);
+                                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                                    player.updateItems();
                                 },
                                 6 * 20
                         ) {
@@ -169,11 +168,6 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                 } else {
                     shiftTickTime = 0;
                 }
-            }
-
-            public void abilityEnergyCost(int multiplier) {
-                abilityEnergyCostReduction.forEach((abstractAbility, aFloat) -> abstractAbility.setEnergyCostMultiplicative(abstractAbility.getEnergyCostMultiplicative() + aFloat * multiplier));
-                player.updateItems();
             }
         }.runTaskTimer(0, 0);
     }

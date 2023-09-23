@@ -11,6 +11,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,13 +23,13 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public abstract class AbstractGroundSlam extends AbstractAbility implements PurpleAbilityIcon {
+public abstract class AbstractGroundSlam extends AbstractAbility implements PurpleAbilityIcon, HitBox {
 
     public int playersHit = 0;
     public int carrierHit = 0;
     public int warpsKnockbacked = 0;
 
-    private int slamSize = 6;
+    private FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
     private boolean trueDamage = false;
 
@@ -100,7 +101,8 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         Set<WarlordsEntity> currentPlayersHit = new HashSet<>();
         Location location = wp.getLocation();
 
-        for (int i = 0; i < slamSize; i++) {
+        float radius = slamSize.getCalculatedValue();
+        for (int i = 0; i < radius; i++) {
             fallingBlockLocations.add(LocationUtils.getCircle(location, i, (i * ((int) (Math.PI * 2)))));
         }
 
@@ -190,12 +192,10 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     }
 
-    public int getSlamSize() {
-        return slamSize;
-    }
-
-    public void setSlamSize(int slamSize) {
-        this.slamSize = slamSize;
+    @Override
+    public void runEveryTick() {
+        slamSize.tick();
+        super.runEveryTick();
     }
 
     public float getVelocity() {
@@ -208,6 +208,11 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     public void setTrueDamage(boolean trueDamage) {
         this.trueDamage = trueDamage;
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return slamSize;
     }
 }
 

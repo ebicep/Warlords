@@ -1,9 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.JudgementStrike;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike> {
 
@@ -20,75 +18,33 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+15% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+30% Damage",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+45% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.45f);
-                    ability.setMaxDamageHeal(maxDamage * 1.45f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+60% Damage",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.6f);
-                    ability.setMaxDamageHeal(maxDamage * 1.6f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 15f)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+100 Healing on strike kill.",
-                5000,
-                () -> {
-                    ability.setStrikeHeal(100);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+200 Healing on strike kill.",
-                10000,
-                () -> {
-                    ability.setStrikeHeal(strikeHeal + 200);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+300 Healing on strike kill.",
-                15000,
-                () -> {
-                    ability.setStrikeHeal(strikeHeal + 300);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+400 Healing on strike kill.",
-                20000,
-                () -> {
-                    ability.setStrikeHeal(strikeHeal + 400);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
+
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + " Healing on Strike Kill";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setStrikeHeal(strikeHeal + value);
+                    }
+                }, 100f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Death Strike",
@@ -112,7 +68,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 50000,
                 () -> {
                     ability.setCritMultiplier(ability.getCritMultiplier() + 45);
-                    ability.setEnergyCost(ability.getEnergyCost() - 5);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 5);
                     ability.multiplyMinMax(0.65f);
                 }
         );

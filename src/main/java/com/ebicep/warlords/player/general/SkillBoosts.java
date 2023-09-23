@@ -37,7 +37,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof FlameBurst) {
                     abstractAbility.multiplyMinMax(1.25f);
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 40);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 40);
                 }
             }
     ),
@@ -52,7 +52,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpPyromancer timeWarp) {
                     timeWarp.setWarpHealPercentage(40);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }
             }
     ),
@@ -64,8 +64,8 @@ public enum SkillBoosts {
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 40);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 40);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -107,7 +107,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof FreezingBreath) {
                     abstractAbility.multiplyMinMax(1.2f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -119,7 +119,7 @@ public enum SkillBoosts {
             TimeWarpCryomancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpCryomancer) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
@@ -131,7 +131,7 @@ public enum SkillBoosts {
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -173,7 +173,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBreath) {
                     abstractAbility.multiplyMinMax(1.15f);
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 30);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 30);
                 }
             }
     ),
@@ -197,8 +197,8 @@ public enum SkillBoosts {
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 40);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 40);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -213,7 +213,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof HealingRain healingRain) {
                     healingRain.setTickDuration(healingRain.getTickDuration() + 80);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -228,7 +228,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeBerserker) {
                     abstractAbility.multiplyMinMax(1.1f);
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 10);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 10);
                 }
             }
     ),
@@ -243,7 +243,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof SeismicWave) {
                     abstractAbility.multiplyMinMax(1.15f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
     ),
@@ -258,7 +258,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam) {
                     abstractAbility.multiplyMinMax(1.35f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
     ),
@@ -273,7 +273,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust bloodLust) {
                     bloodLust.setDamageConvertPercent(70);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -319,7 +319,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof SeismicWave seismicWave) {
                     seismicWave.setVelocity(1.8f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
     ),
@@ -334,7 +334,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam groundSlam) {
                     groundSlam.setVelocity(1.35f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -366,7 +366,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof LastStand lastStand) {
                     lastStand.setSelfDamageReductionPercent(55);
                     lastStand.setTeammateDamageReductionPercent(45);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
     ),
@@ -396,7 +396,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof RecklessCharge recklessCharge) {
                     recklessCharge.setStunTimeInTicks(16);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -408,7 +408,7 @@ public enum SkillBoosts {
             AbstractGroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
@@ -462,7 +462,7 @@ public enum SkillBoosts {
             AbstractConsecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 50);
                     abstractAbility.multiplyMinMax(1.35f);
                 }
             }
@@ -477,7 +477,7 @@ public enum SkillBoosts {
             LightInfusionAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionAvenger lightInfusion) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                     lightInfusion.setEnergyGiven(lightInfusion.getEnergyGiven() + 40);
                 }
             }
@@ -492,7 +492,7 @@ public enum SkillBoosts {
             HolyRadianceAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceAvenger holyRadiance) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                     holyRadiance.setEnergyDrainPerSecond(holyRadiance.getEnergyDrainPerSecond() * 2);
                 }
             }
@@ -532,7 +532,7 @@ public enum SkillBoosts {
             AbstractConsecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 50);
                     abstractAbility.multiplyMinMax(1.35f);
                 }
             }
@@ -547,7 +547,7 @@ public enum SkillBoosts {
             LightInfusionCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionCrusader lightInfusion) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
                     lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }
@@ -566,7 +566,7 @@ public enum SkillBoosts {
             HolyRadianceCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceCrusader holyRadiance) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                     holyRadiance.setMarkDuration(12);
                     holyRadiance.setMarkSpeed(holyRadiance.getMarkSpeed() + 15);
                 }
@@ -582,7 +582,7 @@ public enum SkillBoosts {
             InspiringPresence.class,
             abstractAbility -> {
                 if (abstractAbility instanceof InspiringPresence inspiringPresence) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                     inspiringPresence.setSpeedBuff(inspiringPresence.getSpeedBuff() + 10);
                 }
             }
@@ -613,8 +613,8 @@ public enum SkillBoosts {
             AbstractConsecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate consecrate) {
-                    consecrate.setRadius(consecrate.getRadius() + 2);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    consecrate.getHitBoxRadius().addAdditiveModifier("Skill Boost", 2);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -628,7 +628,7 @@ public enum SkillBoosts {
             LightInfusionProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionProtector lightInfusion) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
                     lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
                 }
             }
@@ -656,7 +656,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof HammerOfLight) {
                     abstractAbility.multiplyMinMax(1.25f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
     ),
@@ -682,7 +682,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof ChainLightning) {
                     abstractAbility.multiplyMinMax(1.25f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
                 }
             }
     ),
@@ -710,7 +710,7 @@ public enum SkillBoosts {
             LightningRod.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightningRod) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
@@ -724,7 +724,7 @@ public enum SkillBoosts {
             CapacitorTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
                     abstractAbility.multiplyMinMax(1.3f);
                 }
             }
@@ -779,7 +779,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance repentance) {
                     repentance.setDamageConvertPercent(15);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
     ),
@@ -861,7 +861,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof HealingTotem) {
                     abstractAbility.multiplyMinMax(1.25f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
     ),
@@ -888,7 +888,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse incendiaryCurse) {
                     incendiaryCurse.setBlindDurationInTicks(50);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
                 }
             }
     ),
@@ -901,7 +901,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof ShadowStep shadowStep) {
                     shadowStep.setFallDamageNegation(1000);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
@@ -915,8 +915,8 @@ public enum SkillBoosts {
             SoulSwitch.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulSwitch soulSwitch) {
-                    soulSwitch.setRadius(15);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
+                    soulSwitch.getHitBoxRadius().addAdditiveModifier("Skill Boost", 2);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }
             }
     ),
@@ -931,7 +931,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof OrderOfEviscerate orderOfEviscerate) {
                     orderOfEviscerate.setTickDuration(orderOfEviscerate.getTickDuration() + 80);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -955,7 +955,7 @@ public enum SkillBoosts {
             SoulShackle.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulShackle) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -970,7 +970,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart heartToHeart) {
                     heartToHeart.setHealthRestore(heartToHeart.getHealthRestore() + 300);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -1000,7 +1000,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Vindicate vindicate) {
                     vindicate.setVindicateDamageReduction(40);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
     ),
@@ -1044,7 +1044,7 @@ public enum SkillBoosts {
                     abstractAbility.multiplyMinMax(1.15f);
                     vitalityLiquor.setMinWaveHealing(vitalityLiquor.getMinWaveHealing() * 1.15f);
                     vitalityLiquor.setMaxWaveHealing(vitalityLiquor.getMaxWaveHealing() * 1.15f);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -1074,7 +1074,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma drainingMiasma) {
                     drainingMiasma.setLeechDuration(10);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
@@ -1105,7 +1105,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof SoulfireBeam soulfireBeam) {
                     soulfireBeam.multiplyMinMax(1.2f);
-                    soulfireBeam.setCooldown(soulfireBeam.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -1132,7 +1132,7 @@ public enum SkillBoosts {
             ContagiousFacade.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ContagiousFacade contagiousFacade) {
-                    contagiousFacade.setDamageAbsorption(contagiousFacade.getDamageAbsorption() + 10);
+                    contagiousFacade.getDamageAbsorption().addAdditiveModifier("Skill Boost", 10);
                 }
             }
     ),
@@ -1144,7 +1144,7 @@ public enum SkillBoosts {
             AstralPlague.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AstralPlague astralPlague) {
-                    astralPlague.setCooldown(astralPlague.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -1175,7 +1175,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof GuardianBeam guardianBeam) {
                     guardianBeam.setShieldPercentSelf(guardianBeam.getShieldPercentSelf() + 5);
                     guardianBeam.setShieldPercentAlly(guardianBeam.getShieldPercentAlly() + 5);
-                    guardianBeam.setCooldown(guardianBeam.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -1217,7 +1217,7 @@ public enum SkillBoosts {
             Sanctuary.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Sanctuary sanctuary) {
-                    sanctuary.setCooldown(sanctuary.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -1248,7 +1248,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof RayOfLight rayOfLight) {
                     rayOfLight.multiplyMinMax(1.2f);
-                    rayOfLight.setCooldown(rayOfLight.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -1287,7 +1287,7 @@ public enum SkillBoosts {
             DivineBlessing.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DivineBlessing divineBlessing) {
-                    divineBlessing.setCooldown(divineBlessing.getCooldown() * .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),

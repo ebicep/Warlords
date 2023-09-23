@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -21,12 +22,12 @@ import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractHolyRadiance extends AbstractAbility implements BlueAbilityIcon {
+public abstract class AbstractHolyRadiance extends AbstractAbility implements BlueAbilityIcon, HitBox {
 
     public int playersHealed = 0;
     public int playersMarked = 0;
 
-    private int radius;
+    private FloatModifiable radius;
 
     public AbstractHolyRadiance(
             String name,
@@ -39,7 +40,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
             int radius
     ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-        this.radius = radius;
+        this.radius = new FloatModifiable(radius);
     }
 
     @Override
@@ -51,8 +52,9 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
             playersMarked++;
         }
 
+        float rad = radius.getCalculatedValue();
         Set<WarlordsEntity> warlordsEntities = PlayerFilter
-                .entitiesAround(player, radius, radius, radius)
+                .entitiesAround(player, rad, rad, rad)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .stream()
                 .collect(Collectors.toSet());
@@ -103,12 +105,15 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     public abstract boolean chain(WarlordsEntity wp, Player player);
 
-    public int getRadius() {
-        return radius;
+    @Override
+    public void runEveryTick() {
+        radius.tick();
+        super.runEveryTick();
     }
 
-    public void setRadius(int radius) {
-        this.radius = radius;
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
     }
 
     public class FlyingArmorStand extends BukkitRunnable {

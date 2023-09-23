@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,7 +33,7 @@ import java.util.List;
 
 public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon, Duration {
 
-    private float damageAbsorption = 30;
+    private FloatModifiable damageAbsorption = new FloatModifiable(30);
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
     private double poisonRadius = 8;
@@ -46,7 +47,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Cover yourself in a protective layer that absorbs ")
-                               .append(Component.text(format(damageAbsorption) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(format(damageAbsorption.getCalculatedValue()) + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" of all incoming damage for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. "))
@@ -150,7 +151,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float afterValue = currentDamageValue * convertToDivisionDecimal(damageAbsorption);
+                float afterValue = currentDamageValue * convertToDivisionDecimal(damageAbsorption.getCalculatedValue());
                 float absorbedAmount = currentDamageValue - afterValue;
                 if (pveMasterUpgrade2 && totalAbsorbed.get() + absorbedAmount >= wp.getMaxHealth()) {
                     return currentDamageValue;
@@ -208,6 +209,12 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     }
 
     @Override
+    public void runEveryTick() {
+        damageAbsorption.tick();
+        super.runEveryTick();
+    }
+
+    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ContagiousFacadeBranch(abilityTree, this);
     }
@@ -222,12 +229,8 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
         this.tickDuration = tickDuration;
     }
 
-    public float getDamageAbsorption() {
+    public FloatModifiable getDamageAbsorption() {
         return damageAbsorption;
-    }
-
-    public void setDamageAbsorption(float damageAbsorption) {
-        this.damageAbsorption = damageAbsorption;
     }
 
     public int getShieldTickDuration() {

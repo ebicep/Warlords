@@ -1,88 +1,32 @@
 package com.ebicep.warlords.pve.upgrades.mage.aquamancer;
 
 import com.ebicep.warlords.abilities.HealingRain;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
-
-    int radius = ability.getRadius();
     float minHealing = ability.getMinDamageHeal();
     float maxHealing = ability.getMaxDamageHeal();
 
     public HealingRainBranch(AbilityTree abilityTree, HealingRain ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+15% Healing",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.15f);
-                    ability.setMaxDamageHeal(maxHealing * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+30% Healing",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.3f);
-                    ability.setMaxDamageHeal(maxHealing * 1.3f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+45% Healing",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.45f);
-                    ability.setMaxDamageHeal(maxHealing * 1.45f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+60% Healing",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minHealing * 1.6f);
-                    ability.setMaxDamageHeal(maxHealing * 1.6f);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Scope - Tier I",
-                "+1 Block rain radius",
-                5000,
-                () -> {
-                    ability.setRadius(radius + 1);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Scope - Tier II",
-                "+2 Blocks rain radius",
-                10000,
-                () -> {
-                    ability.setRadius(radius + 2);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Scope - Tier III",
-                "+3 Blocks rain radius",
-                15000,
-                () -> {
-                    ability.setRadius(radius + 3);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Scope - Tier IV",
-                "+4 Blocks rain radius\n+4s Duration",
-                20000,
-                () -> {
-                    ability.setRadius(radius + 4);
-                    ability.setTickDuration(ability.getTickDuration() + 80);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        value = 1 + value / 100;
+                        ability.setMinDamageHeal(minHealing * value);
+                        ability.setMaxDamageHeal(maxHealing * value);
+                    }
+                }, 15f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeHitBox(ability, 1)
+                .addUpgradeDuration(ability, 80f, false, 4)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Electrifying Storm",

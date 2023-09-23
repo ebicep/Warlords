@@ -42,7 +42,7 @@ public enum SpecialStatPool implements StatPool {
         @Override
         public void applyToAbility(AbstractAbility ability, float value, ItemTier highestTier) {
             float calculatedValue = 1 - value / 100f;
-            ability.setCooldown(ability.getCooldown() * calculatedValue);
+            ability.getCooldown().addMultiplicativeModifierMult("Item Special Stat Pool", calculatedValue);
         }
 
     },

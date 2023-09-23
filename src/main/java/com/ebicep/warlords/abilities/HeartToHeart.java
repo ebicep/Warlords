@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
@@ -19,6 +20,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -32,12 +34,11 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon {
+public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, HitBox {
 
     public int timesUsedWithFlag = 0;
 
-    private int radius = 15;
-    private int verticalRadius = 15;
+    private FloatModifiable radius = new FloatModifiable(15);
     private int vindDuration = 6;
     private float healthRestore = 600;
 
@@ -54,7 +55,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon {
                                .append(Component.text(" seconds, granting immunity to de-buffs. You are healed for "))
                                .append(Component.text(format(healthRestore), NamedTextColor.GREEN))
                                .append(Component.text(" health after reaching your ally. Has a maximum range of"))
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
+                               .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks.\n\nHeart to Heart's range is greatly reduced when holding a flag.", NamedTextColor.GRAY));
 
     }
@@ -70,8 +71,8 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        int radius = getRadius();
-        int verticalRadius = getVerticalRadius();
+        float radius = getHitBoxRadius().getCalculatedValue();
+        float verticalRadius = getHitBoxRadius().getCalculatedValue();
         if (wp.hasFlag()) {
             radius = 10;
             verticalRadius = 2;
@@ -110,16 +111,15 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon {
         return new HeartToHeartBranch(abilityTree, this);
     }
 
-    public int getRadius() {
+    @Override
+    public FloatModifiable getHitBoxRadius() {
         return radius;
     }
 
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public int getVerticalRadius() {
-        return verticalRadius;
+    @Override
+    public void runEveryTick() {
+        radius.tick();
+        super.runEveryTick();
     }
 
     private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {
@@ -232,10 +232,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon {
                 }
             }
         }.runTaskTimer(0, 1);
-    }
-
-    public void setVerticalRadius(int verticalRadius) {
-        this.verticalRadius = verticalRadius;
     }
 
     public void setVindDuration(int vindDuration) {

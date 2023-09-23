@@ -20,7 +20,7 @@ public class MobPlayerClass extends AbstractPlayerClass {
         this(name,
                 maxHealth,
                 (int) Math.round(Arrays.stream(abilities)
-                                       .mapToDouble(AbstractAbility::getEnergyCost)
+                                       .mapToDouble(AbstractAbility::getEnergyCostValue)
                                        .sum()),
                 damageResistance,
                 abilities
@@ -39,10 +39,10 @@ public class MobPlayerClass extends AbstractPlayerClass {
                 maxEnergy,
                 (int) Math.round(Arrays.stream(abilities)
                                        .mapToDouble(ability -> {
-                                           if (ability.getCooldown() == 0) {
-                                               return ability.getEnergyCost();
+                                           if (ability.getCooldownValue() == 0) {
+                                               return ability.getEnergyCostValue();
                                            }
-                                           return ability.getEnergyCost() / ability.getCooldown();
+                                           return ability.getEnergyCostValue() / ability.getCooldownValue();
                                        })
                                        .sum()),
                 0,
@@ -55,15 +55,15 @@ public class MobPlayerClass extends AbstractPlayerClass {
         abilities.add(abilityToAdd);
         maxEnergy = (int) Math.round(abilities
                 .stream()
-                .mapToDouble(AbstractAbility::getEnergyCost)
+                .mapToDouble(AbstractAbility::getEnergyCostValue)
                 .sum());
         energyPerSec = (int) Math.round(abilities
                 .stream()
                 .mapToDouble(ability -> {
-                    if (ability.getCooldown() == 0) {
-                        return ability.getEnergyCost();
+                    if (ability.getCooldownValue() == 0) {
+                        return ability.getEnergyCostValue();
                     }
-                    return ability.getEnergyCost() / ability.getCooldown();
+                    return ability.getEnergyCostValue() / ability.getCooldownValue();
                 })
                 .sum());
     }

@@ -1,87 +1,32 @@
 package com.ebicep.warlords.pve.upgrades.warrior;
 
 import com.ebicep.warlords.abilities.SeismicWave;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-    float cooldown = ability.getCooldown();
 
     public SeismicWaveBranch(AbilityTree abilityTree, SeismicWave ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+5% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.05f);
-                    ability.setMaxDamageHeal(maxDamage * 1.05f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+10% Damage",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+15% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+20% Damage",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.2f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "-3.75% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9725f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "-7.5% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.925f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "-11.25% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8875f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-15% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 5f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability, 0.0375f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Seismic Smash",

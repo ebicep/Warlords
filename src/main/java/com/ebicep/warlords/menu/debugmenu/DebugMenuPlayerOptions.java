@@ -584,12 +584,8 @@ public class DebugMenuPlayerOptions {
                                         Component.text("Click to select!", NamedTextColor.YELLOW)
                                 ).get(),
                         (m, e) -> {
-                            target.setSpec(selectedSpec, skillBoost);
+                            setSpec(player, target, selectedSpec, skillBoost);
                             openSpecMenu(player, target);
-                            sendDebugMessage(player, Component.text("Changed ", NamedTextColor.GREEN)
-                                                              .append(target.getColoredName())
-                                                              .append(Component.text("'s spec to " + selectedSpec.name))
-                            );
                         }
                 );
 
@@ -737,6 +733,14 @@ public class DebugMenuPlayerOptions {
                 menu.openForPlayer(player);
             }
         }
+    }
+
+    public static void setSpec(Player player, WarlordsEntity target, Specializations selectedSpec, SkillBoosts skillBoost) {
+        target.setSpec(selectedSpec, skillBoost);
+        sendDebugMessage(player, Component.text("Changed ", NamedTextColor.GREEN)
+                                          .append(target.getColoredName())
+                                          .append(Component.text("'s spec to " + selectedSpec.name))
+        );
     }
 
 }

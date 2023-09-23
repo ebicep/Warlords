@@ -74,7 +74,7 @@ public class EventDjet extends AbstractZombie implements BossMinionMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (!aboveHealthThreshold() && !wentBelowHealthThreshold) {
             wentBelowHealthThreshold = true;
-            playerClass.getAbilities().get(0).setCooldown(Float.MAX_VALUE);
+            playerClass.getAbilities().get(0).getCooldown().addAdditiveModifier("Djet Health Threshold", 1000000f);
         }
     }
 

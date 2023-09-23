@@ -32,7 +32,7 @@ public class GameDebugCommand extends BaseCommand {
 
     @CommandAlias("gamedebug2|gd2")
     @Description("Auto starts game in wave defense with mobs not spawning")
-    public void gameDebug2(@Conditions("outsideGame") Player player, @Optional Integer branch) {
+    public void gameDebug2(@Conditions("outsideGame") Player player, @Optional Specializations spec) {
         GameStartCommand.startGame(player, false, queueEntryBuilder -> {
             queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
             queueEntryBuilder.setGameMode(GameMode.WAVE_DEFENSE);
@@ -44,6 +44,19 @@ public class GameDebugCommand extends BaseCommand {
                         pveOption.setPauseMobSpawn(true);
                     }
                 }
+                new BukkitRunnable() {
+
+                    @Override
+                    public void run() {
+                        game.warlordsPlayers().forEach(warlordsPlayer -> {
+                            warlordsPlayer.setTakeDamage(false);
+                            warlordsPlayer.setDisableCooldowns(true);
+                            warlordsPlayer.setNoEnergyConsumption(true);
+                            warlordsPlayer.addCurrency(1000000);
+                            warlordsPlayer.setSpec(spec, spec.skillBoosts.get(0));
+                        });
+                    }
+                }.runTaskLater(Warlords.getInstance(), 30);
             });
         });
     }

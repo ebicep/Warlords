@@ -98,7 +98,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
             HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
                     minDamageHeal,
                     maxDamageHeal,
-                    cooldown,
+                    cooldown.getCurrentValue(),
                     energyCost.getCurrentValue(),
                     critChance,
                     critMultiplier
@@ -159,7 +159,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
         HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
                 minDamageHeal,
                 maxDamageHeal,
-                cooldown,
+                cooldown.getCurrentValue(),
                 energyCost.getCurrentValue(),
                 critChance,
                 critMultiplier

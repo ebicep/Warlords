@@ -142,21 +142,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             }
         }
 
-        if (force || upgradesRequiredForMaster <= 0) {
-            upgrade.getOnUpgrade().run();
-            upgrade.setUnlocked(true);
-            if (masterUpgrade.equals(upgrade)) {
-                ability.setPveMasterUpgrade(true);
-            } else if (masterUpgrade2.equals(upgrade)) {
-                ability.setPveMasterUpgrade2(true);
-            }
-
-            player.getAbilityTree().setMaxMasterUpgrades(abilityTree.getMaxMasterUpgrades() - 1);
-            player.subtractCurrency(upgrade.getCurrencyCost());
-            Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 500f, 0.8f);
-
-            globalAnnouncement(player.getGame(), upgrade, ability, autoUpgraded);
-        } else {
+        if (!force && upgradesRequiredForMaster > 0) {
             String s = upgradesRequiredForMaster == 1 ? "" : "s";
             player.sendMessage(Component.text("You need to unlock " + upgradesRequiredForMaster + " more upgrade" + s + " before unlocking the master upgrade!",
                     NamedTextColor.RED
@@ -164,7 +150,21 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             return;
         }
 
-        ability.updateDescription((Player) player.getEntity());
+        upgrade.getOnUpgrade().run();
+        upgrade.setUnlocked(true);
+        if (masterUpgrade.equals(upgrade)) {
+            ability.setPveMasterUpgrade(true);
+        } else if (masterUpgrade2.equals(upgrade)) {
+            ability.setPveMasterUpgrade2(true);
+        }
+
+        abilityTree.setMaxMasterUpgrades(abilityTree.getMaxMasterUpgrades() - 1);
+        player.subtractCurrency(upgrade.getCurrencyCost());
+        Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 500f, 0.8f);
+
+        globalAnnouncement(player.getGame(), upgrade, ability, autoUpgraded);
+
+        player.updateInventory(false);
         if (!autoUpgraded) {
             openUpgradeBranchMenu();
         }
@@ -313,10 +313,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             player.sendMessage(Component.text("You do not have enough Insignia (❂) to buy this upgrade!", NamedTextColor.RED));
             return;
         }
-        if (maxUpgrades <= 0) {
-            player.sendMessage(Component.text("You cannot unlock this upgrade, maximum upgrades reached.", NamedTextColor.RED));
-            return;
-        }
+//        if (maxUpgrades <= 0) {
+//            player.sendMessage(Component.text("You cannot unlock this upgrade, maximum upgrades reached.", NamedTextColor.RED));
+//            return;
+//        }
 
         upgrade.getOnUpgrade().run();
         upgrade.setUnlocked(true);
@@ -332,7 +332,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
         Bukkit.getPluginManager().callEvent(new WarlordsUpgradeUnlockEvent(player, upgrade));
         globalAnnouncement(player.getGame(), upgrade, ability, autoUpgraded);
-        updateInventory(player);
+        player.updateInventory(false);
         if (!autoUpgraded) {
             openUpgradeBranchMenu();
         }
@@ -476,7 +476,6 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     public void updateInventory(WarlordsPlayer wp) {
         wp.updateInventory(false);
-        ability.updateDescription((Player) wp.getEntity());
     }
 
     public int getMaxUpgrades() {

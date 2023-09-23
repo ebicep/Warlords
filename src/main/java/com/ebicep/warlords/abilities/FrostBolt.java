@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Splash;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -13,6 +14,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -32,11 +34,11 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon {
+public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon, Splash {
 
     private int maxFullDistance = 30;
     private float directHitMultiplier = 15;
-    private float hitbox = 4;
+    private FloatModifiable splash = new FloatModifiable(4);
     private int slowness = 25;
 
     public FrostBolt() {
@@ -130,8 +132,9 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         }
 
         int playersHit = 0;
+        float splashRadius = splash.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
+                .entitiesAround(currentLocation, splashRadius, splashRadius, splashRadius)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
@@ -276,6 +279,12 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         return playersHit;
     }
 
+    @Override
+    public void runEveryTick() {
+        splash.tick();
+        super.runEveryTick();
+    }
+
     public int getMaxFullDistance() {
         return maxFullDistance;
     }
@@ -292,14 +301,6 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         this.directHitMultiplier = directHitMultiplier;
     }
 
-    public float getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(float hitbox) {
-        this.hitbox = hitbox;
-    }
-
     public int getSlowness() {
         return slowness;
     }
@@ -309,4 +310,8 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
     }
 
 
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splash;
+    }
 }

@@ -1,15 +1,12 @@
 package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 
 import com.ebicep.warlords.abilities.CrusadersStrike;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike> {
 
     float minDamage;
     float maxDamage;
-    float energyCost = ability.getEnergyCost();
     int energyGiven = ability.getEnergyGiven();
 
     public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {
@@ -21,79 +18,34 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+7.5% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+15% Damage",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+22.5% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+30% Damage",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "-2.5 Energy cost\n+1 Energy given to allies",
-                5000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 2.5f);
-                    ability.setEnergyGiven(energyGiven + 1);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "-5 Energy cost\n+2 Energy given to allies",
-                10000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 5);
-                    ability.setEnergyGiven(energyGiven + 2);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "-7.5 Energy cost\n+3 Energy given to allies",
-                15000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 7.5f);
-                    ability.setEnergyGiven(energyGiven + 3);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "-10 Energy cost\n+4 Energy given to allies",
-                20000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 10);
-                    ability.setEnergyGiven(energyGiven + 4);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        value = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * value);
+                        ability.setMaxDamageHeal(maxDamage * value);
+                    }
+                }, 7.5f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeEnergy(ability, 2.5f)
+                .addUpgrade(new UpgradeTypes.UpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + " Energy Given";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setEnergyGiven(energyGiven + (int) value);
+                    }
+                }, 1f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Crusader’s Slash",
@@ -114,7 +66,7 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
                         """,
                 50000,
                 () -> {
-                    ability.setEnergyCost(ability.getEnergyCost() - 10);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 10);
                     ability.setCritChance(ability.getCritChance() + 5);
                 }
         );

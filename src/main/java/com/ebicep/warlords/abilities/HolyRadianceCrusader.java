@@ -13,6 +13,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
@@ -89,17 +90,17 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
             EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.PUMPKIN), 20);
 
 
-            List<AbstractAbility> abilities = markTarget.getAbilities();
+            List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
             if (pveMasterUpgrade2) {
-                for (AbstractAbility ability : abilities) {
-                    ability.setEnergyCostAdditive(ability.getEnergyCostAdditive() - 10);
+                for (AbstractAbility ability : markTarget.getAbilities()) {
+                    modifiers.add(ability.getEnergyCost().addAdditiveModifier("Unrivalled Radiance", -10));
                 }
             }
 
             HolyRadianceCrusader tempMark = new HolyRadianceCrusader(
                     minDamageHeal,
                     maxDamageHeal,
-                    cooldown,
+                    cooldown.getCurrentValue(),
                     energyCost.getCurrentValue(),
                     critChance,
                     critMultiplier
@@ -116,9 +117,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
                     },
                     cooldownManager -> {
                         if (pveMasterUpgrade2) {
-                            for (AbstractAbility ability : abilities) {
-                                ability.setEnergyCostAdditive(ability.getEnergyCostAdditive() + 10);
-                            }
+                            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                         }
                     },
                     markDuration * 20,

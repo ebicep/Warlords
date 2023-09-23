@@ -1,88 +1,32 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.ShadowStep;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-    float cooldown = ability.getCooldown();
 
     public ShadowStepBranch(AbilityTree abilityTree, ShadowStep ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+7.5% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+15% Damage",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+22.5% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+30% Damage",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 7.5f)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-20% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Shadow Stagger",
@@ -97,13 +41,13 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                 "Shadow Dash",
                 "Shadow Step - Master Upgrade",
                 """
-                        -10% Cooldown reduction
+                        -10% Cooldown Reduction
                          
                         Instead of leaping forward, instantly dash forward +8 blocks, dealing damage to enemies passed through.
                         """,
                 50000,
                 () -> {
-                    ability.setCooldown(ability.getCooldown() * 0.9f);
+                    ability.getCooldown().addMultiplicativeModifierMult("Shadow Dash", 0.9f);
                 }
         );
     }

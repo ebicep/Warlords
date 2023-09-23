@@ -30,7 +30,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
 
-        LightInfusionProtector tempLightInfusion = new LightInfusionProtector(cooldown);
+        LightInfusionProtector tempLightInfusion = new LightInfusionProtector(cooldown.getCurrentValue());
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "INF",

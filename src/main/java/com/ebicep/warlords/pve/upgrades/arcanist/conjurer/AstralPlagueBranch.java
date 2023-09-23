@@ -4,80 +4,22 @@ import com.ebicep.warlords.abilities.AstralPlague;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
-
-    float cooldown = ability.getCooldown();
-    int tickDuration = ability.getTickDuration();
 
     public AstralPlagueBranch(AbilityTree abilityTree, AstralPlague ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Zeal - Tier I",
-                "-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier II",
-                "-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier III",
-                "-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-20% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Chronos - Tier I",
-                "+1.5s Duration",
-                5000,
-                () -> {
-                    ability.setTickDuration(tickDuration + 30);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Chronos - Tier II",
-                "+3s Duration",
-                10000,
-                () -> {
-                    ability.setTickDuration(tickDuration + 60);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Chronos - Tier III",
-                "+4.5s Duration",
-                15000,
-                () -> {
-                    ability.setTickDuration(tickDuration + 90);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Chronos - Tier IV",
-                "+6s Duration",
-                20000,
-                () -> {
-                    ability.setTickDuration(tickDuration + 120);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeDuration(ability, 30f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Virulent State",

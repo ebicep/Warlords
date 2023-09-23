@@ -34,7 +34,6 @@ import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import com.ebicep.warlords.util.warlords.modifiablevalues.IntModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -122,7 +121,6 @@ public abstract class WarlordsEntity {
     private int flagDropCooldown = 0;
     private int flagPickCooldown = 0;
     private int hitCooldown = 20;
-    private IntModifiable baseHitCooldown = new IntModifiable(getBaseHitCooldownValue());
     private int currency;
     private boolean wasSneaking = false;
     private int blocksTravelledCM = 0;
@@ -2924,9 +2922,5 @@ public abstract class WarlordsEntity {
 
     public int getBaseHitCooldownValue() {
         return 20;
-    }
-
-    public IntModifiable getBaseHitCooldown() {
-        return baseHitCooldown;
     }
 }

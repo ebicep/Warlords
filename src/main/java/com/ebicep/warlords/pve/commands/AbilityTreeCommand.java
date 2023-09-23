@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Subcommand;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -17,6 +18,11 @@ public class AbilityTreeCommand extends BaseCommand {
     @Default
     public void openDefault(Player player) {
         open(player);
+    }
+
+    @Subcommand("reset")
+    public void reset(WarlordsPlayer warlordsPlayer) {
+        warlordsPlayer.resetAbilityTree();
     }
 
     public static void open(Player player) {

@@ -1,15 +1,12 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
 import com.ebicep.warlords.abilities.ImpalingStrike;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> {
 
     float minDamage;
     float maxDamage;
-    float energyCost = ability.getEnergyCost();
     float selfLeech = ability.getLeechSelfAmount();
     float allyLeech = ability.getLeechAllyAmount();
 
@@ -22,83 +19,34 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+7.5% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.075f);
-                    ability.setMaxDamageHeal(maxDamage * 1.075f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+15% Damage",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+22.5% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+30% Damage",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 7.5f)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "-2.5 Energy Cost\n+0.25% Leech Heal",
-                5000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 2.5f);
-                    ability.setLeechSelfAmount(selfLeech + 0.25f);
-                    ability.setLeechAllyAmount(allyLeech + 0.25f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "-5 Energy Cost\n+0.5% Leech Heal",
-                10000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 5);
-                    ability.setLeechSelfAmount(selfLeech + 0.5f);
-                    ability.setLeechAllyAmount(allyLeech + 0.5f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "-7.5 Energy Cost\n+0.75% Leech Heal",
-                15000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 7.5f);
-                    ability.setLeechSelfAmount(selfLeech + 0.75f);
-                    ability.setLeechAllyAmount(allyLeech + 0.75f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "-10 Energy Cost\n+1% Leech Heal",
-                20000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 10);
-                    ability.setLeechSelfAmount(selfLeech + 1);
-                    ability.setLeechAllyAmount(allyLeech + 1);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeEnergy(ability, 2.5f)
+                .addUpgrade(new UpgradeTypes.UpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Leech Heal";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setLeechSelfAmount(selfLeech + value);
+                        ability.setLeechAllyAmount(allyLeech + value);
+                    }
+                }, 0.25f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Impaling Slash",
@@ -106,7 +54,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                 "-20 Additional energy cost\n\nYour Impaling Strikes deals triple the damage to enemies afflicted by LEECH",
                 50000,
                 () -> {
-                    ability.setEnergyCost(ability.getEnergyCost() - 20);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 20);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -119,7 +67,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                         """,
                 50000,
                 () -> {
-                    ability.setEnergyCost(ability.getEnergyCost() - 20);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 20);
                 }
         );
     }

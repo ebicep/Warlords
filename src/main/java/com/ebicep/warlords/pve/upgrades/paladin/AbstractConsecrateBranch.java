@@ -1,90 +1,34 @@
 package com.ebicep.warlords.pve.upgrades.paladin;
 
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> extends AbstractUpgradeBranch<T> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-    float radius = ability.getRadius();
-    float cooldown = ability.getCooldown();
 
     public AbstractConsecrateBranch(AbilityTree abilityTree, T ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+10% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+20% Damage",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.2f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+30% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+40% Damage\n-15% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.4f);
-                    ability.setMaxDamageHeal(maxDamage * 1.4f);
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+0.25 Blocks hit radius",
-                5000,
-                () -> {
-                    ability.setRadius(radius + 0.25f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+0.5 Blocks hit radius",
-                10000,
-                () -> {
-                    ability.setRadius(radius + 0.5f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+0.75 Blocks hit radius",
-                15000,
-                () -> {
-                    ability.setRadius(radius + 0.75f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+1 Blocks hit radius\n+1s Duration",
-                20000,
-                () -> {
-                    ability.setRadius(radius + 1);
-                    ability.setTickDuration(ability.getTickDuration() + 20);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 10f)
+                .addUpgradeCooldown(ability, 0.15f, 4)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeHitBox(ability, 0.25f)
+                .addUpgradeDuration(ability, 20f, 4)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Sanctify",
@@ -92,9 +36,9 @@ public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> ext
                 "-30 Energy cost\n+2 Additional blocks hit radius\n-20% Cooldown reduction",
                 50000,
                 () -> {
-                    ability.setEnergyCost(ability.getEnergyCost() - 30);
-                    ability.setRadius(ability.getRadius() + 2);
-                    ability.setCooldown(ability.getCooldown() * 0.8f);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 30);
+                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 2);
+                    ability.getCooldown().addMultiplicativeModifierMult("Sanctify", 0.8f);
                 }
         );
     }

@@ -1,16 +1,12 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
 
 import com.ebicep.warlords.abilities.PoisonousHex;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
 
     float minDamage;
     float maxDamage;
-    float energyCost = ability.getEnergyCost();
-    double projectileSpeed = ability.getProjectileSpeed();
 
     public PoisonousHexBranch(AbilityTree abilityTree, PoisonousHex ability) {
         super(abilityTree, ability);
@@ -21,75 +17,33 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+7.5% Damage",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+15% Damage",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.15f);
-                    ability.setMaxDamageHeal(maxDamage * 1.15f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+22.5% Damage",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.225f);
-                    ability.setMaxDamageHeal(maxDamage * 1.225f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+30% Damage",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 7.5f)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "-5 Energy cost",
-                5000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 5f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "-10 Energy cost",
-                10000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 10f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "-15 Energy cost",
-                15000,
-                () -> {
-                    ability.setEnergyCost(energyCost - 15f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "-20 Energy cost\n+50% Projectile speed",
-                20000,
-                () -> {
-                    ability.setProjectileSpeed(projectileSpeed * 1.5);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeEnergy(ability)
+                .addUpgrade(new UpgradeTypes.UpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+50% Projectile Speed";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setProjectileSpeed(ability.getProjectileSpeed() * 1.5);
+                    }
+                }, 4)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Intrusive Hex",

@@ -93,7 +93,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                         FortifyingHex.giveFortifyingHex(wp, wp);
                     }
                     if (pveMasterUpgrade2) {
-                        subtractCurrentCooldown(cooldown * .35f);
+                        subtractCurrentCooldown(cooldown.getCurrentValue() * .35f);
                     }
                 },
                 tickDuration,

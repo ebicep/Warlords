@@ -106,7 +106,7 @@ public class Narmer extends AbstractZombie implements BossMob {
         if (difficulty == DifficultyIndex.ENDLESS) {
             for (AbstractAbility ability : warlordsNPC.getAbilities()) {
                 if (ability instanceof GroundShred) {
-                    ability.setCooldown(ability.getCooldown() / 2);
+                    ability.getCooldown().addMultiplicativeModifierAdd("Narmer Endless", -0.5f);
                 }
             }
         }
@@ -266,7 +266,7 @@ public class Narmer extends AbstractZombie implements BossMob {
 
                     List<WarlordsEntity> selfAcolytes = spawnNarmerAcolyteAbility.getSelfAcolytes();
                     if (selfAcolytes.contains(dead)) {
-                        spawnNarmerAcolyteAbility.setCurrentCooldown(spawnNarmerAcolyteAbility.getCooldown());
+                        spawnNarmerAcolyteAbility.setCurrentCooldown(spawnNarmerAcolyteAbility.getCooldownValue());
                         selfAcolytes.remove(dead);
                     }
 

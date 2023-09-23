@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -26,9 +27,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class AbstractStrike extends AbstractAbility implements WeaponAbilityIcon {
+public abstract class AbstractStrike extends AbstractAbility implements WeaponAbilityIcon, HitBox {
 
-    private double hitbox = 4.8;
+    private FloatModifiable hitbox = new FloatModifiable(4.8f);
 
     public AbstractStrike(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -37,7 +38,8 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         AtomicBoolean hitPlayer = new AtomicBoolean(false);
-        PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
+        float radius = hitbox.getCalculatedValue();
+        PlayerFilter.entitiesAround(wp, radius, radius, radius)
                     .aliveEnemiesOf(wp)
                     .closestFirst(wp)
                     .requireLineOfSight(wp)
@@ -122,11 +124,14 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
         }
     }
 
-    public double getHitbox() {
-        return hitbox;
+    @Override
+    public void runEveryTick() {
+        hitbox.tick();
+        super.runEveryTick();
     }
 
-    public void setHitbox(double hitbox) {
-        this.hitbox = hitbox;
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hitbox;
     }
 }

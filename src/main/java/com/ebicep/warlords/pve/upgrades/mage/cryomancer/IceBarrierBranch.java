@@ -1,84 +1,46 @@
 package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 
 import com.ebicep.warlords.abilities.IceBarrier;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
 
-    int duration = ability.getTickDuration();
     float damageReductionPercent = ability.getDamageReductionPercent();
 
     public IceBarrierBranch(AbilityTree abilityTree, IceBarrier ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Zeal - Tier I",
-                "+7.5% Damage reduction",
-                5000,
-                () -> {
-                    ability.setDamageReductionPercent(damageReductionPercent + 7.5f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier II",
-                "+15% Damage reduction",
-                10000,
-                () -> {
-                    ability.setDamageReductionPercent(damageReductionPercent + 15);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier III",
-                "+22.5% Damage reduction",
-                15000,
-                () -> {
-                    ability.setDamageReductionPercent(damageReductionPercent + 22.5f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier IV",
-                "+30% Damage reduction\n-10% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(ability.getCooldown() * 0.9f);
-                    ability.setDamageReductionPercent(damageReductionPercent + 30);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+1s Duration",
-                5000,
-                () -> {
-                    ability.setTickDuration(duration + 20);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+2s Duration",
-                10000,
-                () -> {
-                    ability.setTickDuration(duration + 40);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+3s Duration",
-                15000,
-                () -> {
-                    ability.setTickDuration(duration + 60);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+4s Duration\n+20% Slowness on melee hit.",
-                20000,
-                () -> {
-                    ability.setTickDuration(duration + 80);
-                    ability.setSlownessOnMeleeHit(ability.getSlownessOnMeleeHit() + 20);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.ShieldUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Damage Reduction";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setDamageReductionPercent(damageReductionPercent + value);
+                    }
+                }, 7.5f)
+                .addUpgradeCooldown(ability, 0.025f, 4)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeDuration(ability)
+                .addUpgrade(new UpgradeTypes.UpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Movement Speed Reduction";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setSlownessOnMeleeHit((int) (ability.getSlownessOnMeleeHit() + value));
+                    }
+                }, 20f, 4)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Aggravating Hailstorm",

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -21,6 +22,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -35,9 +37,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
+public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitBox {
 
-    private int radius = 13;
+    private FloatModifiable radius = new FloatModifiable(13);
     private int blindnessTicks = 30;
     private int decoyMaxTicksLived = 60;
 
@@ -55,13 +57,13 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
                                    .append(Component.text("health that explodes after "))
                                    .append(Component.text("3 ", NamedTextColor.GOLD))
                                    .append(Component.text("seconds or if killed, damaging nearby enemies. Has an optimal range of "))
-                                   .append(Component.text(radius, NamedTextColor.YELLOW))
+                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                                    .append(Component.text("blocks. Soul Switch has low vertical range."));
         } else {
             description = Component.text("Switch locations with an enemy, blinding them for ")
                                    .append(Component.text("1.5 ", NamedTextColor.GOLD))
                                    .append(Component.text("seconds. Has a range of "))
-                                   .append(Component.text(radius, NamedTextColor.YELLOW))
+                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                                    .append(Component.text("blocks. Soul Switch has low vertical range."));
         }
 
@@ -81,8 +83,9 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
             wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
             return false;
         }
+        float rad = radius.getCalculatedValue();
         for (WarlordsEntity swapTarget : PlayerFilter
-                .entitiesAround(wp.getLocation(), radius, radius / 2f, radius)
+                .entitiesAround(wp.getLocation(), rad, rad / 2f, rad)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
                 .lookingAtFirst(wp)
@@ -243,14 +246,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
         return new SoulSwitchBranch(abilityTree, this);
     }
 
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
     public int getBlindnessTicks() {
         return blindnessTicks;
     }
@@ -265,5 +260,16 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon {
 
     public void setDecoyMaxTicksLived(int decoyMaxTicksLived) {
         this.decoyMaxTicksLived = decoyMaxTicksLived;
+    }
+
+    @Override
+    public void runEveryTick() {
+        radius.tick();
+        super.runEveryTick();
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
     }
 }

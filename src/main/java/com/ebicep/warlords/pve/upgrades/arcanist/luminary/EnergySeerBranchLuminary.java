@@ -4,80 +4,22 @@ import com.ebicep.warlords.abilities.EnergySeerLuminary;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLuminary> {
-
-    int duration = ability.getTickDuration();
-    float cooldown = ability.getCooldown();
 
     public EnergySeerBranchLuminary(AbilityTree abilityTree, EnergySeerLuminary ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Chronos - Tier I",
-                "+0.5s Duration",
-                5000,
-                () -> {
-                    ability.setTickDuration(duration + 10);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Chronos - Tier II",
-                "+1s Duration",
-                10000,
-                () -> {
-                    ability.setTickDuration(duration + 20);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Chronos - Tier III",
-                "+1.5s Duration",
-                15000,
-                () -> {
-                    ability.setTickDuration(duration + 30);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Chronos - Tier IV",
-                "+2s Duration",
-                20000,
-                () -> {
-                    ability.setTickDuration(duration + 40);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeDuration(ability::setBonusDuration, ability::getBonusDuration, 10f)
+                .addTo(treeA);
 
-        treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-20% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Energizing Oracle",
@@ -95,13 +37,13 @@ public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLu
                 "Benevolent Gaze",
                 "Energy Seer - Master Upgrade",
                 """
-                        -20% Cooldown reduction
+                        -20% Additional Cooldown Reduction
                                                 
                         When Energy Seer expires, all allies within a 10 block radius gain 1 stack of Merciful Hex.
                         """,
                 50000,
                 () -> {
-                    ability.setCooldown(ability.getCooldown() * 0.8f);
+                    ability.getCooldown().addMultiplicativeModifierMult("Benevolent Gaze", 0.8f);
                 }
         );
     }

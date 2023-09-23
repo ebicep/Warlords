@@ -1,83 +1,35 @@
 package com.ebicep.warlords.pve.upgrades.warrior.revenant;
 
 import com.ebicep.warlords.abilities.UndyingArmy;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
 
     float flatHealing = ability.getFlatHealing();
-    float cooldown = ability.getCooldown();
 
     public UndyingArmyBranch(AbilityTree abilityTree, UndyingArmy ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+25 Flat healing",
-                5000,
-                () -> {
-                    ability.setFlatHealing(flatHealing + 25);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+50 Flat healing",
-                10000,
-                () -> {
-                    ability.setFlatHealing(flatHealing + 50);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+75 Flat healing",
-                15000,
-                () -> {
-                    ability.setFlatHealing(flatHealing + 75);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+100 Flat healing",
-                20000,
-                () -> {
-                    ability.setFlatHealing(flatHealing + 100);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
 
-        treeB.add(new Upgrade(
-                "Zeal - Tier I",
-                "-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier II",
-                "-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier III",
-                "-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-20% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + " Flat Healing";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setFlatHealing(flatHealing + value);
+                    }
+                }, 25f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Relentless Army",

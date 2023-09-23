@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Splash;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -13,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -25,11 +27,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Fireball extends AbstractProjectile {
+public class Fireball extends AbstractProjectile implements Splash {
 
     private int maxFullDistance = 50;
     private float directHitMultiplier = 15;
-    private float hitbox = 4;
+    private FloatModifiable splashRadius = new FloatModifiable(4);
 
     public Fireball() {
         super("Fireball", 334.4f, 433.4f, 0, 70, 20, 175, 2, 300, false);
@@ -113,8 +115,9 @@ public class Fireball extends AbstractProjectile {
         }
 
         int playersHit = 0;
+        float radius = splashRadius.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, hitbox, hitbox, hitbox)
+                .entitiesAround(currentLocation, radius, radius, radius)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
@@ -227,6 +230,12 @@ public class Fireball extends AbstractProjectile {
         return 1;
     }
 
+    @Override
+    public void runEveryTick() {
+        splashRadius.tick();
+        super.runEveryTick();
+    }
+
     public int getMaxFullDistance() {
         return maxFullDistance;
     }
@@ -243,13 +252,9 @@ public class Fireball extends AbstractProjectile {
         this.directHitMultiplier = directHitMultiplier;
     }
 
-    public float getHitbox() {
-        return hitbox;
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splashRadius;
     }
-
-    public void setHitbox(float hitbox) {
-        this.hitbox = hitbox;
-    }
-
 
 }

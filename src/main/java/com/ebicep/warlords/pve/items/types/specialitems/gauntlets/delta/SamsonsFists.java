@@ -49,7 +49,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         AbstractAbility weapon = warlordsPlayer.getSpec().getWeapon();
-        weapon.setEnergyCost(weapon.getEnergyCost() + 5);
+        weapon.getEnergyCost().addAdditiveModifier("Samson's Fists", 5);
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler

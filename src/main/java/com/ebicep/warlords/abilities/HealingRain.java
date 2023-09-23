@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Overheal;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectPlayer;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -22,6 +19,7 @@ import com.ebicep.warlords.pve.upgrades.mage.aquamancer.HealingRainBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -36,12 +34,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox {
 
     public int playersHealed = 0;
 
     private int tickDuration = 240;
-    private int radius = 8;
+    private FloatModifiable radius = new FloatModifiable(8);
 
     public HealingRain() {
         super("Healing Rain", 100, 125, 52.85f, 50, 25, 200);
@@ -89,11 +87,12 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
             effects.add(new AreaEffect(5, Particle.CLOUD).particlesPerSurface(0.025));
             effects.add(new AreaEffect(5, Particle.DRIP_WATER).particlesPerSurface(0.025));
         }
+        float rad = radius.getCalculatedValue();
         CircleEffect circleEffect = new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
                 location,
-                radius,
+                rad,
                 effects.toArray(new EffectPlayer[0])
         );
 
@@ -110,7 +109,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 cooldownManager -> {
                     if (pveMasterUpgrade) {
                         for (WarlordsEntity enemyInRain : PlayerFilter
-                                .entitiesAround(location, radius, radius, radius)
+                                .entitiesAround(location, rad, rad, rad)
                                 .aliveEnemiesOf(wp)
                                 .limit(8)
                         ) {
@@ -127,7 +126,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     List<WarlordsEntity> teammatesInRain = PlayerFilter
-                            .entitiesAround(location, radius, radius, radius)
+                            .entitiesAround(location, rad, rad, rad)
                             .aliveTeammatesOf(wp)
                             .toList();
                     List<Pair<WarlordsEntity, CircleEffect>> personalCloudList = personalCloud.get();
@@ -195,7 +194,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                     if (ticksElapsed % 40 == 0) {
                         if (pveMasterUpgrade) {
                             for (WarlordsEntity enemyInRain : PlayerFilter
-                                    .entitiesAround(location, radius, radius, radius)
+                                    .entitiesAround(location, rad, rad, rad)
                                     .aliveEnemiesOf(wp)
                                     .limit(8)
                             ) {
@@ -274,12 +273,9 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         return new HealingRainBranch(abilityTree, this);
     }
 
-    public int getRadius() {
+    @Override
+    public FloatModifiable getHitBoxRadius() {
         return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
     }
 
     @Override
@@ -292,5 +288,9 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         this.tickDuration = tickDuration;
     }
 
-
+    @Override
+    public void runEveryTick() {
+        radius.tick();
+        super.runEveryTick();
+    }
 }

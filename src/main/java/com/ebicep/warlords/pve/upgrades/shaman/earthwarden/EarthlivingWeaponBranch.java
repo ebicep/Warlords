@@ -1,89 +1,62 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
 import com.ebicep.warlords.abilities.EarthlivingWeapon;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWeapon> {
 
     int weaponDamage = ability.getWeaponDamage();
     int maxHits = ability.getMaxHits();
-    float cooldown = ability.getCooldown();
 
     public EarthlivingWeaponBranch(AbilityTree abilityTree, EarthlivingWeapon ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Impair - Tier I",
-                "+15% Weapon damage\n-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setWeaponDamage(weaponDamage + 15);
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier II",
-                "+30% Weapon damage\n-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setWeaponDamage(weaponDamage + 30);
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier III",
-                "+45% Weapon damage\n-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setWeaponDamage(weaponDamage + 45);
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Impair - Tier IV",
-                "+60% Weapon Damage\n-20% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setWeaponDamage(weaponDamage + 60);
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + " Weapon Damage";
+                    }
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+4% Proc chance",
-                5000,
-                () -> {
-                    ability.setProcChance(ability.getProcChance() + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+8% Proc chance",
-                10000,
-                () -> {
-                    ability.setProcChance(ability.getProcChance() + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+12% Proc chance",
-                15000,
-                () -> {
-                    ability.setProcChance(ability.getProcChance() + 4);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+16% Proc chance\n+1 Earthliving Weapon hit",
-                20000,
-                () -> {
-                    ability.setProcChance(ability.getProcChance() + 4);
-                    ability.setMaxHits(maxHits + 1);
-                }
-        ));
+                    @Override
+                    public void run(float value) {
+                        ability.setWeaponDamage(weaponDamage + (int) value);
+                    }
+                }, 15f)
+                .addUpgradeCooldown(ability)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.LuckUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Proc Chance";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setProcChance(ability.getProcChance() + value);
+                    }
+
+                    @Override
+                    public boolean autoScaleEffect() {
+                        return false;
+                    }
+                }, 4f)
+                .addUpgrade(new UpgradeTypes.UpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + " Earthliving Weapon Hit";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setMaxHits(maxHits + (int) value);
+                    }
+                }, 1f, 4)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Loamliving Weapon",

@@ -1,89 +1,34 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
 import com.ebicep.warlords.abilities.HolyRadianceAvenger;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianceAvenger> {
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-    float cooldown = ability.getCooldown();
 
     public HolyRadianceBranchAvenger(AbilityTree abilityTree, HolyRadianceAvenger ability) {
         super(abilityTree, ability);
-        treeA.add(new Upgrade(
-                "Zeal - Tier I",
-                "-10% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier II",
-                "-20% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier III",
-                "-30% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.7f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-40% Cooldown reduction\n+1 Block hit radius",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.6f);
-                    ability.setRadius(ability.getRadius() + 1);
-                }
-        ));
 
-        treeB.add(new Upgrade(
-                "Alleviate - Tier I",
-                "+10% Healing",
-                5000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.1f);
-                    ability.setMaxDamageHeal(maxDamage * 1.1f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Alleviate - Tier II",
-                "+20% Healing",
-                10000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.2f);
-                    ability.setMaxDamageHeal(maxDamage * 1.2f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Alleviate - Tier III",
-                "+30% Healing",
-                15000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.3f);
-                    ability.setMaxDamageHeal(maxDamage * 1.3f);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Alleviate - Tier IV",
-                "+40% Healing\n+1 Block hit radius",
-                20000,
-                () -> {
-                    ability.setMinDamageHeal(minDamage * 1.4f);
-                    ability.setMaxDamageHeal(maxDamage * 1.4f);
-                    ability.setRadius(ability.getRadius() + 1);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability, .1f)
+                .addUpgradeHitBox(ability, 1, 4)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        value = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * value);
+                        ability.setMaxDamageHeal(maxDamage * value);
+                    }
+                }, 10f)
+                .addUpgradeHitBox(ability, 1, 4)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Edifying Radiance",

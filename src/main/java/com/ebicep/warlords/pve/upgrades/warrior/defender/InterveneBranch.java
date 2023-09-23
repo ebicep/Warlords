@@ -1,86 +1,37 @@
 package com.ebicep.warlords.pve.upgrades.warrior.defender;
 
 import com.ebicep.warlords.abilities.Intervene;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.*;
+
+import javax.annotation.Nonnull;
 
 public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
 
-    int castRadius = ability.getRadius();
-    int breakRadius = ability.getBreakRadius();
-    float cooldown = ability.getCooldown();
     float maxDamagePrevented = ability.getMaxDamagePrevented();
 
     public InterveneBranch(AbilityTree abilityTree, Intervene ability) {
         super(abilityTree, ability);
 
-        treeA.add(new Upgrade(
-                "Zeal - Tier I",
-                "-5% Cooldown reduction",
-                5000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.95f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier II",
-                "-10% Cooldown reduction",
-                10000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.9f);
+        UpgradeTreeBuilder
+                .create()
+                .addUpgradeCooldown(ability)
+                .addTo(treeA);
 
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier III",
-                "-15% Cooldown reduction",
-                15000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.85f);
-                }
-        ));
-        treeA.add(new Upgrade(
-                "Zeal - Tier IV",
-                "-20% Cooldown reduction",
-                20000,
-                () -> {
-                    ability.setCooldown(cooldown * 0.8f);
-                }
-        ));
+        UpgradeTreeBuilder
+                .create()
+                .addUpgrade(new UpgradeTypes.ShieldUpgradeType() {
+                    @Nonnull
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + " Max Damage Prevented";
+                    }
 
-        treeB.add(new Upgrade(
-                "Spark - Tier I",
-                "+250 Max damage prevented",
-                5000,
-                () -> {
-                    ability.setMaxDamagePrevented(maxDamagePrevented + 250);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier II",
-                "+500 Max damage prevented",
-                10000,
-                () -> {
-                    ability.setMaxDamagePrevented(maxDamagePrevented + 500);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier III",
-                "+750 Max damage prevented",
-                15000,
-                () -> {
-                    ability.setMaxDamagePrevented(maxDamagePrevented + 750);
-                }
-        ));
-        treeB.add(new Upgrade(
-                "Spark - Tier IV",
-                "+1000 Max damage prevented",
-                20000,
-                () -> {
-                    ability.setMaxDamagePrevented(maxDamagePrevented + 1000);
-                }
-        ));
+                    @Override
+                    public void run(float value) {
+                        ability.setMaxDamagePrevented(maxDamagePrevented + value);
+                    }
+                }, 250f)
+                .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Intersection",
