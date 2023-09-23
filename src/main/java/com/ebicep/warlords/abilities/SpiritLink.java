@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -19,6 +20,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -98,6 +100,15 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
 
                 if (pveMasterUpgrade2 && nearPlayer instanceof WarlordsNPC warlordsNPC) {
                     warlordsNPC.getMob().setTarget(wp);
+                    EffectUtils.displayParticle(
+                            Particle.SPELL_INSTANT,
+                            warlordsNPC.getLocation().add(0, 1.2, 0),
+                            5,
+                            .25,
+                            .25,
+                            .25,
+                            0
+                    );
                 }
 
                 break;
@@ -168,6 +179,15 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
 
             if (pveMasterUpgrade2 && bounceTarget instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.getMob().setTarget(wp);
+                EffectUtils.displayParticle(
+                        Particle.SPELL_INSTANT,
+                        warlordsNPC.getLocation().add(0, 1.2, 0),
+                        5,
+                        .25,
+                        .25,
+                        .25,
+                        0
+                );
             }
 
             break;

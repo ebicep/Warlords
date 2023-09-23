@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -19,6 +20,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -39,7 +41,20 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
                 },
-                3 * 20
+                3 * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 20 == 0) {
+                        EffectUtils.displayParticle(
+                                Particle.ELECTRIC_SPARK,
+                                receiver.getLocation().add(0, 1.2, 0),
+                                5,
+                                .25,
+                                .25,
+                                .25,
+                                0
+                        );
+                    }
+                })
         ) {
             @Override
             public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {

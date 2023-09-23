@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -18,12 +19,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
@@ -148,7 +151,20 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
                     },
-                    8 * 20
+                    8 * 20,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 20 == 0) {
+                            EffectUtils.displayParticle(
+                                    Particle.CRIT_MAGIC,
+                                    warlordsEntity.getLocation().add(0, 1.2, 0),
+                                    3,
+                                    .25,
+                                    .25,
+                                    .25,
+                                    0
+                            );
+                        }
+                    })
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {

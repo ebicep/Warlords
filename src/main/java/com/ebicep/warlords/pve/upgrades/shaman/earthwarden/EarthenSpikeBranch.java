@@ -58,12 +58,11 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 """
                         +30 Energy cost
                                                 
-                        Earthen Spike will now release 3 spikes, enemies hit will be ROOTED.
-                                                
-                        ROOTED: Enemies effected by this are connected to each other. Damage dealt to a rooted enemy, will damage all other rooted enemies for 30% of the damage taken.
+                        A single Earthen Spike will be sent out hitting 1 enemy but dealing 4x the damage. Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 35% of the damage dealt.
                         """,
                 50000,
                 () -> {
+                    ability.multiplyMinMax(4);
                 }
         );
     }

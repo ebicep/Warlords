@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -198,6 +199,15 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
         if (pveMasterUpgrade2) {
             if (playersHit >= 2 && playersHit <= 6) {
                 damageMultiplier = 1.2f;
+                EffectUtils.displayParticle(
+                        Particle.CRIT_MAGIC,
+                        hit.getLocation().add(0, 1.2, 0),
+                        5,
+                        .25,
+                        .25,
+                        .25,
+                        0
+                );
             }
         }
         return hit.addDamageInstance(

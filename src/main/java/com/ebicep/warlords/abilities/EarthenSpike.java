@@ -5,14 +5,9 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthenSpikeBranch;
@@ -38,7 +33,6 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox {
@@ -304,63 +298,43 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         if (spikeTarget.hasFlag()) {
             carrierSpiked++;
         }
-        spikeTarget.addDamageInstance(caster, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        spikeTarget.addDamageInstance(caster, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier)
+                   .ifPresent(finalEvent -> {
+                       if (!pveMasterUpgrade2) {
+                           return;
+                       }
+                       if (!finalEvent.isDead()) {
+                           return;
+                       }
+                       float healing = finalEvent.getValue() * .35f;
+                       caster.addHealingInstance(
+                               caster,
+                               "Earthen Verdancy",
+                               healing,
+                               healing,
+                               finalEvent.isCrit() ? 100 : 0,
+                               100
+                       );
+                   });
         if (LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82) {
             spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
         }
         if (pveMasterUpgrade2) {
             spikeTarget.getCooldownManager().removeCooldownByName("Earthen Verdancy");
-            spikeTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    "Earthen Verdancy",
-                    "ROOTED",
-                    EarthenSpike.class,
-                    null,
-                    caster,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {},
-                    5 * 20
-            ) {
-                @Override
-                public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                        return;
-                    }
-                    if (event.getAbility().isEmpty() || event.getWarlordsEntity().equals(event.getAttacker())) {
-                        return;
-                    }
-                    WarlordsEntity victim = event.getWarlordsEntity();
-                    float damage = currentDamageValue * .3f;
-                    PlayerFilter.playingGame(victim.getGame())
-                                .aliveTeammatesOf(victim)
-                                .filter(warlordsEntity -> warlordsEntity.getCooldownManager().hasCooldownFromActionBarName("ROOTED"))
-                                .filter(warlordsEntity -> !warlordsEntity.equals(victim))
-                                .forEach(warlordsEntity -> {
-                                    EffectUtils.playParticleLinkAnimation(
-                                            warlordsEntity.getLocation().add(0, .25, 0),
-                                            victim.getLocation().add(0, .25, 0),
-                                            139,
-                                            69,
-                                            19,
-                                            2
-                                    );
-                                    warlordsEntity.addDamageInstance(
-                                            event.getAttacker(),
-                                            event.getAbility(),
-                                            damage,
-                                            damage,
-                                            0,
-                                            100,
-                                            EnumSet.of(InstanceFlags.RECURSIVE, InstanceFlags.ROOTED)
-                                    );
-                                });
-                }
-            });
+            CripplingStrike.cripple(caster, spikeTarget, "Earthen Verdancy", 5 * 20);
+
         }
     }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new EarthenSpikeBranch(abilityTree, this);
+    }
+
+    @Override
+    public void runEveryTick() {
+        radius.tick();
+        super.runEveryTick();
     }
 
     public float getSpeed() {
@@ -370,7 +344,6 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     public void setSpeed(float speed) {
         this.speed = speed;
     }
-
 
     public double getVerticalVelocity() {
         return verticalVelocity;
@@ -386,12 +359,6 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
     public void setSpikeHitbox(double spikeHitbox) {
         this.spikeHitbox = spikeHitbox;
-    }
-
-    @Override
-    public void runEveryTick() {
-        radius.tick();
-        super.runEveryTick();
     }
 
     @Override
