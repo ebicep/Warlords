@@ -58,7 +58,8 @@ public class ConsecrateCrusader extends AbstractConsecrate {
                 wp.getTeam(),
                 location,
                 radius,
-                new CircumferenceEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 215, 0), 1)),
+                new CircumferenceEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 215, 0), 1))
+                        .particlesPerCircumference(.25),
                 new DoubleLineEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 255, 100), 1))
         );
 

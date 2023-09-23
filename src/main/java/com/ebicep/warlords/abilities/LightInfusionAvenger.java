@@ -85,6 +85,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
                                                          .toList();
             int duration = (5 + teammates.size()) * 20;
             for (WarlordsEntity teammate : teammates) {
+                playCastEffect(teammate);
                 teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Stellar Light",
                         "STELLAR",
@@ -104,22 +105,11 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
             }
         }
 
-        for (int i = 0; i < 10; i++) {
-            wp.getWorld().spawnParticle(
-                    Particle.SPELL,
-                    wp.getLocation().add(0, 1.5, 0),
-                    3,
-                    1,
-                    0,
-                    1,
-                    0.3,
-                    null,
-                    true
-            );
-        }
+        playCastEffect(wp);
 
         return true;
     }
+
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {

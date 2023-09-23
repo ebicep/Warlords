@@ -99,23 +99,12 @@ public class LightInfusionCrusader extends AbstractLightInfusion {
                     .entitiesAround(wp, 6, 6, 6)
                     .aliveTeammatesOfExcludingSelf(wp)
             ) {
+                playCastEffect(infusionTarget);
                 infusionTarget.getSpec().decreaseAllCooldownTimersBy(2);
             }
         }
 
-        for (int i = 0; i < 10; i++) {
-            wp.getWorld().spawnParticle(
-                    Particle.SPELL,
-                    wp.getLocation().add(0, 1.5, 0),
-                    3,
-                    1,
-                    0,
-                    1,
-                    0.3,
-                    null,
-                    true
-            );
-        }
+        playCastEffect(wp);
 
         return true;
     }

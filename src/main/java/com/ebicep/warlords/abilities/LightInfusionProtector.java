@@ -117,6 +117,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                     .entitiesAround(wp, 5, 5, 5)
                     .aliveTeammatesOfExcludingSelf(wp)
             ) {
+                playCastEffect(infusionTarget);
                 infusionTarget.getSpeed().removeSlownessModifiers();
                 infusionTarget.getCooldownManager().removeDebuffCooldowns();
                 infusionTarget.addSpeedModifier(wp, "Chiron Light", speedBuff, tickDuration);
@@ -134,20 +135,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
             }
         }
 
-
-        for (int i = 0; i < 10; i++) {
-            wp.getWorld().spawnParticle(
-                    Particle.SPELL,
-                    wp.getLocation().add(0, 1.5, 0),
-                    3,
-                    1,
-                    0,
-                    1,
-                    0.3,
-                    null,
-                    true
-            );
-        }
+        playCastEffect(wp);
 
         return true;
     }
