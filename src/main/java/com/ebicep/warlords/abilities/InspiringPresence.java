@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
@@ -29,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class InspiringPresence extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox {
+public class InspiringPresence extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, CanReduceCooldowns {
 
     public int playersHit = 0;
 
@@ -183,6 +184,11 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             ability.subtractCurrentCooldown(15);
         }
         we.updateItems();
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade;
     }
 
     public List<WarlordsEntity> getPlayersAffected() {

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractLightInfusion;
+import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -14,7 +15,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-public class LightInfusionCrusader extends AbstractLightInfusion {
+public class LightInfusionCrusader extends AbstractLightInfusion implements CanReduceCooldowns {
 
     public LightInfusionCrusader(float cooldown) {
         super(cooldown);
@@ -114,4 +115,8 @@ public class LightInfusionCrusader extends AbstractLightInfusion {
         return new LightInfusionBranchCrusader(abilityTree, this);
     }
 
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
+    }
 }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
 import com.ebicep.warlords.abilities.internal.Overheal;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -34,7 +35,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
+public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanReduceCooldowns {
 
     public int playersHealed = 0;
     public int debuffsRemoved = 0;
@@ -233,6 +234,11 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon {
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new WaterBreathBranch(abilityTree, this);
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade;
     }
 
     public double getVelocity() {

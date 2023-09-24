@@ -74,42 +74,57 @@ public class FloatModifiable {
 
     public FloatModifier addAdditiveModifier(String log, float additiveModifier) {
         FloatModifier modifier = new FloatModifier(log, additiveModifier);
-        this.additiveModifier.add(modifier);
+        addAdditiveModifier(modifier);
         refresh();
         return modifier;
     }
 
+    private void addAdditiveModifier(FloatModifier modifier) {
+        this.additiveModifier.removeIf(m -> m.getLog().equals(modifier.getLog()));
+        this.additiveModifier.add(modifier);
+    }
+
     public FloatModifier addAdditiveModifier(String log, float additiveModifier, int ticksLeft) {
         FloatModifier modifier = new FloatModifier(log, additiveModifier, ticksLeft);
-        this.additiveModifier.add(modifier);
+        addAdditiveModifier(modifier);
         refresh();
         return modifier;
     }
 
     public FloatModifier addMultiplicativeModifierAdd(String log, float multiplicativeModifier) {
         FloatModifier modifier = new FloatModifier(log, multiplicativeModifier);
-        this.multiplicativeModifierAdditive.add(modifier);
+        addMultiplicativeModifierAdditive(modifier);
         refresh();
         return modifier;
     }
 
+    private void addMultiplicativeModifierAdditive(FloatModifier modifier) {
+        this.multiplicativeModifierAdditive.removeIf(m -> m.getLog().equals(modifier.getLog()));
+        this.multiplicativeModifierAdditive.add(modifier);
+    }
+
     public FloatModifier addMultiplicativeModifierAdd(String log, float multiplicativeModifier, int ticksLeft) {
         FloatModifier modifier = new FloatModifier(log, multiplicativeModifier, ticksLeft);
-        this.multiplicativeModifierAdditive.add(modifier);
+        addMultiplicativeModifierAdditive(modifier);
         refresh();
         return modifier;
     }
 
     public FloatModifier addMultiplicativeModifierMult(String log, float multiplicativeModifier) {
         FloatModifier modifier = new FloatModifier(log, multiplicativeModifier);
-        this.multiplicativeModifierMultiplicative.add(modifier);
+        addMultiplicativeModifierMultiplicative(modifier);
         refresh();
         return modifier;
     }
 
+    private void addMultiplicativeModifierMultiplicative(FloatModifier modifier) {
+        this.multiplicativeModifierMultiplicative.removeIf(m -> m.getLog().equals(modifier.getLog()));
+        this.multiplicativeModifierMultiplicative.add(modifier);
+    }
+
     public FloatModifier addMultiplicativeModifierMult(String log, float multiplicativeModifier, int ticksLeft) {
         FloatModifier modifier = new FloatModifier(log, multiplicativeModifier, ticksLeft);
-        this.multiplicativeModifierMultiplicative.add(modifier);
+        addMultiplicativeModifierMultiplicative(modifier);
         refresh();
         return modifier;
     }
