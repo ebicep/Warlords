@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,6 +23,14 @@ public class Decoy extends AbstractZombie implements BasicMob {
                 0,
                 0
         );
+        this.equipment = new Utils.SimpleEntityEquipment(
+                helmet,
+                chestplate,
+                leggings,
+                boots,
+                weapon
+        );
+        updateEquipment();
     }
 
     @Override

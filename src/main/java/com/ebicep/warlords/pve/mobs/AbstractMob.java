@@ -31,13 +31,11 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -130,8 +128,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             equipment.setChestplate(this.equipment.getChestplate());
             equipment.setHelmet(this.equipment.getHelmet());
             equipment.setItemInMainHand(this.equipment.getItemInMainHand());
-        } else {
-            equipment.setHelmet(new ItemStack(Material.BARRIER));
         }
     }
 

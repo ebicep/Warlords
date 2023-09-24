@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -53,10 +52,6 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
         CryoPod cryoPod;
         if (pveMasterUpgrade && pveOption != null) {
             cryoPod = new CryoPod(warpLocation, wp.getName()) {
-                @Override
-                public Mob getMobRegistry() {
-                    return null;
-                }
 
                 @Override
                 public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
