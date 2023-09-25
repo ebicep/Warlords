@@ -1,10 +1,12 @@
 package com.ebicep.warlords.pve;
 
+import com.ebicep.warlords.game.option.pve.PveOption;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Function;
 
 public enum DifficultyIndex {
 
@@ -20,7 +22,8 @@ public enum DifficultyIndex {
             ),
             NamedTextColor.GREEN,
             25,
-            .75f
+            .75f,
+            pveOption -> .05f
     ),
     NORMAL("Normal",
             List.of(
@@ -32,7 +35,8 @@ public enum DifficultyIndex {
             ),
             NamedTextColor.YELLOW,
             25,
-            1
+            1,
+            pveOption -> .05f + pveOption.getWaveCounter() * .002f // 10% at wave 25
     ),
     HARD("Hard",
             List.of(
@@ -53,7 +57,8 @@ public enum DifficultyIndex {
             ),
             NamedTextColor.GOLD,
             25,
-            2
+            2,
+            pveOption -> .05f + pveOption.getWaveCounter() * .004f // 15% at wave 25
     ),
     EXTREME("Extreme",
             List.of(
@@ -74,7 +79,8 @@ public enum DifficultyIndex {
             ),
             NamedTextColor.DARK_RED,
             25,
-            6
+            6,
+            pveOption -> .05f + pveOption.getWaveCounter() * .006f // 20% at wave 25
     ),
     ENDLESS("Endless",
             List.of(
@@ -87,24 +93,27 @@ public enum DifficultyIndex {
             ),
             NamedTextColor.RED,
             Integer.MAX_VALUE,
-            1.25f
+            1.25f,
+            pveOption -> .05f + pveOption.getWaveCounter() * .002f // 15% at wave 50, 25% at wave 100
     ),
     BOSS_RUSH("Boss Rush",
             List.of(),
             NamedTextColor.RED,
             8,
-            1
+            1,
+            pveOption -> 0f
     ),
     EVENT("Event",
             List.of(),
             NamedTextColor.BLUE,
             Integer.MAX_VALUE,
-            1
+            1,
+            pveOption -> 0f
     ),
 
     ;
 
-    public static final DifficultyIndex[] NON_EVENT = new DifficultyIndex[]{
+    public static final DifficultyIndex[] NON_EVENT = {
             EASY,
             NORMAL,
             HARD,
@@ -118,19 +127,22 @@ public enum DifficultyIndex {
     private final NamedTextColor difficultyColor;
     private final int maxWaves;
     private final float rewardsMultiplier;
+    private final Function<PveOption, Float> aspectChance;
 
     DifficultyIndex(
             @Nonnull String name,
             List<Component> description,
             NamedTextColor difficultyColor,
             int maxWaves,
-            float rewardsMultiplier
+            float rewardsMultiplier,
+            Function<PveOption, Float> aspectChance
     ) {
         this.name = name;
         this.description = description;
         this.difficultyColor = difficultyColor;
         this.maxWaves = maxWaves;
         this.rewardsMultiplier = rewardsMultiplier;
+        this.aspectChance = aspectChance;
     }
 
     public DifficultyIndex next() {
@@ -155,5 +167,9 @@ public enum DifficultyIndex {
 
     public float getRewardsMultiplier() {
         return rewardsMultiplier;
+    }
+
+    public Function<PveOption, Float> getAspectChance() {
+        return aspectChance;
     }
 }

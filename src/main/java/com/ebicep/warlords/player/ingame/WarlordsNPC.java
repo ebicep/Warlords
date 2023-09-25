@@ -202,7 +202,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     public void updateHealth() {
         if (!isDead()) {
             nameDisplay.customName(getNameComponent());
-            nameDisplay.teleport(entity.getLocation().clone().add(0, entity.getHeight() + 0.275, 0));
+            nameDisplay.teleport(entity.getLocation().add(0, entity.getHeight() + 0.275, 0));
 
             entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         }
@@ -211,16 +211,15 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateEntity() {
         if (nameDisplay == null) {
-            nameDisplay = Utils.spawnArmorStand(getLocation(), armorStand -> {
-                armorStand.setGravity(true);
+            nameDisplay = Utils.spawnArmorStand(getLocation().add(0, entity.getHeight() + 0.275, 0), armorStand -> {
                 armorStand.setMarker(true);
-                armorStand.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+                armorStand.customName(getNameComponent());
                 armorStand.setCustomNameVisible(true);
             });
+        } else {
+            nameDisplay.customName(getNameComponent());
+            nameDisplay.teleport(entity.getLocation().add(0, entity.getHeight() + 0.275, 0));
         }
-
-        nameDisplay.customName(getNameComponent());
-        nameDisplay.teleport(entity.getLocation().clone().add(0, entity.getHeight() + 0.275, 0));
 
         entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         entity.setCustomNameVisible(true);

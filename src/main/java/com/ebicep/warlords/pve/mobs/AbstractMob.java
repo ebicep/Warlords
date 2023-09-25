@@ -97,10 +97,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.maxMeleeDamage = maxMeleeDamage;
         this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
 
-        if (ThreadLocalRandom.current().nextDouble() < .05) {
-            this.aspect = Aspect.VALUES[ThreadLocalRandom.current().nextInt(Aspect.VALUES.length)];
-        }
-
         entity.spawn(spawnLocation);
 
         this.mob = entity.get();
@@ -178,8 +174,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         if (!bossBar.name().equals(Component.empty())) {
             showBossBar = true;
         }
-        if (aspect != null) {
-            aspect.apply(warlordsNPC);
+        if (ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option)) {
+            this.aspect = Aspect.VALUES[ThreadLocalRandom.current().nextInt(Aspect.VALUES.length)];
+            this.aspect.apply(warlordsNPC);
         }
     }
 
