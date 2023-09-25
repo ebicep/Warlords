@@ -22,12 +22,15 @@ import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -38,38 +41,6 @@ public class ExperienceManager {
     public static final DecimalFormat EXPERIENCE_DECIMAL_FORMAT = new DecimalFormat("#,###.#");
     public static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
     public static final int LEVEL_TO_PRESTIGE = 100;
-    public static final List<NamedTextColor> PRESTIGE_COLORS = Arrays.asList(
-            NamedTextColor.GRAY,
-            NamedTextColor.RED,
-            NamedTextColor.YELLOW,
-            NamedTextColor.GREEN,
-            NamedTextColor.AQUA,
-            NamedTextColor.BLUE,
-            NamedTextColor.LIGHT_PURPLE,
-            NamedTextColor.BLACK,
-            NamedTextColor.WHITE,
-            NamedTextColor.DARK_GRAY,
-            NamedTextColor.DARK_RED,
-            NamedTextColor.GOLD,
-            NamedTextColor.DARK_AQUA,
-            NamedTextColor.DARK_BLUE,
-            NamedTextColor.DARK_PURPLE,
-            NamedTextColor.GRAY,
-            NamedTextColor.RED,
-            NamedTextColor.YELLOW,
-            NamedTextColor.GREEN,
-            NamedTextColor.AQUA,
-            NamedTextColor.BLUE,
-            NamedTextColor.LIGHT_PURPLE,
-            NamedTextColor.BLACK,
-            NamedTextColor.WHITE,
-            NamedTextColor.DARK_GRAY,
-            NamedTextColor.DARK_RED,
-            NamedTextColor.GOLD,
-            NamedTextColor.DARK_AQUA,
-            NamedTextColor.DARK_BLUE,
-            NamedTextColor.DARK_PURPLE
-    );
     public static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
         put(Classes.MAGE, new Pair<>(2, 1));
         put(Classes.WARRIOR, new Pair<>(4, 1));
@@ -91,6 +62,7 @@ public class ExperienceManager {
         put("flags_captured", new int[]{600, 400, 200});
         put("flags_returned", new int[]{600, 400, 200});
     }};
+    private static final Map<Integer, TextColor> CACHED_PRESTIGE_COLORS = new HashMap<>();
 
     static {
         //caching all levels/experience
@@ -381,7 +353,7 @@ public class ExperienceManager {
         TextComponent.Builder progress = Component.text();
         if (nextLevel == 100) {
             progress.append(Component.text("Progress to ", NamedTextColor.GRAY))
-                    .append(Component.text("PRESTIGE", PRESTIGE_COLORS.get(currentPrestige + 1)))
+                    .append(Component.text("PRESTIGE", getPrestigeColor(currentPrestige + 1)))
                     .append(Component.text(": ", NamedTextColor.GRAY));
         } else {
             progress.append(Component.text("Progress to Level " + nextLevel, NamedTextColor.GRAY))
@@ -390,23 +362,32 @@ public class ExperienceManager {
         return getProgressString(currentExperience, nextLevel, progress.build());
     }
 
+    private static TextColor getPrestigeColor(int prestigeLevel) {
+        return CACHED_PRESTIGE_COLORS.computeIfAbsent(prestigeLevel, integer -> {
+            float hue = (float) prestigeLevel / 100.0f;
+            float saturation = 1f;
+            float brightness = 1f;
+            return TextColor.color(Color.HSBtoRGB(hue, saturation, brightness));
+        });
+    }
+
     public static TextComponent getPrestigeLevelString(UUID uuid, Specializations spec) {
         if (DatabaseManager.playerService == null) {
-            return Component.text("[-]", PRESTIGE_COLORS.get(0));
+            return Component.text("[-]", getPrestigeColor(0));
         }
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         if (databasePlayer == null) {
-            return Component.text("[-]", PRESTIGE_COLORS.get(0));
+            return Component.text("[-]", getPrestigeColor(0));
         }
         int prestigeLevel = databasePlayer.getSpec(spec).getPrestige();
         return Component.text("[", NamedTextColor.DARK_GRAY)
-                        .append(Component.text(prestigeLevel, PRESTIGE_COLORS.get(prestigeLevel)))
+                        .append(Component.text(prestigeLevel, getPrestigeColor(prestigeLevel)))
                         .append(Component.text("]", NamedTextColor.DARK_GRAY));
     }
 
     public static TextComponent getPrestigeLevelString(int prestigeLevel) {
         return Component.text("[", NamedTextColor.DARK_GRAY)
-                        .append(Component.text(prestigeLevel, PRESTIGE_COLORS.get(prestigeLevel)))
+                        .append(Component.text(prestigeLevel, getPrestigeColor(prestigeLevel)))
                         .append(Component.text("]", NamedTextColor.DARK_GRAY));
     }
 

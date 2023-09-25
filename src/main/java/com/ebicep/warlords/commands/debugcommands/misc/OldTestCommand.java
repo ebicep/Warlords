@@ -1,26 +1,25 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
+
+import java.awt.*;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -104,7 +103,23 @@ public class OldTestCommand implements CommandExecutor {
             }
         }
 
+        int level = 20;
         if (commandSender instanceof Player player) {
+            for (int i = 0; i < 110; i++) {
+                player.sendMessage(Component.text("[", NamedTextColor.DARK_GRAY)
+                                            .append(Component.text("MAG", NamedTextColor.GOLD))
+                                            .append(Component.text("]["))
+                                            .append(Component.text((level < 10 ? "0" : "") + level, NamedTextColor.GRAY))
+                                            .append(Component.text("]"))
+                                            .append(Component.text("[", NamedTextColor.DARK_GRAY)
+                                                             .append(Component.text(i, TextColor.color(generateDistinctColor(i).getRGB())))
+                                                             .append(Component.text("]", NamedTextColor.DARK_GRAY)))
+                                            .append(Component.text("["))
+                                            .append(Specializations.PYROMANCER.specType.getColoredSymbol())
+                                            .append(Component.text("] "))
+                                            .append(Permissions.getPrefixWithColor(player, true)));
+            }
+
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {
 //                for (Currencies value : Currencies.VALUES) {
 //                    System.out.println(value.name + ": " + databasePlayer.getPveStats().getCurrencyValue(value));
@@ -176,28 +191,6 @@ public class OldTestCommand implements CommandExecutor {
 //            );
 
 
-            ArmorStand stand = Utils.spawnArmorStand(player.getLocation(), armorStand -> {
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.PACKED_ICE));
-                armorStand.setMarker(true);
-            });
-            Location location = player.getLocation();
-            new BukkitRunnable() {
-
-                int counter = 0;
-                LocationBuilder locationBuilder = new LocationBuilder(location);
-
-                @Override
-                public void run() {
-                    counter++;
-                    stand.teleport(locationBuilder.forward(1));
-                    if (counter == 50) {
-                        stand.remove();
-                        cancel();
-                    }
-                }
-            }.runTaskTimer(Warlords.getInstance(), 0, 10);
-
-
 //            for (int i = 0; i < 10_000; i++) {
 //                player.sendMessage(NumberFormat.addCommaAndRound(i));
 //            }
@@ -230,7 +223,6 @@ public class OldTestCommand implements CommandExecutor {
 ////                      serverPlayer.connection.send(packet);
 //                  });
         }
-
 
 
 //
@@ -392,6 +384,13 @@ public class OldTestCommand implements CommandExecutor {
 
 
         return true;
+    }
+
+    private static Color generateDistinctColor(int prestigeLevel) {
+        float hue = (float) prestigeLevel / 100.0f;
+        float saturation = 1f;
+        float brightness = 1f;
+        return Color.getHSBColor(hue, saturation, brightness);
     }
 
 
