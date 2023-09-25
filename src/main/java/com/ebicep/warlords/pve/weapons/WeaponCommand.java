@@ -69,10 +69,16 @@ public class WeaponCommand extends BaseCommand {
 
     @Subcommand("legendary")
     @Description("Give yourself a legendary weapon with your selected specialization, optional title")
-    public void legendary(Player player, @Optional LegendaryTitles title, @Default("0") @Conditions("limits:min=0,max=4") Integer level) {
+    public void legendary(
+            Player player,
+            @Optional LegendaryTitles title,
+            @Default("0") @Conditions("limits:min=0,max=4") Integer upgradeLevel,
+            @Default("0") @Conditions("limits:min=0,max=4") Integer titleUpgradeLevel
+    ) {
         if (title != null) {
             AbstractLegendaryWeapon legendaryWeapon = title.create.apply(player.getUniqueId());
-            legendaryWeapon.setTitleLevel(level);
+            legendaryWeapon.setUpgradeLevel(upgradeLevel);
+            legendaryWeapon.setTitleLevel(titleUpgradeLevel);
             giveWeapon(player, legendaryWeapon);
         } else {
             giveWeapon(player, new LegendaryWeapon(player.getUniqueId()));

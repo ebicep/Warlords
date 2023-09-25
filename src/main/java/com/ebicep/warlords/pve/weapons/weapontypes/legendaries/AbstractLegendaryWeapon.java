@@ -198,6 +198,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return upgradeLevel;
     }
 
+    public void setUpgradeLevel(int upgradeLevel) {
+        this.upgradeLevel = upgradeLevel;
+    }
+
     @Override
     public int getMaxUpgradeLevel() {
         return isAscendant() ? 5 : 4;
