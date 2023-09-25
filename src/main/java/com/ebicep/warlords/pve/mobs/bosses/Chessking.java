@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.slime.AbstractSlime;
+import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -22,6 +23,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class Chessking extends AbstractSlime implements BossMob {
+
+    private static final int MAX_SLIMY_CHESS = 50;
 
     public Chessking(Location spawnLocation) {
         this(spawnLocation, "Chessking", 75000, 0.3f, 30, 0, 0);
@@ -59,7 +62,11 @@ public class Chessking extends AbstractSlime implements BossMob {
                 ) {
                     @Override
                     public int getSpawnAmount() {
-                        return (int) pveOption.getGame().warlordsPlayers().count();
+                        int slimyChessCount = pveOption.getMobs().stream()
+                                                       .filter(mob -> mob instanceof SlimyChess)
+                                                       .mapToInt(mob -> 1)
+                                                       .sum();
+                        return Math.min(MAX_SLIMY_CHESS - slimyChessCount, (int) pveOption.getGame().warlordsPlayers().count());
                     }
                 }
         );
