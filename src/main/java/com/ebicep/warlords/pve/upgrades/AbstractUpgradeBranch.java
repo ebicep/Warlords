@@ -313,10 +313,10 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             player.sendMessage(Component.text("You do not have enough Insignia (❂) to buy this upgrade!", NamedTextColor.RED));
             return;
         }
-//        if (maxUpgrades <= 0) {
-//            player.sendMessage(Component.text("You cannot unlock this upgrade, maximum upgrades reached.", NamedTextColor.RED));
-//            return;
-//        }
+        if (maxUpgrades <= 0) {
+            player.sendMessage(Component.text("You cannot unlock this upgrade, maximum upgrades reached.", NamedTextColor.RED));
+            return;
+        }
 
         upgrade.getOnUpgrade().run();
         upgrade.setUnlocked(true);
