@@ -214,7 +214,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             if (shouldApplyCooldown) {
                 ability.addTimesUsed();
                 if (!warlordsNPC.isDisableCooldowns()) {
-                    ability.setCurrentCooldown(ability.getCurrentCooldown());
+                    ability.setCurrentCooldown(ability.getCooldownValue());
                 }
             }
         });
