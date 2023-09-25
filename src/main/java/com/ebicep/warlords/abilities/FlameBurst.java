@@ -121,8 +121,6 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
         if (pveMasterUpgrade2) {
             return 0;
         }
-        WarlordsEntity shooter = projectile.getShooter();
-        Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
 
         Utils.playGlobalSound(currentLocation, "mage.flameburst.impact", 2, 1);
@@ -131,10 +129,52 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
         EffectUtils.displayParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 2);
         EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1);
 
-        return hit(projectile, shooter, startingLocation, currentLocation);
+        if (hit != null) {
+            hitEntity(projectile, hit);
+        }
+        return hit(projectile);
     }
 
-    private int hit(@Nonnull InternalProjectile projectile, WarlordsEntity shooter, Location startingLocation, Location currentLocation) {
+    private void hitEntity(@Nonnull InternalProjectile projectile, WarlordsEntity nearEntity) {
+        WarlordsEntity shooter = projectile.getShooter();
+        Location startingLocation = projectile.getStartingLocation();
+        Location currentLocation = projectile.getCurrentLocation();
+
+        getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
+        if (nearEntity.onHorse()) {
+            numberOfDismounts++;
+        }
+
+        if (pveMasterUpgrade) {
+            int damageIncrease = (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685);
+            nearEntity.addDamageInstance(
+                    shooter,
+                    name,
+                    minDamageHeal + damageIncrease,
+                    maxDamageHeal + damageIncrease,
+                    critChance + damageIncrease,
+                    critMultiplier + damageIncrease
+            );
+        } else {
+            float blocksTravelled = (float) projectile.getBlocksTravelled();
+            if (pveMasterUpgrade2) {
+                blocksTravelled = Math.min(30, blocksTravelled);
+            }
+            nearEntity.addDamageInstance(
+                    shooter,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance + blocksTravelled,
+                    critMultiplier
+            );
+        }
+    }
+
+    private int hit(@Nonnull InternalProjectile projectile) {
+        WarlordsEntity shooter = projectile.getShooter();
+        Location currentLocation = projectile.getCurrentLocation();
+
         int playersHit = 0;
         float splashRadius = splash.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
@@ -142,36 +182,8 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
             playersHit++;
-            if (nearEntity.onHorse()) {
-                numberOfDismounts++;
-            }
-
-            if (pveMasterUpgrade) {
-                int damageIncrease = (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685);
-                nearEntity.addDamageInstance(
-                        shooter,
-                        name,
-                        minDamageHeal + damageIncrease,
-                        maxDamageHeal + damageIncrease,
-                        critChance + damageIncrease,
-                        critMultiplier + damageIncrease
-                );
-            } else {
-                float blocksTravelled = (float) projectile.getBlocksTravelled();
-                if (pveMasterUpgrade2) {
-                    blocksTravelled = Math.min(30, blocksTravelled);
-                }
-                nearEntity.addDamageInstance(
-                        shooter,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance + blocksTravelled,
-                        critMultiplier
-                );
-            }
+            hitEntity(projectile, nearEntity);
         }
         return playersHit;
     }
@@ -223,7 +235,8 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
         if (!pveMasterUpgrade2) {
             return;
         }
-        hit(projectile, projectile.getShooter(), projectile.getStartingLocation(), impactLocation);
+        hitEntity(projectile, hit);
+        hit(projectile);
     }
 
     @Override
