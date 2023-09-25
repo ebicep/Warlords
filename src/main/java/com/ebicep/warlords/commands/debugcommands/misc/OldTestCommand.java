@@ -1,17 +1,16 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.permissions.Permissions;
-import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.LegendaryBenevolent;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
@@ -20,6 +19,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
+import java.util.LinkedHashMap;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -93,6 +93,13 @@ public class OldTestCommand implements CommandExecutor {
         ChatUtils.MessageType.WARLORDS.sendMessage("Modified " + modifiedCount + " documents in " + collection);
     }
 
+    private static Color generateDistinctColor(int prestigeLevel) {
+        float hue = (float) prestigeLevel / 100.0f;
+        float saturation = 1f;
+        float brightness = 1f;
+        return Color.getHSBColor(hue, saturation, brightness);
+    }
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
@@ -105,19 +112,18 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
-            for (int i = 0; i < 110; i++) {
-                player.sendMessage(Component.text("[", NamedTextColor.DARK_GRAY)
-                                            .append(Component.text("MAG", NamedTextColor.GOLD))
-                                            .append(Component.text("]["))
-                                            .append(Component.text((level < 10 ? "0" : "") + level, NamedTextColor.GRAY))
-                                            .append(Component.text("]"))
-                                            .append(Component.text("[", NamedTextColor.DARK_GRAY)
-                                                             .append(Component.text(i, TextColor.color(generateDistinctColor(i).getRGB())))
-                                                             .append(Component.text("]", NamedTextColor.DARK_GRAY)))
-                                            .append(Component.text("["))
-                                            .append(Specializations.PYROMANCER.specType.getColoredSymbol())
-                                            .append(Component.text("] "))
-                                            .append(Permissions.getPrefixWithColor(player, true)));
+            LegendaryBenevolent legendaryWeapon = new LegendaryBenevolent();
+            System.out.println("Upgrade Costs:");
+            for (int i = 1; i < 6; i++) {
+                LinkedHashMap<Currencies, Long> upgradeCost = legendaryWeapon.getUpgradeCost(i);
+                System.out.println("Level: " + i);
+                upgradeCost.forEach((currencies, aLong) -> System.out.println(NumberFormat.addCommas(aLong) + " " + currencies.getName() + (aLong == 1 || !currencies.pluralIncludeS() ? "" : "s")));
+            }
+            System.out.println("Title Upgrade Costs:");
+            for (int i = 1; i < 6; i++) {
+                LinkedHashMap<Spendable, Long> upgradeCost = legendaryWeapon.getTitleUpgradeCost(i);
+                System.out.println("Level: " + i);
+                upgradeCost.forEach((currencies, aLong) -> System.out.println(NumberFormat.addCommas(aLong) + " " + currencies.getName() + (aLong == 1 || !currencies.pluralIncludeS() ? "" : "s")));
             }
 
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {
@@ -384,13 +390,6 @@ public class OldTestCommand implements CommandExecutor {
 
 
         return true;
-    }
-
-    private static Color generateDistinctColor(int prestigeLevel) {
-        float hue = (float) prestigeLevel / 100.0f;
-        float saturation = 1f;
-        float brightness = 1f;
-        return Color.getHSBColor(hue, saturation, brightness);
     }
 
 

@@ -567,12 +567,12 @@ public class WeaponManagerMenu {
                                 player.sendMessage(Component.text("This title level upgrade is currently unavailable!", NamedTextColor.RED));
                                 return;
                             }
-                            if (legendaryWeapon.getTitleLevel() >= 4) {
+                            if (legendaryWeapon.getTitleLevel() >= legendaryWeapon.getMaxUpgradeLevel()) {
                                 player.sendMessage(Component.text("You can't upgrade this weapon title anymore.", NamedTextColor.RED));
                                 return;
                             }
                             if (legendaryWeapon.getTitleLevelUpgraded() > legendaryWeapon.getUpgradeLevel()) {
-                                player.sendMessage(Component.text("You need to upgrade your weapon to upgrade its title.", NamedTextColor.RED));
+                                player.sendMessage(Component.text("Weapon title level cannot be higher than weapon level. Upgrade your weapon first.", NamedTextColor.RED));
                                 return;
                             }
                             for (Map.Entry<Spendable, Long> enumLongEntry : legendaryWeapon.getTitleUpgradeCost(legendaryWeapon.getTitleLevelUpgraded())

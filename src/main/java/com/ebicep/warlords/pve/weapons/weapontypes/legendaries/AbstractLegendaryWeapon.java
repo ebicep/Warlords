@@ -93,6 +93,10 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         return titles;
     }
 
+    public boolean isAscendant() {
+        return ascendant;
+    }
+
     public List<Component> getCostLore() {
         return PvEUtils.getCostLore(getCost(), "Title Cost", true);
     }
@@ -197,6 +201,42 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Override
     public int getMaxUpgradeLevel() {
         return isAscendant() ? 5 : 4;
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getUpgradeCost(int tier) {
+        LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
+        if (tier == 5 && !ascendant) {
+            return cost;
+        }
+        switch (tier) {
+            case 1 -> {
+                cost.put(Currencies.COIN, 100_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 10_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
+            }
+            case 2 -> {
+                cost.put(Currencies.COIN, 250_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 15_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 7_500L);
+            }
+            case 3 -> {
+                cost.put(Currencies.COIN, 500_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 20_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 10_000L);
+            }
+            case 4 -> {
+                cost.put(Currencies.COIN, 1_000_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 25_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 15_000L);
+            }
+            case 5 -> {
+                cost.put(Currencies.COIN, 2_000_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 30_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 20_000L);
+            }
+        }
+        return cost;
     }
 
     public float getSpeedBonus() {
@@ -655,40 +695,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         }
     }
 
-    @Override
-    public LinkedHashMap<Currencies, Long> getUpgradeCost(int tier) {
-        LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
-        switch (tier) {
-            case 1 -> {
-                cost.put(Currencies.COIN, 100000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
-            }
-            case 2 -> {
-                cost.put(Currencies.COIN, 250000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 15000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 10000L);
-            }
-            case 3 -> {
-                cost.put(Currencies.COIN, 500000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 20000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 15000L);
-            }
-            case 4 -> {
-                cost.put(Currencies.COIN, 1000000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 25000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 20000L);
-            }
-            case 5 -> {
-                cost.put(Currencies.COIN, 2000000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 50000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 40000L);
-                cost.put(Currencies.ASCENDANT_SHARD, 100L);
-            }
-        }
-        return cost;
-    }
-
     public LinkedHashMap<Spendable, Long> getTitleUpgradeCost(int tier) {
         LinkedHashMap<Spendable, Long> cost = new LinkedHashMap<>();
         switch (tier) {
@@ -696,33 +702,36 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 cost.put(Currencies.COIN, 500_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 2500L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 1000L);
-                cost.put(MobDrop.ZENITH_STAR, 2L);
+                cost.put(MobDrop.ZENITH_STAR, 1L);
             }
             case 2 -> {
                 cost.put(Currencies.COIN, 1_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 5000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 2000L);
-                cost.put(MobDrop.ZENITH_STAR, 4L);
+                cost.put(MobDrop.ZENITH_STAR, 3L);
             }
             case 3 -> {
                 cost.put(Currencies.COIN, 2_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 7500L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 4000L);
-                cost.put(MobDrop.ZENITH_STAR, 6L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 3000L);
+                cost.put(MobDrop.ZENITH_STAR, 5L);
                 cost.put(Currencies.LIMIT_BREAKER, 1L);
             }
             case 4 -> {
                 cost.put(Currencies.COIN, 4_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 10000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 8000L);
-                cost.put(MobDrop.ZENITH_STAR, 8L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
+                cost.put(MobDrop.ZENITH_STAR, 7L);
                 cost.put(Currencies.LIMIT_BREAKER, 2L);
+            }
+            case 5 -> {
+                cost.put(Currencies.COIN, 8_000_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 15000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 8000L);
+                cost.put(MobDrop.ZENITH_STAR, 9L);
+                cost.put(Currencies.LIMIT_BREAKER, 3L);
             }
         }
         return cost;
-    }
-
-    public boolean isAscendant() {
-        return ascendant;
     }
 }
