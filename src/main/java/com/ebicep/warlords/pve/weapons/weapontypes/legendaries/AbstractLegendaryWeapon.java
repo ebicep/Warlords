@@ -210,9 +210,6 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Override
     public LinkedHashMap<Currencies, Long> getUpgradeCost(int tier) {
         LinkedHashMap<Currencies, Long> cost = new LinkedHashMap<>();
-        if (tier == 5 && !ascendant) {
-            return cost;
-        }
         switch (tier) {
             case 1 -> {
                 cost.put(Currencies.COIN, 100_000L);
@@ -238,6 +235,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 cost.put(Currencies.COIN, 2_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 30_000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 20_000L);
+                cost.put(Currencies.ASCENDANT_SHARD, 1L);
             }
         }
         return cost;

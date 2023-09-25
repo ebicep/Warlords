@@ -42,7 +42,7 @@ public class WeaponLegendaryCraftMenu {
             }
         }
 
-        Menu menu = new Menu("Craft Legendary Weapon", 9 * 6);
+        Menu menu = new Menu("Witchard the Weapon Specialist", 9 * 6);
 
         menu.setItem(4, 2,
                 new ItemBuilder(Material.GUNPOWDER)
