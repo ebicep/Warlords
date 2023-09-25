@@ -1,6 +1,6 @@
 package com.ebicep.customentities.nms.pve;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalTargetAggroWarlordsEntity;
+import com.ebicep.customentities.nms.pve.pathfindergoals.TargetAggroWarlordsEntityGoal;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -122,7 +122,7 @@ public interface CustomEntity<T extends Mob> {
 
     default void aiTargetClosest() {
         T entity = get();
-        entity.targetSelector.addGoal(2, new PathfinderGoalTargetAggroWarlordsEntity(entity));
+        entity.targetSelector.addGoal(2, new TargetAggroWarlordsEntityGoal(entity));
     }
 
     default void spawn(Location location) {
@@ -148,3 +148,4 @@ public interface CustomEntity<T extends Mob> {
         return null;
     }
 }
+

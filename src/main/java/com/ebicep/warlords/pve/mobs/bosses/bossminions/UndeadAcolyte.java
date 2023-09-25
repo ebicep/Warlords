@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalTargetNarmerAcolyte;
+import com.ebicep.customentities.nms.pve.pathfindergoals.TargetNarmerAcolyteGoal;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -52,7 +52,7 @@ public class UndeadAcolyte extends AbstractZombie implements BossMinionMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        mob.targetSelector.addGoal(0, new PathfinderGoalTargetNarmerAcolyte(mob));
+        mob.targetSelector.addGoal(0, new TargetNarmerAcolyteGoal(mob));
     }
 
     @Override

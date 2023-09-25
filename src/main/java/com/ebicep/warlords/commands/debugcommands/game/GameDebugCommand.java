@@ -53,7 +53,9 @@ public class GameDebugCommand extends BaseCommand {
                             warlordsPlayer.setDisableCooldowns(true);
                             warlordsPlayer.setNoEnergyConsumption(true);
                             warlordsPlayer.addCurrency(1000000);
-                            warlordsPlayer.setSpec(spec, spec.skillBoosts.get(0));
+                            if (spec != null) {
+                                warlordsPlayer.setSpec(spec, spec.skillBoosts.get(0));
+                            }
                         });
                     }
                 }.runTaskLater(Warlords.getInstance(), 30);

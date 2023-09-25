@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.customentities.nms.pve.CustomSlime;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -23,33 +24,7 @@ import java.util.List;
 public class Chessking extends AbstractSlime implements BossMob {
 
     public Chessking(Location spawnLocation) {
-        super(spawnLocation,
-                "Chessking",
-                100000,
-                0.3f,
-                30,
-                0,
-                0,
-                new Belch(),
-                new SpawnMobAbility(
-                        20,
-                        Mob.SLIME_GUARD
-                ) {
-                    @Override
-                    public int getSpawnAmount() {
-                        return (int) pveOption.getGame().warlordsPlayers().count();
-                    }
-                },
-                new SpawnMobAbility(
-                        60,
-                        Mob.SLIMY_CHESS
-                ) {
-                    @Override
-                    public int getSpawnAmount() {
-                        return (int) pveOption.getGame().warlordsPlayers().count();
-                    }
-                }
-        );
+        this(spawnLocation, "Chessking", 75000, 0.3f, 30, 0, 0);
     }
 
     public Chessking(
@@ -108,12 +83,11 @@ public class Chessking extends AbstractSlime implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        this.entity.get().setSize(19, true);
+        this.entity.get().setSize(20, true);
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-
     }
 
     @Override
@@ -129,9 +103,23 @@ public class Chessking extends AbstractSlime implements BossMob {
         } else {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 0.2f);
         }
+        CustomSlime customSlime = this.getEntity().get();
+        float healthPercent = warlordsNPC.getHealth() / warlordsNPC.getMaxHealth();
+        int size = customSlime.getSize();
+        int newSize = (int) (21 * healthPercent);
+        if (size != newSize && 0 < newSize && newSize < 21) {
+            customSlime.setSize(newSize, true);
+            customSlime.setCustomJumpPower(1 + ((20 - newSize) * .02f));
+            warlordsNPC.getAbilitiesMatching(Belch.class)
+                       .forEach(belch -> belch.setRange(9 - ((20 - newSize) * .2f)));
+            warlordsNPC.getAbilitiesMatching(SpawnMobAbility.class)
+                       .forEach(spawnMobAbility -> spawnMobAbility.getCooldown().addMultiplicativeModifierAdd("Chessking", -((20 - newSize) * .01f)));
+        }
     }
 
     private static class Belch extends AbstractAbility {
+
+        private float range = 9;
 
         public Belch() {
             super("Belch", 2800, 3600, 10, 100);
@@ -152,7 +140,7 @@ public class Chessking extends AbstractSlime implements BossMob {
             wp.subtractEnergy(energyCost, false);
 
             for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(wp, 8, 8, 8)
+                    .entitiesAround(wp, range, range, range)
                     .aliveEnemiesOf(wp)
             ) {
                 we.addDamageInstance(
@@ -165,6 +153,14 @@ public class Chessking extends AbstractSlime implements BossMob {
                 );
             }
             return true;
+        }
+
+        public float getRange() {
+            return range;
+        }
+
+        public void setRange(float range) {
+            this.range = range;
         }
     }
 

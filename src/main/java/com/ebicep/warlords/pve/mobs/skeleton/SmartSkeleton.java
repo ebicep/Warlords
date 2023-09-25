@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalPredictTargetFutureLocationGoal;
-import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalTargetAggroWarlordsEntity;
+import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
 import com.ebicep.customentities.nms.pve.pathfindergoals.StrafeGoal;
+import com.ebicep.customentities.nms.pve.pathfindergoals.TargetAggroWarlordsEntityGoal;
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -59,8 +59,8 @@ public class SmartSkeleton extends AbstractSkeleton implements ChampionMob {
         entity.resetAI();
         entity.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100);
         entity.addGoalAI(1, new StrafeGoal(mob));
-        entity.addGoalAI(2, new PathfinderGoalPredictTargetFutureLocationGoal(mob));
-        entity.addTargetAI(1, new PathfinderGoalTargetAggroWarlordsEntity(mob));
+        entity.addGoalAI(2, new PredictTargetFutureLocationGoal(mob));
+        entity.addTargetAI(1, new TargetAggroWarlordsEntityGoal(mob));
     }
 
     @Override

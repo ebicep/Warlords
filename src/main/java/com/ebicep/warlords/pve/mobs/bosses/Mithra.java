@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalPredictTargetFutureLocationGoal;
+import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -87,7 +87,7 @@ public class Mithra extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        entity.addGoalAI(2, new PathfinderGoalPredictTargetFutureLocationGoal(mob));
+        entity.addGoalAI(2, new PredictTargetFutureLocationGoal(mob));
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new ArachnoVeneratus(spawnLocation));

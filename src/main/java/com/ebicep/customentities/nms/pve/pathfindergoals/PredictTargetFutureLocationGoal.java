@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class PathfinderGoalPredictTargetFutureLocationGoal extends Goal {
+public class PredictTargetFutureLocationGoal extends Goal {
 
     private final Mob self;
     private final AtomicInteger delay = new AtomicInteger((int) (Math.random() * 10)); //countdown for delay, starts at a random number so shots are not all fired at the same time
@@ -20,7 +20,7 @@ public class PathfinderGoalPredictTargetFutureLocationGoal extends Goal {
     private float yaw;
     private float pitch;
 
-    public PathfinderGoalPredictTargetFutureLocationGoal(Mob self) {
+    public PredictTargetFutureLocationGoal(Mob self) {
         this.self = self;
     }
 

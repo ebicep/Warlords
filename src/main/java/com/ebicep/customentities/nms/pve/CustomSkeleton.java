@@ -1,6 +1,6 @@
 package com.ebicep.customentities.nms.pve;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalPredictTargetFutureLocationGoal;
+import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkeleton> {
 
-    private final PathfinderGoalPredictTargetFutureLocationGoal pathfinderGoalPredictTargetFutureLocationGoal = new PathfinderGoalPredictTargetFutureLocationGoal(this);
+    private final PredictTargetFutureLocationGoal predictTargetFutureLocationGoal = new PredictTargetFutureLocationGoal(this);
     private boolean stunned;
 
     public CustomSkeleton(org.bukkit.World world) {
@@ -25,7 +25,7 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
         super(EntityType.SKELETON, serverLevel);
         resetAI();
         giveBaseAI(1.2, 1.0, 100);
-        this.goalSelector.addGoal(2, pathfinderGoalPredictTargetFutureLocationGoal);
+        this.goalSelector.addGoal(2, predictTargetFutureLocationGoal);
     }
 
     @Override
@@ -63,8 +63,8 @@ public class CustomSkeleton extends Skeleton implements CustomEntity<CustomSkele
         return DisguiseType.SKELETON;
     }
 
-    public PathfinderGoalPredictTargetFutureLocationGoal getPathfinderGoalFireAtPlayer() {
-        return pathfinderGoalPredictTargetFutureLocationGoal;
+    public PredictTargetFutureLocationGoal getPathfinderGoalFireAtPlayer() {
+        return predictTargetFutureLocationGoal;
     }
 
 }

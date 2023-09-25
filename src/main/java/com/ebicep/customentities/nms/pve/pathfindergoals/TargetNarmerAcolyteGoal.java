@@ -15,14 +15,14 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import java.util.EnumSet;
 import java.util.List;
 
-public class PathfinderGoalTargetNarmerAcolyte extends TargetGoal {
+public class TargetNarmerAcolyteGoal extends TargetGoal {
     protected LivingEntity targetEntity;
 
-    public PathfinderGoalTargetNarmerAcolyte(Mob entitycreature) {
+    public TargetNarmerAcolyteGoal(Mob entitycreature) {
         this(entitycreature, false, true);
     }
 
-    public PathfinderGoalTargetNarmerAcolyte(Mob entitycreature, boolean checkSight, boolean onlyNearby) {
+    public TargetNarmerAcolyteGoal(Mob entitycreature, boolean checkSight, boolean onlyNearby) {
         super(entitycreature, checkSight, onlyNearby);
         this.setFlags(EnumSet.of(Flag.TARGET));
     }

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option.pve;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.PathfinderGoalPredictTargetFutureLocationGoal;
+import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -252,10 +252,10 @@ public interface PveOption extends Option {
                 Set<WrappedGoal> availableGoals = npcMob.getMob().goalSelector.getAvailableGoals();
                 availableGoals.stream()
                               .map(WrappedGoal::getGoal)
-                              .filter(PathfinderGoalPredictTargetFutureLocationGoal.class::isInstance)
+                              .filter(PredictTargetFutureLocationGoal.class::isInstance)
                               .findFirst()
-                              .map(PathfinderGoalPredictTargetFutureLocationGoal.class::cast)
-                              .ifPresent(PathfinderGoalPredictTargetFutureLocationGoal::lookAtPredicted);
+                              .map(PredictTargetFutureLocationGoal.class::cast)
+                              .ifPresent(PredictTargetFutureLocationGoal::lookAtPredicted);
             }
 
             @EventHandler

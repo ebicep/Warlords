@@ -3,14 +3,10 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.RandomCollection;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.phys.AABB;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import java.util.EnumSet;
@@ -30,14 +26,14 @@ import java.util.List;
  * ex. (w=100,d=20), (w=50,d=25), (w=0,d>=30)
  * Random target is chosen from weighted list
  */
-public class PathfinderGoalTargetAggroWarlordsEntity extends TargetGoal {
+public class TargetAggroWarlordsEntityGoal extends TargetGoal {
     protected LivingEntity targetEntity;
 
-    public PathfinderGoalTargetAggroWarlordsEntity(Mob entitycreature) {
+    public TargetAggroWarlordsEntityGoal(Mob entitycreature) {
         this(entitycreature, false, true);
     }
 
-    public PathfinderGoalTargetAggroWarlordsEntity(Mob entitycreature, boolean checkSight, boolean onlyNearby) {
+    public TargetAggroWarlordsEntityGoal(Mob entitycreature, boolean checkSight, boolean onlyNearby) {
         super(entitycreature, checkSight, onlyNearby);
         this.setFlags(EnumSet.of(Goal.Flag.TARGET));
     }
@@ -49,15 +45,7 @@ public class PathfinderGoalTargetAggroWarlordsEntity extends TargetGoal {
             return false;
         }
         double followRange = this.getFollowDistance();
-        List<LivingEntity> list = this.mob.level().getEntitiesOfClass(LivingEntity.class, this.getTargetSearchArea(followRange)); // getEntitiesWithinAABB
-        list.removeIf(entity -> {
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
-            return warlordsEntity == null ||
-                    warlordsEntity.isDead() ||
-                    warlordsEntity.isTeammate(thisWarlordsEntity) ||
-                    entity.hasEffect(MobEffects.INVISIBILITY) ||
-                    (entity instanceof ServerPlayer p && p.gameMode.getGameModeForPlayer() == GameType.CREATIVE);
-        });
+        List<LivingEntity> list = GoalUtils.getNearbyWarlordEntities(this.mob, thisWarlordsEntity, followRange); // getEntitiesWithinAABB
         list.sort((o1, o2) -> Double.compare(o1.distanceToSqr(this.mob), o2.distanceToSqr(this.mob)));
         if (list.isEmpty()) {
             return false;
@@ -85,10 +73,6 @@ public class PathfinderGoalTargetAggroWarlordsEntity extends TargetGoal {
     @Override
     public boolean canContinueToUse() {
         return mob.getTarget() != null && mob.getTarget().valid;
-    }
-
-    protected AABB getTargetSearchArea(double distance) {
-        return this.mob.getBoundingBox().inflate(distance, 4.0D, distance);
     }
 
     @Override

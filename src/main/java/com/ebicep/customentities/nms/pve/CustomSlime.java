@@ -12,9 +12,17 @@ import javax.annotation.Nonnull;
 
 public class CustomSlime extends Slime implements CustomEntity<CustomSlime> {
 
+    private float customJumpPower = .1f;
+
     public CustomSlime(ServerLevel serverLevel) {
         super(EntityType.SLIME, serverLevel);
         setSize(5, true);
+    }
+
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        resetTargetAI();
         giveBaseAI();
     }
 
@@ -25,7 +33,7 @@ public class CustomSlime extends Slime implements CustomEntity<CustomSlime> {
     @Override
     protected void jumpFromGround() {
         Vec3 vec3d = this.getDeltaMovement();
-        this.setDeltaMovement(vec3d.x, .1, vec3d.z);
+        this.setDeltaMovement(vec3d.x, customJumpPower, vec3d.z);
         this.hasImpulse = true;
     }
 
@@ -54,5 +62,13 @@ public class CustomSlime extends Slime implements CustomEntity<CustomSlime> {
     @Override
     public DisguiseType getDisguiseType() {
         return DisguiseType.SLIME;
+    }
+
+    public float getCustomJumpPower() {
+        return customJumpPower;
+    }
+
+    public void setCustomJumpPower(float customJumpPower) {
+        this.customJumpPower = customJumpPower;
     }
 }
