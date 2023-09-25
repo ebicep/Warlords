@@ -381,9 +381,9 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         hitboxInflation.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override

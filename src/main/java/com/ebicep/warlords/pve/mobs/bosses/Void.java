@@ -10,7 +10,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.bosses.bossminions.TormentedSoul;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.abilities.SpawnSouls;
+import com.ebicep.warlords.pve.mobs.abilities.ThunderCloudAbility;
 import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -23,13 +25,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Void extends AbstractSkeleton implements BossMob {
 
     AtomicInteger damageToDeal = new AtomicInteger(0);
     private final int stormRadius = 10;
-    private final int earthQuakeRadius = 10;
     private boolean flamePhaseTrigger = false;
     private boolean flamePhaseTriggerTwo = false;
     private boolean timedDamageTrigger = false;
@@ -38,15 +40,7 @@ public class Void extends AbstractSkeleton implements BossMob {
     private boolean boltaroPhaseTrigger = false;
 
     public Void(Location spawnLocation) {
-        super(
-                spawnLocation,
-                "Void",
-                180000,
-                0.24f,
-                20,
-                3000,
-                4000
-        );
+        this(spawnLocation, "Void", 100000, 0.24f, 20, 3000, 4000);
     }
 
     public Void(
@@ -65,8 +59,41 @@ public class Void extends AbstractSkeleton implements BossMob {
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
-                maxMeleeDamage
+                maxMeleeDamage,
+                new GroundShred(),
+                new SpawnSouls(20) {
+                    @Override
+                    public int getSpawnAmount() {
+                        int spawnAmount = 2 * pveOption.playerCount();
+                        DifficultyIndex difficulty = pveOption.getDifficulty();
+                        if (difficulty == DifficultyIndex.EXTREME) {
+                            spawnAmount--;
+                        }
+                        return spawnAmount;
+                    }
+                },
+                new ThunderCloudAbility(
+                        10,
+                        false,
+                        21, 30,
+                        7, 12
+                )
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.VOID;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("?????", NamedTextColor.BLACK);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_GRAY;
     }
 
     @Override
@@ -74,7 +101,7 @@ public class Void extends AbstractSkeleton implements BossMob {
         super.onSpawn(option);
 
         if (option.getDifficulty() == DifficultyIndex.EXTREME) {
-            float newHealth = 100000;
+            float newHealth = 55000;
             warlordsNPC.setMaxBaseHealth(newHealth);
             warlordsNPC.setHealth(newHealth);
             warlordsNPC.setMaxHealth(newHealth);
@@ -151,27 +178,6 @@ public class Void extends AbstractSkeleton implements BossMob {
             }
         }
 
-        if (ticksElapsed % 160 == 0) {
-            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
-            EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
-            for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                Utils.addKnockback(name, loc, enemy, -1.5, 0.25);
-                enemy.addDamageInstance(
-                        warlordsNPC,
-                        "Ground Shred",
-                        900,
-                        1200,
-                        0,
-                        100
-                );
-            }
-        }
-
         if (ticksElapsed % 320 == 0 && !preventArmageddon) {
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.6f);
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.6f);
@@ -197,12 +203,6 @@ public class Void extends AbstractSkeleton implements BossMob {
                 }
             }.runTaskLater(60);
         }
-
-        if (ticksElapsed % 400 == 0) {
-            for (int i = 0; i < spawnAmount; i++) {
-                option.spawnNewMob(new TormentedSoul(warlordsNPC.getLocation()));
-            }
-        }
     }
 
     @Override
@@ -226,21 +226,6 @@ public class Void extends AbstractSkeleton implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .withTrail()
                                                                        .build());
-    }
-
-    @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.DARK_GRAY;
-    }
-
-    @Override
-    public Mob getMobRegistry() {
-        return Mob.VOID;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("?????", NamedTextColor.BLACK);
     }
 
     private void immolation(PveOption option, Location loc) {
@@ -310,36 +295,6 @@ public class Void extends AbstractSkeleton implements BossMob {
         }.runTaskTimer(40, 4);
     }
 
-    private void shockwave(Location loc, double radius, int tickDelay, long playerCount) {
-        new GameRunnable(warlordsNPC.getGame()) {
-            @Override
-            public void run() {
-                if (warlordsNPC.isDead() || preventArmageddon) {
-                    this.cancel();
-                    return;
-                }
-
-                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 0.4f);
-                Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
-                for (WarlordsEntity we : PlayerFilter
-                        .entitiesAround(loc, radius, radius, radius)
-                        .aliveEnemiesOf(warlordsNPC)
-                ) {
-                    if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC,
-                                "Augmented Armageddon",
-                                (550 * playerCount),
-                                (700 * playerCount),
-                                0,
-                                100
-                        );
-                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
-                    }
-                }
-            }
-        }.runTaskLater(tickDelay);
-    }
-
     private void timedDamage(PveOption option, long playerCount, int damageValue, int timeToDealDamage) {
         damageToDeal.set((int) (damageValue * playerCount));
 
@@ -372,9 +327,9 @@ public class Void extends AbstractSkeleton implements BossMob {
 
                 if (damageToDeal.get() <= 0) {
                     EffectUtils.playFirework(warlordsNPC.getLocation(), FireworkEffect.builder()
-                                                                                               .withColor(Color.WHITE)
-                                                                                               .with(FireworkEffect.Type.BALL_LARGE)
-                                                                                               .build());
+                                                                                      .withColor(Color.WHITE)
+                                                                                      .with(FireworkEffect.Type.BALL_LARGE)
+                                                                                      .build());
                     warlordsNPC.getSpec().getBlue().onActivate(warlordsNPC, null);
                     preventArmageddon = false;
                     this.cancel();
@@ -458,6 +413,69 @@ public class Void extends AbstractSkeleton implements BossMob {
                 );
             }
         }.runTaskTimer(40, 0);
+    }
+
+    private void shockwave(Location loc, double radius, int tickDelay, long playerCount) {
+        new GameRunnable(warlordsNPC.getGame()) {
+            @Override
+            public void run() {
+                if (warlordsNPC.isDead() || preventArmageddon) {
+                    this.cancel();
+                    return;
+                }
+
+                Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 10, 0.4f);
+                Utils.playGlobalSound(loc, "warrior.laststand.activation", 10, 0.4f);
+                for (WarlordsEntity we : PlayerFilter
+                        .entitiesAround(loc, radius, radius, radius)
+                        .aliveEnemiesOf(warlordsNPC)
+                ) {
+                    if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
+                        we.addDamageInstance(warlordsNPC,
+                                "Augmented Armageddon",
+                                (550 * playerCount),
+                                (700 * playerCount),
+                                0,
+                                100
+                        );
+                        Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
+                    }
+                }
+            }
+        }.runTaskLater(tickDelay);
+    }
+
+    private static class GroundShred extends AbstractPveAbility {
+
+        private final int earthQuakeRadius = 10;
+
+        public GroundShred() {
+            super("Ground Shred", 900, 1200, 8, 50);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            Location loc = wp.getLocation();
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
+            EffectUtils.strikeLightning(loc, false);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(wp, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
+                    .aliveEnemiesOf(wp)
+            ) {
+                Utils.addKnockback(name, loc, enemy, -1.5, 0.25);
+                enemy.addDamageInstance(
+                        wp,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier
+                );
+            }
+            return true;
+        }
     }
 
 }

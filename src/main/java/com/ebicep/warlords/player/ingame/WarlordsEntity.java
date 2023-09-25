@@ -2442,7 +2442,7 @@ public abstract class WarlordsEntity {
     public abstract boolean isOnline();
 
     public void runEveryTick() {
-        this.spec.runEveryTick();
+        this.spec.runEveryTick(this);
         // Gives the player their respawn timer as display.
         this.decrementRespawnTimer();
 
@@ -2770,7 +2770,7 @@ public abstract class WarlordsEntity {
     public abstract void updateEntity();
 
     public void runEverySecond() {
-        this.spec.runEverySecond();
+        this.spec.runEverySecond(this);
         // Checks whether the player has a flag cooldown.
         if (getFlagDropCooldown() > 0) {
             setFlagDropCooldown(getFlagDropCooldown() - 1);

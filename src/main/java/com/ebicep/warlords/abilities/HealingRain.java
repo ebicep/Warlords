@@ -27,6 +27,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -289,8 +290,8 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         radius.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 }

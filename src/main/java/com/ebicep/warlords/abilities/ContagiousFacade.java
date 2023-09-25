@@ -27,6 +27,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -209,9 +210,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         damageAbsorption.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public abstract class AbstractGroundSlam extends AbstractAbility implements PurpleAbilityIcon, HitBox {
@@ -193,9 +194,9 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         slamSize.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     public float getVelocity() {

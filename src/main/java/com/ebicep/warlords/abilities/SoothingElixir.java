@@ -30,6 +30,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -243,9 +244,9 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         puddleRadius.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     public int getPuddleMinHealing() {

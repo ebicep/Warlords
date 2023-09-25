@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -106,9 +107,9 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
     public abstract boolean chain(WarlordsEntity wp, Player player);
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         radius.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override

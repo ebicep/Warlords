@@ -1,18 +1,16 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.effects.circle.AreaEffect;
-import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
+import com.ebicep.warlords.pve.mobs.abilities.ThunderCloudAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -23,15 +21,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Zenith extends AbstractZombie implements BossMob {
-
-    private List<ThunderCloud> thunderClouds = new ArrayList<>();
 
     public Zenith(Location spawnLocation) {
         super(spawnLocation,
@@ -75,7 +67,8 @@ public class Zenith extends AbstractZombie implements BossMob {
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();
                     }
-                }
+                },
+                new ThunderCloudAbility(2)
         );
     }
 
@@ -115,16 +108,6 @@ public class Zenith extends AbstractZombie implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 40 == 0) {
-            Location randomSpawnLocation = option.getRandomSpawnLocation(null);
-            if (randomSpawnLocation == null) {
-                return;
-            }
-            ThreadLocalRandom random = ThreadLocalRandom.current();
-            randomSpawnLocation.add(random.nextDouble(10) - 5, 0, random.nextDouble(10) - 5);
-            thunderClouds.add(new ThunderCloud(option.getGame(), randomSpawnLocation));
-        }
-        thunderClouds.removeIf(thunderCloud -> thunderCloud.tick(warlordsNPC));
     }
 
     @Override
@@ -319,77 +302,4 @@ public class Zenith extends AbstractZombie implements BossMob {
         }
     }
 
-    private static class ThunderCloud {
-
-        private static final int[] CLOUD_COLORS = {150, 200, 250};
-        private final Location floorLocation;
-        private final int ticksToLive = ThreadLocalRandom.current().nextInt(7, 12) * 20;
-        private final int size = ThreadLocalRandom.current().nextInt(5, 10);
-        private final List<CircleEffect> effects = new ArrayList<>();
-        private int ticksElapsed = ThreadLocalRandom.current().nextInt(15);
-        private int startDamageTick = 30;
-
-        private ThunderCloud(Game game, Location floorLocation) {
-            this.floorLocation = floorLocation.clone();
-            ThreadLocalRandom random = ThreadLocalRandom.current();
-            int startingYOffset = random.nextInt(5, 8);
-            for (int i = 0; i < 3; i++) {
-                double yOffset = startingYOffset + i * .35;
-                int cloudColor = CLOUD_COLORS[i];
-                AreaEffect areaEffect = new AreaEffect(
-                        yOffset,
-                        Particle.REDSTONE,
-                        new Particle.DustOptions(Color.fromRGB(cloudColor, cloudColor, cloudColor), 1)
-                ).particlesPerSurface(1.15 - (i * 0.05));
-                effects.add(new CircleEffect(
-                        game,
-                        null,
-                        floorLocation,
-                        size - i,
-                        areaEffect
-                ));
-                if (i == 0) {
-                    floorLocation.add(random.nextDouble(1) - .5, 0, random.nextDouble(1) - .5);
-                }
-            }
-        }
-
-        public boolean tick(WarlordsEntity warlordsEntity) {
-            ticksElapsed++;
-            startDamageTick--;
-            if (ticksElapsed % 5 == 0) {
-                effects.forEach(CircleEffect::playEffects);
-            }
-            if (ticksElapsed % 20 == 0 && startDamageTick <= 0) {
-                ThreadLocalRandom random = ThreadLocalRandom.current();
-                EffectUtils.strikeLightning(
-                        floorLocation.clone().add(random.nextDouble(4) - 2, -1, random.nextDouble(4) - 2),
-                        true
-                );
-                PlayerFilter.entitiesAround(floorLocation, size, size, size)
-                            .excluding(warlordsEntity)
-                            .forEach(entity -> {
-                                float minDamage;
-                                float maxDamage;
-                                if (entity.isTeammate(warlordsEntity)) {
-                                    minDamage = 150;
-                                    maxDamage = 300;
-                                } else {
-                                    minDamage = 800;
-                                    maxDamage = 1000;
-                                }
-                                entity.addDamageInstance(
-                                        warlordsEntity,
-                                        "Thunder Strike",
-                                        minDamage,
-                                        maxDamage,
-                                        0,
-                                        100,
-                                        size > 8 ? EnumSet.of(InstanceFlags.PIERCE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class)
-                                );
-                            });
-            }
-            return ticksElapsed >= ticksToLive;
-        }
-    }
 }

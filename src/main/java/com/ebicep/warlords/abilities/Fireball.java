@@ -231,9 +231,9 @@ public class Fireball extends AbstractProjectile implements Splash {
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@javax.annotation.Nullable WarlordsEntity warlordsEntity) {
         splashRadius.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     public int getMaxFullDistance() {

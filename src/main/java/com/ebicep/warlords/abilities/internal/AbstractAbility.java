@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -351,10 +352,10 @@ public abstract class AbstractAbility implements AbilityIcon {
         return 1 + (input / 100f);
     }
 
-    public void runEverySecond() {
+    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
     }
 
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         cooldown.tick();
         energyCost.tick();
         if (getCooldownValue() > 0) {

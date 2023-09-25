@@ -19,6 +19,7 @@ import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -319,12 +320,12 @@ public abstract class AbstractPlayerClass {
                         .append(Component.text("]", NamedTextColor.DARK_GRAY));
     }
 
-    public void runEverySecond() {
-        abilities.forEach(AbstractAbility::runEverySecond);
+    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
+        abilities.forEach(ability -> ability.runEverySecond(warlordsEntity));
     }
 
-    public void runEveryTick() {
-        abilities.forEach(AbstractAbility::runEveryTick);
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        abilities.forEach(ability -> ability.runEveryTick(warlordsEntity));
     }
 
     public void increaseAllCooldownTimersBy(float amount) {

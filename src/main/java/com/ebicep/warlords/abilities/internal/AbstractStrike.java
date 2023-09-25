@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -125,9 +126,9 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         hitbox.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override

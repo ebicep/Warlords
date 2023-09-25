@@ -4,11 +4,8 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
 
@@ -22,16 +19,6 @@ public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
 
     public AbstractSpawnMobAbility(String mobName, float cooldown, float energyCost, float startCooldown) {
         super("Spawn " + mobName, cooldown, energyCost, startCooldown);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        return null;
     }
 
     @Override

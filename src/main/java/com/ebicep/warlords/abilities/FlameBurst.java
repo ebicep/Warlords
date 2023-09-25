@@ -275,9 +275,9 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@javax.annotation.Nullable WarlordsEntity warlordsEntity) {
         splash.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     public double getAcceleration() {

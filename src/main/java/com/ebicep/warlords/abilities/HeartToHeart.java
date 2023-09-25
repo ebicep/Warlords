@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,9 +118,9 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         radius.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {

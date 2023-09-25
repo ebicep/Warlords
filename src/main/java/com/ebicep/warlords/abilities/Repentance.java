@@ -21,6 +21,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -132,7 +133,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    public void runEverySecond() {
+    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
         if (pool > 0) {
             float newPool = pool * .8f - poolDecay;
             pool = Math.max(newPool, 0);

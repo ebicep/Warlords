@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -225,7 +226,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
     }
 
     @Override
-    public void runEverySecond() {
+    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
         if (shacklePool > 0) {
             float newPool = shacklePool - 200;
             shacklePool = Math.max(newPool, 0);

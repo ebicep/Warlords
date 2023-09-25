@@ -33,6 +33,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -258,9 +259,9 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     }
 
     @Override
-    public void runEveryTick() {
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         radius.tick();
-        super.runEveryTick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override
