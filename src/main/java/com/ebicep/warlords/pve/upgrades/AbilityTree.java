@@ -308,7 +308,7 @@ public class AbilityTree {
             public void run() {
                 openAbilityTree();
             }
-        }.runTaskLater(Warlords.getInstance(), 1);
+        }.runTaskLater(Warlords.getInstance(), 2);
     }
 
     public List<Component> getUpgradeTreeInfo(AbstractUpgradeBranch<?> upgradeBranch, List<Upgrade> upgrades) {
