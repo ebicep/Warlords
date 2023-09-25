@@ -41,13 +41,6 @@ public class ExperienceManager {
     public static final DecimalFormat EXPERIENCE_DECIMAL_FORMAT = new DecimalFormat("#,###.#");
     public static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
     public static final int LEVEL_TO_PRESTIGE = 100;
-    public static final HashMap<Classes, Pair<Integer, Integer>> CLASSES_MENU_LOCATION = new HashMap<>() {{
-        put(Classes.MAGE, new Pair<>(2, 1));
-        put(Classes.WARRIOR, new Pair<>(4, 1));
-        put(Classes.PALADIN, new Pair<>(6, 1));
-        put(Classes.SHAMAN, new Pair<>(3, 3));
-        put(Classes.ROGUE, new Pair<>(5, 3));
-    }};
     private static final Map<String, int[]> awardOrder = new LinkedHashMap<>() {{
         put("wins", new int[]{1000, 750, 500});
         put("losses", new int[]{200, 150, 100});
@@ -362,7 +355,7 @@ public class ExperienceManager {
         return getProgressString(currentExperience, nextLevel, progress.build());
     }
 
-    private static TextColor getPrestigeColor(int prestigeLevel) {
+    public static TextColor getPrestigeColor(int prestigeLevel) {
         return CACHED_PRESTIGE_COLORS.computeIfAbsent(prestigeLevel, integer -> {
             float hue = (float) prestigeLevel / 100.0f;
             float saturation = 1f;

@@ -41,6 +41,7 @@ public class LevelUpReward extends AbstractReward {
             if (level == 100) {
                 rewards.put(Currencies.FAIRY_ESSENCE, 80L);
                 rewards.put(Currencies.SUPPLY_DROP_TOKEN, 20L);
+                rewards.put(Currencies.ASCENDANT_SHARD, 1L);
             } else if (level == 90) {
                 rewards.put(Currencies.FAIRY_ESSENCE, 40L);
                 rewards.put(Currencies.SUPPLY_DROP_TOKEN, 10L);

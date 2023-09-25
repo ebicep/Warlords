@@ -221,7 +221,7 @@ public class WarlordsEvents implements Listener {
                                 player.getLocation(),
                                 FireworkEffect.builder()
                                               .with(FireworkEffect.Type.BALL)
-                                              .withColor(Color.fromRGB(ExperienceManager.PRESTIGE_COLORS.get(prestige).value()))
+                                              .withColor(Color.fromRGB(ExperienceManager.getPrestigeColor(prestige).value()))
                                               .build()
                         );
                         player.showTitle(Title.title(
@@ -230,16 +230,16 @@ public class WarlordsEvents implements Listener {
                                         Component.text(" Prestige " + value.name + " ", NamedTextColor.GOLD, TextDecoration.BOLD),
                                         Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)
                                 ),
-                                Component.text(prestige - 1, ExperienceManager.PRESTIGE_COLORS.get(prestige - 1))
+                                Component.text(prestige - 1, ExperienceManager.getPrestigeColor(prestige - 1))
                                          .append(Component.text(" > ", NamedTextColor.GRAY))
-                                         .append(Component.text(prestige, ExperienceManager.PRESTIGE_COLORS.get(prestige))),
+                                         .append(Component.text(prestige, ExperienceManager.getPrestigeColor(prestige))),
                                 Title.Times.times(Ticks.duration(20), Ticks.duration(140), Ticks.duration(20))
                         ));
                         //sumSmash is now prestige level 5 in Pyromancer!
                         Bukkit.broadcast(Permissions.getPrefixWithColor(player, false)
                                                     .append(Component.text(player.getName()))
                                                     .append(Component.text(" is now prestige level ", NamedTextColor.GRAY))
-                                                    .append(Component.text(prestige, ExperienceManager.PRESTIGE_COLORS.get(prestige)))
+                                                    .append(Component.text(prestige, ExperienceManager.getPrestigeColor(prestige)))
                                                     .append(Component.text(" in ", NamedTextColor.GRAY))
                                                     .append(Component.text(value.name, NamedTextColor.GOLD)));
 
