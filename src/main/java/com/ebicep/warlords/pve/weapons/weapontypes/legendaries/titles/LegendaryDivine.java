@@ -21,7 +21,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.annotation.Transient;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -33,7 +36,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
 
     public static final int ABILITY_DAMAGE_BOOST = 20;
     public static final int ABILITY_DAMAGE_BOOST_PER_UPGRADE = 5;
-    public static final int ABILITY_EPS = 20;
+    public static final int ABILITY_EPS = 15;
     public static final int ABILITY_EPS_PER_UPGRADE = 5;
 
     public static final int MAX_STACKS = 3;
@@ -111,7 +114,6 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
 
         new GameRunnable(player.getGame()) {
 
-            final HashMap<AbstractAbility, Float> abilityEnergyCostReduction = new HashMap<>();
             int shiftTickTime = 0;
 
             @Override
@@ -135,7 +137,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
                             if (ability.getEnergyCostValue() > 0) {
-                                modifiers.add(ability.getEnergyCost().addMultiplicativeModifierAdd("Divine", -.4f));
+                                modifiers.add(ability.getEnergyCost().addMultiplicativeModifierAdd("Divine", -.25f));
                             }
                         }
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -179,7 +181,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                         )
                         .append(Component.newline())
                         .append(Component.newline())
-                        .append(Component.text("When at max stacks, shift for 1 second to consume all 3 stacks and gain 40% energy cost reduction for all abilities, "))
+                        .append(Component.text("When at max stacks, shift for 1 second to consume all 3 stacks and gain 25% energy cost reduction for all abilities, "))
                         .append(formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
                         .append(Component.text(" increased damage, and "))
                         .append(formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()))
