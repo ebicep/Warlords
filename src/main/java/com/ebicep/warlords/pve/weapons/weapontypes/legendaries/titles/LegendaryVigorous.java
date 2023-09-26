@@ -20,8 +20,8 @@ import java.util.UUID;
 
 public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
-    public static final int EPS = 20;
-    public static final int EPS_PER_UPGRADE = 5;
+    public static final int EPS = 25;
+    public static final int EPS_PER_UPGRADE = 4;
     public static final int DURATION = 10;
 
     @Transient
