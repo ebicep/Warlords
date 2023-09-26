@@ -51,7 +51,7 @@ public class LegendaryGradient extends AbstractLegendaryWeapon implements Passiv
                 tickCountdown--;
                 if (tickCountdown <= 0) {
                     tickCountdown = interval;
-                    float healValue = player.getMaxHealth() * .07f;
+                    float healValue = player.getMaxHealth() * .085f;
                     player.addHealingInstance(player, "Gradient", healValue, healValue, 0, 100);
                 }
             }
@@ -60,7 +60,7 @@ public class LegendaryGradient extends AbstractLegendaryWeapon implements Passiv
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Perpetually regenerate 7% of your health every ", NamedTextColor.GRAY)
+        return Component.text("Perpetually regenerate 8.5% of your health every ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade((REGEN_TICK_INTERVAL - REGEN_TICK_INTERVAL_DECREASE_PER_UPGRADE * getTitleLevel()) / 20))
                         .append(Component.text(" seconds."));
     }
