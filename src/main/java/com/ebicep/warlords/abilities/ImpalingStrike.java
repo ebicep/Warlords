@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class ImpalingStrike extends AbstractStrike {
@@ -30,6 +31,7 @@ public class ImpalingStrike extends AbstractStrike {
     private int leechDuration = 5;
     private float leechAllyAmount = 25;
     private float leechSelfAmount = 15;
+
     public ImpalingStrike() {
         super("Impaling Strike", 323, 427, 0, 90, 20, 175);
     }
@@ -124,6 +126,8 @@ public class ImpalingStrike extends AbstractStrike {
             float allyHealMultiplier,
             Consumer<WarlordsDamageHealingFinalEvent> finalEvent
     ) {
+        boolean inPve = wp.isInPve();
+        AtomicReference<Float> totalHealingDone = new AtomicReference<>((float) 0);
         target.getCooldownManager().removeCooldown(ImpalingStrike.class, false);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Leech Debuff",
@@ -138,6 +142,10 @@ public class ImpalingStrike extends AbstractStrike {
         ) {
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (inPve && totalHealingDone.get() > 1000) {
+                    setTicksLeft(0);
+                    return;
+                }
                 float healingMultiplier;
                 if (event.getAttacker() == wp) {
                     healingMultiplier = selfHealMultiplier;
@@ -153,6 +161,7 @@ public class ImpalingStrike extends AbstractStrike {
                         100
                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
                     finalEvent.accept(warlordsDamageHealingFinalEvent);
+                    totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
                     if (event.getWarlordsEntity().hasFlag()) {
                         this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
                     }
