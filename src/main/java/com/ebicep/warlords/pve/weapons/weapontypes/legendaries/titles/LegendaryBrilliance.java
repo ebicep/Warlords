@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryBrilliance extends AbstractLegendaryWeapon implements PassiveCounter, EventTitle {
 
-    public static final int HEALING_BOOST = 25;
+    public static final int HEALING_BOOST = 40;
     public static final float HEALING_BOOST_PER_UPGRADE = 6.25f;
     public static final int COOLDOWN = 30;
     public static final float COOLDOWN_INCREASE_PER_UPGRADE = -1.5f;
@@ -88,7 +88,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                     // incoming healing
                     @Override
                     public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                        return currentHealValue * 1.25f;
+                        return currentHealValue * 1.4f;
                     }
 
                     // outgoing healing
@@ -108,7 +108,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     public TextComponent getPassiveEffect() {
         float outgoingHealingBoost = HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel();
         float cooldown = COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel();
-        return Component.text("When your health falls below 30%, incoming healing increases by 50% and outgoing healing increases by ", NamedTextColor.GRAY)
+        return Component.text("When your health falls below 30%, incoming and outgoing healing increases by ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(outgoingHealingBoost, "%"))
                         .append(Component.text(" for 10s. Can be triggered once every "))
                         .append(formatTitleUpgrade(cooldown, "s"))
