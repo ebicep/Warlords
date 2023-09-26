@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventIllumina;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventIllusionCore;
 import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaro;
 import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaroShadow;
+import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.*;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjer;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjet;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmer;
@@ -39,6 +40,7 @@ import com.ebicep.warlords.pve.mobs.zombie.*;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.AdvancedWarriorBerserker;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.BasicWarriorBerserker;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.IntermediateWarriorBerserker;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -47,6 +49,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
@@ -605,6 +608,92 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200),
+            Weapons.NEW_LEAF_SCYTHE.getItem()
+    )),
+    EVENT_APOLLO(EventApollo.class, EventApollo::new, EventApollo::new, new Utils.SimpleEntityEquipment(
+            null,
+            ArmorManager.ArmorSets.MASTERWORK_CHESTPLATE.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_LEGGINGS.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_BOOTS.itemRed,
+            new ItemBuilder(Material.BOW)
+                    .enchant(Enchantment.OXYGEN, 1)
+                    .get()
+    )),
+    EVENT_ARES(EventAres.class, EventAres::new, EventAres::new, new Utils.SimpleEntityEquipment(
+            null,
+            ArmorManager.ArmorSets.MASTERWORK_CHESTPLATE.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_LEGGINGS.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_BOOTS.itemRed,
+            Weapons.VOID_TWIG.getItem()
+    )),
+    EVENT_PROMETHEUS(EventPrometheus.class, EventPrometheus::new, EventPrometheus::new, new Utils.SimpleEntityEquipment(
+            null,
+            ArmorManager.ArmorSets.MASTERWORK_CHESTPLATE.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_LEGGINGS.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_BOOTS.itemRed,
+            Weapons.ARMBLADE.getItem()
+    )),
+    EVENT_ATHENA(EventAthena.class, EventAthena::new, EventAthena::new, new Utils.SimpleEntityEquipment(
+            null,
+            ArmorManager.ArmorSets.MASTERWORK_CHESTPLATE.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_LEGGINGS.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_BOOTS.itemRed,
+            Weapons.NEW_LEAF_AXE.getItem()
+    )),
+    EVENT_CRONUS(EventCronus.class, EventCronus::new, EventCronus::new, new Utils.SimpleEntityEquipment(
+            null,
+            ArmorManager.ArmorSets.MASTERWORK_CHESTPLATE.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_LEGGINGS.itemRed,
+            ArmorManager.ArmorSets.MASTERWORK_BOOTS.itemRed,
+            Weapons.LUNAR_JUSTICE.getItem()
+    )),
+    EVENT_ZEUS(EventZeus.class, EventZeus::new, EventZeus::new, new Utils.SimpleEntityEquipment(
+            null,
+            ArmorManager.ArmorSets.GREATER_CHESTPLATE.itemRed,
+            ArmorManager.ArmorSets.GREATER_LEGGINGS.itemRed,
+            ArmorManager.ArmorSets.GREATER_BOOTS.itemRed,
+            Weapons.SEVENTH.getItem()
+    )),
+    EVENT_POSEIDON(EventPoseidon.class, EventPoseidon::new, EventPoseidon::new, new Utils.SimpleEntityEquipment(
+            null,
+            ArmorManager.ArmorSets.SIMPLE_CHESTPLATE.itemRed,
+            ArmorManager.ArmorSets.SIMPLE_LEGGINGS.itemRed,
+            ArmorManager.ArmorSets.SIMPLE_BOOTS.itemRed,
+            Weapons.SILVER_PHANTASM_TRIDENT.getItem()
+    )),
+    EVENT_HADES(EventHades.class, EventHades::new, EventHades::new, new Utils.SimpleEntityEquipment(
+            null,
+            new ItemStack((Material.NETHERITE_CHESTPLATE)),
+            new ItemStack(Material.NETHERITE_LEGGINGS),
+            new ItemStack(Material.NETHERITE_BOOTS),
+            Weapons.FABLED_HEROICS_SCYTHE.getItem()
+    )),
+    EVENT_TERAS_MINOTAUR(EvenTerasMinotaur.class, EvenTerasMinotaur::new, EvenTerasMinotaur::new, new Utils.SimpleEntityEquipment(
+            null,
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 51, 102),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 51, 102),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 51, 102),
+            Weapons.NOMEGUSTA.getItem()
+    )),
+    EVENT_TERAS_CYCLOPS(EvenTerasCyclops.class, EvenTerasCyclops::new, EvenTerasCyclops::new, new Utils.SimpleEntityEquipment(
+            null,
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 102, 51, 0),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 102, 51, 0),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 102, 51, 0),
+            Weapons.HAMMER_OF_LIGHT.getItem()
+    )),
+    EVENT_TERAS_SIREN(EvenTerasSiren.class, EvenTerasSiren::new, EvenTerasSiren::new, new Utils.SimpleEntityEquipment(
+            null,
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 102, 0, 51),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 102, 0, 51),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 102, 0, 51),
+            Weapons.FABLED_HEROICS_SWORD.getItem()
+    )),
+    EVENT_TERAS_DRYAD(EvenTerasDryad.class, EvenTerasDryad::new, EvenTerasDryad::new, new Utils.SimpleEntityEquipment(
+            null,
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 255, 128),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 255, 128),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 255, 128),
             Weapons.NEW_LEAF_SCYTHE.getItem()
     )),
 

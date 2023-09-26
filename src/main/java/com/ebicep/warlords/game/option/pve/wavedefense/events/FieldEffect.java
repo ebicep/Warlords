@@ -258,6 +258,22 @@ public class FieldEffect implements Option {
                 }
             }
         },
+        TYCHE_PROSPERITY("Tyche Prosperity",
+                """
+                        When two specs of the same class are present in the game, the following buffs are applied to all players:
+                        Mage: Movement speed +5% and Projectile speed +10%.
+                        Paladin: EPS +5 and EPH +5.
+                        Warrior: Knockback resistance +10% and damage bonus +5%.
+                        Shaman: Melee damage +10% and max HP +5%.
+                        Rogue: Cooldown reduction -10% and healing Bonus +5%.
+                        Arcanist: Damage reduction +5% and ability crit chance +10%.
+                        """
+        ) {
+            @Override
+            public void onWarlordsEntityCreated(WarlordsEntity player) {
+
+            }
+        },
         ;
 
         public final String name;

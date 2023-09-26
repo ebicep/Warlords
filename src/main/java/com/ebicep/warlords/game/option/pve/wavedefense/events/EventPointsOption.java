@@ -37,7 +37,7 @@ public class EventPointsOption implements Option, Listener {
     private final ConcurrentHashMap<UUID, Integer> points = new ConcurrentHashMap<>();
 
     private final HashMap<Integer, Integer> perXWaveClear = new HashMap<>();
-    private final HashMap<Class<?>, Integer> perMobKill = new HashMap<>();
+    private final HashMap<Mob, Integer> perMobKill = new HashMap<>();
     private int onKill = 0;
     private int reduceScoreOnAllDeath = 0; //percentage 30 = reduce 30%
     private int cap = Integer.MAX_VALUE;
@@ -61,7 +61,7 @@ public class EventPointsOption implements Option, Listener {
     }
 
     public EventPointsOption onPerMobKill(Mob mob, int points) {
-        perMobKill.put(mob.mobClass, points);
+        perMobKill.put(mob, points);
         return this;
     }
 
@@ -119,7 +119,7 @@ public class EventPointsOption implements Option, Listener {
                                .forEach(warlordsPlayer -> addTo(warlordsPlayer, onKill));
         }
         if (!perMobKill.isEmpty()) {
-            Integer mobPoint = perMobKill.get(deadEntity.getMob().getClass());
+            Integer mobPoint = perMobKill.get(deadEntity.getMob().getMobRegistry());
             if (mobPoint != null) {
                 PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
                                    .matchingTeam(killer.getTeam())

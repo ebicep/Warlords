@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.mobflags.DynamicFlags;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -24,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,6 +36,7 @@ public class CurrencyOnEventOption implements Option, Listener {
         put(5, 4000);
         put(1, 1000);
     }};
+    private final HashMap<Mob, Integer> perMobKill = new HashMap<>();
     private int currencyOnKill = 100;
     private int startingCurrency = 0;
     private boolean scaleWithPlayerCount = false;
@@ -52,6 +55,12 @@ public class CurrencyOnEventOption implements Option, Listener {
         this.scaleWithPlayerCount = scaleWithPlayerCount;
         return this;
     }
+
+    public CurrencyOnEventOption onPerMobKill(Mob mob, int points) {
+        perMobKill.put(mob, points);
+        return this;
+    }
+
 
     public CurrencyOnEventOption startWith(int startingCurrency) {
         this.startingCurrency = startingCurrency;
@@ -102,11 +111,14 @@ public class CurrencyOnEventOption implements Option, Listener {
 
     @EventHandler
     public void onKill(WarlordsDeathEvent event) {
-        if (currencyOnKill == 0) {
+        WarlordsEntity mob = event.getWarlordsEntity();
+        if (currencyOnKill == 0 || !(mob instanceof WarlordsNPC warlordsNPC)) {
+            return;
+        }
+        if (!perMobKill.containsKey(warlordsNPC.getMob().getMobRegistry()) || warlordsNPC.getMob().getDynamicFlags().contains(DynamicFlags.NO_INSIGNIA)) {
             return;
         }
 
-        WarlordsEntity mob = event.getWarlordsEntity();
         for (WarlordsEntity player : PlayerFilter
                 .playingGame(mob.getGame())
                 .aliveEnemiesOf(mob)
@@ -114,16 +126,12 @@ public class CurrencyOnEventOption implements Option, Listener {
             if (!(player instanceof WarlordsPlayer) || player.isDead()) {
                 continue;
             }
-            if (mob instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getDynamicFlags().contains(DynamicFlags.NO_INSIGNIA)) {
-                continue;
-            }
+            int currency = perMobKill.getOrDefault(warlordsNPC.getMob().getMobRegistry(), currencyOnKill);
             int playerCount = (int) player.getGame().warlordsPlayers().count();
             if (scaleWithPlayerCount && playerCount > 2) {
-                int finalCurrency = currencyOnKill - (20 * playerCount);
-                player.addCurrency(finalCurrency);
-            } else {
-                player.addCurrency(currencyOnKill);
+                currency = currencyOnKill - (20 * playerCount);
             }
+            player.addCurrency(currency);
         }
     }
 

@@ -50,9 +50,10 @@ public class CoinGainOption implements Option {
         return mobCoinValues;
     }
 
-    public void clearMobCoinValueAndSet(String key, LinkedHashMap<String, Long> value) {
+    public CoinGainOption clearMobCoinValueAndSet(String key, LinkedHashMap<String, Long> value) {
         mobCoinValues.clear();
         mobCoinValues.put(key, value);
+        return this;
     }
 
     public CoinGainOption clearMobCoinValueAndSet(String key, String mobName, long value) {

@@ -1198,19 +1198,19 @@ public enum GameMap {
                                     //basic
                                     .add(0.6, Mob.ZOMBIE_LAMENT)
                                     //.add(0, Mobs.BASIC_SKELETON)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_DISCIPLE)
                                     .add(0.1, Mob.SLIMY_ANOMALY)
                                     .add(0.05, Mob.ARACHNO_VENARI)
                                     //elite
                                     .add(0.3, Mob.ZOMBIE_SWORDSMAN)
                                     .add(0.1, Mob.SKELETAL_WARLOCK)
-                                    //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_SHAMAN)
                                     .add(0.02, Mob.ILLUMINATION)
                                     .add(0.1, Mob.GOLEM_APPRENTICE)
                                     //envoy
-                                    //.add(0, Mobs.ENVOY_ZOMBIE)
+                                    //.add(0, Mobs.ZOMBIE_VANGUARD)
                                     //.add(0, Mobs.ENVOY_SKELETON)
-                                    //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_ALLEVIATOR)
                                     //void
                                     .add(0.04, Mob.SKELETAL_MESMER)
                                     .add(0.04, Mob.ZOMBIE_KNIGHT)
@@ -1223,19 +1223,19 @@ public enum GameMap {
                                     //basic
                                     .add(0.5, Mob.ZOMBIE_LAMENT)
                                     //.add(0, Mobs.BASIC_SKELETON)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_DISCIPLE)
                                     .add(0.1, Mob.SLIMY_ANOMALY)
                                     .add(0.05, Mob.ARACHNO_VENARI)
                                     //elite
                                     .add(0.3, Mob.ZOMBIE_SWORDSMAN)
                                     .add(0.05, Mob.SKELETAL_WARLOCK)
-                                    //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_SHAMAN)
                                     .add(0.02, Mob.ILLUMINATION)
                                     .add(0.1, Mob.GOLEM_APPRENTICE)
                                     //envoy
-                                    //.add(0, Mobs.ENVOY_ZOMBIE)
+                                    //.add(0, Mobs.ZOMBIE_VANGUARD)
                                     //.add(0, Mobs.ENVOY_SKELETON)
-                                    //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_ALLEVIATOR)
                                     //void
                                     .add(0.03, Mob.SKELETAL_MESMER)
                                     .add(0.03, Mob.VOID_ZOMBIE)
@@ -1250,9 +1250,9 @@ public enum GameMap {
                                     //basic
                                     .add(0.35, Mob.ZOMBIE_LAMENT)
                                     //.add(0, Mobs.BASIC_SKELETON)
-                                    //.add(0.0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0.0, Mobs.PIG_DISCIPLE)
                                     .add(0.15, Mob.SLIMY_ANOMALY)
-                                    //.add(0.0, Mobs.SPIDER)
+                                    //.add(0.0, Mobs.ARACHNO_VENARI)
                                     //elite
                                     .add(0.25, Mob.ZOMBIE_SWORDSMAN)
                                     .add(0.05, Mob.SKELETAL_WARLOCK)
@@ -1263,7 +1263,7 @@ public enum GameMap {
                                     //envoy
                                     .add(0.1, Mob.ZOMBIE_VANGUARD)
                                     //.add(0, Mobs.ENVOY_SKELETON)
-                                    //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_ALLEVIATOR)
                                     .add(0.01, Mob.ADVANCED_WARRIOR_BERSERKER)
                                     //void
                                     .add(0.04, Mob.VOID_ZOMBIE)
@@ -1279,7 +1279,7 @@ public enum GameMap {
                             //basic
                             .add(0.3, Mob.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0.0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0.0, Mobs.PIG_DISCIPLE)
                             .add(0.15, Mob.SLIMY_ANOMALY)
                             .add(0.1, Mob.ARACHNO_VENARI)
                             //elite
@@ -1292,7 +1292,7 @@ public enum GameMap {
                             //envoy
                             .add(0.02, Mob.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             .add(0.02, Mob.ADVANCED_WARRIOR_BERSERKER)
                             //void
                             .add(0.03, Mob.VOID_ZOMBIE)
@@ -1310,7 +1310,7 @@ public enum GameMap {
                             //basic
                             .add(0.2, Mob.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             .add(0.1, Mob.SLIMY_ANOMALY)
                             .add(0.2, Mob.ARACHNO_VENARI)
                             //elite
@@ -1394,7 +1394,7 @@ public enum GameMap {
                                     .add(0.05, Mob.ARACHNO_VENARI)
                                     //elite
                                     .add(0.3, Mob.ZOMBIE_SWORDSMAN)
-                                    //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_SHAMAN)
                                     .add(0.04, Mob.ILLUMINATION)
                                     .add(0.15, Mob.GOLEM_APPRENTICE)
                                     //envoy
@@ -1413,7 +1413,7 @@ public enum GameMap {
                                     //elite
                                     .add(0.5, Mob.ZOMBIE_SWORDSMAN)
                                     .add(0.05, Mob.SKELETAL_WARLOCK)
-                                    //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_SHAMAN)
                                     .add(0.02, Mob.ILLUMINATION)
                                     .add(0.1, Mob.GOLEM_APPRENTICE)
                                     //envoy
@@ -1569,13 +1569,13 @@ public enum GameMap {
                                     //elite
                                     .add(0.01, Mob.ZOMBIE_SWORDSMAN)
                                     .add(0.01, Mob.SKELETAL_WARLOCK)
-                                    //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_SHAMAN)
                                     //.add(0, Mobs.MAGMA_CUBE)
                                     .add(0.01, Mob.GOLEM_APPRENTICE)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             //void
                             //.add(0, Mobs.VOID_ZOMBIE)
                     )
@@ -1596,9 +1596,9 @@ public enum GameMap {
                                     //.add(0, Mobs.MAGMA_CUBE)
                                     .add(0.03, Mob.GOLEM_APPRENTICE)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             //void
                             //.add(0, Mobs.VOID_ZOMBIE)
                     )
@@ -1623,7 +1623,7 @@ public enum GameMap {
                                     //envoy
                                     .add(0.01, Mob.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             //void
                             //.add(0, Mobs.VOID_ZOMBIE)
                     )
@@ -1634,7 +1634,7 @@ public enum GameMap {
                             //basic
                             .add(0.5, Mob.ZOMBIE_LANCER)
                             .add(0.2, Mob.SKELETAL_MAGE)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             .add(0.15, Mob.SLIMY_ANOMALY)
                             .add(0.5, Mob.ARACHNO_VENARI)
                             //elite
@@ -1661,7 +1661,7 @@ public enum GameMap {
                             //basic
                             .add(0.4, Mob.ZOMBIE_LANCER)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             .add(0.2, Mob.SLIMY_ANOMALY)
                             .add(0.2, Mob.ARACHNO_VENARI)
                             //elite
@@ -1746,15 +1746,15 @@ public enum GameMap {
                                     .add(0.1, Mob.SLIMY_ANOMALY)
                                     .add(0.05, Mob.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             //.add(0, Mobs.MAGMA_CUBE)
                             //.add(0, Mobs.IRON_GOLEM)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             //void
                             //.add(0, Mobs.VOID_ZOMBIE)
                     )
@@ -1775,9 +1775,9 @@ public enum GameMap {
                                     //.add(0, Mobs.MAGMA_CUBE)
                                     .add(0.03, Mob.GOLEM_APPRENTICE)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             //void
                             //.add(0, Mobs.VOID_ZOMBIE)
                     )
@@ -1798,7 +1798,7 @@ public enum GameMap {
                                     //envoy
                                     .add(0.01, Mob.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             //void
                             //.add(0, Mobs.VOID_ZOMBIE)
                     )
@@ -1809,7 +1809,7 @@ public enum GameMap {
                                     //basic
                                     .add(0.7, Mob.ZOMBIE_LANCER)
                                     .add(0.2, Mob.SKELETAL_MAGE)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_DISCIPLE)
                                     .add(0.15, Mob.SLIMY_ANOMALY)
                                     .add(0.1, Mob.ARACHNO_VENARI)
                                     //elite
@@ -1834,7 +1834,7 @@ public enum GameMap {
                                     //basic
                                     .add(0.5, Mob.ZOMBIE_LANCER)
                                     //.add(0, Mobs.BASIC_SKELETON)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_DISCIPLE)
                                     .add(0.2, Mob.SLIMY_ANOMALY)
                                     .add(0.1, Mob.ARACHNO_VENARI)
                                     //elite
@@ -1942,12 +1942,12 @@ public enum GameMap {
                                     .add(0.8, Mob.ZOMBIE_LANCER)
                                     .add(0.05, Mob.ZOMBIE_LAMENT)
                                     .add(0.1, Mob.SKELETAL_MAGE)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_DISCIPLE)
                                     .add(0.06, Mob.SLIMY_ANOMALY)
                                     .add(0.08, Mob.ARACHNO_VENARI)
                                     //elite
                                     .add(0.2, Mob.ZOMBIE_SWORDSMAN)
-                                    //.add(0, Mobs.ELITE_SKELETON)
+                                    //.add(0, Mobs.SKELETAL_WARLOCK)
                                     .add(0.1, Mob.PIG_SHAMAN)
                                     .add(0.02, Mob.ILLUMINATION)
                                     .add(0.02, Mob.GOLEM_APPRENTICE)
@@ -1960,11 +1960,11 @@ public enum GameMap {
                                     //.add(0, Mobs.VOID_ZOMBIE)
                                     .add(0.01, Mob.SKELETAL_MESMER)
                             // exiled
-                            //.add(0, Mobs.EXILED_VOID_LANCER)
+                            //.add(0, Mobs.ZOMBIE_KNIGHT)
                             //.add(0, Mobs.EXILED_ZOMBIE)
-                            //.add(0, Mobs.EXILED_SKELETON)
+                            //.add(0, Mobs.SKELETAL_SORCERER)
                             //.add(0, Mobs.EXILED_ZOMBIE_LAVA)
-                            //.add(0, Mobs.EXILED_ZOMBIE_RIFT)
+                            //.add(0, Mobs.RIFT_WALKER)
                             // forgotten
                             //.add(0, Mobs.FORGOTTEN_ZOMBIE)
                     )
@@ -1976,12 +1976,12 @@ public enum GameMap {
                                     .add(0.6, Mob.ZOMBIE_LANCER)
                                     .add(0.15, Mob.ZOMBIE_LAMENT)
                                     //.add(0, Mobs.BASIC_SKELETON)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_DISCIPLE)
                                     .add(0.08, Mob.SLIMY_ANOMALY)
                                     .add(0.08, Mob.ARACHNO_VENARI)
                                     //elite
                                     .add(0.25, Mob.ZOMBIE_SWORDSMAN)
-                                    //.add(0, Mobs.ELITE_SKELETON)
+                                    //.add(0, Mobs.SKELETAL_WARLOCK)
                                     .add(0.1, Mob.PIG_SHAMAN)
                                     .add(0.04, Mob.ILLUMINATION)
                                     .add(0.06, Mob.GOLEM_APPRENTICE)
@@ -1994,9 +1994,9 @@ public enum GameMap {
                                     .add(0.01, Mob.VOID_ZOMBIE)
                                     .add(0.01, Mob.SKELETAL_MESMER)
                                     // exiled
-                                    //.add(0, Mobs.EXILED_VOID_LANCER)
+                                    //.add(0, Mobs.ZOMBIE_KNIGHT)
                                     //.add(0, Mobs.EXILED_ZOMBIE)
-                                    //.add(0, Mobs.EXILED_SKELETON)
+                                    //.add(0, Mobs.SKELETAL_SORCERER)
                                     //.add(0, Mobs.EXILED_ZOMBIE_LAVA)
                                     .add(0.01, Mob.RIFT_WALKER)
                             // forgotten
@@ -2007,7 +2007,7 @@ public enum GameMap {
                                     .add(0.5, Mob.ZOMBIE_LANCER)
                                     .add(0.25, Mob.ZOMBIE_LAMENT)
                                     //.add(0, Mobs.BASIC_SKELETON)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_DISCIPLE)
                                     .add(0.08, Mob.SLIMY_ANOMALY)
                                     .add(0.08, Mob.ARACHNO_VENARI)
                                     //elite
@@ -2025,9 +2025,9 @@ public enum GameMap {
                                     .add(0.02, Mob.VOID_ZOMBIE)
                                     .add(0.02, Mob.SKELETAL_MESMER)
                                     // exiled
-                                    //.add(0, Mobs.EXILED_VOID_LANCER)
+                                    //.add(0, Mobs.ZOMBIE_KNIGHT)
                                     //.add(0, Mobs.EXILED_ZOMBIE)
-                                    //.add(0, Mobs.EXILED_SKELETON)
+                                    //.add(0, Mobs.SKELETAL_SORCERER)
                                     //.add(0, Mobs.EXILED_ZOMBIE_LAVA)
                                     .add(0.01, Mob.RIFT_WALKER)
                             // forgotten
@@ -2041,7 +2041,7 @@ public enum GameMap {
                             .add(0.2, Mob.ZOMBIE_LANCER)
                             .add(0.35, Mob.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             .add(0.08, Mob.SLIMY_ANOMALY)
                             .add(0.08, Mob.ARACHNO_VENARI)
                             //elite
@@ -2059,9 +2059,9 @@ public enum GameMap {
                             .add(0.03, Mob.VOID_ZOMBIE)
                             .add(0.03, Mob.SKELETAL_MESMER)
                             // exiled
-                            //.add(0, Mobs.EXILED_VOID_LANCER)
+                            //.add(0, Mobs.ZOMBIE_KNIGHT)
                             .add(0.01, Mob.SCRUPULOUS_ZOMBIE)
-                            //.add(0, Mobs.EXILED_SKELETON)
+                            //.add(0, Mobs.SKELETAL_SORCERER)
                             .add(0.02, Mob.FIRE_SPLITTER)
                             .add(0.04, Mob.RIFT_WALKER)
                             // forgotten
@@ -2069,15 +2069,15 @@ public enum GameMap {
                     )
                     .add(25, new SimpleWave(25, 10 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
                             .add(0.5, Mob.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
                             .add(0.1, Mob.PIG_SHAMAN)
                             .add(0.08, Mob.ILLUMINATION)
                             .add(0.2, Mob.GOLEM_APPRENTICE)
@@ -2092,7 +2092,7 @@ public enum GameMap {
                             // exiled
                             .add(0.02, Mob.ZOMBIE_KNIGHT)
                             .add(0.02, Mob.SCRUPULOUS_ZOMBIE)
-                            //.add(0, Mobs.EXILED_SKELETON)
+                            //.add(0, Mobs.SKELETAL_SORCERER)
                             .add(0.02, Mob.FIRE_SPLITTER)
                             .add(0.06, Mob.RIFT_WALKER)
                             // forgotten
@@ -2103,15 +2103,15 @@ public enum GameMap {
                     )
                     .add(31, new SimpleWave(30, 10 * SECOND, null)
                                     //basic
-                                    //.add(0, Mobs.BASIC_ZOMBIE)
+                                    //.add(0, Mobs.ZOMBIE_LANCER)
                                     .add(0.4, Mob.ZOMBIE_LAMENT)
                                     //.add(0, Mobs.BASIC_SKELETON)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_DISCIPLE)
                                     //.add(0, Mobs.BASIC_SLIME)
-                                    //.add(0, Mobs.SPIDER)
+                                    //.add(0, Mobs.ARACHNO_VENARI)
                                     //elite
-                                    //.add(0, Mobs.ELITE_ZOMBIE)
-                                    //.add(0, Mobs.ELITE_SKELETON)
+                                    //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                                    //.add(0, Mobs.SKELETAL_WARLOCK)
                                     .add(0.1, Mob.PIG_SHAMAN)
                                     .add(0.08, Mob.ILLUMINATION)
                                     .add(0.2, Mob.GOLEM_APPRENTICE)
@@ -2126,7 +2126,7 @@ public enum GameMap {
                                     // exiled
                                     .add(0.03, Mob.ZOMBIE_KNIGHT)
                                     .add(0.03, Mob.SCRUPULOUS_ZOMBIE)
-                                    //.add(0, Mobs.EXILED_SKELETON)
+                                    //.add(0, Mobs.SKELETAL_SORCERER)
                                     .add(0.03, Mob.FIRE_SPLITTER)
                                     .add(0.03, Mob.RIFT_WALKER)
                             // forgotten
@@ -2134,15 +2134,15 @@ public enum GameMap {
                     )
                     .add(35, new SimpleWave(30, 10 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
                             .add(0.4, Mob.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
                             .add(0.1, Mob.PIG_SHAMAN)
                             .add(0.08, Mob.ILLUMINATION)
                             .add(0.2, Mob.GOLEM_APPRENTICE)
@@ -2157,7 +2157,7 @@ public enum GameMap {
                             // exiled
                             .add(0.03, Mob.ZOMBIE_KNIGHT)
                             .add(0.03, Mob.SCRUPULOUS_ZOMBIE)
-                            //.add(0, Mobs.EXILED_SKELETON)
+                            //.add(0, Mobs.SKELETAL_SORCERER)
                             .add(0.04, Mob.FIRE_SPLITTER)
                             .add(0.04, Mob.RIFT_WALKER)
                             // forgotten
@@ -2168,15 +2168,15 @@ public enum GameMap {
                     )
                     .add(41, new SimpleWave(35, 10 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
                             .add(0.3, Mob.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
                             .add(0.1, Mob.PIG_SHAMAN)
                             .add(0.08, Mob.ILLUMINATION)
                             .add(0.1, Mob.GOLEM_APPRENTICE)
@@ -2199,15 +2199,15 @@ public enum GameMap {
                     )
                     .add(45, new SimpleWave(35, 10 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
                             .add(0.2, Mob.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
                             .add(0.1, Mob.PIG_SHAMAN)
                             .add(0.08, Mob.ILLUMINATION)
                             .add(0.1, Mob.GOLEM_APPRENTICE)
@@ -2233,23 +2233,23 @@ public enum GameMap {
                     )
                     .add(51, new SimpleWave(35, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.08, Mob.ILLUMINATION)
                             .add(0.12, Mob.GOLEM_APPRENTICE)
                             .add(0.05, Mob.WITCH_DEACON)
                             //envoy
                             .add(0.3, Mob.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             //void
                             .add(0.08, Mob.VOID_ZOMBIE)
                             .add(0.12, Mob.SKELETAL_MESMER)
@@ -2268,23 +2268,23 @@ public enum GameMap {
                     )
                     .add(55, new SimpleWave(35, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.08, Mob.ILLUMINATION)
                             .add(0.15, Mob.GOLEM_APPRENTICE)
                             .add(0.05, Mob.WITCH_DEACON)
                             //envoy
                             .add(0.2, Mob.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             //void
                             .add(0.08, Mob.VOID_ZOMBIE)
                             .add(0.16, Mob.SKELETAL_MESMER)
@@ -2307,23 +2307,23 @@ public enum GameMap {
                     )
                     .add(61, new SimpleWave(40, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.08, Mob.ILLUMINATION)
                             .add(0.15, Mob.GOLEM_APPRENTICE)
                             .add(0.05, Mob.WITCH_DEACON)
                             //envoy
                             .add(0.1, Mob.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             .add(0.1, Mob.SLIME_GUARD)
                             //void
                             .add(0.08, Mob.VOID_ZOMBIE)
@@ -2344,23 +2344,23 @@ public enum GameMap {
                     )
                     .add(65, new SimpleWave(40, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             .add(0.05, Mob.SLIMY_ANOMALY)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.08, Mob.ILLUMINATION)
                             .add(0.15, Mob.GOLEM_APPRENTICE)
                             .add(0.05, Mob.WITCH_DEACON)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             .add(0.1, Mob.SLIME_GUARD)
                             //void
                             .add(0.08, Mob.VOID_ZOMBIE)
@@ -2384,23 +2384,23 @@ public enum GameMap {
                     )
                     .add(71, new SimpleWave(45, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.1, Mob.ILLUMINATION)
                             .add(0.15, Mob.GOLEM_APPRENTICE)
                             .add(0.1, Mob.WITCH_DEACON)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             //void
                             .add(0.2, Mob.VOID_ZOMBIE)
                             .add(0.2, Mob.SKELETAL_MESMER)
@@ -2421,23 +2421,23 @@ public enum GameMap {
                     )
                     .add(75, new SimpleWave(45, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.1, Mob.ILLUMINATION)
                             .add(0.15, Mob.GOLEM_APPRENTICE)
                             .add(0.1, Mob.WITCH_DEACON)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             .add(0.3, Mob.SLIME_GUARD)
                             //void
                             .add(0.2, Mob.VOID_ZOMBIE)
@@ -2462,23 +2462,23 @@ public enum GameMap {
                     )
                     .add(81, new SimpleWave(50, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.1, Mob.ILLUMINATION)
                             .add(0.15, Mob.GOLEM_APPRENTICE)
                             .add(0.1, Mob.WITCH_DEACON)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             .add(0.5, Mob.SLIME_GUARD)
                             //void
                             .add(0.2, Mob.VOID_ZOMBIE)
@@ -2490,7 +2490,7 @@ public enum GameMap {
                             .add(0.2, Mob.SCRUPULOUS_ZOMBIE)
                             .add(0.3, Mob.SKELETAL_SORCERER)
                             .add(0.25, Mob.FIRE_SPLITTER)
-                            //.add(0, Mobs.EXILED_ZOMBIE_RIFT)
+                            //.add(0, Mobs.RIFT_WALKER)
                             // forgotten
                             .add(0.05, Mob.NIGHTMARE_ZOMBIE)
                             .add(0.5, Mob.OVERGROWN_ZOMBIE)
@@ -2500,23 +2500,23 @@ public enum GameMap {
                     )
                     .add(85, new SimpleWave(50, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.1, Mob.ILLUMINATION)
                             .add(0.15, Mob.GOLEM_APPRENTICE)
                             .add(0.1, Mob.WITCH_DEACON)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             .add(0.7, Mob.SLIME_GUARD)
                             //void
                             .add(0.1, Mob.VOID_ZOMBIE)
@@ -2528,7 +2528,7 @@ public enum GameMap {
                             .add(0.2, Mob.SCRUPULOUS_ZOMBIE)
                             .add(0.3, Mob.SKELETAL_SORCERER)
                             .add(0.25, Mob.FIRE_SPLITTER)
-                            //.add(0, Mobs.EXILED_ZOMBIE_RIFT)
+                            //.add(0, Mobs.RIFT_WALKER)
                             // forgotten
                             .add(0.05, Mob.NIGHTMARE_ZOMBIE)
                             .add(0.3, Mob.OVERGROWN_ZOMBIE)
@@ -2541,23 +2541,23 @@ public enum GameMap {
                     )
                     .add(91, new SimpleWave(50, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.1, Mob.ILLUMINATION)
                             .add(0.25, Mob.GOLEM_APPRENTICE)
                             .add(0.1, Mob.WITCH_DEACON)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             .add(0.5, Mob.SLIME_GUARD)
                             //void
                             .add(0.1, Mob.VOID_ZOMBIE)
@@ -2579,23 +2579,23 @@ public enum GameMap {
                     )
                     .add(95, new SimpleWave(50, 5 * SECOND, null)
                             //basic
-                            //.add(0, Mobs.BASIC_ZOMBIE)
-                            //.add(0, Mobs.GHOST_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_LANCER)
+                            //.add(0, Mobs.ZOMBIE_LAMENT)
                             //.add(0, Mobs.BASIC_SKELETON)
-                            //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_DISCIPLE)
                             //.add(0, Mobs.BASIC_SLIME)
-                            //.add(0, Mobs.SPIDER)
+                            //.add(0, Mobs.ARACHNO_VENARI)
                             //elite
-                            //.add(0, Mobs.ELITE_ZOMBIE)
-                            //.add(0, Mobs.ELITE_SKELETON)
-                            //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                            //.add(0, Mobs.SKELETAL_WARLOCK)
+                            //.add(0, Mobs.PIG_SHAMAN)
                             .add(0.1, Mob.ILLUMINATION)
                             .add(0.25, Mob.GOLEM_APPRENTICE)
                             .add(0.1, Mob.WITCH_DEACON)
                             //envoy
-                            //.add(0, Mobs.ENVOY_ZOMBIE)
+                            //.add(0, Mobs.ZOMBIE_VANGUARD)
                             //.add(0, Mobs.ENVOY_SKELETON)
-                            //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                            //.add(0, Mobs.PIG_ALLEVIATOR)
                             .add(0.5, Mob.SLIME_GUARD)
                             //void
                             .add(0.1, Mob.VOID_ZOMBIE)
@@ -2620,23 +2620,23 @@ public enum GameMap {
                     )
                     .add(101, new SimpleWave(80, 2 * SECOND, null)
                                     //basic
-                                    //.add(0, Mobs.BASIC_ZOMBIE)
-                                    //.add(0, Mobs.GHOST_ZOMBIE)
+                                    //.add(0, Mobs.ZOMBIE_LANCER)
+                                    //.add(0, Mobs.ZOMBIE_LAMENT)
                                     //.add(0, Mobs.BASIC_SKELETON)
-                                    //.add(0, Mobs.BASIC_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_DISCIPLE)
                                     //.add(0, Mobs.BASIC_SLIME)
-                                    //.add(0, Mobs.SPIDER)
+                                    //.add(0, Mobs.ARACHNO_VENARI)
                                     //elite
-                                    //.add(0, Mobs.ELITE_ZOMBIE)
-                                    //.add(0, Mobs.ELITE_SKELETON)
-                                    //.add(0, Mobs.ELITE_PIG_ZOMBIE)
+                                    //.add(0, Mobs.ZOMBIE_SWORDSMAN)
+                                    //.add(0, Mobs.SKELETAL_WARLOCK)
+                                    //.add(0, Mobs.PIG_SHAMAN)
                                     //.add(0, Mobs.MAGMA_CUBE)
                                     //.add(0, Mobs.IRON_GOLEM)
                                     .add(0.1, Mob.WITCH_DEACON)
                                     //envoy
-                                    //.add(0, Mobs.ENVOY_ZOMBIE)
+                                    //.add(0, Mobs.ZOMBIE_VANGUARD)
                                     //.add(0, Mobs.ENVOY_SKELETON)
-                                    //.add(0, Mobs.ENVOY_PIG_ZOMBIE)
+                                    //.add(0, Mobs.PIG_ALLEVIATOR)
                                     //void
                                     .add(1, Mob.VOID_ZOMBIE)
                                     .add(0.5, Mob.SKELETAL_MESMER)
@@ -2644,9 +2644,9 @@ public enum GameMap {
                                     // exiled
                                     .add(1, Mob.ZOMBIE_KNIGHT)
                                     //.add(0, Mobs.EXILED_ZOMBIE)
-                                    //.add(0, Mobs.EXILED_SKELETON)
+                                    //.add(0, Mobs.SKELETAL_SORCERER)
                                     //.add(0, Mobs.EXILED_ZOMBIE_LAVA)
-                                    //.add(0, Mobs.EXILED_ZOMBIE_RIFT)
+                                    //.add(0, Mobs.RIFT_WALKER)
                                     // forgotten
                                     .add(0.1, Mob.NIGHTMARE_ZOMBIE)
                             //.add(0, Mobs.FORGOTTEN_LANCER)
@@ -2848,7 +2848,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRiftEvent1",
-            0,
+            1,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -3032,7 +3032,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRiftEvent2",
-            0,
+            1,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -3124,7 +3124,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRiftEvent3",
-            6,
+            1,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -3352,12 +3352,12 @@ public enum GameMap {
 
     },
     ILLUSION_RIFT_EVENT_4(
-            "Spiders Burrow",
+            "ARACHNO_VENARIs Burrow",
             4,
             1,
             120 * SECOND,
             "IllusionRiftEvent4",
-            6,
+            1,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -3365,7 +3365,7 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TextOption.Type.CHAT_CENTERED.create(
-                    Component.text("Spiders Dwelling", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.text("ARACHNO_VENARIs Dwelling", NamedTextColor.WHITE, TextDecoration.BOLD),
                     Component.empty(),
                     Component.text("Kill mobs to gain event points!", NamedTextColor.YELLOW, TextDecoration.BOLD),
                     Component.empty()
@@ -3527,7 +3527,7 @@ public enum GameMap {
 
                 @Override
                 public List<Component> getWaveScoreboard(WarlordsPlayer player) {
-                    return Collections.singletonList(Component.text("Event: ").append(Component.text("Spiders Burrow", NamedTextColor.GREEN)));
+                    return Collections.singletonList(Component.text("Event: ").append(Component.text("ARACHNO_VENARIs Burrow", NamedTextColor.GREEN)));
                 }
 
                 @Override
@@ -3596,7 +3596,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "IllusionRiftEvent5",
-            6,
+            1,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -3879,6 +3879,255 @@ public enum GameMap {
                     .guildExpPerXSec(20, 30)
             );
             options.add(new FieldEffect(options, FieldEffect.FieldEffects.LOST_BUFF, FieldEffect.FieldEffects.DUMB_DEBUFFS));
+
+            return options;
+        }
+
+    },
+    ILLUSION_RIFT_EVENT_6(
+            "Acropolis",
+            4,
+            1,
+            120 * SECOND,
+            "IllusionRiftEvent6",
+            1,
+            GameMode.EVENT_WAVE_DEFENSE
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    Component.text(getMapName(), NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    Component.text("Kill mobs to gain event points!", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                    Component.empty()
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Kill as many mobs as possible!", NamedTextColor.YELLOW)
+            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 22, 0.5), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-9.5, 22, 0.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(7.5, 22, 0.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-17.5, 22, -4.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(6.5, 22, -7.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 22, 6.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-6.5, 22, -6.5), Team.RED));
+
+            options.add(new PowerupOption(loc.addXYZ(16.5, 24.5, 17.5), PowerupType.COOLDOWN, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(-15.5, 24.5, -18.5), PowerupType.HEALING, 5, 90, 30));
+
+            options.add(new RespawnWaveOption(2, 1, 20));
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
+                    .add(1, new SimpleWave(8, 10 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.5, Mob.PIG_DISCIPLE)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                    )
+                    .add(2, new SimpleWave(8, 10 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.4, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ZOMBIE_LAMENT)
+                    )
+                    .add(4, new SimpleWave(8, 10 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.3, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.05, Mob.SKELETAL_WARLOCK)
+                            .add(0.05, Mob.PIG_SHAMAN)
+                    )
+                    .add(5, new SimpleWave(11, 10 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_APOLLO)
+                    )
+                    .add(6, new SimpleWave(12, 10 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.2, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.05, Mob.SKELETAL_WARLOCK)
+                            .add(0.05, Mob.PIG_ALLEVIATOR)
+                    )
+                    .add(8, new SimpleWave(12, 10 * SECOND, null)
+                            .add(0.2, Mob.ZOMBIE_LANCER)
+                            .add(0.2, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.2, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
+                            .add(0.05, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                    )
+                    .add(10, new SimpleWave(10, 10 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_ARES)
+                    )
+                    .add(11, new SimpleWave(16, 10 * SECOND, null)
+                            .add(0.1, Mob.ZOMBIE_LANCER)
+                            .add(0.1, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ZOMBIE_LAMENT)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.PIG_SHAMAN)
+                            .add(0.2, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                            .add(0.05, Mob.SLIME_GUARD)
+                    )
+                    .add(13, new SimpleWave(16, 10 * SECOND, null)
+                            .add(0.1, Mob.ZOMBIE_LANCER)
+                            .add(0.1, Mob.PIG_DISCIPLE)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.1, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.PIG_SHAMAN)
+                            .add(0.2, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                            .add(0.05, Mob.SLIME_GUARD)
+                            .add(0.2, Mob.ZOMBIE_SWORDSMAN)
+                    )
+                    .add(15, new SimpleWave(11, 10 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_PROMETHEUS)
+                    )
+                    .add(16, new SimpleWave(20, 10 * SECOND, null)
+                            .add(0.2, Mob.PIG_DISCIPLE)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.1, Mob.ARACHNO_VENARI)
+                            .add(0.2, Mob.PIG_SHAMAN)
+                            .add(0.05, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                            .add(0.05, Mob.SLIME_GUARD)
+                            .add(0.05, Mob.ZOMBIE_SWORDSMAN)
+                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
+                            .add(0.1, Mob.RIFT_WALKER)
+                    )
+                    .add(20, new SimpleWave(13, 10 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_ATHENA)
+                    )
+                    .add(21, new SimpleWave(24, 10 * SECOND, null)
+                            .add(0.2, Mob.ZOMBIE_LAMENT)
+                            .add(0.2, Mob.PIG_ALLEVIATOR)
+                            .add(0.1, Mob.ZOMBIE_VANGUARD)
+                            .add(0.1, Mob.SLIME_GUARD)
+                            .add(0.1, Mob.ZOMBIE_SWORDSMAN)
+                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
+                            .add(0.1, Mob.RIFT_WALKER)
+                            .add(0.05, Mob.SKELETAL_SORCERER)
+                            .add(0.05, Mob.ZOMBIE_KNIGHT)
+                    )
+                    .add(25, new SimpleWave(21, 10 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_CRONUS)
+                    ), DifficultyIndex.EVENT
+            ) {
+                @Override
+                public void register(@Nonnull Game game) {
+                    super.register(game);
+                    game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 2, "wave") {
+                        @Nonnull
+                        @Override
+                        public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                            return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                        }
+                    });
+                }
+
+                @Override
+                public float getSpawnCountMultiplier(int playerCount) {
+                    return switch (playerCount) {
+                        case 3 -> 1.2f;
+                        case 4 -> 1.5f;
+                        default -> 1;
+                    };
+                }
+
+                @Override
+                protected void modifyStats(WarlordsNPC warlordsNPC) {
+                    warlordsNPC.getMob().onSpawn(this);
+                    //TODO
+                }
+            });
+            options.add(new ItemOption());
+            options.add(new WinAfterTimeoutOption(900, 50, "spec"));
+            options.add(new TheBorderlineOfIllusionEvent());
+            options.add(new SafeZoneOption(1));
+            options.add(new EventPointsOption()
+                    .reduceScoreOnAllDeath(30, Team.BLUE)
+                    .onPerWaveClear(1, 500)
+                    .onPerWaveClear(5, 2000)
+                    .onPerMobKill(Mob.ZOMBIE_LANCER, 5)
+                    .onPerMobKill(Mob.SKELETAL_ENTROPY, 5)
+                    .onPerMobKill(Mob.PIG_DISCIPLE, 10)
+                    .onPerMobKill(Mob.ZOMBIE_LAMENT, 10)
+                    .onPerMobKill(Mob.ARACHNO_VENARI, 10)
+                    .onPerMobKill(Mob.PIG_SHAMAN, 15)
+                    .onPerMobKill(Mob.PIG_ALLEVIATOR, 15)
+                    .onPerMobKill(Mob.ZOMBIE_VANGUARD, 20)
+                    .onPerMobKill(Mob.SLIME_GUARD, 25)
+                    .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 25)
+                    .onPerMobKill(Mob.ILLUMINATION, 25)
+                    .onPerMobKill(Mob.INTERMEDIATE_WARRIOR_BERSERKER, 25)
+                    .onPerMobKill(Mob.SKELETAL_MESMER, 35)
+                    .onPerMobKill(Mob.OVERGROWN_ZOMBIE, 40)
+                    .onPerMobKill(Mob.ADVANCED_WARRIOR_BERSERKER, 40)
+                    .onPerMobKill(Mob.RIFT_WALKER, 45)
+                    .onPerMobKill(Mob.SKELETAL_SORCERER, 45)
+                    .onPerMobKill(Mob.FIRE_SPLITTER, 45)
+                    .onPerMobKill(Mob.ZOMBIE_KNIGHT, 50)
+                    .onPerMobKill(Mob.SCRUPULOUS_ZOMBIE, 50)
+                    .onPerMobKill(Mob.EVENT_TERAS_MINOTAUR, 150)
+                    .onPerMobKill(Mob.EVENT_TERAS_CYCLOPS, 150)
+                    .onPerMobKill(Mob.EVENT_TERAS_SIREN, 150)
+                    .onPerMobKill(Mob.EVENT_TERAS_DRYAD, 150)
+                    .onPerMobKill(Mob.EVENT_APOLLO, 500)
+                    .onPerMobKill(Mob.EVENT_ARES, 500)
+                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 500)
+                    .onPerMobKill(Mob.EVENT_ATHENA, 500)
+                    .onPerMobKill(Mob.EVENT_CRONUS, 500)
+                    .onPerMobKill(Mob.EVENT_ZEUS, 500)
+                    .onPerMobKill(Mob.EVENT_POSEIDON, 500)
+                    .onPerMobKill(Mob.EVENT_HADES, 500)
+
+            );
+            options.add(new CurrencyOnEventOption()
+                    .startWith(120000)
+                    .onKill(500)
+                    .setPerWaveClear(5, 25000)
+                    .onPerMobKill(Mob.EVENT_APOLLO, 10000)
+                    .onPerMobKill(Mob.EVENT_ARES, 10000)
+                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 10000)
+                    .onPerMobKill(Mob.EVENT_ATHENA, 10000)
+                    .onPerMobKill(Mob.EVENT_CRONUS, 10000)
+                    .onPerMobKill(Mob.EVENT_ZEUS, 10000)
+                    .onPerMobKill(Mob.EVENT_POSEIDON, 10000)
+                    .onPerMobKill(Mob.EVENT_HADES, 10000)
+            );
+            options.add(new CoinGainOption()
+                    .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{
+                        put("Apollo", 100L);
+                        put("Ares", 100L);
+                        put("Prometheus", 100L);
+                        put("Athena", 100L);
+                        put("Cronus", 100L);
+                        put("Zeus", 100L);
+                        put("Poseidon", 100L);
+                        put("Hades", 100L);
+                    }})
+                    .playerCoinPerXSec(150, 10)
+                    .guildCoinInsigniaConvertBonus(1000)
+                    .guildCoinPerXSec(1, 1)
+                    .disableCoinConversionUpgrade()
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerXSec(15, 10)
+                    .guildExpPerXSec(4, 10)
+            );
+            options.add(new FieldEffect(options, FieldEffect.FieldEffects.TYCHE_PROSPERITY));
 
             return options;
         }

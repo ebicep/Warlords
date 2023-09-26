@@ -744,7 +744,6 @@ public enum GameEvents {
                 add(new SpendableBuyShop(1, FixedItems.DISASTER_FRAGMENT, 1, 500_000));
             }}
     ) {
-
         @Override
         public LinkedHashMap<Spendable, Long> getRewards(int position) {
             if (position == 1) {
@@ -908,6 +907,227 @@ public enum GameEvents {
                                     queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_5)
                             );
                         }
+                    }
+            );
+
+            menu.setItem(4, 3, MENU_BACK, (m, e) -> openMenu(player));
+            menu.openForPlayer(player);
+        }
+    },
+    GARDEN_OF_HESPERIDES("Garden of Hesperides",
+            Currencies.EVENT_POINTS_GARDEN_OF_HESPERIDES,
+            null, //TODO
+            null,
+            null,
+            (game, warlordsGameTriggerWinEvent, aBoolean) -> {
+                for (Option option : game.getOptions()) {
+//                    if (option instanceof TheBorderlineOfIllusionEvent) {
+//                        return new DatabaseGamePvEEventTheBorderlineOfIllusion(game, warlordsGameTriggerWinEvent, aBoolean);
+//                    }
+                }
+                return null;
+            },
+            new ArrayList<>() {{
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 3, 300_000));
+                add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
+                add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
+                add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
+                add(new SpendableBuyShop(200, Currencies.FAIRY_ESSENCE, 5, 50_000));
+                add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
+                add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
+                add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 8_000));
+                add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
+                add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+                add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
+            }}
+    ) {
+        @Override
+        public LinkedHashMap<Spendable, Long> getRewards(int position) {
+            if (position == 1) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 500_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 500L);
+                    put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1_000L);
+                    put(Currencies.EPIC_STAR_PIECE, 3L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 5L);
+                }};
+            }
+            if (position == 2) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 300_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 300L);
+                    put(Currencies.LEGEND_FRAGMENTS, 3_500L);
+                    put(Currencies.FAIRY_ESSENCE, 1000L);
+                    put(Currencies.EPIC_STAR_PIECE, 2L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 3L);
+                }};
+            }
+            if (position == 3) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 200_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 200L);
+                    put(Currencies.LEGEND_FRAGMENTS, 2_000L);
+                    put(Currencies.FAIRY_ESSENCE, 1000L);
+                    put(Currencies.EPIC_STAR_PIECE, 1L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 2L);
+                }};
+            }
+            if (4 <= position && position <= 10) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 100_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 100L);
+                    put(Currencies.LEGEND_FRAGMENTS, 1_000L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 5L);
+                    put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1L);
+                }};
+            }
+            if (11 <= position && position <= 20) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 50_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 50L);
+                    put(Currencies.LEGEND_FRAGMENTS, 500L);
+                    put(Currencies.FAIRY_ESSENCE, 500L);
+                    put(Currencies.RARE_STAR_PIECE, 2L);
+                }};
+            }
+            if (21 <= position && position <= 50) {
+                return new LinkedHashMap<>() {{
+                    put(Currencies.COIN, 25_000L);
+                    put(Currencies.SUPPLY_DROP_TOKEN, 25L);
+                    put(Currencies.RARE_STAR_PIECE, 1L);
+                }};
+            }
+            return new LinkedHashMap<>() {{
+                put(Currencies.COIN, 10_000L);
+                put(Currencies.SUPPLY_DROP_TOKEN, 10L);
+                put(Currencies.COMMON_STAR_PIECE, 1L);
+            }};
+        }
+
+        @Override
+        public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
+//            long eventStart = currentGameEvent.getStartDateSecond(); //TODO
+//            EventLeaderboard borderlineOfIllusionBoard = new EventLeaderboard(
+//                    eventStart,
+//                    "Highest Game Event Points",
+//                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 751.5),
+//                    (databasePlayer, time) -> databasePlayer
+//                            .getPveStats()
+//                            .getEventStats()
+//                            .getIlluminaEventStats()
+//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
+//                            .getBorderLineOfIllusionStats()
+//                            .getHighestEventPointsGame(),
+//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+//                            .getPveStats()
+//                            .getEventStats()
+//                            .getIlluminaEventStats()
+//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
+//                            .getBorderLineOfIllusionStats()
+//                            .getHighestEventPointsGame())
+//            );
+//            EventLeaderboard totalBoard = new EventLeaderboard(
+//                    eventStart,
+//                    "Event Points",
+//                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 737.5),
+//                    (databasePlayer, time) -> databasePlayer
+//                            .getPveStats()
+//                            .getEventStats()
+//                            .getIlluminaEventStats()
+//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
+//                            .getEventPointsCumulative(),
+//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+//                            .getPveStats()
+//                            .getEventStats()
+//                            .getIlluminaEventStats()
+//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
+//                            .getEventPointsCumulative())
+//            );
+//            leaderboards.put(borderlineOfIllusionBoard, "The Borderline of Illusion");
+//            leaderboards.put(totalBoard, "Total Event Points");
+        }
+
+        @Override
+        public void editNPC(NPC npc) {
+            Equipment equipment = npc.getOrAddTrait(Equipment.class); //TODO
+            equipment.set(Equipment.EquipmentSlot.HELMET, SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM));
+            equipment.set(Equipment.EquipmentSlot.CHESTPLATE, Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200));
+            equipment.set(Equipment.EquipmentSlot.LEGGINGS, Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200));
+            equipment.set(Equipment.EquipmentSlot.BOOTS, Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200));
+            equipment.set(Equipment.EquipmentSlot.HAND, Weapons.NEW_LEAF_SCYTHE.getItem());
+        }
+
+        @Override
+        public void setMenu(Menu menu) {
+            menu.setItem(2, 1,
+                    new ItemBuilder(Material.BLAZE_POWDER)
+                            .name(Component.text("Start a private Garden of Hesperides event game", NamedTextColor.GREEN))
+                            .get(),
+                    (m, e) -> openGardenOfHesperidesModeMenu((Player) e.getWhoClicked(), true)
+            );
+            menu.setItem(6, 1,
+                    new ItemBuilder(Material.COMPARATOR)
+                            .name(Component.text("Join a public Garden of Hesperides event game", NamedTextColor.GREEN))
+                            .get(),
+                    (m, e) -> openGardenOfHesperidesModeMenu((Player) e.getWhoClicked(), false)
+            );
+        }
+
+        private void openGardenOfHesperidesModeMenu(Player player, boolean privateGame) {
+            Menu menu = new Menu("Garden of Hesperides Modes", 9 * 4);
+
+            menu.setItem(2, 1,
+                    new ItemBuilder(Material.BONE)
+                            .name(Component.text("The Acropolis", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("You can’t hide behind your fingers!", NamedTextColor.YELLOW),
+                                    Component.empty(),
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("1-4 Players", NamedTextColor.GREEN))
+                            )
+                            .get(),
+                    (m, e) -> {
+                        if (privateGame) {
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_6)
+                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+
+                            );
+                        } else {
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_6)
+                            );
+                        }
+                    }
+            );
+            menu.setItem(4, 1,
+                    new ItemBuilder(Material.BONE)
+                            .name(Component.text("Tartarus", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("All gathered in the depths of an infernal hell, they seek to sever the ties between Warlords and life.", NamedTextColor.YELLOW),
+                                    Component.empty(),
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
+                            )
+                            .get(),
+                    (m, e) -> {
+//                        if (privateGame) {
+//                            GameStartCommand.startGamePvEEvent(player,
+//                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_5)
+//                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+//
+//                            );
+//                        } else {
+//                            GameStartCommand.startGamePvEEvent(player,
+//                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_5)
+//                            );
+//                        }
                     }
             );
 
