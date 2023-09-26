@@ -26,7 +26,7 @@ import java.util.UUID;
 
 public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveCounter {
 
-    private static final int MELEE_DAMAGE_BOOST = 20;
+    private static final int MELEE_DAMAGE_BOOST = 15;
     private static final float MELEE_DAMAGE_BOOST_PER_UPGRADE = 5;
     private static final int PROC_CHANCE_INCREASE = 5;
     private static final float PROC_CHANCE_INCREASE_PER_UPGRADE = 2.5f;
