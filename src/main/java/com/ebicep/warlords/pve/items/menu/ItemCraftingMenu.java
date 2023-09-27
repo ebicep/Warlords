@@ -75,7 +75,7 @@ public class ItemCraftingMenu {
     public static void openItemCraftingMenu(Player player, DatabasePlayer databasePlayer) {
         Menu menu = new Menu("Ethical Enya", 9 * 4);
 
-        menu.setItem(1, 1,
+        menu.setItem(2, 1,
                 new ItemBuilder(Material.YELLOW_TERRACOTTA)
                         .name(Component.text("Delta Forging", NamedTextColor.GREEN))
                         .lore(Component.text("Craft a Delta Tiered Item", NamedTextColor.GRAY))
@@ -83,7 +83,7 @@ public class ItemCraftingMenu {
                 (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.DELTA, new HashMap<>())
         );
 
-        menu.setItem(4, 1,
+        menu.setItem(6, 1,
                 new ItemBuilder(Material.WHITE_TERRACOTTA)
                         .name(Component.text("Omega Forging", NamedTextColor.GREEN))
                         .lore(Component.text("Craft an Omega Tiered Item", NamedTextColor.GRAY))
@@ -93,13 +93,13 @@ public class ItemCraftingMenu {
                     openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>());
                 }
         );
-        menu.setItem(7, 1,
-                new ItemBuilder(Material.ANVIL)
-                        .name(Component.text("Celestial Smeltery", NamedTextColor.GREEN))
-                        .lore(Component.text("Smelt Celestial Bronze", NamedTextColor.GRAY))
-                        .get(),
-                (m, e) -> openCelestialSmelteryMenu(player, databasePlayer, null)
-        );
+//        menu.setItem(7, 1,
+//                new ItemBuilder(Material.ANVIL)
+//                        .name(Component.text("Celestial Smeltery", NamedTextColor.GREEN))
+//                        .lore(Component.text("Smelt Celestial Bronze", NamedTextColor.GRAY))
+//                        .get(),
+//                (m, e) -> openCelestialSmelteryMenu(player, databasePlayer, null)
+//        );
 
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
@@ -216,7 +216,6 @@ public class ItemCraftingMenu {
             player.sendMessage(Component.text("An error occurred while crafting the item. Please report this!", NamedTextColor.RED));
             return;
         }
-        itemToCraft.setModifier(inheritedItem.getModifier());
         ItemBuilder itemBuilder;
         if (requirementsMet && enoughMobDrops) {
             ItemStack craftedItemObfuscated = craftedItem.generateItemStackWithObfuscatedStat(otherStat);
@@ -280,7 +279,6 @@ public class ItemCraftingMenu {
                                 for (Map.Entry<Spendable, Long> currenciesLongEntry : tierCostInfo.cost().entrySet()) {
                                     currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                 }
-                                itemToCraft.bless(null);
                                 pveStats.getItemsManager().addItem(itemToCraft);
                                 AbstractItem.sendItemMessage(player,
                                         Component.textOfChildren(Component.text("You crafted ", NamedTextColor.GRAY), itemToCraft.getHoverComponent())

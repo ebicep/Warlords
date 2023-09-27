@@ -11,7 +11,7 @@ import java.util.Set;
 public abstract class SpecialDeltaTome extends SpecialTome implements ItemAddonClassBonus, AppliesToWarlordsPlayer {
 
     public SpecialDeltaTome() {
-        super(ItemTier.DELTA);
+        this.tier = ItemTier.DELTA;
     }
 
     public SpecialDeltaTome(Set<BasicStatPool> statPool) {

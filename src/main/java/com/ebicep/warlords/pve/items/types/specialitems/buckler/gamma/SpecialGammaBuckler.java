@@ -11,7 +11,7 @@ import java.util.Set;
 public abstract class SpecialGammaBuckler extends SpecialBuckler implements ItemAddonClassBonus, CraftsInto {
 
     public SpecialGammaBuckler() {
-        super(ItemTier.GAMMA);
+        this.tier = ItemTier.GAMMA;
     }
 
     public SpecialGammaBuckler(Set<BasicStatPool> statPool) {

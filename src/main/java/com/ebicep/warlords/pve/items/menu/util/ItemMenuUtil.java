@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.BonusLore;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -124,7 +125,143 @@ public class ItemMenuUtil {
         }
     }
 
-    public static List<Component> getTotalBonusLore(List<AbstractItem> equippedItems, boolean skipFirstLine) {
+    public static List<Component> getTotalBonusLore(List<AbstractItem> equippedItems) {
+        List<Component> lore = new ArrayList<>();
+        lore.addAll(getStatBonusLore(equippedItems));
+        lore.addAll(getAspectBonusLore(equippedItems));
+        lore.addAll(getSpecialBonusLore(equippedItems));
+        return lore;
+    }
+
+    public static List<Component> getAspectBonusLore(List<AbstractItem> equippedItems) {
+        Map<Aspect, Map<ItemType, Integer>> aspectBonuses = new HashMap<>();
+        for (AbstractItem equippedItem : equippedItems) {
+            ItemType type = equippedItem.getType();
+            Aspect aspectModifier1 = equippedItem.getAspectModifier1();
+            Aspect aspectModifier2 = equippedItem.getAspectModifier2();
+            if (aspectModifier1 != null) {
+                ItemTier tier = equippedItem.getTier();
+                if (aspectModifier2 != null) {
+                    aspectBonuses.computeIfAbsent(aspectModifier1, k -> new HashMap<>()).merge(type, tier.aspectModifierValues.dualModifier1(), Integer::sum);
+                    aspectBonuses.computeIfAbsent(aspectModifier2, k -> new HashMap<>()).merge(type, tier.aspectModifierValues.dualModifier2(), Integer::sum);
+                } else {
+                    aspectBonuses.computeIfAbsent(aspectModifier1, k -> new HashMap<>()).merge(type, tier.aspectModifierValues.singleModifier(), Integer::sum);
+                }
+            }
+        }
+        List<Component> bonusLore = new ArrayList<>();
+        aspectBonuses.keySet()
+                     .stream()
+                     .sorted(Comparator.comparingInt(Enum::ordinal))
+                     .forEachOrdered(aspect -> {
+                         Map<ItemType, Integer> itemTypeBonuses = aspectBonuses.get(aspect);
+                         bonusLore.add(Component.textOfChildren(
+                                 Component.text("- ", NamedTextColor.AQUA),
+                                 Component.text(aspect.name, aspect.textColor)
+                         ));
+                         itemTypeBonuses.keySet()
+                                        .stream()
+                                        .sorted(Comparator.comparingInt(Enum::ordinal))
+                                        .forEachOrdered(itemType -> {
+                                            bonusLore.add(Component.textOfChildren(
+                                                    Component.text("    ", NamedTextColor.AQUA),
+                                                    itemType.getModifierDescriptionCalculatedInverted(itemTypeBonuses.get(itemType))
+                                            ));
+                                        });
+                     });
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Aspect Bonuses:", NamedTextColor.AQUA));
+        lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(Component.text("None", NamedTextColor.GRAY)) : bonusLore);
+        return lore;
+    }
+
+
+    public static List<Component> getStatBonusLore(List<AbstractItem> equippedItems) {
+        Map<BasicStatPool, Integer> statPool = new HashMap<>();
+        for (AbstractItem equippedItem : equippedItems) {
+            equippedItem.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
+        }
+        List<Component> bonusLore = BasicStatPool.getStatPoolLore(statPool, Component.text("- ", NamedTextColor.AQUA), true, null);
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Stat Bonuses:", NamedTextColor.AQUA));
+        lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(Component.text("None", NamedTextColor.GRAY)) : bonusLore);
+        return lore;
+    }
+
+    public static List<Component> getSpecialBonusLore(List<AbstractItem> equippedItems) {
+        List<Component> bonusLore = new ArrayList<>();
+        HashMap<Classes, LinkedHashSet<List<Component>>> bonuses = new HashMap<>();
+        equippedItems.stream()
+                     .sorted(Comparator.comparingInt(o -> o.getTier().ordinal()))
+                     .filter(BonusLore.class::isInstance)
+                     .filter(item -> ((BonusLore) item).getBonusLore() != null)
+                     .forEach(item -> {
+                         BonusLore bonus = (BonusLore) item;
+                         if (item instanceof ItemAddonClassBonus classBonus) {
+                             bonuses.computeIfAbsent(classBonus.getClasses(), k -> new LinkedHashSet<>()).add(bonus.getBonusLore());
+                         } else {
+                             bonuses.computeIfAbsent(null, k -> new LinkedHashSet<>()).add(bonus.getBonusLore());
+                         }
+                     });
+        bonuses.entrySet()
+               .stream()
+               .sorted((o1, o2) -> {
+                   if (o1.getKey() == null) {
+                       return -1;
+                   } else if (o2.getKey() == null) {
+                       return 1;
+                   } else {
+                       return o1.getKey().compareTo(o2.getKey());
+                   }
+               })
+               .forEachOrdered(entry -> {
+                   Classes classes = entry.getKey();
+                   LinkedHashSet<List<Component>> lists = entry.getValue();
+                   bonusLore.add(Component.textOfChildren(
+                           Component.text("- ", NamedTextColor.AQUA),
+                           Component.text(classes == null ? "General" : classes.name, NamedTextColor.GREEN)
+                   ));
+                   if (classes == null) {
+                       lists.forEach(bonusLores -> {
+                           for (int i = 1; i < bonusLores.size(); i++) {
+                               Component lore = bonusLores.get(i);
+                               if (i == 1) {
+                                   bonusLore.add(Component.textOfChildren(
+                                           Component.text("    "),
+                                           Component.text("- ", NamedTextColor.AQUA),
+                                           lore
+                                   ));
+                               } else {
+                                   bonusLore.add(Component.text("       ").append(lore));
+                               }
+                           }
+                       });
+                   } else {
+                       lists.forEach(bonusLores -> {
+                           for (int i = 1; i < bonusLores.size(); i++) {
+                               Component lore = bonusLores.get(i);
+                               if (i == 1) {
+                                   bonusLore.add(Component.textOfChildren(
+                                           Component.text("    "),
+                                           Component.text("- ", NamedTextColor.AQUA),
+                                           lore
+                                   ));
+                               } else {
+                                   bonusLore.add(Component.text("       ").append(lore));
+                               }
+                           }
+                       });
+                   }
+               });
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Special Bonuses:", NamedTextColor.AQUA));
+        lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(Component.text("None", NamedTextColor.GRAY)) : bonusLore);
+        return lore;
+    }
+
+
+    @Deprecated
+    public static List<Component> getTotalBonusLoreLegacy(List<AbstractItem> equippedItems, boolean skipFirstLine) {
         HashMap<BasicStatPool, Integer> statPool = new HashMap<>();
         float gauntletModifier = 0;
         float tomeModifier = 0;

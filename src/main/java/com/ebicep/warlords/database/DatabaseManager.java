@@ -19,6 +19,7 @@ import com.ebicep.warlords.database.repositories.masterworksfair.MasterworksFair
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.timings.TimingsService;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -35,6 +36,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.annotation.Nonnull;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,7 +70,6 @@ public class DatabaseManager {
             put(value, new ConcurrentHashMap<>());
         }
     }};
-    private static DatabasePlayer CACHED_MOB_DATABASEPLAYER = new DatabasePlayer();
     public static MongoClient mongoClient;
     public static MongoDatabase warlordsDatabase;
     public static PlayerService playerService;
@@ -78,7 +80,8 @@ public class DatabaseManager {
     public static GameEventsService gameEventsService;
     public static WeeklyBlessingsService weeklyBlessingsService;
     public static IllusionVendorService illusionVendorService;
-    public static boolean enabled = false;
+    public static boolean enabled = true;
+    private static DatabasePlayer CACHED_MOB_DATABASEPLAYER = new DatabasePlayer();
 
     public static void init() {
         if (!enabled) {
@@ -244,7 +247,8 @@ public class DatabaseManager {
 
     private static void loadPlayerInfo(UUID uuid, DatabasePlayer databasePlayer) {
         //check weapon inventory
-        List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
+        DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        List<AbstractWeapon> weaponInventory = pveStats.getWeaponInventory();
         for (Specializations value : Specializations.VALUES) {
             int count = (int) weaponInventory.stream().filter(w -> w.getSpecializations() == value).count();
             if (count == 0) {
@@ -252,6 +256,15 @@ public class DatabaseManager {
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             }
         }
+        pveStats.getItemsManager().getItemInventory().forEach(item -> {
+            //TODO
+            if (item.getObtainedDate().isBefore(ZonedDateTime.of(2023, 10, 30, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant())
+                    && !item.isLegacyRemodified()
+            ) {
+                item.applyRandomModifier();
+                item.setLegacyRemodified(true);
+            }
+        });
 
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
         playerSettings.setSelectedSpec(databasePlayer.getLastSpec());

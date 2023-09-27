@@ -26,7 +26,8 @@ public enum ItemTier {
             0,
             0,
             null,
-            0
+            0,
+            null
     ),
     ALPHA(
             "Alpha",
@@ -43,7 +44,8 @@ public enum ItemTier {
             new LinkedHashMap<>() {{
                 put(Currencies.COIN, 10_000L);
             }},
-            100
+            100,
+            new AspectModifierValues(2, 1, 1)
     ),
     BETA(
             "Beta",
@@ -61,7 +63,8 @@ public enum ItemTier {
                 put(Currencies.COIN, 25_000L);
                 put(Currencies.SYNTHETIC_SHARD, 100L);
             }},
-            200
+            200,
+            new AspectModifierValues(4, 2, 2)
     ),
     GAMMA(
             "Gamma",
@@ -79,7 +82,8 @@ public enum ItemTier {
                 put(Currencies.COIN, 75_000L);
                 put(Currencies.SYNTHETIC_SHARD, 250L);
             }},
-            350
+            350,
+            new AspectModifierValues(6, 3, 3)
     ),
     DELTA(
             "Delta",
@@ -97,7 +101,8 @@ public enum ItemTier {
                 put(Currencies.COIN, 125_000L);
                 put(Currencies.LEGEND_FRAGMENTS, 50L);
             }},
-            550
+            550,
+            new AspectModifierValues(8, 4, 4)
     ),
     OMEGA(
             "Omega",
@@ -115,7 +120,8 @@ public enum ItemTier {
                 put(Currencies.COIN, 200_000L);
                 put(Currencies.LEGEND_FRAGMENTS, 200L);
             }},
-            800
+            800,
+            new AspectModifierValues(10, 5, 5)
     ),
 
     ;
@@ -143,11 +149,15 @@ public enum ItemTier {
     public final WeightRange weightRange;
     public final Pair<Integer, Integer> scrapValue;
     public final double dropChance;
+    @Deprecated
     public final double cursedChance;
+    @Deprecated
     public final double blessedChance;
     public final int maxEquipped;
+    @Deprecated
     public final LinkedHashMap<Spendable, Long> removeCurseCost;
     public final int maxThornsDamage;
+    public final AspectModifierValues aspectModifierValues;
 
     ItemTier(
             String name,
@@ -161,7 +171,8 @@ public enum ItemTier {
             double blessedChance,
             int maxEquipped,
             LinkedHashMap<Spendable, Long> removeCurseCost,
-            int maxThornsDamage
+            int maxThornsDamage,
+            AspectModifierValues aspectModifierValues
     ) {
         this.name = name;
         this.textColor = textColor;
@@ -176,6 +187,7 @@ public enum ItemTier {
         this.maxEquipped = maxEquipped;
         this.removeCurseCost = removeCurseCost;
         this.maxThornsDamage = maxThornsDamage;
+        this.aspectModifierValues = aspectModifierValues;
     }
 
     public Set<BasicStatPool> generateStatPool() {
@@ -191,6 +203,10 @@ public enum ItemTier {
     }
 
     public record WeightRange(int min, int normal, int max) {
+    }
+
+    public record AspectModifierValues(int singleModifier, int dualModifier1, int dualModifier2) {
+
     }
 
 }

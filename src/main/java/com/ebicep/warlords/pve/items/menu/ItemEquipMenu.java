@@ -164,10 +164,30 @@ public class ItemEquipMenu {
         List<ItemLoadout> loadouts = itemsManager.getLoadouts();
         List<AbstractItem> equippedItems = itemLoadout.getActualItems(itemsManager);
 
-        menu.setItem(4, 0,
+        List<Component> statBonusLore = ItemMenuUtil.getStatBonusLore(equippedItems);
+        statBonusLore.remove(0);
+        menu.setItem(3, 0,
                 new ItemBuilder(HeadUtils.getHead(player))
                         .name(Component.text("Stat Bonuses", NamedTextColor.AQUA))
-                        .lore(ItemMenuUtil.getTotalBonusLore(equippedItems, true))
+                        .lore(statBonusLore)
+                        .get(),
+                (m, e) -> {}
+        );
+        List<Component> aspectBonusLore = ItemMenuUtil.getAspectBonusLore(equippedItems);
+        aspectBonusLore.remove(0);
+        menu.setItem(4, 0,
+                new ItemBuilder(Material.ZOMBIE_HEAD)
+                        .name(Component.text("Aspect Bonuses", NamedTextColor.AQUA))
+                        .lore(aspectBonusLore)
+                        .get(),
+                (m, e) -> {}
+        );
+        List<Component> specialBonusLore = ItemMenuUtil.getSpecialBonusLore(equippedItems);
+        specialBonusLore.remove(0);
+        menu.setItem(5, 0,
+                new ItemBuilder(Material.END_CRYSTAL)
+                        .name(Component.text("Special Bonuses", NamedTextColor.AQUA))
+                        .lore(specialBonusLore)
                         .get(),
                 (m, e) -> {}
         );

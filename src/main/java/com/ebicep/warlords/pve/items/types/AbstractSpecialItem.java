@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
-import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -18,6 +17,7 @@ import java.util.Set;
 public abstract class AbstractSpecialItem extends AbstractItem implements BonusStats, BonusLore {
 
     public AbstractSpecialItem() {
+        super();
     }
 
     public AbstractSpecialItem(ItemType type, ItemTier tier) {
@@ -36,10 +36,10 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
     @Override
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
-        addStatPoolAndBlessing(itemBuilder, null);
+        addStatPoolAndModifier(itemBuilder, null);
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(getBonusLore());
-        addItemScoreAndWeight(itemBuilder, false);
+        addItemScore(itemBuilder, false);
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 160));
         return itemBuilder;
@@ -51,10 +51,10 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
 
     public ItemBuilder generateItemBuilderWithObfuscatedStat(BasicStatPool stat) {
         ItemBuilder itemBuilder = getBaseItemBuilder();
-        addStatPoolAndBlessing(itemBuilder, stat);
+        addStatPoolAndModifier(itemBuilder, stat);
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(getBonusLore());
-        addItemScoreAndWeight(itemBuilder, true);
+        addItemScore(itemBuilder, true);
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 160));
         return itemBuilder;
@@ -62,11 +62,7 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
 
     @Override
     public Component getItemName() {
-        ItemModifier itemModifier = getItemModifier();
-        if (itemModifier != null) {
-            return Component.text(getName(), modifier > 0 ? NamedTextColor.GREEN : NamedTextColor.RED);
-        }
-        return Component.text(getName(), NamedTextColor.GRAY);
+        return Component.text(getName(), getModifierColor());
     }
 
     public abstract String getName();
