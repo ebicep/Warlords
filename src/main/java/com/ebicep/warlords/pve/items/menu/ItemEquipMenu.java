@@ -164,36 +164,10 @@ public class ItemEquipMenu {
         List<ItemLoadout> loadouts = itemsManager.getLoadouts();
         List<AbstractItem> equippedItems = itemLoadout.getActualItems(itemsManager);
 
-        Specializations selectedSpec = itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec();
-        List<Pair<String, Integer>> weightBreakdown = ItemsManager.getMaxWeightBreakdown(databasePlayer, selectedSpec);
-        int maxWeight = weightBreakdown.stream().mapToInt(Pair::getB).sum();
-        int loadoutWeight = itemLoadout.getWeight(itemsManager);
-        addWeightPercentageBar(menu, maxWeight, loadoutWeight);
-        menu.setItem(2, 1,
+        menu.setItem(4, 0,
                 new ItemBuilder(HeadUtils.getHead(player))
                         .name(Component.text("Stat Bonuses", NamedTextColor.AQUA))
                         .lore(ItemMenuUtil.getTotalBonusLore(equippedItems, true))
-                        .get(),
-                (m, e) -> {}
-        );
-        menu.setItem(6, 1,
-                new ItemBuilder(Material.ANVIL)
-                        .name(Component.text("Weight: ", NamedTextColor.GOLD)
-                                       .append(Component.text(loadoutWeight, (loadoutWeight <= maxWeight ? NamedTextColor.GREEN : NamedTextColor.RED)))
-                                       .append(Component.text(" / ", NamedTextColor.GRAY))
-                                       .append(Component.text(maxWeight, NamedTextColor.GREEN))
-                        )
-                        .lore(Component.empty(),
-                                Component.text("Breakdown (" + selectedSpec.name + "):", NamedTextColor.AQUA)
-                        )
-                        .addLore(weightBreakdown.stream()
-                                                .map(pair -> Component.textOfChildren(
-                                                        Component.text("- ", NamedTextColor.AQUA),
-                                                        Component.text(pair.getA() + ": ", NamedTextColor.GRAY),
-                                                        Component.text(pair.getB(), NamedTextColor.GREEN)
-                                                ))
-                                                .collect(Collectors.toList())
-                        )
                         .get(),
                 (m, e) -> {}
         );
@@ -445,9 +419,7 @@ public class ItemEquipMenu {
         lore.add(Component.text("Any", itemLoadout.getSpec() == null ? NamedTextColor.AQUA : NamedTextColor.GRAY));
         Specializations[] specializations = Specializations.VALUES;
         for (Specializations spec : specializations) {
-            lore.add(Component.text(spec.name + " - " + ItemsManager.getMaxWeight(databasePlayer, spec),
-                    itemLoadout.getSpec() == spec ? NamedTextColor.AQUA : NamedTextColor.GRAY
-            ));
+            lore.add(Component.text(spec.name, itemLoadout.getSpec() == spec ? NamedTextColor.AQUA : NamedTextColor.GRAY));
         }
         menu.setItem(7, 5,
                 new ItemBuilder(Material.SLIME_BALL)

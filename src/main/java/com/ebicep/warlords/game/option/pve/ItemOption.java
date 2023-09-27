@@ -73,7 +73,6 @@ public class ItemOption implements Option {
             //items
             ItemsManager itemsManager = pveStats.getItemsManager();
             List<ItemLoadout> loadouts = new ArrayList<>(itemsManager.getLoadouts());
-            int maxWeight = ItemsManager.getMaxWeight(databasePlayer, player.getSpecClass());
             loadouts.removeIf(itemLoadout -> itemLoadout.getItems().isEmpty());
             int nonEmptyLoadouts = loadouts.size();
             loadouts.removeIf(itemLoadout -> {
@@ -81,7 +80,6 @@ public class ItemOption implements Option {
                 return difficultyMode != null && !difficultyMode.validGameMode(game.getGameMode()) && !difficultyMode.validDifficulty(pveOption.getDifficulty());
             });
             loadouts.removeIf(itemLoadout -> itemLoadout.getSpec() != null && itemLoadout.getSpec() != player.getSpecClass());
-            loadouts.removeIf(itemLoadout -> itemLoadout.getWeight(itemsManager) > maxWeight);
 
             if (loadouts.isEmpty()) {
                 if (nonEmptyLoadouts > 0 && player.getEntity() instanceof Player) {
