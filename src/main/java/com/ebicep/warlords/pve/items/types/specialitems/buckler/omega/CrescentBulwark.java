@@ -20,10 +20,6 @@ public class CrescentBulwark extends SpecialOmegaBuckler implements AppliesToWar
         super(statPool);
     }
 
-    public CrescentBulwark() {
-
-    }
-
     @Override
     public String getName() {
         return "Crescent Bulwark";

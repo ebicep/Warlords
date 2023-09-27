@@ -161,13 +161,13 @@ public enum ItemType {
                 return new BasicItem(this, tier);
             }
             case GAMMA -> {
-                return SpecialItems.GAMMA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.GAMMA_ITEMS.length)].create.get();
+                return SpecialItems.GAMMA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.GAMMA_ITEMS.length)].create();
             }
             case DELTA -> {
-                return SpecialItems.DELTA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.DELTA_ITEMS.length)].create.get();
+                return SpecialItems.DELTA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.DELTA_ITEMS.length)].create();
             }
             case OMEGA -> {
-                return SpecialItems.OMEGA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.OMEGA_ITEMS.length)].create.get();
+                return SpecialItems.OMEGA_ITEMS[ThreadLocalRandom.current().nextInt(SpecialItems.OMEGA_ITEMS.length)].create();
             }
         }
         ChatUtils.MessageType.WARLORDS.sendErrorMessage("Invalid item tier creation: " + tier.name);

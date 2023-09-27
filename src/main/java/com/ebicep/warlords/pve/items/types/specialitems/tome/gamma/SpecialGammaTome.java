@@ -11,7 +11,7 @@ import java.util.Set;
 public abstract class SpecialGammaTome extends SpecialTome implements ItemAddonClassBonus, CraftsInto {
 
     public SpecialGammaTome() {
-        this.tier = ItemTier.GAMMA;
+        super(ItemTier.GAMMA);
     }
 
     public SpecialGammaTome(Set<BasicStatPool> statPool) {

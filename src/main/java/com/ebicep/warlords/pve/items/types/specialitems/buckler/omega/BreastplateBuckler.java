@@ -16,10 +16,6 @@ public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesTo
         super(statPool);
     }
 
-    public BreastplateBuckler() {
-
-    }
-
     @Override
     public String getName() {
         return "Breastplate Buckler";

@@ -16,10 +16,6 @@ public class AthenianAegis extends SpecialOmegaBuckler implements AppliesToWarlo
         super(statPool);
     }
 
-    public AthenianAegis() {
-
-    }
-
     @Override
     public String getName() {
         return "Athenian Aegis";

@@ -23,10 +23,6 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
         super(statPool);
     }
 
-    public ShieldOfSnatching() {
-
-    }
-
     @Override
     public String getName() {
         return "Shield of Snatching";

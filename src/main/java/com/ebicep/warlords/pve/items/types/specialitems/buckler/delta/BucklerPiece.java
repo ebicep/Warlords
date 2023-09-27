@@ -21,10 +21,6 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
         super(statPool);
     }
 
-    public BucklerPiece() {
-
-    }
-
     @Override
     public String getName() {
         return "Buckler Piece";

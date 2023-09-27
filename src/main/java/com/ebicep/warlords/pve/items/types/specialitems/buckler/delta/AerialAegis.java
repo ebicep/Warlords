@@ -19,10 +19,6 @@ public class AerialAegis extends SpecialDeltaBuckler implements CraftsInto {
         super(statPool);
     }
 
-    public AerialAegis() {
-
-    }
-
     @Override
     public String getName() {
         return "Aerial Aegis";

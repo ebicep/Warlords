@@ -16,10 +16,6 @@ public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWar
         super(statPool);
     }
 
-    public ChakramOfBlades() {
-
-    }
-
     @Override
     public String getName() {
         return "Chakram of Blades";

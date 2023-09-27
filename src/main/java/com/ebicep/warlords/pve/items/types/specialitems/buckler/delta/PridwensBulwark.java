@@ -19,12 +19,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
 
-    public PridwensBulwark(Set<BasicStatPool> statPool) {
-        super(statPool);
+    public PridwensBulwark() {
+        super();
     }
 
-    public PridwensBulwark() {
-
+    public PridwensBulwark(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

@@ -18,10 +18,6 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
         super(statPool);
     }
 
-    public CrossNecklaceCharm() {
-
-    }
-
     @Override
     public String getName() {
         return "Cross Necklace Chakram";

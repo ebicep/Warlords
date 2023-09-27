@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems;
 
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
@@ -11,7 +12,9 @@ import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.*;
 
-import java.util.function.Supplier;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Function;
 
 public enum SpecialItems {
     //GAMMA
@@ -177,9 +180,13 @@ public enum SpecialItems {
             CHAKRAM_OF_BLADES,
     };
 
-    public final Supplier<AbstractSpecialItem> create;
+    public final Function<Set<BasicStatPool>, AbstractSpecialItem> create;
 
-    SpecialItems(Supplier<AbstractSpecialItem> create) {
+    SpecialItems(Function<Set<BasicStatPool>, AbstractSpecialItem> create) {
         this.create = create;
+    }
+
+    public AbstractSpecialItem create() {
+        return create.apply(new HashSet<>());
     }
 }

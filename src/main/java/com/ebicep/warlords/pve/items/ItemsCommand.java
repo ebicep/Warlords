@@ -107,7 +107,7 @@ public class ItemsCommand extends BaseCommand {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
-                AbstractSpecialItem item = specialItem.create.get();
+                AbstractSpecialItem item = specialItem.create();
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
                                                                                     .append(item.getHoverComponent()));

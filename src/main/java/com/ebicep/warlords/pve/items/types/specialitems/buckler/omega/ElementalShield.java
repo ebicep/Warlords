@@ -18,10 +18,6 @@ public class ElementalShield extends SpecialOmegaBuckler implements AppliesToWar
         super(statPool);
     }
 
-    public ElementalShield() {
-
-    }
-
     @Override
     public String getName() {
         return "Elemental Shield";
