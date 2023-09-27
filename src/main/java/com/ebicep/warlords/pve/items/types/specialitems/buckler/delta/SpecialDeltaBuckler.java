@@ -11,7 +11,7 @@ import java.util.Set;
 public abstract class SpecialDeltaBuckler extends SpecialBuckler implements ItemAddonClassBonus, AppliesToWarlordsPlayer {
 
     public SpecialDeltaBuckler() {
-        super(ItemTier.DELTA);
+        this.tier = ItemTier.DELTA;
     }
 
     public SpecialDeltaBuckler(Set<BasicStatPool> statPool) {

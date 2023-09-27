@@ -11,7 +11,7 @@ import java.util.Set;
 public abstract class SpecialGammaGauntlet extends SpecialGauntlet implements ItemAddonClassBonus, CraftsInto {
 
     public SpecialGammaGauntlet() {
-        super(ItemTier.GAMMA);
+        this.tier = ItemTier.GAMMA;
     }
 
     public SpecialGammaGauntlet(Set<BasicStatPool> statPool) {

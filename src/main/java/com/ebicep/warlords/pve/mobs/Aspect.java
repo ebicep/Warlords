@@ -15,8 +15,12 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
+import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public enum Aspect {
 
@@ -26,7 +30,7 @@ public enum Aspect {
             warlordsEntity.setDamageResistance(warlordsEntity.getSpec().getDamageResistance() + 20);
         }
     },
-    CHILLING("Chilling", NamedTextColor.AQUA) {
+    CHILLING("Chilling", TextColor.color(68, 204, 204)) {
         @Override
         public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
             receiver.getSpeed().addSpeedModifier(attacker, "Chilling", -20, 40, "BASE");
@@ -181,6 +185,18 @@ public enum Aspect {
     ;
 
     public static final Aspect[] VALUES = values();
+
+    @Nullable
+    public static Aspect getRandomAspect(List<Aspect> excluding) {
+        List<Aspect> aspects = Arrays.stream(VALUES)
+                                     .filter(aspect -> !excluding.contains(aspect))
+                                     .collect(Collectors.toList());
+        Collections.shuffle(aspects);
+        if (aspects.isEmpty()) {
+            return null;
+        }
+        return aspects.get(0);
+    }
 
     public final String name;
     public final TextColor textColor;

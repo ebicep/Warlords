@@ -8,8 +8,12 @@ import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.SpecialItems;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,6 +36,16 @@ public enum ItemType {
         public <R extends Enum<R> & ItemModifier> R[] getCurses() {
             return null;
         }
+
+        @Override
+        public TextComponent getModifierDescriptionCalculated(float amount) {
+            return null;
+        }
+
+        @Override
+        public TextComponent getModifierDescriptionCalculatedInverted(float amount) {
+            return null;
+        }
     },
     GAUNTLET("Gauntlet",
             SkullUtils.getSkullFrom(SkullID.IRON_FIST)
@@ -44,6 +58,22 @@ public enum ItemType {
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getCurses() {
             return (R[]) ItemGauntletModifier.Curses.VALUES;
+        }
+
+        @Override
+        public TextComponent getModifierDescriptionCalculated(float amount) {
+            return Component.textOfChildren(
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%", NamedTextColor.GREEN),
+                    Component.text(" Damage", NamedTextColor.GRAY)
+            );
+        }
+
+        @Override
+        public TextComponent getModifierDescriptionCalculatedInverted(float amount) {
+            return Component.textOfChildren(
+                    Component.text("Damage: ", NamedTextColor.GRAY),
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%", NamedTextColor.GREEN)
+            );
         }
     },
     TOME("Tome",
@@ -58,6 +88,22 @@ public enum ItemType {
         public <R extends Enum<R> & ItemModifier> R[] getCurses() {
             return (R[]) ItemTomeModifier.Curses.VALUES;
         }
+
+        @Override
+        public TextComponent getModifierDescriptionCalculated(float amount) {
+            return Component.textOfChildren(
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount / 10) + "s", NamedTextColor.GREEN),
+                    Component.text(" Effect Negation", NamedTextColor.GRAY)
+            );
+        }
+
+        @Override
+        public TextComponent getModifierDescriptionCalculatedInverted(float amount) {
+            return Component.textOfChildren(
+                    Component.text("Effect Negation: ", NamedTextColor.GRAY),
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount / 10) + "s", NamedTextColor.GREEN)
+            );
+        }
     },
     BUCKLER("Buckler",
             SkullUtils.getSkullFrom(SkullID.GOOGLE_HOME_MINI)
@@ -70,6 +116,22 @@ public enum ItemType {
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getCurses() {
             return (R[]) ItemBucklerModifier.Curses.VALUES;
+        }
+
+        @Override
+        public TextComponent getModifierDescriptionCalculated(float amount) {
+            return Component.textOfChildren(
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%", NamedTextColor.GREEN),
+                    Component.text(" Resistance", NamedTextColor.GRAY)
+            );
+        }
+
+        @Override
+        public TextComponent getModifierDescriptionCalculatedInverted(float amount) {
+            return Component.textOfChildren(
+                    Component.text("Resistance: ", NamedTextColor.GRAY),
+                    Component.text(NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(amount) + "%", NamedTextColor.GREEN)
+            );
         }
     },
 
@@ -119,4 +181,8 @@ public enum ItemType {
     public abstract <R extends Enum<R> & ItemModifier> R[] getBlessings();
 
     public abstract <R extends Enum<R> & ItemModifier> R[] getCurses();
+
+    public abstract TextComponent getModifierDescriptionCalculated(float amount);
+
+    public abstract TextComponent getModifierDescriptionCalculatedInverted(float amount);
 }

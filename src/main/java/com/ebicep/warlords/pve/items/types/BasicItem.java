@@ -9,6 +9,7 @@ import java.util.Set;
 public class BasicItem extends AbstractItem {
 
     public BasicItem() {
+        super();
     }
 
     public BasicItem(ItemType type, ItemTier tier) {
@@ -25,7 +26,8 @@ public class BasicItem extends AbstractItem {
         clone.type = type;
         clone.tier = tier;
         clone.statPoolDistribution = new HashMap<>(statPoolDistribution);
-        clone.modifier = modifier;
+        clone.aspectModifier1 = aspectModifier1;
+        clone.aspectModifier2 = aspectModifier2;
         return clone;
     }
 

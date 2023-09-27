@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
 @CommandAlias("items")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class ItemsCommand extends BaseCommand {
 
     @Default
