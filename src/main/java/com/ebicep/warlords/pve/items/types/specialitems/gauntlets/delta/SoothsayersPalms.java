@@ -36,7 +36,7 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
 
     @Override
     public String getBonus() {
-        return "+1% chance to perform 1 random rune instead of the player's weapon right-click.";
+        return "Weapon right-clicks have a 2% chance to perform 1 random rune.";
     }
 
     @Override
@@ -62,10 +62,9 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
                 if (!Objects.equals(event.getAbility(), playerSpec.getWeapon())) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextDouble() > 0.01) {
+                if (ThreadLocalRandom.current().nextDouble() > 0.02) {
                     return;
                 }
-                event.setCancelled(true);
                 List<AbstractAbility> abilities = playerSpec.getAbilitiesExcludingWeapon();
                 //picking random ability
                 AbstractAbility ability = abilities.get(ThreadLocalRandom.current().nextInt(abilities.size()));
