@@ -7,13 +7,13 @@ public interface DamageInstance extends Instance {
     /**
      * Calls before variables are declared - based on self cooldowns
      */
-    default void doBeforeVariableSetFromSelf(WarlordsDamageHealingEvent event) {
+    default void damageDoBeforeVariableSetFromSelf(WarlordsDamageHealingEvent event) {
     }
 
     /**
      * Calls before variables are declared - based on attackers cooldowns
      */
-    default void doBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
+    default void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
     }
 
     /**

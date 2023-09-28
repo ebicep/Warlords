@@ -36,7 +36,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
         warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
                 null,
-                SamsonsFists.class,
+                PendragonGauntlets.class,
                 null,
                 warlordsPlayer,
                 CooldownTypes.WEAPON,

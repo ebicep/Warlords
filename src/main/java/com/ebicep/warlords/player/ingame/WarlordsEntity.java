@@ -332,10 +332,10 @@ public abstract class WarlordsEntity {
 
     private Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
-            abstractCooldown.doBeforeVariableSetFromSelf(event);
+            abstractCooldown.damageDoBeforeVariableSetFromSelf(event);
         }
         for (AbstractCooldown<?> abstractCooldown : event.getAttacker().getCooldownManager().getCooldownsDistinct()) {
-            abstractCooldown.doBeforeVariableSetFromAttacker(event);
+            abstractCooldown.damageDoBeforeVariableSetFromAttacker(event);
         }
 
         WarlordsEntity attacker = event.getAttacker();
@@ -986,6 +986,13 @@ public abstract class WarlordsEntity {
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
+        for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+            abstractCooldown.healingDoBeforeVariableSetFromSelf(event);
+        }
+        for (AbstractCooldown<?> abstractCooldown : event.getAttacker().getCooldownManager().getCooldownsDistinct()) {
+            abstractCooldown.healingDoBeforeVariableSetFromAttacker(event);
+        }
+
         WarlordsEntity attacker = event.getAttacker();
         String ability = event.getAbility();
         float min = event.getMin();

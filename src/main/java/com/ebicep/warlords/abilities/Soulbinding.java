@@ -157,7 +157,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 })
         ) {
             @Override
-            public void doBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
+            public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
                 WarlordsEntity wpAttacker = event.getAttacker();
                 WarlordsEntity wpVictim = event.getWarlordsEntity();
                 if (!event.getAbility().isEmpty() || wpAttacker == wpVictim) {
