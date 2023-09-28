@@ -1,20 +1,16 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.HandsOfTheHolyCorpse;
-import com.ebicep.warlords.util.warlords.Utils;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-import java.util.Objects;
 import java.util.Set;
 
 public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
@@ -32,36 +28,42 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
     }
 
     @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
+        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getName(),
+                null,
+                SamsonsFists.class,
+                null,
+                warlordsPlayer,
+                CooldownTypes.WEAPON,
+                cooldownManager -> {
+
+                },
+                false
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (event.getAbility().isEmpty()) {
+                    return currentDamageValue * 1.25f;
+                }
+                return currentDamageValue;
+            }
+        });
+    }
+
+    @Override
     public String getName() {
         return "Samson's Fists";
     }
 
     @Override
     public String getBonus() {
-        return "Weapon right-clicks deals moderate knockback, at slightly increased energy cost.";
+        return "Increases your melee damage by 50%.";
     }
 
     @Override
     public String getDescription() {
         return "Don't cut your hair!";
-    }
-
-    @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        AbstractAbility weapon = warlordsPlayer.getSpec().getWeapon();
-        weapon.getEnergyCost().addAdditiveModifier("Samson's Fists", 5);
-        warlordsPlayer.getGame().registerEvents(new Listener() {
-
-            @EventHandler
-            public void onStrike(WarlordsStrikeEvent event) {
-                if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
-                    return;
-                }
-                WarlordsEntity strikedEntity = event.getStrikedEntity();
-                //same kb as mithra immolation
-                Utils.addKnockback(getName(), warlordsPlayer.getLocation(), strikedEntity, -.7, 0.15f);
-            }
-        });
     }
 
     @Override
