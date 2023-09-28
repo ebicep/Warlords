@@ -15,6 +15,9 @@ import java.util.Set;
 
 public class AerialAegis extends SpecialDeltaBuckler implements CraftsInto {
 
+    public AerialAegis() {
+    }
+
     public AerialAegis(Set<BasicStatPool> statPool) {
         super(statPool);
     }

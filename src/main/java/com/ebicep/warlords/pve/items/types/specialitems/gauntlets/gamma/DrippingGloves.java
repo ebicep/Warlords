@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class DrippingGloves extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsPalmOfTheSoothsayer {
 
+    public DrippingGloves() {
+    }
+
     public DrippingGloves(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

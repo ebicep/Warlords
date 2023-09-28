@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class GuideToJudo extends SpecialGammaTome implements CDRandHealing, CraftsInto.CraftsAGuideToMMA {
 
+    public GuideToJudo() {
+
+    }
+
     public GuideToJudo(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

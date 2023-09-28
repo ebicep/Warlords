@@ -11,7 +11,6 @@ import java.util.Set;
 public abstract class SpecialDeltaGauntlet extends SpecialGauntlet implements ItemAddonClassBonus, CraftsInto {
 
     public SpecialDeltaGauntlet() {
-        this.tier = ItemTier.DELTA;
     }
 
     public SpecialDeltaGauntlet(Set<BasicStatPool> statPool) {

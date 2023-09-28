@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class AnointedAegis extends SpecialGammaBuckler implements DamageReductionandKBRes, CraftsInto.CraftsCrossNecklaceCharm {
 
+    public AnointedAegis() {
+    }
+
     public AnointedAegis(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

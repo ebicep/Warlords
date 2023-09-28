@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class NecroticScroll extends SpecialGammaTome implements CDRandCritChance, CraftsInto.CraftsPansTome {
 
+    public NecroticScroll() {
+
+    }
+
     public NecroticScroll(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

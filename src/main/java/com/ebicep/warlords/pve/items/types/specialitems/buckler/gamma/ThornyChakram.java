@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class ThornyChakram extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsPridwensBulwark {
 
+    public ThornyChakram() {
+    }
+
     public ThornyChakram(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class PatrioticClaws extends SpecialGammaGauntlet implements EPSandSpeed, CraftsInto.CraftsPendragonGauntlets {
 
+    public PatrioticClaws() {
+    }
+
     public PatrioticClaws(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

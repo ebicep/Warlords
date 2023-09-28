@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class VoltageGauntlet extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsGardeningGloves {
 
+    public VoltageGauntlet() {
+    }
+
     public VoltageGauntlet(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

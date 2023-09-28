@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class BloodyChakram extends SpecialGammaBuckler implements DamageReductionandKBRes, CraftsInto.CraftsPridwensBulwark {
 
+    public BloodyChakram() {
+    }
+
     public BloodyChakram(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

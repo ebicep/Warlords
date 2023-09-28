@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class BookOfActs extends SpecialGammaTome implements CDRandCritChance, CraftsInto.CraftsThePresentTestament {
 
+    public BookOfActs() {
+
+    }
+
     public BookOfActs(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

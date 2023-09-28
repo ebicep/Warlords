@@ -5,12 +5,12 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import java.util.Set;
 
 public class HandsOfTheHolyCorpse extends SpecialOmegaGauntlet {
-    public HandsOfTheHolyCorpse(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public HandsOfTheHolyCorpse() {
 
+    }
+
+    public HandsOfTheHolyCorpse(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

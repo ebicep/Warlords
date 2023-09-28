@@ -142,10 +142,13 @@ public class ItemMenuUtil {
             if (aspectModifier1 != null) {
                 ItemTier tier = equippedItem.getTier();
                 if (aspectModifier2 != null) {
-                    aspectBonuses.computeIfAbsent(aspectModifier1, k -> new HashMap<>()).merge(type, tier.aspectModifierValues.dualModifier1(), Integer::sum);
-                    aspectBonuses.computeIfAbsent(aspectModifier2, k -> new HashMap<>()).merge(type, tier.aspectModifierValues.dualModifier2(), Integer::sum);
+                    aspectBonuses.computeIfAbsent(aspectModifier1, k -> new HashMap<>())
+                                 .merge(type, tier.aspectModifierValues.dualModifier1(), Integer::sum);
+                    aspectBonuses.computeIfAbsent(aspectModifier2, k -> new HashMap<>())
+                                 .merge(type, tier.aspectModifierValues.dualModifier2(), Integer::sum);
                 } else {
-                    aspectBonuses.computeIfAbsent(aspectModifier1, k -> new HashMap<>()).merge(type, tier.aspectModifierValues.singleModifier(), Integer::sum);
+                    aspectBonuses.computeIfAbsent(aspectModifier1, k -> new HashMap<>())
+                                 .merge(type, tier.aspectModifierValues.singleModifier(), Integer::sum);
                 }
             }
         }

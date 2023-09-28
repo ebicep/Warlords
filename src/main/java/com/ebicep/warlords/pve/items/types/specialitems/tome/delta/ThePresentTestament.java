@@ -19,12 +19,12 @@ import java.util.Set;
 
 public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto {
 
-    public ThePresentTestament(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public ThePresentTestament() {
 
+    }
+
+    public ThePresentTestament(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

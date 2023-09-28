@@ -14,6 +14,9 @@ import java.util.Set;
 
 public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInto {
 
+    public CrossNecklaceCharm() {
+    }
+
     public CrossNecklaceCharm(Set<BasicStatPool> statPool) {
         super(statPool);
     }

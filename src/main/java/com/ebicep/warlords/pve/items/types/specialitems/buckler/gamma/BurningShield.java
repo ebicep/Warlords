@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class BurningShield extends SpecialGammaBuckler implements DamageReductionandKBRes, CraftsInto.CraftsBucklerPiece {
 
+    public BurningShield() {
+    }
+
     public BurningShield(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

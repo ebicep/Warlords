@@ -13,12 +13,12 @@ import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.GlassKnu
 import java.util.Set;
 
 public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
-    public PendragonGauntlets(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public PendragonGauntlets() {
 
+    }
+
+    public PendragonGauntlets(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

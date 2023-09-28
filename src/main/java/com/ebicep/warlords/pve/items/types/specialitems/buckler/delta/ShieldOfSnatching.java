@@ -19,6 +19,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto {
 
+    public ShieldOfSnatching() {
+    }
+
     public ShieldOfSnatching(Set<BasicStatPool> statPool) {
         super(statPool);
     }

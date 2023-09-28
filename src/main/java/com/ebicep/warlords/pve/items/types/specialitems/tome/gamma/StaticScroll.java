@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class StaticScroll extends SpecialGammaTome implements CDRandDamage, CraftsInto.CraftsPansTome {
 
+    public StaticScroll() {
+
+    }
+
     public StaticScroll(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

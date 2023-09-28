@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class SlipperyShield extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsBucklerPiece {
 
+    public SlipperyShield() {
+    }
+
     public SlipperyShield(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

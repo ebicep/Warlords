@@ -145,9 +145,6 @@ public interface PveOption extends Option {
                     AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
                     if (mob != null && getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
                         mob.onAttack(attacker, receiver, event);
-                        if (mob.getAspect() != null) {
-                            mob.getAspect().onAttack(attacker, receiver, event);
-                        }
                     }
                 }
 
@@ -155,9 +152,6 @@ public interface PveOption extends Option {
                     AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
                     if (mob != null && getMobsMap().containsKey(mob)) {
                         mob.onDamageTaken(receiver, attacker, event);
-                        if (mob.getAspect() != null) {
-                            mob.getAspect().onDamageTaken(receiver, attacker, event);
-                        }
                     }
                 }
             }

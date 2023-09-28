@@ -19,12 +19,12 @@ public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
         put(SpecialStatPool.EPS, 5);
     }};
 
-    public MultipurposeKnuckles(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public MultipurposeKnuckles() {
 
+    }
+
+    public MultipurposeKnuckles(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

@@ -15,12 +15,12 @@ import java.util.Set;
 
 public class PansTome extends SpecialDeltaTome implements CraftsInto {
 
-    public PansTome(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public PansTome() {
 
+    }
+
+    public PansTome(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

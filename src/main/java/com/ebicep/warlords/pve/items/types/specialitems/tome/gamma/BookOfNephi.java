@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class BookOfNephi extends SpecialGammaTome implements CDRandHealing, CraftsInto.CraftsThePresentTestament {
 
+    public BookOfNephi() {
+
+    }
+
     public BookOfNephi(Set<BasicStatPool> basicStatPools) {
 
     }

@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class FrostyShield extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsBucklerPiece {
 
+    public FrostyShield() {
+    }
+
     public FrostyShield(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

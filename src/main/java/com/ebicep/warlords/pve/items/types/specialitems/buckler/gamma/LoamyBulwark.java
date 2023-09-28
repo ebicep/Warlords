@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class LoamyBulwark extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsAerialAegis {
 
+    public LoamyBulwark() {
+    }
+
     public LoamyBulwark(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

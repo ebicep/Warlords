@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class GuideToTaiChi extends SpecialGammaTome implements CDRandCritChance, CraftsInto.CraftsAGuideToMMA {
 
+    public GuideToTaiChi() {
+
+    }
+
     public GuideToTaiChi(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

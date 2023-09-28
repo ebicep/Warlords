@@ -14,10 +14,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
-import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.MobDrop;
-import com.ebicep.warlords.pve.mobs.MobMenu;
+import com.ebicep.warlords.pve.mobs.*;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -57,13 +54,17 @@ public class MobCommand extends BaseCommand {
     public void spawn(
             @Conditions("requireGame:gamemode=PVE") Player player,
             Mob mobType,
-            @Default("1") @Conditions("limits:min=0,max=25") Integer amount
+            @Default("1") @Conditions("limits:min=0,max=25") Integer amount,
+            @Optional Aspect aspect
     ) {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
             if (option instanceof PveOption pveOption) {
                 for (int i = 0; i < amount; i++) {
                     AbstractMob<?> mob = mobType.createMob(player.getLocation());
+                    if (aspect != null) {
+                        mob.setAspect(aspect);
+                    }
                     pveOption.spawnNewMob(mob);
                     SPAWNED_MOBS.add(mob);
                 }
@@ -77,7 +78,8 @@ public class MobCommand extends BaseCommand {
     @Description("Spawns all mobs in a group")
     public void spawnGroup(
             @Conditions("requireGame:gamemode=PVE") Player player,
-            Mob.MobGroup mobGroup
+            Mob.MobGroup mobGroup,
+            @Optional Aspect aspect
     ) {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
@@ -85,6 +87,9 @@ public class MobCommand extends BaseCommand {
                 ChatChannels.sendDebugMessage(player, Component.text("Spawning " + mobGroup.name() + " mobs", NamedTextColor.GREEN));
                 for (Mob mob : mobGroup.mobs) {
                     AbstractMob<?> abstractMob = mob.createMob(player.getLocation());
+                    if (aspect != null) {
+                        abstractMob.setAspect(aspect);
+                    }
                     pveOption.spawnNewMob(abstractMob);
                     SPAWNED_MOBS.add(abstractMob);
                     ChatChannels.sendDebugMessage(player, Component.text("Spawned " + abstractMob.getName(), NamedTextColor.GREEN));

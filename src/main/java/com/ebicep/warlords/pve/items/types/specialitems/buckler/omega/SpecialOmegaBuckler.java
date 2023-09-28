@@ -8,6 +8,9 @@ import java.util.Set;
 
 public abstract class SpecialOmegaBuckler extends SpecialBuckler {
 
+    public SpecialOmegaBuckler() {
+    }
+
     public SpecialOmegaBuckler(Set<BasicStatPool> statPool) {
         super(ItemTier.OMEGA, statPool);
     }

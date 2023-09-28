@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class PhysiciansAlmanac extends SpecialGammaTome implements CDRandHealing, CraftsInto.CraftsScrollOfUncertainty {
 
+    public PhysiciansAlmanac() {
+
+    }
+
     public PhysiciansAlmanac(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class TomeOfWater extends SpecialGammaTome implements CDRandHealing, CraftsInto.CraftsFirewaterAlmanac {
 
+    public TomeOfWater() {
+
+    }
+
     public TomeOfWater(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

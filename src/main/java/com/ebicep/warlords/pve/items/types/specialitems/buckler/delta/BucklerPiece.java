@@ -17,6 +17,9 @@ import java.util.Set;
 
 public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
 
+    public BucklerPiece() {
+    }
+
     public BucklerPiece(Set<BasicStatPool> statPool) {
         super(statPool);
     }

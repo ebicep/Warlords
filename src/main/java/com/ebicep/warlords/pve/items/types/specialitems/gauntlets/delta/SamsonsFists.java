@@ -18,12 +18,12 @@ import java.util.Objects;
 import java.util.Set;
 
 public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
-    public SamsonsFists(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public SamsonsFists() {
 
+    }
+
+    public SamsonsFists(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

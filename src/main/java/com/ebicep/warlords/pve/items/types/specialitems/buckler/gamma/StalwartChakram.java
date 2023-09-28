@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class StalwartChakram extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsPridwensBulwark {
 
+    public StalwartChakram() {
+    }
+
     public StalwartChakram(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

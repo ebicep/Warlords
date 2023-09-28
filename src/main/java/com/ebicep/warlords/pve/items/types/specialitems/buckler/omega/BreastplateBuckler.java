@@ -12,6 +12,10 @@ import java.util.Objects;
 import java.util.Set;
 
 public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesToWarlordsPlayer {
+
+    public BreastplateBuckler() {
+    }
+
     public BreastplateBuckler(Set<BasicStatPool> statPool) {
         super(statPool);
     }

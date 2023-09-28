@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class TomeOfIce extends SpecialGammaTome implements CDRandCritChance, CraftsInto.CraftsFirewaterAlmanac {
 
+    public TomeOfIce() {
+
+    }
+
     public TomeOfIce(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class LiberatorAlmanac extends SpecialGammaTome implements CDRandCritChance, CraftsInto.CraftsScrollOfUncertainty {
 
+    public LiberatorAlmanac() {
+
+    }
+
     public LiberatorAlmanac(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

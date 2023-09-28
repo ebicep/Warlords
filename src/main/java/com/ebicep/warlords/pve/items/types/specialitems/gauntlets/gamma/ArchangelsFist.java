@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class ArchangelsFist extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsSamsonsFists {
 
+    public ArchangelsFist() {
+    }
+
     public ArchangelsFist(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

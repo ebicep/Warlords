@@ -12,12 +12,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GuideForTheRiverStyx extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
-    public GuideForTheRiverStyx(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public GuideForTheRiverStyx() {
 
+    }
+
+    public GuideForTheRiverStyx(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

@@ -21,12 +21,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
 
-    public SoothsayersPalms(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public SoothsayersPalms() {
 
+    }
+
+    public SoothsayersPalms(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class MediatorsFist extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsSamsonsFists {
 
+    public MediatorsFist() {
+    }
+
     public MediatorsFist(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

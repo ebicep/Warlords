@@ -174,8 +174,11 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         if (!bossBar.name().equals(Component.empty())) {
             showBossBar = true;
         }
-        if (ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option)) {
+        // null checks to handle manual spawns with aspects
+        if (this.aspect == null && ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option)) {
             this.aspect = Aspect.VALUES[ThreadLocalRandom.current().nextInt(Aspect.VALUES.length)];
+        }
+        if (this.aspect != null) {
             this.aspect.apply(warlordsNPC);
         }
     }
@@ -223,9 +226,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         bossBar(option.getGame(), false);
-        if (aspect != null) {
-            aspect.onDeath(killer, deathLocation, option);
-        }
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
@@ -453,6 +453,10 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     @Nullable
     public Aspect getAspect() {
         return aspect;
+    }
+
+    public void setAspect(@Nullable Aspect aspect) {
+        this.aspect = aspect;
     }
 
     public int getMaxHealth() {

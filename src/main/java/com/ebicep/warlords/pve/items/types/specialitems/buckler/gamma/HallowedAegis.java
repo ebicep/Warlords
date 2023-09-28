@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class HallowedAegis extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsCrossNecklaceCharm {
 
+    public HallowedAegis() {
+    }
+
     public HallowedAegis(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

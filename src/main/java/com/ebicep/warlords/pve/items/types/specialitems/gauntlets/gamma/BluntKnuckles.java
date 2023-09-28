@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class BluntKnuckles extends SpecialGammaGauntlet implements EPSandSpeed, CraftsInto.CraftsMultipurposeKnuckles {
 
+    public BluntKnuckles() {
+    }
+
     public BluntKnuckles(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

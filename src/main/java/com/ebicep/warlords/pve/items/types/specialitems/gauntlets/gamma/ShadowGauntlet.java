@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class ShadowGauntlet extends SpecialGammaGauntlet implements EPSandSpeed, CraftsInto.CraftsGardeningGloves {
 
+    public ShadowGauntlet() {
+    }
+
     public ShadowGauntlet(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

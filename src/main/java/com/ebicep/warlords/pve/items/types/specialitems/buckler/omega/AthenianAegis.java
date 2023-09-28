@@ -12,6 +12,10 @@ import java.util.Objects;
 import java.util.Set;
 
 public class AthenianAegis extends SpecialOmegaBuckler implements AppliesToWarlordsPlayer {
+
+    public AthenianAegis() {
+    }
+
     public AthenianAegis(Set<BasicStatPool> statPool) {
         super(statPool);
     }

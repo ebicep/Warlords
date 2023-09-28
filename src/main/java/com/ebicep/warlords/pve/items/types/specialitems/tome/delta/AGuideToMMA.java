@@ -18,12 +18,12 @@ import java.util.Set;
 
 public class AGuideToMMA extends SpecialDeltaTome implements CraftsInto {
 
-    public AGuideToMMA(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public AGuideToMMA() {
 
+    }
+
+    public AGuideToMMA(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

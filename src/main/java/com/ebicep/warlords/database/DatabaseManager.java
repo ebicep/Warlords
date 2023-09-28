@@ -261,8 +261,8 @@ public class DatabaseManager {
             if (item.getObtainedDate().isBefore(ZonedDateTime.of(2023, 10, 30, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant())
                     && !item.isLegacyRemodified()
             ) {
-                item.applyRandomModifier();
-                item.setLegacyRemodified(true);
+//                item.applyRandomModifier();
+//                item.setLegacyRemodified(true);
             }
         });
 

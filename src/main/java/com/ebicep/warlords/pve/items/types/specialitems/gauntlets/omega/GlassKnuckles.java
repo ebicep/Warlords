@@ -15,12 +15,12 @@ public class GlassKnuckles extends SpecialOmegaGauntlet {
         put(BasicStatPool.DAMAGE, 300);
     }};
 
-    public GlassKnuckles(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public GlassKnuckles() {
 
+    }
+
+    public GlassKnuckles(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

@@ -11,12 +11,12 @@ import org.bukkit.event.Listener;
 import java.util.Set;
 
 public class ScrollOfScripts extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
-    public ScrollOfScripts(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public ScrollOfScripts() {
 
+    }
+
+    public ScrollOfScripts(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

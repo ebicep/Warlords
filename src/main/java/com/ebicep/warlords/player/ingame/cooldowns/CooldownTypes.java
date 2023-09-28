@@ -9,6 +9,7 @@ public enum CooldownTypes {
     ITEM("ITEM"),
     MASTERY("MASTERY"),
     ADDON("ADDON"),
+    ASPECT("ASPECT"),
 
     ;
 

@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class ExecutionersAlmanac extends SpecialGammaTome implements CDRandDamage, CraftsInto.CraftsScrollOfUncertainty {
 
+    public ExecutionersAlmanac() {
+
+    }
+
     public ExecutionersAlmanac(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

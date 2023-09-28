@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class GalvanicBulwark extends SpecialGammaBuckler implements DamageReductionandKBRes, CraftsInto.CraftsAerialAegis {
 
+    public GalvanicBulwark() {
+    }
+
     public GalvanicBulwark(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

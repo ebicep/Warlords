@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class TomeOfFire extends SpecialGammaTome implements CDRandDamage, CraftsInto.CraftsFirewaterAlmanac {
 
+    public TomeOfFire() {
+
+    }
+
     public TomeOfFire(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

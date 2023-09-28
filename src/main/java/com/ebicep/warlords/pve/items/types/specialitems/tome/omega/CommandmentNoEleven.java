@@ -14,12 +14,12 @@ import java.util.Objects;
 import java.util.Set;
 
 public class CommandmentNoEleven extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
-    public CommandmentNoEleven(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public CommandmentNoEleven() {
 
+    }
+
+    public CommandmentNoEleven(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

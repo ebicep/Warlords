@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class ConquerorsFist extends SpecialGammaGauntlet implements EPSandSpeed, CraftsInto.CraftsSamsonsFists {
 
+    public ConquerorsFist() {
+    }
+
     public ConquerorsFist(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

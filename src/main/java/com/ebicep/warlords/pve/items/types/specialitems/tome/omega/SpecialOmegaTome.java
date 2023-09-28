@@ -9,7 +9,6 @@ import java.util.Set;
 public abstract class SpecialOmegaTome extends SpecialTome {
 
     public SpecialOmegaTome() {
-        this.tier = ItemTier.OMEGA;
     }
 
     public SpecialOmegaTome(Set<BasicStatPool> statPool) {

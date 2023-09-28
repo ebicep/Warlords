@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class HerbalKnuckles extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsMultipurposeKnuckles {
 
+    public HerbalKnuckles() {
+    }
+
     public HerbalKnuckles(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

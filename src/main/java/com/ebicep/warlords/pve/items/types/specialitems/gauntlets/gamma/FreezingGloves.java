@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class FreezingGloves extends SpecialGammaGauntlet implements EPSandSpeed, CraftsInto.CraftsPalmOfTheSoothsayer {
 
+    public FreezingGloves() {
+    }
+
     public FreezingGloves(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

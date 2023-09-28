@@ -16,12 +16,12 @@ import java.util.Objects;
 import java.util.Set;
 
 public class RobinHoodsGloves extends SpecialOmegaGauntlet implements AppliesToWarlordsPlayer {
-    public RobinHoodsGloves(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public RobinHoodsGloves() {
 
+    }
+
+    public RobinHoodsGloves(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

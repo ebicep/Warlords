@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class OvergrownBuckler extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsShieldOfSnatching {
 
+    public OvergrownBuckler() {
+    }
+
     public OvergrownBuckler(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

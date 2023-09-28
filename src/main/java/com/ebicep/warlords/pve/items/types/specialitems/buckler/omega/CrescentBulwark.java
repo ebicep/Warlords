@@ -16,6 +16,9 @@ public class CrescentBulwark extends SpecialOmegaBuckler implements AppliesToWar
         put(BasicStatPool.AGGRO_PRIO, -100);
     }};
 
+    public CrescentBulwark() {
+    }
+
     public CrescentBulwark(Set<BasicStatPool> statPool) {
         super(statPool);
     }

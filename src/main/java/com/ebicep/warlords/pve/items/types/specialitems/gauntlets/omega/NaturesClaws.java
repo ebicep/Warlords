@@ -13,12 +13,12 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import java.util.Set;
 
 public class NaturesClaws extends SpecialOmegaGauntlet implements AppliesToWarlordsPlayer {
-    public NaturesClaws(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public NaturesClaws() {
 
+    }
+
+    public NaturesClaws(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

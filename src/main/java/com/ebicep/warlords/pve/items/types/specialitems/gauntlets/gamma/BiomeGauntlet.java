@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class BiomeGauntlet extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsGardeningGloves {
 
+    public BiomeGauntlet() {
+    }
+
     public BiomeGauntlet(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

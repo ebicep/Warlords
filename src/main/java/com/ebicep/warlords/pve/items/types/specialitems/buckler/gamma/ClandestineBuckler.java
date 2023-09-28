@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class ClandestineBuckler extends SpecialGammaBuckler implements DamageReductionandKBRes, CraftsInto.CraftsShieldOfSnatching {
 
+    public ClandestineBuckler() {
+    }
+
     public ClandestineBuckler(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

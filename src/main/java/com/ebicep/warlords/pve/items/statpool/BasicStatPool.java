@@ -71,25 +71,25 @@ public enum BasicStatPool implements StatPool {
     DAMAGE("Damage") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            ItemAdditiveCooldown.increaseDamage(warlordsPlayer, value);
+            ItemAdditiveCooldown.giveCooldown(warlordsPlayer, itemAdditiveCooldown -> itemAdditiveCooldown.addDamageBoost(value));
         }
     },
     HEALING("Healing") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            ItemAdditiveCooldown.increaseHealing(warlordsPlayer, value);
+            ItemAdditiveCooldown.giveCooldown(warlordsPlayer, itemAdditiveCooldown -> itemAdditiveCooldown.addHealBoost(value));
         }
     },
     CRIT_CHANCE("Crit Chance") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            ItemAdditiveCooldown.increaseCritChance(warlordsPlayer, value);
+            ItemAdditiveCooldown.giveCooldown(warlordsPlayer, itemAdditiveCooldown -> itemAdditiveCooldown.addCritChance(value));
         }
     },
     CRIT_MULTI("Crit Multiplier") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            ItemAdditiveCooldown.increaseCritMultiplier(warlordsPlayer, value);
+            ItemAdditiveCooldown.giveCooldown(warlordsPlayer, itemAdditiveCooldown -> itemAdditiveCooldown.addCritMultiplier(value));
         }
     },
     AGGRO_PRIO("Aggression Priority") {
@@ -106,13 +106,13 @@ public enum BasicStatPool implements StatPool {
     THORNS("Thorns") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            ItemAdditiveCooldown.increaseThorns(warlordsPlayer, value, highestTier.maxThornsDamage);
+            ItemAdditiveCooldown.giveCooldown(warlordsPlayer, itemAdditiveCooldown -> itemAdditiveCooldown.addThorns(value, highestTier.maxThornsDamage));
         }
     },
     KB_RES("Knockback Resistance") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            ItemAdditiveCooldown.increaseKBRes(warlordsPlayer, value);
+            ItemAdditiveCooldown.giveCooldown(warlordsPlayer, itemAdditiveCooldown -> itemAdditiveCooldown.addKBRes(value));
         }
     },
     REGEN_TIMER("Shorter Regen Timer") {
@@ -179,20 +179,6 @@ public enum BasicStatPool implements StatPool {
         return lore;
     }
 
-    public Component getValueStatFormatted(float value) {
-        return Component.textOfChildren(
-                Component.text(formatValue(value) + getOperation().prepend, NamedTextColor.GREEN),
-                Component.text(" " + getName(), NamedTextColor.GRAY)
-        );
-    }
-
-    public Component getStatValueFormatted(float value) {
-        return Component.textOfChildren(
-                Component.text(getName() + ": ", NamedTextColor.GRAY),
-                Component.text(formatValue(value) + getOperation().prepend, NamedTextColor.GREEN)
-        );
-    }
-
     public Component getValueStatFormattedObfuscated() {
         return Component.textOfChildren(
                 Component.text("??" + getOperation().prepend, NamedTextColor.GREEN),
@@ -207,12 +193,26 @@ public enum BasicStatPool implements StatPool {
         );
     }
 
-    public String formatValue(float value) {
-        return NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(value / getDecimalPlace().value);
+    public Component getValueStatFormatted(float value) {
+        return Component.textOfChildren(
+                Component.text(formatValue(value) + getOperation().prepend, NamedTextColor.GREEN),
+                Component.text(" " + getName(), NamedTextColor.GRAY)
+        );
+    }
+
+    public Component getStatValueFormatted(float value) {
+        return Component.textOfChildren(
+                Component.text(getName() + ": ", NamedTextColor.GRAY),
+                Component.text(formatValue(value) + getOperation().prepend, NamedTextColor.GREEN)
+        );
     }
 
     public String getName() {
         return name;
+    }
+
+    public String formatValue(float value) {
+        return NumberFormat.DECIMAL_FORMAT_OPTIONAL_TENTHS_PREFIX.format(value / getDecimalPlace().value);
     }
 
     public final String name;

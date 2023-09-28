@@ -14,12 +14,12 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TomeOfTheft extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
-    public TomeOfTheft(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public TomeOfTheft() {
 
+    }
+
+    public TomeOfTheft(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

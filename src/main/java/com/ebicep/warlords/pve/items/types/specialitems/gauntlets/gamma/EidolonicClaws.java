@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class EidolonicClaws extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsPendragonGauntlets {
 
+    public EidolonicClaws() {
+    }
+
     public EidolonicClaws(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

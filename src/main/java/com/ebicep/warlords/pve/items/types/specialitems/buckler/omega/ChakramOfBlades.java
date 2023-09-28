@@ -12,6 +12,10 @@ import java.util.Objects;
 import java.util.Set;
 
 public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWarlordsPlayer {
+
+    public ChakramOfBlades() {
+    }
+
     public ChakramOfBlades(Set<BasicStatPool> statPool) {
         super(statPool);
     }

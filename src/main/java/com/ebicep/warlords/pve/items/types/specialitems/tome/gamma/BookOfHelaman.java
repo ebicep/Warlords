@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class BookOfHelaman extends SpecialGammaTome implements CDRandDamage, CraftsInto.CraftsThePresentTestament {
 
+    public BookOfHelaman() {
+
+    }
+
     public BookOfHelaman(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

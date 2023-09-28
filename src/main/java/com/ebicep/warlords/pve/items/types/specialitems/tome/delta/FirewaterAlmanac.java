@@ -20,12 +20,12 @@ import java.util.UUID;
 
 public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
 
-    public FirewaterAlmanac(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public FirewaterAlmanac() {
 
+    }
+
+    public FirewaterAlmanac(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

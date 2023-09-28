@@ -17,12 +17,12 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LilithsClaws extends SpecialOmegaGauntlet implements AppliesToWarlordsPlayer {
-    public LilithsClaws(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public LilithsClaws() {
 
+    }
+
+    public LilithsClaws(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

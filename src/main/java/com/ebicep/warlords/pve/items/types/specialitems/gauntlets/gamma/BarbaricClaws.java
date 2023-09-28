@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class BarbaricClaws extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsPendragonGauntlets {
 
+    public BarbaricClaws() {
+    }
+
     public BarbaricClaws(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

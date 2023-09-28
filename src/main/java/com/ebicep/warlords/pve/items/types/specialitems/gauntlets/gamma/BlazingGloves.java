@@ -9,6 +9,9 @@ import java.util.Set;
 public class BlazingGloves extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsPalmOfTheSoothsayer {
 
 
+    public BlazingGloves() {
+    }
+
     public BlazingGloves(Set<BasicStatPool> statPools) {
         super(statPools);
     }

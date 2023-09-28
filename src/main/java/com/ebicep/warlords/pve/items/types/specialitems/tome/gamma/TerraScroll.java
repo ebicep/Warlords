@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class TerraScroll extends SpecialGammaTome implements CDRandHealing, CraftsInto.CraftsPansTome {
 
+    public TerraScroll() {
+
+    }
+
     public TerraScroll(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

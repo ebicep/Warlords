@@ -14,6 +14,10 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ElementalShield extends SpecialOmegaBuckler implements AppliesToWarlordsPlayer {
+
+    public ElementalShield() {
+    }
+
     public ElementalShield(Set<BasicStatPool> statPool) {
         super(statPool);
     }

@@ -17,12 +17,12 @@ import java.util.Set;
 
 public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
 
-    public GardeningGloves(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public GardeningGloves() {
 
+    }
+
+    public GardeningGloves(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

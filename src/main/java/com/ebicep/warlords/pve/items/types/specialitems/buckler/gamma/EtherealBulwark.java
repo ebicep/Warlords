@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class EtherealBulwark extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsAerialAegis {
 
+    public EtherealBulwark() {
+    }
+
     public EtherealBulwark(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

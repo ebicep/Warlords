@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class ToxicKnuckles extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsMultipurposeKnuckles {
 
+    public ToxicKnuckles() {
+    }
+
     public ToxicKnuckles(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class GuideToJuJitsu extends SpecialGammaTome implements CDRandDamage, CraftsInto.CraftsAGuideToMMA {
 
+    public GuideToJuJitsu() {
+
+    }
+
     public GuideToJuJitsu(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

@@ -8,6 +8,9 @@ import java.util.Set;
 
 public class LucidBuckler extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsShieldOfSnatching {
 
+    public LucidBuckler() {
+    }
+
     public LucidBuckler(Set<BasicStatPool> basicStatPools) {
         super(basicStatPools);
     }

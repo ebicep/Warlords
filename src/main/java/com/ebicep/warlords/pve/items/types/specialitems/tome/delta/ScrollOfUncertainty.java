@@ -17,12 +17,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto {
 
-    public ScrollOfUncertainty(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public ScrollOfUncertainty() {
 
+    }
+
+    public ScrollOfUncertainty(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override
