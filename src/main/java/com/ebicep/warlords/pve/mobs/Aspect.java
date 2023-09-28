@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -17,10 +18,9 @@ import org.bukkit.Particle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -340,6 +340,44 @@ public enum Aspect {
     ;
 
     public static final Aspect[] VALUES = values();
+    private static final Map<Pair<Aspect, Aspect>, String> NAMING = new HashMap<>() {{
+        put(new Pair<>(ARMOURED, null), "Shattering");
+        put(new Pair<>(CHILLING, null), "Heated");
+        put(new Pair<>(EVASIVE, null), "Insightful");
+        put(new Pair<>(INFERNAL, null), "Divine");
+        put(new Pair<>(JUGGERNAUT, null), "Indomitable");
+        put(new Pair<>(REGENERATIVE, null), "Stagnant");
+        put(new Pair<>(SWIFT, null), "Paralyzing");
+        put(new Pair<>(VAMPIRIC, null), "Coagulated");
+        put(new Pair<>(ARMOURED, CHILLING), "Fiery");
+        put(new Pair<>(ARMOURED, EVASIVE), "Precise");
+        put(new Pair<>(ARMOURED, INFERNAL), "Judgmental");
+        put(new Pair<>(ARMOURED, JUGGERNAUT), "Implosive");
+        put(new Pair<>(ARMOURED, REGENERATIVE), "Lifeless");
+        put(new Pair<>(ARMOURED, SWIFT), "Inebriating");
+        put(new Pair<>(ARMOURED, VAMPIRIC), "Curdled");
+        put(new Pair<>(CHILLING, EVASIVE), "Heat-Seeking");
+        put(new Pair<>(CHILLING, INFERNAL), "Jolly");
+        put(new Pair<>(CHILLING, JUGGERNAUT), "Nuclear");
+        put(new Pair<>(CHILLING, REGENERATIVE), "Fusing");
+        put(new Pair<>(CHILLING, SWIFT), "Exhausted");
+        put(new Pair<>(CHILLING, VAMPIRIC), "Saharan");
+        put(new Pair<>(EVASIVE, INFERNAL), "Angry");
+        put(new Pair<>(EVASIVE, JUGGERNAUT), "Blatant");
+        put(new Pair<>(EVASIVE, REGENERATIVE), "Murderous");
+        put(new Pair<>(EVASIVE, SWIFT), "Lazy");
+        put(new Pair<>(EVASIVE, VAMPIRIC), "Concentrating");
+        put(new Pair<>(INFERNAL, JUGGERNAUT), "Veiled");
+        put(new Pair<>(INFERNAL, REGENERATIVE), "Fiery");
+        put(new Pair<>(INFERNAL, SWIFT), "Heavy");
+        put(new Pair<>(INFERNAL, VAMPIRIC), "Religious");
+        put(new Pair<>(JUGGERNAUT, REGENERATIVE), "Obliterating");
+        put(new Pair<>(JUGGERNAUT, SWIFT), "Sticky");
+        put(new Pair<>(JUGGERNAUT, VAMPIRIC), "Gelatinous");
+        put(new Pair<>(REGENERATIVE, SWIFT), "Acidic");
+        put(new Pair<>(REGENERATIVE, VAMPIRIC), "Lethal");
+        put(new Pair<>(SWIFT, VAMPIRIC), "Pillared");
+    }};
 
     private static boolean isNegated(WarlordsEntity entity) {
         return entity.getCooldownManager().hasCooldown(AspectNegationCooldown.class);
@@ -355,6 +393,13 @@ public enum Aspect {
             return null;
         }
         return aspects.get(0);
+    }
+
+    @Nonnull
+    public static String getAspectName(@Nullable Aspect aspect1, @Nullable Aspect aspect2) {
+        Pair<Aspect, Aspect> aspectAspectPair1 = new Pair<>(aspect1, aspect2);
+        Pair<Aspect, Aspect> aspectAspectPair2 = new Pair<>(aspect2, aspect1);
+        return NAMING.getOrDefault(aspectAspectPair1, NAMING.getOrDefault(aspectAspectPair2, ""));
     }
 
     public final String name;

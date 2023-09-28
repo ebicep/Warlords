@@ -128,7 +128,8 @@ public abstract class AbstractItem {
     }
 
     public Component getItemName() {
-        return Component.text((aspectModifier1 != null ? aspectModifier2 != null ? "Dual " : "Single " : "Normal ") + getType().name, getModifierColor());
+        String aspectName = Aspect.getAspectName(aspectModifier1, aspectModifier2);
+        return Component.text((aspectName.isEmpty() ? "Normal" : aspectName) + " " + getType().name, getModifierColor());
     }
 
     public ItemStack generateItemStack() {
@@ -177,34 +178,6 @@ public abstract class AbstractItem {
         }
     }
 
-    private void addModifier(ItemBuilder itemBuilder, Aspect aspectModifier, int perTier) {
-        itemBuilder.addLore(Component.textOfChildren(
-//                Component.text("- ", NamedTextColor.AQUA),
-                Component.text(aspectModifier.name, aspectModifier.textColor)
-        ));
-        itemBuilder.addLore(
-                Component.textOfChildren(
-                        Component.text("  ", NamedTextColor.AQUA),
-                        type.getModifierDescriptionCalculated(perTier)
-                )
-        );
-    }
-
-    @Deprecated
-    protected void addItemScoreAndWeight(ItemBuilder itemBuilder, boolean obfuscated) {
-        Component itemScoreString = getItemScoreString(obfuscated);
-        itemBuilder.addLore(Component.empty());
-        if (itemScoreString != null) {
-            itemBuilder.addLore(
-                    itemScoreString,
-                    Component.empty(),
-                    getWeightString(obfuscated)
-            );
-        } else {
-            itemBuilder.addLore(getWeightString(obfuscated));
-        }
-    }
-
     protected void addItemScore(ItemBuilder itemBuilder, boolean obfuscated) {
         Component itemScoreString = getItemScoreString(obfuscated);
         itemBuilder.addLore(Component.empty());
@@ -225,16 +198,24 @@ public abstract class AbstractItem {
         return BasicStatPool.getStatPoolLore(getStatPool(), false, obfuscatedStat);
     }
 
+    private void addModifier(ItemBuilder itemBuilder, Aspect aspectModifier, int perTier) {
+        itemBuilder.addLore(Component.textOfChildren(
+//                Component.text("- ", NamedTextColor.AQUA),
+                Component.text(aspectModifier.name, aspectModifier.textColor)
+        ));
+        itemBuilder.addLore(
+                Component.textOfChildren(
+                        Component.text("  ", NamedTextColor.AQUA),
+                        type.getModifierDescriptionCalculated(perTier)
+                )
+        );
+    }
+
     protected Component getItemScoreString(boolean obfuscated) {
         return Component.text("Score: ", NamedTextColor.GRAY)
                         .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getItemScore()), NamedTextColor.YELLOW))
                         .append(Component.text("/"))
                         .append(Component.text("100"));
-    }
-
-    private Component getWeightString(boolean obfuscated) {
-        return Component.text("Weight: ", NamedTextColor.GRAY)
-                        .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getWeight()), NamedTextColor.GOLD, TextDecoration.BOLD));
     }
 
     public HashMap<BasicStatPool, Integer> getStatPool() {
@@ -262,6 +243,30 @@ public abstract class AbstractItem {
             sum += statDistribution.getValue();
         }
         return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    @Deprecated
+    protected void addItemScoreAndWeight(ItemBuilder itemBuilder, boolean obfuscated) {
+        Component itemScoreString = getItemScoreString(obfuscated);
+        itemBuilder.addLore(Component.empty());
+        if (itemScoreString != null) {
+            itemBuilder.addLore(
+                    itemScoreString,
+                    Component.empty(),
+                    getWeightString(obfuscated)
+            );
+        } else {
+            itemBuilder.addLore(getWeightString(obfuscated));
+        }
+    }
+
+    private Component getWeightString(boolean obfuscated) {
+        return Component.text("Weight: ", NamedTextColor.GRAY)
+                        .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getWeight()), NamedTextColor.GOLD, TextDecoration.BOLD));
     }
 
     public int getWeight() {
@@ -320,10 +325,6 @@ public abstract class AbstractItem {
             sum += Math.max(0, Math.min(1, value));
         }
         return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
-    }
-
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
     }
 
     @Deprecated
