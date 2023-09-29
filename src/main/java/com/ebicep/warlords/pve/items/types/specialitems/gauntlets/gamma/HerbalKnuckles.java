@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class HerbalKnuckles extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsMultipurposeKnuckles {
+public class HerbalKnuckles extends SpecialGammaGauntlet implements CraftsInto.CraftsMultipurposeKnuckles {
 
     public HerbalKnuckles() {
     }
@@ -30,4 +31,8 @@ public class HerbalKnuckles extends SpecialGammaGauntlet implements EPSandEPH, C
         return "Cuts like a rose.";
     }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.APOTHECARY;
+    }
 }

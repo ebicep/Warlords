@@ -13,7 +13,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -25,7 +25,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
 
                     @Override

@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class ArchangelsFist extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsSamsonsFists {
+public class ArchangelsFist extends SpecialGammaGauntlet implements CraftsInto.CraftsSamsonsFists {
 
     public ArchangelsFist() {
     }
@@ -30,4 +31,8 @@ public class ArchangelsFist extends SpecialGammaGauntlet implements EPSandMaxEne
         return "Behold! Judgement from on high!";
     }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.AVENGER;
+    }
 }

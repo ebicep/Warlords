@@ -18,7 +18,7 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
         maxDamage = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -30,7 +30,7 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override

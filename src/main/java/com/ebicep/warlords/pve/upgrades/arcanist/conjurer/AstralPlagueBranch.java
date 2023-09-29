@@ -12,12 +12,12 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability, 30f)
                 .addTo(treeB);
 

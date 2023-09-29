@@ -11,7 +11,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
 
                     @Override
@@ -27,7 +27,7 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability)
                 .addTo(treeB);
 

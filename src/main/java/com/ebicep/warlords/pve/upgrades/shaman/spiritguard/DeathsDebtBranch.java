@@ -14,7 +14,7 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
         ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.5f);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
 
                     @Override
@@ -43,7 +43,7 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

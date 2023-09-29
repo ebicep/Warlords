@@ -12,7 +12,7 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -24,7 +24,7 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
                 .addTo(treeB);
 

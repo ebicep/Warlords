@@ -12,7 +12,7 @@ public class LightInfusionBranchAvenger extends AbstractUpgradeBranch<LightInfus
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.EnergyUpgradeType() {
 
                                 @Override
@@ -30,7 +30,7 @@ public class LightInfusionBranchAvenger extends AbstractUpgradeBranch<LightInfus
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability, .075f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override

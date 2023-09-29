@@ -10,6 +10,8 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -68,7 +70,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     }
 
     public void openUpgradeBranchMenu() {
-        WarlordsPlayer player = abilityTree.getWarlordsPlayer();
+        WarlordsPlayer warlordsPlayer = abilityTree.getWarlordsPlayer();
+        WarlordsPlayer player = warlordsPlayer;
         Menu menu = new Menu("Upgrades", 9 * 6);
 
         addBranchToMenu(menu, treeA, 2, 4);
@@ -104,7 +107,15 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
         menu.setItem(4, 3,
                 new ItemBuilder(Material.DIAMOND)
-                        .name(Component.text("Upgrades Remaining: ", NamedTextColor.GRAY).append(Component.text(maxUpgrades, NamedTextColor.GREEN)))
+                        .name(Component.text("Insignia: ", NamedTextColor.GRAY)
+                                       .append(Component.text("❂ " + NumberFormat.addCommas(warlordsPlayer.getCurrency()), NamedTextColor.GOLD)))
+                        .lore(
+                                Component.text("Upgrades Remaining: ", NamedTextColor.GRAY).append(Component.text(maxUpgrades, NamedTextColor.GREEN)),
+                                Component.text("Free Upgrades Available: ", NamedTextColor.GRAY)
+                                         .append(Component.text(freeUpgrades, NamedTextColor.GREEN)),
+                                Component.empty()
+                        )
+                        .addLore(WordWrap.wrap(Component.text("Note: Free Upgrades are only available for the first upgrade in each branch.", NamedTextColor.GRAY), 160))
                         .get(),
                 ACTION_DO_NOTHING
         );
@@ -309,7 +320,8 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
             }
         }
 
-        if (player.getCurrency() < upgrade.getCurrencyCost() && freeUpgrades <= 0) {
+        boolean isFree = freeUpgrades > 0 && (treeA.indexOf(upgrade) == 0 || treeB.indexOf(upgrade) == 0);
+        if (player.getCurrency() < upgrade.getCurrencyCost() && !isFree) {
             player.sendMessage(Component.text("You do not have enough Insignia (❂) to buy this upgrade!", NamedTextColor.RED));
             return;
         }
@@ -323,7 +335,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         maxUpgrades--;
         upgradesRequiredForMaster--;
 
-        if (freeUpgrades > 0) {
+        if (isFree) {
             freeUpgrades--;
         } else {
             player.subtractCurrency(upgrade.getCurrencyCost());
@@ -369,7 +381,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         Component.text("Auto Upgrade Position: ", NamedTextColor.GRAY).append(position),
                         Component.empty(),
                         Component.textOfChildren(
-                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                 Component.text(" to remove from auto upgrade queue.", NamedTextColor.GRAY)
                         )
                 );
@@ -378,7 +390,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 itemBuilder.addLore(
                         Component.empty(),
                         Component.textOfChildren(
-                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                 Component.text(" to add to auto upgrade queue.", NamedTextColor.GRAY)
                         )
                 );
@@ -388,18 +400,18 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
     }
 
     private ItemStack branchItem(Upgrade upgrade) {
-        ItemBuilder itemBuilder = new ItemBuilder(upgrade.isUnlocked() ? new ItemStack(Material.ORANGE_WOOL) : new ItemStack(Material.LIGHT_GRAY_WOOL))
-                .name(Component.text(upgrade.getName(), upgrade.isUnlocked() ? NamedTextColor.GOLD : NamedTextColor.RED));
-        List<Component> lore = new ArrayList<>();
-        for (Component component : upgrade.getDescription()) {
-            lore.add(component.color(upgrade.isUnlocked() ? NamedTextColor.RED : NamedTextColor.DARK_GRAY));
+        boolean unlocked = upgrade.isUnlocked();
+        ItemBuilder itemBuilder = new ItemBuilder(unlocked ? new ItemStack(Material.ORANGE_WOOL) : new ItemStack(Material.LIGHT_GRAY_WOOL))
+                .name(Component.text(upgrade.getName(), unlocked ? NamedTextColor.GOLD : NamedTextColor.RED))
+                .lore(upgrade.getDescription(unlocked ? NamedTextColor.GREEN : NamedTextColor.GRAY));
+        if (!unlocked) {
+            boolean isFree = freeUpgrades > 0 && (treeA.indexOf(upgrade) == 0 || treeB.indexOf(upgrade) == 0);
+            itemBuilder.addLore(Component.empty(),
+                    Component.text("Cost: ", NamedTextColor.GRAY)
+                             .append(Component.text("❂ " + upgrade.getCurrencyCost() + (isFree ? " (Free)" : ""), NamedTextColor.GOLD))
+            );
         }
-        lore.add(Component.empty());
-        lore.add(Component.text("Cost: ", NamedTextColor.GRAY)
-                          .append(Component.text("❂ " + upgrade.getCurrencyCost(), NamedTextColor.GOLD))
-        );
-        itemBuilder.lore(lore);
-        if (!upgrade.isUnlocked()) {
+        if (!unlocked) {
             Component position = abilityTree.getAutoUpgradeProfile().getPosition(abilityTree, upgrade);
             if (position != null) {
                 itemBuilder.addLore(

@@ -18,7 +18,7 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
         maxDamage = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -30,7 +30,7 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability)
                 .addTo(treeB);
 

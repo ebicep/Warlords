@@ -12,7 +12,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.EnergyUpgradeType() {
 
                                 @Override
@@ -30,7 +30,7 @@ public class AvengersWrathBranch extends AbstractUpgradeBranch<AvengersWrath> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability, 40f)
                 .addTo(treeB);
 

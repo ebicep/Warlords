@@ -12,7 +12,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -24,7 +24,7 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability)
                 .addUpgradeCooldown(ability, 3, 4)
                 .addTo(treeB);

@@ -11,7 +11,7 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -22,7 +22,7 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability::setBonusDuration, ability::getBonusDuration, 10f)
                 .addTo(treeB);
 

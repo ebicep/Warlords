@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class StaticScroll extends SpecialGammaTome implements CDRandDamage, CraftsInto.CraftsPansTome {
+public class StaticScroll extends SpecialGammaTome implements CraftsInto.CraftsPansTome {
 
     public StaticScroll() {
 
@@ -31,4 +32,8 @@ public class StaticScroll extends SpecialGammaTome implements CDRandDamage, Craf
     }
 
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.THUNDERLORD;
+    }
 }

@@ -12,7 +12,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -24,7 +24,7 @@ public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> 
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeHitBox(ability, 1.5f)
                 .addUpgradeDuration(ability, 40f, 4)
                 .addTo(treeB);

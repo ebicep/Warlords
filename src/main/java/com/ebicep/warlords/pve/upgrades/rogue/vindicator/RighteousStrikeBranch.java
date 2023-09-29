@@ -18,7 +18,7 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
         maxDamage = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -30,7 +30,7 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
                 .addTo(treeB);
 

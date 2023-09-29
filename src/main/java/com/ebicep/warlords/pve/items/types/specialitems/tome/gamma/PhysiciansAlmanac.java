@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class PhysiciansAlmanac extends SpecialGammaTome implements CDRandHealing, CraftsInto.CraftsScrollOfUncertainty {
+public class PhysiciansAlmanac extends SpecialGammaTome implements CraftsInto.CraftsScrollOfUncertainty {
 
     public PhysiciansAlmanac() {
 
@@ -31,4 +32,8 @@ public class PhysiciansAlmanac extends SpecialGammaTome implements CDRandHealing
     }
 
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.APOTHECARY;
+    }
 }

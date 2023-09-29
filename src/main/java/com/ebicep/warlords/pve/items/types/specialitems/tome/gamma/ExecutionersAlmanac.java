@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class ExecutionersAlmanac extends SpecialGammaTome implements CDRandDamage, CraftsInto.CraftsScrollOfUncertainty {
+public class ExecutionersAlmanac extends SpecialGammaTome implements CraftsInto.CraftsScrollOfUncertainty {
 
     public ExecutionersAlmanac() {
 
@@ -31,4 +32,8 @@ public class ExecutionersAlmanac extends SpecialGammaTome implements CDRandDamag
     }
 
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.ASSASSIN;
+    }
 }

@@ -21,7 +21,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -33,18 +33,19 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
-                        return "+50% Projectile Speed";
+                        return "+" + value + "% Projectile Speed";
                     }
 
                     @Override
                     public void run(float value) {
-                        ability.setProjectileSpeed(ability.getProjectileSpeed() * 1.5);
+                        value = 1 + value / 100;
+                        ability.setProjectileSpeed(ability.getProjectileSpeed() * value);
                     }
-                }, 4)
+                }, 50f, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
                 .addUpgradeHitBox(ability, .5f)
                 .addTo(treeB);

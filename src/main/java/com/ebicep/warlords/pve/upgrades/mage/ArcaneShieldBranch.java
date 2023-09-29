@@ -11,7 +11,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.ShieldUpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -27,7 +27,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

@@ -12,7 +12,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -24,18 +24,19 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
-                        return "+50% Projectile Speed";
+                        return "+" + value + "% Projectile Speed";
                     }
 
                     @Override
                     public void run(float value) {
-                        ability.setProjectileSpeed(ability.getProjectileSpeed() * 1.5);
+                        value = 1 + value / 100;
+                        ability.setProjectileSpeed(ability.getProjectileSpeed() * value);
                     }
-                }, 4)
+                }, 50f, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeSplash(ability, 0.5f)
                 .addUpgradeEnergy(ability, 2.5f)
                 .addTo(treeB);

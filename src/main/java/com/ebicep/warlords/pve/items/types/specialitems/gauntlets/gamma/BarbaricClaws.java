@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class BarbaricClaws extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsPendragonGauntlets {
+public class BarbaricClaws extends SpecialGammaGauntlet implements CraftsInto.CraftsPendragonGauntlets {
 
     public BarbaricClaws() {
     }
@@ -30,4 +31,8 @@ public class BarbaricClaws extends SpecialGammaGauntlet implements EPSandMaxEner
         return "Only a madman would wear such an instrument.";
     }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.BERSERKER;
+    }
 }

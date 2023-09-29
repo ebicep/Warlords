@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class BloodyChakram extends SpecialGammaBuckler implements DamageReductionandKBRes, CraftsInto.CraftsPridwensBulwark {
+public class BloodyChakram extends SpecialGammaBuckler implements CraftsInto.CraftsPridwensBulwark {
 
     public BloodyChakram() {
     }
@@ -30,4 +31,8 @@ public class BloodyChakram extends SpecialGammaBuckler implements DamageReductio
     }
 
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.BERSERKER;
+    }
 }

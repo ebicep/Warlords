@@ -13,7 +13,7 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -26,7 +26,7 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override

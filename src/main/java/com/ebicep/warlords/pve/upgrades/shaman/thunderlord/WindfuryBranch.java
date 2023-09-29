@@ -11,7 +11,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -27,7 +27,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.LuckUpgradeType() {
                     @Override
                     public String getDescription0(String value) {

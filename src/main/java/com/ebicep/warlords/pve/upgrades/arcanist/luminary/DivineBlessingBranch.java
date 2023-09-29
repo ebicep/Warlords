@@ -12,12 +12,12 @@ public class DivineBlessingBranch extends AbstractUpgradeBranch<DivineBlessing> 
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability, 10f)
                 .addTo(treeB);
 

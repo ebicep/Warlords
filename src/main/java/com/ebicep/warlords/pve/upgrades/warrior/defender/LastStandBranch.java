@@ -18,7 +18,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
         allyDamageReduction = ability.getTeammateDamageReduction();
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.ShieldUpgradeType() {
                     @Nonnull
                     @Override
@@ -35,7 +35,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability)
                 .addTo(treeB);
 

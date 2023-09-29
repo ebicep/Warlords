@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class BiomeGauntlet extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsGardeningGloves {
+public class BiomeGauntlet extends SpecialGammaGauntlet implements CraftsInto.CraftsGardeningGloves {
 
     public BiomeGauntlet() {
     }
@@ -30,4 +31,8 @@ public class BiomeGauntlet extends SpecialGammaGauntlet implements EPSandEPH, Cr
         return "One touch and you're underground.";
     }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.EARTHWARDEN;
+    }
 }

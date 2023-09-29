@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class MediatorsFist extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsSamsonsFists {
+public class MediatorsFist extends SpecialGammaGauntlet implements CraftsInto.CraftsSamsonsFists {
 
     public MediatorsFist() {
     }
@@ -30,4 +31,8 @@ public class MediatorsFist extends SpecialGammaGauntlet implements EPSandEPH, Cr
         return "Fear not! I am risen.";
     }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.PROTECTOR;
+    }
 }

@@ -115,7 +115,7 @@ public class MyPositionCommand extends BaseCommand {
     @CommandCompletion("@classesalias")
     @Description("Displays your class stats position in the leaderboards")
     public void myStatsClass(Player player, String className) {
-        Classes classes = Classes.getClassFromNameNullable(className);
+        Classes classes = Classes.getClassFromName(className);
         if (classes == null) {
             throw new InvalidCommandArgument("Invalid Class");
         }

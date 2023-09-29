@@ -15,7 +15,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -27,7 +27,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
                     @Override
                     public String getName() {

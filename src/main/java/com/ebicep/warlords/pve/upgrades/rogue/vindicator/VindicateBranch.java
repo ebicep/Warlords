@@ -10,7 +10,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.ShieldUpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -25,7 +25,7 @@ public class VindicateBranch extends AbstractUpgradeBranch<Vindicate> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability, 20f)
                 .addUpgradeDuration(ability::setDamageReductionTickDuration, ability::getDamageReductionTickDuration, 20f, true, true)
                 .addTo(treeB);

@@ -1,10 +1,7 @@
 package com.ebicep.warlords.pve.items.types;
 
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.pve.items.modifiers.ItemBucklerModifier;
-import com.ebicep.warlords.pve.items.modifiers.ItemGauntletModifier;
-import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
-import com.ebicep.warlords.pve.items.modifiers.ItemTomeModifier;
+import com.ebicep.warlords.pve.items.modifiers.*;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.SpecialItems;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -25,7 +22,8 @@ public enum ItemType {
 
 
     NONE("All",
-            new ItemStack(Material.BARRIER)
+            new ItemStack(Material.BARRIER),
+            null
     ) {
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -48,7 +46,8 @@ public enum ItemType {
         }
     },
     GAUNTLET("Gauntlet",
-            SkullUtils.getSkullFrom(SkullID.IRON_FIST)
+            SkullUtils.getSkullFrom(SkullID.IRON_FIST),
+            UpgradeTreeBonus.UPGRADES
     ) {
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -77,7 +76,8 @@ public enum ItemType {
         }
     },
     TOME("Tome",
-            SkullUtils.getSkullFrom(SkullID.ENCHANTMENT_BOOK)
+            SkullUtils.getSkullFrom(SkullID.ENCHANTMENT_BOOK),
+            UpgradeTreeBonus.COSTS
     ) {
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -106,7 +106,8 @@ public enum ItemType {
         }
     },
     BUCKLER("Buckler",
-            SkullUtils.getSkullFrom(SkullID.GOOGLE_HOME_MINI)
+            SkullUtils.getSkullFrom(SkullID.GOOGLE_HOME_MINI),
+            UpgradeTreeBonus.EFFECTIVENESS
     ) {
         @Override
         public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
@@ -141,14 +142,17 @@ public enum ItemType {
     public static final ItemType[] VALID_VALUES = {GAUNTLET, TOME, BUCKLER};
     public final String name;
     public final ItemStack skull;
+    public final UpgradeTreeBonus[] upgradeTreeBonuses;
+
 
     public static ItemType getRandom() {
         return VALID_VALUES[ThreadLocalRandom.current().nextInt(VALID_VALUES.length)];
     }
 
-    ItemType(String name, ItemStack skull) {
+    ItemType(String name, ItemStack skull, UpgradeTreeBonus[] upgradeTreeBonuses) {
         this.name = name;
         this.skull = skull;
+        this.upgradeTreeBonuses = upgradeTreeBonuses;
     }
 
     public ItemType next() {

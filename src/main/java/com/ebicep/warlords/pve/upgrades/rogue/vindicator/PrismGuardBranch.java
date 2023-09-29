@@ -16,7 +16,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
         }
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
 
                     @Override
@@ -44,7 +44,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability, 20f)
                 .addTo(treeB);
 

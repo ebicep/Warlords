@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class DrippingGloves extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsPalmOfTheSoothsayer {
+public class DrippingGloves extends SpecialGammaGauntlet implements CraftsInto.CraftsPalmOfTheSoothsayer {
 
     public DrippingGloves() {
     }
@@ -30,4 +31,8 @@ public class DrippingGloves extends SpecialGammaGauntlet implements EPSandEPH, C
     }
 
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.AQUAMANCER;
+    }
 }

@@ -14,7 +14,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
     public FreezingBreathBranch(AbilityTree abilityTree, FreezingBreath ability) {
         super(abilityTree, ability);
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -26,7 +26,7 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
 

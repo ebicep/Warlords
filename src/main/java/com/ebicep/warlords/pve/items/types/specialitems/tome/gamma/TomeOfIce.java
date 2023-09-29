@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class TomeOfIce extends SpecialGammaTome implements CDRandCritChance, CraftsInto.CraftsFirewaterAlmanac {
+public class TomeOfIce extends SpecialGammaTome implements CraftsInto.CraftsFirewaterAlmanac {
 
     public TomeOfIce() {
 
@@ -31,4 +32,8 @@ public class TomeOfIce extends SpecialGammaTome implements CDRandCritChance, Cra
     }
 
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.CRYOMANCER;
+    }
 }

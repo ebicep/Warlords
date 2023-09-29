@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class ShadowGauntlet extends SpecialGammaGauntlet implements EPSandSpeed, CraftsInto.CraftsGardeningGloves {
+public class ShadowGauntlet extends SpecialGammaGauntlet implements CraftsInto.CraftsGardeningGloves {
 
     public ShadowGauntlet() {
     }
@@ -30,4 +31,8 @@ public class ShadowGauntlet extends SpecialGammaGauntlet implements EPSandSpeed,
         return "One touch and you're floating.";
     }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.SPIRITGUARD;
+    }
 }

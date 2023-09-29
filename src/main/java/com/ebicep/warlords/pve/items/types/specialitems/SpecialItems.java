@@ -187,6 +187,7 @@ public enum SpecialItems {
     }
 
     public AbstractSpecialItem create() {
-        return create.apply(new HashSet<>());
+        AbstractSpecialItem abstractSpecialItem = create.apply(new HashSet<>());
+        return create.apply(abstractSpecialItem.getTier().generateStatPool());
     }
 }

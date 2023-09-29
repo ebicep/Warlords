@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class GuideToJudo extends SpecialGammaTome implements CDRandHealing, CraftsInto.CraftsAGuideToMMA {
+public class GuideToJudo extends SpecialGammaTome implements CraftsInto.CraftsAGuideToMMA {
 
     public GuideToJudo() {
 
@@ -31,4 +32,8 @@ public class GuideToJudo extends SpecialGammaTome implements CDRandHealing, Craf
     }
 
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.REVENANT;
+    }
 }

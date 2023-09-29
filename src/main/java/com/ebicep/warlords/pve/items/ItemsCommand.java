@@ -45,10 +45,10 @@ public class ItemsCommand extends BaseCommand {
     @Subcommand("addfoundblessings")
     public void addFoundBlessings(Player player, @Conditions("limits:min=1,max=10") Integer amount) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.getPveStats()
-                          .getItemsManager()
-                          .addBlessingsFound(amount);
-            ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " found blessings", NamedTextColor.GREEN));
+                    databasePlayer.getPveStats()
+                                  .getItemsManager()
+                                  .addBlessingsFound(amount);
+                    ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " found blessings", NamedTextColor.GREEN));
                 }
         );
     }
@@ -61,8 +61,7 @@ public class ItemsCommand extends BaseCommand {
                           .getBlessingsBought()
                           .merge(tier, amount, Integer::sum);
             ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " Tier " + tier + " bought blessings", NamedTextColor.GREEN));
-                }
-        );
+        });
     }
 
     @Subcommand("generate")

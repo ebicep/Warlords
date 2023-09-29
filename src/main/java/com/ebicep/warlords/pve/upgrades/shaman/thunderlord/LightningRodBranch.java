@@ -12,7 +12,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -28,7 +28,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {

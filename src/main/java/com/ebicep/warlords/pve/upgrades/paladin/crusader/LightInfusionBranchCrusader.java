@@ -12,7 +12,7 @@ public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfu
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.EnergyUpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -38,7 +38,7 @@ public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfu
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

@@ -12,13 +12,13 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability, .1f)
                 .addUpgradeHitBox(ability, 1, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {

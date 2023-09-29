@@ -1,11 +1,12 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class OvergrownBuckler extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsShieldOfSnatching {
+public class OvergrownBuckler extends SpecialGammaBuckler implements CraftsInto.CraftsShieldOfSnatching {
 
     public OvergrownBuckler() {
     }
@@ -30,4 +31,8 @@ public class OvergrownBuckler extends SpecialGammaBuckler implements DamageReduc
     }
 
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.APOTHECARY;
+    }
 }

@@ -11,7 +11,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.EnergyUpgradeType() {
 
                     @Override
@@ -27,7 +27,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability)
                 .addUpgradeHitBox(ability, 1.5f)
                 .addTo(treeB);
