@@ -1,15 +1,17 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.omega;
 
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GuideForTheRiverStyx extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
     public GuideForTheRiverStyx() {
@@ -27,7 +29,7 @@ public class GuideForTheRiverStyx extends SpecialOmegaTome implements AppliesToW
 
     @Override
     public String getBonus() {
-        return "Significantly increased respawn speed.";
+        return "Negates damage done by Primary Attack projectiles.";
     }
 
     @Override
@@ -40,9 +42,19 @@ public class GuideForTheRiverStyx extends SpecialOmegaTome implements AppliesToW
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler
-            public void onEvent(WarlordsGiveRespawnEvent event) {
-                AtomicInteger respawnTimer = event.getRespawnTimer();
-                respawnTimer.set((int) (respawnTimer.get() * .75));
+            public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
+                    return;
+                }
+                if (event.isHealingInstance()) {
+                    return;
+                }
+                if (!Utils.isPrimaryProjectile(event.getAbility())) {
+                    return;
+                }
+                if (ThreadLocalRandom.current().nextDouble() < 0.05) {
+                    event.setCancelled(true);
+                }
             }
         });
     }
