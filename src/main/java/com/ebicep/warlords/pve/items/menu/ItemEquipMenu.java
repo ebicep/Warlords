@@ -118,7 +118,7 @@ public class ItemEquipMenu {
 
                                 AbstractItem.sendItemMessage(player,
                                         Component.text("You received " + scrapAmount + " Scrap Metal from scrapping ", NamedTextColor.GRAY)
-                                                 .hoverEvent(i.getHoverComponent())
+                                                 .append(i.getHoverComponent())
                                 );
                                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
 
