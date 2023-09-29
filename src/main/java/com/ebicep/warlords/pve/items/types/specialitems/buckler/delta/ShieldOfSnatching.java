@@ -26,8 +26,8 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
     }
 
     @Override
-    public String getName() {
-        return "Shield of Snatching";
+    public String getDescription() {
+        return "Kinda looks like a hand... Is that my wallet?";
     }
 
     @Override
@@ -36,14 +36,14 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
     }
 
     @Override
-    public String getDescription() {
-        return "Kinda looks like a hand... Is that my wallet?";
+    public String getName() {
+        return "Shield of Snatching";
     }
-
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         warlordsPlayer.getGame().registerEvents(new Listener() {
+            int timesStolen = 0;
 
             @EventHandler
             public void onMobDrop(WarlordsGiveMobDropEvent event) {
@@ -56,7 +56,11 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
                 if (ThreadLocalRandom.current().nextDouble() > 0.25) {
                     return;
                 }
+                if (timesStolen > 0) {
+                    return;
+                }
                 if (warlordsPlayer.getEntity() instanceof Player) {
+                    timesStolen++;
                     event.getStolenBy().add(warlordsPlayer);
                 }
             }
