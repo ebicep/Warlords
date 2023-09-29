@@ -6,7 +6,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.MobDrop;
-import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -29,7 +28,7 @@ public class CommandmentNoEleven extends SpecialOmegaTome implements AppliesToWa
 
     @Override
     public String getBonus() {
-        return "Chance for Zenith to drop a Zenith Star is doubled.";
+        return "+15% chance for Zenith to drop a Zenith Star.";
     }
 
     @Override
@@ -49,8 +48,7 @@ public class CommandmentNoEleven extends SpecialOmegaTome implements AppliesToWa
                 if (event.getMobDrop() != MobDrop.ZENITH_STAR) {
                     return;
                 }
-                AtomicDouble dropRate = event.getDropRate();
-                dropRate.set(dropRate.get() * 2);
+                event.addModifier(.15);
             }
         });
     }
