@@ -986,14 +986,18 @@ public abstract class WarlordsEntity {
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
-        for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+        WarlordsEntity attacker = event.getAttacker();
+
+        List<AbstractCooldown<?>> selfCooldownsDistinct = getCooldownManager().getCooldownsDistinct();
+        List<AbstractCooldown<?>> attackersCooldownsDistinct = attacker.getCooldownManager().getCooldownsDistinct();
+
+        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
             abstractCooldown.healingDoBeforeVariableSetFromSelf(event);
         }
-        for (AbstractCooldown<?> abstractCooldown : event.getAttacker().getCooldownManager().getCooldownsDistinct()) {
+        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.healingDoBeforeVariableSetFromAttacker(event);
         }
 
-        WarlordsEntity attacker = event.getAttacker();
         String ability = event.getAbility();
         float min = event.getMin();
         float max = event.getMax();
@@ -1031,7 +1035,7 @@ public abstract class WarlordsEntity {
 
         debugMessage.append(Component.newline()).append(Component.text("Before Heal", NamedTextColor.AQUA));
         appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
-        for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
             healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
             if (previousHealValue != healValue) {
                 appendDebugMessage(debugMessage, 2, "Heal Value", previousHealValue, healValue, abstractCooldown);
@@ -1040,18 +1044,16 @@ public abstract class WarlordsEntity {
         }
 
         appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
-        for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             healValue = abstractCooldown.doBeforeHealFromAttacker(event, healValue);
             if (previousHealValue != healValue) {
                 appendDebugMessage(debugMessage, 2, "Heal Value", previousHealValue, healValue, abstractCooldown);
             }
             previousHealValue = healValue;
         }
-
-        // Self Healing
-        if (this == attacker) {
+        if (this == attacker || isTeammate(attacker)) {
             float maxHealth = this.maxHealth;
-            if (flags.contains(InstanceFlags.CAN_OVERHEAL_SELF)) {
+            if (this == attacker && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF) || isTeammate(attacker) && flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS)) {
                 maxHealth *= 1.1;
             }
             if (this.health + healValue > maxHealth) {
@@ -1063,39 +1065,20 @@ public abstract class WarlordsEntity {
             }
 
             boolean isOverheal = maxHealth > this.maxHealth && healValue + this.health > this.maxHealth;
-            sendHealingMessage(debugMessage, this, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
+            sendHealingMessage(debugMessage, attacker, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
+
+            for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                abstractCooldown.onHealFromSelf(event, healValue, isCrit);
+            }
+            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                abstractCooldown.onHealFromAttacker(event, healValue, isCrit);
+            }
 
             health += healValue;
-            addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
+            attacker.addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
 
             if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
                 playHitSound(attacker);
-            }
-        } else {
-            // Teammate Healing
-            if (isTeammate(attacker)) {
-                float maxHealth = this.maxHealth;
-                if (flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS)) {
-                    maxHealth *= 1.1;
-                }
-
-                if (this.health + healValue > maxHealth) {
-                    healValue = maxHealth - this.health;
-                }
-
-                if (healValue <= 0) {
-                    return Optional.empty();
-                }
-
-                boolean isOverheal = maxHealth > this.maxHealth && healValue + this.health > this.maxHealth;
-                sendHealingMessage(debugMessage, attacker, this, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
-
-                health += healValue;
-                attacker.addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
-
-                if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
-                    playHitSound(attacker);
-                }
             }
         }
 
@@ -1303,6 +1286,42 @@ public abstract class WarlordsEntity {
             }
         }
 
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    @Nonnull
+    public LivingEntity getEntity() {
+        return this.entity;
+    }
+
+    public void setEntity(LivingEntity entity) {
+        this.entity = entity;
+    }
+
+    public void sendMessage(Component component) {
+        this.entity.sendMessage(component);
+        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
+            game.spectators()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
+                .forEach(player -> player.sendMessage(component.hoverEvent(null)));
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     /**
@@ -1883,42 +1902,6 @@ public abstract class WarlordsEntity {
 
     public float getMaxEnergy() {
         return spec.getMaxEnergy();
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    @Nonnull
-    public LivingEntity getEntity() {
-        return this.entity;
-    }
-
-    public void setEntity(LivingEntity entity) {
-        this.entity = entity;
-    }
-
-    public void sendMessage(Component component) {
-        this.entity.sendMessage(component);
-        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
-            game.spectators()
-                .map(Bukkit::getPlayer)
-                .filter(Objects::nonNull)
-                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                .forEach(player -> player.sendMessage(component.hoverEvent(null)));
-        }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
     }
 
     public float subtractEnergy(FloatModifiable amount, boolean fromAttacker) {

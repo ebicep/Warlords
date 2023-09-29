@@ -30,4 +30,10 @@ public interface HealingInstance extends Instance {
         return currentHealValue;
     }
 
+    default void onHealFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    }
+
+    default void onHealFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    }
+
 }
