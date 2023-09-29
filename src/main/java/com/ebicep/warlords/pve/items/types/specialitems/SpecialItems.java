@@ -66,7 +66,7 @@ public enum SpecialItems {
     //DELTA
     SOOTHSAYERS_PALMS(SoothsayersPalms::new),
     SAMSONS_FISTS(SamsonsFists::new),
-    PENDRAGON_GAUNTLETS(PendragonGauntlets::new),
+    PENDRAGON_KNUCKLES(PendragonGauntlets::new),
     GARDENING_GLOVES(GardeningGloves::new),
     MULTIPURPOSE_KNUCKLES(MultipurposeKnuckles::new),
     FIREWATER_ALMANAC(FirewaterAlmanac::new),
@@ -148,7 +148,7 @@ public enum SpecialItems {
     public static final SpecialItems[] DELTA_ITEMS = {
             SOOTHSAYERS_PALMS,
             SAMSONS_FISTS,
-            PENDRAGON_GAUNTLETS,
+            PENDRAGON_KNUCKLES,
             GARDENING_GLOVES,
             MULTIPURPOSE_KNUCKLES,
             FIREWATER_ALMANAC,
