@@ -212,15 +212,14 @@ public class ItemMenuUtil {
                                  // first element needs to be filler bc its USUALLY "Bonus" and this way is omega scuffed
                                  List<Component> upgradeTreeBonusDescription = Arrays.asList(
                                          Component.empty(),
-                                         Component.text(specialItem.getUpgradeTreeBonusDescription(1))
+                                         Component.text(specialItem.getUpgradeTreeBonusDescription(1), NamedTextColor.GRAY)
                                  );
                                  boolean hadPreviously = hashSet.remove(upgradeTreeBonusDescription);
                                  if (hadPreviously) {
                                      hashSet.add(Arrays.asList(
-                                                     Component.empty(),
-                                                     Component.text(specialItem.getUpgradeTreeBonusDescription(2))
-                                             )
-                                     );
+                                             Component.empty(),
+                                             Component.text(specialItem.getUpgradeTreeBonusDescription(2), NamedTextColor.GRAY)
+                                     ));
                                  } else {
                                      hashSet.add(upgradeTreeBonusDescription);
                                  }
