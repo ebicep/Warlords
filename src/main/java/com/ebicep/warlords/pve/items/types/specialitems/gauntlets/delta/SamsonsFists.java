@@ -53,7 +53,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
 
     @Override
     public String getBonus() {
-        return "Increases your melee damage by 50%.";
+        return "Increases your melee damage by 25%.";
     }
 
     @Override
