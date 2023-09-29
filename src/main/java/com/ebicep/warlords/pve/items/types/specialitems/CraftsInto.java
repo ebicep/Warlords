@@ -117,10 +117,10 @@ public interface CraftsInto {
         }
     }
 
-    interface CraftsDiabolicalRage extends CraftsInto {
+    interface CraftsDiabolicalRings extends CraftsInto {
         @Override
         default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
-            return new DiabolicalRage(statPool);
+            return new DiabolicalRings(statPool);
         }
     }
 

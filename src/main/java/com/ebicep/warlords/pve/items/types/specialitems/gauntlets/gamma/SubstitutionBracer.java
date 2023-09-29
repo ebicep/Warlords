@@ -6,7 +6,7 @@ import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
 import java.util.Set;
 
-public class SubstitutionBracer extends SpecialGammaGauntlet implements CraftsInto.CraftsDiabolicalRage {
+public class SubstitutionBracer extends SpecialGammaGauntlet implements CraftsInto.CraftsDiabolicalRings {
 
     public SubstitutionBracer() {
     }

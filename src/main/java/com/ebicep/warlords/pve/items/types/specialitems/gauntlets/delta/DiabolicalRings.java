@@ -12,13 +12,13 @@ import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class DiabolicalRage extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
+public class DiabolicalRings extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
 
-    public DiabolicalRage() {
+    public DiabolicalRings() {
 
     }
 
-    public DiabolicalRage(Set<BasicStatPool> statPool) {
+    public DiabolicalRings(Set<BasicStatPool> statPool) {
         super(statPool);
     }
 
@@ -48,7 +48,7 @@ public class DiabolicalRage extends SpecialDeltaGauntlet implements AppliesToWar
 
     @Override
     public String getName() {
-        return "Diabolical Rage";
+        return "Diabolical Rings";
     }
 
     @Override
