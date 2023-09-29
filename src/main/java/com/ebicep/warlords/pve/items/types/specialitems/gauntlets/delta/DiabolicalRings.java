@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
+import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.MonaLisasPalms;
 
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -63,6 +64,6 @@ public class DiabolicalRings extends SpecialDeltaGauntlet implements AppliesToWa
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
-        return null;
+        return new MonaLisasPalms(statPool);
     }
 }
