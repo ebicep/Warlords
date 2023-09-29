@@ -1,17 +1,18 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.ElementalShield;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-import java.util.Objects;
+import java.util.EnumSet;
 import java.util.Set;
 
 public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
@@ -25,49 +26,47 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
 
     @Override
     public String getName() {
-        return "Buckler Piece";
+        return "Hazardous Buckler";
     }
 
     @Override
     public String getBonus() {
-        return "50% of the healing received from Time Warp is dealt as damage to nearby enemies.";
+        return "Heal for 10% of the damage you deal.";
     }
 
     @Override
     public String getDescription() {
-        return "Punk Hazard on a plate.";
+        return "Half magma, half ice.";
     }
 
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        warlordsPlayer.getGame().registerEvents(new Listener() {
-
-            @EventHandler
-            public void onDamageHealFinal(WarlordsDamageHealingFinalEvent event) {
-                if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
-                    return;
-                }
-                if (event.isDamageInstance()) {
-                    return;
-                }
-                if (Objects.equals(event.getAbility(), "Time Warp")) {
-                    float damageValue = event.getValue() * .5f;
-                    PlayerFilter.entitiesAround(warlordsPlayer.getLocation(), 2, 2, 2)
-                                .aliveEnemiesOf(warlordsPlayer)
-                                .forEach(hit -> {
-                                    hit.addDamageInstance(
-                                            warlordsPlayer,
-                                            "Time Warp",
-                                            damageValue,
-                                            damageValue,
-                                            0,
-                                            100
-                                    );
-                                });
-                }
+        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getName(),
+                null,
+                BucklerPiece.class,
+                null,
+                warlordsPlayer,
+                CooldownTypes.ITEM,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                WarlordsEntity attacker = event.getAttacker();
+                float healAmount = currentDamageValue * .1f;
+                attacker.addHealingInstance(
+                        attacker,
+                        getName(),
+                        healAmount,
+                        healAmount,
+                        0,
+                        100,
+                        EnumSet.of(InstanceFlags.NO_HIT_SOUND)
+                );
             }
-
         });
     }
 
