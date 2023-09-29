@@ -107,7 +107,6 @@ public class Warlords extends JavaPlugin {
             addon.warlordsEntityCreated(warlordsEntity.getGame(), warlordsEntity);
         }
 
-        ChatUtils.MessageType.WARLORDS.sendMessage("---------------");
         new ArrayList<>(warlordsEntity.getGame().getOptions())
                 .stream()
                 .sorted((o1, o2) -> {
@@ -128,7 +127,6 @@ public class Warlords extends JavaPlugin {
                     }
                 })
                 .forEachOrdered(option -> {
-                    ChatUtils.MessageType.WARLORDS.sendMessage(option.getClass() + "");
                     option.onWarlordsEntityCreated(warlordsEntity);
                 });
 

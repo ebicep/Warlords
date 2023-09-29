@@ -36,8 +36,13 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
 
     public AbstractSpecialItem(ItemType type, ItemTier tier, Set<BasicStatPool> statPool) {
         super(type, tier, statPool);
-        if (tier == ItemTier.GAMMA) {
-            upgradeTreeBonus = type.upgradeTreeBonuses[ThreadLocalRandom.current().nextInt(type.upgradeTreeBonuses.length)];
+    }
+
+    @Override
+    public void applyRandomModifier() {
+        super.applyRandomModifier();
+        if (getTier() == ItemTier.GAMMA) {
+            upgradeTreeBonus = getType().upgradeTreeBonuses[ThreadLocalRandom.current().nextInt(getType().upgradeTreeBonuses.length)];
         }
     }
 

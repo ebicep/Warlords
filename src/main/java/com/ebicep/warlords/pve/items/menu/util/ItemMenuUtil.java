@@ -141,7 +141,7 @@ public class ItemMenuUtil {
         for (AbstractItem equippedItem : equippedItems) {
             equippedItem.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
         }
-        List<Component> bonusLore = BasicStatPool.getStatPoolLore(statPool, Component.text("- ", NamedTextColor.AQUA), true, null);
+        List<Component> bonusLore = BasicStatPool.getStatPoolLore(statPool, Component.text("➤ ", NamedTextColor.AQUA), true, null);
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Stat Bonuses:", NamedTextColor.AQUA));
         lore.addAll(bonusLore.isEmpty() ? Collections.singletonList(Component.text("None", NamedTextColor.GRAY)) : bonusLore);
@@ -174,7 +174,7 @@ public class ItemMenuUtil {
                      .forEachOrdered(aspect -> {
                          Map<ItemType, Integer> itemTypeBonuses = aspectBonuses.get(aspect);
                          bonusLore.add(Component.textOfChildren(
-                                 Component.text("- ", NamedTextColor.AQUA),
+                                 Component.text("➤ ", NamedTextColor.AQUA),
                                  Component.text(aspect.name, aspect.textColor)
                          ));
                          itemTypeBonuses.keySet()
@@ -182,7 +182,7 @@ public class ItemMenuUtil {
                                         .sorted(Comparator.comparingInt(Enum::ordinal))
                                         .forEachOrdered(itemType -> {
                                             bonusLore.add(Component.textOfChildren(
-                                                    Component.text("   - ", NamedTextColor.AQUA),
+                                                    Component.text("   ➤ ", NamedTextColor.AQUA),
                                                     itemType.getModifierDescriptionCalculatedInverted(itemTypeBonuses.get(itemType))
                                             ));
                                         });
@@ -265,7 +265,7 @@ public class ItemMenuUtil {
                    String category = entry.getKey();
                    LinkedHashSet<List<Component>> lists = entry.getValue();
                    bonusLore.add(Component.textOfChildren(
-                           Component.text("- ", NamedTextColor.AQUA),
+                           Component.text("➤ ", NamedTextColor.AQUA),
                            Component.text(category, NamedTextColor.GREEN)
                    ));
                    lists.forEach(bonusLores -> {
@@ -274,7 +274,7 @@ public class ItemMenuUtil {
                            if (i == 1) {
                                bonusLore.add(Component.textOfChildren(
                                        Component.text("   "),
-                                       Component.text("- ", NamedTextColor.AQUA),
+                                       Component.text("➤ ", NamedTextColor.AQUA),
                                        lore
                                ));
                            } else {
