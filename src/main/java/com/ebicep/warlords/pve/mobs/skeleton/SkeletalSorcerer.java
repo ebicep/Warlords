@@ -119,7 +119,7 @@ public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
                 5 * 20
         ) {
             @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 return currentHealValue * .5f;
             }
         });

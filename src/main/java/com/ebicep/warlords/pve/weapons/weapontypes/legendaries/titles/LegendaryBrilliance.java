@@ -87,13 +87,13 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
 
                     // incoming healing
                     @Override
-                    public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                    public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                         return currentHealValue * 1.4f;
                     }
 
                     // outgoing healing
                     @Override
-                    public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                    public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
                         return currentHealValue * healBoost;
                     }
                 });

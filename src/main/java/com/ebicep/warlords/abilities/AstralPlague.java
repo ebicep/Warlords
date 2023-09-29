@@ -140,7 +140,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         ) {
                             return;
                         }
-                        event.getFlags().add(InstanceFlags.PIERCE_DAMAGE);
+                        event.getFlags().add(InstanceFlags.PIERCE);
                         if (inPve) {
                             event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
                         }

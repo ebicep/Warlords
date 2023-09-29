@@ -160,7 +160,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     }
 
     @Override
-    public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+    public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
         return currentHealValue * healMultiplier;
     }
 

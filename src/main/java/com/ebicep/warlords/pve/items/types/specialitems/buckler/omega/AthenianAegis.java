@@ -7,7 +7,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
-import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.BucklerPiece;
 
 import java.util.Set;
 
@@ -40,7 +39,7 @@ public class AthenianAegis extends SpecialOmegaBuckler implements AppliesToWarlo
         warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
                 null,
-                BucklerPiece.class,
+                AthenianAegis.class,
                 null,
                 warlordsPlayer,
                 CooldownTypes.ITEM,
@@ -50,7 +49,7 @@ public class AthenianAegis extends SpecialOmegaBuckler implements AppliesToWarlo
         ) {
 
             @Override
-            public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
                 return currentHealValue * getHealingBoost();
             }
 

@@ -57,7 +57,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 })
         ) {
             @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 return currentHealValue * .5f;
             }
         });

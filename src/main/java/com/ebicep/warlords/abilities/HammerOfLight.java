@@ -249,7 +249,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         if (tempHammerOfLight.isCrownOfLight) {
                             return;
                         }
-                        event.getFlags().add(InstanceFlags.PIERCE_DAMAGE);
+                        event.getFlags().add(InstanceFlags.PIERCE);
                     }
                 };
             }

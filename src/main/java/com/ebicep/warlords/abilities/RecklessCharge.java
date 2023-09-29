@@ -172,7 +172,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                             8 * 20
                                     ) {
                                         @Override
-                                        public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                        public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                                             return currentHealValue * 2;
                                         }
                                     });

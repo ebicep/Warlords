@@ -55,7 +55,7 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
                     if (warlordsNPC.getMob() instanceof BossLike) {
                         return;
                     }
-                    event.getFlags().add(InstanceFlags.PIERCE_DAMAGE);
+                    event.getFlags().add(InstanceFlags.PIERCE);
                 }
             }
 

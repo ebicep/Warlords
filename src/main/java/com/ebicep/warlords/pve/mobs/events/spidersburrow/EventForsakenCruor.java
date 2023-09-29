@@ -121,7 +121,7 @@ public class EventForsakenCruor extends AbstractZombie implements BossMinionMob,
                                            3 * 20
                                    ) {
                                        @Override
-                                       public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                       public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                                            return currentHealValue * .5f;
                                        }
                                    });

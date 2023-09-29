@@ -120,7 +120,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                                 5 * 20
                         ) {
                             @Override
-                            public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
                                 return currentHealValue * 1.15f;
                             }
                         });

@@ -102,7 +102,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 40
                         ) {
                             @Override
-                            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                                 return currentHealValue * .6f;
                             }
                         });
@@ -178,7 +178,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 })
                         ) {
                             @Override
-                            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                                 return currentHealValue * .2f;
                             }
                         });

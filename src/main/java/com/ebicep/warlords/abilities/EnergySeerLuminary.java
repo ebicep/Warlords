@@ -62,7 +62,7 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
                 bonusDuration
         ) {
             @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 return healingIncrease * convertToMultiplicationDecimal(healingIncrease);
             }
         };

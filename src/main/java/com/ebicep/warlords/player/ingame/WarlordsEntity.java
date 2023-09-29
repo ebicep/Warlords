@@ -348,7 +348,7 @@ public abstract class WarlordsEntity {
         boolean isFallDamage = ability.equals("Fall");
         EnumSet<InstanceFlags> flags = event.getFlags();
         boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
-        boolean pierceDamage = flags.contains(InstanceFlags.PIERCE_DAMAGE);
+        boolean pierceDamage = flags.contains(InstanceFlags.PIERCE);
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
@@ -1005,7 +1005,7 @@ public abstract class WarlordsEntity {
         float critMultiplier = event.getCritMultiplier();
         EnumSet<InstanceFlags> flags = event.getFlags();
         boolean isLastStandFromShield = flags.contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
-        boolean isMeleeHit = ability.isEmpty();
+        boolean pierce = flags.contains(InstanceFlags.PIERCE);
 
         WarlordsDamageHealingFinalEvent finalEvent;
         // Spawn Protection / Undying Army / Game State
@@ -1036,7 +1036,11 @@ public abstract class WarlordsEntity {
         debugMessage.append(Component.newline()).append(Component.text("Before Heal", NamedTextColor.AQUA));
         appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            healValue = abstractCooldown.doBeforeHealFromSelf(event, healValue);
+            float newHealValue = abstractCooldown.modifyHealingFromSelf(event, healValue);
+            if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
+                continue;
+            }
+            healValue = newHealValue;
             if (previousHealValue != healValue) {
                 appendDebugMessage(debugMessage, 2, "Heal Value", previousHealValue, healValue, abstractCooldown);
             }
@@ -1045,7 +1049,7 @@ public abstract class WarlordsEntity {
 
         appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            healValue = abstractCooldown.doBeforeHealFromAttacker(event, healValue);
+            healValue = abstractCooldown.modifyHealingFromAttacker(event, healValue);
             if (previousHealValue != healValue) {
                 appendDebugMessage(debugMessage, 2, "Heal Value", previousHealValue, healValue, abstractCooldown);
             }

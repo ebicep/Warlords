@@ -149,7 +149,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                 21
                                         ) {
                                             @Override
-                                            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                                                 return currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
                                             }
 
@@ -177,7 +177,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         ) {
 
             @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 if (hasMaxStacks()) {
                     return currentHealValue * (1 + hexHealingBonus / 100f);
                 } else {
