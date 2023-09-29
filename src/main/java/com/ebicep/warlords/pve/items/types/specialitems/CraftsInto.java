@@ -116,4 +116,27 @@ public interface CraftsInto {
             return new ShieldOfSnatching(statPool);
         }
     }
+
+    interface CraftsDiabolicalRage extends CraftsInto {
+        @Override
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new DiabolicalRage(statPool);
+        }
+    }
+
+    interface CraftsBruisedBook extends CraftsInto {
+        @Override
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new BruisedBook(statPool);
+        }
+    }
+
+    interface CraftsOtherworldlyAmulet extends CraftsInto {
+        @Override
+        default AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
+            return new OtherworldlyAmulet(statPool);
+        }
+    }
+
+
 }
