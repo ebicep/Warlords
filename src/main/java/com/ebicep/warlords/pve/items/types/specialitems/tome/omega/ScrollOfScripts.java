@@ -1,16 +1,24 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.omega;
 
-import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropItemEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 import java.util.Set;
 
 public class ScrollOfScripts extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
+    public static int numberOfPlayersAbove75(WarlordsPlayer warlordsPlayer) {
+        return warlordsPlayer.getGame()
+                             .warlordsPlayers()
+                             .filter(player -> player.getHealth() > player.getMaxHealth() * .75)
+                             .mapToInt(player -> 1)
+                             .sum();
+    }
+
     public ScrollOfScripts() {
 
     }
@@ -20,37 +28,39 @@ public class ScrollOfScripts extends SpecialOmegaTome implements AppliesToWarlor
     }
 
     @Override
-    public String getName() {
-        return "Scroll of Scripts";
+    public String getDescription() {
+        return "Bwahahahaha!!!!";
     }
 
     @Override
     public String getBonus() {
-        return "For every player with more kills than you, increase your chance of finding Items by 2.5%.";
+        return "For every player that is above 75% health, deal 5% more damage.";
     }
 
     @Override
-    public String getDescription() {
-        return "It's not scripted, I promise.";
+    public String getName() {
+        return "Scroll of Sanguinity";
     }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        warlordsPlayer.getGame().registerEvents(new Listener() {
+        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getName(),
+                null,
+                ScrollOfScripts.class,
+                null,
+                warlordsPlayer,
+                CooldownTypes.ITEM,
+                cooldownManager -> {
 
-            @EventHandler
-            public void onEvent(WarlordsDropItemEvent event) {
-                event.addModifier(0.025 * numberOfPlayersMoreKillsThan(warlordsPlayer));
+                },
+                false
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * (1 + .05f * numberOfPlayersAbove75(warlordsPlayer));
             }
         });
-    }
-
-    public static int numberOfPlayersMoreKillsThan(WarlordsPlayer warlordsPlayer) {
-        int playerKills = warlordsPlayer.getMinuteStats().total().getKills();
-        return warlordsPlayer.getGame()
-                             .warlordsPlayers()
-                             .mapToInt(player -> player.getMinuteStats().total().getKills() > playerKills && !warlordsPlayer.equals(player) ? 1 : 0)
-                             .sum();
     }
 
 }
