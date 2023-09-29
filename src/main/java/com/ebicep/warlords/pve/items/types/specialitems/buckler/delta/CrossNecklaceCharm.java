@@ -1,13 +1,14 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.BreastplateBuckler;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 
 import java.util.Set;
 
@@ -21,29 +22,40 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
     }
 
     @Override
+    public String getDescription() {
+        return "Exorcism on the go!";
+    }
+
+    @Override
+    public String getBonus() {
+        return "Targets within 3 blocks of you are slowed by 35%.";
+    }
+
+    @Override
     public String getName() {
         return "Cross Necklace Chakram";
     }
 
     @Override
-    public String getBonus() {
-        return "Consecrate lasts 3 more seconds and increase your strike damage by an additional 5%.";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Exorcism on the go!";
-    }
-
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-            if (ability instanceof AbstractConsecrate consecrate) {
-                consecrate.setTickDuration(consecrate.getTickDuration() + 60);
-                consecrate.setStrikeDamageBoost(consecrate.getStrikeDamageBoost() + 5);
-            }
-        }
+        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getName(),
+                null,
+                CrossNecklaceCharm.class,
+                null,
+                warlordsPlayer,
+                CooldownTypes.ITEM,
+                cooldownManager -> {
+                },
+                false,
+                (cooldown, ticksElapsed) -> {
+                    if (ticksElapsed % 5 == 0) {
+                        PlayerFilter.entitiesAround(warlordsPlayer, 3, 3, 3)
+                                    .aliveEnemiesOf(warlordsPlayer)
+                                    .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(warlordsEntity, getName(), -35, 5));
+                    }
+                }
+        ));
     }
 
     @Override
