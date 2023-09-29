@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
@@ -42,10 +41,6 @@ public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
         return "Say hello to Mary!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.WARRIOR;
-    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {

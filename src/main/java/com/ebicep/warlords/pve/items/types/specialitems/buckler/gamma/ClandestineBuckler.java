@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
@@ -30,9 +29,5 @@ public class ClandestineBuckler extends SpecialGammaBuckler implements DamageRed
         return "Some might even say it's not even there.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.ROGUE;
-    }
 
 }

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.statpool.SpecialStatPool;
 import com.ebicep.warlords.pve.items.statpool.StatPool;
@@ -42,10 +41,6 @@ public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
         return "Wow! So creative!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.ROGUE;
-    }
 
     @Override
     public HashMap<StatPool, Integer> getBonusStats() {

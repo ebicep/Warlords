@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
@@ -30,9 +29,5 @@ public class FrostyShield extends SpecialGammaBuckler implements DamageReduction
         return "Frostbitten fingers never felt so good!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.MAGE;
-    }
 
 }

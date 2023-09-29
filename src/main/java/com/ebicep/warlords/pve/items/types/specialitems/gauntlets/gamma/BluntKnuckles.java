@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
@@ -15,10 +14,6 @@ public class BluntKnuckles extends SpecialGammaGauntlet implements EPSandSpeed, 
         super(basicStatPools);
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.ROGUE;
-    }
 
     @Override
     public String getName() {

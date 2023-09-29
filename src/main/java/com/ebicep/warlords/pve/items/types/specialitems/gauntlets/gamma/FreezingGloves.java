@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
@@ -28,11 +27,6 @@ public class FreezingGloves extends SpecialGammaGauntlet implements EPSandSpeed,
     @Override
     public String getDescription() {
         return "It seems you have been frozen into place.";
-    }
-
-    @Override
-    public Classes getClasses() {
-        return Classes.MAGE;
     }
 
 

@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.ChainHeal;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -38,10 +37,6 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
         return "Born to be wild.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.SHAMAN;
-    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {

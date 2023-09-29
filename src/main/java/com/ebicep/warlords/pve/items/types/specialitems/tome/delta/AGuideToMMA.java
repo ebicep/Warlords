@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
@@ -28,7 +27,7 @@ public class AGuideToMMA extends SpecialDeltaTome implements CraftsInto {
 
     @Override
     public String getName() {
-        return "mmmpffgfg: A Guide to MMA";
+        return "Don't Tap Out: A Guide to MMA";
     }
 
     @Override
@@ -41,10 +40,6 @@ public class AGuideToMMA extends SpecialDeltaTome implements CraftsInto {
         return "Dana White approved!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.WARRIOR;
-    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {

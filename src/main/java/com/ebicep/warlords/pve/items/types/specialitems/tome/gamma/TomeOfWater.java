@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
@@ -31,9 +30,5 @@ public class TomeOfWater extends SpecialGammaTome implements CDRandHealing, Craf
         return "Step 1: Own an umbrella!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.MAGE;
-    }
 
 }

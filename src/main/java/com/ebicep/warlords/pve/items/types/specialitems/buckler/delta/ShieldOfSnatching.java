@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -41,10 +40,6 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
         return "Kinda looks like a hand... Is that my wallet?";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.ROGUE;
-    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {

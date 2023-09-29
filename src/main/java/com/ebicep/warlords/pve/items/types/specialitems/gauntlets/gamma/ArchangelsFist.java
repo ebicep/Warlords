@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
@@ -15,10 +14,6 @@ public class ArchangelsFist extends SpecialGammaGauntlet implements EPSandMaxEne
         super(basicStatPools);
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
-    }
 
     @Override
     public String getName() {

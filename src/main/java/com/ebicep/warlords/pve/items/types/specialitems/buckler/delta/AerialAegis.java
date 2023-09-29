@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -25,10 +24,6 @@ public class AerialAegis extends SpecialDeltaBuckler implements CraftsInto {
         super(statPool);
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.SHAMAN;
-    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {

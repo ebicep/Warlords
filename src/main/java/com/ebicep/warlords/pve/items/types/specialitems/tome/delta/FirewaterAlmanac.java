@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropItemEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -43,10 +42,6 @@ public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
         return "Now Including Ice Spells!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.MAGE;
-    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {

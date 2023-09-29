@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -36,10 +35,6 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
         return "Exorcism on the go!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
-    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
@@ -30,9 +29,5 @@ public class EnlightenedAegis extends SpecialGammaBuckler implements DamageReduc
         return "Victory or Death, right?";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
-    }
 
 }
