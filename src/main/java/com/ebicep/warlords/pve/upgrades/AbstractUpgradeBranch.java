@@ -418,7 +418,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                         Component.text("Auto Upgrade Position: ", NamedTextColor.GRAY).append(position),
                         Component.empty(),
                         Component.textOfChildren(
-                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                 Component.text(" to remove from auto upgrade queue.", NamedTextColor.GRAY)
                         )
                 );
@@ -427,7 +427,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                 itemBuilder.addLore(
                         Component.empty(),
                         Component.textOfChildren(
-                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                 Component.text(" to add to auto upgrade queue.", NamedTextColor.GRAY)
                         )
                 );
