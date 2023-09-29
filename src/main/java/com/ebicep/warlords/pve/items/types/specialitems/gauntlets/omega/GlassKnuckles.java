@@ -30,7 +30,7 @@ public class GlassKnuckles extends SpecialOmegaGauntlet {
 
     @Override
     public String getBonus() {
-        return "-40% Damage Reduction, but deal 30% more damage.";
+        return "-30% Damage Reduction, but deal 20% more damage.";
     }
 
     @Override

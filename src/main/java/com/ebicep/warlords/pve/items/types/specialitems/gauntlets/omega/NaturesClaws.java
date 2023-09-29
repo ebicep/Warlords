@@ -1,16 +1,20 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega;
 
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
-import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class NaturesClaws extends SpecialOmegaGauntlet implements AppliesToWarlordsPlayer {
     public NaturesClaws() {
@@ -22,58 +26,47 @@ public class NaturesClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
     }
 
     @Override
+    public String getDescription() {
+        return "Survival of the fittest, at it's finest.";
+    }
+
+    @Override
+    public String getBonus() {
+        return "+5% chance to gain a 200 HP 10s long shield instead of dealing damage or healing.";
+    }
+
+    @Override
     public String getName() {
         return "Nature's Claws";
     }
 
     @Override
-    public String getBonus() {
-        return "For every currently dead ally, gain +10% Damage, +5% Damage Reduction, and +10% Healing.";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Survival of the fittest, huh?";
-    }
-
-    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Natures Claws",
-                null,
-                NaturesClaws.class,
-                null,
-                warlordsPlayer,
-                CooldownTypes.ITEM,
-                cooldownManager -> {
-
-                },
-                false
-        ) {
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 + getCurrentlyDeadAllies(warlordsPlayer) * 0.1f);
-            }
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 - getCurrentlyDeadAllies(warlordsPlayer) * 0.05f);
-            }
-
-            @Override
-            public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * (1 + getCurrentlyDeadAllies(warlordsPlayer) * 0.1f);
+        warlordsPlayer.getGame().registerEvents(new Listener() {
+            @EventHandler
+            public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                if (!event.getAttacker().equals(warlordsPlayer)) {
+                    return;
+                }
+                if (ThreadLocalRandom.current().nextDouble() > 0.05) {
+                    return;
+                }
+                event.setCancelled(true);
+                warlordsPlayer.sendMessage(Component.text("Nature's Claws has given you a shield instead!", NamedTextColor.GREEN));
+                warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        getName(),
+                        null,
+                        Shield.class,
+                        new Shield(getName(), 200),
+                        warlordsPlayer,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                        },
+                        200
+                ));
             }
         });
     }
 
-    public int getCurrentlyDeadAllies(WarlordsPlayer warlordsPlayer) {
-        return (int) PlayerFilterGeneric.playingGameWarlordsPlayers(warlordsPlayer.getGame())
-                                        .teammatesOfExcludingSelf(warlordsPlayer)
-                                        .filter(WarlordsEntity::isDead)
-                                        .stream()
-                                        .count();
-    }
 
 }
