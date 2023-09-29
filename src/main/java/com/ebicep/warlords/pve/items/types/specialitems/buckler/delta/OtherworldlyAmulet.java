@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
+import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.LovelyOmamori;
 
 import java.util.Set;
 
@@ -39,6 +40,6 @@ public class OtherworldlyAmulet extends SpecialDeltaBuckler implements CraftsInt
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
-        return null;
+        return new LovelyOmamori(statPool);
     }
 }
