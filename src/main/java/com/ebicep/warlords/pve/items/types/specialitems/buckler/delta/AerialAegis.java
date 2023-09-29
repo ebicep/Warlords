@@ -40,7 +40,7 @@ public class AerialAegis extends SpecialDeltaBuckler implements CraftsInto {
                 AerialAegis.class,
                 null,
                 warlordsPlayer,
-                CooldownTypes.WEAPON,
+                CooldownTypes.ITEM,
                 cooldownManager -> {
 
                 },

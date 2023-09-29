@@ -3,14 +3,13 @@ package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.TomeOfTheft;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -31,7 +30,7 @@ public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto 
 
     @Override
     public String getBonus() {
-        return "+2% chance to deal the max amount of damage any attack can do.";
+        return "All your attacks have a 40% chance to do max damage, and a 60% chance to do no damage.";
     }
 
     @Override
@@ -42,20 +41,30 @@ public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto 
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        warlordsPlayer.getGame().registerEvents(new Listener() {
+        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getName(),
+                null,
+                ScrollOfUncertainty.class,
+                null,
+                warlordsPlayer,
+                CooldownTypes.ITEM,
+                cooldownManager -> {
 
-            @EventHandler
-            public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
-                    return;
-                }
-                if (ThreadLocalRandom.current().nextDouble() < 0.02) {
-                    event.setMin(event.getMax());
+                },
+                false
+        ) {
+            @Override
+            public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
+                if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
+                    if (ThreadLocalRandom.current().nextDouble() <= .4) {
+                        event.setMin(event.getMax());
+                    } else {
+                        event.setMin(0);
+                        event.setMax(0);
+                    }
                 }
             }
-
         });
-
     }
 
     @Override

@@ -46,7 +46,7 @@ public class BruisedBook extends SpecialDeltaTome implements CraftsInto {
                 GardeningGloves.class,
                 null,
                 warlordsPlayer,
-                CooldownTypes.WEAPON,
+                CooldownTypes.ITEM,
                 cooldownManager -> {
 
                 },

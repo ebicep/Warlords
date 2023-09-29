@@ -34,7 +34,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
                 PendragonGauntlets.class,
                 null,
                 warlordsPlayer,
-                CooldownTypes.WEAPON,
+                CooldownTypes.ITEM,
                 cooldownManager -> {
 
                 },

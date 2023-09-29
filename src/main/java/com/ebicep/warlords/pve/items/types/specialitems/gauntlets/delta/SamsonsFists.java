@@ -30,7 +30,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
                 SamsonsFists.class,
                 null,
                 warlordsPlayer,
-                CooldownTypes.WEAPON,
+                CooldownTypes.ITEM,
                 cooldownManager -> {
 
                 },

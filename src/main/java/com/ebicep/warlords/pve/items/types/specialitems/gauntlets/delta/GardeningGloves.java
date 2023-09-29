@@ -32,7 +32,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
                 GardeningGloves.class,
                 null,
                 warlordsPlayer,
-                CooldownTypes.WEAPON,
+                CooldownTypes.ITEM,
                 cooldownManager -> {
 
                 },
