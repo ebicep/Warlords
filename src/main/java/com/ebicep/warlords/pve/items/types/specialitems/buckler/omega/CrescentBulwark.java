@@ -21,7 +21,7 @@ public class CrescentBulwark extends SpecialOmegaBuckler implements AppliesToWar
 
     @Override
     public String getDescription() {
-        return "It's covered in olive oil. No, it doesn't come off.";
+        return "A sword AND a shield? This is revolutionary!";
     }
 
     @Override
