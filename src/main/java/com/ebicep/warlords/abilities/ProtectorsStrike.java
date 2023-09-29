@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -88,6 +89,9 @@ public class ProtectorsStrike extends AbstractStrike {
                 critChance,
                 critMultiplier
         ).ifPresent(warlordsDamageHealingFinalEvent -> {
+            if (warlordsDamageHealingFinalEvent.getFinalEventFlag() != WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR) {
+                return;
+            }
             float currentDamageValue = warlordsDamageHealingFinalEvent.getValue();
             boolean isCrit = warlordsDamageHealingFinalEvent.isCrit();
 

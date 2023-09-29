@@ -576,7 +576,8 @@ public abstract class WarlordsEntity {
                         critChance,
                         critMultiplier,
                         isCrit,
-                        true
+                        true,
+                        WarlordsDamageHealingFinalEvent.FinalEventFlag.INTERVENED
                 ));
             }
 
@@ -772,7 +773,8 @@ public abstract class WarlordsEntity {
                         critChance,
                         critMultiplier,
                         isCrit,
-                        true
+                        true,
+                        WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED
                 ));
                 secondStats.addDamageHealingEventAsSelf(finalEvent.get());
                 attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
@@ -855,7 +857,8 @@ public abstract class WarlordsEntity {
                         critChance,
                         critMultiplier,
                         isCrit,
-                        true
+                        true,
+                        WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
                 ));
                 secondStats.addDamageHealingEventAsSelf(finalEvent.get());
                 attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
@@ -1099,7 +1102,8 @@ public abstract class WarlordsEntity {
                 critChance,
                 critMultiplier,
                 isCrit,
-                false
+                false,
+                WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR
         );
         secondStats.addDamageHealingEventAsSelf(finalEvent);
         attacker.getSecondStats().addDamageHealingEventAsAttacker(finalEvent);

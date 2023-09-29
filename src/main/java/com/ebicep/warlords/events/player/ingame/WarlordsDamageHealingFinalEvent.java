@@ -35,6 +35,8 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
 
     private final int inGameTick;
 
+    private final FinalEventFlag finalEventFlag;
+
     public WarlordsDamageHealingFinalEvent(
             WarlordsDamageHealingEvent warlordsDamageHealingEvent,
             WarlordsEntity player,
@@ -48,10 +50,12 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
             float critChance,
             float critMultiplier,
             boolean isCrit,
-            boolean isDamageInstance
+            boolean isDamageInstance,
+            FinalEventFlag finalEventFlag
     ) {
         super(player);
         this.warlordsDamageHealingEvent = warlordsDamageHealingEvent;
+        this.finalEventFlag = finalEventFlag;
         this.playerCooldowns.addAll(player.getCooldownManager().getCooldowns().stream()
                                           .map(CooldownRecord::new)
                                           .toList()
@@ -170,7 +174,8 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
     @Override
     public String toString() {
         return "WarlordsDamageHealingFinalEvent{" +
-                "playerCooldowns=" + playerCooldowns +
+                "warlordsDamageHealingEvent=" + warlordsDamageHealingEvent +
+                ", playerCooldowns=" + playerCooldowns +
                 ", attackerCooldowns=" + attackerCooldowns +
                 ", attacker=" + attacker +
                 ", ability='" + ability + '\'' +
@@ -188,7 +193,20 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
                 ", attackerInCombat=" + attackerInCombat +
                 ", isDamageInstance=" + isDamageInstance +
                 ", inGameTick=" + inGameTick +
+                ", finalEventFlag=" + finalEventFlag +
                 '}';
+    }
+
+    public FinalEventFlag getFinalEventFlag() {
+        return finalEventFlag;
+    }
+
+    public enum FinalEventFlag {
+
+        REGULAR,
+        INTERVENED,
+        SHIELDED
+
     }
 
     public static class CooldownRecord {
