@@ -25,6 +25,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -501,8 +502,8 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     @Override
-    public NamedTextColor getTextColor() {
-        return isAscendant() ? NamedTextColor.RED : NamedTextColor.GOLD;
+    public TextColor getTextColor() {
+        return isAscendant() ? Currencies.ASCENDANT_SHARD.textColor : NamedTextColor.GOLD;
     }
 
     public String getTitleName() {

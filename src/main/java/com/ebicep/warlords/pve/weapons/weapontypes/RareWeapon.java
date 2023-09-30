@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.java.MathUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +50,7 @@ public class RareWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     }
 
     @Override
-    public NamedTextColor getTextColor() {
+    public TextColor getTextColor() {
         return NamedTextColor.BLUE;
     }
 
