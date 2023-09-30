@@ -198,7 +198,7 @@ public class Fireball extends AbstractProjectile implements Splash {
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
                     PlayerFilter.entitiesAround(hit, 3, 3, 3)
-                                .aliveTeammatesOfExcludingSelf(hit)
+                                .aliveTeammatesOf(hit)
                                 .forEach(warlordsEntity -> {
                                     warlordsEntity.addDamageInstance(
                                             shooter,
