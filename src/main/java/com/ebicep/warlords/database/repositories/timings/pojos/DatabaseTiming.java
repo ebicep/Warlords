@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.illusionvendor.pojos.IllusionVendorWeeklyShop;
-import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.guilds.Guild;
@@ -128,7 +127,6 @@ public class DatabaseTiming {
                         GuildLeaderboardManager.recalculateLeaderboard(Timing.WEEKLY);
                     }
 
-                    WeeklyBlessings.loadWeeklyBlessings();
                     IllusionVendorWeeklyShop.loadWeeklyIllusionVendor();
                 })
                 .execute();

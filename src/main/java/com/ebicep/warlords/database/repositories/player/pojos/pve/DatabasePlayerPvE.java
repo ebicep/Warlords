@@ -330,6 +330,13 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         this.addCurrency(currency, -amount);
     }
 
+    public void setCurrency(Currencies currency, Long amount) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return;
+        }
+        this.currencies.put(currency, amount);
+    }
+
     public DatabasePlayerPvEWaveDefenseDifficultyStats getEasyStats() {
         return waveDefenseStats.getEasyStats();
     }

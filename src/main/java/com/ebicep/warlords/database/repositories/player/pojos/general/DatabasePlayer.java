@@ -6,6 +6,7 @@ import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
@@ -17,6 +18,11 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.items.ItemsManager;
+import com.ebicep.warlords.pve.items.menu.ItemMichaelMenu;
+import com.ebicep.warlords.pve.rewards.types.CompensationReward;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
@@ -25,10 +31,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Document(collection = "Players_Information")
 public class DatabasePlayer extends DatabasePlayerGeneral {
@@ -91,6 +94,8 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
     private List<String> permissions = new ArrayList<>();
+    @Field("patches_applied")
+    private List<Patches> patchesApplied = new ArrayList<>();
 
     public DatabasePlayer() {
     }
@@ -433,4 +438,91 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         return permissions.contains(permission);
     }
 
+    public List<Patches> getPatchesApplied() {
+        return patchesApplied;
+    }
+
+    public enum Patches {
+
+        EOD_ITEMS {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                pveStats.getItemsManager().getItemInventory().forEach(item -> {
+                    //TODO blessings / bronze etc
+//                item.applyRandomModifier();
+//                item.setLegacyRemodified(true);
+                });
+                return true;
+            }
+        },
+        EOD_ASCENDANT_SHARD {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                List<CompensationReward> compensationRewards = pveStats.getCompensationRewards();
+                if (compensationRewards.stream().noneMatch(compensationReward -> compensationReward instanceof CompensationReward.AscendantShardPrestigePatch)) {
+                    int totalPrestige = Arrays.stream(Specializations.VALUES)
+                                              .mapToInt(spec -> databasePlayer.getSpec(spec).getPrestige())
+                                              .sum();
+                    compensationRewards.add(new CompensationReward.AscendantShardPrestigePatch(totalPrestige));
+                }
+                return true;
+            }
+        },
+        EOD_CELESTIAL_BRONZE {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                List<CompensationReward> compensationRewards = pveStats.getCompensationRewards();
+                if (compensationRewards.stream().noneMatch(compensationReward -> compensationReward instanceof CompensationReward.CelestialBronzePatch)) {
+                    compensationRewards.add(new CompensationReward.CelestialBronzePatch(pveStats.getCurrencyValue(Currencies.CELESTIAL_BRONZE)));
+                    pveStats.setCurrency(Currencies.CELESTIAL_BRONZE, 0L);
+                }
+                return true;
+            }
+        },
+        EOD_BLESSINGS {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                List<WeeklyBlessings> weeklyBlessings = WeeklyBlessings.allWeeklyBlessings;
+                if (weeklyBlessings.isEmpty()) {
+                    return false;
+                }
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                List<CompensationReward> compensationRewards = pveStats.getCompensationRewards();
+                if (compensationRewards.stream().noneMatch(compensationReward -> compensationReward instanceof CompensationReward.BlessingPatch)) {
+                    Map<Integer, Integer> blessingsBought = new HashMap<>();
+                    for (WeeklyBlessings weeklyBlessing : weeklyBlessings) {
+                        Map<Integer, Integer> bought = weeklyBlessing.getPlayerOrders().get(uuid);
+                        if (bought == null) {
+                            continue;
+                        }
+                        for (Map.Entry<Integer, Integer> entry : bought.entrySet()) {
+                            blessingsBought.merge(entry.getKey(), entry.getValue(), Integer::sum);
+                        }
+                    }
+                    LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
+                    blessingsBought.forEach((tier, amount) -> {
+                        LinkedHashMap<Spendable, Long> cost = ItemMichaelMenu.BuyABlessingMenu.COSTS.get(tier);
+                        cost.forEach((spendable, aLong) -> rewards.merge(spendable, aLong * amount, Long::sum));
+                    });
+                    ItemsManager itemsManager = pveStats.getItemsManager();
+                    rewards.merge(Currencies.LEGEND_FRAGMENTS, itemsManager.getBlessingsFound() * 15L, Long::sum);
+                    compensationRewards.add(new CompensationReward.BlessingPatch(rewards));
+                    itemsManager.setBlessingsFound(0);
+                    itemsManager.getBlessingsBought().clear();
+                }
+                return true;
+            }
+        },
+
+        ;
+
+        public static final Patches[] VALUES = values();
+
+        public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+            return false;
+        }
+    }
 }

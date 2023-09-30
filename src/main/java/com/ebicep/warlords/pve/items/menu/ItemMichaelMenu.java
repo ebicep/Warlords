@@ -177,7 +177,7 @@ public class ItemMichaelMenu {
 
     public static class BuyABlessingMenu {
 
-        private static final HashMap<Integer, LinkedHashMap<Spendable, Long>> COSTS = new HashMap<>() {{
+        public static final HashMap<Integer, LinkedHashMap<Spendable, Long>> COSTS = new HashMap<>() {{
             put(1, new LinkedHashMap<>() {{
 
                 put(Currencies.COIN, 300_000L);

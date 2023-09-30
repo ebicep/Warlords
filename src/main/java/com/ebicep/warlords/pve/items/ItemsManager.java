@@ -351,4 +351,8 @@ public class ItemsManager {
         blessingsBought.merge(tier, -1, Integer::sum);
     }
 
+    public void setBlessingsFound(int blessingsFound) {
+        this.blessingsFound = blessingsFound;
+    }
+
 }

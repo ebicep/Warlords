@@ -42,10 +42,10 @@ public class UpgradeTreeBuilder {
         if (level.length == 0) {
             level = new int[]{1, 2, 3, 4};
         }
-        System.out.println(upgradeType.getDescription(0) + " - value = " + value);
         AtomicReference<Float> valueReference = new AtomicReference<>(value);
-        Bukkit.getPluginManager().callEvent(new WarlordsUpgradeTreeBuilderAddUpgradeEvent(warlordsEntity, this, valueReference));
-        System.out.println(upgradeType.getDescription(0) + " - value = " + valueReference.get());
+        if (warlordsEntity.getGame() != null) {
+            Bukkit.getPluginManager().callEvent(new WarlordsUpgradeTreeBuilderAddUpgradeEvent(warlordsEntity, this, valueReference));
+        }
         for (int i : level) {
             upgradeTypes.computeIfAbsent(i, k -> new ArrayList<>())
                         .add(new UpgradeTypeHolder(upgradeType, modifier, valueReference.get(), level[0])); // assuming level[0] is lowest level

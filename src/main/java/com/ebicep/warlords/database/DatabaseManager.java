@@ -29,6 +29,7 @@ import com.ebicep.warlords.pve.weapons.weapontypes.StarterWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,8 +37,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.AbstractApplicationContext;
 
 import javax.annotation.Nonnull;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -97,6 +96,8 @@ public class DatabaseManager {
             return;
         }
 
+        Bukkit.getOnlinePlayers().forEach(player -> player.kick(Component.text("Server is restarting, please rejoin in a few minutes!")));
+
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
 
         try {
@@ -112,18 +113,14 @@ public class DatabaseManager {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             return;
         }
+
+        WeeklyBlessings.loadAllWeeklyBlessings();
+
         NPCManager.createDatabaseRequiredNPCs();
         if (!StatsLeaderboardManager.enabled) {
             DatabaseGameEvent.startGameEvent();
         }
 
-        //Loading all online players
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            for (PlayersCollections collection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                loadPlayer(player.getUniqueId(), collection, (databasePlayer) -> {
-                });
-            }
-        });
 
         ChatUtils.MessageType.GUILD_SERVICE.sendMessage("Storing all guilds");
         long guildStart = System.nanoTime();
@@ -173,6 +170,19 @@ public class DatabaseManager {
                 .execute();
     }
 
+    public static void updateQueue() {
+        synchronized (PLAYERS_TO_UPDATE) {
+            PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> {
+                databasePlayers.forEach(databasePlayer -> {
+                    Warlords.newChain()
+                            .async(() -> playerService.update(databasePlayer, playersCollections))
+                            .execute();
+                });
+                databasePlayers.clear();
+            });
+        }
+    }
+
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Consumer<DatabasePlayer> callback) {
         if (playerService == null || !enabled) {
             return;
@@ -204,19 +214,6 @@ public class DatabaseManager {
                             }).execute();
                 }
         );
-    }
-
-    public static void updateQueue() {
-        synchronized (PLAYERS_TO_UPDATE) {
-            PLAYERS_TO_UPDATE.forEach((playersCollections, databasePlayers) -> {
-                databasePlayers.forEach(databasePlayer -> {
-                    Warlords.newChain()
-                            .async(() -> playerService.update(databasePlayer, playersCollections))
-                            .execute();
-                });
-                databasePlayers.clear();
-            });
-        }
     }
 
     public static void getPlayer(UUID uuid, PlayersCollections playersCollections, Consumer<DatabasePlayer> databasePlayerConsumer, Runnable onNotFound) {
@@ -256,16 +253,22 @@ public class DatabaseManager {
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             }
         }
-        pveStats.getItemsManager().getItemInventory().forEach(item -> {
-            //TODO
-            if (item.getObtainedDate().isBefore(ZonedDateTime.of(2023, 10, 30, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant())
-                    && !item.isLegacyRemodified()
-            ) {
-                //TODO blessings / bronze etc
-//                item.applyRandomModifier();
-//                item.setLegacyRemodified(true);
+        // PATCHES
+        List<DatabasePlayer.Patches> patchesApplied = databasePlayer.getPatchesApplied();
+        for (DatabasePlayer.Patches patch : DatabasePlayer.Patches.VALUES) {
+            if (patchesApplied.contains(patch)) {
+                continue;
             }
-        });
+            ChatUtils.MessageType.WARLORDS.sendMessage("Applying " + patch + " patch to " + uuid);
+            boolean applied = patch.run(uuid, databasePlayer);
+            if (applied) {
+                ChatUtils.MessageType.WARLORDS.sendMessage("Applied " + patch + " patch to " + uuid);
+                patchesApplied.add(patch);
+            } else {
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Failed to apply " + patch + " patch to " + uuid);
+            }
+        }
+
 
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
         playerSettings.setSelectedSpec(databasePlayer.getLastSpec());
@@ -297,6 +300,8 @@ public class DatabaseManager {
         playerSettings.setHotkeyMode(databasePlayer.getHotkeyMode());
         playerSettings.setParticleQuality(databasePlayer.getParticleQuality());
         playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
+
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 
     public static boolean inCache(UUID uuid, PlayersCollections collection) {
