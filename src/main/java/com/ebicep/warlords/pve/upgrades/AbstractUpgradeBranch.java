@@ -89,7 +89,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         addBranchToMenu(menu, treeB, 6, 4);
         boolean hasSecondMaster = !masterUpgrade2.getName().equals("Name Placeholder");
         menu.setItem(
-                hasSecondMaster ? 2 : 4,
+                hasSecondMaster ? 3 : 4,
                 0,
                 masterBranchItem(masterUpgrade, false).get(),
                 (m, e) -> {
@@ -116,7 +116,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                     masterBranchItem.addLore(PvEUtils.getCostLore(ALTERNATIVE_MASTERY_COST, true));
                 }
                 menu.setItem(
-                        6,
+                        5,
                         0,
                         masterBranchItem.get(),
                         (m, e) -> {

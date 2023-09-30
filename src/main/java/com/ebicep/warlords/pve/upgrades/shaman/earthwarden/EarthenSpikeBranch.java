@@ -55,10 +55,10 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
         masterUpgrade2 = new Upgrade(
                 "Earthen Verdancy",
                 "Earthen Spike - Master Upgrade",
-                """
-                        +30 Energy cost
-                                                
-                        A single Earthen Spike will be sent out hitting 1 enemy but dealing 4x the damage. Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 35% of the damage dealt.
+                """                      
+                        A single Earthen Spike will be sent out hitting 1 enemy but dealing 4x the damage.
+                        Enemies hit are CRIPPLED for 5s, and killed enemies heal the user for 35% of the damage dealt.
+                        Critical spikes will refund the caster with 10 energy.
                         """,
                 50000,
                 () -> {
