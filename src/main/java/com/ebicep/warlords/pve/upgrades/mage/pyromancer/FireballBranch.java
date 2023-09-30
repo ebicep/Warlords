@@ -58,9 +58,9 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 "Volatile Flames",
                 "Fireball - Master Upgrade",
                 """
-                        Fires 2 projectiles. Direct-hits apply the SCORCHED status.
+                        Fires 2 projectiles. Direct-hits apply the IGNITE status.
                                                 
-                        SCORCHED: Enemies will take an additional instance of damage after 2 seconds dealing 0.25% of their max health.""",
+                        IGNITE: Enemies will explode after 2s dealing 250-450 true damage to nearby enemies. Enemies killed by Ignition damage will refund the caster 5 energy.""",
                 50000,
                 () -> {
                     ability.setShotsFiredAtATime(2);
