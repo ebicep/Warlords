@@ -204,7 +204,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
     @Override
     public int getMaxUpgradeLevel() {
-        return isAscendant() ? 5 : 4;
+        return 5;
     }
 
     @Override

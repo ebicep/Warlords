@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.Spendable;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,10 +20,10 @@ public enum MobDrop implements Spendable {
     public static final MobDrop[] VALUES = values();
 
     public final String name;
-    public final NamedTextColor textColor;
+    public final TextColor textColor;
     public final ItemStack item;
 
-    MobDrop(String name, NamedTextColor textColor, ItemStack item) {
+    MobDrop(String name, TextColor textColor, ItemStack item) {
         this.name = name;
         this.textColor = textColor;
         this.item = item;
@@ -34,7 +35,7 @@ public enum MobDrop implements Spendable {
     }
 
     @Override
-    public NamedTextColor getTextColor() {
+    public TextColor getTextColor() {
         return textColor;
     }
 
