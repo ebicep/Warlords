@@ -82,8 +82,8 @@ public class WoundingStrikeDefender extends AbstractStrike {
         ).ifPresent(event -> onFinalEvent(wp, nearPlayer, event));
 
         if (pveMasterUpgrade2) {
-            tripleHit(
-                    wp,
+            additionalHit(
+                    2, wp,
                     nearPlayer,
                     1,
                     warlordsEntity -> {

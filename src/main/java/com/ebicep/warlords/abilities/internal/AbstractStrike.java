@@ -82,7 +82,8 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
         kbTarget.setVelocity(name, v, false);
     }
 
-    public void tripleHit(
+    public void additionalHit(
+            int additionalHitAmount,
             WarlordsEntity giver,
             WarlordsEntity initialTarget,
             float damageModifier,
@@ -94,7 +95,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                 .aliveEnemiesOf(giver)
                 .closestFirst(initialTarget)
                 .excluding(initialTarget)
-                .limit(2)
+                .limit(additionalHitAmount)
         ) {
             EnumSet<InstanceFlags> flags = getFlags != null ? getFlags.apply(we) : EnumSet.noneOf(InstanceFlags.class);
             onFinalEvent.accept(we.addDamageInstance(

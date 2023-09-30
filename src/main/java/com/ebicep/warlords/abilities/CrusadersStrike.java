@@ -100,7 +100,7 @@ public class CrusadersStrike extends AbstractStrike {
         }
 
         if (pveMasterUpgrade) {
-            tripleHit(wp, nearPlayer, 1, null, finalEvent2 -> {});
+            additionalHit(2, wp, nearPlayer, 1, null, finalEvent2 -> {});
         } else if (pveMasterUpgrade2) {
             PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius)
                         .aliveTeammatesOfExcludingSelf(wp)
