@@ -272,13 +272,13 @@ public class ItemEquipMenu {
             DifficultyMode difficulty = l.getDifficultyMode();
             Specializations spec = l.getSpec();
             lore.add(Component.text((i + 1) + ". " + l.getName() +
-                            " (" + l.getWeight(itemsManager) + " | " + difficulty.getShortName() + " | " + (spec == null ? "Any" : spec.name) + ")",
+                            " (" + difficulty.getShortName() + " | " + (spec == null ? "Any" : spec.name) + ")",
                     l.equals(itemLoadout) ? NamedTextColor.AQUA : NamedTextColor.GRAY
             ));
         }
         menu.setItem(0, 5,
                 new ItemBuilder(Material.BOOK)
-                        .name(Component.text("Change Loadout (Weight | Difficulty | Spec)", NamedTextColor.GREEN))
+                        .name(Component.text("Change Loadout (Difficulty | Spec)", NamedTextColor.GREEN))
                         .lore(lore)
                         .get(),
                 (m, e) -> {
