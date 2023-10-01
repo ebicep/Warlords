@@ -460,12 +460,11 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
             @Override
             public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                List<CompensationReward> compensationRewards = pveStats.getCompensationRewards();
-                if (compensationRewards.stream().noneMatch(compensationReward -> compensationReward instanceof CompensationReward.AscendantShardPrestigePatch)) {
-                    int totalPrestige = Arrays.stream(Specializations.VALUES)
-                                              .mapToInt(spec -> databasePlayer.getSpec(spec).getPrestige())
-                                              .sum();
-                    compensationRewards.add(new CompensationReward.AscendantShardPrestigePatch(totalPrestige));
+                int totalPrestige = Arrays.stream(Specializations.VALUES)
+                                          .mapToInt(spec -> databasePlayer.getSpec(spec).getPrestige())
+                                          .sum();
+                if (totalPrestige > 0) {
+                    pveStats.getCompensationRewards().add(new CompensationReward.AscendantShardPrestigePatch(totalPrestige));
                 }
                 return true;
             }
@@ -474,11 +473,11 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
             @Override
             public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                List<CompensationReward> compensationRewards = pveStats.getCompensationRewards();
-                if (compensationRewards.stream().noneMatch(compensationReward -> compensationReward instanceof CompensationReward.CelestialBronzePatch)) {
-                    compensationRewards.add(new CompensationReward.CelestialBronzePatch(pveStats.getCurrencyValue(Currencies.CELESTIAL_BRONZE)));
-                    pveStats.setCurrency(Currencies.CELESTIAL_BRONZE, 0L);
+                Long celestialBronze = pveStats.getCurrencyValue(Currencies.CELESTIAL_BRONZE);
+                if (celestialBronze > 0) {
+                    pveStats.getCompensationRewards().add(new CompensationReward.CelestialBronzePatch(celestialBronze));
                 }
+                pveStats.setCurrency(Currencies.CELESTIAL_BRONZE, 0L);
                 return true;
             }
         },
@@ -490,18 +489,18 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
                     return false;
                 }
                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                List<CompensationReward> compensationRewards = pveStats.getCompensationRewards();
-                if (compensationRewards.stream().noneMatch(compensationReward -> compensationReward instanceof CompensationReward.BlessingPatch)) {
-                    Map<Integer, Integer> blessingsBought = new HashMap<>();
-                    for (WeeklyBlessings weeklyBlessing : weeklyBlessings) {
-                        Map<Integer, Integer> bought = weeklyBlessing.getPlayerOrders().get(uuid);
-                        if (bought == null) {
-                            continue;
-                        }
-                        for (Map.Entry<Integer, Integer> entry : bought.entrySet()) {
-                            blessingsBought.merge(entry.getKey(), entry.getValue(), Integer::sum);
-                        }
+
+                Map<Integer, Integer> blessingsBought = new HashMap<>();
+                for (WeeklyBlessings weeklyBlessing : weeklyBlessings) {
+                    Map<Integer, Integer> bought = weeklyBlessing.getPlayerOrders().get(uuid);
+                    if (bought == null) {
+                        continue;
                     }
+                    for (Map.Entry<Integer, Integer> entry : bought.entrySet()) {
+                        blessingsBought.merge(entry.getKey(), entry.getValue(), Integer::sum);
+                    }
+                }
+                if (!blessingsBought.isEmpty()) {
                     LinkedHashMap<Spendable, Long> rewards = new LinkedHashMap<>();
                     blessingsBought.forEach((tier, amount) -> {
                         LinkedHashMap<Spendable, Long> cost = ItemMichaelMenu.BuyABlessingMenu.COSTS.get(tier);
@@ -509,7 +508,14 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
                     });
                     ItemsManager itemsManager = pveStats.getItemsManager();
                     rewards.merge(Currencies.LEGEND_FRAGMENTS, itemsManager.getBlessingsFound() * 15L, Long::sum);
-                    compensationRewards.add(new CompensationReward.BlessingPatch(rewards));
+
+                    //sort rewards by highest first into new map
+                    LinkedHashMap<Spendable, Long> sortedRewards = new LinkedHashMap<>();
+                    rewards.entrySet().stream()
+                           .sorted(Map.Entry.<Spendable, Long>comparingByValue().reversed())
+                           .forEachOrdered(x -> sortedRewards.put(x.getKey(), x.getValue()));
+
+                    pveStats.getCompensationRewards().add(new CompensationReward.BlessingPatch(sortedRewards));
                     itemsManager.setBlessingsFound(0);
                     itemsManager.getBlessingsBought().clear();
                 }
