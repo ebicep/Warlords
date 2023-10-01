@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta.GardeningGloves;
+import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.MysticksManualVol23H;
 
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -68,6 +69,6 @@ public class BruisedBook extends SpecialDeltaTome implements CraftsInto {
 
     @Override
     public AbstractItem getCraftsInto(Set<BasicStatPool> statPool) {
-        return null;
+        return new MysticksManualVol23H(statPool);
     }
 }
