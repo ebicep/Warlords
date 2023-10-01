@@ -796,7 +796,7 @@ public abstract class WarlordsEntity {
                     previousDamageValue = damageValue;
                 }
 
-                boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");
+                boolean debt = getCooldownManager().hasCooldownFromName("Spirits' Respite");
                 //if (isEnemy(attacker)) {
                 hitBy.put(attacker, 10);
                 cancelHealingPowerUp();

@@ -199,7 +199,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
         int limit = linkInformation.limit();
         //adding .25 to totem, cap 6 sec
 //        new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-//                .filterName("Spirits Respite")
+//                .filterName("Spirits' Respite")
 //                .findFirst()
 //                .ifPresent(regularCooldown -> {
 //                    regularCooldown.setTicksLeft(Math.min(regularCooldown.getTicksLeft() + 10, 6 * 20));

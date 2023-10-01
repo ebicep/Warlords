@@ -98,7 +98,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
                     wp.getCooldownManager().addRegularCooldown(
-                            name,
+                            name + " Shield",
                             "SHIELD",
                             Shield.class,
                             new Shield(name, shieldHealth),

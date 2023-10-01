@@ -155,7 +155,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     private void giveShield(WarlordsEntity from, @Nonnull WarlordsEntity to, int shieldHealth) {
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
+                name + " Shield",
                 "SHIELD",
                 Shield.class,
                 new Shield(name, shieldHealth),

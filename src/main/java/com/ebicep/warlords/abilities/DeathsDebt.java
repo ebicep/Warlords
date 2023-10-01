@@ -147,7 +147,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
 
         DeathsDebt tempDeathsDebt = new DeathsDebt(totemStand, wp);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Spirits Respite",
+                "Spirits' Respite",
                 "RESP",
                 DeathsDebt.class,
                 tempDeathsDebt,

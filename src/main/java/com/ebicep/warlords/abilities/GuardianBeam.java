@@ -103,7 +103,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
             }
             Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
             to.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
+                    name + " Shield",
                     "SHIELD",
                     Shield.class,
                     new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent),
