@@ -70,6 +70,7 @@ public enum SpecialItems {
     GARDENING_GLOVES(GardeningGloves::new),
     MULTIPURPOSE_KNUCKLES(MultipurposeKnuckles::new),
     DIABOLICAL_RINGS(DiabolicalRings::new),
+
     FIREWATER_ALMANAC(FirewaterAlmanac::new), //TODO
     THE_PRESENT_TESTAMENT(ThePresentTestament::new),
     A_GUIDE_TO_MMA(AGuideToMMA::new),
@@ -82,6 +83,8 @@ public enum SpecialItems {
     PRIDWENS_BULWARK(PridwensBulwark::new),
     AERIAL_AEGIS(AerialAegis::new),
     SHIELD_OF_SNATCHING(ShieldOfSnatching::new),
+    OTHERWORLDLY_AMULET(OtherworldlyAmulet::new),
+
     //OMEGA
     LILITHS_CLAWS(LilithsClaws::new),
     HANDS_OF_THE_HOLY_CORPSE(HandsOfTheHolyCorpse::new),
@@ -96,8 +99,9 @@ public enum SpecialItems {
     GUIDE_FOR_THE_RIVER_STYX(GuideForTheRiverStyx::new),
     TOME_OF_THEFT(TomeOfTheft::new),
     MYSTICKS_MANUAL_VOL_23_H(MysticksManualVol23H::new),
+
     ELEMENTAL_SHIELD(ElementalShield::new),
-    BREASTPLATE_BUCKLER(BreastplateBuckler::new), //TODO
+    BREASTPLATE_BUCKLER(BreastplateBuckler::new),
     ATHENIAN_AEGIS(AthenianAegis::new),
     WAXING_BULWARK(CrescentBulwark::new),
     DIRTY_CHAKRAM(ChakramOfBlades::new),
@@ -169,6 +173,7 @@ public enum SpecialItems {
             PRIDWENS_BULWARK,
             AERIAL_AEGIS,
             SHIELD_OF_SNATCHING,
+            OTHERWORLDLY_AMULET,
     };
     public static final SpecialItems[] OMEGA_ITEMS = {
             LILITHS_CLAWS,
