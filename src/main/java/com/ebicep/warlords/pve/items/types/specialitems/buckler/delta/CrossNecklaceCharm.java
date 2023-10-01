@@ -28,7 +28,7 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
 
     @Override
     public String getBonus() {
-        return "Targets within 3 blocks of you are slowed by 35%.";
+        return "Targets within 4 blocks of you are slowed by 35%.";
     }
 
     @Override
@@ -50,7 +50,7 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 5 == 0) {
-                        PlayerFilter.entitiesAround(warlordsPlayer, 3, 3, 3)
+                        PlayerFilter.entitiesAround(warlordsPlayer, 4, 4, 4)
                                     .aliveEnemiesOf(warlordsPlayer)
                                     .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(warlordsEntity, getName(), -35, 5));
                     }
