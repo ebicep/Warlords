@@ -95,7 +95,7 @@ public enum SpecialItems {
     SCROLL_OF_SANGUINITY(ScrollOfScripts::new),
     GUIDE_FOR_THE_RIVER_STYX(GuideForTheRiverStyx::new),
     TOME_OF_THEFT(TomeOfTheft::new),
-    //TODO
+    MYSTICKS_MANUAL_VOL_23_H(MysticksManualVol23H::new),
     ELEMENTAL_SHIELD(ElementalShield::new),
     BREASTPLATE_BUCKLER(BreastplateBuckler::new), //TODO
     ATHENIAN_AEGIS(AthenianAegis::new),
@@ -182,6 +182,7 @@ public enum SpecialItems {
             SCROLL_OF_SANGUINITY,
             GUIDE_FOR_THE_RIVER_STYX,
             TOME_OF_THEFT,
+            MYSTICKS_MANUAL_VOL_23_H,
             ELEMENTAL_SHIELD,
             BREASTPLATE_BUCKLER,
             ATHENIAN_AEGIS,
