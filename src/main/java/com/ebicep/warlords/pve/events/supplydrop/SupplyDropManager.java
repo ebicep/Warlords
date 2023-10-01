@@ -150,7 +150,7 @@ public class SupplyDropManager {
                     new ItemBuilder(Material.BOOK)
                             .name(Component.text("Your most recent supply drops", NamedTextColor.GREEN))
                             .lore(IntStream.range(0, supplyDropHistory.size())
-                                           .mapToObj(index -> Component.text((index + 1) + ".", NamedTextColor.GRAY)
+                                           .mapToObj(index -> Component.text((index + 1) + ". ", NamedTextColor.GRAY)
                                                                        .append(supplyDropHistory.get(supplyDropHistory.size() - index - 1))
                                            )
                                            .collect(Collectors.toList()))
