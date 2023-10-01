@@ -332,7 +332,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
             Location loc = wp.getLocation();
 
             Utils.playGlobalSound(loc, Sound.BLOCK_GRASS_BREAK, 500, 0.4f);
@@ -363,7 +363,7 @@ public class Illumina extends AbstractZombie implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
             Location loc = wp.getLocation();
 
             EffectUtils.strikeLightningInCylinder(loc, 6, false);

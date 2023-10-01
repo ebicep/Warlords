@@ -104,7 +104,7 @@ public class BlazingKindle extends AbstractBlaze implements IntermediateMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
 
             Location loc = wp.getLocation();
             EffectUtils.playSphereAnimation(loc, kindleRadius, Particle.FLAME, 1);

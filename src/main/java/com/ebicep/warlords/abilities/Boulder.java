@@ -60,7 +60,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
 
         Location location = player.getLocation();

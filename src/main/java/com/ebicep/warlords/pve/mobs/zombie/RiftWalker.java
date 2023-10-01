@@ -113,7 +113,7 @@ public class RiftWalker extends AbstractZombie implements EliteMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
 
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.2f);
             wp.addSpeedModifier(wp, "Rift Speed", 80, 2 * 20);

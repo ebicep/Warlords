@@ -89,7 +89,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife(minDamageHeal, maxDamageHeal);

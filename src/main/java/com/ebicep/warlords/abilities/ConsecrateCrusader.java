@@ -47,7 +47,7 @@ public class ConsecrateCrusader extends AbstractConsecrate {
         if (!pveMasterUpgrade2) {
             return super.onActivate(wp, player);
         }
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         Location location = player.getLocation().clone();
 

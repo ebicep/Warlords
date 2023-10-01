@@ -113,7 +113,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         Location location = wp.getLocation();
         FallingBlock block = spawnFallingBlock(location, location);
         EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), spikeTarget, wp);
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         new GameRunnable(wp.getGame()) {
             private final float SPEED_SQUARED = speed * speed;

@@ -106,7 +106,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", 40, tickDuration, "BASE");
 

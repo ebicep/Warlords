@@ -1865,7 +1865,7 @@ public abstract class WarlordsEntity {
         this.energy = energy;
     }
 
-    public float addEnergy(WarlordsEntity giver, String ability, float amount) {
+    public float addEnergy(WarlordsEntity giver, @Nullable String ability, float amount) {
         float energyGiven = 0;
         if (energy + amount > getMaxEnergy()) {
             energyGiven = getMaxEnergy() - energy;
@@ -1876,7 +1876,7 @@ public abstract class WarlordsEntity {
         } else {
             this.energy = 1;
         }
-        if ((int) energyGiven != 0) {
+        if ((int) energyGiven != 0 && ability != null) {
             DatabasePlayer receiverSettings = DatabaseManager.getPlayer(getUuid(), getEntity() instanceof Player);
             DatabasePlayer giverSettings = DatabaseManager.getPlayer(giver.getUuid(), giver.getEntity() instanceof Player);
             if (receiverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
@@ -1912,27 +1912,32 @@ public abstract class WarlordsEntity {
         return spec.getMaxEnergy();
     }
 
-    public float subtractEnergy(FloatModifiable amount, boolean fromAttacker) {
-        return subtractEnergy(amount.getCalculatedValue(), fromAttacker);
+    public float subtractEnergy(String from, FloatModifiable amount, boolean fromAttacker) {
+        return subtractEnergy(from, amount.getCalculatedValue(), fromAttacker);
     }
 
-    public float subtractEnergy(float amount, boolean fromAttacker) {
+    public float subtractEnergy(String from, float amount, boolean fromAttacker) {
         float amountSubtracted = 0;
         if (!noEnergyConsumption) {
             amount *= energyModifier;
             if (energy - amount > getMaxEnergy()) {
                 amountSubtracted = getMaxEnergy() - energy;
-                energy = getMaxEnergy();
             } else if (energy - amount < 0) {
                 amountSubtracted = energy;
-                energy = 0;
             } else {
                 amountSubtracted = amount;
-                energy -= amount;
             }
         }
         if (!fromAttacker) {
-            Bukkit.getPluginManager().callEvent(new WarlordsEnergyUsedEvent(this, amountSubtracted));
+            WarlordsEnergyUseEvent.Pre event = new WarlordsEnergyUseEvent.Pre(this, from, amountSubtracted);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                amountSubtracted = 0;
+            }
+        }
+        energy -= amountSubtracted;
+        if (!fromAttacker) {
+            Bukkit.getPluginManager().callEvent(new WarlordsEnergyUseEvent.Post(this, from, amountSubtracted));
         }
         return amountSubtracted;
     }

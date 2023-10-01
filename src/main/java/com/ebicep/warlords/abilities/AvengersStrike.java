@@ -131,7 +131,7 @@ public class AvengersStrike extends AbstractStrike {
             }
         }
 
-        energyStole += nearPlayer.subtractEnergy(energySteal, true);
+        energyStole += nearPlayer.subtractEnergy(name, energySteal, true);
         return true;
     }
 

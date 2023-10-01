@@ -139,7 +139,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     );
 
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
-                    wrathTarget.subtractEnergy(10, true);
+                    wrathTarget.subtractEnergy(name, 10, true);
                 }
             }
 

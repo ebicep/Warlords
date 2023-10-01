@@ -62,7 +62,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         Utils.playGlobalSound(wp.getLocation(), "arcanist.astralplague.activation", 2, 1.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2, 0.7f);

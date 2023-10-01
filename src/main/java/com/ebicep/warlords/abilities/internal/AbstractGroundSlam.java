@@ -56,7 +56,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
 
         UUID abilityUUID = UUID.randomUUID();

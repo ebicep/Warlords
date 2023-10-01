@@ -100,7 +100,7 @@ public class ZenithLegionnaire extends AbstractZombie implements BossMinionMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
 
             PlayerFilter.playingGame(wp.getGame())
                         .filter(we -> we.getName().equals("Zenith"))

@@ -105,7 +105,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 

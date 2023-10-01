@@ -3,7 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUsedEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -75,7 +75,7 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
     }
 
     @Override
-    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUsedEvent event, EnergySeerConjurer cooldownObjet) {
+    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUseEvent.Post event, EnergySeerConjurer cooldownObjet) {
         if (!pveMasterUpgrade2) {
             return;
         }

@@ -58,12 +58,12 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                                         .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                                         .findAny();
                                 if (optionalHammerOfLight.isPresent()) {
-                                    wp.subtractEnergy(energyCost.getCurrentValue() - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
+                                    wp.subtractEnergy(name, energyCost.getCurrentValue() - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
                                 } else {
-                                    wp.subtractEnergy(energyCost, false);
+                                    wp.subtractEnergy(name, energyCost, false);
                                 }
                             } else {
-                                wp.subtractEnergy(energyCost, false);
+                                wp.subtractEnergy(name, energyCost, false);
                             }
                             hitPlayer.set(successfulStrike);
                         }

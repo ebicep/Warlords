@@ -76,7 +76,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         Location location = targetBlock.getLocation().clone();
         location.add(0, 1, 0);

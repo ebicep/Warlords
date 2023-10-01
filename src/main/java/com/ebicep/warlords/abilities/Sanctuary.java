@@ -65,7 +65,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         Location loc = wp.getLocation();
         Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 1.8f);

@@ -75,7 +75,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.waterbreath.activation", 2, 1);
         player.getWorld().spawnParticle(
                 Particle.HEART,

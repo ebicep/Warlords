@@ -101,7 +101,7 @@ public class SoulOfGradient extends AbstractZombie implements BossMinionMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
 
             new CircleEffect(
                     wp.getGame(),

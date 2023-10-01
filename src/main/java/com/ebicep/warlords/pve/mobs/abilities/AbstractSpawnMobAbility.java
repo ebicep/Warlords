@@ -23,7 +23,7 @@ public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
 
     @Override
     public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         for (int i = 0; i < getSpawnAmount(); i++) {
             spawnMob(wp);
