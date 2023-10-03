@@ -81,9 +81,9 @@ public class EventAres extends AbstractZombie implements BossMinionMob {
 
             @Override
             public void run() {
-                List<Location> mesmerSpawnLocations = LocationUtils.getCircle(warlordsNPC.getLocation(), 3, option.playerCount());
-                for (Location mesmerSpawnLocation : mesmerSpawnLocations) {
-                    option.spawnNewMob(Mob.ADVANCED_WARRIOR_BERSERKER.createMob(mesmerSpawnLocation));
+                List<Location> spawnLocations = LocationUtils.getCircle(warlordsNPC.getLocation(), 3, option.playerCount());
+                for (Location location : spawnLocations) {
+                    option.spawnNewMob(Mob.ADVANCED_WARRIOR_BERSERKER.createMob(location));
                 }
             }
         }.runTaskLater(40);
@@ -121,7 +121,7 @@ public class EventAres extends AbstractZombie implements BossMinionMob {
         ) {
             @Override
             public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .6f;
+                return currentHealValue * .5f;
             }
         });
     }

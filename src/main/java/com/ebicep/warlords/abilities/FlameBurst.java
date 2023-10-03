@@ -240,13 +240,13 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
     }
 
     @Override
-    protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         if (pveMasterUpgrade2) {
-            Location location = super.getProjectileStartingLocation(shooter, startingLocation);
+            Location location = super.modifyProjectileStartingLocation(shooter, startingLocation);
             location.setPitch(0);
             return location;
         }
-        return super.getProjectileStartingLocation(shooter, startingLocation);
+        return super.modifyProjectileStartingLocation(shooter, startingLocation);
     }
 
     @Override

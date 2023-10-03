@@ -70,9 +70,9 @@ public class EventApollo extends AbstractSkeleton implements BossMinionMob {
 
             @Override
             public void run() {
-                List<Location> mesmerSpawnLocations = LocationUtils.getCircle(warlordsNPC.getLocation(), 3, option.playerCount());
-                for (Location mesmerSpawnLocation : mesmerSpawnLocations) {
-                    option.spawnNewMob(Mob.SKELETAL_MESMER.createMob(mesmerSpawnLocation));
+                List<Location> spawnLocations = LocationUtils.getCircle(warlordsNPC.getLocation(), 3, option.playerCount());
+                for (Location location : spawnLocations) {
+                    option.spawnNewMob(Mob.SKELETAL_MESMER.createMob(location));
                 }
             }
         }.runTaskLater(40);
@@ -110,9 +110,9 @@ public class EventApollo extends AbstractSkeleton implements BossMinionMob {
                             ImpalingStrike.giveLeechCooldown(
                                     wp,
                                     warlordsEntity,
-                                    5,
-                                    15,
-                                    25,
+                                    3,
+                                    20,
+                                    35,
                                     event -> {}
                             );
                             warlordsEntity.addDamageInstance(

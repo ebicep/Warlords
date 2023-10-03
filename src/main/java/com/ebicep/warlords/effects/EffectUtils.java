@@ -73,11 +73,16 @@ public class EffectUtils {
      * @param particleCount the amount of particles that should be displayed.
      */
     public static void playSphereAnimation(Location loc, double sphereRadius, Particle effect, int particleCount) {
+        playSphereAnimation(loc, sphereRadius, effect, particleCount, 1);
+    }
+
+    public static void playSphereAnimation(Location loc, double sphereRadius, Particle effect, int particleCount, float density) {
+        float dens = 10 * density;
         loc.add(0, 1, 0);
-        for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
+        for (double i = 0; i <= Math.PI; i += Math.PI / dens) {
             double radius = Math.sin(i) * sphereRadius + 0.5;
             double y = cos(i) * sphereRadius;
-            for (double a = 0; a < Math.PI * 2; a += Math.PI / 10) {
+            for (double a = 0; a < Math.PI * 2; a += Math.PI / dens) {
                 double x = cos(a) * radius;
                 double z = Math.sin(a) * radius;
                 loc.add(x, y, z);
@@ -655,18 +660,6 @@ public class EffectUtils {
     }
 
     public static void playSpiralAnimation(
-            @Nonnull WarlordsEntity wp,
-            Location playerLoc,
-            final int maxAnimationEffects,
-            final int maxAnimationTime,
-            BiConsumer<Matrix4d, Integer> playAdditionalEffects,
-            List<Pair<Particle, Object>> customParticles,
-            Particle... particles
-    ) {
-        playSpiralAnimation(false, wp, playerLoc, maxAnimationEffects, maxAnimationTime, playAdditionalEffects, customParticles, particles);
-    }
-
-    public static void playSpiralAnimation(
             boolean vertical,
             @Nonnull WarlordsEntity wp,
             Location playerLoc,
@@ -717,6 +710,18 @@ public class EffectUtils {
                 animationTimer++;
             }
         }.runTaskTimer(0, 1);
+    }
+
+    public static void playSpiralAnimation(
+            @Nonnull WarlordsEntity wp,
+            Location playerLoc,
+            final int maxAnimationEffects,
+            final int maxAnimationTime,
+            BiConsumer<Matrix4d, Integer> playAdditionalEffects,
+            List<Pair<Particle, Object>> customParticles,
+            Particle... particles
+    ) {
+        playSpiralAnimation(false, wp, playerLoc, maxAnimationEffects, maxAnimationTime, playAdditionalEffects, customParticles, particles);
     }
 
 }

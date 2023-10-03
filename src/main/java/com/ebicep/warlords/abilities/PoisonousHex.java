@@ -128,7 +128,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     }
 
     @Override
-    protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
     }
 

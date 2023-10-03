@@ -146,7 +146,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     }
 
     @Override
-    protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.1);
     }
 

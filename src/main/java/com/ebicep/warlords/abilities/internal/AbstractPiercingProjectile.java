@@ -18,7 +18,6 @@ import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
@@ -260,7 +259,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
      * @param startingLocation
      * @return
      */
-    protected Location getProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         //return new LocationBuilder(startingLocation).backward(.5f);
         return startingLocation.clone().add(startingLocation.getDirection().multiply(0.2));
     }
@@ -280,7 +279,13 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
         shooter.subtractEnergy(name, energyCost, false);
 
-        List<Location> projectileLocations = getLocationsToFireShots(shooter.getEntity());
+        fire(shooter, shooter.getEyeLocation());
+
+        return true;
+    }
+
+    public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
+        List<Location> projectileLocations = getLocationsToFireShots(startingLocation);
         List<InternalProjectile> internalProjectiles = new ArrayList<>();
         for (Location projectileLocation : projectileLocations) {
             InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
@@ -295,18 +300,16 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
             onSpawn(projectile);
             projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
         }
-
-        return true;
     }
 
     /**
      * @param player Player that fires the shots
      * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
      */
-    public List<Location> getLocationsToFireShots(LivingEntity player) {
+    public List<Location> getLocationsToFireShots(Location startingLocation) {
         List<Location> locations = new ArrayList<>();
 
-        Location playerLocation = new LocationBuilder(player.getEyeLocation().clone()).backward(forwardTeleportAmount);
+        Location playerLocation = new LocationBuilder(startingLocation.clone()).backward(forwardTeleportAmount);
         double beginningYaw = playerLocation.getYaw() - (maxAngleOfShots / 2d);
         double angleBetweenShots = (double) maxAngleOfShots / (shotsFiredAtATime + 1);
         for (int i = 1; i <= shotsFiredAtATime; i++) {
@@ -426,7 +429,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         private double blocksTravelled = 0;
 
         private InternalProjectile(WarlordsEntity shooter, Location startingLocation) {
-            this.currentLocation = getProjectileStartingLocation(shooter, startingLocation);
+            this.currentLocation = modifyProjectileStartingLocation(shooter, startingLocation);
             this.speed = getProjectileStartingSpeed(shooter, startingLocation);
             this.shooter = shooter;
             this.startingLocation = currentLocation.clone();
