@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 public class Fireball extends AbstractProjectile implements Splash {
@@ -69,6 +71,11 @@ public class Fireball extends AbstractProjectile implements Splash {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FireballBranch(abilityTree, this);
+    }
+
+    @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
         EffectUtils.displayParticle(Particle.DRIP_LAVA, currentLocation, 5, 0, 0, 0, 0.35);
         EffectUtils.displayParticle(Particle.SMOKE_NORMAL, currentLocation, 7, 0, 0, 0, 0.001);
@@ -110,7 +117,7 @@ public class Fireball extends AbstractProjectile implements Splash {
             if (pveMasterUpgrade) {
                 applyBurnEffect(hit, shooter);
             } else if (pveMasterUpgrade2) {
-                applyScorchedEffect(hit, shooter);
+                applyIgniteEffect(hit, shooter);
             }
         }
 
@@ -178,29 +185,33 @@ public class Fireball extends AbstractProjectile implements Splash {
         });
     }
 
-    private void applyScorchedEffect(@Nonnull WarlordsEntity hit, WarlordsEntity shooter) {
-        //hit.getCooldownManager().removeCooldownByName("Scorched");
+    private void applyIgniteEffect(@Nonnull WarlordsEntity hit, WarlordsEntity shooter) {
+        if (hit.getCooldownManager().hasCooldownFromName("Ignite")) {
+            return;
+        }
         hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Scorched",
-                "SCH",
+                "Ignite",
+                "IGN",
                 Fireball.class,
                 new Fireball(),
                 shooter,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
-                    float damage = hit.getMaxBaseHealth() * 0.0025f;
-                    hit.addDamageInstance(
-                            shooter,
-                            "Scorched",
-                            damage,
-                            damage,
-                            0,
-                            100
-                    );
+                    PlayerFilter.entitiesAround(hit, 3, 3, 3)
+                                .aliveTeammatesOf(hit)
+                                .forEach(warlordsEntity -> {
+                                    warlordsEntity.addDamageInstance(
+                                            shooter,
+                                            "Ignite",
+                                            250,
+                                            450,
+                                            0,
+                                            100,
+                                            EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                                    );
+                                });
                 },
-                40,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                })
+                40
         ));
     }
 
@@ -208,11 +219,6 @@ public class Fireball extends AbstractProjectile implements Splash {
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
         this.playEffect(projectile);
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FireballBranch(abilityTree, this);
     }
 
     @Override

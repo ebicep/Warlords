@@ -13,12 +13,12 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeSplash(ability, .5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override

@@ -1,9 +1,20 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class GuideToTaiChi extends SpecialGammaTome implements CDRandCritChance, CraftsInto.CraftsAGuideToMMA {
+import java.util.Set;
+
+public class GuideToTaiChi extends SpecialGammaTome implements CraftsInto.CraftsAGuideToMMA {
+
+    public GuideToTaiChi() {
+
+    }
+
+    public GuideToTaiChi(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +31,9 @@ public class GuideToTaiChi extends SpecialGammaTome implements CDRandCritChance,
         return "Center yourself.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.WARRIOR;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.DEFENDER;
+    }
 }

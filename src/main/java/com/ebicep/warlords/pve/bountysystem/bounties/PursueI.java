@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUsedEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
@@ -42,7 +42,7 @@ public class PursueI extends AbstractBounty implements TracksDuringGame, DailyCo
     }
 
     @Override
-    public void onEnergyUsed(UUID uuid, WarlordsEnergyUsedEvent event) {
+    public void onEnergyUsed(UUID uuid, WarlordsEnergyUseEvent.Post event) {
         if (event.getWarlordsEntity().getUuid().equals(uuid)) {
             newEnergyUsed += event.getEnergyUsed();
         }

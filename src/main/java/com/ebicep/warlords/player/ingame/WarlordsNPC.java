@@ -98,9 +98,12 @@ public final class WarlordsNPC extends WarlordsEntity {
             builder.append(Component.text(aspect.name + " ", aspect.textColor));
         }
 
-        builder.append(Component.text(name, nameColor))
-               .append(Component.text(" - "))
-               .append(Component.text(NumberFormat.formatOptionalTenths(spec.getDamageResistance()) + "% ⛊", NamedTextColor.GOLD));
+        int resistance = spec.getDamageResistance();
+        builder.append(Component.text(name, nameColor));
+        if (resistance > 0) {
+            builder.append(Component.text(" - "))
+                   .append(Component.text(NumberFormat.formatOptionalTenths(resistance) + "% ⛊", NamedTextColor.GOLD));
+        }
 
         return builder.build();
     }
@@ -146,11 +149,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     public void die(@Nullable WarlordsEntity attacker) {
         super.die(attacker);
         nameDisplay.remove();
-    }
-
-    @Override
-    public int getBaseHitCooldownValue() {
-        return 20;
     }
 
     @Override
@@ -238,6 +236,11 @@ public final class WarlordsNPC extends WarlordsEntity {
     public void setDamageResistance(int damageResistance) {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
         nameDisplay.customName(getNameComponent());
+    }
+
+    @Override
+    public int getBaseHitCooldownValue() {
+        return 20;
     }
 
     public int getStunTicks() {

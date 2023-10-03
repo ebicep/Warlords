@@ -12,12 +12,12 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class FlemingAlmanac extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
-    public FlemingAlmanac(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public FlemingAlmanac() {
 
+    }
+
+    public FlemingAlmanac(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override

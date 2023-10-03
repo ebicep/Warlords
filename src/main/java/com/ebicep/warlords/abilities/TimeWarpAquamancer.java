@@ -35,7 +35,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
 
         Location warpLocation = wp.getLocation();
@@ -120,7 +120,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                                 5 * 20
                         ) {
                             @Override
-                            public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
                                 return currentHealValue * 1.15f;
                             }
                         });

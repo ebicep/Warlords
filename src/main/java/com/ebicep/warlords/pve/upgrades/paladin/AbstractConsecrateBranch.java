@@ -12,7 +12,7 @@ public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> ext
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -25,7 +25,7 @@ public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> ext
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeHitBox(ability, 0.25f)
                 .addUpgradeDuration(ability, 20f, 4)
                 .addTo(treeB);

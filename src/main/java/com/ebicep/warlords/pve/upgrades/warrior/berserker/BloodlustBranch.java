@@ -11,7 +11,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
 
                     @Override
@@ -27,7 +27,7 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability, 0.0375f)
                 .addTo(treeB);
 

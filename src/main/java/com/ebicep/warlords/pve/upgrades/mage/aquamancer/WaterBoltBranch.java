@@ -14,7 +14,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -39,7 +39,7 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 5f)
                 .addUpgradeSplash(ability, .5f)
                 .addTo(treeB);

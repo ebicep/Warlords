@@ -12,7 +12,7 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -24,7 +24,7 @@ public class SeismicWaveBranch extends AbstractUpgradeBranch<SeismicWave> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability, 0.0375f)
                 .addTo(treeB);
 

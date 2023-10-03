@@ -11,7 +11,7 @@ public class TimeWarpBranchAquamancer extends AbstractUpgradeBranch<TimeWarpAqua
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -21,7 +21,7 @@ public class TimeWarpBranchAquamancer extends AbstractUpgradeBranch<TimeWarpAqua
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

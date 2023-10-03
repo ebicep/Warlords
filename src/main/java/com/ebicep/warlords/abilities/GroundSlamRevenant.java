@@ -33,7 +33,7 @@ public class GroundSlamRevenant extends AbstractGroundSlam {
                     5 * 20
             ) {
                 @Override
-                public float doBeforeHealFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
                     return currentHealValue * healingBoost;
                 }
             });

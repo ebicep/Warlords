@@ -143,7 +143,7 @@ public class NPCManager {
                     createBountyMenuNPC();
                     createStarPieceSynthesizerNPC();
 //                    createMysteriousTokenNPC();
-                    createItemMichaelNPC();
+//                    createItemMichaelNPC();
                     createItemEnyaNPC();
                     createIllusionVendorNPC();
                 })

@@ -106,9 +106,30 @@ public class Warlords extends JavaPlugin {
         for (GameAddon addon : warlordsEntity.getGame().getAddons()) {
             addon.warlordsEntityCreated(warlordsEntity.getGame(), warlordsEntity);
         }
-        for (Option option : warlordsEntity.getGame().getOptions()) {
-            option.onWarlordsEntityCreated(warlordsEntity);
-        }
+
+        new ArrayList<>(warlordsEntity.getGame().getOptions())
+                .stream()
+                .sorted((o1, o2) -> {
+                    try {
+                        Option.Priority o1Priority = o1.getClass()
+                                                       .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
+                                                       .getAnnotation(Option.Priority.class);
+                        Option.Priority o2Priority = o2.getClass()
+                                                       .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
+                                                       .getAnnotation(Option.Priority.class);
+                        return Integer.compare(
+                                o1Priority == null ? 3 : o1Priority.value(),
+                                o2Priority == null ? 3 : o2Priority.value()
+                        );
+                    } catch (Exception e) {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+                        return 0;
+                    }
+                })
+                .forEachOrdered(option -> {
+                    option.onWarlordsEntityCreated(warlordsEntity);
+                });
+
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Added player " + warlordsEntity.getName() + " - " + warlordsEntity.getSpecClass
         // ().name);
     }
@@ -209,6 +230,7 @@ public class Warlords extends JavaPlugin {
     public static boolean hasPlayer(@Nonnull UUID player) {
         return PLAYERS.containsKey(player);
     }
+
     private GameManager gameManager;
 
     @Override

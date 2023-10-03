@@ -74,7 +74,7 @@ public class VoltaicSoul extends AbstractZombie implements BossMinionMob {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 171, 74, 228, 1);
         Utils.playGlobalSound(self.getLocation(), Sound.BLOCK_GRASS_STEP, 0.35f, 2);
         if (!event.getAbility().isEmpty()) {
-            attacker.subtractEnergy(-energyRemoved, true);
+            attacker.subtractEnergy(name, -energyRemoved, true);
             hitBuildUp++;
         }
     }

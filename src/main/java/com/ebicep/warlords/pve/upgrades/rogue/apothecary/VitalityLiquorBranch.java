@@ -16,7 +16,7 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -30,7 +30,7 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addUpgrade(
                         new UpgradeTypes.UpgradeType() {

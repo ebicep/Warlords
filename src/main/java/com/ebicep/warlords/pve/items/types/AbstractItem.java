@@ -3,25 +3,32 @@ package com.ebicep.warlords.pve.items.types;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
+import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractItem {
+
+    public static RandomCollection<Integer> MODIFIER_CHANCE = new RandomCollection<Integer>()
+            .add(1, 0)
+            .add(1, 1)
+            .add(1, 2);
 
     public static void sendItemMessage(Player player, String message) {
         player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(Component.text(message)));
@@ -35,23 +42,6 @@ public abstract class AbstractItem {
         return (current - min) / (max - min);
     }
 
-    public static List<Component> getModifierCalculatedLore(
-            ItemModifier[] blessings,
-            ItemModifier[] curses,
-            float modifierCalculated,
-            boolean inverted
-    ) {
-        if (modifierCalculated > 0) {
-            ItemModifier blessing = blessings[0];
-            return WordWrap.wrap(!inverted ? blessing.getDescriptionCalculated(modifierCalculated) : blessing.getDescriptionCalculatedInverted(
-                    modifierCalculated), 150);
-        } else {
-            ItemModifier curse = curses[0];
-            return WordWrap.wrap(!inverted ? curse.getDescriptionCalculated(modifierCalculated) : curse.getDescriptionCalculatedInverted(
-                    modifierCalculated), 150);
-        }
-    }
-
     protected UUID uuid = UUID.randomUUID();
     @Field("obtained_date")
     protected Instant obtainedDate = Instant.now();
@@ -61,7 +51,18 @@ public abstract class AbstractItem {
     protected Map<BasicStatPool, Float> statPoolDistribution = new HashMap<>();
     @Transient
     protected HashMap<BasicStatPool, Integer> statPoolValues;
+    @Deprecated
     protected int modifier;
+    @Field("legacy_remodified")
+    @Deprecated
+    protected boolean legacyRemodified = false;
+    @Field("aspect_modifier_1")
+    @Nullable
+    protected Aspect aspectModifier1 = null;
+
+    @Field("aspect_modifier_2")
+    @Nullable
+    protected Aspect aspectModifier2 = null;
     protected boolean favorite;
 
     public AbstractItem() {
@@ -77,12 +78,8 @@ public abstract class AbstractItem {
         for (BasicStatPool stat : statPool) {
             this.statPoolDistribution.put(stat, (float) getRandomValueNormalDistribution());
         }
-        if (tier != ItemTier.DELTA && tier != ItemTier.OMEGA) {
-            bless(null);
-        }
+        applyRandomModifier();
     }
-
-    public abstract AbstractItem clone();
 
     private static double getRandomValueNormalDistribution() {
         double mean = 0.5;
@@ -91,6 +88,18 @@ public abstract class AbstractItem {
         // Clamp to [0, 1]
         return Math.max(0, Math.min(1, random));
     }
+
+    public void applyRandomModifier() {
+        switch (MODIFIER_CHANCE.next()) {
+            case 1 -> aspectModifier1 = Aspect.getRandomAspect(Collections.emptyList());
+            case 2 -> {
+                aspectModifier1 = Aspect.getRandomAspect(Collections.emptyList());
+                aspectModifier2 = Aspect.getRandomAspect(Collections.singletonList(aspectModifier1));
+            }
+        }
+    }
+
+    public abstract AbstractItem clone();
 
     /**
      * Ran when the item is first created or found blessing applied
@@ -101,6 +110,7 @@ public abstract class AbstractItem {
      * <p>
      * Random tier generated adds to current modifier (blessing is positive, curse is negative)
      */
+    @Deprecated
     public void bless(Integer tier) {
         Integer result = new RandomCollection<Integer>()
                 .add(this.tier.blessedChance, 1)
@@ -113,18 +123,31 @@ public abstract class AbstractItem {
         }
     }
 
-    public ItemStack generateItemStack() {
-        return generateItemBuilder().get();
-    }
-
     public Component getHoverComponent() {
         return getItemName().hoverEvent(generateItemStack());
     }
 
+    public Component getItemName() {
+        String aspectName = Aspect.getAspectName(aspectModifier1, aspectModifier2);
+        return Component.text((aspectName.isEmpty() ? "Normal" : aspectName) + " " + getType().name, getModifierColor());
+    }
+
+    public ItemStack generateItemStack() {
+        return generateItemBuilder().get();
+    }
+
+    public ItemType getType() {
+        return type;
+    }
+
+    protected TextColor getModifierColor() {
+        return aspectModifier1 != null ? aspectModifier2 != null ? NamedTextColor.DARK_GREEN : NamedTextColor.GREEN : NamedTextColor.GRAY;
+    }
+
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
-        addStatPoolAndBlessing(itemBuilder, null);
-        addItemScoreAndWeight(itemBuilder, false);
+        addStatPoolAndModifier(itemBuilder, null);
+        addItemScore(itemBuilder, false);
         if (isFavorite()) {
             itemBuilder.addLore(Component.empty(), Component.text("FAVORITE", NamedTextColor.LIGHT_PURPLE));
         }
@@ -143,78 +166,49 @@ public abstract class AbstractItem {
                 );
     }
 
-    protected ItemStack getItemStack() {
-        return getType().skull;
-    }
-
-    protected void addStatPoolAndBlessing(ItemBuilder itemBuilder, BasicStatPool obfuscatedStat) {
+    protected void addStatPoolAndModifier(ItemBuilder itemBuilder, BasicStatPool obfuscatedStat) {
         itemBuilder.addLore(getStatPoolLore(obfuscatedStat));
-        if (modifier != 0) {
+        if (aspectModifier1 != null) {
             itemBuilder.addLore(Component.empty());
-            itemBuilder.addLore(getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false));
+            boolean doubleModifier = aspectModifier2 != null;
+            addModifier(itemBuilder, aspectModifier1, doubleModifier ? tier.aspectModifierValues.dualModifier1() : tier.aspectModifierValues.singleModifier());
+            if (doubleModifier) {
+                addModifier(itemBuilder, aspectModifier2, tier.aspectModifierValues.dualModifier2());
+            }
         }
     }
 
-    protected void addItemScoreAndWeight(ItemBuilder itemBuilder, boolean obfuscated) {
+    protected void addItemScore(ItemBuilder itemBuilder, boolean obfuscated) {
         Component itemScoreString = getItemScoreString(obfuscated);
         itemBuilder.addLore(Component.empty());
         if (itemScoreString != null) {
-            itemBuilder.addLore(
-                    itemScoreString,
-                    Component.empty(),
-                    getWeightString(obfuscated)
-            );
-        } else {
-            itemBuilder.addLore(getWeightString(obfuscated));
+            itemBuilder.addLore(itemScoreString);
         }
     }
 
-    public Component getItemName() {
-        ItemModifier itemModifier = getItemModifier();
-        TextComponent.Builder name = Component.text()
-                                              .color(itemModifier != null ?
-                                                     modifier > 0 ? NamedTextColor.GREEN : NamedTextColor.RED :
-                                                     NamedTextColor.GRAY);
-        if (itemModifier != null) {
-            name.append(Component.text(itemModifier.getName() + " "));
-        } else {
-            name.append(Component.text("Normal "));
-        }
-        name.append(Component.text(getType().name));
-        return name.build();
+    public boolean isFavorite() {
+        return favorite;
     }
 
-    public ItemModifier getItemModifier() {
-        return getItemModifier(modifier);
-    }
-
-    public ItemModifier getItemModifier(int modifier) {
-        if (modifier > 0) {
-            return getBlessings()[modifier - 1];
-        } else if (modifier < 0) {
-            return getCurses()[-modifier - 1];
-        } else {
-            return null;
-        }
+    protected ItemStack getItemStack() {
+        return getType().skull;
     }
 
     public List<Component> getStatPoolLore(BasicStatPool obfuscatedStat) {
         return BasicStatPool.getStatPoolLore(getStatPool(), false, obfuscatedStat);
     }
 
-    public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
-        return getType().getBlessings();
-    }
-
-    public <U extends Enum<U> & ItemModifier> U[] getCurses() {
-        return getType().getCurses();
-    }
-
-    public float getModifierCalculated() {
-        if (modifier == 0) {
-            return 0;
-        }
-        return modifier * getItemModifier().getIncreasePerTier();
+    private void addModifier(ItemBuilder itemBuilder, Aspect aspectModifier, int perTier) {
+        itemBuilder.addLore(Component.textOfChildren(
+//                Component.text("- ", NamedTextColor.AQUA),
+                Component.text(aspectModifier.name, aspectModifier.textColor)
+        ));
+        itemBuilder.addLore(
+                Component.textOfChildren(
+                        Component.text("  ", NamedTextColor.AQUA),
+                        type.getModifierDescriptionCalculated(perTier)
+                )
+        );
     }
 
     protected Component getItemScoreString(boolean obfuscated) {
@@ -222,11 +216,6 @@ public abstract class AbstractItem {
                         .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getItemScore()), NamedTextColor.YELLOW))
                         .append(Component.text("/"))
                         .append(Component.text("100"));
-    }
-
-    private Component getWeightString(boolean obfuscated) {
-        return Component.text("Weight: ", NamedTextColor.GRAY)
-                        .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getWeight()), NamedTextColor.GOLD, TextDecoration.BOLD));
     }
 
     public HashMap<BasicStatPool, Integer> getStatPool() {
@@ -254,6 +243,30 @@ public abstract class AbstractItem {
             sum += statDistribution.getValue();
         }
         return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    @Deprecated
+    protected void addItemScoreAndWeight(ItemBuilder itemBuilder, boolean obfuscated) {
+        Component itemScoreString = getItemScoreString(obfuscated);
+        itemBuilder.addLore(Component.empty());
+        if (itemScoreString != null) {
+            itemBuilder.addLore(
+                    itemScoreString,
+                    Component.empty(),
+                    getWeightString(obfuscated)
+            );
+        } else {
+            itemBuilder.addLore(getWeightString(obfuscated));
+        }
+    }
+
+    private Component getWeightString(boolean obfuscated) {
+        return Component.text("Weight: ", NamedTextColor.GRAY)
+                        .append(Component.text(obfuscated ? "???" : NumberFormat.formatOptionalHundredths(getWeight()), NamedTextColor.GOLD, TextDecoration.BOLD));
     }
 
     public int getWeight() {
@@ -314,8 +327,62 @@ public abstract class AbstractItem {
         return Math.round(sum / statPoolDistribution.size() * 10000) / 100f;
     }
 
-    public ItemType getType() {
-        return type;
+    @Deprecated
+    protected void addStatPoolAndBlessing(ItemBuilder itemBuilder, BasicStatPool obfuscatedStat) {
+        itemBuilder.addLore(getStatPoolLore(obfuscatedStat));
+        if (modifier != 0) {
+            itemBuilder.addLore(Component.empty());
+            itemBuilder.addLore(getModifierCalculatedLore(getBlessings(), getCurses(), getModifierCalculated(), false));
+        }
+    }
+
+    public static List<Component> getModifierCalculatedLore(
+            ItemModifier[] blessings,
+            ItemModifier[] curses,
+            float modifierCalculated,
+            boolean inverted
+    ) {
+        if (modifierCalculated > 0) {
+            ItemModifier blessing = blessings[0];
+            return WordWrap.wrap(!inverted ? blessing.getDescriptionCalculated(modifierCalculated) : blessing.getDescriptionCalculatedInverted(
+                    modifierCalculated), 150);
+        } else {
+            ItemModifier curse = curses[0];
+            return WordWrap.wrap(!inverted ? curse.getDescriptionCalculated(modifierCalculated) : curse.getDescriptionCalculatedInverted(
+                    modifierCalculated), 150);
+        }
+    }
+
+    public <R extends Enum<R> & ItemModifier> R[] getBlessings() {
+        return getType().getBlessings();
+    }
+
+    public <U extends Enum<U> & ItemModifier> U[] getCurses() {
+        return getType().getCurses();
+    }
+
+    @Deprecated
+    public float getModifierCalculated() {
+        if (modifier == 0) {
+            return 0;
+        }
+        return modifier * getItemModifier().getIncreasePerTier();
+    }
+
+    @Deprecated
+    public ItemModifier getItemModifier() {
+        return getItemModifier(modifier);
+    }
+
+    @Deprecated
+    public ItemModifier getItemModifier(int modifier) {
+        if (modifier > 0) {
+            return getBlessings()[modifier - 1];
+        } else if (modifier < 0) {
+            return getCurses()[-modifier - 1];
+        } else {
+            return null;
+        }
     }
 
     public UUID getUUID() {
@@ -334,20 +401,32 @@ public abstract class AbstractItem {
         return tier;
     }
 
+    @Deprecated
     public int getModifier() {
         return modifier;
     }
 
+    @Deprecated
     public AbstractItem setModifier(int modifier) {
         this.modifier = modifier;
         return this;
     }
 
-    public boolean isFavorite() {
-        return favorite;
+    @Nullable
+    public Aspect getAspectModifier1() {
+        return aspectModifier1;
     }
 
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
+    @Nullable
+    public Aspect getAspectModifier2() {
+        return aspectModifier2;
+    }
+
+    public boolean isLegacyRemodified() {
+        return legacyRemodified;
+    }
+
+    public void setLegacyRemodified(boolean legacyRemodified) {
+        this.legacyRemodified = legacyRemodified;
     }
 }

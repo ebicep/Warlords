@@ -7,6 +7,7 @@ import com.ebicep.warlords.pve.items.types.BonusStats;
 
 import java.util.HashMap;
 
+@Deprecated
 public interface CDRandHealing extends BonusStats {
 
     HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{

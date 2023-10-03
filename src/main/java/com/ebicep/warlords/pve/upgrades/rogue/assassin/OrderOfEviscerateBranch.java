@@ -16,12 +16,12 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
         }
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability, 40f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

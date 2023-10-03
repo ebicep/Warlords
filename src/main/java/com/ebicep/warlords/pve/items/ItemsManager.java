@@ -56,6 +56,7 @@ public class ItemsManager {
      * @param selectedSpec   The spec that the player is currently using
      * @return The weight of the player
      */
+    @Deprecated
     public static int getMaxWeight(DatabasePlayer databasePlayer, Specializations selectedSpec) {
         if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(databasePlayer.getPveStats())) {
             return 10000;
@@ -99,6 +100,7 @@ public class ItemsManager {
      * @param selectedSpec   The spec that the player is currently using
      * @return Prestige weight of the player
      */
+    @Deprecated
     private static int getPrestigeWeight(DatabasePlayer databasePlayer, Specializations selectedSpec) {
         int weight = 0;
         // 1.
@@ -156,6 +158,7 @@ public class ItemsManager {
      * @param databasePlayer The player to get the weight of
      * @return Achievement weight of the player
      */
+    @Deprecated
     private static int getAchievementsWeight(DatabasePlayer databasePlayer) {
         int weight = 0;
 
@@ -221,6 +224,7 @@ public class ItemsManager {
      * @param databasePlayer The player to get the weight of
      * @return Leaderboard weight of the player
      */
+    @Deprecated
     private static int getHiScoreWeight(DatabasePlayer databasePlayer) {
         int weight = 0;
         List<StatsLeaderboard> statsLeaderboards = StatsLeaderboardManager.STATS_LEADERBOARDS
@@ -243,6 +247,7 @@ public class ItemsManager {
         return Math.min(weight, 9);
     }
 
+    @Deprecated
     public static List<Pair<String, Integer>> getMaxWeightBreakdown(DatabasePlayer databasePlayer, Specializations selectedSpec) {
         List<Pair<String, Integer>> weightBreakdown = new ArrayList<>();
         // x1
@@ -344,6 +349,10 @@ public class ItemsManager {
 
     public void subtractBlessingBought(int tier) {
         blessingsBought.merge(tier, -1, Integer::sum);
+    }
+
+    public void setBlessingsFound(int blessingsFound) {
+        this.blessingsFound = blessingsFound;
     }
 
 }

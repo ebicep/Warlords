@@ -1,10 +1,20 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class BlazingGloves extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsPalmOfTheSoothsayer {
+import java.util.Set;
 
+public class BlazingGloves extends SpecialGammaGauntlet implements CraftsInto.CraftsPalmOfTheSoothsayer {
+
+
+    public BlazingGloves() {
+    }
+
+    public BlazingGloves(Set<BasicStatPool> statPools) {
+        super(statPools);
+    }
 
     @Override
     public String getName() {
@@ -21,9 +31,9 @@ public class BlazingGloves extends SpecialGammaGauntlet implements EPSandMaxEner
         return "It seems you have spontaneously combusted.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.MAGE;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.PYROMANCER;
+    }
 }

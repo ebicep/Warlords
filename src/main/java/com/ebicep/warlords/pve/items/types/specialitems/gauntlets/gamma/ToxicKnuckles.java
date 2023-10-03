@@ -1,14 +1,20 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class ToxicKnuckles extends SpecialGammaGauntlet implements EPSandMaxEnergy, CraftsInto.CraftsMultipurposeKnuckles {
+import java.util.Set;
 
-    @Override
-    public Classes getClasses() {
-        return Classes.ROGUE;
+public class ToxicKnuckles extends SpecialGammaGauntlet implements CraftsInto.CraftsMultipurposeKnuckles {
+
+    public ToxicKnuckles() {
     }
+
+    public ToxicKnuckles(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
+
 
     @Override
     public String getName() {
@@ -25,4 +31,8 @@ public class ToxicKnuckles extends SpecialGammaGauntlet implements EPSandMaxEner
         return "Bites like a snake.";
     }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.ASSASSIN;
+    }
 }

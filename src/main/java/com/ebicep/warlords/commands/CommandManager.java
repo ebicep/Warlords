@@ -570,6 +570,7 @@ public class CommandManager {
         manager.registerCommand(new GetPlayerLastAbilityStatsCommand());
         manager.registerCommand(new GetPlayersCommand());
         manager.registerCommand(new MuteCommand());
+        manager.registerCommand(new PatchCommand());
         manager.registerCommand(new LocationCommand());
         manager.registerCommand(new PatreonCommand());
         manager.registerCommand(new PvECurrencyCommand());

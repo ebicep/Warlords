@@ -12,7 +12,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWe
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -28,7 +28,7 @@ public class EarthlivingWeaponBranch extends AbstractUpgradeBranch<EarthlivingWe
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.LuckUpgradeType() {
                     @Override
                     public String getDescription0(String value) {

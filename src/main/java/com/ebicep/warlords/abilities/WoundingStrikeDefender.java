@@ -77,13 +77,13 @@ public class WoundingStrikeDefender extends AbstractStrike {
                 critChance,
                 critMultiplier,
                 wp.getCooldownManager().hasCooldown(Intervene.class) && nearPlayer instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)
-                ? EnumSet.of(InstanceFlags.PIERCE_DAMAGE) :
+                ? EnumSet.of(InstanceFlags.PIERCE) :
                 EnumSet.noneOf(InstanceFlags.class)
         ).ifPresent(event -> onFinalEvent(wp, nearPlayer, event));
 
         if (pveMasterUpgrade2) {
-            tripleHit(
-                    wp,
+            additionalHit(
+                    2, wp,
                     nearPlayer,
                     1,
                     warlordsEntity -> {
@@ -91,7 +91,7 @@ public class WoundingStrikeDefender extends AbstractStrike {
                             return EnumSet.noneOf(InstanceFlags.class);
                         }
                         if (warlordsEntity instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)) {
-                            return EnumSet.of(InstanceFlags.PIERCE_DAMAGE);
+                            return EnumSet.of(InstanceFlags.PIERCE);
                         }
                         return EnumSet.noneOf(InstanceFlags.class);
                     },
@@ -139,7 +139,7 @@ public class WoundingStrikeDefender extends AbstractStrike {
                     3 * 20
             ) {
                 @Override
-                public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                     return currentHealValue * (100 - wounding) / 100f;
                 }
 

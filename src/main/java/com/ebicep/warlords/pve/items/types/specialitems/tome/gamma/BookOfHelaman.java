@@ -1,9 +1,20 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class BookOfHelaman extends SpecialGammaTome implements CDRandDamage, CraftsInto.CraftsThePresentTestament {
+import java.util.Set;
+
+public class BookOfHelaman extends SpecialGammaTome implements CraftsInto.CraftsThePresentTestament {
+
+    public BookOfHelaman() {
+
+    }
+
+    public BookOfHelaman(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,8 +31,9 @@ public class BookOfHelaman extends SpecialGammaTome implements CDRandDamage, Cra
         return "A tale of war.";
     }
 
+
     @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
+    public Specializations getSpec() {
+        return Specializations.AVENGER;
     }
 }

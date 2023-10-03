@@ -12,7 +12,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -24,7 +24,7 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

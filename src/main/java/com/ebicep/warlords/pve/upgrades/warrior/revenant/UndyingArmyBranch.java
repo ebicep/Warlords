@@ -11,7 +11,7 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
 
                     @Override
@@ -27,7 +27,7 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

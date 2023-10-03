@@ -1,9 +1,19 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class LucidBuckler extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsShieldOfSnatching {
+import java.util.Set;
+
+public class LucidBuckler extends SpecialGammaBuckler implements CraftsInto.CraftsShieldOfSnatching {
+
+    public LucidBuckler() {
+    }
+
+    public LucidBuckler(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +30,9 @@ public class LucidBuckler extends SpecialGammaBuckler implements DamageReduction
         return "Some might even say its obviously there.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.ROGUE;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.VINDICATOR;
+    }
 }

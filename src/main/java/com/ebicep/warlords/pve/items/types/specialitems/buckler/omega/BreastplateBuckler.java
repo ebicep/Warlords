@@ -2,32 +2,25 @@ package com.ebicep.warlords.pve.items.types.specialitems.buckler.omega;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesToWarlordsPlayer {
-    public BreastplateBuckler(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
 
     public BreastplateBuckler() {
-
     }
 
-    @Override
-    public String getName() {
-        return "Breastplate Buckler";
-    }
-
-    @Override
-    public String getBonus() {
-        return "Increases Damage Reduction by 1% for every 5% of health you lose.";
+    public BreastplateBuckler(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override
@@ -36,29 +29,45 @@ public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesTo
     }
 
     @Override
-    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        warlordsPlayer.getGame().registerEvents(new Listener() {
-
-            @EventHandler
-            public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
-                    return;
-                }
-                if (event.isHealingInstance()) {
-                    return;
-                }
-                float damageReduction = Math.max(.8f, getDamageReduction(warlordsPlayer));
-                event.setMin(event.getMin() * damageReduction);
-                event.setMax(event.getMax() * damageReduction);
-            }
-        });
+    public String getBonus() {
+        return "Repeated attacks from same target deal 2% less damage, up to 20%.";
     }
 
-    private static float getDamageReduction(WarlordsPlayer warlordsPlayer) {
-        float healthLost = warlordsPlayer.getHealth() / warlordsPlayer.getMaxBaseHealth();
-        //get health lost in multiples of 5 rounded up to nearest multiple of 5
-        float healthLostRounded = (int) Math.ceil(healthLost * 20) * .05f;
-        return 1 - healthLostRounded;
+    @Override
+    public String getName() {
+        return "Breastplate Buckler";
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
+        Map<AbstractMob<?>, Integer> repeatedAttacks = new ConcurrentHashMap<>();
+        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getName(),
+                null,
+                BreastplateBuckler.class,
+                null,
+                warlordsPlayer,
+                CooldownTypes.ITEM,
+                cooldownManager -> {
+                },
+                false,
+                (cooldown, ticksElapsed) -> {
+                    if (ticksElapsed % 40 == 0) {
+                        repeatedAttacks.entrySet().removeIf(warlordsEntityIntegerEntry -> !pveOption.getMobs().contains(warlordsEntityIntegerEntry.getKey()));
+                    }
+                }
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
+                    AbstractMob<?> mob = warlordsNPC.getMob();
+                    float damageReduction = Math.max(1 - (repeatedAttacks.getOrDefault(mob, 0) * 0.02f), 0.8f);
+                    repeatedAttacks.merge(mob, 1, Integer::sum);
+                    return currentDamageValue * damageReduction;
+                }
+                return currentDamageValue;
+            }
+        });
     }
 
 }

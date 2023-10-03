@@ -77,7 +77,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);

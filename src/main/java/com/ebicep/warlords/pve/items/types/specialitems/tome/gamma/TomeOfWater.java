@@ -1,9 +1,20 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class TomeOfWater extends SpecialGammaTome implements CDRandHealing, CraftsInto.CraftsFirewaterAlmanac {
+import java.util.Set;
+
+public final class TomeOfWater extends SpecialGammaTome implements CraftsInto.CraftsFirewaterAlmanac {
+
+    public TomeOfWater() {
+
+    }
+
+    public TomeOfWater(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +31,9 @@ public class TomeOfWater extends SpecialGammaTome implements CDRandHealing, Craf
         return "Step 1: Own an umbrella!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.MAGE;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.AQUAMANCER;
+    }
 }

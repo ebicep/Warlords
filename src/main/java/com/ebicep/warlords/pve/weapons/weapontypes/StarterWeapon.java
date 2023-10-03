@@ -7,6 +7,7 @@ import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +44,7 @@ public class StarterWeapon extends AbstractTierOneWeapon {
     }
 
     @Override
-    public NamedTextColor getTextColor() {
+    public TextColor getTextColor() {
         return NamedTextColor.GRAY;
     }
 

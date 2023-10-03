@@ -13,7 +13,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -25,7 +25,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addUpgrade(
                         new UpgradeTypes.UpgradeType() {

@@ -113,7 +113,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         Location location = wp.getLocation();
         FallingBlock block = spawnFallingBlock(location, location);
         EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), spikeTarget, wp);
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         new GameRunnable(wp.getGame()) {
             private final float SPEED_SQUARED = speed * speed;
@@ -316,6 +316,9 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                                finalEvent.isCrit() ? 100 : 0,
                                100
                        );
+                       if (finalEvent.isCrit()) {
+                           caster.addEnergy(caster, "Earthen Verdancy", 10);
+                       }
                    });
         if (LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82) {
             spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
@@ -323,7 +326,6 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         if (pveMasterUpgrade2) {
             spikeTarget.getCooldownManager().removeCooldownByName("Earthen Verdancy");
             CripplingStrike.cripple(caster, spikeTarget, "Earthen Verdancy", 5 * 20);
-
         }
     }
 

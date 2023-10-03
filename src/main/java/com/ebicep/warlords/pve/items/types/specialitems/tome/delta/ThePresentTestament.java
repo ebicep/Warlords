@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
@@ -10,7 +9,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.CommandmentNoEleven;
-import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
+import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -19,12 +18,12 @@ import java.util.Set;
 
 public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto {
 
-    public ThePresentTestament(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public ThePresentTestament() {
 
+    }
+
+    public ThePresentTestament(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override
@@ -34,7 +33,7 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
 
     @Override
     public String getBonus() {
-        return "ELITE mobs take true damage.";
+        return "Targets (excluding bosses) above 65% health take pierce damage.";
     }
 
     @Override
@@ -42,10 +41,6 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
         return "No longer Old nor New!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
-    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
@@ -57,9 +52,10 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
                     return;
                 }
                 if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-                    if (warlordsNPC.getMob() instanceof IntermediateMob) {
-                        event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
+                    if (warlordsNPC.getMob() instanceof BossLike) {
+                        return;
                     }
+                    event.getFlags().add(InstanceFlags.PIERCE);
                 }
             }
 

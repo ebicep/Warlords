@@ -84,7 +84,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
 
         LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);

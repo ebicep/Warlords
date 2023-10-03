@@ -12,7 +12,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
 
                     @Override
@@ -29,7 +29,7 @@ public class BerserkBranch extends AbstractUpgradeBranch<Berserk> {
 
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.SpeedUpgradeType() {
                     @Override
                     public String getDescription0(String value) {

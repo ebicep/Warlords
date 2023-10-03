@@ -12,6 +12,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -167,7 +168,7 @@ public enum Currencies implements Spendable {
     },
     ASCENDANT_SHARD(
             "Ascendant Shard",
-            NamedTextColor.GOLD,
+            TextColor.color(220, 20, 60),
             new ItemStack(Material.ECHO_SHARD)
     ),
 
@@ -262,10 +263,10 @@ public enum Currencies implements Spendable {
     }
 
     public final String name;
-    public final NamedTextColor textColor;
+    public final TextColor textColor;
     public final ItemStack item;
 
-    Currencies(String name, NamedTextColor textColor, ItemStack item) {
+    Currencies(String name, TextColor textColor, ItemStack item) {
         this.name = name;
         this.textColor = textColor;
         this.item = item;
@@ -277,7 +278,7 @@ public enum Currencies implements Spendable {
     }
 
     @Override
-    public NamedTextColor getTextColor() {
+    public TextColor getTextColor() {
         return textColor;
     }
 

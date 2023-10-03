@@ -53,6 +53,7 @@ import org.bukkit.Bukkit;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -125,9 +126,14 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     private Map<Specializations, List<AutoUpgradeProfile>> autoUpgradeProfiles = new HashMap<>();
     @Field("auto_save_upgrade_profile")
     private boolean autoSaveUpgradeProfile;
-
     @Field("illusion_vendor_rewards_purchased")
     private Map<String, Long> illusionVendorRewardsPurchased = new HashMap<>();
+    //MAGE
+    //0=fireball
+    //1=flameburst
+    //etc
+    @Field("alternative_masteries_unlocked")
+    private Map<Specializations, Map<Integer, Instant>> alternativeMasteriesUnlocked = new HashMap<>();
 
     public void loadInCollection(PlayersCollections collection) {
         if (activeBounties.isEmpty()) {
@@ -330,6 +336,13 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         this.addCurrency(currency, -amount);
     }
 
+    public void setCurrency(Currencies currency, Long amount) {
+        if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
+            return;
+        }
+        this.currencies.put(currency, amount);
+    }
+
     public DatabasePlayerPvEWaveDefenseDifficultyStats getEasyStats() {
         return waveDefenseStats.getEasyStats();
     }
@@ -487,5 +500,9 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     public DatabasePlayerOnslaughtStats getOnslaughtStats() {
         return onslaughtStats;
+    }
+
+    public Map<Specializations, Map<Integer, Instant>> getAlternativeMasteriesUnlocked() {
+        return alternativeMasteriesUnlocked;
     }
 }

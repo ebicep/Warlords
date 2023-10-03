@@ -1,9 +1,19 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class ClandestineBuckler extends SpecialGammaBuckler implements DamageReductionandKBRes, CraftsInto.CraftsShieldOfSnatching {
+import java.util.Set;
+
+public class ClandestineBuckler extends SpecialGammaBuckler implements CraftsInto.CraftsShieldOfSnatching {
+
+    public ClandestineBuckler() {
+    }
+
+    public ClandestineBuckler(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +30,9 @@ public class ClandestineBuckler extends SpecialGammaBuckler implements DamageRed
         return "Some might even say it's not even there.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.ROGUE;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.ASSASSIN;
+    }
 }

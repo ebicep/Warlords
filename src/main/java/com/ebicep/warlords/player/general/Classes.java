@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,17 +77,16 @@ public enum Classes {
         this.subclasses = List.of(subclasses);
     }
 
-    public static Classes getClassFromNameNullable(String name) {
+    @Nullable
+    public static Classes getClassFromName(String name) {
         if (name == null) {
             return null;
         }
-
         for (Classes value : VALUES) {
             if (value.name.equalsIgnoreCase(name) || value.aliases.contains(name.toLowerCase())) {
                 return value;
             }
         }
-
         return null;
     }
 

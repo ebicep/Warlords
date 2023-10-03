@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,7 +13,7 @@ public enum GuildSpendable implements Spendable {
 
     GUILD_COIN("Coin") {
         @Override
-        public NamedTextColor getTextColor() {
+        public TextColor getTextColor() {
             return NamedTextColor.GOLD;
         }
 
@@ -41,7 +42,7 @@ public enum GuildSpendable implements Spendable {
     },
     GUILD_EXPERIENCE("Experience") {
         @Override
-        public NamedTextColor getTextColor() {
+        public TextColor getTextColor() {
             return NamedTextColor.GREEN;
         }
 

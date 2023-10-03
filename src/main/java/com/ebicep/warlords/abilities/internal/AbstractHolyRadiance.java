@@ -47,7 +47,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
 
         if (chain(wp, player)) {
             playersMarked++;

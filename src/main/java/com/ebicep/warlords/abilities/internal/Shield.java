@@ -34,32 +34,33 @@ public class Shield implements Listener {
         WarlordsEntity warlordsEntity = event.getWarlordsEntity();
         org.bukkit.entity.LivingEntity livingEntity = warlordsEntity.getEntity();
         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-        if (cooldown.getCooldownObject() instanceof Shield shield) {
-            Consumer<CooldownManager> oldRemoveForce = cooldown.getOnRemoveForce();
-            cooldown.setOnRemoveForce(cooldownManager -> {
-                WarlordsEntity we = cooldownManager.getWarlordsEntity();
-                if (livingEntity instanceof Player player) {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Shield.class).stream().count() == 1) {
-                        ((CraftPlayer) player).getHandle().setAbsorptionAmount(0);
-                    } else {
-                        double totalShieldHealth = new CooldownFilter<>(we, RegularCooldown.class)
-                                .filter(RegularCooldown::hasTicksLeft)
-                                .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                                .mapToDouble(Shield::getShieldHealth)
-                                .sum();
-                        ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / we.getMaxHealth() * 40));
-                    }
-                }
-                oldRemoveForce.accept(cooldownManager);
-            });
+        if (!(cooldown.getCooldownObject() instanceof Shield shield)) {
+            return;
+        }
+        Consumer<CooldownManager> oldRemoveForce = cooldown.getOnRemoveForce();
+        cooldown.setOnRemoveForce(cooldownManager -> {
+            WarlordsEntity we = cooldownManager.getWarlordsEntity();
             if (livingEntity instanceof Player player) {
-                double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                        .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                        .mapToDouble(Shield::getShieldHealth)
-                        .sum();
-                totalShieldHealth += shield.getShieldHealth();
-                ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
+                if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Shield.class).stream().count() == 1) {
+                    ((CraftPlayer) player).getHandle().setAbsorptionAmount(0);
+                } else {
+                    double totalShieldHealth = new CooldownFilter<>(we, RegularCooldown.class)
+                            .filter(RegularCooldown::hasTicksLeft)
+                            .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                            .mapToDouble(Shield::getShieldHealth)
+                            .sum();
+                    ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / we.getMaxHealth() * 40));
+                }
             }
+            oldRemoveForce.accept(cooldownManager);
+        });
+        if (livingEntity instanceof Player player) {
+            double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                    .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                    .mapToDouble(Shield::getShieldHealth)
+                    .sum();
+            totalShieldHealth += shield.getShieldHealth();
+            ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
         }
     }
 

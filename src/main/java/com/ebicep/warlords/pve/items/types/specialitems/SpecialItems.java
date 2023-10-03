@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems;
 
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma.*;
@@ -11,7 +12,9 @@ import com.ebicep.warlords.pve.items.types.specialitems.tome.delta.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.gamma.*;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.*;
 
-import java.util.function.Supplier;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Function;
 
 public enum SpecialItems {
     //GAMMA
@@ -63,35 +66,46 @@ public enum SpecialItems {
     //DELTA
     SOOTHSAYERS_PALMS(SoothsayersPalms::new),
     SAMSONS_FISTS(SamsonsFists::new),
-    PENDRAGON_GAUNTLETS(PendragonGauntlets::new),
+    PENDRAGON_KNUCKLES(PendragonGauntlets::new),
     GARDENING_GLOVES(GardeningGloves::new),
     MULTIPURPOSE_KNUCKLES(MultipurposeKnuckles::new),
-    FIREWATER_ALMANAC(FirewaterAlmanac::new),
+    DIABOLICAL_RINGS(DiabolicalRings::new),
+
+    FIREWATER_ALMANAC(FirewaterAlmanac::new), //TODO
     THE_PRESENT_TESTAMENT(ThePresentTestament::new),
     A_GUIDE_TO_MMA(AGuideToMMA::new),
-    PANS_TOME(PansTome::new),
+    GHOUL_TOME(PansTome::new),
     SCROLL_OF_UNCERTAINTY(ScrollOfUncertainty::new),
-    BUCKLER_PIECE(BucklerPiece::new),
+    BRUISED_BOOK(BruisedBook::new),
+
+    HAZARDOUS_BUCKLER(BucklerPiece::new),
     CROSS_NECKLACE_CHARM(CrossNecklaceCharm::new),
     PRIDWENS_BULWARK(PridwensBulwark::new),
     AERIAL_AEGIS(AerialAegis::new),
     SHIELD_OF_SNATCHING(ShieldOfSnatching::new),
+    OTHERWORLDLY_AMULET(OtherworldlyAmulet::new),
+
     //OMEGA
     LILITHS_CLAWS(LilithsClaws::new),
     HANDS_OF_THE_HOLY_CORPSE(HandsOfTheHolyCorpse::new),
     GLASS_KNUCKLES(GlassKnuckles::new),
     NATURES_CLAWS(NaturesClaws::new),
     ROBIN_HOODS_GLOVES(RobinHoodsGloves::new),
+    MONA_LISAS_PALMS(MonaLisasPalms::new),
+
     FLEMING_ALMANAC(FlemingAlmanac::new),
     COMMANDMENT_NO_ELEVEN(CommandmentNoEleven::new),
-    SCROLL_OF_SCRIPTS(ScrollOfScripts::new),
+    SCROLL_OF_SANGUINITY(ScrollOfScripts::new),
     GUIDE_FOR_THE_RIVER_STYX(GuideForTheRiverStyx::new),
     TOME_OF_THEFT(TomeOfTheft::new),
+    MYSTICKS_MANUAL_VOL_23_H(MysticksManualVol23H::new),
+
     ELEMENTAL_SHIELD(ElementalShield::new),
     BREASTPLATE_BUCKLER(BreastplateBuckler::new),
     ATHENIAN_AEGIS(AthenianAegis::new),
-    CRESCENT_BULWARK(CrescentBulwark::new),
-    CHAKRAM_OF_BLADES(ChakramOfBlades::new),
+    WAXING_BULWARK(CrescentBulwark::new),
+    DIRTY_CHAKRAM(ChakramOfBlades::new),
+    LOVELY_OMAMORI(LovelyOmamori::new),
 
     ;
 
@@ -145,19 +159,21 @@ public enum SpecialItems {
     public static final SpecialItems[] DELTA_ITEMS = {
             SOOTHSAYERS_PALMS,
             SAMSONS_FISTS,
-            PENDRAGON_GAUNTLETS,
+            PENDRAGON_KNUCKLES,
             GARDENING_GLOVES,
             MULTIPURPOSE_KNUCKLES,
+            DIABOLICAL_RINGS,
             FIREWATER_ALMANAC,
             THE_PRESENT_TESTAMENT,
             A_GUIDE_TO_MMA,
-            PANS_TOME,
+            GHOUL_TOME,
             SCROLL_OF_UNCERTAINTY,
-            BUCKLER_PIECE,
+            HAZARDOUS_BUCKLER,
             CROSS_NECKLACE_CHARM,
             PRIDWENS_BULWARK,
             AERIAL_AEGIS,
             SHIELD_OF_SNATCHING,
+            OTHERWORLDLY_AMULET,
     };
     public static final SpecialItems[] OMEGA_ITEMS = {
             LILITHS_CLAWS,
@@ -165,21 +181,29 @@ public enum SpecialItems {
             GLASS_KNUCKLES,
             NATURES_CLAWS,
             ROBIN_HOODS_GLOVES,
+            MONA_LISAS_PALMS,
             FLEMING_ALMANAC,
             COMMANDMENT_NO_ELEVEN,
-            SCROLL_OF_SCRIPTS,
+            SCROLL_OF_SANGUINITY,
             GUIDE_FOR_THE_RIVER_STYX,
             TOME_OF_THEFT,
+            MYSTICKS_MANUAL_VOL_23_H,
             ELEMENTAL_SHIELD,
             BREASTPLATE_BUCKLER,
             ATHENIAN_AEGIS,
-            CRESCENT_BULWARK,
-            CHAKRAM_OF_BLADES,
+            WAXING_BULWARK,
+            DIRTY_CHAKRAM,
+            LOVELY_OMAMORI,
     };
 
-    public final Supplier<AbstractSpecialItem> create;
+    public final Function<Set<BasicStatPool>, AbstractSpecialItem> create;
 
-    SpecialItems(Supplier<AbstractSpecialItem> create) {
+    SpecialItems(Function<Set<BasicStatPool>, AbstractSpecialItem> create) {
         this.create = create;
+    }
+
+    public AbstractSpecialItem create() {
+        AbstractSpecialItem abstractSpecialItem = create.apply(new HashSet<>());
+        return create.apply(abstractSpecialItem.getTier().generateStatPool());
     }
 }

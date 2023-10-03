@@ -1,9 +1,20 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class BookOfActs extends SpecialGammaTome implements CDRandCritChance, CraftsInto.CraftsThePresentTestament {
+import java.util.Set;
+
+public class BookOfActs extends SpecialGammaTome implements CraftsInto.CraftsThePresentTestament {
+
+    public BookOfActs() {
+
+    }
+
+    public BookOfActs(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +31,9 @@ public class BookOfActs extends SpecialGammaTome implements CDRandCritChance, Cr
         return "A tale of twelve men.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.CRUSADER;
+    }
 }

@@ -64,7 +64,7 @@ public class ZombieSwordsman extends AbstractZombie implements IntermediateMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.subtractEnergy(5, true);
+        receiver.subtractEnergy(name, 5, true);
     }
 
     @Override

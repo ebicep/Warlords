@@ -11,7 +11,7 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -26,7 +26,7 @@ public class RepentanceBranch extends AbstractUpgradeBranch<Repentance> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability)
                 .addTo(treeB);
 

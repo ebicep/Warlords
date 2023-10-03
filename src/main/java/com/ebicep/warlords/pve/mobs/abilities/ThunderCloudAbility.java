@@ -138,7 +138,7 @@ public class ThunderCloudAbility extends AbstractPveAbility {
                                         maxDamage,
                                         0,
                                         100,
-                                        size > 8 ? EnumSet.of(InstanceFlags.PIERCE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class)
+                                        size > 8 ? EnumSet.of(InstanceFlags.PIERCE) : EnumSet.noneOf(InstanceFlags.class)
                                 );
                             });
             }

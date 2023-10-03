@@ -12,7 +12,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
@@ -28,7 +28,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
                     @Override
                     public String getName() {

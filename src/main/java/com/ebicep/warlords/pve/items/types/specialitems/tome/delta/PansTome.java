@@ -1,63 +1,74 @@
 package com.ebicep.warlords.pve.items.types.specialitems.tome.delta;
 
-import com.ebicep.warlords.abilities.ChainHeal;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.GuideForTheRiverStyx;
 
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class PansTome extends SpecialDeltaTome implements CraftsInto {
-
-    public PansTome(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
 
     public PansTome() {
 
     }
 
-    @Override
-    public String getName() {
-        return "Pan's Tome";
-    }
-
-    @Override
-    public String getBonus() {
-        return "Chain abilities guarantee to hit their max amount of targets.";
+    public PansTome(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override
     public String getDescription() {
-        return "Born to be wild.";
+        return "Good grief.";
     }
 
     @Override
-    public Classes getClasses() {
-        return Classes.SHAMAN;
+    public String getBonus() {
+        return "Melee attacks have a 20% chance to hit two additional times.";
+    }
+
+    @Override
+    public String getName() {
+        return "Ghoul Tome";
     }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
-            if (!(ability instanceof AbstractChain chain)) {
-                continue;
-            }
-            chain.setBounceRange(100);
-            int additionalBounces = chain.getAdditionalBounces();
-            if (ability instanceof ChainHeal) {
-                chain.setAdditionalBounces(additionalBounces + 1);
-            } else {
-                chain.setAdditionalBounces(additionalBounces + 2);
-            }
-        }
+        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getName(),
+                null,
+                PansTome.class,
+                null,
+                warlordsPlayer,
+                CooldownTypes.ITEM,
+                cooldownManager -> {
 
+                },
+                false
+        ) {
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getAbility().isEmpty() && ThreadLocalRandom.current().nextDouble() <= .2) {
+                    for (int i = 0; i < 2; i++) {
+                        event.getWarlordsEntity().addDamageInstance(
+                                warlordsPlayer,
+                                event.getAbility(),
+                                event.getMin(),
+                                event.getMax(),
+                                event.getCritChance(),
+                                event.getCritMultiplier(),
+                                event.getFlags()
+                        );
+                    }
+                }
+            }
+        });
     }
 
     @Override

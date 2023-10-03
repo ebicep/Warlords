@@ -13,7 +13,7 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
 
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -25,7 +25,7 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

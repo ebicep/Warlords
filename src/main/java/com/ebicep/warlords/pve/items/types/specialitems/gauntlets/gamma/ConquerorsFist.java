@@ -1,14 +1,20 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class ConquerorsFist extends SpecialGammaGauntlet implements EPSandSpeed, CraftsInto.CraftsSamsonsFists {
+import java.util.Set;
 
-    @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
+public class ConquerorsFist extends SpecialGammaGauntlet implements CraftsInto.CraftsSamsonsFists {
+
+    public ConquerorsFist() {
     }
+
+    public ConquerorsFist(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
+
 
     @Override
     public String getName() {
@@ -25,4 +31,8 @@ public class ConquerorsFist extends SpecialGammaGauntlet implements EPSandSpeed,
         return "Kneel before your ruler, Godfrey of Boullion!";
     }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.CRUSADER;
+    }
 }

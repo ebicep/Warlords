@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.weapons.weaponaddons.WeaponScore;
 import com.ebicep.warlords.util.java.MathUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -93,7 +94,7 @@ public class EpicWeapon extends AbstractTierTwoWeapon implements Salvageable, We
     }
 
     @Override
-    public NamedTextColor getTextColor() {
+    public TextColor getTextColor() {
         return NamedTextColor.DARK_PURPLE;
     }
 

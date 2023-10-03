@@ -13,7 +13,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -26,7 +26,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public String getDescription0(String value) {

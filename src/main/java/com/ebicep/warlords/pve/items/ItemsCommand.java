@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
 @CommandAlias("items")
-@CommandPermission("minecraft.command.op|group.administrator")
+@CommandPermission("group.administrator")
 public class ItemsCommand extends BaseCommand {
 
     @Default
@@ -45,10 +45,10 @@ public class ItemsCommand extends BaseCommand {
     @Subcommand("addfoundblessings")
     public void addFoundBlessings(Player player, @Conditions("limits:min=1,max=10") Integer amount) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.getPveStats()
-                          .getItemsManager()
-                          .addBlessingsFound(amount);
-            ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " found blessings", NamedTextColor.GREEN));
+                    databasePlayer.getPveStats()
+                                  .getItemsManager()
+                                  .addBlessingsFound(amount);
+                    ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " found blessings", NamedTextColor.GREEN));
                 }
         );
     }
@@ -61,8 +61,7 @@ public class ItemsCommand extends BaseCommand {
                           .getBlessingsBought()
                           .merge(tier, amount, Integer::sum);
             ChatChannels.sendDebugMessage(player, Component.text("Added " + amount + " Tier " + tier + " bought blessings", NamedTextColor.GREEN));
-                }
-        );
+        });
     }
 
     @Subcommand("generate")
@@ -74,7 +73,7 @@ public class ItemsCommand extends BaseCommand {
         ItemTier finalTier = tier;
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
-                AbstractItem item = type.createBasic(finalTier);
+                AbstractItem item = type.create(finalTier);
                 if (item == null) {
                     continue;
                 }
@@ -91,7 +90,7 @@ public class ItemsCommand extends BaseCommand {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
                 ItemTier randomItemTier = ItemTier.VALID_VALUES[random.nextInt(ItemTier.VALID_VALUES.length)];
-                AbstractItem item = ItemType.getRandom().createBasic(randomItemTier);
+                AbstractItem item = ItemType.getRandom().create(randomItemTier);
                 if (item == null) {
                     continue;
                 }
@@ -107,7 +106,7 @@ public class ItemsCommand extends BaseCommand {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
             for (int i = 0; i < amount; i++) {
-                AbstractSpecialItem item = specialItem.create.get();
+                AbstractSpecialItem item = specialItem.create();
                 databasePlayer.getPveStats().getItemsManager().addItem(item);
                 ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, Component.text("Spawned item: ", NamedTextColor.GRAY)
                                                                                     .append(item.getHoverComponent()));

@@ -9,7 +9,6 @@ import java.util.Set;
 public abstract class SpecialOmegaGauntlet extends SpecialGauntlet {
 
     public SpecialOmegaGauntlet() {
-        super(ItemTier.OMEGA);
     }
 
     public SpecialOmegaGauntlet(Set<BasicStatPool> statPool) {

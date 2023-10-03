@@ -15,7 +15,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -35,20 +35,15 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addUpgrade(
-                        new UpgradeTypes.UpgradeType() {
-                            @Override
-                            public String getDescription0(String value) {
-                                return "+2s Duration";
-                            }
-
+                        new UpgradeTypes.DurationUpgradeType() {
                             @Override
                             public void run(float value) {
-                                ability.setTickDuration(duration + 40);
+                                ability.setTickDuration((int) (duration + value));
                             }
-                        }, .25f, 4
+                        }, 40f, 4
                 )
                 .addTo(treeB);
 

@@ -74,6 +74,10 @@ public class ItemBuilder {
         return this;
     }
 
+    public Component getName() {
+        return meta().displayName();
+    }
+
     public ItemBuilder enchant(@Nonnull Enchantment enchant, int level) {
         meta().addEnchant(enchant, level, true);
         return this;
@@ -143,6 +147,10 @@ public class ItemBuilder {
     public ItemBuilder prependLore(Component... lore) {
         prependLore(Arrays.asList(lore));
         return this;
+    }
+
+    public List<Component> getLore() {
+        return meta().lore();
     }
 
     public ItemBuilder amount(int amount) {

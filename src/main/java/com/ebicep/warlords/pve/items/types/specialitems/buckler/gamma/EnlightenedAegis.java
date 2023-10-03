@@ -1,9 +1,19 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class EnlightenedAegis extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsCrossNecklaceCharm {
+import java.util.Set;
+
+public class EnlightenedAegis extends SpecialGammaBuckler implements CraftsInto.CraftsCrossNecklaceCharm {
+
+    public EnlightenedAegis() {
+    }
+
+    public EnlightenedAegis(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +30,9 @@ public class EnlightenedAegis extends SpecialGammaBuckler implements DamageReduc
         return "Victory or Death, right?";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.CRUSADER;
+    }
 }

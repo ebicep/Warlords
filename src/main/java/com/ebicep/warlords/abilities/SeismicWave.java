@@ -62,7 +62,7 @@ public class SeismicWave extends AbstractAbility implements RedAbilityIcon {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         List<List<Location>> fallingBlockLocations = new ArrayList<>();

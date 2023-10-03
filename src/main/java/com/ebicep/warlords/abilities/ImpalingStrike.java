@@ -96,8 +96,8 @@ public class ImpalingStrike extends AbstractStrike {
 
 
         if (pveMasterUpgrade2) {
-            tripleHit(
-                    wp,
+            additionalHit(
+                    2, wp,
                     nearPlayer,
                     1,
                     warlordsEntity -> EnumSet.noneOf(InstanceFlags.class),

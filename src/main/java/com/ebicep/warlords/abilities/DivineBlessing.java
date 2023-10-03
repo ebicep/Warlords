@@ -71,7 +71,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.divineblessing.activation", 2, 1.2f);
         Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.6f);
         EffectUtils.strikeLightning(wp.getLocation(), true);
@@ -149,7 +149,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                 21
                                         ) {
                                             @Override
-                                            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                                                 return currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
                                             }
 
@@ -177,7 +177,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         ) {
 
             @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 if (hasMaxStacks()) {
                     return currentHealValue * (1 + hexHealingBonus / 100f);
                 } else {

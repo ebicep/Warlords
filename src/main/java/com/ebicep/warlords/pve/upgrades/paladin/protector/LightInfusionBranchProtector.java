@@ -11,7 +11,7 @@ public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInf
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.EnergyUpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -26,20 +26,20 @@ public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInf
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addUpgrade(
                         new UpgradeTypes.UpgradeType() {
                             @Override
                             public String getDescription0(String value) {
-                                return "+20% Speed";
+                                return "+" + value + "% Speed";
                             }
 
                             @Override
                             public void run(float value) {
-                                ability.setSpeedBuff(ability.getSpeedBuff() + 20);
+                                ability.setSpeedBuff((int) (ability.getSpeedBuff() + value));
                             }
-                        }, .25f, 4
+                        }, 20f, 4
                 )
                 .addTo(treeB);
 

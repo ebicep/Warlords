@@ -58,12 +58,12 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                                         .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
                                         .findAny();
                                 if (optionalHammerOfLight.isPresent()) {
-                                    wp.subtractEnergy(energyCost.getCurrentValue() - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
+                                    wp.subtractEnergy(name, energyCost.getCurrentValue() - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
                                 } else {
-                                    wp.subtractEnergy(energyCost, false);
+                                    wp.subtractEnergy(name, energyCost, false);
                                 }
                             } else {
-                                wp.subtractEnergy(energyCost, false);
+                                wp.subtractEnergy(name, energyCost, false);
                             }
                             hitPlayer.set(successfulStrike);
                         }
@@ -82,7 +82,8 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
         kbTarget.setVelocity(name, v, false);
     }
 
-    public void tripleHit(
+    public void additionalHit(
+            int additionalHitAmount,
             WarlordsEntity giver,
             WarlordsEntity initialTarget,
             float damageModifier,
@@ -94,7 +95,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                 .aliveEnemiesOf(giver)
                 .closestFirst(initialTarget)
                 .excluding(initialTarget)
-                .limit(2)
+                .limit(additionalHitAmount)
         ) {
             EnumSet<InstanceFlags> flags = getFlags != null ? getFlags.apply(we) : EnumSet.noneOf(InstanceFlags.class);
             onFinalEvent.accept(we.addDamageInstance(

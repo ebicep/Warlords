@@ -19,7 +19,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
         maxDamage = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -31,7 +31,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
 
                     @Override

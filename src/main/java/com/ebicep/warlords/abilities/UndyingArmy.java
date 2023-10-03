@@ -97,7 +97,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, 0.3f);
         Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 0.9f);
 

@@ -12,12 +12,12 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability, 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

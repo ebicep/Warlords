@@ -157,13 +157,15 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                         }
                     }
 
-                    for (WarlordsEntity we : PlayerFilter
-                            .entitiesAround(wp, 15, 15, 15)
-                            .aliveEnemiesOf(wp)
-                            .closestFirst(wp)
-                    ) {
-                        if (we instanceof WarlordsNPC) {
-                            ((WarlordsNPC) we).getMob().setTarget(wp);
+                    if (wp.isInPve()) {
+                        for (WarlordsEntity we : PlayerFilter
+                                .entitiesAround(wp, 15, 15, 15)
+                                .aliveEnemiesOf(wp)
+                                .closestFirst(wp)
+                        ) {
+                            if (we instanceof WarlordsNPC warlordsNPC) {
+                                warlordsNPC.getMob().setTarget(wp);
+                            }
                         }
                     }
                 })

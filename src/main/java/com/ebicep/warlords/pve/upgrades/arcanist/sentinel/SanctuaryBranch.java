@@ -9,12 +9,12 @@ public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DurationUpgradeType() {
                     @Override
                     public String getDescription0(String value) {

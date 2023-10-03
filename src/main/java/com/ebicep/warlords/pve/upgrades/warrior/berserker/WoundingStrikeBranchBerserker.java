@@ -18,7 +18,7 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
         maxDamage = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -30,7 +30,7 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
                 .addUpgradeDuration(ability::setWoundingTickDuration, ability::getWoundingTickDuration, 10f)
                 .addTo(treeB);

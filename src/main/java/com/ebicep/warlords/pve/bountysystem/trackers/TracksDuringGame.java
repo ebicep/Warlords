@@ -3,7 +3,7 @@ package com.ebicep.warlords.pve.bountysystem.trackers;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUsedEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import org.bukkit.event.EventHandler;
@@ -31,7 +31,7 @@ public interface TracksDuringGame {
             }
 
             @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-            public void onEnergyUsed(WarlordsEnergyUsedEvent event) {
+            public void onEnergyUsed(WarlordsEnergyUseEvent.Post event) {
                 trackers.forEach((uuid, tracksDuringGame) -> tracksDuringGame.forEach(track -> track.onEnergyUsed(uuid, event)));
             }
 
@@ -55,7 +55,7 @@ public interface TracksDuringGame {
 
     }
 
-    default void onEnergyUsed(UUID uuid, WarlordsEnergyUsedEvent event) {
+    default void onEnergyUsed(UUID uuid, WarlordsEnergyUseEvent.Post event) {
 
     }
 

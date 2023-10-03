@@ -12,7 +12,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -24,7 +24,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeDuration(ability)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);

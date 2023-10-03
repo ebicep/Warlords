@@ -119,7 +119,7 @@ public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
                 5 * 20
         ) {
             @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 return currentHealValue * .5f;
             }
         });
@@ -159,7 +159,7 @@ public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
 
             EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.FLAME, 1);
             for (WarlordsEntity enemy : PlayerFilter

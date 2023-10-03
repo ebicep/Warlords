@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -135,7 +136,7 @@ public abstract class AbstractWeapon {
         return new ArrayList<>();
     }
 
-    public abstract NamedTextColor getTextColor();
+    public abstract TextColor getTextColor();
 
     public ItemBuilder generateItemStackInLore(Component name) {
         List<Component> lore = new ArrayList<>();

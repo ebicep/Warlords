@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Supplier;
@@ -29,7 +30,7 @@ public enum FixedItems implements Spendable {
     }
 
     @Override
-    public NamedTextColor getTextColor() {
+    public TextColor getTextColor() {
         return NamedTextColor.GRAY;
     }
 

@@ -6,6 +6,10 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.List;
 
 /**
@@ -73,6 +77,7 @@ public interface Option {
      *
      * @param player The player to act on
      */
+    @Priority()
     default void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
     }
 
@@ -101,6 +106,12 @@ public interface Option {
      */
     default void onPlayerQuit(Player player) {
 
+    }
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Priority {
+        int value() default 3;
     }
 
 }

@@ -1,55 +1,52 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
+import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
-import com.ebicep.warlords.pve.items.statpool.SpecialStatPool;
-import com.ebicep.warlords.pve.items.statpool.StatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.RobinHoodsGloves;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-import java.util.HashMap;
 import java.util.Set;
 
-public class MultipurposeKnuckles extends SpecialDeltaGauntlet {
-
-    private static final HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
-        put(BasicStatPool.DAMAGE, 50);
-        put(SpecialStatPool.DAMAGE_RESISTANCE, 5);
-        put(BasicStatPool.HEALING, 50);
-        put(SpecialStatPool.EPS, 5);
-    }};
-
-    public MultipurposeKnuckles(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
+public class MultipurposeKnuckles extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
 
     public MultipurposeKnuckles() {
 
     }
 
+    public MultipurposeKnuckles(Set<BasicStatPool> statPool) {
+        super(statPool);
+    }
+
+    @Override
+    public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
+        warlordsPlayer.getGame().registerEvents(new Listener() {
+            @EventHandler
+            public void onCurrencyAdd(WarlordsAddCurrencyEvent event) {
+                if (event.getWarlordsEntity().equals(warlordsPlayer)) {
+                    event.getCurrencyToAdd().updateAndGet(value -> (int) (value * 1.1));
+                }
+            }
+        });
+    }
+
     @Override
     public String getName() {
-        return "Multipurpose Knuckles";
+        return "Swiper's Claws";
     }
 
     @Override
     public String getBonus() {
-        return "+5% Damage, Damage Reduction, Healing, and EPS.";
+        return "Gain 10% more insignia from all sources.";
     }
 
     @Override
     public String getDescription() {
-        return "Wow! So creative!";
-    }
-
-    @Override
-    public Classes getClasses() {
-        return Classes.ROGUE;
-    }
-
-    @Override
-    public HashMap<StatPool, Integer> getBonusStats() {
-        return BONUS_STATS;
+        return "Swiper no swiping!";
     }
 
     @Override

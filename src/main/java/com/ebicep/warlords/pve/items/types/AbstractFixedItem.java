@@ -15,6 +15,7 @@ import java.util.List;
 public abstract class AbstractFixedItem extends AbstractItem implements BonusLore {
 
     public AbstractFixedItem() {
+        super();
     }
 
     public AbstractFixedItem(ItemTier tier) {
@@ -29,7 +30,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     @Override
     public ItemBuilder generateItemBuilder() {
         ItemBuilder itemBuilder = getBaseItemBuilder();
-        addStatPoolAndBlessing(itemBuilder, null);
+        addStatPoolAndModifier(itemBuilder, null);
         if (this instanceof FixedItemAppliesToPlayer bonus) {
             itemBuilder.addLore(
                     Component.empty(),
@@ -37,7 +38,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
             );
             itemBuilder.addLore(WordWrap.wrap(Component.text(bonus.getEffectDescription(), NamedTextColor.GRAY), 160));
         }
-        addItemScoreAndWeight(itemBuilder, false);
+        addItemScore(itemBuilder, false);
         if (isFavorite()) {
             itemBuilder.addLore(
                     Component.empty(),

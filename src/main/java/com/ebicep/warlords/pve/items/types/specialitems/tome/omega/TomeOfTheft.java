@@ -14,12 +14,12 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TomeOfTheft extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
-    public TomeOfTheft(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public TomeOfTheft() {
 
+    }
+
+    public TomeOfTheft(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class TomeOfTheft extends SpecialOmegaTome implements AppliesToWarlordsPl
                 if (event.isHealingInstance()) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextDouble() < .05) {
+                if (ThreadLocalRandom.current().nextDouble() < .1) {
                     // doenst make logical sense for item to dodge but whatever
                     warlordsPlayer.sendMessage(Component.text("Your " + getName() + " dodged ", NamedTextColor.GREEN)
                                                         .append(event.getAttacker().getColoredName())
@@ -52,7 +52,7 @@ public class TomeOfTheft extends SpecialOmegaTome implements AppliesToWarlordsPl
 
     @Override
     public String getBonus() {
-        return "5% of all attacks are dodged.";
+        return "10% of all attacks are dodged.";
     }
 
     @Override

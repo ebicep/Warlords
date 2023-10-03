@@ -1,9 +1,19 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class DrippingGloves extends SpecialGammaGauntlet implements EPSandEPH, CraftsInto.CraftsPalmOfTheSoothsayer {
+import java.util.Set;
+
+public class DrippingGloves extends SpecialGammaGauntlet implements CraftsInto.CraftsPalmOfTheSoothsayer {
+
+    public DrippingGloves() {
+    }
+
+    public DrippingGloves(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +30,9 @@ public class DrippingGloves extends SpecialGammaGauntlet implements EPSandEPH, C
         return "It seems that air drying isn't very effective.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.MAGE;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.AQUAMANCER;
+    }
 }

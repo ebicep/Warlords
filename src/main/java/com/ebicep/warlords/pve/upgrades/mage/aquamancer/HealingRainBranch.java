@@ -11,7 +11,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -23,7 +23,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeHitBox(ability, 1)
                 .addUpgradeDuration(ability, 80f, false, 4)
                 .addTo(treeB);

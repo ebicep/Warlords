@@ -12,7 +12,7 @@ public class AbstractGroundSlamBranch<T extends AbstractGroundSlam> extends Abst
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -25,7 +25,7 @@ public class AbstractGroundSlamBranch<T extends AbstractGroundSlam> extends Abst
 
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeHitBox(ability, 1f)
                 .addTo(treeB);
 

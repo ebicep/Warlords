@@ -3,14 +3,14 @@ package com.ebicep.warlords.pve;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.inventory.ItemStack;
 
 public interface Spendable {
 
     String getName();
 
-    NamedTextColor getTextColor();
+    TextColor getTextColor();
 
     ItemStack getItem();
 

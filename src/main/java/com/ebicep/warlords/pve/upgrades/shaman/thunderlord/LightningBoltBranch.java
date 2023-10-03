@@ -15,7 +15,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -40,7 +40,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
                 .addUpgradeHitBox(ability, .25f)
                 .addTo(treeB);

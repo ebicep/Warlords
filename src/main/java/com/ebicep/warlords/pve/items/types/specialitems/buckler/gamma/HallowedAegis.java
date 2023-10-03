@@ -1,9 +1,19 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class HallowedAegis extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsCrossNecklaceCharm {
+import java.util.Set;
+
+public class HallowedAegis extends SpecialGammaBuckler implements CraftsInto.CraftsCrossNecklaceCharm {
+
+    public HallowedAegis() {
+    }
+
+    public HallowedAegis(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +30,9 @@ public class HallowedAegis extends SpecialGammaBuckler implements DamageReductio
         return "Heal and Steal, right?";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.PALADIN;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.PROTECTOR;
+    }
 }

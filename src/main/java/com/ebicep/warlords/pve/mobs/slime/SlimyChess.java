@@ -95,13 +95,13 @@ public class SlimyChess extends AbstractSlime implements AdvancedMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
 
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 10, 10, 10)
                     .aliveEnemiesOf(wp)
             ) {
-                we.subtractEnergy(10, true);
+                we.subtractEnergy(name, 10, true);
             }
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 100, 100, 100)
@@ -110,7 +110,7 @@ public class SlimyChess extends AbstractSlime implements AdvancedMob {
                     .limit(1)
             ) {
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), we.getLocation(), Particle.DRIP_LAVA);
-                we.subtractEnergy(5, true);
+                we.subtractEnergy(name, 5, true);
                 we.addSpeedModifier(wp, "Blob Slowness", -20, 20);
             }
             return true;

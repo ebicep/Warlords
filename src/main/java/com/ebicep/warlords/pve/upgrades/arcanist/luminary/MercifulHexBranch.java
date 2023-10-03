@@ -36,7 +36,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
 
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -52,7 +52,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override

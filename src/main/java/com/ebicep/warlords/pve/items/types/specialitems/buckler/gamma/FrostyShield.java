@@ -1,9 +1,19 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class FrostyShield extends SpecialGammaBuckler implements DamageReductionandAggroPrio, CraftsInto.CraftsBucklerPiece {
+import java.util.Set;
+
+public class FrostyShield extends SpecialGammaBuckler implements CraftsInto.CraftsBucklerPiece {
+
+    public FrostyShield() {
+    }
+
+    public FrostyShield(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +30,9 @@ public class FrostyShield extends SpecialGammaBuckler implements DamageReduction
         return "Frostbitten fingers never felt so good!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.MAGE;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.CRYOMANCER;
+    }
 }

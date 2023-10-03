@@ -186,7 +186,7 @@ public class SlimyAnomaly extends AbstractSlime implements BasicMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
 
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(wp, hitRadius, hitRadius, hitRadius)

@@ -18,7 +18,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
         maxDamage = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -30,19 +30,20 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
-                        return "+50% Projectile Speed";
+                        return "+" + value + "% Projectile Speed";
                     }
 
                     @Override
                     public void run(float value) {
-                        ability.setProjectileSpeed(ability.getProjectileSpeed() * 1.5);
+                        value = 1 + value / 100;
+                        ability.setProjectileSpeed(ability.getProjectileSpeed() * value);
                     }
-                }, 4)
+                }, 50f, 4)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

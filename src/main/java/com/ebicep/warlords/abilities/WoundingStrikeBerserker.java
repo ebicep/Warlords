@@ -81,8 +81,8 @@ public class WoundingStrikeBerserker extends AbstractStrike {
         ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
 
         if (pveMasterUpgrade2) {
-            tripleHit(
-                    wp,
+            additionalHit(
+                    2, wp,
                     nearPlayer,
                     lustDamageBoost,
                     null,
@@ -130,7 +130,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                 woundingTickDuration
         ) {
             @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 return currentHealValue * .6f;
             }
 
@@ -176,7 +176,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                 })
         ) {
             @Override
-            public float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 return currentHealValue * .2f;
             }
         });

@@ -20,7 +20,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
         maxDamage = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -32,7 +32,7 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
 
                     @Override

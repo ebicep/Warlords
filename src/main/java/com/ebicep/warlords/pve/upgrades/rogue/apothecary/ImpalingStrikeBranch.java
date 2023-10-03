@@ -20,7 +20,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
         maxDamage = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -32,7 +32,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override

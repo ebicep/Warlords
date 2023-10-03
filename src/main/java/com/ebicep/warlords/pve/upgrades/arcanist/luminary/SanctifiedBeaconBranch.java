@@ -12,12 +12,12 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeHitBox(ability, .5f)
                 .addTo(treeB);
 

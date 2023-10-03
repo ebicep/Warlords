@@ -13,12 +13,12 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
         ability.getCooldown().addMultiplicativeModifierMult("Soul Switch Branch", 0.75f);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability, .1f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeHitBox(ability, 3f)
                 .addTo(treeB);
 

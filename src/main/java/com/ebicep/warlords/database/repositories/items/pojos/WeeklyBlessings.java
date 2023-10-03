@@ -11,16 +11,24 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Document(collection = "Items_Weekly_Blessing")
+@Deprecated
 public class WeeklyBlessings {
 
+    public static List<WeeklyBlessings> allWeeklyBlessings = new ArrayList<>();
     public static WeeklyBlessings currentWeeklyBlessings;
 
-    public static void loadWeeklyBlessings() {
+    public static void loadAllWeeklyBlessings() {
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.weeklyBlessingsService.findAll())
+                .syncLast(weeklyBlessings -> allWeeklyBlessings = weeklyBlessings)
+                .execute();
+    }
+
+    @Deprecated
+    private static void loadWeeklyBlessings() {
         ChatUtils.MessageType.WEEKLY_BLESSINGS.sendMessage("Loading Weekly Blessings - " + DatabaseTiming.RESET_WEEKLY.get());
         if (DatabaseTiming.RESET_WEEKLY.get()) {
             currentWeeklyBlessings = new WeeklyBlessings();

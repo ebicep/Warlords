@@ -12,7 +12,7 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -24,7 +24,7 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

@@ -39,7 +39,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
 
         Location warpLocation = wp.getLocation();

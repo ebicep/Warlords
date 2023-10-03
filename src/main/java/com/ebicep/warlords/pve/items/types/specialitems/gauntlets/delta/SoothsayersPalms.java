@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -21,12 +20,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToWarlordsPlayer {
 
-    public SoothsayersPalms(Set<BasicStatPool> statPool) {
-        super(statPool);
-    }
-
     public SoothsayersPalms() {
 
+    }
+
+    public SoothsayersPalms(Set<BasicStatPool> statPool) {
+        super(statPool);
     }
 
     @Override
@@ -36,7 +35,7 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
 
     @Override
     public String getBonus() {
-        return "+1% chance to perform 1 random rune instead of the player's weapon right-click.";
+        return "Weapon right-clicks have a 2% chance to perform 1 random rune.";
     }
 
     @Override
@@ -44,10 +43,6 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
         return "Not even Nostradamus could predict what's coming next!";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.MAGE;
-    }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
@@ -62,10 +57,9 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
                 if (!Objects.equals(event.getAbility(), playerSpec.getWeapon())) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextDouble() > 0.01) {
+                if (ThreadLocalRandom.current().nextDouble() > 0.02) {
                     return;
                 }
-                event.setCancelled(true);
                 List<AbstractAbility> abilities = playerSpec.getAbilitiesExcludingWeapon();
                 //picking random ability
                 AbstractAbility ability = abilities.get(ThreadLocalRandom.current().nextInt(abilities.size()));

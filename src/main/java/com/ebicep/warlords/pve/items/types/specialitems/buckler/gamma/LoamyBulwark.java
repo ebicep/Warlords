@@ -1,9 +1,19 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class LoamyBulwark extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsAerialAegis {
+import java.util.Set;
+
+public class LoamyBulwark extends SpecialGammaBuckler implements CraftsInto.CraftsAerialAegis {
+
+    public LoamyBulwark() {
+    }
+
+    public LoamyBulwark(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +30,9 @@ public class LoamyBulwark extends SpecialGammaBuckler implements DamageReduction
         return "Basically a rock on a stick.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.SHAMAN;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.EARTHWARDEN;
+    }
 }

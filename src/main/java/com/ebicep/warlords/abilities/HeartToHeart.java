@@ -127,7 +127,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         if (wp.hasFlag()) {
             timesUsedWithFlag++;
         }
-        wp.subtractEnergy(energyCost, false);
+        wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation", 2, 1);
         Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
 

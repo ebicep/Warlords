@@ -131,7 +131,8 @@ public class CripplingStrike extends AbstractStrike {
         ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
 
         if (pveMasterUpgrade || pveMasterUpgrade2) {
-            tripleHit(
+            additionalHit(
+                    1,
                     wp,
                     nearPlayer,
                     1,

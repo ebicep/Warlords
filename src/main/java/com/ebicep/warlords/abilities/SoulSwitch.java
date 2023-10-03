@@ -98,7 +98,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 wp.sendMessage(Component.text(" You cannot Soul Switch with that mob!", NamedTextColor.RED));
                 continue;
             }
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
             Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
 
             Location swapLocation = swapTarget.getLocation();

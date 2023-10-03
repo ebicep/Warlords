@@ -13,7 +13,7 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public void run(float value) {
@@ -25,7 +25,7 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeEnergy(ability)
                 .addTo(treeB);
 

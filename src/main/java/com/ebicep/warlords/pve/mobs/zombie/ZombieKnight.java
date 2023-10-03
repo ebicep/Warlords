@@ -98,7 +98,7 @@ public class ZombieKnight extends AbstractZombie implements AdvancedMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
-            wp.subtractEnergy(energyCost, false);
+            wp.subtractEnergy(name, energyCost, false);
 
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 5, 5, 5)

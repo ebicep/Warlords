@@ -12,7 +12,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeHitBox(ability, 2)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
@@ -25,7 +25,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeB);
 

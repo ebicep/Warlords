@@ -1,9 +1,19 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.gamma;
 
-import com.ebicep.warlords.player.general.Classes;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 
-public class OvergrownBuckler extends SpecialGammaBuckler implements DamageReductionandRegenTimer, CraftsInto.CraftsShieldOfSnatching {
+import java.util.Set;
+
+public class OvergrownBuckler extends SpecialGammaBuckler implements CraftsInto.CraftsShieldOfSnatching {
+
+    public OvergrownBuckler() {
+    }
+
+    public OvergrownBuckler(Set<BasicStatPool> basicStatPools) {
+        super(basicStatPools);
+    }
 
     @Override
     public String getName() {
@@ -20,9 +30,9 @@ public class OvergrownBuckler extends SpecialGammaBuckler implements DamageReduc
         return "Some might even say it grew onto there.";
     }
 
-    @Override
-    public Classes getClasses() {
-        return Classes.ROGUE;
-    }
 
+    @Override
+    public Specializations getSpec() {
+        return Specializations.APOTHECARY;
+    }
 }

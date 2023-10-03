@@ -4,24 +4,35 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeTreeBuilderAddUpgradeEvent;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.RomanNumber;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class UpgradeTreeBuilder {
 
-    public static UpgradeTreeBuilder create() {
-        return new UpgradeTreeBuilder();
+    public static UpgradeTreeBuilder create(AbilityTree abilityTree, AbstractUpgradeBranch<?> upgradeBranch) {
+        return new UpgradeTreeBuilder(abilityTree.getWarlordsPlayer(), upgradeBranch);
     }
 
+    private final AbstractUpgradeBranch<?> upgradeBranch;
+    private final WarlordsEntity warlordsEntity;
     private final LinkedHashMap<Integer, List<UpgradeTypeHolder>> upgradeTypes = new LinkedHashMap<>();
+
+    public UpgradeTreeBuilder(WarlordsEntity warlordsEntity, AbstractUpgradeBranch<?> upgradeBranch) {
+        this.upgradeBranch = upgradeBranch;
+        this.warlordsEntity = warlordsEntity;
+    }
 
     public UpgradeTreeBuilder addUpgrade(UpgradeTypes.UpgradeType upgradeType, int... levels) {
         return addUpgrade(upgradeType, null, 0, levels);
@@ -31,9 +42,13 @@ public class UpgradeTreeBuilder {
         if (level.length == 0) {
             level = new int[]{1, 2, 3, 4};
         }
+        AtomicReference<Float> valueReference = new AtomicReference<>(value);
+        if (warlordsEntity.getGame() != null) {
+            Bukkit.getPluginManager().callEvent(new WarlordsUpgradeTreeBuilderAddUpgradeEvent(warlordsEntity, this, valueReference));
+        }
         for (int i : level) {
             upgradeTypes.computeIfAbsent(i, k -> new ArrayList<>())
-                        .add(new UpgradeTypeHolder(upgradeType, modifier, value, level[0])); // assuming level[0] is lowest level
+                        .add(new UpgradeTypeHolder(upgradeType, modifier, valueReference.get(), level[0])); // assuming level[0] is lowest level
         }
         return this;
     }
@@ -181,6 +196,10 @@ public class UpgradeTreeBuilder {
                     }
             ));
         });
+    }
+
+    public AbstractUpgradeBranch<?> getUpgradeBranch() {
+        return upgradeBranch;
     }
 
     public record UpgradeTypeHolder(UpgradeTypes.UpgradeType upgradeType, @Nullable FloatModifiable.FloatModifier modifier, float value, int scalingStart) {

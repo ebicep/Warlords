@@ -1,16 +1,13 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.pve.Currencies;
-import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.LegendaryBenevolent;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.java.NumberFormat;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
@@ -19,7 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -112,18 +109,21 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
-            LegendaryBenevolent legendaryWeapon = new LegendaryBenevolent();
-            System.out.println("Upgrade Costs:");
-            for (int i = 1; i < 6; i++) {
-                LinkedHashMap<Currencies, Long> upgradeCost = legendaryWeapon.getUpgradeCost(i);
-                System.out.println("Level: " + i);
-                upgradeCost.forEach((currencies, aLong) -> System.out.println(NumberFormat.addCommas(aLong) + " " + currencies.getName() + (aLong == 1 || !currencies.pluralIncludeS() ? "" : "s")));
-            }
-            System.out.println("Title Upgrade Costs:");
-            for (int i = 1; i < 6; i++) {
-                LinkedHashMap<Spendable, Long> upgradeCost = legendaryWeapon.getTitleUpgradeCost(i);
-                System.out.println("Level: " + i);
-                upgradeCost.forEach((currencies, aLong) -> System.out.println(NumberFormat.addCommas(aLong) + " " + currencies.getName() + (aLong == 1 || !currencies.pluralIncludeS() ? "" : "s")));
+            for (NamedTextColor value : NamedTextColor.NAMES.values()) {
+                float[] hsb = new float[3];
+                System.out.println(value + " - " + value.red() + ", " + value.green() + ", " + value.blue());
+                Color.RGBtoHSB(value.red(), value.green(), value.blue(), hsb);
+                System.out.println(value + " - " + Arrays.toString(hsb));
+//                if (hsb[1] != 1) {
+//                    hsb[1] = hsb[1] + .1f;
+//                }
+//                if (hsb[2] != 1) {
+//                    hsb[2] = hsb[2] + .1f;
+//                }
+                System.out.println(value + " - " + Arrays.toString(hsb));
+                Color color = new Color(value.red(), value.green(), value.blue());
+                Color brighter = color.brighter();
+                System.out.println(brighter.getRed() + ", " + brighter.getGreen() + ", " + brighter.getBlue());
             }
 
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {

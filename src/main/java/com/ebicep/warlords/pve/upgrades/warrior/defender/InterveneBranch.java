@@ -13,12 +13,12 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
-                .create()
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.ShieldUpgradeType() {
                     @Nonnull
                     @Override
