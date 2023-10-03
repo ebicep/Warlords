@@ -4054,8 +4054,8 @@ public enum GameMap {
             });
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(900, 50, "spec"));
-            options.add(new TheBorderlineOfIllusionEvent());
-            options.add(new SafeZoneOption(1));
+            options.add(new TheAcropolisOption());
+//            options.add(new SafeZoneOption(1));
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(30, Team.BLUE)
                     .onPerWaveClear(1, 500)
