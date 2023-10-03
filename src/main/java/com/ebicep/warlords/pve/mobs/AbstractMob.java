@@ -341,7 +341,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                                    if (!(rng < dropRate.get() * dropRewardEvent.getModifier())) {
                                        continue;
                                    }
-                                   AbstractItem item = ItemType.getRandom().createBasic(itemTier);
+                                   AbstractItem item = ItemType.getRandom().create(itemTier);
                                    Bukkit.getPluginManager().callEvent(new WarlordsGiveItemEvent(warlordsPlayer, item));
                                    game.forEachOnlinePlayer((player, team) -> {
                                        AbstractItem.sendItemMessage(player,

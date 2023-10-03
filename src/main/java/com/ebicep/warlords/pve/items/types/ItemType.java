@@ -159,7 +159,7 @@ public enum ItemType {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public AbstractItem createBasic(ItemTier tier) {
+    public AbstractItem create(ItemTier tier) {
         switch (tier) {
             case ALPHA, BETA -> {
                 return new BasicItem(this, tier);

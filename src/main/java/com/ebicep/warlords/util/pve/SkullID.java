@@ -152,6 +152,8 @@ public enum SkullID {
     MC_PIGLIN("ZDcxYjNhZWUxODJiOWE5OWVkMjZjYmY1ZWNiNDdhZTkwYzJjM2FkYzA5MjdkZGUxMDJjN2IzMGZkZjdmNDU0NSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/animals/49759-angry-wolf
     MC_ANGRY_WOLF("M2Y2NWQ5MWU3ZjBhYmU0NmMyNmYyN2VmYmM3NTRhYjI3Yjc5MTdlZTVjODg4YzE3NDdkODgyZDgxYzFhMTNlOSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/alphabet/5650-question-mark
+    QUESTION_MARK("ZWNjNThjYjU1YjFhMTFlNmQ4OGMyZDRkMWE2MzY2YzIzODg3ZGVlMjYzMDRiZGE0MTJjNGE1MTgyNWYxOTkifX19="),
 
     ;
 
