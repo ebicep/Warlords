@@ -109,6 +109,8 @@ public class Illumination extends AbstractMagmaCube implements AdvancedMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(name, energyCost, false);
+
             wp.getCooldownManager().removeCooldown(LastStand.class, false);
 
             Location loc = wp.getLocation();

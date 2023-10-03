@@ -104,6 +104,8 @@ public class EventDjet extends AbstractZombie implements BossMinionMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(name, energyCost, false);
+
             for (WarlordsPlayer warlordsPlayer : PlayerFilterGeneric
                     .playingGameWarlordsPlayers(wp.getGame())
                     .aliveEnemiesOf(wp)

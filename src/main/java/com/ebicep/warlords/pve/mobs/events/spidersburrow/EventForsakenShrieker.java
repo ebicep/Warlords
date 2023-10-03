@@ -90,6 +90,8 @@ public class EventForsakenShrieker extends AbstractZombie implements BossMinionM
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(name, energyCost, false);
+
             PlayerFilterGeneric.entitiesAround(wp, 10, 10, 10)
                                .enemiesOf(wp)
                                .warlordsPlayers()

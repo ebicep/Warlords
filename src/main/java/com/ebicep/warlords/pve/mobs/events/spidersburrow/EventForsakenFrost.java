@@ -88,6 +88,8 @@ public class EventForsakenFrost extends AbstractZombie implements BossMinionMob,
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(name, energyCost, false);
+
             PlayerFilterGeneric.playingGameWarlordsPlayers(pveOption.getGame())
                                .enemiesOf(wp)
                                .forEach(warlordsPlayer -> warlordsPlayer.addSpeedModifier(warlordsPlayer, name, -20, 20, "BASE"));

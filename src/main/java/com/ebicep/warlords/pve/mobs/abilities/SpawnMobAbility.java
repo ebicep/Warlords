@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 
 public class SpawnMobAbility extends AbstractSpawnMobAbility {
 
-    private final Mob mobToSpawn;
+    protected final Mob mobToSpawn;
 
     public SpawnMobAbility(
             float cooldown,

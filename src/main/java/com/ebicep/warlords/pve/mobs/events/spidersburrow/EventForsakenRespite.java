@@ -89,6 +89,8 @@ public class EventForsakenRespite extends AbstractZombie implements BossMinionMo
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            wp.subtractEnergy(name, energyCost, false);
+
             PlayerFilterGeneric.playingGameWarlordsPlayers(pveOption.getGame())
                                .enemiesOf(wp)
                                .forEach(warlordsPlayer ->
