@@ -88,7 +88,7 @@ public class EventPrometheus extends AbstractZombie implements BossMinionMob {
                         barrageOfFlames();
                     }
                 }.runTaskLater(40);
-                barrageOfFlamesDelay = 15;
+                barrageOfFlamesDelay = 10;
             } else {
                 if (barrageOfFlamesDelay > 0) {
                     barrageOfFlamesDelay--;
@@ -99,6 +99,9 @@ public class EventPrometheus extends AbstractZombie implements BossMinionMob {
 
     private void barrageOfFlames() {
         new GameRunnable(warlordsNPC.getGame()) {
+            final List<WarlordsEntity> enemies = PlayerFilter.playingGame(warlordsNPC.getGame())
+                                                             .aliveEnemiesOf(warlordsNPC)
+                                                             .toList();
             int counter = 0;
 
             @Override
@@ -109,17 +112,13 @@ public class EventPrometheus extends AbstractZombie implements BossMinionMob {
                 }
 
                 counter++;
-                List<WarlordsEntity> enemies = PlayerFilter.playingGame(warlordsNPC.getGame())
-                                                           .aliveEnemiesOf(warlordsNPC)
-                                                           .toList();
                 for (Fireball fireball : warlordsNPC.getAbilitiesMatching(Fireball.class)) {
-                    for (WarlordsEntity enemy : enemies) {
-                        Location predictedLocation = PredictTargetFutureLocationGoal.lookAtLocation(
-                                warlordsNPC.getEyeLocation(),
-                                PredictTargetFutureLocationGoal.predictFutureLocation(warlordsNPC, enemy).add(0, 1, 0)
-                        );
-                        fireball.fire(warlordsNPC, predictedLocation);
-                    }
+                    WarlordsEntity enemy = enemies.get(counter % enemies.size());
+                    Location predictedLocation = PredictTargetFutureLocationGoal.lookAtLocation(
+                            warlordsNPC.getEyeLocation(),
+                            PredictTargetFutureLocationGoal.predictFutureLocation(warlordsNPC, enemy).add(0, 1, 0)
+                    );
+                    fireball.fire(warlordsNPC, predictedLocation);
                 }
 
                 if (counter == 4 * 5) {
