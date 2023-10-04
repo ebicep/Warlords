@@ -31,18 +31,21 @@ public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
         return true;
     }
 
-    public abstract AbstractMob<?> createMob(@Nonnull WarlordsEntity wp);
+    public int getSpawnAmount() {
+        return 1;
+    }
 
     public void spawnMob(@Nonnull WarlordsEntity wp) {
         AbstractMob<?> mob = createMob(wp);
+        if (mob == null) {
+            return;
+        }
         onMobCreate(mob);
         pveOption.spawnNewMob(mob, wp.getTeam());
         onMobSpawn(mob.getWarlordsNPC());
     }
 
-    public int getSpawnAmount() {
-        return 1;
-    }
+    public abstract AbstractMob<?> createMob(@Nonnull WarlordsEntity wp);
 
     public void onMobCreate(AbstractMob<?> mobSpawned) {
 

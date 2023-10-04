@@ -23,7 +23,7 @@ import java.util.List;
 public class EventPrometheus extends AbstractZombie implements BossMinionMob {
 
     private int barrageOfFlamesDelay = 0;
-    private boolean halfHealthSpawned = false;
+    private boolean healthCheck = false;
 
     public EventPrometheus(Location spawnLocation) {
         this(spawnLocation, "Prometheus", 30000, 0, 10, 730, 870);
@@ -136,8 +136,8 @@ public class EventPrometheus extends AbstractZombie implements BossMinionMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (self.getHealth() / self.getMaxHealth() < 0.5 && !halfHealthSpawned) {
-            halfHealthSpawned = true;
+        if (self.getHealth() / self.getMaxHealth() <= 0.5 && !healthCheck) {
+            healthCheck = true;
             List<Location> spawnLocations = LocationUtils.getCircle(warlordsNPC.getLocation(), 3, pveOption.playerCount());
             for (Location location : spawnLocations) {
                 pveOption.spawnNewMob(Mob.FIRE_SPLITTER.createMob(location));
