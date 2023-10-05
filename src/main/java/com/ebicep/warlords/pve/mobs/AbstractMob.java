@@ -19,6 +19,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.mobflags.DynamicFlags;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -175,7 +176,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             showBossBar = true;
         }
         // null checks to handle manual spawns with aspects
-        if (this.aspect == null && ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option)) {
+        if (this.aspect == null && ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option) && !(this instanceof BossMob)) {
             this.aspect = Aspect.VALUES[ThreadLocalRandom.current().nextInt(Aspect.VALUES.length)];
         }
         if (this.aspect != null) {
