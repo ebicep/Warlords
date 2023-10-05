@@ -11,7 +11,7 @@ import org.bukkit.Location;
 public class EventPoseidon extends AbstractZombie implements BossMinionMob {
 
     public EventPoseidon(Location spawnLocation) {
-        this(spawnLocation, "Poseidon", 75000, 0, 15, 725, 846);
+        this(spawnLocation, "Poseidon", 75000, .33f, 15, 725, 846);
     }
 
     public EventPoseidon(

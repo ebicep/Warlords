@@ -1,20 +1,26 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.customentities.nms.pve.pathfindergoals.FollowWarlordsEntityGoal;
+import com.ebicep.customentities.nms.pve.pathfindergoals.TargetAggroWarlordsEntityGoal;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.util.warlords.Utils;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.bukkit.Location;
 
-public class EvenTerasDryad extends AbstractZombie implements BossMinionMob {
+public class EventTerasSiren extends AbstractZombie implements BossMinionMob {
 
-    public EvenTerasDryad(Location spawnLocation) {
-        this(spawnLocation, "Zeus", 3600, 0, 0, 350, 450);
+    private EventCronus cronus;
+
+    public EventTerasSiren(Location spawnLocation) {
+        this(spawnLocation, "Teras Siren", 4100, 0.6f, 0, 250, 350);
     }
 
-    public EvenTerasDryad(
+    public EventTerasSiren(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -36,7 +42,19 @@ public class EvenTerasDryad extends AbstractZombie implements BossMinionMob {
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.EVENT_TERAS_DRYAD;
+        return Mob.EVENT_TERAS_SIREN;
+    }
+
+    @Override
+    public void onSpawn(PveOption option) {
+        super.onSpawn(option);
+        if (cronus != null) {
+            entity.resetAI();
+            entity.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100);
+            entity.addGoalAI(0, new FollowWarlordsEntityGoal(mob, cronus.getWarlordsNPC(), 1, 10));
+            entity.aiMeleeAttack(1);
+            entity.addTargetAI(1, new TargetAggroWarlordsEntityGoal(mob));
+        }
     }
 
     @Override
@@ -51,6 +69,13 @@ public class EvenTerasDryad extends AbstractZombie implements BossMinionMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+        //TODO animation
+        if (Utils.isProjectile(event.getAbility())) {
+            event.setCancelled(true);
+        }
+    }
 
+    public void setCronus(EventCronus cronus) {
+        this.cronus = cronus;
     }
 }

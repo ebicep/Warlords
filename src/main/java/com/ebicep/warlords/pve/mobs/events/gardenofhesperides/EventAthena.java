@@ -12,6 +12,8 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -26,7 +28,7 @@ public class EventAthena extends AbstractZombie implements BossMinionMob {
     private boolean healthCheck = false;
 
     public EventAthena(Location spawnLocation) {
-        this(spawnLocation, "Athena", 35000, 0, 20, 820, 930);
+        this(spawnLocation, "Athena", 35000, .33f, 20, 820, 930);
     }
 
     public EventAthena(
@@ -47,18 +49,17 @@ public class EventAthena extends AbstractZombie implements BossMinionMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new AbstractSpawnMobAbility("Athena Mobs", 10, 100, 2) {
-                    private final long playerCount = pveOption.getGame().warlordsPlayers().count();
                     private int spawnCounter = 0;
                     private List<Location> spawnLocations = new ArrayList<>();
 
                     @Override
                     public int getSpawnAmount() {
-                        return (int) (playerCount * INITIAL_SPAWN.size());
+                        return (int) (pveOption.getGame().warlordsPlayers().count() * INITIAL_SPAWN.size());
                     }
 
                     @Override
                     public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
-                        if (spawnCounter % playerCount == 0 || spawnLocations.isEmpty()) {
+                        if (spawnCounter % pveOption.getGame().warlordsPlayers().count() == 0 || spawnLocations.isEmpty()) {
                             Location randomSpawnLocation = pveOption.getRandomSpawnLocation(null);
                             if (randomSpawnLocation == null) {
                                 return null;
@@ -91,10 +92,11 @@ public class EventAthena extends AbstractZombie implements BossMinionMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (pveOption.mobCount() > 1) {
+            //TODO animation
             event.setCancelled(true);
             return;
         }
-        if (self.getHealth() / self.getMaxHealth() < 0.25 && !healthCheck) {
+        if (!healthCheck && self.getHealth() / self.getMaxHealth() < 0.25) {
             healthCheck = true;
             warlordsNPC.getAbilitiesMatching(Shockwave.class).forEach(ability -> ability.getCooldown().setCurrentValue(5));
         }
@@ -128,5 +130,15 @@ public class EventAthena extends AbstractZombie implements BossMinionMob {
                         });
             return true;
         }
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_PURPLE;
     }
 }

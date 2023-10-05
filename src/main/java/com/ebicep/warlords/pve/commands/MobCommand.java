@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
+import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -15,6 +16,8 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
 import com.ebicep.warlords.pve.mobs.*;
+import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventCronus;
+import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventTerasSiren;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -27,6 +30,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -34,9 +38,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @CommandAlias("mob")
 @CommandPermission("group.administrator")
@@ -310,6 +312,59 @@ public class MobCommand extends BaseCommand {
                             value.minMeleeDamage + " - " +
                             value.maxMeleeDamage
                     , NamedTextColor.GREEN));
+        }
+    }
+
+    @Subcommand("moveto")
+    public void moveTo(Player player) {
+        for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
+            spawnedMob.getMob().getNavigation().moveTo(((CraftEntity) player).getHandle(), 2);
+        }
+    }
+
+    @Subcommand("moveto2")
+    public void moveTo2(Player player) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        for (Option option : game.getOptions()) {
+            if (!(option instanceof PveOption pveOption)) {
+                continue;
+            }
+            List<EventTerasSiren> sirens = new ArrayList<>();
+            EventCronus cronus = null;
+            for (AbstractMob<?> mob : pveOption.getMobs()) {
+                if (mob instanceof EventTerasSiren) {
+                    sirens.add((EventTerasSiren) mob);
+                } else if (mob instanceof EventCronus) {
+                    cronus = (EventCronus) mob;
+                }
+            }
+            if (cronus == null) {
+                return;
+            }
+            for (EventTerasSiren siren : sirens) {
+                net.minecraft.world.entity.Mob cronusMob = cronus.getMob();
+                ChatChannels.sendDebugMessage(player, Component.text("Moving: " + siren.getMob().getNavigation().moveTo(cronusMob, 2), NamedTextColor.GREEN));
+            }
+        }
+    }
+
+    @Subcommand("resetai")
+    public void resetAI(Player player) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        for (Option option : game.getOptions()) {
+            if (!(option instanceof PveOption pveOption)) {
+                continue;
+            }
+            List<EventTerasSiren> sirens = new ArrayList<>();
+            for (AbstractMob<?> mob : pveOption.getMobs()) {
+                if (mob instanceof EventTerasSiren) {
+                    sirens.add((EventTerasSiren) mob);
+                }
+            }
+            for (EventTerasSiren siren : sirens) {
+                siren.getEntity().resetAI();
+                ChatChannels.sendDebugMessage(player, Component.text("Reset AI: " + siren.getMob().toString(), NamedTextColor.GREEN));
+            }
         }
     }
 

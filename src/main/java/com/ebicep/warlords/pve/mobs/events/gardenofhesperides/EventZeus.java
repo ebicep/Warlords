@@ -11,7 +11,7 @@ import org.bukkit.Location;
 public class EventZeus extends AbstractZombie implements BossMinionMob {
 
     public EventZeus(Location spawnLocation) {
-        this(spawnLocation, "Zeus", 100000, 0, 20, 825, 946);
+        this(spawnLocation, "Zeus", 100000, .33f, 20, 825, 946);
     }
 
     public EventZeus(

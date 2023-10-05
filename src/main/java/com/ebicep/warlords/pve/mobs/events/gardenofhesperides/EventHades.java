@@ -11,7 +11,7 @@ import org.bukkit.Location;
 public class EventHades extends AbstractZombie implements BossMinionMob {
 
     public EventHades(Location spawnLocation) {
-        this(spawnLocation, "Hades", 50000, 0, 20, 524, 607);
+        this(spawnLocation, "Hades", 50000, .33f, 20, 524, 607);
     }
 
     public EventHades(

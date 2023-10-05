@@ -24,7 +24,7 @@ import java.util.List;
 public class EventAres extends AbstractZombie implements BossMinionMob {
 
     public EventAres(Location spawnLocation) {
-        this(spawnLocation, "Ares", 25500, 0, 20, 680, 740);
+        this(spawnLocation, "Ares", 25500, .4f, 20, 680, 740);
     }
 
     public EventAres(
@@ -129,5 +129,15 @@ public class EventAres extends AbstractZombie implements BossMinionMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_PURPLE;
     }
 }

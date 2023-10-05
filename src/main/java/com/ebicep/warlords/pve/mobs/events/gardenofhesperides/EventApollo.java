@@ -14,6 +14,8 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -126,6 +128,16 @@ public class EventApollo extends AbstractSkeleton implements BossMinionMob {
                         });
             return true;
         }
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_PURPLE;
     }
 
 }

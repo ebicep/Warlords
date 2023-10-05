@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.warlords.abilities.GroundSlamBerserker;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -8,13 +9,13 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import org.bukkit.Location;
 
-public class EvenTerasCyclops extends AbstractZombie implements BossMinionMob {
+public class EventTerasMinotaur extends AbstractZombie implements BossMinionMob {
 
-    public EvenTerasCyclops(Location spawnLocation) {
-        this(spawnLocation, "Zeus", 3500, 0, 10, 550, 650);
+    public EventTerasMinotaur(Location spawnLocation) {
+        this(spawnLocation, "Teras Minotaur", 2800, 0.38f, 10, 400, 600);
     }
 
-    public EvenTerasCyclops(
+    public EventTerasMinotaur(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -30,13 +31,14 @@ public class EvenTerasCyclops extends AbstractZombie implements BossMinionMob {
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
-                maxMeleeDamage
+                maxMeleeDamage,
+                new GroundSlamBerserker(5)
         );
     }
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.EVENT_TERAS_CYCLOPS;
+        return Mob.EVENT_TERAS_MINOTAUR;
     }
 
     @Override
