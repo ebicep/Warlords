@@ -59,7 +59,7 @@ public class MysticksManualVol23H extends SpecialOmegaTome implements AppliesToW
                 if (!abilityNames.contains(from)) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextFloat() > 0.5f) {
+                if (ThreadLocalRandom.current().nextFloat() > 0.1f) {
                     return;
                 }
                 if (warlordsPlayer.getEntity() instanceof Player player) {
