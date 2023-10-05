@@ -1095,13 +1095,13 @@ public enum GameEvents {
                     (m, e) -> {
                         if (privateGame) {
                             GameStartCommand.startGamePvEEvent(player,
-                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_6)
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ACROPOLIS)
                                                                           .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
 
                             );
                         } else {
                             GameStartCommand.startGamePvEEvent(player,
-                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_6)
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ACROPOLIS)
                             );
                         }
                     }
