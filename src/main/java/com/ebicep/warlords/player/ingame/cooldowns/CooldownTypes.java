@@ -10,6 +10,7 @@ public enum CooldownTypes {
     MASTERY("MASTERY"),
     ADDON("ADDON"),
     ASPECT("ASPECT"),
+    FIELD_EFFECT("FIELD EFFECT"),
 
     ;
 

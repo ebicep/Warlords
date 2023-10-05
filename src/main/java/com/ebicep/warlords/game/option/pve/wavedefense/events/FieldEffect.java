@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.events;
 
+import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -22,6 +23,7 @@ import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventPoisonousSpider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
@@ -29,11 +31,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 public class FieldEffect implements Option {
 
@@ -261,17 +262,138 @@ public class FieldEffect implements Option {
         TYCHE_PROSPERITY("Tyche Prosperity",
                 """
                         When two specs of the same class are present in the game, the following buffs are applied to all players:
-                        Mage: Movement speed +5% and Projectile speed +10%.
+                        Mage: Movement speed +5% and Projectile Speed +10%.
                         Paladin: EPS +5 and EPH +5.
-                        Warrior: Knockback resistance +10% and damage bonus +5%.
-                        Shaman: Melee damage +10% and max HP +5%.
-                        Rogue: Cooldown reduction -10% and healing Bonus +5%.
-                        Arcanist: Damage reduction +5% and ability crit chance +10%.
+                        Warrior: Knockback Resistance +10% and Damage Bonus +5%.
+                        Shaman: Melee Damage +10% and Max HP +5%.
+                        Rogue: Cooldown Reduction -10% and Healing Bonus +5%.
+                        Arcanist: Damage Reduction +5% and Ability Crit Chance +10%.
                         """
         ) {
             @Override
-            public void onWarlordsEntityCreated(WarlordsEntity player) {
+            public void onStart(Game game) {
+                Map<Classes, Integer> classCounts = new HashMap<>();
+                game.warlordsPlayers()
+                    .map(warlordsPlayer -> Specializations.getClass(warlordsPlayer.getSpecClass()))
+                    .forEach(classes -> classCounts.merge(classes, 1, Integer::sum));
+                classCounts.forEach((classes, integer) -> {
+                    if (integer < 2) {
+                        return;
+                    }
+                    ChatUtils.MessageType.GAME.sendMessage(name + ": Applied " + classes.name + " Bonus");
+                    switch (classes) {
+                        case MAGE -> game.warlordsPlayers().forEach(this::mageBonus);
+                        case PALADIN -> game.warlordsPlayers().forEach(this::paladinBonus);
+                        case WARRIOR -> game.warlordsPlayers().forEach(this::warriorBonus);
+                        case SHAMAN -> game.warlordsPlayers().forEach(this::shamanBonus);
+                        case ROGUE -> game.warlordsPlayers().forEach(this::rogueBonus);
+                        case ARCANIST -> game.warlordsPlayers().forEach(this::arcanistBonus);
+                    }
+                });
 
+            }
+
+            private void mageBonus(WarlordsEntity warlordsEntity) {
+                warlordsEntity.getSpeed().addBaseModifier(5);
+                warlordsEntity.getAbilitiesMatching(AbstractPiercingProjectile.class).forEach(proj -> proj.setProjectileSpeed(proj.getProjectileSpeed() * 1.1f));
+            }
+
+            private void paladinBonus(WarlordsEntity warlordsEntity) {
+                warlordsEntity.getSpec().setEnergyPerSec(warlordsEntity.getSpec().getEnergyPerSec() + 5);
+                warlordsEntity.getSpec().setEnergyPerHit(warlordsEntity.getSpec().getEnergyPerHit() + 5);
+            }
+
+            private void warriorBonus(WarlordsEntity warlordsEntity) {
+                warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                        name,
+                        null,
+                        FieldEffect.class,
+                        null,
+                        warlordsEntity,
+                        CooldownTypes.FIELD_EFFECT,
+                        cooldownManager -> {
+                        },
+                        false
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 1.05f;
+                    }
+
+                    @Override
+                    public void multiplyKB(Vector currentVector) {
+                        currentVector.multiply(.95);
+                    }
+                });
+            }
+
+            private void shamanBonus(WarlordsEntity warlordsEntity) {
+                warlordsEntity.setMaxBaseHealth(warlordsEntity.getMaxBaseHealth() * 1.05f);
+                warlordsEntity.heal();
+                warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                        name,
+                        null,
+                        FieldEffect.class,
+                        null,
+                        warlordsEntity,
+                        CooldownTypes.FIELD_EFFECT,
+                        cooldownManager -> {
+                        },
+                        false
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        if (event.getAbility().isEmpty()) {
+                            return currentDamageValue * 1.05f;
+                        }
+                        return currentDamageValue;
+                    }
+                });
+            }
+
+            private void rogueBonus(WarlordsEntity warlordsEntity) {
+                warlordsEntity.getAbilities().forEach(ability -> ability.getCooldown().addMultiplicativeModifierMult(name, .9f));
+                warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                        name,
+                        null,
+                        FieldEffect.class,
+                        null,
+                        warlordsEntity,
+                        CooldownTypes.FIELD_EFFECT,
+                        cooldownManager -> {
+                        },
+                        false
+                ) {
+                    @Override
+                    public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                        return currentHealValue * 1.05f;
+                    }
+                });
+            }
+
+            private void arcanistBonus(WarlordsEntity warlordsEntity) {
+                warlordsEntity.getAbilities().forEach(ability -> {
+                    float critChance = ability.getCritChance();
+                    if (critChance > 0) {
+                        ability.setCritChance(critChance + 10f);
+                    }
+                });
+                warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                        name,
+                        null,
+                        FieldEffect.class,
+                        null,
+                        warlordsEntity,
+                        CooldownTypes.FIELD_EFFECT,
+                        cooldownManager -> {
+                        },
+                        false
+                ) {
+                    @Override
+                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * .95f;
+                    }
+                });
             }
         },
         ;

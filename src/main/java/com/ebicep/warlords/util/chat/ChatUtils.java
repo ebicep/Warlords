@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
@@ -170,14 +171,15 @@ public class ChatUtils {
 
         DISCORD_BOT("DiscordBot", NamedTextColor.DARK_AQUA, true),
         BOUNTIES("Bounties", NamedTextColor.AQUA, true),
+        GAME("Game", TextColor.color(173, 255, 47), true),
 
         ;
 
         public final String name;
-        public final NamedTextColor textColor;
+        public final TextColor textColor;
         private boolean enabled;
 
-        MessageType(String name, NamedTextColor textColor, boolean enabled) {
+        MessageType(String name, TextColor textColor, boolean enabled) {
             this.name = name;
             this.textColor = textColor;
             this.enabled = enabled;
