@@ -51,7 +51,8 @@ public class FieldEffect implements Option {
         lines.add(Component.empty());
         fieldEffects.forEach(effect -> {
             lines.addAll(WordWrap.wrap(Component.text(effect.name + ": ", NamedTextColor.GREEN)
-                                                .append(Component.text(effect.description, NamedTextColor.GRAY)), 170));
+                                                .append(Component.text(effect.description, NamedTextColor.GRAY)), 180));
+            lines.addAll(effect.subDescription);
             lines.add(Component.empty());
         });
         options.add(TextOption.Type.CHAT_CENTERED.create(lines));
@@ -86,10 +87,16 @@ public class FieldEffect implements Option {
         fieldEffects.forEach(fieldEffect -> fieldEffect.onWarlordsEntityCreated(player));
     }
 
+    @Override
+    public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
+        fieldEffects.forEach(fieldEffect -> fieldEffect.afterAllWarlordsEntitiesCreated(players));
+    }
+
     public enum FieldEffects {
 
         WARRIORS_TRIUMPH("Warrior's Triumph",
-                "Ability durations are reduced by 30% on ability activation for non-Warrior specializations. Warrior strikes deal 200% more damage. The gravity is twice as intensive."
+                "Ability durations are reduced by 30% on ability activation for non-Warrior specializations. Warrior strikes deal 200% more damage. The gravity is twice as intensive.",
+                Collections.emptyList()
         ) {
             @Override
             public void onStart(Game game) {
@@ -131,7 +138,8 @@ public class FieldEffect implements Option {
             }
         },
         CONQUERING_ENERGY("Conquering Energy",
-                "Reduce EPS by 10, base EPH increased by 150%. Melee damage increased by 50%."
+                "Reduce EPS by 10, base EPH increased by 150%. Melee damage increased by 50%.",
+                Collections.emptyList()
         ) {
             @Override
             public void onStart(Game game) {
@@ -161,7 +169,8 @@ public class FieldEffect implements Option {
             }
         },
         ARACHNOPHOBIA("Arachnophobia",
-                "All strikes deal 200% more damage to Egg Sacs and Poisonous Spiders. All healing abilities are increased by 15%."
+                "All strikes deal 200% more damage to Egg Sacs and Poisonous Spiders. All healing abilities are increased by 15%.",
+                Collections.emptyList()
         ) {
             @Override
             public void onStart(Game game) {
@@ -206,7 +215,8 @@ public class FieldEffect implements Option {
             }
         },
         LOST_BUFF("Lost Buff",
-                "Players and mobs will lose 1% of their max health every second."
+                "Players and mobs will lose 1% of their max health every second.",
+                Collections.emptyList()
         ) {
             @Override
             public void run(Game game, int ticksElapsed) {
@@ -234,7 +244,8 @@ public class FieldEffect implements Option {
             }
         },
         DUMB_DEBUFFS("Dumb Debuffs",
-                "Each debuff on a mobs will increase the damage they take by 15%. (Max 120%)"
+                "Each debuff on a mobs will increase the damage they take by 15%. (Max 120%)",
+                Collections.emptyList()
         ) {
             @Override
             public void onWarlordsEntityCreated(WarlordsEntity player) {
@@ -260,47 +271,59 @@ public class FieldEffect implements Option {
             }
         },
         TYCHE_PROSPERITY("Tyche Prosperity",
-                """
-                        When two specs of the same class are present in the game, the following buffs are applied to all players:
-                        Mage: Movement speed +5% and Projectile Speed +10%.
-                        Paladin: EPS +5 and EPH +5.
-                        Warrior: Knockback Resistance +10% and Damage Bonus +5%.
-                        Shaman: Melee Damage +10% and Max HP +5%.
-                        Rogue: Cooldown Reduction -10% and Healing Bonus +5%.
-                        Arcanist: Damage Reduction +5% and Ability Crit Chance +10%.
-                        """
+                "When two specs of the same class are present in the game, the following buffs are applied to all players:",
+                new ArrayList<>() {{
+                    add(Component.empty());
+                    add(Component.text("Mage: ", NamedTextColor.GOLD).append(Component.text("+5 EPS / +10% Projectile Speed", NamedTextColor.GRAY)));
+                    add(Component.text("Warrior: ", NamedTextColor.GOLD).append(Component.text("+5% Damage / +10% Knockback Resistance", NamedTextColor.GRAY)));
+                    add(Component.text("Paladin: ", NamedTextColor.GOLD).append(Component.text("+5 EPH / +5% Movement Speed", NamedTextColor.GRAY)));
+                    add(Component.text("Shaman: ", NamedTextColor.GOLD).append(Component.text("+10% Melee Damage / +5% Max HP", NamedTextColor.GRAY)));
+                    add(Component.text("Rogue: ", NamedTextColor.GOLD).append(Component.text("+5% Healing / +10% Cooldown Reduction", NamedTextColor.GRAY)));
+                    add(Component.text("Arcanist: ", NamedTextColor.GOLD).append(Component.text("+5% Damage Reduction / +10% Crit Chance", NamedTextColor.GRAY)));
+                }}
         ) {
             @Override
-            public void onStart(Game game) {
+            public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
+                if (players.isEmpty()) {
+                    return;
+                }
+                Game game = players.get(0).getGame();
+                if (game == null) {
+                    return;
+                }
                 Map<Classes, Integer> classCounts = new HashMap<>();
-                game.warlordsPlayers()
-                    .map(warlordsPlayer -> Specializations.getClass(warlordsPlayer.getSpecClass()))
-                    .forEach(classes -> classCounts.merge(classes, 1, Integer::sum));
+                players.forEach(p -> classCounts.merge(Specializations.getClass(p.getSpecClass()), 1, Integer::sum));
                 classCounts.forEach((classes, integer) -> {
-                    if (integer < 2) {
+                    if (integer < 1) {
                         return;
                     }
                     ChatUtils.MessageType.GAME.sendMessage(name + ": Applied " + classes.name + " Bonus");
+                    game.onlinePlayers().forEach(playerTeamEntry -> playerTeamEntry.getKey().sendMessage(
+                            Component.textOfChildren(
+                                    Component.text("Tyche Prosperity Bonus", NamedTextColor.WHITE, TextDecoration.BOLD),
+                                    Component.text(" > ", NamedTextColor.DARK_GRAY),
+                                    subDescription.get(classes.ordinal() + 1)
+                            )
+                    ));
                     switch (classes) {
-                        case MAGE -> game.warlordsPlayers().forEach(this::mageBonus);
-                        case PALADIN -> game.warlordsPlayers().forEach(this::paladinBonus);
-                        case WARRIOR -> game.warlordsPlayers().forEach(this::warriorBonus);
-                        case SHAMAN -> game.warlordsPlayers().forEach(this::shamanBonus);
-                        case ROGUE -> game.warlordsPlayers().forEach(this::rogueBonus);
-                        case ARCANIST -> game.warlordsPlayers().forEach(this::arcanistBonus);
+                        case MAGE -> players.forEach(this::mageBonus);
+                        case PALADIN -> players.forEach(this::paladinBonus);
+                        case WARRIOR -> players.forEach(this::warriorBonus);
+                        case SHAMAN -> players.forEach(this::shamanBonus);
+                        case ROGUE -> players.forEach(this::rogueBonus);
+                        case ARCANIST -> players.forEach(this::arcanistBonus);
                     }
                 });
-
             }
 
             private void mageBonus(WarlordsEntity warlordsEntity) {
-                warlordsEntity.getSpeed().addBaseModifier(5);
+                warlordsEntity.getSpec().setEnergyPerSec(warlordsEntity.getSpec().getEnergyPerSec() + 5);
                 warlordsEntity.getAbilitiesMatching(AbstractPiercingProjectile.class).forEach(proj -> proj.setProjectileSpeed(proj.getProjectileSpeed() * 1.1f));
             }
 
             private void paladinBonus(WarlordsEntity warlordsEntity) {
-                warlordsEntity.getSpec().setEnergyPerSec(warlordsEntity.getSpec().getEnergyPerSec() + 5);
                 warlordsEntity.getSpec().setEnergyPerHit(warlordsEntity.getSpec().getEnergyPerHit() + 5);
+                warlordsEntity.getSpeed().addBaseModifier(5);
             }
 
             private void warriorBonus(WarlordsEntity warlordsEntity) {
@@ -400,10 +423,12 @@ public class FieldEffect implements Option {
 
         public final String name;
         public final String description;
+        public final List<Component> subDescription;
 
-        FieldEffects(String name, String description) {
+        FieldEffects(String name, String description, List<Component> subDescription) {
             this.name = name;
             this.description = description;
+            this.subDescription = subDescription;
         }
 
         public void onStart(Game game) {
@@ -411,6 +436,10 @@ public class FieldEffect implements Option {
         }
 
         public void onWarlordsEntityCreated(WarlordsEntity player) {
+
+        }
+
+        public void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
 
         }
 

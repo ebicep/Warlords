@@ -81,6 +81,9 @@ public interface Option {
     default void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
     }
 
+    default void afterAllWarlordsEntitiesCreated(List<WarlordsEntity> players) {
+    }
+
     /**
      * Called to update the warlordsPlayer's inventory
      *

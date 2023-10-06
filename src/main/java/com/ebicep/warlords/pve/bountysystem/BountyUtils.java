@@ -4,7 +4,6 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
-import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
@@ -19,9 +18,6 @@ import java.util.stream.Collectors;
 public class BountyUtils {
 
     public static final TextColor COLOR = TextColor.color(255, 140, 0);
-    public static final LinkedHashMap<Currencies, Long> COST = new LinkedHashMap<>() {{
-        put(Currencies.COIN, 5000L);
-    }};
     public static Map<PlayersCollections, BountyInfo> BOUNTY_COLLECTION_INFO = new HashMap<>() {{
         put(PlayersCollections.DAILY, new BountyInfo(Bounty.BountyGroup.DAILY_ALL.bounties, 2, 5));
         put(PlayersCollections.WEEKLY, new BountyInfo(Bounty.BountyGroup.WEEKLY_ALL.bounties, 2, 5));

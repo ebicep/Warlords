@@ -96,6 +96,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game options added");
 
+        List<WarlordsEntity> warlordsEntities = new ArrayList<>();
         this.game.forEachOfflinePlayer((player, team) -> {
             Player p = player.getPlayer();
             if (team == null || (!player.isOnline() && com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()))) {
@@ -120,16 +121,21 @@ public class PlayingState implements State, TimerDebugAble {
                     }
                 }
             }
-            Warlords.addPlayer(new WarlordsPlayer(
+            WarlordsPlayer warlordsEntity = new WarlordsPlayer(
                     player,
                     this.getGame(),
                     team
-            ));
+            );
+            Warlords.addPlayer(warlordsEntity);
+            warlordsEntities.add(warlordsEntity);
             if (p != null) {
                 p.getInventory().setHeldItemSlot(0);
             }
             Utils.resetPlayerMovementStatistics(player);
         });
+        for (Option option : game.getOptions()) {
+            option.afterAllWarlordsEntitiesCreated(warlordsEntities);
+        }
 
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
