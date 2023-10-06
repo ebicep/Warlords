@@ -8,6 +8,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -152,6 +153,29 @@ public interface PveOption extends Option {
                     AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
                     if (mob != null && getMobsMap().containsKey(mob)) {
                         mob.onDamageTaken(receiver, attacker, event);
+                    }
+                }
+            }
+
+            @EventHandler
+            public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity receiver = event.getWarlordsEntity();
+
+                if (!event.isDamageInstance()) {
+                    return;
+                }
+                if (attacker instanceof WarlordsNPC) {
+                    AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
+                    if (mob != null && getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
+                        mob.onFinalAttack(event);
+                    }
+                }
+
+                if (receiver instanceof WarlordsNPC) {
+                    AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
+                    if (mob != null && getMobsMap().containsKey(mob)) {
+                        mob.onFinalDamageTaken(event);
                     }
                 }
             }

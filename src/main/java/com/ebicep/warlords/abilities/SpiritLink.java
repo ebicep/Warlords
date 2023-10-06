@@ -74,20 +74,20 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
     }
 
     @Override
-    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player player) {
+    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp) {
         Set<WarlordsEntity> hitCounter = new HashSet<>();
         for (WarlordsEntity nearPlayer : PlayerFilter
-                .entitiesAround(player, radius, radius - 2, radius)
+                .entitiesAround(wp, radius, radius - 2, radius)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
                 .soulBindedFirst(wp)
         ) {
-            if (LocationUtils.isLookingAtChain(player, nearPlayer.getEntity()) && LocationUtils.hasLineOfSight(player, nearPlayer.getEntity())) {
+            if (LocationUtils.isLookingAtChain(wp.getEntity(), nearPlayer.getEntity()) && LocationUtils.hasLineOfSight(wp.getEntity(), nearPlayer.getEntity())) {
                 playersHit++;
                 if (nearPlayer.onHorse()) {
                     numberOfDismounts++;
                 }
-                chain(player.getLocation(), nearPlayer.getLocation());
+                chain(wp.getLocation(), nearPlayer.getLocation());
                 nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 hitCounter.add(nearPlayer);
 
@@ -118,8 +118,8 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
     }
 
     @Override
-    protected void onHit(WarlordsEntity we, Player player, int hitCounter) {
-        player.playSound(player.getLocation(), "mage.firebreath.activation", 1, 1);
+    protected void onHit(WarlordsEntity we, int hitCounter) {
+        we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
         if (we.isInPve()) {
             we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, 4);
         }

@@ -61,14 +61,14 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
     }
 
     @Override
-    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player p) {
+    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp) {
         Set<WarlordsEntity> hitCounter = new HashSet<>();
         for (WarlordsEntity chainTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (!LocationUtils.isLookingAtChain(p, chainTarget.getEntity())) {
+            if (!LocationUtils.isLookingAtChain(wp.getEntity(), chainTarget.getEntity())) {
                 continue;
             }
             wp.addHealingInstance(
@@ -94,7 +94,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                 critStatsOnHit(chainTarget);
             }
 
-            chain(p.getLocation(), chainTarget.getLocation());
+            chain(wp.getLocation(), chainTarget.getLocation());
             hitCounter.add(chainTarget);
 
             additionalBounce(wp, hitCounter, chainTarget, new ArrayList<>(Arrays.asList(wp, chainTarget)), 0);
@@ -145,8 +145,8 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
     }
 
     @Override
-    protected void onHit(WarlordsEntity wp, Player player, int hitCounter) {
-        Utils.playGlobalSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
+    protected void onHit(WarlordsEntity wp, int hitCounter) {
+        Utils.playGlobalSound(wp.getLocation(), "shaman.chainheal.activation", 2, 1);
 
         for (Boulder boulder : wp.getAbilitiesMatching(Boulder.class)) {
             float currentCD = boulder.getCurrentCooldown();

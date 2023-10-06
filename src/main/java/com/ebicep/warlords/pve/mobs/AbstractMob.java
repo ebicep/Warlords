@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.events.player.ingame.pve.drops.*;
 import com.ebicep.warlords.game.Game;
@@ -223,7 +224,15 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
 
     public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event);
 
+    public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
+
+    }
+
     public abstract void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event);
+
+    public void onFinalDamageTaken(WarlordsDamageHealingFinalEvent event) {
+
+    }
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         bossBar(option.getGame(), false);

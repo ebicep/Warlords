@@ -72,6 +72,10 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         super("Chain Lightning", 370, 499, 9.4f, 40, 20, 175, 20, 10, 3);
     }
 
+    public ChainLightning(float cooldown) {
+        super("Chain Lightning", 370, 499, cooldown, 40, 20, 175, 20, 10, 3);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Discharge a bolt of lightning at the targeted enemy player that deals ")
@@ -109,14 +113,14 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     }
 
     @Override
-    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp, Player player) {
+    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp) {
         return partOfChainLightning(wp, new HashSet<>(), wp.getEntity(), false);
     }
 
     @Override
-    protected void onHit(WarlordsEntity wp, Player player, int hitCounter) {
-        Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.activation", 3, 1);
-        player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
+    protected void onHit(WarlordsEntity wp, int hitCounter) {
+        Utils.playGlobalSound(wp.getLocation(), "shaman.chainlightning.activation", 3, 1);
+        wp.playSound(wp.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
         wp.getCooldownManager().removeCooldown(ChainLightning.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(

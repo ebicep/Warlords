@@ -46,7 +46,7 @@ public abstract class AbstractChain extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer, @Nonnull Player player) {
-        Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer, player);
+        Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer);
         int hitCounter = entitiesHit.size();
         if (hitCounter != 0) {
             playersHit += hitCounter;
@@ -54,7 +54,7 @@ public abstract class AbstractChain extends AbstractAbility {
             AbstractPlayerClass.sendRightClickPacket(player);
             warlordsPlayer.subtractEnergy(name, energyCost, false);
 
-            onHit(warlordsPlayer, player, hitCounter);
+            onHit(warlordsPlayer, hitCounter);
 
             entitiesHit.remove(null);
 
@@ -66,9 +66,9 @@ public abstract class AbstractChain extends AbstractAbility {
         return false;
     }
 
-    protected abstract Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity warlordsPlayer, Player player);
+    protected abstract Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity warlordsPlayer);
 
-    protected abstract void onHit(WarlordsEntity warlordsPlayer, Player player, int hitCounter);
+    protected abstract void onHit(WarlordsEntity warlordsPlayer, int hitCounter);
 
     protected void chain(Location from, Location to) {
         Location location = from.subtract(0, .5, 0);

@@ -46,6 +46,10 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         super("Healing Rain", 100, 125, 52.85f, 50, 25, 200);
     }
 
+    public HealingRain(float cooldown) {
+        super("Healing Rain", 100, 125, cooldown, 50, 25, 200);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Conjure rain at targeted location that will restore ")

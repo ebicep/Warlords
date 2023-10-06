@@ -37,6 +37,10 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
         super("Lightning Bolt", 261, 352, 0, 60, 20, 200, 2.5, 60, false);
     }
 
+    public LightningBolt(float minDamageHeal, float maxDamageHeal, float cooldown) {
+        super("Lightning Bolt", minDamageHeal, maxDamageHeal, cooldown, 60, 20, 200, 2.5, 60, false);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Hurl a fast, piercing bolt of lightning that deals ")
