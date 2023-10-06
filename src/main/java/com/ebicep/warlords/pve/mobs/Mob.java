@@ -611,7 +611,7 @@ public enum Mob {
             Weapons.NEW_LEAF_SCYTHE.getItem()
     )),
     EVENT_APOLLO(EventApollo.class, EventApollo::new, EventApollo::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.APOLLO),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 140, 0),
@@ -620,49 +620,49 @@ public enum Mob {
                     .get()
     )),
     EVENT_ARES(EventAres.class, EventAres::new, EventAres::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.ARES),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 140, 0),
             Weapons.VOID_TWIG.getItem()
     )),
     EVENT_PROMETHEUS(EventPrometheus.class, EventPrometheus::new, EventPrometheus::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.HERMES),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 140, 0),
             Weapons.ARMBLADE.getItem()
     )),
     EVENT_ATHENA(EventAthena.class, EventAthena::new, EventAthena::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.APHRODITE),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 140, 0),
             Weapons.NEW_LEAF_AXE.getItem()
     )),
     EVENT_CRONUS(EventCronus.class, EventCronus::new, EventCronus::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.BUST_ZEUS),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 140, 0),
             Weapons.LUNAR_JUSTICE.getItem()
     )),
     EVENT_ZEUS(EventZeus.class, EventZeus::new, EventZeus::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.ZEUS),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 240, 245),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 240, 245),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 240, 245),
             Weapons.SEVENTH.getItem()
     )),
     EVENT_POSEIDON(EventPoseidon.class, EventPoseidon::new, EventPoseidon::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.POSEIDON),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 0, 205),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 0, 205),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 205),
             Weapons.SILVER_PHANTASM_TRIDENT.getItem()
     )),
     EVENT_HADES(EventHades.class, EventHades::new, EventHades::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.DARK_WRAITH),
             new ItemStack((Material.NETHERITE_CHESTPLATE)),
             new ItemStack(Material.NETHERITE_LEGGINGS),
             new ItemStack(Material.NETHERITE_BOOTS),

@@ -120,7 +120,7 @@ public enum SkullID {
     //https://minecraft-heads.com/custom-heads/alphabet/193-oak-wood-1
     OAK_WOOD_1("NzFiYzJiY2ZiMmJkMzc1OWU2YjFlODZmYzdhNzk1ODVlMTEyN2RkMzU3ZmMyMDI4OTNmOWRlMjQxYmM5ZTUzMCJ9fX0="),
     //https://minecraft-heads.com/custom-heads/alphabet/505-stone-2
-    STONE_2("YWNiNDE5ZDk4NGQ4Nzk2MzczYzk2NDYyMzNjN2EwMjY2NGJkMmNlM2ExZDM0NzZkZDliMWM1NDYzYjE0ZWJlIn19fQ==="),
+    STONE_2("YWNiNDE5ZDk4NGQ4Nzk2MzczYzk2NDYyMzNjN2EwMjY2NGJkMmNlM2ExZDM0NzZkZDliMWM1NDYzYjE0ZWJlIn19fQ=="),
     //https://minecraft-heads.com/custom-heads/alphabet/9162-yellow-1
     YELLOW_1("Yjk0OWRmMzZhMWEzZjdjYjRjNjcwNjVhOWQ1MzUwMjU4YTNjNTFiMDJhMWEzNzdiODRhODI4NzZkNzdiIn19fQ=="),
     //https://minecraft-heads.com/custom-heads/alphabet/7898-golden-2
@@ -154,6 +154,30 @@ public enum SkullID {
     MC_ANGRY_WOLF("M2Y2NWQ5MWU3ZjBhYmU0NmMyNmYyN2VmYmM3NTRhYjI3Yjc5MTdlZTVjODg4YzE3NDdkODgyZDgxYzFhMTNlOSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/alphabet/5650-question-mark
     QUESTION_MARK("ZWNjNThjYjU1YjFhMTFlNmQ4OGMyZDRkMWE2MzY2YzIzODg3ZGVlMjYzMDRiZGE0MTJjNGE1MTgyNWYxOTkifX19="),
+    //https://minecraft-heads.com/custom-heads/humans/8152-apollo
+    APOLLO("YzRhYzVjNTA5MjM3Mzc3NTNlYThiNjMwYTQyZjg5ZjVkOThjMTcyNDQ4MmJjM2ZmYzE0ZjllZDFmYmZlZWEifX19="),
+    //https://minecraft-heads.com/custom-heads/humanoid/51769-ares
+    ARES("OGZiZGFhM2U4ZDQ1MzY1Yjc3MzNiY2RiN2YyZjc4MjJlZTcyNzMzYWJmNjA3NDgwYzJhMzU2YWE0NzYwZDRmNSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/humans/28229-hermes
+    HERMES("OGU2ZjI4NDI1MjE3OWExNzE4ZTY4MTkwNzZiMTQyM2U2ODM1MWQ2OTc3YzQ2ODc2NGI3ZGZjOTRjNjgwMTk2NiJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/humans/28233-aphrodite
+    APHRODITE("YmQ5N2MwNTE4NDYzN2Q0YzQxZjY2MzAyMjYwYWI4ZDJkNThkOGJmMGVkMmQwYzdjOWE3NjdjMzRjNmRhOTVmNCJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/humans/1584-bust-zeus
+    BUST_ZEUS("MTI3ZDgxNWJmNjE5OWE4NjM3NDlkZDI3MWM3YzgxNDliOTk5N2JiYmE1MzFkMDM5NGNjZmMwOTQ0ZGEyNzYifX19"),
+    //https://minecraft-heads.com/custom-heads/humans/36134-zeus
+    ZEUS("ZGNkOWRkZjRmYjllMjVlNjJkMmU5ODU5NWQ1MTY4ZGUyYjMzNjdiYTc4ZjM2OTdiZTFjNDc5ZjM1MTAyYWQ3NiJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/humanoid/34400-poseidon
+    POSEIDON("NjAzNTRiMDc5Y2VhMDBmMTFhMjhlN2MyMWJhOWMxM2ExN2NjY2IwNjA1NjAxOWNiNGM2NGJjMjQzNTc1NTI5YSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/humanoid/18986-dark-wraith
+    DARK_WRAITH("YTEyMDBjNDcwYzY3MjhkZDY1N2IyNDVjMmRiYzAzMTg5MWUzY2RkOWQ5OTc5MDk4NDU2YjMzZjgxMmFmZGMzZiJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/humanoid/2372-minotaur
+    MINOTAUR("ZTI0NThmYWQzMmIxZjM0MjY0NTg5MjY3MTFjODJiNjYxYTAxYjIwZDE2MzNjMmE4ZDQyZmMzNzNkMTQ5ZGRjIn19fQ=="),
+    //https://minecraft-heads.com/custom-heads/humanoid/57977-cyclops
+    CYCLOPS("NzFjMGRiMjA0YWMzYTEyY2RlMzJjZDU3ODBkYjBhZjg2ZWQ5MDgyMTgxMDllOTU5NjRkMWExN2JhZjM0MzI0YiJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/humanoid/52611-siren
+    SIREN("NGUxOTFkZTIwNWQzNmRmMGYzYWUyNzFlYWE0MGNlNDk0NTk3NjI0ZmQwYzJmZTU5MDQzMjFjYmQ0YWExMDJlZSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/humans/58821-dryad
+    DRYAD("NWY3ODMyZjk5YzFmMmZkYjZjM2JmZGJmNzNkMzdhOGY2ZWQ2NTg5MGIzODg1NDNkNjgzOGE1MWRmODYzZDNiZCJ9fX0="),
 
     ;
 

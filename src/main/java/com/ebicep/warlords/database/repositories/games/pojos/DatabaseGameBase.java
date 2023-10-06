@@ -133,6 +133,10 @@ public abstract class DatabaseGameBase {
                 return false;
             }
             DatabaseGameBase databaseGame = createDatabaseGame.apply(game, gameWinEvent, updatePlayerStats);
+            if (databaseGame == null) {
+                ChatUtils.MessageType.GAME_SERVICE.sendMessage("Cannot add game to database - null database game");
+                return false;
+            }
 
             if (previousGames.size() >= 10) {
                 previousGames.get(0).deleteHolograms();

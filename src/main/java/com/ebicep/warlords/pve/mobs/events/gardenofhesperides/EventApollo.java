@@ -54,7 +54,7 @@ public class EventApollo extends AbstractSkeleton implements BossMinionMob {
 
                     @Override
                     public int getSpawnAmount() {
-                        return (int) (pveOption.getGame().warlordsPlayers().count() + 2);
+                        return (int) (pveOption.getGame().warlordsPlayers().count());
                     }
                 }
         );
@@ -113,8 +113,8 @@ public class EventApollo extends AbstractSkeleton implements BossMinionMob {
                                     wp,
                                     warlordsEntity,
                                     3,
-                                    20,
-                                    35,
+                                    .20f,
+                                    .35f,
                                     event -> {}
                             );
                             warlordsEntity.addDamageInstance(
