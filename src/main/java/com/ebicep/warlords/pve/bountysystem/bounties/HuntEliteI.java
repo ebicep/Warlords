@@ -5,7 +5,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
-import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
+import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
@@ -13,7 +13,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.util.UUID;
 
-public class HuntEliteI extends AbstractBounty implements TracksDuringGame, DailyCost, WeeklyRewardSpendable1 {
+public class HuntEliteI extends AbstractBounty implements TracksDuringGame, WeeklyCost, WeeklyRewardSpendable1 {
 
     @Transient
     private int newKills = 0;
