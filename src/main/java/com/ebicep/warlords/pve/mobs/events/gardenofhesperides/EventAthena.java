@@ -48,6 +48,7 @@ public class EventAthena extends AbstractZombie implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
+                new Shockwave(),
                 new AbstractSpawnMobAbility("Athena Mobs", 10, 100, 2) {
                     private int spawnCounter = 0;
                     private List<Location> spawnLocations = new ArrayList<>();
@@ -66,7 +67,7 @@ public class EventAthena extends AbstractZombie implements BossMinionMob {
                             }
                             spawnLocations = LocationUtils.getCircle(randomSpawnLocation, 3, pveOption.playerCount());
                         }
-                        Mob mobToSpawn = INITIAL_SPAWN.get(spawnCounter);
+                        Mob mobToSpawn = INITIAL_SPAWN.get(spawnCounter % INITIAL_SPAWN.size());
                         spawnCounter++;
                         return mobToSpawn.createMob(spawnLocations.remove(0));
                     }
