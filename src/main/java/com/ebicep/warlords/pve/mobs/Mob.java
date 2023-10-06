@@ -669,28 +669,28 @@ public enum Mob {
             Weapons.FABLED_HEROICS_SCYTHE.getItem()
     )),
     EVENT_TERAS_MINOTAUR(EventTerasMinotaur.class, EventTerasMinotaur::new, EventTerasMinotaur::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.MINOTAUR),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 51, 102),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 51, 102),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 51, 102),
             Weapons.NOMEGUSTA.getItem()
     )),
     EVENT_TERAS_CYCLOPS(EventTerasCyclops.class, EventTerasCyclops::new, EventTerasCyclops::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.CYCLOPS),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 102, 51, 0),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 102, 51, 0),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 102, 51, 0),
             Weapons.HAMMER_OF_LIGHT.getItem()
     )),
     EVENT_TERAS_SIREN(EventTerasSiren.class, EventTerasSiren::new, EventTerasSiren::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.SIREN),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 102, 0, 51),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 102, 0, 51),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 102, 0, 51),
             Weapons.FABLED_HEROICS_SWORD.getItem()
     )),
     EVENT_TERAS_DRYAD(EventTerasDryad.class, EventTerasDryad::new, EventTerasDryad::new, new Utils.SimpleEntityEquipment(
-            null,
+            SkullUtils.getSkullFrom(SkullID.DRYAD),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 255, 128),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 255, 128),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 255, 128),
