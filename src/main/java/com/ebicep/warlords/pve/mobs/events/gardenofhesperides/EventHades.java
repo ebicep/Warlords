@@ -8,10 +8,12 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -19,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class EventHades extends AbstractZombie implements BossMinionMob {
 
-    private int resurrectionTicksLeft = -1;
+    private int resurrectionTicksLeft = 2 * 60 * 20;
 
     public EventHades(Location spawnLocation) {
         this(spawnLocation, "Hades", 50000, .33f, 20, 524, 607);
@@ -46,7 +48,17 @@ public class EventHades extends AbstractZombie implements BossMinionMob {
                 new IncendiaryCurse(524, 607, 10) {
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
-                        return super.calculateSpeed(we);
+                        Location location = we.getLocation();
+                        Vector speed = we.getLocation().getDirection().normalize().multiply(.3).setY(.01);
+                        if (we instanceof WarlordsNPC npc && npc.getMob() != null) {
+                            AbstractMob<?> npcMob = npc.getMob();
+                            LivingEntity target = npcMob.getTarget();
+                            if (target != null) {
+                                double distance = location.distance(target.getBukkitLivingEntity().getLocation());
+                                speed.setY(distance * .003);
+                            }
+                        }
+                        return speed;
                     }
                 },
                 new UndyingArmy(60)
@@ -61,9 +73,6 @@ public class EventHades extends AbstractZombie implements BossMinionMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (option.getMobs().size() != 1 || !option.getMobs().contains(this)) {
-            return;
-        }
-        if (resurrectionTicksLeft <= 0) {
             return;
         }
         resurrectionTicksLeft--;

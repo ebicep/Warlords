@@ -67,7 +67,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(name, energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
+        Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         Utils.spawnThrowableProjectile(
                 wp.getGame(),
