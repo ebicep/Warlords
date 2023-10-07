@@ -50,6 +50,10 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         super("Last Stand", 0, 0, 56.38f, 40);
     }
 
+    public LastStand(float cooldown) {
+        super("Last Stand", 0, 0, cooldown, 40);
+    }
+
     public LastStand(int selfDamageReductionPercent, int teammateDamageReductionPercent) {
         super("Last Stand", 0, 0, 56.38f, 40);
         this.selfDamageReductionPercent = selfDamageReductionPercent;
@@ -85,7 +89,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(name, energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
+        Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1);
 
         LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -206,7 +210,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
             }
         }
 
-        Location loc = player.getEyeLocation();
+        Location loc = wp.getEyeLocation();
         loc.setPitch(0);
         loc.setYaw(0);
         Matrix4d matrix = new Matrix4d();
@@ -220,7 +224,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
                 loc.getWorld().spawnParticle(
                         Particle.FLAME,
-                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
+                        matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
                         1,
                         0,
                         0,
@@ -237,7 +241,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
                 loc.getWorld().spawnParticle(
                         Particle.REDSTONE,
-                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
+                        matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
                         1,
                         0,
                         0,

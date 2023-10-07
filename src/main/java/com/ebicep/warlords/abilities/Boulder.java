@@ -40,6 +40,10 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
         super("Boulder", 451, 673, 7.05f, 80, 15, 175);
     }
 
+    public Boulder(float minDamageHeal, float maxDamageHeal, float cooldown) {
+        super("Boulder", minDamageHeal, maxDamageHeal, cooldown, 80, 15, 175);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Launch a giant boulder that shatters and deals")
@@ -61,17 +65,12 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.subtractEnergy(name, energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
+        Utils.playGlobalSound(wp.getLocation(), "shaman.boulder.activation", 2, 1);
 
-        Location location = player.getLocation();
-        Vector speed;
-        if (pveMasterUpgrade) {
-            speed = player.getLocation().getDirection().add(new Vector(0, 0.5, 0).multiply(boulderSpeed));
-        } else {
-            speed = player.getLocation().getDirection().multiply(boulderSpeed);
-        }
+        Location location = wp.getLocation();
+        Vector speed = calculateSpeed(wp);
 
-        Location initialCastLocation = player.getLocation();
+        Location initialCastLocation = wp.getLocation();
 
         Utils.spawnThrowableProjectile(
                 wp.getGame(),
@@ -153,6 +152,16 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
         );
 
         return true;
+    }
+
+    protected Vector calculateSpeed(WarlordsEntity we) {
+        Vector speed;
+        if (pveMasterUpgrade) {
+            speed = we.getLocation().getDirection().add(new Vector(0, 0.5, 0).multiply(boulderSpeed));
+        } else {
+            speed = we.getLocation().getDirection().multiply(boulderSpeed);
+        }
+        return speed;
     }
 
     @Override

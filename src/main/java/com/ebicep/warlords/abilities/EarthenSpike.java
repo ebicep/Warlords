@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -57,6 +56,10 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         super("Earthen Spike", 404, 562, 0, 100, 15, 175);
     }
 
+    public EarthenSpike(float minDamageHeal, float maxDamageHeal, float cooldown) {
+        super("Earthen Spike", minDamageHeal, maxDamageHeal, cooldown, 100, 15, 175);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text(
@@ -95,18 +98,9 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
             spiked.add(spikeTarget);
             spikeTarget(wp, spikeTarget);
 
-            if (!pveMasterUpgrade2 || spiked.size() >= 3) {
-                addTimesUsed();
-                AbstractPlayerClass.sendRightClickPacket(player);
-                break;
-            }
+            break;
         }
-        if (pveMasterUpgrade2 && spiked.size() < 3 && !spiked.isEmpty()) {
-            for (int i = 0; i < 3 - spiked.size(); i++) {
-                spikeTarget(wp, spiked.get(0));
-            }
-        }
-        return true;
+        return !spiked.isEmpty();
     }
 
     private void spikeTarget(@Nonnull WarlordsEntity wp, WarlordsEntity spikeTarget) {
@@ -294,7 +288,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         return newBlock;
     }
 
-    private void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
+    protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
         playersSpiked++;
         if (spikeTarget.hasFlag()) {
             carrierSpiked++;

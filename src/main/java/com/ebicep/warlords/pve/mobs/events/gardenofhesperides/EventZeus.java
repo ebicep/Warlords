@@ -21,6 +21,7 @@ import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
@@ -82,8 +83,11 @@ public class EventZeus extends AbstractZombie implements BossMinionMob {
             @Override
             protected Listener getListener() {
                 return new Listener() {
-                    @EventHandler
+                    @EventHandler(priority = EventPriority.HIGHEST)
                     public void onDeath(WarlordsDeathEvent event) {
+                        if (pveOption.getMobs().size() != 1) {
+                            return;
+                        }
                         WarlordsEntity dead = event.getWarlordsEntity();
                         if (!(dead instanceof WarlordsNPC npc)) {
                             return;
@@ -93,7 +97,7 @@ public class EventZeus extends AbstractZombie implements BossMinionMob {
                             float healing = warlordsNPC.getHealth() * 0.25f;
                             warlordsNPC.addHealingInstance(
                                     npc,
-                                    "Hades Soul",
+                                    "Soul",
                                     healing,
                                     healing,
                                     0,

@@ -21,6 +21,10 @@ public class GroundSlamBerserker extends AbstractGroundSlam {
         super(448.8f, 606.1f, cooldown, 60, 15, 200);
     }
 
+    public GroundSlamBerserker(float minDamageHeal, float maxDamageHeal, float cooldown) {
+        super(448.8f, 606.1f, cooldown, 60, 15, 200);
+    }
+
     @Override
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
         if (pveMasterUpgrade2) {
