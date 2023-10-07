@@ -11,6 +11,8 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.tartarus.DatabaseGamePvEEventTartarus;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePvEEventTheAcropolis;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.theborderlineofillusion.DatabaseGamePvEEventTheBorderlineOfIllusion;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
@@ -19,6 +21,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayer
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabasePlayerPvEEventIlluminaDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
@@ -916,14 +919,16 @@ public enum GameEvents {
     },
     GARDEN_OF_HESPERIDES("Garden of Hesperides",
             Currencies.EVENT_POINTS_GARDEN_OF_HESPERIDES,
-            null, //TODO
-            null,
-            null,
+            DatabasePlayerPvEEventStats::getGardenOfHesperidesStats,
+            DatabasePlayerPvEEventStats::getGardenOfHesperidesEventStats,
+            DatabasePlayerPvEEventStats::getGardenOfHesperidesStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 for (Option option : game.getOptions()) {
-//                    if (option instanceof TheBorderlineOfIllusionEvent) {
-//                        return new DatabaseGamePvEEventTheBorderlineOfIllusion(game, warlordsGameTriggerWinEvent, aBoolean);
-//                    }
+                    if (option instanceof TheAcropolisOption) {
+                        return new DatabaseGamePvEEventTheAcropolis(game, warlordsGameTriggerWinEvent, aBoolean);
+                    } else if (option instanceof TartarusOption) {
+                        return new DatabaseGamePvEEventTartarus(game, warlordsGameTriggerWinEvent, aBoolean);
+                    }
                 }
                 return null;
             },
@@ -1012,45 +1017,65 @@ public enum GameEvents {
 
         @Override
         public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
-//            long eventStart = currentGameEvent.getStartDateSecond(); //TODO
-//            EventLeaderboard borderlineOfIllusionBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Highest Game Event Points",
-//                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 751.5),
-//                    (databasePlayer, time) -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getIlluminaEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
-//                            .getBorderLineOfIllusionStats()
-//                            .getHighestEventPointsGame(),
-//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getIlluminaEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
-//                            .getBorderLineOfIllusionStats()
-//                            .getHighestEventPointsGame())
-//            );
-//            EventLeaderboard totalBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Event Points",
-//                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 737.5),
-//                    (databasePlayer, time) -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getIlluminaEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
-//                            .getEventPointsCumulative(),
-//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getIlluminaEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventIlluminaDifficultyStats())
-//                            .getEventPointsCumulative())
-//            );
-//            leaderboards.put(borderlineOfIllusionBoard, "The Borderline of Illusion");
-//            leaderboards.put(totalBoard, "Total Event Points");
+            long eventStart = currentGameEvent.getStartDateSecond();
+            EventLeaderboard acropolisBoard = new EventLeaderboard(
+                    eventStart,
+                    "Highest Game Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 751.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getGardenOfHesperidesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
+                            .getAcropolisStats()
+                            .getHighestEventPointsGame(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getGardenOfHesperidesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
+                            .getAcropolisStats()
+                            .getHighestEventPointsGame())
+            );
+            EventLeaderboard tartarusBoard = new EventLeaderboard(
+                    eventStart,
+                    "Highest Game Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 757.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getGardenOfHesperidesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
+                            .getTartarusStats()
+                            .getHighestEventPointsGame(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getGardenOfHesperidesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
+                            .getTartarusStats()
+                            .getHighestEventPointsGame())
+            );
+            EventLeaderboard totalBoard = new EventLeaderboard(
+                    eventStart,
+                    "Event Points",
+                    new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2539.5, 55, 737.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getGardenOfHesperidesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
+                            .getEventPointsCumulative(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getGardenOfHesperidesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
+                            .getEventPointsCumulative())
+            );
+            leaderboards.put(acropolisBoard, "The Acropolis");
+            leaderboards.put(tartarusBoard, "Tartarus");
+            leaderboards.put(totalBoard, "Total Event Points");
         }
 
         @Override

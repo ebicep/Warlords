@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -10,6 +11,8 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabasePlayerPvEEventGardenOfHesperidesStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabasePlayerPvEEventIlluminaDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabasePlayerPvEEventIlluminaStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraDifficultyStats;
@@ -35,10 +38,13 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
     private DatabasePlayerPvEEventMithraStats mithraStats = new DatabasePlayerPvEEventMithraStats();
     @Field("illumina")
     private DatabasePlayerPvEEventIlluminaStats illuminaStats = new DatabasePlayerPvEEventIlluminaStats();
+    @Field("garden_of_hesperides")
+    private DatabasePlayerPvEEventGardenOfHesperidesStats gardenOfHesperidesStats = new DatabasePlayerPvEEventGardenOfHesperidesStats();
 
     @Override
     public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer,
+            DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -49,7 +55,8 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
 
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent != null) {
-            currentGameEvent.getEvent().updateStatsFunction.apply(this).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+            GameEvents event = currentGameEvent.getEvent();
+            event.updateStatsFunction.apply(this).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
 
             //GUILDS
             Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
@@ -57,14 +64,12 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
                 Guild guild = guildGuildPlayerPair.getA();
                 GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
 
-                long points = Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(),
+                long points = Math.min(
+                        ((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(),
                         ((DatabaseGamePvEEvent) databaseGame).getPointLimit()
                 ) * multiplier;
-                guild.addEventPoints(currentGameEvent.getEvent(), currentGameEvent.getStartDateSecond(), points * multiplier);
-                guildPlayer.addEventPoints(currentGameEvent.getEvent(),
-                        currentGameEvent.getStartDateSecond(),
-                        points * multiplier
-                );
+                guild.addEventPoints(event, currentGameEvent.getStartDateSecond(), points * multiplier);
+                guildPlayer.addEventPoints(event, currentGameEvent.getStartDateSecond(), points * multiplier);
                 guild.queueUpdate();
             }
         }
@@ -100,6 +105,14 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
 
     public Map<Long, DatabasePlayerPvEEventIlluminaDifficultyStats> getIlluminaEventStats() {
         return illuminaStats.getEventStats();
+    }
+
+    public DatabasePlayerPvEEventGardenOfHesperidesStats getGardenOfHesperidesStats() {
+        return gardenOfHesperidesStats;
+    }
+
+    public Map<Long, DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats> getGardenOfHesperidesEventStats() {
+        return gardenOfHesperidesStats.getEventStats();
     }
 
 
