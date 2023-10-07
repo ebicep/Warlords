@@ -6,16 +6,22 @@ import com.ebicep.warlords.abilities.LightningBolt;
 import com.ebicep.warlords.abilities.LightningRod;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 
@@ -46,33 +52,7 @@ public class EventZeus extends AbstractZombie implements BossMinionMob {
                 new ChainLightning(7) {{
                     this.setTickDuration(40);
                 }},
-                new LightningRod() {
-                    {
-                        this.setHealthRestore(0);
-                    }
-
-                    @Override
-                    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                name,
-                                "ROD DMG",
-                                LightningRod.class,
-                                new LightningRod(),
-                                wp,
-                                CooldownTypes.BUFF,
-                                cooldownManager -> {
-                                },
-                                5 * 20
-                        ) {
-                            @Override
-                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-
-                                return currentDamageValue * 1.15f;
-                            }
-                        });
-                        return super.onActivate(wp, player);
-                    }
-                },
+                new ZeusLightningRod(),
                 new HealingRain(60) {{
                     this.setPveMasterUpgrade(true);
                     this.setTickDuration(320);
@@ -83,6 +63,52 @@ public class EventZeus extends AbstractZombie implements BossMinionMob {
     @Override
     public Mob getMobRegistry() {
         return Mob.EVENT_ZEUS;
+    }
+
+    @Override
+    public void onSpawn(PveOption option) {
+        super.onSpawn(option);
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Defeated Check",
+                null,
+                EventZeus.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.INTERNAL,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+                    @EventHandler
+                    public void onDeath(WarlordsDeathEvent event) {
+                        WarlordsEntity dead = event.getWarlordsEntity();
+                        if (!(dead instanceof WarlordsNPC npc)) {
+                            return;
+                        }
+                        AbstractMob<?> npcMob = npc.getMob();
+                        if (npcMob instanceof EventHades) {
+                            float healing = warlordsNPC.getHealth() * 0.25f;
+                            warlordsNPC.addHealingInstance(
+                                    npc,
+                                    "Hades Soul",
+                                    healing,
+                                    healing,
+                                    0,
+                                    100
+                            );
+                        } else if (npcMob instanceof EventPoseidon) {
+                            warlordsNPC.getAbilitiesMatching(ZeusLightningRod.class).forEach(lightningRod -> {
+                                lightningRod.setHealthRestore(10);
+                                lightningRod.setDamageBuff(lightningRod.getDamageBuff() + .1f);
+                            });
+                        }
+                    }
+                };
+            }
+        });
     }
 
     @Override
@@ -107,5 +133,44 @@ public class EventZeus extends AbstractZombie implements BossMinionMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    private static class ZeusLightningRod extends LightningRod {
+
+        private float damageBuff = 1.15f;
+
+        public ZeusLightningRod() {
+            this.setHealthRestore(0);
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "ROD DMG",
+                    LightningRod.class,
+                    new LightningRod(),
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    5 * 20
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+
+                    return currentDamageValue * damageBuff;
+                }
+            });
+            return super.onActivate(wp, player);
+        }
+
+        public float getDamageBuff() {
+            return damageBuff;
+        }
+
+        public void setDamageBuff(float damageBuff) {
+            this.damageBuff = damageBuff;
+        }
     }
 }

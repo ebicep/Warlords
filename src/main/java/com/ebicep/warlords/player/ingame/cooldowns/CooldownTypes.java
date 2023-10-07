@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 public enum CooldownTypes {
 
+    INTERNAL("INTERNAL"),
     BUFF("BUFF"),
     DEBUFF("DEBUFF"),
     ABILITY("ABILITY"),
