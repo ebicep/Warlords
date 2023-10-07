@@ -60,7 +60,11 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     public UndyingArmy() {
-        super("Undying Army", 0, 0, 62.64f, 60);
+        this(62.64f);
+    }
+
+    public UndyingArmy(float cooldown) {
+        super("Undying Army", 0, 0, cooldown, 60);
     }
 
     @Override

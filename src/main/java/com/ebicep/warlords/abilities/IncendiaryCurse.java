@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -37,7 +38,11 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
     private int blindDurationInTicks = 30;
 
     public IncendiaryCurse() {
-        super("Incendiary Curse", 408, 552, 8, 60, 25, 175);
+        this(408, 552, 8);
+    }
+
+    public IncendiaryCurse(float minDamageHeal, float maxDamageHeal, float cooldown) {
+        super("Incendiary Curse", minDamageHeal, maxDamageHeal, cooldown, 60, 25, 175);
     }
 
     @Override
@@ -69,7 +74,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
                 Utils.spawnArmorStand(wp.getLocation(), armorStand -> {
                     armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
                 }),
-                player.getLocation().getDirection().multiply(SPEED),
+                calculateSpeed(wp),
                 GRAVITY,
                 SPEED,
                 (newLoc, integer) -> {},
@@ -158,6 +163,10 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
         );
 
         return true;
+    }
+
+    protected Vector calculateSpeed(WarlordsEntity we) {
+        return we.getLocation().getDirection().multiply(SPEED);
     }
 
     @Override

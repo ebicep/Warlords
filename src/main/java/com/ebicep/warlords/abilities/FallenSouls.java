@@ -42,7 +42,11 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
     public int numberOfDismounts = 0;
 
     public FallenSouls() {
-        super("Fallen Souls", 164f, 212f, 0, 55, 20, 180, 2, 35, false);
+        this(164f, 212f, 0);
+    }
+
+    public FallenSouls(float minDamageHeal, float maxDamageHeal, float cooldown) {
+        super("Fallen Souls", minDamageHeal, maxDamageHeal, cooldown, 55, 20, 180, 2, 35, false);
         this.shotsFiredAtATime = 3;
         this.maxAngleOfShots = 54;
         this.forwardTeleportAmount = 1.6f;

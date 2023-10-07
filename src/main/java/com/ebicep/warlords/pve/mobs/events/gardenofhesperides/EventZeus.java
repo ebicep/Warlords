@@ -89,7 +89,7 @@ public class EventZeus extends AbstractZombie implements BossMinionMob {
                             return;
                         }
                         WarlordsEntity dead = event.getWarlordsEntity();
-                        if (!(dead instanceof WarlordsNPC npc)) {
+                        if (!(dead instanceof WarlordsNPC npc) || dead == warlordsNPC) {
                             return;
                         }
                         AbstractMob<?> npcMob = npc.getMob();
