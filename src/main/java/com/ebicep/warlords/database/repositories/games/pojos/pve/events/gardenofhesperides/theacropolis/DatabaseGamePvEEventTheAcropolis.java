@@ -70,7 +70,7 @@ public class DatabaseGamePvEEventTheAcropolis extends DatabaseGamePvEEvent {
 
     @Override
     public int getPointLimit() {
-        return 15_000;
+        return 75_000;
     }
 
     @Override

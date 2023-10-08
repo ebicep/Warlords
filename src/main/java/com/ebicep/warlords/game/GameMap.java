@@ -4121,9 +4121,6 @@ public enum GameMap {
                     .onPerMobKill(Mob.EVENT_PROMETHEUS, 500)
                     .onPerMobKill(Mob.EVENT_ATHENA, 500)
                     .onPerMobKill(Mob.EVENT_CRONUS, 500)
-                    .onPerMobKill(Mob.EVENT_ZEUS, 500)
-                    .onPerMobKill(Mob.EVENT_POSEIDON, 500)
-                    .onPerMobKill(Mob.EVENT_HADES, 500)
 
             );
             options.add(new CurrencyOnEventOption()
@@ -4135,9 +4132,6 @@ public enum GameMap {
                     .onPerMobKill(Mob.EVENT_PROMETHEUS, 10000)
                     .onPerMobKill(Mob.EVENT_ATHENA, 10000)
                     .onPerMobKill(Mob.EVENT_CRONUS, 10000)
-                    .onPerMobKill(Mob.EVENT_ZEUS, 10000)
-                    .onPerMobKill(Mob.EVENT_POSEIDON, 10000)
-                    .onPerMobKill(Mob.EVENT_HADES, 10000)
             );
             options.add(new CoinGainOption()
                     .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{
@@ -4271,41 +4265,10 @@ public enum GameMap {
             });
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(900, 50, "spec"));
-            options.add(new TheAcropolisOption());
+            options.add(new TartarusOption());
 //            options.add(new SafeZoneOption(1));
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(30, Team.BLUE)
-                    .onPerWaveClear(1, 500)
-                    .onPerWaveClear(5, 2000)
-                    .onPerMobKill(Mob.ZOMBIE_LANCER, 5)
-                    .onPerMobKill(Mob.SKELETAL_ENTROPY, 5)
-                    .onPerMobKill(Mob.PIG_DISCIPLE, 10)
-                    .onPerMobKill(Mob.ZOMBIE_LAMENT, 10)
-                    .onPerMobKill(Mob.ARACHNO_VENARI, 10)
-                    .onPerMobKill(Mob.PIG_SHAMAN, 15)
-                    .onPerMobKill(Mob.PIG_ALLEVIATOR, 15)
-                    .onPerMobKill(Mob.ZOMBIE_VANGUARD, 20)
-                    .onPerMobKill(Mob.SLIME_GUARD, 25)
-                    .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 25)
-                    .onPerMobKill(Mob.ILLUMINATION, 25)
-                    .onPerMobKill(Mob.INTERMEDIATE_WARRIOR_BERSERKER, 25)
-                    .onPerMobKill(Mob.SKELETAL_MESMER, 35)
-                    .onPerMobKill(Mob.OVERGROWN_ZOMBIE, 40)
-                    .onPerMobKill(Mob.ADVANCED_WARRIOR_BERSERKER, 40)
-                    .onPerMobKill(Mob.RIFT_WALKER, 45)
-                    .onPerMobKill(Mob.SKELETAL_SORCERER, 45)
-                    .onPerMobKill(Mob.FIRE_SPLITTER, 45)
-                    .onPerMobKill(Mob.ZOMBIE_KNIGHT, 50)
-                    .onPerMobKill(Mob.SCRUPULOUS_ZOMBIE, 50)
-                    .onPerMobKill(Mob.EVENT_TERAS_MINOTAUR, 150)
-                    .onPerMobKill(Mob.EVENT_TERAS_CYCLOPS, 150)
-                    .onPerMobKill(Mob.EVENT_TERAS_SIREN, 150)
-                    .onPerMobKill(Mob.EVENT_TERAS_DRYAD, 150)
-                    .onPerMobKill(Mob.EVENT_APOLLO, 500)
-                    .onPerMobKill(Mob.EVENT_ARES, 500)
-                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 500)
-                    .onPerMobKill(Mob.EVENT_ATHENA, 500)
-                    .onPerMobKill(Mob.EVENT_CRONUS, 500)
                     .onPerMobKill(Mob.EVENT_ZEUS, 500)
                     .onPerMobKill(Mob.EVENT_POSEIDON, 500)
                     .onPerMobKill(Mob.EVENT_HADES, 500)
@@ -4314,15 +4277,9 @@ public enum GameMap {
             options.add(new CurrencyOnEventOption()
                     .startWith(120000)
                     .onKill(500)
-                    .setPerWaveClear(5, 25000)
-                    .onPerMobKill(Mob.EVENT_APOLLO, 10000)
-                    .onPerMobKill(Mob.EVENT_ARES, 10000)
-                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 10000)
-                    .onPerMobKill(Mob.EVENT_ATHENA, 10000)
-                    .onPerMobKill(Mob.EVENT_CRONUS, 10000)
-                    .onPerMobKill(Mob.EVENT_ZEUS, 10000)
-                    .onPerMobKill(Mob.EVENT_POSEIDON, 10000)
-                    .onPerMobKill(Mob.EVENT_HADES, 10000)
+                    .onPerMobKill(Mob.EVENT_ZEUS, 5000)
+                    .onPerMobKill(Mob.EVENT_POSEIDON, 5000)
+                    .onPerMobKill(Mob.EVENT_HADES, 5000)
             );
             options.add(new CoinGainOption()
                     .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{

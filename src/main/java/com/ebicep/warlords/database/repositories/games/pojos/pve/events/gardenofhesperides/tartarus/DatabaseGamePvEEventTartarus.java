@@ -71,7 +71,7 @@ public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEvent implement
 
     @Override
     public int getPointLimit() {
-        return 50_000;
+        return 20_000;
     }
 
     @Override
