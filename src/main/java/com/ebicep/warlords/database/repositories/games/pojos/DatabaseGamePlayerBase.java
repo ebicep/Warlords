@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -58,7 +59,7 @@ public class DatabaseGamePlayerBase {
     public DatabaseGamePlayerBase() {
     }
 
-    public DatabaseGamePlayerBase(WarlordsPlayer warlordsPlayer) {
+    public DatabaseGamePlayerBase(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, true);
         long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
         long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);

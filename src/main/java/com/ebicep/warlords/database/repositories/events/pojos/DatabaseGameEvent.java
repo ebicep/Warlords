@@ -34,6 +34,10 @@ public class DatabaseGameEvent {
     public static final HashMap<GameEvents, List<Long>> ALL_GAME_EVENT_TIMES = new HashMap<>();
     public static DatabaseGameEvent currentGameEvent = null;
 
+    public static boolean eventIsActive() {
+        return currentGameEvent != null && currentGameEvent.isActive();
+    }
+
     public static void sendGameEventMessage(Player player, String message) {
         player.sendMessage(Component.text("Game Events", NamedTextColor.GOLD)
                                     .append(Component.text(" > " + message, NamedTextColor.DARK_GRAY)));
@@ -53,7 +57,7 @@ public class DatabaseGameEvent {
                         }
                         if (gameEvent.getEndDate().isBefore(now)) {
                             PREVIOUS_GAME_EVENTS.put(gameEvent.getEvent(), gameEvent);
-                        } else if (gameEvent.getEndDate().isAfter(now)) {
+                        } else if (gameEvent.isActive()) {
                             ChatUtils.MessageType.GAME_EVENTS.sendMessage("Found active game event: " + gameEvent.getEvent().name + " in " + (System.nanoTime() - start) / 1000000 + "ms");
                             ChatUtils.MessageType.GAME_EVENTS.sendMessage("Start: " + gameEvent.getStartDate());
                             ChatUtils.MessageType.GAME_EVENTS.sendMessage("End: " + gameEvent.getEndDate());
@@ -110,6 +114,10 @@ public class DatabaseGameEvent {
 
     public Instant getEndDate() {
         return endDate;
+    }
+
+    public boolean isActive() {
+        return getEndDate().isAfter(Instant.now()); //getStartDate().isBefore(Instant.now()) &&
     }
 
     public Boolean getStarted() {

@@ -308,7 +308,7 @@ public enum Quests {
 
     public LinkedHashMap<Spendable, Long> getRewards() {
         LinkedHashMap<Spendable, Long> editedRewards = new LinkedHashMap<>(rewards);
-        if (DatabaseGameEvent.currentGameEvent != null && !DatabaseGameEvent.currentGameEvent.getEndDate().isBefore(Instant.now())) {
+        if (DatabaseGameEvent.currentGameEvent != null && !DatabaseGameEvent.currentGameEvent.isActive()) {
             return editedRewards;
         }
         rewards.forEach((spendable, aLong) -> {

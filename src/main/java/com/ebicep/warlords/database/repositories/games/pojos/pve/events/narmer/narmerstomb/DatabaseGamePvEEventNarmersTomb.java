@@ -57,7 +57,7 @@ public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEvent implem
         }
         game.warlordsPlayers()
             .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventNarmersTomb(warlordsPlayer,
-                    waveDefenseOption.get(),
+                    gameWinEvent, waveDefenseOption.get(),
                     eventPointsOption.get()
             )));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();

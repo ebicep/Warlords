@@ -27,6 +27,7 @@ public class EventCronus extends AbstractZombie implements BossMinionMob {
 
     private static final List<Mob> INITIAL_SPAWN = Arrays.asList(Mob.EVENT_TERAS_CYCLOPS, Mob.EVENT_TERAS_MINOTAUR, Mob.EVENT_TERAS_SIREN, Mob.EVENT_TERAS_DRYAD);
     private boolean healthCheck = false;
+    private boolean rejuvenateOver = false;
 
     public EventCronus(Location spawnLocation) {
         this(spawnLocation, "Cronus", 42500, 0.2f, 25, 920, 1000);
@@ -123,11 +124,16 @@ public class EventCronus extends AbstractZombie implements BossMinionMob {
                         CalculateSpeed calculateSpeed = warlordsNPC.getSpeed();
                         calculateSpeed.setBaseSpeedToWalkingSpeed(0.25f);
                         calculateSpeed.setChanged(true);
+                        rejuvenateOver = true;
                         this.cancel();
                     }
                 }
             }.runTaskTimer(0, 10);
         }
+    }
+
+    public boolean diedDuringRejuvenate() {
+        return healthCheck && !rejuvenateOver;
     }
 
     @Override

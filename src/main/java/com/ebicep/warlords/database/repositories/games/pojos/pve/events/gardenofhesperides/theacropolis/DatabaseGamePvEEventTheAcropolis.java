@@ -56,7 +56,7 @@ public class DatabaseGamePvEEventTheAcropolis extends DatabaseGamePvEEvent {
         }
         game.warlordsPlayers()
             .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventTheAcropolis(warlordsPlayer,
-                    waveDefenseOption.get(),
+                    gameWinEvent, waveDefenseOption.get(),
                     eventPointsOption.get()
             )));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();

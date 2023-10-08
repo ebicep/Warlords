@@ -56,7 +56,7 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
         }
         game.warlordsPlayers()
             .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventBoltaroBonanza(warlordsPlayer,
-                    waveDefenseOption.get(),
+                    gameWinEvent, waveDefenseOption.get(),
                     eventPointsOption.get()
             )));
         this.highestSplit = boltaroBonanzaOption.get().getHighestSplitValue();

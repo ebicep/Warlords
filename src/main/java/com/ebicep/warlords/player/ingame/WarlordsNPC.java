@@ -8,7 +8,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Aspect;
-import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
+import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;

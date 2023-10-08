@@ -13,7 +13,7 @@ import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 
-public class EventTerasDryad extends AbstractZombie implements BossMinionMob {
+public class EventTerasDryad extends AbstractZombie implements BossMinionMob, Teras {
 
     public EventTerasDryad(Location spawnLocation) {
         this(spawnLocation, "Teras Dryad", 3600, 0.25f, 0, 350, 450);

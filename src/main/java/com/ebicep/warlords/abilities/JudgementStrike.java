@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.mobflags.Unexecutable;
+import com.ebicep.warlords.pve.mobs.flags.Unexecutable;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.JudgementStrikeBranch;

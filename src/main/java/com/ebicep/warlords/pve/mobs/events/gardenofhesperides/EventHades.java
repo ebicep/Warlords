@@ -19,7 +19,7 @@ import org.bukkit.util.Vector;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EventHades extends AbstractZombie implements BossMinionMob {
+public class EventHades extends AbstractZombie implements BossMinionMob, God {
 
     private int resurrectionTicksLeft = 2 * 60 * 20;
 

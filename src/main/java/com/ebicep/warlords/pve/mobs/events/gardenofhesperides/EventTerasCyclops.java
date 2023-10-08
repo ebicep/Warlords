@@ -11,7 +11,7 @@ import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 
-public class EventTerasCyclops extends AbstractZombie implements BossMinionMob {
+public class EventTerasCyclops extends AbstractZombie implements BossMinionMob, Teras {
 
     public EventTerasCyclops(Location spawnLocation) {
         this(spawnLocation, "Teras Cyclops", 3500, 0.4f, 10, 550, 650);

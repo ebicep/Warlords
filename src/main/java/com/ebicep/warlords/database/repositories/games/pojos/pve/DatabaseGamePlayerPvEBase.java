@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PlayerPveRewards;
 import com.ebicep.warlords.guilds.GuildExperienceUtils;
@@ -63,8 +64,8 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerPvEBase() {
     }
 
-    public DatabaseGamePlayerPvEBase(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        super(warlordsPlayer);
+    public DatabaseGamePlayerPvEBase(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, PveOption pveOption) {
+        super(warlordsPlayer, gameWinEvent);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName());
         UUID uuid = warlordsPlayer.getUuid();
         PlayerPveRewards playerPveRewards = pveOption.getRewards()
@@ -101,7 +102,7 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
                 List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
                 for (AbstractBounty bounty : trackableBounties) {
                     if (bounty instanceof TracksPostGame tracksPostGame) {
-                        tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer);
+                        tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer, gameWinEvent);
                     } else if (bounty instanceof TracksDuringGame tracksDuringGame) {
                         tracksDuringGame.apply(bounty);
                     }

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.tiers;
 
-import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
-import com.ebicep.warlords.pve.mobs.mobflags.Unexecutable;
+import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.pve.mobs.flags.Unexecutable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 

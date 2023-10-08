@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -34,7 +35,7 @@ public class AmassI extends AbstractBounty implements TracksPostGame, LifetimeCo
     }
 
     @Override
-    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {
+    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, false);
         value += expSummary.values().stream().mapToLong(Long::longValue).sum();
     }

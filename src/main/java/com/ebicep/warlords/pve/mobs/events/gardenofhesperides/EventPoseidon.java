@@ -20,7 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
-public class EventPoseidon extends AbstractZombie implements BossMinionMob {
+public class EventPoseidon extends AbstractZombie implements BossMinionMob, God {
 
     public EventPoseidon(Location spawnLocation) {
         this(spawnLocation, "Poseidon", 75000, .33f, 15, 725, 846);

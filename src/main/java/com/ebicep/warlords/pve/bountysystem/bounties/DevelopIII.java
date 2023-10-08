@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
@@ -33,7 +34,7 @@ public class DevelopIII extends AbstractBounty implements TracksPostGame, Weekly
     }
 
     @Override
-    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {
+    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         AbstractWeapon weapon = warlordsPlayer.getWeapon();
         if (weapon == null) {
             return;

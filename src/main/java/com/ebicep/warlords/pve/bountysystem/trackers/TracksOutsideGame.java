@@ -3,8 +3,10 @@ package com.ebicep.warlords.pve.bountysystem.trackers;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.EventShopPurchaseEvent;
 import com.ebicep.warlords.events.WeaponTitlePurchaseEvent;
 import com.ebicep.warlords.events.player.*;
+import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyStartEvent;
@@ -107,6 +109,12 @@ public interface TracksOutsideGame {
                 runTracker(event.getUUID(), TracksOutsideGame::onSpecPrestige);
             }
 
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onEventShopPurchase(EventShopPurchaseEvent event) {
+                quicklyValidate();
+                runTracker(event.getUUID(), tracker -> tracker.onEventShopPurchase(event.getBought()));
+            }
+
             private void quicklyValidate() {
                 Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
                 int onlinePlayerCount = onlinePlayers.size();
@@ -169,6 +177,9 @@ public interface TracksOutsideGame {
     }
 
     default void onSpecPrestige() {
+    }
+
+    default void onEventShopPurchase(SpendableBuyShop shop) {
     }
 
 }

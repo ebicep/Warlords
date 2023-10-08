@@ -22,7 +22,7 @@ public class DatabaseGamePlayerPvEOnslaught extends DatabaseGamePlayerPvEBase {
     }
 
     public DatabaseGamePlayerPvEOnslaught(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        super(warlordsPlayer, pveOption);
+        super(warlordsPlayer, gameWinEvent, pveOption);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName());
         UUID uuid = warlordsPlayer.getUuid();
         PlayerPveRewards playerPveRewards = pveOption.getRewards()

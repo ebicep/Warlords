@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -35,7 +36,7 @@ public class AdvanceIII extends AbstractBounty implements TracksPostGame, Weekly
     }
 
     @Override
-    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {
+    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         BountyUtils.getPvEOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
             if (waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS) {
                 int wavesCleared = waveDefenseOption.getWavesCleared();

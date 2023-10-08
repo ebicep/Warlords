@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.mobs.mobflags;
+package com.ebicep.warlords.pve.mobs.flags;
 
 
 /**

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -39,7 +40,7 @@ public class DedicationI extends AbstractBounty implements TracksPostGame, Lifet
     }
 
     @Override
-    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {
+    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         BountyUtils.getPvEOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
             if (DIFFICULTIES.contains(waveDefenseOption.getDifficulty())) {
                 value += waveDefenseOption.getWavesCleared();

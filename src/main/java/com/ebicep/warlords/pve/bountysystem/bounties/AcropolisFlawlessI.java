@@ -1,11 +1,19 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.TheAcropolisOption;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides1;
+import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 
-public class AcropolisFlawlessI extends AbstractBounty implements EventCost, GardenOfHesperides1 {
+public class AcropolisFlawlessI extends AbstractBounty implements TracksPostGame, EventCost, GardenOfHesperides1 {
 
     @Override
     public String getName() {
@@ -27,4 +35,20 @@ public class AcropolisFlawlessI extends AbstractBounty implements EventCost, Gar
         return Bounty.ACROPOLIS_FLAWLESS_I;
     }
 
+    @Override
+    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
+        if (!DatabaseGameEvent.eventIsActive()) {
+            return;
+        }
+        BountyUtils.getPvEOptionFromGame(game, TheAcropolisOption.class).ifPresent(acropolisOption -> {
+            int totalTeamDeaths = PlayerFilter.playingGame(game)
+                                              .teammatesOf(warlordsPlayer)
+                                              .stream()
+                                              .mapToInt(warlordsEntity -> warlordsEntity.getMinuteStats().total().getDeaths())
+                                              .sum();
+            if (totalTeamDeaths == 0) {
+                value++;
+            }
+        });
+    }
 }

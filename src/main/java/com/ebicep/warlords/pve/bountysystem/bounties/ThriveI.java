@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -33,7 +34,7 @@ public class ThriveI extends AbstractBounty implements TracksPostGame, WeeklyCos
     }
 
     @Override
-    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {
+    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
         value += total.getDamage() + total.getHealing() + total.getAbsorbed();
     }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -33,7 +34,7 @@ public class ChallengeI extends AbstractBounty implements TracksPostGame, DailyC
     }
 
     @Override
-    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer) {
+    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         BountyUtils.getPvEOptionFromGame(game, OnslaughtOption.class).ifPresent(onslaughtOption -> {
             int secondsElapsed = onslaughtOption.getTicksElapsed() / 20;
             if (secondsElapsed > value) {

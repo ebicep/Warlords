@@ -19,7 +19,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
-import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -134,7 +133,7 @@ public class GameStartCommand {
             return;
         }
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-        if (currentGameEvent == null || currentGameEvent.getEndDate().isBefore(Instant.now())) {
+        if (currentGameEvent == null || !currentGameEvent.isActive()) {
             player.sendMessage(Component.text("The event is over!", NamedTextColor.RED));
             return;
         }

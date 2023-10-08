@@ -10,7 +10,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.ScrollOfScripts;
-import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
+import com.ebicep.warlords.pve.mobs.flags.BossLike;
 
 import java.util.Set;
 

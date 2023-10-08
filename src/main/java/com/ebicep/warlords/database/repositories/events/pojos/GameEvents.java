@@ -25,6 +25,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.g
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabasePlayerPvEEventIlluminaDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
+import com.ebicep.warlords.events.EventShopPurchaseEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.WeaponSalvageEvent;
 import com.ebicep.warlords.game.Game;
@@ -51,6 +52,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -1281,7 +1283,8 @@ public enum GameEvents {
         }
         DatabaseGameEvent finalGameEvent = gameEvent;
 
-        DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+        UUID uuid = player.getUniqueId();
+        DatabaseManager.getPlayer(uuid, databasePlayer -> {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
             DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
             EventMode eventMode = eventsStatsFunction.apply(eventStats).get(finalGameEvent.getStartDateSecond());
@@ -1357,6 +1360,7 @@ public enum GameEvents {
                                                         .append(Component.text("!"))
                             );
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2.5f);
+                            Bukkit.getPluginManager().callEvent(new EventShopPurchaseEvent(uuid, reward));
                             openShopMenu(player);
 
                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);

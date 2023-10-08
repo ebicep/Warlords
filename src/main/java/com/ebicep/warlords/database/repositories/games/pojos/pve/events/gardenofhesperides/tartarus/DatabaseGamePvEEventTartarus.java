@@ -57,7 +57,7 @@ public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEvent implement
         }
         game.warlordsPlayers()
             .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventTartarus(warlordsPlayer,
-                    waveDefenseOption.get(),
+                    gameWinEvent, waveDefenseOption.get(),
                     eventPointsOption.get()
             )));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();

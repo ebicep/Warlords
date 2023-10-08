@@ -19,7 +19,7 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
-import com.ebicep.warlords.pve.mobs.mobflags.DynamicFlags;
+import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;

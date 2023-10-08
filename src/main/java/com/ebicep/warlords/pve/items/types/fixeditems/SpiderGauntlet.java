@@ -13,7 +13,7 @@ import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
-import com.ebicep.warlords.pve.mobs.mobflags.Spider;
+import com.ebicep.warlords.pve.mobs.flags.Spider;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
 import org.bukkit.inventory.ItemStack;

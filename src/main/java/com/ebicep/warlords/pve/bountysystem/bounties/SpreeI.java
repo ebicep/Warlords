@@ -1,11 +1,13 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
+import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides1;
+import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 
-public class SpreeI extends AbstractBounty implements EventCost, GardenOfHesperides1 {
+public class SpreeI extends AbstractBounty implements TracksOutsideGame, EventCost, GardenOfHesperides1 {
 
     @Override
     public String getName() {
@@ -27,4 +29,8 @@ public class SpreeI extends AbstractBounty implements EventCost, GardenOfHesperi
         return Bounty.SPREE_I;
     }
 
+    @Override
+    public void onEventShopPurchase(SpendableBuyShop shop) {
+        value += shop.price();
+    }
 }

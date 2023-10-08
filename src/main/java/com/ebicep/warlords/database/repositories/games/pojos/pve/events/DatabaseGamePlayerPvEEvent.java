@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve.events;
 
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -16,10 +17,11 @@ public abstract class DatabaseGamePlayerPvEEvent extends DatabaseGamePlayerPvEWa
 
     public DatabaseGamePlayerPvEEvent(
             WarlordsPlayer warlordsPlayer,
+            WarlordsGameTriggerWinEvent gameWinEvent,
             WaveDefenseOption waveDefenseOption,
             EventPointsOption eventPointsOption
     ) {
-        super(warlordsPlayer, waveDefenseOption);
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption);
         this.points = eventPointsOption.getPoints().getOrDefault(warlordsPlayer.getUuid(), 0);
     }
 

@@ -9,7 +9,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.CommandmentNoEleven;
-import com.ebicep.warlords.pve.mobs.mobflags.BossLike;
+import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

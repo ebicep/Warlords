@@ -12,7 +12,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.bukkit.Location;
 
-public class EventTerasSiren extends AbstractZombie implements BossMinionMob {
+public class EventTerasSiren extends AbstractZombie implements BossMinionMob, Teras {
 
     private EventCronus cronus;
 
