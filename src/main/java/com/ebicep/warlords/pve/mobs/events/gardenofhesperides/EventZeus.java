@@ -162,7 +162,9 @@ public class EventZeus extends AbstractZombie implements BossMinionMob {
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-
+                    if (event.getAbility().isEmpty()) {
+                        return currentDamageValue;
+                    }
                     return currentDamageValue * damageBuff;
                 }
             });

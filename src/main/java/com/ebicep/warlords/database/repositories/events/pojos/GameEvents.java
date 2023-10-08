@@ -1088,7 +1088,7 @@ public enum GameEvents {
             equipment.set(Equipment.EquipmentSlot.CHESTPLATE, Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 210, 105, 30));
             equipment.set(Equipment.EquipmentSlot.LEGGINGS, Utils.applyColorTo(Material.LEATHER_LEGGINGS, 210, 105, 30));
             equipment.set(Equipment.EquipmentSlot.BOOTS, Utils.applyColorTo(Material.LEATHER_BOOTS, 210, 105, 30));
-            equipment.set(Equipment.EquipmentSlot.HAND, Weapons.SILVER_PHANTASM_TRIDENT.getItem());
+            equipment.set(Equipment.EquipmentSlot.HAND, new ItemStack(Material.WRITABLE_BOOK));
         }
 
         @Override
@@ -1111,7 +1111,7 @@ public enum GameEvents {
             Menu menu = new Menu("Garden of Hesperides Modes", 9 * 4);
 
             menu.setItem(2, 1,
-                    new ItemBuilder(Material.BONE)
+                    new ItemBuilder(Material.MUD_BRICK_WALL)
                             .name(Component.text("The Acropolis", NamedTextColor.GREEN))
                             .lore(
                                     Component.text("You can’t hide behind your fingers!", NamedTextColor.YELLOW),
@@ -1135,7 +1135,7 @@ public enum GameEvents {
                     }
             );
             menu.setItem(6, 1,
-                    new ItemBuilder(Material.BONE)
+                    new ItemBuilder(Material.CHAIN)
                             .name(Component.text("Tartarus", NamedTextColor.GREEN))
                             .lore(WordWrap.wrap(
                                     Component.text("All gathered in the depths of an infernal hell, they seek to sever the ties between Warlords and life.", NamedTextColor.YELLOW),

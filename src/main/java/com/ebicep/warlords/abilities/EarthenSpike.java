@@ -103,7 +103,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         return !spiked.isEmpty();
     }
 
-    private void spikeTarget(@Nonnull WarlordsEntity wp, WarlordsEntity spikeTarget) {
+    protected void spikeTarget(@Nonnull WarlordsEntity wp, WarlordsEntity spikeTarget) {
         Location location = wp.getLocation();
         FallingBlock block = spawnFallingBlock(location, location);
         EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), spikeTarget, wp);

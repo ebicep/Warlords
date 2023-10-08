@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos.duel;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -12,7 +13,7 @@ public class DatabaseGamePlayerDuel extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerDuel() {
     }
 
-    public DatabaseGamePlayerDuel(WarlordsPlayer warlordsPlayer) {
+    public DatabaseGamePlayerDuel(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         super(warlordsPlayer, gameWinEvent);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
     }

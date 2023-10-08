@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos.interception;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -19,7 +20,7 @@ public class DatabaseGamePlayerInterception extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerInterception() {
     }
 
-    public DatabaseGamePlayerInterception(WarlordsPlayer warlordsPlayer) {
+    public DatabaseGamePlayerInterception(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         super(warlordsPlayer, gameWinEvent);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
         this.secondsInRespawn = warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent() / 20;

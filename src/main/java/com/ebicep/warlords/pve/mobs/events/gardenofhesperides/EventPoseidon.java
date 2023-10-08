@@ -13,12 +13,19 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventPoseidon extends AbstractZombie implements BossMinionMob, God {
 
@@ -44,6 +51,34 @@ public class EventPoseidon extends AbstractZombie implements BossMinionMob, God 
                 minMeleeDamage,
                 maxMeleeDamage,
                 new EarthenSpike(600, 700, 6) {
+                    @Override
+                    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+                        List<WarlordsEntity> spiked = new ArrayList<>();
+                        float rad = 10;
+                        for (WarlordsEntity spikeTarget : PlayerFilter
+                                .entitiesAround(wp, rad, rad, rad)
+                                .aliveEnemiesOf(wp)
+                        ) {
+                            if (!LocationUtils.hasLineOfSight(player, spikeTarget.getEntity())) {
+                                continue;
+                            }
+
+                            spiked.add(spikeTarget);
+                            spikeTarget(wp, spikeTarget);
+
+                            if (spiked.size() >= 3) {
+                                addTimesUsed();
+                                break;
+                            }
+                        }
+                        if (spiked.size() < 3 && !spiked.isEmpty()) {
+                            for (int i = 0; i < 3 - spiked.size(); i++) {
+                                spikeTarget(wp, spiked.get(0));
+                            }
+                        }
+                        return !spiked.isEmpty();
+                    }
+
                     @Override
                     protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
                         super.onSpikeTarget(caster, spikeTarget);

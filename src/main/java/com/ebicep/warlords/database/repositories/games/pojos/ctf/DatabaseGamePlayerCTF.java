@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos.ctf;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -31,7 +32,7 @@ public class DatabaseGamePlayerCTF extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerCTF() {
     }
 
-    public DatabaseGamePlayerCTF(WarlordsPlayer warlordsPlayer) {
+    public DatabaseGamePlayerCTF(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         super(warlordsPlayer, gameWinEvent);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
         this.secondsInRespawn = warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent() / 20;

@@ -242,7 +242,7 @@ public class OnslaughtOption implements PveOption {
 
             public WarlordsEntity spawn(Location loc) {
                 currentMobSet = mobSet.getWave((game.getState().getTicksElapsed() / 20) / 60, new Random());
-                AbstractMob<?> abstractMob = currentMobSet.spawnRandomMonster(loc);
+                AbstractMob<?> abstractMob = currentMobSet.spawnMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
                 WarlordsNPC wpc = abstractMob.toNPC(game, team, OnslaughtOption.this::modifyStats);
                 game.addNPC(wpc);

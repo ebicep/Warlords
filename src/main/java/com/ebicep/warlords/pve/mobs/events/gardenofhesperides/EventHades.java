@@ -45,7 +45,7 @@ public class EventHades extends AbstractZombie implements BossMinionMob, God {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new FallenSouls(464, 512, 3),
-                new IncendiaryCurse(524, 607, 10) {
+                new IncendiaryCurse(524, 607, 8) {
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
                         Location location = we.getLocation();
@@ -86,7 +86,7 @@ public class EventHades extends AbstractZombie implements BossMinionMob, God {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        ImpalingStrike.giveLeechCooldown(warlordsNPC, receiver, 5, 15, 25, finalEvent -> {});
+        ImpalingStrike.giveLeechCooldown(warlordsNPC, receiver, 3, 20, 35, finalEvent -> {});
     }
 
     @Override

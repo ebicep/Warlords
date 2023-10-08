@@ -13,11 +13,6 @@ public class DelegatingWave implements Wave {
     }
 
     @Override
-    public AbstractMob<?> spawnRandomMonster(Location loc) {
-        return w.spawnRandomMonster(loc);
-    }
-
-    @Override
     public AbstractMob<?> spawnMonster(Location loc) {
         return w.spawnMonster(loc);
     }
@@ -35,6 +30,11 @@ public class DelegatingWave implements Wave {
     @Override
     public int getDelay() {
         return w.getDelay();
+    }
+
+    @Override
+    public int getSpawnTickPeriod() {
+        return w.getSpawnTickPeriod();
     }
 
 }

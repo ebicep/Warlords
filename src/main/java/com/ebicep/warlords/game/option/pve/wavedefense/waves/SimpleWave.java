@@ -15,6 +15,7 @@ public class SimpleWave implements Wave {
     private final RandomCollection<SpawnSettings> randomCollection = new RandomCollection<>();
     private final int count;
     private final Component message;
+    private int spawnTickPeriod = 8;
 
     public SimpleWave(@Nullable Component message) {
         this.delay = 0;
@@ -47,18 +48,13 @@ public class SimpleWave implements Wave {
     }
 
     @Override
-    public AbstractMob<?> spawnRandomMonster(Location loc) {
+    public AbstractMob<?> spawnMonster(Location loc) {
         SpawnSettings spawnSettings = randomCollection.next();
         AbstractMob<?> mob = spawnSettings.mob().createMob(spawnSettings.location() == null ? loc : spawnSettings.location());
         if (mob instanceof BossMob) {
             loc.getWorld().spigot().strikeLightningEffect(loc, false);
         }
         return mob;
-    }
-
-    @Override
-    public AbstractMob<?> spawnMonster(Location loc) {
-        return spawnRandomMonster(loc);
     }
 
     @Override
@@ -69,6 +65,11 @@ public class SimpleWave implements Wave {
     @Override
     public int getDelay() {
         return delay;
+    }
+
+    @Override
+    public int getSpawnTickPeriod() {
+        return spawnTickPeriod;
     }
 
     @Override

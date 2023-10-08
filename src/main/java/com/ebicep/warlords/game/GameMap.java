@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.PowerupOption.PowerupType;
 import com.ebicep.warlords.game.option.cuboid.AbstractCuboidOption;
@@ -23,6 +24,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.SafeZoneOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.*;
+import com.ebicep.warlords.game.option.pve.wavedefense.waves.FixedWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.SimpleWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.StaticWaveList;
 import com.ebicep.warlords.game.option.pvp.*;
@@ -37,6 +39,8 @@ import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.game.state.SyncTimerState;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
@@ -4023,7 +4027,11 @@ public enum GameMap {
                     )
                     .add(25, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
                             .add(1, Mob.EVENT_CRONUS)
-                    ), DifficultyIndex.EVENT
+                    )
+                    .loop(6, 21, 5)
+                    .loop(6, 25, 5)
+                    ,
+                    DifficultyIndex.EVENT
             ) {
                 @Override
                 public void register(@Nonnull Game game) {
@@ -4049,7 +4057,31 @@ public enum GameMap {
                 @Override
                 protected void modifyStats(WarlordsNPC warlordsNPC) {
                     warlordsNPC.getMob().onSpawn(this);
-                    //TODO
+
+                    int playerCount = playerCount();
+                    float healthMultiplier = .5f + .5f * playerCount; // 1 / 1.5 / 2 / 2.5
+                    float damageMultiplier = playerCount >= 4 ? 1.15f : 1;
+
+                    float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
+                    warlordsNPC.setMaxBaseHealth(newBaseHealth);
+                    warlordsNPC.setHealth(newBaseHealth);
+                    warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Scaling",
+                            null,
+                            GameMap.class,
+                            null,
+                            warlordsNPC,
+                            CooldownTypes.INTERNAL,
+                            cooldownManager -> {
+
+                            },
+                            false
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * damageMultiplier;
+                        }
+                    });
                 }
             });
             options.add(new ItemOption());
@@ -4180,98 +4212,10 @@ public enum GameMap {
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new SimpleWave(8, 10 * SECOND, null)
-                            .add(0.4, Mob.ZOMBIE_LANCER)
-                            .add(0.5, Mob.PIG_DISCIPLE)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                    )
-                    .add(2, new SimpleWave(8, 10 * SECOND, null)
-                            .add(0.4, Mob.ZOMBIE_LANCER)
-                            .add(0.4, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ZOMBIE_LAMENT)
-                    )
-                    .add(4, new SimpleWave(8, 10 * SECOND, null)
-                            .add(0.4, Mob.ZOMBIE_LANCER)
-                            .add(0.3, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ARACHNO_VENARI)
-                            .add(0.05, Mob.SKELETAL_WARLOCK)
-                            .add(0.05, Mob.PIG_SHAMAN)
-                    )
-                    .add(5, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_APOLLO)
-                    )
-                    .add(6, new SimpleWave(12, 10 * SECOND, null)
-                            .add(0.4, Mob.ZOMBIE_LANCER)
-                            .add(0.2, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ARACHNO_VENARI)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                            .add(0.05, Mob.SKELETAL_WARLOCK)
-                            .add(0.05, Mob.PIG_ALLEVIATOR)
-                    )
-                    .add(8, new SimpleWave(12, 10 * SECOND, null)
-                            .add(0.2, Mob.ZOMBIE_LANCER)
-                            .add(0.2, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ARACHNO_VENARI)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                            .add(0.2, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
-                            .add(0.05, Mob.PIG_ALLEVIATOR)
-                            .add(0.05, Mob.ZOMBIE_VANGUARD)
-                    )
-                    .add(10, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_ARES)
-                    )
-                    .add(11, new SimpleWave(16, 10 * SECOND, null)
-                            .add(0.1, Mob.ZOMBIE_LANCER)
-                            .add(0.1, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ZOMBIE_LAMENT)
-                            .add(0.2, Mob.ARACHNO_VENARI)
-                            .add(0.1, Mob.PIG_SHAMAN)
-                            .add(0.2, Mob.PIG_ALLEVIATOR)
-                            .add(0.05, Mob.ZOMBIE_VANGUARD)
-                            .add(0.05, Mob.SLIME_GUARD)
-                    )
-                    .add(13, new SimpleWave(16, 10 * SECOND, null)
-                            .add(0.1, Mob.ZOMBIE_LANCER)
-                            .add(0.1, Mob.PIG_DISCIPLE)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                            .add(0.1, Mob.ARACHNO_VENARI)
-                            .add(0.1, Mob.PIG_SHAMAN)
-                            .add(0.2, Mob.PIG_ALLEVIATOR)
-                            .add(0.05, Mob.ZOMBIE_VANGUARD)
-                            .add(0.05, Mob.SLIME_GUARD)
-                            .add(0.2, Mob.ZOMBIE_SWORDSMAN)
-                    )
-                    .add(15, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_PROMETHEUS)
-                    )
-                    .add(16, new SimpleWave(20, 10 * SECOND, null)
-                            .add(0.2, Mob.PIG_DISCIPLE)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                            .add(0.1, Mob.ARACHNO_VENARI)
-                            .add(0.2, Mob.PIG_SHAMAN)
-                            .add(0.05, Mob.PIG_ALLEVIATOR)
-                            .add(0.05, Mob.ZOMBIE_VANGUARD)
-                            .add(0.05, Mob.SLIME_GUARD)
-                            .add(0.05, Mob.ZOMBIE_SWORDSMAN)
-                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
-                            .add(0.1, Mob.RIFT_WALKER)
-                    )
-                    .add(20, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_ATHENA)
-                    )
-                    .add(21, new SimpleWave(24, 10 * SECOND, null)
-                            .add(0.2, Mob.ZOMBIE_LAMENT)
-                            .add(0.2, Mob.PIG_ALLEVIATOR)
-                            .add(0.1, Mob.ZOMBIE_VANGUARD)
-                            .add(0.1, Mob.SLIME_GUARD)
-                            .add(0.1, Mob.ZOMBIE_SWORDSMAN)
-                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
-                            .add(0.1, Mob.RIFT_WALKER)
-                            .add(0.05, Mob.SKELETAL_SORCERER)
-                            .add(0.05, Mob.ZOMBIE_KNIGHT)
-                    )
-                    .add(25, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_CRONUS)
+                    .add(1, new FixedWave(10 * SECOND, -1, null)
+                            .add(Mob.EVENT_HADES)
+                            .add(Mob.EVENT_POSEIDON)
+                            .add(Mob.EVENT_ZEUS)
                     ), DifficultyIndex.EVENT
             ) {
                 @Override
@@ -4298,7 +4242,31 @@ public enum GameMap {
                 @Override
                 protected void modifyStats(WarlordsNPC warlordsNPC) {
                     warlordsNPC.getMob().onSpawn(this);
-                    //TODO
+
+                    int playerCount = playerCount();
+                    float healthMultiplier = .5f * playerCount; // 1 / 1.5 / 2
+                    float damageMultiplier = playerCount >= 4 ? 1.15f : 1;
+
+                    float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
+                    warlordsNPC.setMaxBaseHealth(newBaseHealth);
+                    warlordsNPC.setHealth(newBaseHealth);
+                    warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Scaling",
+                            null,
+                            GameMap.class,
+                            null,
+                            warlordsNPC,
+                            CooldownTypes.INTERNAL,
+                            cooldownManager -> {
+
+                            },
+                            false
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * damageMultiplier;
+                        }
+                    });
                 }
             });
             options.add(new ItemOption());

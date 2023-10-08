@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos.tdm;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -14,7 +15,7 @@ public class DatabaseGamePlayerTDM extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerTDM() {
     }
 
-    public DatabaseGamePlayerTDM(WarlordsPlayer warlordsPlayer) {
+    public DatabaseGamePlayerTDM(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         super(warlordsPlayer, gameWinEvent);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
         this.secondsInRespawn = warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent() / 20;

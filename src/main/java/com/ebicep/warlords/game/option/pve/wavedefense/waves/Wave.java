@@ -6,13 +6,13 @@ import org.bukkit.Location;
 
 public interface Wave {
 
-    AbstractMob<?> spawnRandomMonster(Location loc);
-
     AbstractMob<?> spawnMonster(Location loc);
 
     int getMonsterCount();
 
     int getDelay();
+
+    int getSpawnTickPeriod();
 
     Component getMessage();
 }
