@@ -21,7 +21,7 @@ import org.bukkit.Location;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EventAres extends AbstractZombie implements BossMinionMob {
+public class EventAres extends AbstractZombie implements BossMinionMob, LesserGod {
 
     public EventAres(Location spawnLocation) {
         this(spawnLocation, "Ares", 25500, .4f, 20, 680, 740);

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class EventAthena extends AbstractZombie implements BossMinionMob {
+public class EventAthena extends AbstractZombie implements BossMinionMob, LesserGod {
 
     private static final List<Mob> INITIAL_SPAWN = Arrays.asList(Mob.ZOMBIE_VANGUARD, Mob.ZOMBIE_LANCER, Mob.OVERGROWN_ZOMBIE, Mob.SCRUPULOUS_ZOMBIE);
     private boolean healthCheck = false;

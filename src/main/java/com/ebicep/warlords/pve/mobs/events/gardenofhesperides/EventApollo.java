@@ -22,7 +22,7 @@ import org.bukkit.Particle;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EventApollo extends AbstractSkeleton implements BossMinionMob {
+public class EventApollo extends AbstractSkeleton implements BossMinionMob, LesserGod {
 
     public EventApollo(Location spawnLocation) {
         this(spawnLocation, "Apollo", 20000, 0, 10, 450, 600);

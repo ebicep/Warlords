@@ -11,7 +11,6 @@ import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 
 public class AcropolisFlawlessI extends AbstractBounty implements TracksPostGame, EventCost, GardenOfHesperides1 {
 
@@ -41,12 +40,8 @@ public class AcropolisFlawlessI extends AbstractBounty implements TracksPostGame
             return;
         }
         BountyUtils.getPvEOptionFromGame(game, TheAcropolisOption.class).ifPresent(acropolisOption -> {
-            int totalTeamDeaths = PlayerFilter.playingGame(game)
-                                              .teammatesOf(warlordsPlayer)
-                                              .stream()
-                                              .mapToInt(warlordsEntity -> warlordsEntity.getMinuteStats().total().getDeaths())
-                                              .sum();
-            if (totalTeamDeaths == 0) {
+            int deaths = warlordsPlayer.getMinuteStats().total().getDeaths();
+            if (deaths == 0) {
                 value++;
             }
         });

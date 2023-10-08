@@ -26,7 +26,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 
-public class EventZeus extends AbstractZombie implements BossMinionMob {
+public class EventZeus extends AbstractZombie implements BossMinionMob, God {
 
     public EventZeus(Location spawnLocation) {
         this(spawnLocation, "Zeus", 100000, .33f, 20, 825, 946);

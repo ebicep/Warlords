@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-public class EventCronus extends AbstractZombie implements BossMinionMob {
+public class EventCronus extends AbstractZombie implements BossMinionMob, LesserGod {
 
     private static final List<Mob> INITIAL_SPAWN = Arrays.asList(Mob.EVENT_TERAS_CYCLOPS, Mob.EVENT_TERAS_MINOTAUR, Mob.EVENT_TERAS_SIREN, Mob.EVENT_TERAS_DRYAD);
     private boolean healthCheck = false;

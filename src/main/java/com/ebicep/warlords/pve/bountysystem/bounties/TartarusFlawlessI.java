@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.TartarusOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
@@ -40,15 +39,12 @@ public class TartarusFlawlessI extends AbstractBounty implements TracksPostGame,
         if (!DatabaseGameEvent.eventIsActive()) {
             return;
         }
-        if (BountyUtils.getPvEOptionFromGame(game, TartarusOption.class).isEmpty()) {
-            return;
-        }
-        BountyUtils.getPvEOptionFromGame(game, RecordTimeElapsedOption.class)
-                   .ifPresent(recordTimeElapsedOption -> {
-                       if (gameWinEvent.getCause() instanceof WarlordsGameTriggerWinEvent && recordTimeElapsedOption.getTicksElapsed() < 10 * 60 * 20) {
-                           value++;
-                       }
-                   });
+        BountyUtils.getPvEOptionFromGame(game, TartarusOption.class).ifPresent(acropolisOption -> {
+            int deaths = warlordsPlayer.getMinuteStats().total().getDeaths();
+            if (deaths == 0) {
+                value++;
+            }
+        });
     }
 
 }

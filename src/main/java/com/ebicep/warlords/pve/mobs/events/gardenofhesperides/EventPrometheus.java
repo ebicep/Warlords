@@ -20,7 +20,7 @@ import org.bukkit.Particle;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EventPrometheus extends AbstractZombie implements BossMinionMob, God {
+public class EventPrometheus extends AbstractZombie implements BossMinionMob, LesserGod {
 
     private int barrageOfFlamesDelay = 0;
     private boolean healthCheck = false;
