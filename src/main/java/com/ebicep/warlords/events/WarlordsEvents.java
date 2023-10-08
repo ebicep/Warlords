@@ -14,10 +14,8 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
-import com.ebicep.warlords.events.player.SpecPrestigeEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -28,7 +26,10 @@ import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
-import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.CustomScoreboard;
+import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -48,7 +49,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.*;
 import org.bukkit.entity.*;
@@ -209,44 +213,7 @@ public class WarlordsEvents implements Listener {
 
             DatabaseManager.getPlayer(uuid, databasePlayer -> {
                 if (fromGame) {
-                    //check all spec prestige
-                    for (Specializations value : Specializations.VALUES) {
-                        int level = ExperienceManager.getLevelForSpec(uuid, value);
-                        if (level < ExperienceManager.LEVEL_TO_PRESTIGE) {
-                            continue;
-                        }
-                        databasePlayer.getSpec(value).addPrestige();
-                        int prestige = databasePlayer.getSpec(value).getPrestige();
-                        EffectUtils.playFirework(
-                                player.getLocation(),
-                                FireworkEffect.builder()
-                                              .with(FireworkEffect.Type.BALL)
-                                              .withColor(Color.fromRGB(ExperienceManager.getPrestigeColor(prestige).value()))
-                                              .build()
-                        );
-                        player.showTitle(Title.title(
-                                Component.textOfChildren(
-                                        Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED),
-                                        Component.text(" Prestige " + value.name + " ", NamedTextColor.GOLD, TextDecoration.BOLD),
-                                        Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)
-                                ),
-                                Component.text(prestige - 1, ExperienceManager.getPrestigeColor(prestige - 1))
-                                         .append(Component.text(" > ", NamedTextColor.GRAY))
-                                         .append(Component.text(prestige, ExperienceManager.getPrestigeColor(prestige))),
-                                Title.Times.times(Ticks.duration(20), Ticks.duration(140), Ticks.duration(20))
-                        ));
-                        //sumSmash is now prestige level 5 in Pyromancer!
-                        Bukkit.broadcast(Permissions.getPrefixWithColor(player, false)
-                                                    .append(Component.text(player.getName()))
-                                                    .append(Component.text(" is now prestige level ", NamedTextColor.GRAY))
-                                                    .append(Component.text(prestige, ExperienceManager.getPrestigeColor(prestige)))
-                                                    .append(Component.text(" in ", NamedTextColor.GRAY))
-                                                    .append(Component.text(value.name, NamedTextColor.GOLD)));
-
-                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-
-                        Bukkit.getPluginManager().callEvent(new SpecPrestigeEvent(player.getUniqueId(), value, prestige));
-                    }
+                    ExperienceManager.checkForPrestige(player, uuid, databasePlayer);
                 } else {
                     databasePlayer.setLastLogin(Instant.now());
                     HeadUtils.updateHead(player);

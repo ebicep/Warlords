@@ -4,7 +4,10 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
@@ -82,12 +85,66 @@ public class BountyCommand extends BaseCommand {
         });
     }
 
+    @Subcommand("forcecomplateevent")
+    public void forceComplete(Player player, Integer index) {
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent == null) {
+            ChatChannels.sendDebugMessage(player, Component.text("No event is currently active"));
+            return;
+        }
+        DatabaseManager.getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, databasePlayer -> {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats()).get(currentGameEvent.getStartDateSecond());
+            if (eventMode == null) {
+                ChatChannels.sendDebugMessage(player, Component.text("No event mode detected"));
+                return;
+            }
+            List<AbstractBounty> activeBounties = eventMode.getActiveBounties();
+            try {
+                AbstractBounty abstractBounty = activeBounties.get(index);
+                abstractBounty.setValue(abstractBounty.getTarget());
+                ChatChannels.sendDebugMessage(
+                        player,
+                        Component.text("Forced completion of ", NamedTextColor.GRAY)
+                                 .append(Component.text(abstractBounty.getName(), NamedTextColor.GREEN)
+                                                  .hoverEvent(abstractBounty.getItem().get().asHoverEvent()))
+                                 .append(Component.text(" in ", NamedTextColor.GRAY))
+                                 .append(Component.text(currentGameEvent.getEvent().name, NamedTextColor.GREEN))
+                );
+            } catch (IndexOutOfBoundsException e) {
+                ChatChannels.sendDebugMessage(player, Component.text("Index out of bounds"));
+            }
+        });
+    }
+
     @Subcommand("clear")
     public void clear(Player player, PlayersCollections collection) {
         DatabaseManager.getPlayer(player.getUniqueId(), collection, databasePlayer -> {
             List<AbstractBounty> activeBounties = databasePlayer.getPveStats().getActiveBounties();
             for (AbstractBounty activeBounty : activeBounties) {
                 ChatChannels.sendDebugMessage(player, Component.text("Cleared " + activeBounty.getName() + " in " + collection.name));
+            }
+            activeBounties.clear();
+        });
+    }
+
+    @Subcommand("clearevent")
+    public void clear(Player player) {
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent == null) {
+            ChatChannels.sendDebugMessage(player, Component.text("No event is currently active"));
+            return;
+        }
+        DatabaseManager.getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, databasePlayer -> {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats()).get(currentGameEvent.getStartDateSecond());
+            if (eventMode == null) {
+                ChatChannels.sendDebugMessage(player, Component.text("No event mode detected"));
+                return;
+            }
+            List<AbstractBounty> activeBounties = eventMode.getActiveBounties();
+            for (AbstractBounty activeBounty : activeBounties) {
+                ChatChannels.sendDebugMessage(player, Component.text("Cleared " + activeBounty.getName() + " event bounty"));
             }
             activeBounties.clear();
         });

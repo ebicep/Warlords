@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -18,36 +17,37 @@ import java.util.stream.Collectors;
 public class BountyUtils {
 
     public static final TextColor COLOR = TextColor.color(255, 140, 0);
-    public static Map<PlayersCollections, BountyInfo> BOUNTY_COLLECTION_INFO = new HashMap<>() {{
-        put(PlayersCollections.DAILY, new BountyInfo(Bounty.BountyGroup.DAILY_ALL.bounties, 2, 5));
-        put(PlayersCollections.WEEKLY, new BountyInfo(Bounty.BountyGroup.WEEKLY_ALL.bounties, 2, 5));
-        put(PlayersCollections.LIFETIME, new BountyInfo(Bounty.BountyGroup.LIFETIME_ALL.bounties, Integer.MAX_VALUE, 1));
+    public static Map<String, BountyInfo> BOUNTY_COLLECTION_INFO = new HashMap<>() {{
+        put(PlayersCollections.DAILY.name, new BountyInfo(Bounty.BountyGroup.DAILY_ALL.bounties, 2, 5));
+        put(PlayersCollections.WEEKLY.name, new BountyInfo(Bounty.BountyGroup.WEEKLY_ALL.bounties, 2, 5));
+        put(PlayersCollections.LIFETIME.name, new BountyInfo(Bounty.BountyGroup.LIFETIME_ALL.bounties, Integer.MAX_VALUE, 1));
+        put("Garden of Hesperides", new BountyInfo(Bounty.BountyGroup.EVENT_GARDEN_OF_HESPERIDES_ALL.bounties, 5, 5));
     }};
 
-    public static void giveNewBounties(DatabasePlayerPvE databasePlayerPvE, PlayersCollections playersCollections) {
-        BountyInfo bountyInfo = BOUNTY_COLLECTION_INFO.get(playersCollections);
+    public static List<AbstractBounty> getNewBounties(String bountyInfoName) {
+        BountyInfo bountyInfo = BOUNTY_COLLECTION_INFO.get(bountyInfoName);
         if (bountyInfo == null) {
 //            ChatUtils.MessageType.BOUNTIES.sendMessage("Unknown bounty collection: " + playersCollections.name());
-            return;
+            return new ArrayList<>();
         }
-        List<AbstractBounty> activeBounties = databasePlayerPvE.getActiveBounties();
-        activeBounties.clear(); // precaution
+        List<AbstractBounty> newBounties = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            Bounty randomBounty = getRandomBounty(playersCollections, activeBounties.stream().map(AbstractBounty::getBounty).collect(Collectors.toList()));
+            Bounty randomBounty = getRandomBounty(bountyInfoName, newBounties.stream().map(AbstractBounty::getBounty).collect(Collectors.toSet()));
             if (randomBounty == null) {
 //                ChatUtils.MessageType.BOUNTIES.sendMessage("No bounties found for " + playersCollections.name());
-                return;
+                return newBounties;
             }
-            activeBounties.add(randomBounty.create.get());
+            newBounties.add(randomBounty.create.get());
         }
-//        ChatUtils.MessageType.BOUNTIES.sendMessage("Gave new bounties (" + playersCollections.name() + ") - " + activeBounties.stream().map(bounty -> bounty.getBounty().name()).collect(Collectors.joining(", ")));
+//        ChatUtils.MessageType.BOUNTIES.sendMessage("Gave new bounties (" + playersCollections.name() + ") - " + newBounties.stream().map(bounty -> bounty.getBounty().name()).collect(Collectors.joining(", ")));
+        return newBounties;
     }
 
     @Nullable
-    public static Bounty getRandomBounty(PlayersCollections collection, List<Bounty> excluding) {
-        BountyInfo bountyInfo = BOUNTY_COLLECTION_INFO.get(collection);
+    public static Bounty getRandomBounty(String bountyInfoName, Set<Bounty> excluding) {
+        BountyInfo bountyInfo = BOUNTY_COLLECTION_INFO.get(bountyInfoName);
         if (bountyInfo == null) {
-            ChatUtils.MessageType.BOUNTIES.sendMessage("Unknown bounty collection: " + collection.name());
+            ChatUtils.MessageType.BOUNTIES.sendMessage("Unknown bounty collection: " + bountyInfoName);
             return null;
         }
         List<Bounty> bountyList = Arrays.stream(bountyInfo.bounties)

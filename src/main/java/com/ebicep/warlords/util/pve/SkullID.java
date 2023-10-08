@@ -178,7 +178,8 @@ public enum SkullID {
     SIREN("NGUxOTFkZTIwNWQzNmRmMGYzYWUyNzFlYWE0MGNlNDk0NTk3NjI0ZmQwYzJmZTU5MDQzMjFjYmQ0YWExMDJlZSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/humans/58821-dryad
     DRYAD("NWY3ODMyZjk5YzFmMmZkYjZjM2JmZGJmNzNkMzdhOGY2ZWQ2NTg5MGIzODg1NDNkNjgzOGE1MWRmODYzZDNiZCJ9fX0="),
-
+    //https://minecraft-heads.com/custom-heads/humanoid/58891-faun
+    FAUN("NWFmMzgwYTZlMTkwOTk1NzAyNTFkMWM4ZTk0NDllZjhhNjcxMDhiZTRiM2JmNDIwMzNhOTQyMWM2YjUyODhlMSJ9fX0="),
     ;
 
     private final String textureId;

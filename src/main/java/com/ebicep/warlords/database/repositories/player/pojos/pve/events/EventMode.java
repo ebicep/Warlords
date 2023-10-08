@@ -1,5 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 
+import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
+import com.ebicep.warlords.pve.bountysystem.Bounty;
+
+import java.util.List;
 import java.util.Map;
 
 public interface EventMode {
@@ -13,5 +17,13 @@ public interface EventMode {
     int getPlays();
 
     long getEventPointsCumulative();
+
+    Map<Bounty, Long> getCompletedBounties();
+
+    int getBountiesCompleted();
+
+    void addBountiesCompleted();
+
+    List<AbstractBounty> getActiveBounties();
 
 }

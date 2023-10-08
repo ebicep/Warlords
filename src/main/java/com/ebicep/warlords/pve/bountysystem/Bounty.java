@@ -2,6 +2,8 @@ package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.pve.bountysystem.bounties.*;
 import com.ebicep.warlords.pve.bountysystem.rewards.*;
+import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides1;
+import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides2;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -69,7 +71,17 @@ public enum Bounty {
     ENTHRALL_I(EnthrallI.class, EnthrallI::new),
     MEND_I(MendI.class, MendI::new),
     AMASS_I(AmassI.class, AmassI::new),
-
+    // garden of hesperides event
+    ACROPOLIS_SLAYER_I(AcropolisSlayerI.class, AcropolisSlayerI::new),
+    STATE_OF_MIND_I(StateOfMindI.class, StateOfMindI::new),
+    TERAS_TORMENT_I(TerasTormentI.class, TerasTormentI::new),
+    SPREE_I(SpreeI.class, SpreeI::new),
+    ACROPOLIS_FLAWLESS_I(AcropolisFlawlessI.class, AcropolisFlawlessI::new),
+    TARTARUS_SLAYER_I(TartarusSlayerI.class, TartarusSlayerI::new),
+    ORDER_OF_THINGS_I(OrderOfThingsI.class, OrderOfThingsI::new),
+    TARTARUS_FLAWLESS_I(TartarusFlawlessI.class, TartarusFlawlessI::new),
+    WITHIN_THE_TIME_I(WithinTheTimeI.class, WithinTheTimeI::new),
+    TAKE_MY_TITLE_I(TakeMyTitleI.class, TakeMyTitleI::new),
 
     ;
 
@@ -103,8 +115,11 @@ public enum Bounty {
         LIFETIME_2(getBountyFrom(LifetimeRewardSpendable2.class)),
         LIFETIME_3(getBountyFrom(LifetimeRewardSpendable3.class)),
         LIFETIME_ALL(Stream.of(LIFETIME_1, LIFETIME_2, LIFETIME_3).flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties)).toArray(Bounty[]::new)),
-
-        ;
+        EVENT_GARDEN_OF_HESPERIDES_1(getBountyFrom(GardenOfHesperides1.class)),
+        EVENT_GARDEN_OF_HESPERIDES_2(getBountyFrom(GardenOfHesperides2.class)),
+        EVENT_GARDEN_OF_HESPERIDES_ALL(Stream.of(EVENT_GARDEN_OF_HESPERIDES_1, EVENT_GARDEN_OF_HESPERIDES_2)
+                                             .flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties))
+                                             .toArray(Bounty[]::new));
 
         public final Bounty[] bounties;
 

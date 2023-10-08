@@ -92,8 +92,12 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
         this.illusionShardGained = playerPveRewards.getIllusionShardGain();
         this.blessingsFound = playerPveRewards.getBlessingsFound();
         this.mobDropsGained = new HashMap<>(playerPveRewards.getMobDropsGained());
-        for (PlayersCollections collection : BountyUtils.BOUNTY_COLLECTION_INFO.keySet()) {
-            DatabaseManager.getPlayer(uuid, collection, databasePlayer -> {
+        for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+            BountyUtils.BountyInfo bountyInfo = BountyUtils.BOUNTY_COLLECTION_INFO.get(activeCollection.name);
+            if (bountyInfo == null) {
+                continue;
+            }
+            DatabaseManager.getPlayer(uuid, activeCollection, databasePlayer -> {
                 List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
                 for (AbstractBounty bounty : trackableBounties) {
                     if (bounty instanceof TracksPostGame tracksPostGame) {

@@ -5,6 +5,8 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.SpecPrestigeEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsGiveExperienceEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
@@ -14,6 +16,7 @@ import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -24,8 +27,11 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.FireworkEffect;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
@@ -427,6 +433,47 @@ public class ExperienceManager {
                              .append(Component.text("   ", NamedTextColor.GREEN, TextDecoration.OBFUSCATED))
                              .build()
             );
+        }
+    }
+
+    public static void checkForPrestige(Player player, UUID uuid, DatabasePlayer databasePlayer) {
+        //check all spec prestige
+        for (Specializations value : Specializations.VALUES) {
+            int level = getLevelForSpec(uuid, value);
+            if (level < LEVEL_TO_PRESTIGE) {
+                continue;
+            }
+            databasePlayer.getSpec(value).addPrestige();
+            int prestige = databasePlayer.getSpec(value).getPrestige();
+            EffectUtils.playFirework(
+                    player.getLocation(),
+                    FireworkEffect.builder()
+                                  .with(FireworkEffect.Type.BALL)
+                                  .withColor(org.bukkit.Color.fromRGB(getPrestigeColor(prestige).value()))
+                                  .build()
+            );
+            player.showTitle(Title.title(
+                    Component.textOfChildren(
+                            Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED),
+                            Component.text(" Prestige " + value.name + " ", NamedTextColor.GOLD, TextDecoration.BOLD),
+                            Component.text("###", NamedTextColor.WHITE, TextDecoration.OBFUSCATED)
+                    ),
+                    Component.text(prestige - 1, getPrestigeColor(prestige - 1))
+                             .append(Component.text(" > ", NamedTextColor.GRAY))
+                             .append(Component.text(prestige, getPrestigeColor(prestige))),
+                    Title.Times.times(Ticks.duration(20), Ticks.duration(140), Ticks.duration(20))
+            ));
+            //sumSmash is now prestige level 5 in Pyromancer!
+            Bukkit.broadcast(Permissions.getPrefixWithColor(player, false)
+                                        .append(Component.text(player.getName()))
+                                        .append(Component.text(" is now prestige level ", NamedTextColor.GRAY))
+                                        .append(Component.text(prestige, getPrestigeColor(prestige)))
+                                        .append(Component.text(" in ", NamedTextColor.GRAY))
+                                        .append(Component.text(value.name, NamedTextColor.GOLD)));
+
+            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+            Bukkit.getPluginManager().callEvent(new SpecPrestigeEvent(player.getUniqueId(), value, prestige));
         }
     }
 

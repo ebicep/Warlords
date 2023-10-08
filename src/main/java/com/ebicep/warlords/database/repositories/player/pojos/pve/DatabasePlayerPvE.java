@@ -137,7 +137,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     public void loadInCollection(PlayersCollections collection) {
         if (activeBounties.isEmpty()) {
-            BountyUtils.giveNewBounties(this, collection);
+            activeBounties.addAll(BountyUtils.getNewBounties(collection.name));
         }
     }
 

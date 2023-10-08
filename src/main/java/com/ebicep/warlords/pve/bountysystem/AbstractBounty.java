@@ -1,15 +1,21 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.pve.PvEUtils;
 import com.ebicep.warlords.pve.bountysystem.costs.BountyCost;
+import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.RewardSpendable;
 import com.ebicep.warlords.pve.rewards.types.BountyReward;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -18,7 +24,10 @@ import org.bukkit.enchantments.Enchantment;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.pve.bountysystem.BountyUtils.BOUNTY_COLLECTION_INFO;
 
@@ -113,18 +122,53 @@ public abstract class AbstractBounty implements RewardSpendable, BountyCost {
     }
 
     public void claim(DatabasePlayer databasePlayer, PlayersCollections collection) {
+        claim(databasePlayer, collection, collection.name);
+    }
+
+    public void claim(DatabasePlayer databasePlayer, PlayersCollections collection, String bountyInfoName) {
+        DatabaseGameEvent gameEvent = DatabaseGameEvent.currentGameEvent;
+        boolean isEventBounty = this instanceof EventCost && gameEvent != null;
+
         DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+        List<AbstractBounty> activeBounties;
+        Set<Bounty> excludeBounties = new HashSet<>();
+        excludeBounties.add(getBounty());
+        EventMode eventMode;
+        EventMode generalEventMode;
+        if (isEventBounty) {
+            GameEvents event = gameEvent.getEvent();
+            DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
+            eventMode = event.eventsStatsFunction.apply(eventStats).get(gameEvent.getStartDateSecond());
+            if (eventMode == null) {
+                ChatUtils.MessageType.BOUNTIES.sendErrorMessage("Could not claim bounty - Event mode not found");
+                return;
+            }
+            generalEventMode = event.generalEventFunction.apply(eventStats);
+
+            eventMode.addBountiesCompleted();
+            generalEventMode.addBountiesCompleted();
+            pveStats.getEventStats().addBountiesCompleted();
+
+            activeBounties = eventMode.getActiveBounties();
+            excludeBounties.addAll(eventMode.getCompletedBounties().keySet());
+        } else {
+            eventMode = null;
+            generalEventMode = null;
+            activeBounties = pveStats.getActiveBounties();
+            excludeBounties.addAll(pveStats.getCompletedBounties().keySet());
+        }
+        excludeBounties.addAll(activeBounties.stream().map(AbstractBounty::getBounty).collect(Collectors.toSet()));
         pveStats.addBountiesCompleted();
-        int replaceIndex = pveStats.getActiveBounties().indexOf(this);
-        int maxBounties = BOUNTY_COLLECTION_INFO.get(collection).maxBounties();
+        int replaceIndex = activeBounties.indexOf(this);
+        int maxBounties = BOUNTY_COLLECTION_INFO.get(bountyInfoName).maxBounties();
         AbstractBounty replacementBounty = null;
         if (pveStats.getBountiesCompleted() <= maxBounties) {
-            Bounty randomBounty = BountyUtils.getRandomBounty(collection, pveStats.getCompletedBounties().keySet().stream().toList());
+            Bounty randomBounty = BountyUtils.getRandomBounty(bountyInfoName, excludeBounties);
             if (randomBounty != null) {
                 replacementBounty = randomBounty.create.get();
             }
         }
-        pveStats.getActiveBounties().set(replaceIndex, replacementBounty);
+        activeBounties.set(replaceIndex, replacementBounty);
 
         if (collection != PlayersCollections.LIFETIME) {
             pveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
@@ -134,6 +178,11 @@ public abstract class AbstractBounty implements RewardSpendable, BountyCost {
             DatabasePlayerPvE lifetimePveStats = lifetimeDatabasePlayer.getPveStats();
             lifetimePveStats.getBountyRewards().add(new BountyReward(getCurrencyReward(), getBounty()));
             lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+            if (isEventBounty) {
+                eventMode.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+                generalEventMode.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+                lifetimePveStats.getEventStats().getCompletedBounties().merge(getBounty(), 1L, Long::sum);
+            }
         });
     }
 

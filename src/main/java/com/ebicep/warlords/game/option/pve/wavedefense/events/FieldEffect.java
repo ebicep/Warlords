@@ -294,7 +294,7 @@ public class FieldEffect implements Option {
                 Map<Classes, Integer> classCounts = new HashMap<>();
                 players.forEach(p -> classCounts.merge(Specializations.getClass(p.getSpecClass()), 1, Integer::sum));
                 classCounts.forEach((classes, integer) -> {
-                    if (integer < 1) {
+                    if (integer < 2) {
                         return;
                     }
                     ChatUtils.MessageType.GAME.sendMessage(name + ": Applied " + classes.name + " Bonus");
@@ -367,7 +367,7 @@ public class FieldEffect implements Option {
                     @Override
                     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                         if (event.getAbility().isEmpty()) {
-                            return currentDamageValue * 1.05f;
+                            return currentDamageValue * 1.1f;
                         }
                         return currentDamageValue;
                     }

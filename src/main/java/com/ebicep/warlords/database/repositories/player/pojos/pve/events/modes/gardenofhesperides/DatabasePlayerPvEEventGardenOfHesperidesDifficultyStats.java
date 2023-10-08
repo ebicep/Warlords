@@ -15,11 +15,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.g
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
+import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats extends PvEEventGardenOfHesperidesDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventGardenOfHesperidesDatabaseStatInformation>, EventMode {
 
@@ -41,9 +42,36 @@ public class DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats extends PvE
     @Field("rewards_purchased")
     private Map<String, Long> rewardsPurchased = new LinkedHashMap<>();
     @Field("acropolis_stats")
-    private DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats acropolisStats = new DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats();
+    private DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats acropolisStats = new DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats();
     @Field("tartarus_stats")
-    private DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats tartarusStats = new DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats();
+    private DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats tartarusStats = new DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats();
+
+    @Field("completed_bounties")
+    private Map<Bounty, Long> completedBounties = new HashMap<>();
+    @Field("bounties_completed")
+    private int bountiesCompleted = 0;
+    @Field("active_bounties")
+    private List<AbstractBounty> activeBounties = new ArrayList<>();
+
+    @Override
+    public Map<Bounty, Long> getCompletedBounties() {
+        return completedBounties;
+    }
+
+    @Override
+    public int getBountiesCompleted() {
+        return bountiesCompleted;
+    }
+
+    @Override
+    public void addBountiesCompleted() {
+        this.bountiesCompleted++;
+    }
+
+    @Override
+    public List<AbstractBounty> getActiveBounties() {
+        return activeBounties;
+    }
 
     public DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats() {
     }
@@ -175,19 +203,19 @@ public class DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats extends PvE
         return rewardsPurchased;
     }
 
-    public DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats getAcropolisStats() {
+    public DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats getAcropolisStats() {
         return acropolisStats;
     }
 
-    public DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats getTartarusStats() {
+    public DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats getTartarusStats() {
         return tartarusStats;
     }
 
-    public void setAcropolisStats(DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats acropolisStats) {
+    public void setAcropolisStats(DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats acropolisStats) {
         this.acropolisStats = acropolisStats;
     }
 
-    public void setTartarusStats(DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats tartarusStats) {
+    public void setTartarusStats(DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats tartarusStats) {
         this.tartarusStats = tartarusStats;
     }
 }

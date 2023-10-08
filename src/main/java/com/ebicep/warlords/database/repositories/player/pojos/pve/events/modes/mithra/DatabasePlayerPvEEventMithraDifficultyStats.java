@@ -13,11 +13,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.m
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
+import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventMithraDatabaseStatInformation>, EventMode {
 
@@ -40,6 +41,33 @@ public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraD
     private Map<String, Long> rewardsPurchased = new LinkedHashMap<>();
     @Field("spiders_dwelling_stats")
     private DatabasePlayerPvEEventSpidersDwellingDifficultyStats spidersDwellingStats = new DatabasePlayerPvEEventSpidersDwellingDifficultyStats();
+
+    @Field("completed_bounties")
+    private Map<Bounty, Long> completedBounties = new HashMap<>();
+    @Field("bounties_completed")
+    private int bountiesCompleted = 0;
+    @Field("active_bounties")
+    private List<AbstractBounty> activeBounties = new ArrayList<>();
+
+    @Override
+    public Map<Bounty, Long> getCompletedBounties() {
+        return completedBounties;
+    }
+
+    @Override
+    public int getBountiesCompleted() {
+        return bountiesCompleted;
+    }
+
+    @Override
+    public void addBountiesCompleted() {
+        this.bountiesCompleted++;
+    }
+
+    @Override
+    public List<AbstractBounty> getActiveBounties() {
+        return activeBounties;
+    }
 
     public DatabasePlayerPvEEventMithraDifficultyStats() {
     }

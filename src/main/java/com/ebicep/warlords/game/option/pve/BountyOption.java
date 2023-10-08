@@ -22,8 +22,12 @@ public class BountyOption implements Option {
                 return;
             }
             UUID uniqueId = offlinePlayer.getUniqueId();
-            for (PlayersCollections collection : BountyUtils.BOUNTY_COLLECTION_INFO.keySet()) {
-                DatabaseManager.getPlayer(uniqueId, collection, databasePlayer -> {
+            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                BountyUtils.BountyInfo bountyInfo = BountyUtils.BOUNTY_COLLECTION_INFO.get(activeCollection.name);
+                if (bountyInfo == null) {
+                    continue;
+                }
+                DatabaseManager.getPlayer(uniqueId, activeCollection, databasePlayer -> {
                     List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
                     for (AbstractBounty bounty : trackableBounties) {
                         if (bounty instanceof TracksDuringGame tracksDuringGame && tracksDuringGame.trackGame(game)) {

@@ -40,6 +40,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.TriFunction;
@@ -1080,12 +1081,12 @@ public enum GameEvents {
 
         @Override
         public void editNPC(NPC npc) {
-            Equipment equipment = npc.getOrAddTrait(Equipment.class); //TODO
-            equipment.set(Equipment.EquipmentSlot.HELMET, SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM));
-            equipment.set(Equipment.EquipmentSlot.CHESTPLATE, Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200));
-            equipment.set(Equipment.EquipmentSlot.LEGGINGS, Utils.applyColorTo(Material.LEATHER_LEGGINGS, 120, 120, 200));
-            equipment.set(Equipment.EquipmentSlot.BOOTS, Utils.applyColorTo(Material.LEATHER_BOOTS, 120, 120, 200));
-            equipment.set(Equipment.EquipmentSlot.HAND, Weapons.NEW_LEAF_SCYTHE.getItem());
+            Equipment equipment = npc.getOrAddTrait(Equipment.class);
+            equipment.set(Equipment.EquipmentSlot.HELMET, SkullUtils.getSkullFrom(SkullID.FAUN));
+            equipment.set(Equipment.EquipmentSlot.CHESTPLATE, Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 139, 69, 19));
+            equipment.set(Equipment.EquipmentSlot.LEGGINGS, Utils.applyColorTo(Material.LEATHER_LEGGINGS, 139, 69, 19));
+            equipment.set(Equipment.EquipmentSlot.BOOTS, Utils.applyColorTo(Material.LEATHER_BOOTS, 139, 69, 19));
+            equipment.set(Equipment.EquipmentSlot.HAND, Weapons.SILVER_PHANTASM_TRIDENT.getItem());
         }
 
         @Override
@@ -1131,12 +1132,14 @@ public enum GameEvents {
                         }
                     }
             );
-            menu.setItem(4, 1,
+            menu.setItem(6, 1,
                     new ItemBuilder(Material.BONE)
                             .name(Component.text("Tartarus", NamedTextColor.GREEN))
-                            .lore(
+                            .lore(WordWrap.wrap(
                                     Component.text("All gathered in the depths of an infernal hell, they seek to sever the ties between Warlords and life.", NamedTextColor.YELLOW),
-                                    Component.empty(),
+                                    160
+                            ))
+                            .addLore(Component.empty(),
                                     Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
                                     Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
                             )
@@ -1169,8 +1172,8 @@ public enum GameEvents {
     public final String name;
     public final Currencies currency;
     public final Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFunction;
-    public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction;
-    public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction;
+    public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction; // specific event stats (during a time)
+    public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction; // general/shared event stats
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
     public final List<SpendableBuyShop> shopRewards;
 
