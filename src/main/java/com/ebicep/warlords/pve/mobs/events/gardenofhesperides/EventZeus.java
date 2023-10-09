@@ -16,7 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class EventZeus extends AbstractZombie implements BossMinionMob, God {
+public class EventZeus extends AbstractZombie implements BossMob, God {
 
     public EventZeus(Location spawnLocation) {
         this(spawnLocation, "Zeus", 100000, .33f, 20, 825, 946);
@@ -138,6 +138,11 @@ public class EventZeus extends AbstractZombie implements BossMinionMob, God {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    @Override
+    public double weaponDropRate() {
+        return BossMob.super.weaponDropRate() * 1.5;
     }
 
     private static class ZeusLightningRod extends LightningRod {

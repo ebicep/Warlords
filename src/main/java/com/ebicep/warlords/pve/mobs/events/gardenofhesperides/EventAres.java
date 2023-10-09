@@ -10,7 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
-import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -21,7 +21,7 @@ import org.bukkit.Location;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EventAres extends AbstractZombie implements BossMinionMob, LesserGod {
+public class EventAres extends AbstractZombie implements BossMob, LesserGod {
 
     public EventAres(Location spawnLocation) {
         this(spawnLocation, "Ares", 25500, .4f, 20, 680, 740);

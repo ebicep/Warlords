@@ -10,7 +10,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
-import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -22,7 +22,7 @@ import org.bukkit.Particle;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EventApollo extends AbstractSkeleton implements BossMinionMob, LesserGod {
+public class EventApollo extends AbstractSkeleton implements BossMob, LesserGod {
 
     public EventApollo(Location spawnLocation) {
         this(spawnLocation, "Apollo", 20000, 0, 10, 450, 600);

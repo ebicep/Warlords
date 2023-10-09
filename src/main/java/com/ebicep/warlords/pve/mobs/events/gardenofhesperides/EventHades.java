@@ -11,7 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
@@ -19,7 +19,7 @@ import org.bukkit.util.Vector;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EventHades extends AbstractZombie implements BossMinionMob, God {
+public class EventHades extends AbstractZombie implements BossMob, God {
 
     private int resurrectionTicksLeft = 2 * 60 * 20;
 
@@ -99,5 +99,10 @@ public class EventHades extends AbstractZombie implements BossMinionMob, God {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
 
+    }
+
+    @Override
+    public double weaponDropRate() {
+        return BossMob.super.weaponDropRate() * 1.5;
     }
 }
