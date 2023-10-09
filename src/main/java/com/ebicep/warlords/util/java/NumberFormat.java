@@ -16,6 +16,7 @@ public class NumberFormat {
     private static final DecimalFormat DECIMAL_FORMAT_OPTIONAL_HUNDREDTHS = new DecimalFormat("#.##");
     private static final DecimalFormat DECIMAL_FORMAT_COMMAS_OPTIONAL_HUNDREDTHS = new DecimalFormat("#,###.##");
     private static final NavigableMap<Long, String> SUFFIXES = new TreeMap<>();
+    private static final String[] ORDINAL = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
 
     static {
         DECIMAL_FORMAT_TENTHS.setDecimalSeparatorAlwaysShown(false);
@@ -90,5 +91,12 @@ public class NumberFormat {
 
     public static String addCommas(double amount) {
         return FORMAT_COMMAS.format(amount);
+    }
+
+    public static String ordinal(int i) {
+        return switch (i % 100) {
+            case 11, 12, 13 -> i + "th";
+            default -> i + ORDINAL[i % 10];
+        };
     }
 }

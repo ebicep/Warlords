@@ -11,6 +11,8 @@ import java.util.List;
 
 public class ComponentUtils {
 
+    public static final Component CLICK_TO_VIEW = Component.text("Click to view!", NamedTextColor.YELLOW);
+
     @Nonnull
     public static TextComponent componentBase() {
         return Component.empty()

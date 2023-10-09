@@ -34,6 +34,11 @@ public enum ExpSpendable implements Spendable {
         public Long getFromPlayer(DatabasePlayer databasePlayer) {
             return databasePlayer.getSpec(databasePlayer.getLastSpec()).getExperience();
         }
+
+        @Override
+        public boolean pluralIncludeS() {
+            return false;
+        }
     };
 
     public final String name;

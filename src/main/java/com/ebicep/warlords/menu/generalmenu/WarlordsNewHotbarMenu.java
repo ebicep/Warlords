@@ -21,6 +21,7 @@ import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
+import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -883,7 +884,7 @@ public class WarlordsNewHotbarMenu {
                 .lore(WordWrap.wrap(Component.text("View and modify all your weapons, also accessible through The Weaponsmith.", NamedTextColor.GRAY), 160))
                 .addLore(
                         Component.empty(),
-                        Component.text("Click to view!", NamedTextColor.YELLOW)
+                        ComponentUtils.CLICK_TO_VIEW
                 )
                 .get();
         public static final ItemStack ITEMS_MENU = new ItemBuilder(Material.ITEM_FRAME)
@@ -891,7 +892,7 @@ public class WarlordsNewHotbarMenu {
                 .lore(
                         Component.text("View and equip all your Items.", NamedTextColor.GRAY),
                         Component.empty(),
-                        Component.text("Click to view!", NamedTextColor.YELLOW)
+                        ComponentUtils.CLICK_TO_VIEW
                 )
                 .get();
         public static final ItemStack REWARD_INVENTORY_MENU = new ItemBuilder(Material.ENDER_CHEST)
@@ -899,7 +900,7 @@ public class WarlordsNewHotbarMenu {
                 .lore(
                         Component.text("View and claim all your rewards.", NamedTextColor.GRAY),
                         Component.empty(),
-                        Component.text("Click to view!", NamedTextColor.YELLOW)
+                        ComponentUtils.CLICK_TO_VIEW
                 )
                 .get();
         public static final ItemStack ABILITY_TREE_MENU = new ItemBuilder(Material.GOLD_NUGGET)
@@ -907,7 +908,7 @@ public class WarlordsNewHotbarMenu {
                 .lore(
                         Component.text("View your ability upgrades.", NamedTextColor.GRAY),
                         Component.empty(),
-                        Component.text("Click to view!", NamedTextColor.YELLOW)
+                        ComponentUtils.CLICK_TO_VIEW
                 )
                 .get();
 

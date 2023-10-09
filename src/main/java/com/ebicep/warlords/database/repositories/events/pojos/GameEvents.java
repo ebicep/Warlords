@@ -40,6 +40,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
+import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -239,13 +240,13 @@ public enum GameEvents {
         public void setMenu(Menu menu) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
-                            .name(Component.text("Start a private Boltaro event game", NamedTextColor.GREEN))
+                            .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openBoltaroModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
                     new ItemBuilder(Material.COMPARATOR)
-                            .name(Component.text("Join a public Boltaro event game", NamedTextColor.GREEN))
+                            .name(Component.text("Join a Public Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openBoltaroModeMenu((Player) e.getWhoClicked(), false)
             );
@@ -469,13 +470,13 @@ public enum GameEvents {
         public void setMenu(Menu menu) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
-                            .name(Component.text("Start a private Narmer event game", NamedTextColor.GREEN))
+                            .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openNarmerModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
                     new ItemBuilder(Material.COMPARATOR)
-                            .name(Component.text("Join a public Narmer event game", NamedTextColor.GREEN))
+                            .name(Component.text("Join a Public Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openNarmerModeMenu((Player) e.getWhoClicked(), false)
             );
@@ -680,13 +681,13 @@ public enum GameEvents {
         public void setMenu(Menu menu) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
-                            .name(Component.text("Start a private Mithra event game", NamedTextColor.GREEN))
+                            .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
                     new ItemBuilder(Material.COMPARATOR)
-                            .name(Component.text("Join a public Mithra event game", NamedTextColor.GREEN))
+                            .name(Component.text("Join a Public Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), false)
             );
@@ -879,13 +880,13 @@ public enum GameEvents {
         public void setMenu(Menu menu) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
-                            .name(Component.text("Start a private Illumina event game", NamedTextColor.GREEN))
+                            .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
                     new ItemBuilder(Material.COMPARATOR)
-                            .name(Component.text("Join a public Illumina event game", NamedTextColor.GREEN))
+                            .name(Component.text("Join a Public Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openMithraModeMenu((Player) e.getWhoClicked(), false)
             );
@@ -1098,13 +1099,13 @@ public enum GameEvents {
         public void setMenu(Menu menu) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
-                            .name(Component.text("Start a private Garden of Hesperides event game", NamedTextColor.GREEN))
+                            .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openGardenOfHesperidesModeMenu((Player) e.getWhoClicked(), true)
             );
             menu.setItem(6, 1,
                     new ItemBuilder(Material.COMPARATOR)
-                            .name(Component.text("Join a public Garden of Hesperides event game", NamedTextColor.GREEN))
+                            .name(Component.text("Join a Public Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> openGardenOfHesperidesModeMenu((Player) e.getWhoClicked(), false)
             );
@@ -1261,6 +1262,14 @@ public enum GameEvents {
         menu.setItem(4, 0,
                 new ItemBuilder(Material.TOTEM_OF_UNDYING)
                         .name(Component.text("Leaderboard Rewards", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(
+                                Component.text("Based on total event points gained.", NamedTextColor.GRAY),
+                                170
+                        ))
+                        .addLore(
+                                Component.empty(),
+                                ComponentUtils.CLICK_TO_VIEW
+                        )
                         .get(),
                 (m, e) -> {
                     openLeaderboardRewardsMenu(player);
@@ -1271,6 +1280,17 @@ public enum GameEvents {
         menu.setItem(4, 3,
                 new ItemBuilder(Material.ENDER_CHEST)
                         .name(Component.text("Event Shop", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(
+                                Component.text(
+                                        "Spend your event points for extraordinary rewards. The event points can only be used for this specific event.",
+                                        NamedTextColor.GRAY
+                                ),
+                                160
+                        ))
+                        .addLore(
+                                Component.empty(),
+                                ComponentUtils.CLICK_TO_VIEW
+                        )
                         .get(),
                 (m, e) -> openShopMenu(player)
         );
@@ -1294,15 +1314,16 @@ public enum GameEvents {
             Pair<Integer, Material> ranking = rankings.get(i);
             Integer position = ranking.getA();
             Material material = ranking.getB();
-            String positionName = "#" + position;
+            String positionName = NumberFormat.ordinal(position);
             if (i < rankings.size() - 1) {
                 Pair<Integer, Material> nextRanking = rankings.get(i + 1);
                 if (nextRanking.getA() - 1 != position) {
-                    positionName += "-" + (nextRanking.getA() - 1);
+                    positionName += "-" + NumberFormat.ordinal((nextRanking.getA() - 1));
                 }
             } else {
                 positionName += "+";
             }
+            positionName += " Place";
             menu.setItem(i + 1, 1,
                     new ItemBuilder(material)
                             .name(Component.text(positionName, NamedTextColor.GREEN))

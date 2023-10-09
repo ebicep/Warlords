@@ -10,6 +10,7 @@ import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
@@ -43,7 +44,7 @@ public class PlayerHotBarItemListener implements Listener {
             .lore(
                     Component.text("View all information pertaining to PvP.", NamedTextColor.GRAY),
                     Component.empty(),
-                    Component.text("Click to view!", NamedTextColor.YELLOW)
+                    ComponentUtils.CLICK_TO_VIEW
             )
             .get();
     public static final ItemStack PVE_MENU = new ItemBuilder(Material.GOLD_INGOT)
@@ -51,7 +52,7 @@ public class PlayerHotBarItemListener implements Listener {
             .lore(
                     Component.text("View all information pertaining to PvE.", NamedTextColor.GRAY),
                     Component.empty(),
-                    Component.text("Click to view!", NamedTextColor.YELLOW)
+                    ComponentUtils.CLICK_TO_VIEW
             )
             .get();
     public static final ItemStack START_MENU = new ItemBuilder(Material.BLAZE_POWDER)
@@ -78,7 +79,7 @@ public class PlayerHotBarItemListener implements Listener {
             .lore(
                     Component.text("View all your in game settings.", NamedTextColor.GRAY),
                     Component.empty(),
-                    Component.text("Click to view!", NamedTextColor.YELLOW)
+                    ComponentUtils.CLICK_TO_VIEW
             )
             .get();
     private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
