@@ -4140,9 +4140,6 @@ public enum GameMap {
                         put("Prometheus", 100L);
                         put("Athena", 100L);
                         put("Cronus", 100L);
-                        put("Zeus", 100L);
-                        put("Poseidon", 100L);
-                        put("Hades", 100L);
                     }})
                     .playerCoinPerXSec(150, 10)
                     .guildCoinInsigniaConvertBonus(1000)
@@ -4185,8 +4182,8 @@ public enum GameMap {
             ));
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 33, 61.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 33, 61.5), Team.RED).asOption());
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -2.50), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, 5.5), Team.RED));
@@ -4196,8 +4193,10 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -18.5), Team.RED));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, -10.5), Team.RED));
 
-            options.add(new PowerupOption(loc.addXYZ(14.5, 24.5, 16.5), PowerupType.COOLDOWN, 30, 180, 30));
-            options.add(new PowerupOption(loc.addXYZ(-13.5, 24.5, -23.5), PowerupType.HEALING, 5, 90, 30));
+            options.add(new PowerupOption(loc.addXYZ(137.5, 34.5, 87.5), PowerupType.COOLDOWN, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(137.5, 34.5, 37.5), PowerupType.DAMAGE, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(87.5, 34.5, 37.5), PowerupType.HEALING, 30, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(87.5, 34.5, 87.5), PowerupType.SPEED, 5, 90, 30));
 
             options.add(new RespawnWaveOption(2, 1, 20));
             options.add(new GraveOption());
@@ -4205,11 +4204,18 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
+            List<Location> bossSpawnLocations = new ArrayList<>();
+            bossSpawnLocations.add(loc.addXYZ(100.5, 33, 51.5, -90, 0));
+            bossSpawnLocations.add(loc.addXYZ(125.5, 33, 40.5, 0, 0));
+            bossSpawnLocations.add(loc.addXYZ(144.5, 33, 69.5, 180, 0));
+            bossSpawnLocations.add(loc.addXYZ(114.5, 33, 96.5, 180, 0));
+            bossSpawnLocations.add(loc.addXYZ(88.5, 33, 76.5, -90, 0));
+            Collections.shuffle(bossSpawnLocations);
             options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
                     .add(1, new FixedWave(10 * SECOND, -1, null)
-                            .add(Mob.EVENT_HADES)
-                            .add(Mob.EVENT_POSEIDON)
-                            .add(Mob.EVENT_ZEUS)
+                            .add(Mob.EVENT_HADES, bossSpawnLocations.get(0))
+                            .add(Mob.EVENT_POSEIDON, bossSpawnLocations.get(1))
+                            .add(Mob.EVENT_ZEUS, bossSpawnLocations.get(2))
                     ), DifficultyIndex.EVENT
             ) {
                 @Override
@@ -4262,6 +4268,11 @@ public enum GameMap {
                         }
                     });
                 }
+
+                @Override
+                protected Pair<Float, Component> getWaveOpening() {
+                    return new Pair<>(.8f, Component.text(""));
+                }
             });
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(900, 50, "spec"));
@@ -4275,7 +4286,7 @@ public enum GameMap {
 
             );
             options.add(new CurrencyOnEventOption()
-                    .startWith(120000)
+                    .startWith(750000)
                     .onKill(500)
                     .onPerMobKill(Mob.EVENT_ZEUS, 5000)
                     .onPerMobKill(Mob.EVENT_POSEIDON, 5000)
@@ -4283,11 +4294,6 @@ public enum GameMap {
             );
             options.add(new CoinGainOption()
                     .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{
-                        put("Apollo", 100L);
-                        put("Ares", 100L);
-                        put("Prometheus", 100L);
-                        put("Athena", 100L);
-                        put("Cronus", 100L);
                         put("Zeus", 100L);
                         put("Poseidon", 100L);
                         put("Hades", 100L);

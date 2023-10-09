@@ -33,6 +33,7 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -267,52 +268,55 @@ public class WaveDefenseOption implements PveOption {
                                  .append(Component.text(" seconds!"))
                 );
             }
-
-            float soundPitch = 0.8f;
-            Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
-            if (waveCounter >= 101) {
-                wavePrefix = Component.text("W ", NamedTextColor.BLACK)
-                                      .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
-                                      .append(Component.text("v").decorate(TextDecoration.BOLD))
-                                      .append(Component.text("e " + waveCounter).decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED));
-            } else if (waveCounter == 100) {
-                soundPitch = 0.1f;
-                wavePrefix = Component.text("W", NamedTextColor.DARK_RED)
-                                      .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
-                                      .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
-            } else if (waveCounter >= 90) {
-                soundPitch = 0.2f;
-                wavePrefix = Component.text("W", NamedTextColor.DARK_PURPLE)
-                                      .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
-                                      .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
-            } else if (waveCounter >= 80) {
-                soundPitch = 0.3f;
-                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.DARK_PURPLE, TextDecoration.BOLD);
-            } else if (waveCounter >= 70) {
-                soundPitch = 0.4f;
-                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD);
-            } else if (waveCounter >= 60) {
-                soundPitch = 0.5f;
-                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.DARK_GRAY, TextDecoration.BOLD);
-            } else if (waveCounter >= 50) {
-                soundPitch = 0.65f;
-                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.GRAY);
-            } else if (waveCounter >= 25) {
-                soundPitch = 0.7f;
-                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.GOLD);
-            } else if (waveCounter >= 10) {
-                soundPitch = 0.75f;
-                wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
-            }
-
-            entry.getKey().playSound(entry.getKey().getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, soundPitch);
+            Pair<Float, Component> waveOpening = getWaveOpening();
+            entry.getKey().playSound(entry.getKey().getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, waveOpening.getA());
             entry.getKey().showTitle(Title.title(
-                    wavePrefix,
+                    waveOpening.getB(),
                     Component.empty(),
                     Title.Times.times(Ticks.duration(20), Ticks.duration(60), Ticks.duration(20))
             ));
         }
         startSpawnTask();
+    }
+
+    protected Pair<Float, Component> getWaveOpening() {
+        float soundPitch = 0.8f;
+        Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
+        if (waveCounter >= 101) {
+            wavePrefix = Component.text("W ", NamedTextColor.BLACK)
+                                  .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                  .append(Component.text("v").decorate(TextDecoration.BOLD))
+                                  .append(Component.text("e " + waveCounter).decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED));
+        } else if (waveCounter == 100) {
+            soundPitch = 0.1f;
+            wavePrefix = Component.text("W", NamedTextColor.DARK_RED)
+                                  .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                  .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
+        } else if (waveCounter >= 90) {
+            soundPitch = 0.2f;
+            wavePrefix = Component.text("W", NamedTextColor.DARK_PURPLE)
+                                  .append(Component.text("a").decorate(TextDecoration.BOLD, TextDecoration.OBFUSCATED))
+                                  .append(Component.text("ve " + waveCounter).decorate(TextDecoration.BOLD));
+        } else if (waveCounter >= 80) {
+            soundPitch = 0.3f;
+            wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.DARK_PURPLE, TextDecoration.BOLD);
+        } else if (waveCounter >= 70) {
+            soundPitch = 0.4f;
+            wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD);
+        } else if (waveCounter >= 60) {
+            soundPitch = 0.5f;
+            wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.DARK_GRAY, TextDecoration.BOLD);
+        } else if (waveCounter >= 50) {
+            soundPitch = 0.65f;
+            wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.GRAY);
+        } else if (waveCounter >= 25) {
+            soundPitch = 0.7f;
+            wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.GOLD);
+        } else if (waveCounter >= 10) {
+            soundPitch = 0.75f;
+            wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
+        }
+        return new Pair<>(soundPitch, wavePrefix);
     }
 
     public float getSpawnCountMultiplier(int playerCount) {

@@ -46,7 +46,7 @@ public class FixedWave implements Wave {
         if (spawnCounter >= spawnSettings.size()) {
             spawnCounter = 0;
         }
-        SpawnSetting spawnSetting = spawnSettings.get(spawnCounter);
+        SpawnSetting spawnSetting = spawnSettings.get(spawnCounter++);
         AbstractMob<?> mob = spawnSetting.mob.createMob(spawnSetting.location() == null ? loc : spawnSetting.location());
         if (mob instanceof BossMob) {
             loc.getWorld().spigot().strikeLightningEffect(loc, false);

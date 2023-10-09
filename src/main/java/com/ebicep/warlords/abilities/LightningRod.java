@@ -36,7 +36,11 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
     private int healthRestore = 30;
 
     public LightningRod() {
-        super("Lightning Rod", 0, 0, 31.32f, 0);
+        this(31.32f);
+    }
+
+    public LightningRod(float cooldown) {
+        super("Lightning Rod", 0, 0, cooldown, 0);
     }
 
     @Override
@@ -63,10 +67,10 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
         wp.addEnergy(wp, name, energyRestore);
-        Utils.playGlobalSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
+        Utils.playGlobalSound(wp.getLocation(), "shaman.lightningrod.activation", 2, 1);
 
         new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.ORANGE_TULIP).play();
-        player.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
+        wp.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
 
         wp.addHealingInstance(
                 wp,
@@ -78,12 +82,12 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
         );
 
         List<WarlordsEntity> hit = PlayerFilter
-                .entitiesAround(player, knockbackRadius, knockbackRadius, knockbackRadius)
+                .entitiesAround(wp, knockbackRadius, knockbackRadius, knockbackRadius)
                 .aliveEnemiesOf(wp)
                 .toList();
         for (WarlordsEntity knockbackTarget : hit) {
             final Location loc = knockbackTarget.getLocation();
-            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
+            final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
             knockbackTarget.setVelocity(name, v, false);
         }
         if (pveMasterUpgrade2) {
@@ -96,7 +100,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
             ArmorStand totem = capacitorTotem.getTotem();
 
             Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
-            player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
+            wp.playSound(wp.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
             capacitorTotem.pulseDamage();
             if (capacitorTotem.isPveMasterUpgrade()) {

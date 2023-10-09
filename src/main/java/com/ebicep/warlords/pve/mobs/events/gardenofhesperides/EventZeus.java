@@ -144,6 +144,7 @@ public class EventZeus extends AbstractZombie implements BossMinionMob, God {
         private float damageBuff = 1.15f;
 
         public ZeusLightningRod() {
+            super(15);
             this.setHealthRestore(0);
         }
 

@@ -60,6 +60,16 @@ public class EventCronus extends AbstractZombie implements BossMinionMob, Lesser
     }
 
     @Override
+    public Component getDescription() {
+        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_PURPLE;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
@@ -99,11 +109,15 @@ public class EventCronus extends AbstractZombie implements BossMinionMob, Lesser
             groundSlamBerserker.getHitBoxRadius().setCurrentValue(10);
             groundSlamBerserker.getEnergyCost().setCurrentValue(0);
             new GameRunnable(self.getGame()) {
-                int counter = 0;
                 final float healing = self.getMaxHealth() * .0333f;
+                int counter = 0;
 
                 @Override
                 public void run() {
+                    if (warlordsNPC.isDead()) {
+                        this.cancel();
+                        return;
+                    }
                     groundSlamBerserker.onActivate(self, null);
 
                     warlordsNPC.addHealingInstance(
@@ -135,17 +149,6 @@ public class EventCronus extends AbstractZombie implements BossMinionMob, Lesser
     public boolean diedDuringRejuvenate() {
         return healthCheck && !rejuvenateOver;
     }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
-    }
-
-    @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.DARK_PURPLE;
-    }
-
 
     private static class HeavenlyDamage extends AbstractPveAbility {
 

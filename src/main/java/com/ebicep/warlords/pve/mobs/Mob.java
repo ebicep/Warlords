@@ -649,9 +649,9 @@ public enum Mob {
     )),
     EVENT_ZEUS(EventZeus.class, EventZeus::new, EventZeus::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.ZEUS),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 240, 245),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 240, 245),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 240, 245),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 236, 236, 236),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 236, 236, 236),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 236, 236, 236),
             Weapons.SEVENTH.getItem()
     )),
     EVENT_POSEIDON(EventPoseidon.class, EventPoseidon::new, EventPoseidon::new, new Utils.SimpleEntityEquipment(

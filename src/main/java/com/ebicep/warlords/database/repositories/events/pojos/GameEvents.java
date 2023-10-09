@@ -1147,17 +1147,17 @@ public enum GameEvents {
                             )
                             .get(),
                     (m, e) -> {
-//                        if (privateGame) {
-//                            GameStartCommand.startGamePvEEvent(player,
-//                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_5)
-//                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
-//
-//                            );
-//                        } else {
-//                            GameStartCommand.startGamePvEEvent(player,
-//                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.ILLUSION_RIFT_EVENT_5)
-//                            );
-//                        }
+                        if (privateGame) {
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.TARTARUS)
+                                                                          .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
+
+                            );
+                        } else {
+                            GameStartCommand.startGamePvEEvent(player,
+                                    queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.TARTARUS)
+                            );
+                        }
                     }
             );
 
