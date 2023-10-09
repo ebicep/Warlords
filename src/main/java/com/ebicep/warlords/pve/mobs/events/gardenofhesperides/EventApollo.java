@@ -46,7 +46,7 @@ public class EventApollo extends AbstractSkeleton implements BossMinionMob, Less
                 minMeleeDamage,
                 maxMeleeDamage,
                 new PoisonArrow(),
-                new SpawnMobAbility(10, Mob.SKELETAL_ENTROPY) {
+                new SpawnMobAbility(10, Mob.SKELETAL_ENTROPY, 10) {
                     @Override
                     public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
                         return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));
@@ -99,7 +99,7 @@ public class EventApollo extends AbstractSkeleton implements BossMinionMob, Less
     private static class PoisonArrow extends AbstractPveAbility {
 
         public PoisonArrow() {
-            super("Poison Arrow", 550, 750, 5, 100);
+            super("Poison Arrow", 550, 750, 5, 100, false);
         }
 
         @Override

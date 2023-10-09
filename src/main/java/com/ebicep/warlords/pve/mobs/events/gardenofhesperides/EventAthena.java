@@ -108,7 +108,7 @@ public class EventAthena extends AbstractZombie implements BossMinionMob, Lesser
         private float radius = 10;
 
         public Shockwave() {
-            super("Shockwave", 650, 800, 8, 100);
+            super("Shockwave", 650, 800, 8, 100, false);
         }
 
         @Override

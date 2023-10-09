@@ -155,7 +155,7 @@ public class EventCronus extends AbstractZombie implements BossMinionMob, Lesser
         private float radius = 20;
 
         public HeavenlyDamage() {
-            super("Heavenly Damage", 950, 1100, 10, 100);
+            super("Heavenly Damage", 950, 1100, 10, 100, false);
         }
 
         @Override

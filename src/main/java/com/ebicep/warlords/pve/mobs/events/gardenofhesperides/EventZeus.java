@@ -50,12 +50,12 @@ public class EventZeus extends AbstractZombie implements BossMinionMob, God {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new LightningBolt(258, 415, 3),
-                new ChainLightning(7) {{
+                new LightningBolt(258, 415, 3, 3),
+                new ChainLightning(7, 7) {{
                     this.setTickDuration(40);
                 }},
                 new ZeusLightningRod(),
-                new HealingRain(60) {{
+                new HealingRain(60, 60) {{
                     this.setPveMasterUpgrade(true);
                     this.setTickDuration(320);
                 }}
@@ -145,7 +145,7 @@ public class EventZeus extends AbstractZombie implements BossMinionMob, God {
         private float damageBuff = 1.15f;
 
         public ZeusLightningRod() {
-            super(15);
+            super(15, 15);
             this.setHealthRestore(0);
         }
 

@@ -44,7 +44,7 @@ public class EventAres extends AbstractZombie implements BossMinionMob, LesserGo
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new SpawnMobAbility(10, Mob.INTERMEDIATE_WARRIOR_BERSERKER) {
+                new SpawnMobAbility(10, Mob.INTERMEDIATE_WARRIOR_BERSERKER, 10) {
                     @Override
                     public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
                         return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));
@@ -55,7 +55,7 @@ public class EventAres extends AbstractZombie implements BossMinionMob, LesserGo
                         return (int) (pveOption.getGame().warlordsPlayers().count() + 1);
                     }
                 },
-                new SpawnMobAbility(10, Mob.ADVANCED_WARRIOR_BERSERKER) {
+                new SpawnMobAbility(10, Mob.ADVANCED_WARRIOR_BERSERKER, 10) {
                     @Override
                     public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
                         return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));

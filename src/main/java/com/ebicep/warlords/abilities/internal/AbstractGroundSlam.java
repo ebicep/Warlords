@@ -35,7 +35,11 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     private boolean trueDamage = false;
 
     public AbstractGroundSlam(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super("Ground Slam", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        this(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 0);
+    }
+
+    public AbstractGroundSlam(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, float startCooldown) {
+        super("Ground Slam", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, startCooldown);
     }
 
     @Override

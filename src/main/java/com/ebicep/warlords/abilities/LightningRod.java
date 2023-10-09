@@ -37,11 +37,11 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
     private int healthRestore = 30;
 
     public LightningRod() {
-        this(31.32f);
+        this(31.32f, 0);
     }
 
-    public LightningRod(float cooldown) {
-        super("Lightning Rod", 0, 0, cooldown, 0);
+    public LightningRod(float cooldown, float startCooldown) {
+        super("Lightning Rod", 0, 0, cooldown, 0, startCooldown);
     }
 
     @Override

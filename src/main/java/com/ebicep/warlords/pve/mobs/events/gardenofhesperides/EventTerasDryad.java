@@ -64,7 +64,7 @@ public class EventTerasDryad extends AbstractZombie implements BossMinionMob, Te
 
 
         public SpiritHealing() {
-            super("Spirit Healing", 200, 200, 2, 75);
+            super("Spirit Healing", 200, 200, 2, 75, false);
         }
 
         @Override

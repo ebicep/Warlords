@@ -64,6 +64,26 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         this.hitTeammates = hitTeammates;
     }
 
+    public AbstractPiercingProjectile(
+            String name,
+            float minDamageHeal,
+            float maxDamageHeal,
+            float cooldown,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            double projectileSpeed,
+            double maxDistance,
+            boolean hitTeammates,
+            float startCooldown
+    ) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, startCooldown);
+        this.projectileSpeed = projectileSpeed;
+        this.maxDistance = maxDistance;
+        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
+        this.hitTeammates = hitTeammates;
+    }
+
     /**
      * Plays this projectile effect at a location
      *

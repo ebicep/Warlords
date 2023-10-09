@@ -44,8 +44,8 @@ public class EventHades extends AbstractZombie implements BossMinionMob, God {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FallenSouls(464, 512, 3),
-                new IncendiaryCurse(524, 607, 8) {
+                new FallenSouls(464, 512, 3, 3),
+                new IncendiaryCurse(524, 607, 8, 8) {
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
                         Location location = we.getLocation();
@@ -61,7 +61,7 @@ public class EventHades extends AbstractZombie implements BossMinionMob, God {
                         return speed;
                     }
                 },
-                new UndyingArmy(60)
+                new UndyingArmy(60f, 60)
         );
     }
 

@@ -14,15 +14,15 @@ import java.util.Set;
 public class GroundSlamBerserker extends AbstractGroundSlam {
 
     public GroundSlamBerserker() {
-        super(448.8f, 606.1f, 9.32f, 60, 15, 200);
+        this(9.32f, 0);
     }
 
-    public GroundSlamBerserker(float cooldown) {
-        super(448.8f, 606.1f, cooldown, 60, 15, 200);
+    public GroundSlamBerserker(float cooldown, float startCooldown) {
+        this(448.8f, 606.1f, cooldown, startCooldown);
     }
 
-    public GroundSlamBerserker(float minDamageHeal, float maxDamageHeal, float cooldown) {
-        super(448.8f, 606.1f, cooldown, 60, 15, 200);
+    public GroundSlamBerserker(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
+        super(minDamageHeal, maxDamageHeal, cooldown, 60, 15, 200, startCooldown);
     }
 
     @Override

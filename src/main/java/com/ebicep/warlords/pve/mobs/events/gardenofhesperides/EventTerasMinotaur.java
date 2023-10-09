@@ -32,7 +32,7 @@ public class EventTerasMinotaur extends AbstractZombie implements BossMinionMob,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new GroundSlamBerserker(5)
+                new GroundSlamBerserker(5, 5)
         );
     }
 

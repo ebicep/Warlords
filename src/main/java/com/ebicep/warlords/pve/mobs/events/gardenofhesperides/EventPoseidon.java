@@ -51,7 +51,7 @@ public class EventPoseidon extends AbstractZombie implements BossMinionMob, God 
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new EarthenSpike(600, 700, 6) {
+                new EarthenSpike(600, 700, 6, 6) {
                     @Override
                     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
                         List<WarlordsEntity> spiked = new ArrayList<>();
@@ -86,7 +86,7 @@ public class EventPoseidon extends AbstractZombie implements BossMinionMob, God 
                         CripplingStrike.cripple(caster, spikeTarget, name, 2 * 20);
                     }
                 },
-                new Boulder(551, 773, 5) {
+                new Boulder(551, 773, 5, 5) {
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
                         Location location = we.getLocation();
@@ -102,8 +102,8 @@ public class EventPoseidon extends AbstractZombie implements BossMinionMob, God 
                         return speed;
                     }
                 },
-                new GroundSlamBerserker(558, 616, 10),
-                new LastStand(60)
+                new GroundSlamBerserker(558, 616, 10, 10),
+                new LastStand(60, 60)
         );
     }
 

@@ -44,11 +44,11 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     private FloatModifiable radius = new FloatModifiable(8);
 
     public HealingRain() {
-        super("Healing Rain", 100, 125, 52.85f, 50, 25, 200);
+        this(60, 0);
     }
 
-    public HealingRain(float cooldown) {
-        super("Healing Rain", 100, 125, cooldown, 50, 25, 200);
+    public HealingRain(float cooldown, float startCooldown) {
+        super("Healing Rain", 100, 125, cooldown, 50, 25, 200, startCooldown);
     }
 
     @Override

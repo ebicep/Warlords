@@ -150,7 +150,7 @@ public class EventPrometheus extends AbstractZombie implements BossMinionMob, Le
         private float radius = 10;
 
         public BurstOfFlames() {
-            super("Burst of Flames", 860, 940, 5, 100);
+            super("Burst of Flames", 860, 940, 5, 100, false);
         }
 
         @Override
