@@ -86,7 +86,7 @@ public class EventHades extends AbstractZombie implements BossMinionMob, God {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        ImpalingStrike.giveLeechCooldown(warlordsNPC, receiver, 3, 20, 35, finalEvent -> {});
+        ImpalingStrike.giveLeechCooldown(warlordsNPC, receiver, 3, .20f, .35f, finalEvent -> {});
     }
 
     @Override

@@ -53,14 +53,14 @@ public class EventPoseidon extends AbstractZombie implements BossMinionMob, God 
                 maxMeleeDamage,
                 new EarthenSpike(600, 700, 6) {
                     @Override
-                    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+                    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
                         List<WarlordsEntity> spiked = new ArrayList<>();
                         float rad = 10;
                         for (WarlordsEntity spikeTarget : PlayerFilter
                                 .entitiesAround(wp, rad, rad, rad)
                                 .aliveEnemiesOf(wp)
                         ) {
-                            if (!LocationUtils.hasLineOfSight(player, spikeTarget.getEntity())) {
+                            if (!LocationUtils.hasLineOfSight(wp.getEntity(), spikeTarget.getEntity())) {
                                 continue;
                             }
 
