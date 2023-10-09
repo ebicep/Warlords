@@ -15,14 +15,13 @@ import java.util.Map;
 
 public class PvEEventGardenOfHesperidesTartarusDatabaseStatInformation extends PvEEventGardenOfHesperidesDatabaseStatInformation {
 
-    @Field("highest_wave_cleared")
-    protected int highestWaveCleared;
-    @Field("total_waves_cleared")
-    protected int totalWavesCleared;
+    @Field("fastest_game_finished")
+    protected long fastestGameFinished = 0;
 
     @Override
     public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer,
+            DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -33,16 +32,16 @@ public class PvEEventGardenOfHesperidesTartarusDatabaseStatInformation extends P
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventTartarus;
         super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
+        DatabaseGamePvEEventTartarus eventTartarus = (DatabaseGamePvEEventTartarus) databaseGame;
+        boolean won = eventTartarus.getWavesCleared() == 1;
+        int timeElapsed = eventTartarus.getTimeElapsed();
         if (multiplier > 0) {
-            this.highestWaveCleared = Math.max((((DatabaseGamePvEEventTartarus) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);
-        } else if (this.highestWaveCleared == ((DatabaseGamePvEEventTartarus) databaseGame).getWavesCleared()) {
-            this.highestWaveCleared = 0;
+            if (won && (this.fastestGameFinished == 0 || timeElapsed < fastestGameFinished)) {
+                this.fastestGameFinished = timeElapsed;
+            }
+        } else if (this.fastestGameFinished == timeElapsed) {
+            this.fastestGameFinished = 0;
         }
-        this.totalWavesCleared += ((DatabaseGamePvEEventTartarus) databaseGame).getWavesCleared() * multiplier;
-    }
-
-    public void setHighestWaveCleared(int highestWaveCleared) {
-        this.highestWaveCleared = highestWaveCleared;
     }
 
     public long getExperiencePvE() {
@@ -65,4 +64,7 @@ public class PvEEventGardenOfHesperidesTartarusDatabaseStatInformation extends P
         return mobDeaths;
     }
 
+    public long getFastestGameFinished() {
+        return fastestGameFinished;
+    }
 }

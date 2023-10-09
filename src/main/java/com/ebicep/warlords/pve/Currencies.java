@@ -28,7 +28,7 @@ public enum Currencies implements Spendable {
     ),
     LEGEND_FRAGMENTS(
             "Legend Fragment",
-            NamedTextColor.GOLD,
+            TextColor.color(255, 139, 0),
             new ItemStack(Material.BLAZE_POWDER)
     ),
     FAIRY_ESSENCE(

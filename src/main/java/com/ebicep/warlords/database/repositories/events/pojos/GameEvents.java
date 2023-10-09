@@ -44,6 +44,8 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.java.TriFunction;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
@@ -64,6 +66,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -1042,7 +1045,7 @@ public enum GameEvents {
             );
             EventLeaderboard tartarusBoard = new EventLeaderboard(
                     eventStart,
-                    "Highest Game Event Points",
+                    "Fastest Win",
                     new Location(StatsLeaderboardLocations.CENTER.getWorld(), -2546.5, 55, 757.5),
                     (databasePlayer, time) -> databasePlayer
                             .getPveStats()
@@ -1050,14 +1053,14 @@ public enum GameEvents {
                             .getGardenOfHesperidesEventStats()
                             .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
                             .getTartarusStats()
-                            .getHighestEventPointsGame(),
-                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getFastestGameFinished(),
+                    (databasePlayer, time) -> StringUtils.formatTimeLeft(databasePlayer
                             .getPveStats()
                             .getEventStats()
                             .getGardenOfHesperidesEventStats()
                             .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
                             .getTartarusStats()
-                            .getHighestEventPointsGame())
+                            .getFastestGameFinished() / 20)
             );
             EventLeaderboard totalBoard = new EventLeaderboard(
                     eventStart,
@@ -1255,6 +1258,16 @@ public enum GameEvents {
 
         setMenu(menu);
 
+        menu.setItem(4, 0,
+                new ItemBuilder(Material.TOTEM_OF_UNDYING)
+                        .name(Component.text("Leaderboard Rewards", NamedTextColor.GREEN))
+                        .get(),
+                (m, e) -> {
+                    openLeaderboardRewardsMenu(player);
+                }
+        );
+
+
         menu.setItem(4, 3,
                 new ItemBuilder(Material.ENDER_CHEST)
                         .name(Component.text("Event Shop", NamedTextColor.GREEN))
@@ -1263,6 +1276,50 @@ public enum GameEvents {
         );
 
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    private void openLeaderboardRewardsMenu(Player player) {
+        Menu menu = new Menu(name + " Rewards", 9 * 4);
+        List<Pair<Integer, Material>> rankings = List.of(
+                new Pair<>(1, Material.EMERALD_BLOCK),
+                new Pair<>(2, Material.DIAMOND_BLOCK),
+                new Pair<>(3, Material.GOLD_BLOCK),
+                new Pair<>(4, Material.IRON_BLOCK),
+                new Pair<>(11, Material.COAL_BLOCK),
+                new Pair<>(21, Material.STONE),
+                new Pair<>(51, Material.OAK_WOOD)
+        );
+        for (int i = 0; i < rankings.size(); i++) {
+            Pair<Integer, Material> ranking = rankings.get(i);
+            Integer position = ranking.getA();
+            Material material = ranking.getB();
+            String positionName = "#" + position;
+            if (i < rankings.size() - 1) {
+                Pair<Integer, Material> nextRanking = rankings.get(i + 1);
+                if (nextRanking.getA() - 1 != position) {
+                    positionName += "-" + (nextRanking.getA() - 1);
+                }
+            } else {
+                positionName += "+";
+            }
+            menu.setItem(i + 1, 1,
+                    new ItemBuilder(material)
+                            .name(Component.text(positionName, NamedTextColor.GREEN))
+                            .lore(getRewards(position)
+                                    .entrySet()
+                                    .stream()
+                                    .map(spendableLongEntry -> spendableLongEntry.getKey().getCostColoredName(spendableLongEntry.getValue()))
+                                    .collect(Collectors.toList())
+                            )
+                            .get(),
+                    (m, e) -> {
+
+                    }
+
+            );
+        }
+        menu.setItem(4, 3, Menu.MENU_BACK, (m, e) -> openMenu(player));
         menu.openForPlayer(player);
     }
 

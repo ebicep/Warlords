@@ -15,8 +15,6 @@ import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.TartarusOption;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -88,7 +86,6 @@ public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEvent implement
     @Override
     public void appendLastGameStats(Hologram hologram) {
         super.appendLastGameStats(hologram);
-        hologram.getLines().appendText(ChatColor.YELLOW + "Waves Cleared: " + wavesCleared);
     }
 
     @Override
@@ -99,15 +96,12 @@ public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEvent implement
 
     @Override
     public String getGameLabel() {
-        return super.getGameLabel() + " - " + ChatColor.YELLOW + wavesCleared;
+        return super.getGameLabel();
     }
 
     @Override
     public List<Component> getExtraLore() {
         List<Component> extraLore = super.getExtraLore();
-        extraLore.add(Component.text("Waves Cleared: ", NamedTextColor.GRAY)
-                               .append(Component.text(wavesCleared, NamedTextColor.YELLOW))
-        );
         return extraLore;
     }
 
