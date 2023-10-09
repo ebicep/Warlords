@@ -78,7 +78,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         if (wp.getCarriedFlag() != null) {
             wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
             return false;
@@ -99,7 +99,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 continue;
             }
             wp.subtractEnergy(name, energyCost, false);
-            Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
+            Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
 
             Location swapLocation = swapTarget.getLocation();
             Location ownLocation = wp.getLocation();

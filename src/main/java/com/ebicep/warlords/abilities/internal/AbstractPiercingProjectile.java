@@ -276,7 +276,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nullable Player player) {
         shooter.subtractEnergy(name, energyCost, false);
 
         fire(shooter, shooter.getEyeLocation());

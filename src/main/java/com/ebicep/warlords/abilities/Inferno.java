@@ -59,8 +59,8 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
-        Utils.playGlobalSound(player.getLocation(), "mage.inferno.activation", 2, 1);
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+        Utils.playGlobalSound(wp.getLocation(), "mage.inferno.activation", 2, 1);
 
         Inferno tempInferno = new Inferno();
         if (pveMasterUpgrade) {

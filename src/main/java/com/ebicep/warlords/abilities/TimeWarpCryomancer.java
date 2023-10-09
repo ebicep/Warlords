@@ -35,9 +35,9 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
+        Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
 
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();

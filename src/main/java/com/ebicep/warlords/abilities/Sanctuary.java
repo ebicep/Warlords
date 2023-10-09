@@ -69,7 +69,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         wp.subtractEnergy(name, energyCost, false);
 
         Location loc = wp.getLocation();
-        Utils.playGlobalSound(player.getLocation(), "warrior.laststand.activation", 2, 1.8f);
+        Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1.8f);
         Utils.playGlobalSound(loc, "arcanist.sanctuary.activation", 2, 0.55f);
 
         EffectUtils.playCircularShieldAnimation(loc, Particle.END_ROD, 5, 0.8, 2);

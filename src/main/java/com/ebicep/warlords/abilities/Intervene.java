@@ -83,7 +83,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         setDamagePrevented(0);
 
         for (WarlordsEntity veneTarget : PlayerFilter

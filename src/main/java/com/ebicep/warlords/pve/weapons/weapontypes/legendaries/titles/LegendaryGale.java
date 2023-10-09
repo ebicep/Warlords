@@ -142,7 +142,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
             List<FloatModifiable.FloatModifier> modifiers = wp
                     .getAbilities()
                     .stream()

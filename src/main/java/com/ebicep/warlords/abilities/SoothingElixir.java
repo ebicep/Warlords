@@ -76,7 +76,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
 
         Location location = player.getLocation();
@@ -233,7 +233,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                 }
         );
 
-        Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
+        Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         return true;
     }

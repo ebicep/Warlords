@@ -65,7 +65,7 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
 
         Location standLocation = LocationUtils.getGroundLocation(player);

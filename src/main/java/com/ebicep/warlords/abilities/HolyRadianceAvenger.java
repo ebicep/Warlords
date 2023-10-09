@@ -89,7 +89,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                 player.sendMessage(Component.text("Your mark was out of range or you did not target a player!", NamedTextColor.RED));
                 continue;
             }
-            Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
+            Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
             // chain particles
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);

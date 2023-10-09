@@ -74,7 +74,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         boolean hasShackled = false;
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             Location playerLoc = new LocationBuilder(wp.getLocation())
@@ -84,8 +84,8 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
                     .pitch(0)
                     .backward(1);
             Vector viewDirection = playerLoc.getDirection();
-            Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
-            Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
+            Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
+            Utils.playGlobalSound(wp.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
             for (WarlordsEntity shackleTarget : PlayerFilter
                     .entitiesAroundRectangle(wp, shackleRange, shackleRange + 2, shackleRange)
                     .aliveEnemiesOf(wp)
@@ -112,8 +112,8 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
                         .append(Component.text(shackleTarget.getName(), NamedTextColor.YELLOW))
                         .append(Component.text("!", NamedTextColor.GRAY))
                 );
-                Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
-                Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
+                Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1.5f, 0.25f);
+                Utils.playGlobalSound(wp.getLocation(), "mage.fireball.activation", 1.5f, 0.2f);
                 activateAbility(wp, shackleTarget);
                 shacklePool = 0;
 

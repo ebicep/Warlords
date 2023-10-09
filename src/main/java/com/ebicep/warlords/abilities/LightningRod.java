@@ -66,7 +66,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.addEnergy(wp, name, energyRestore);
         Utils.playGlobalSound(wp.getLocation(), "shaman.lightningrod.activation", 2, 1);
 

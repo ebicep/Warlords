@@ -43,10 +43,10 @@ public class WonderTrap extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         WonderTrap tempTrap = new WonderTrap();
 
-        Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 0.6f);
+        Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation", 2, 0.6f);
 
         Trap trap = new Trap(wp.getLocation(), wp, 200, 40, 3);
         trap.runTaskTimer(Warlords.getInstance(), 0, 0);

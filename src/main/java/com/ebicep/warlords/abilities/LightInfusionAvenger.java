@@ -27,12 +27,12 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         // pveMasterUpgrade
         AtomicInteger strikesUsed = new AtomicInteger();
 
         wp.addEnergy(wp, name, energyGiven);
-        Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
+        Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
 

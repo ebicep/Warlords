@@ -45,7 +45,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         wp.subtractEnergy(name, energyCost, false);
 
@@ -74,7 +74,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, warlordsEntities));
 
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-        Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
+        Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1);
 
         Location particleLoc = player.getLocation().add(0, 1.2, 0);
 

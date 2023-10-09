@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.HealingRainBranch;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -76,7 +77,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
-        Block targetBlock = Utils.getTargetBlock(player, 25);
+        Block targetBlock = player == null ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(player, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }

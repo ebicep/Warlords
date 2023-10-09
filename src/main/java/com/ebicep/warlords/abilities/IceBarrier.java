@@ -69,8 +69,8 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
-        Utils.playGlobalSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+        Utils.playGlobalSound(wp.getLocation(), "mage.icebarrier.activation", 2, 1);
 
         IceBarrier tempIceBarrier = new IceBarrier(damageReductionPercent);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(

@@ -101,13 +101,13 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
-        Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, 0.3f);
-        Utils.playGlobalSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 0.9f);
+        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, 0.3f);
+        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 0.9f);
 
         // particles
-        Location loc = player.getEyeLocation();
+        Location loc = wp.getEyeLocation();
         loc.setPitch(0);
         loc.setYaw(0);
         Matrix4d matrix = new Matrix4d();
@@ -118,9 +118,9 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 double angle = c / 30D * Math.PI * 2;
                 double width = 1.5;
 
-                player.getWorld().spawnParticle(
+                wp.getWorld().spawnParticle(
                         Particle.ENCHANTMENT_TABLE,
-                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
+                        matrix.translateVector(wp.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
                         1,
                         0,
                         0.1,
@@ -135,9 +135,9 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 double angle = c / 15D * Math.PI * 2;
                 double width = 0.6;
 
-                player.getWorld().spawnParticle(
+                wp.getWorld().spawnParticle(
                         Particle.SPELL,
-                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
+                        matrix.translateVector(wp.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
                         1,
                         0,
                         0,
@@ -152,7 +152,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
-                player.getLocation(),
+                wp.getLocation(),
                 radius,
                 new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(2)
         ).playEffects();

@@ -101,14 +101,14 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         Block targetBlock = Utils.getTargetBlock(player, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
         wp.subtractEnergy(name, energyCost, false);
 
-        Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
+        Utils.playGlobalSound(wp.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
         Location location = targetBlock.getLocation().clone().add(.6, 0, .6).clone();
         if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) {

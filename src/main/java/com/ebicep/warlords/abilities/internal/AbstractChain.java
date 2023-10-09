@@ -46,7 +46,7 @@ public abstract class AbstractChain extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer, @Nonnull @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer, @Nullable Player player) {
         Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer);
         int hitCounter = entitiesHit.size();
         if (hitCounter != 0) {
