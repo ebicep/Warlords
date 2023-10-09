@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game;
 
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.option.PowerupOption.PowerupType;
@@ -14,12 +15,14 @@ import com.ebicep.warlords.game.option.payload.PayloadOption;
 import com.ebicep.warlords.game.option.payload.PayloadSpawns;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.pve.ItemOption;
+import com.ebicep.warlords.game.option.pve.ReadyUpOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
 import com.ebicep.warlords.game.option.pve.treasurehunt.DungeonRoomMarker;
 import com.ebicep.warlords.game.option.pve.treasurehunt.RoomType;
 import com.ebicep.warlords.game.option.pve.treasurehunt.TreasureHuntOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.SafeZoneOption;
@@ -46,12 +49,17 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.Pair;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.SkinTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -4031,7 +4039,7 @@ public enum GameMap {
                     .loop(6, 21, 5)
                     .loop(6, 25, 5)
                     ,
-                    DifficultyIndex.EVENT
+                    DifficultyIndex.EVENT, 1
             ) {
                 @Override
                 public void register(@Nonnull Game game) {
@@ -4162,7 +4170,7 @@ public enum GameMap {
             1, //TODO
             120 * SECOND,
             "Tartarus",
-            1,
+            2,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -4172,13 +4180,8 @@ public enum GameMap {
             options.add(TextOption.Type.CHAT_CENTERED.create(
                     Component.text(getMapName(), NamedTextColor.WHITE, TextDecoration.BOLD),
                     Component.empty(),
-                    Component.text("Kill mobs to gain event points!", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                    Component.text("Kill the gods as fast as possible!", NamedTextColor.YELLOW, TextDecoration.BOLD),
                     Component.empty()
-            ));
-            options.add(TextOption.Type.TITLE.create(
-                    10,
-                    Component.text("GO!", NamedTextColor.GREEN),
-                    Component.text("Kill as many mobs as possible!", NamedTextColor.YELLOW)
             ));
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
@@ -4204,6 +4207,27 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
+            options.add(new WinByMaxWaveClearOption());
+
+            ReadyUpOption readyUpOption = new ReadyUpOption("Charon") {
+                @Override
+                protected void createNPC(@Nonnull Game game) {
+                    npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.PLAYER, "ready-up");
+                    npc.getOrAddTrait(ReadyUpTrait.class).setReadyUpOption(this);
+                    // https://minesk.in/29ee19b22b7d421d86f10f5017f7abe5
+                    SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
+                    skinTrait.setSkinPersistent(
+                            "Charon",
+                            "bksbQ5KevV4Bjm7cJHkCa6D2BCPSB7KLQZ7wO2+omZGw93NcEkalzl6sjRDyLYft4TPxa7QsXr7tDnHqLcrgkGM9tlNIlKLN6wtJ/WJjUIo5SOsm09JVuRtohQH4HRbu5fIhaoFZhkywsetZmJHW3ZNMR8ErgojpUdg6UqaUuL6DMZWTcbTBpDHOWmM9GVwDPArHrsFMD11L5BlDdKsUgbIbvmHdOep8oXx4PujVP5G2GWDEHc9j4XIZN8PpR9t5PajyAOoXMcUJXFf8d5QJXMWTT1VDqPy0Q17aAM87xjzASJbXxBrvMgcV2bkhkmwifxMAEuvrHAXdpjRBBNz+5iPDwFmjs4XNWvdy/Z6idrPcfJuD9qDSq3V6SGqfoFw4b4FUOg2K5T/MCIttp8SGL2cN52uuirlFwk+oalrOidhhbB8YoEMpYLp06aU6MSTVBKL8uIjB/yOjVX40664ciOJf+GPAhXYnVBTYHqrVu4rUf3FJkNbfROo6if0oM6EVzJ+FMCEbNTmhtVZGQ6ljJ/pVR+Qy/EMUbU+lLHTVZ28DVnwTZ8XcuNUX6c+hnVfyic+yy7m3lxhmd6Wthsrr3JwZfw19wakqapJQ1j7bYAny/oH3AqMQqBDW6sIOIwtJgttPGVtqHn41iXfcP23zr85gJjl5tiFrRH3qNiTVpFI=",
+                            "ewogICJ0aW1lc3RhbXAiIDogMTYwODU2NTczOTQyNywKICAicHJvZmlsZUlkIiA6ICJmMTA0NzMxZjljYTU0NmI0OTkzNjM4NTlkZWY5N2NjNiIsCiAgInByb2ZpbGVOYW1lIiA6ICJ6aWFkODciLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmI4NThkYTE0MDE2YjRhNDVhMGMzNzRlMmI4M2QxYzY3MTJiNzIwNzNiODEyM2QzNTlmOTQxNmVmNGJhZjk5NSIKICAgIH0KICB9Cn0="
+                    );
+
+                    npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+                    npc.spawn(game.getLocations().addXYZ(119.5, 33, 72.5, 135, 0));
+                }
+            };
+            options.add(readyUpOption);
+
             List<Location> bossSpawnLocations = new ArrayList<>();
             bossSpawnLocations.add(loc.addXYZ(100.5, 33, 51.5, -90, 0));
             bossSpawnLocations.add(loc.addXYZ(125.5, 33, 40.5, 0, 0));
@@ -4211,12 +4235,12 @@ public enum GameMap {
             bossSpawnLocations.add(loc.addXYZ(114.5, 33, 96.5, 180, 0));
             bossSpawnLocations.add(loc.addXYZ(88.5, 33, 76.5, -90, 0));
             Collections.shuffle(bossSpawnLocations);
-            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new FixedWave(10 * SECOND, -1, null)
+            WaveDefenseOption waveDefenseOption = new WaveDefenseOption(Team.RED, new StaticWaveList()
+                    .add(1, new FixedWave(60 * SECOND, -1, null)
                             .add(Mob.EVENT_HADES, bossSpawnLocations.get(0))
                             .add(Mob.EVENT_POSEIDON, bossSpawnLocations.get(1))
                             .add(Mob.EVENT_ZEUS, bossSpawnLocations.get(2))
-                    ), DifficultyIndex.EVENT
+                    ), DifficultyIndex.EVENT, 1
             ) {
                 @Override
                 public void register(@Nonnull Game game) {
@@ -4228,6 +4252,11 @@ public enum GameMap {
                             return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
                         }
                     });
+                }
+
+                @Override
+                public List<Component> getWaveScoreboard(WarlordsPlayer player) {
+                    return Collections.emptyList();
                 }
 
                 @Override
@@ -4273,24 +4302,52 @@ public enum GameMap {
                 protected Pair<Float, Component> getWaveOpening() {
                     return new Pair<>(.8f, Component.text(""));
                 }
+
+                @Override
+                protected void onSpawnDelayChange(int newTickDelay) {
+                    switch (newTickDelay) {
+                        case 960 -> readyUpOption.sendNPCMessage(Component.text("Hades has powers of resurrection given to him by the eternal flames.", NamedTextColor.YELLOW));
+                        case 720 -> readyUpOption.sendNPCMessage(Component.text("Poseidon retaliates and responds negatively to the loss of his brothers.", NamedTextColor.YELLOW));
+                        case 480 -> readyUpOption.sendNPCMessage(Component.text("Zeus sends his brothers into battle as he leads the gods to ruin.", NamedTextColor.YELLOW));
+                        case 240 -> readyUpOption.sendNPCMessage(Component.text("The order in which the brothers fall will determine their fate as well as yours!",
+                                NamedTextColor.YELLOW
+                        ));
+                        case 0 -> {
+                            readyUpOption.sendNPCMessage(Component.text("Good luck, you'll need it.", NamedTextColor.YELLOW));
+                            readyUpOption.getNpc().destroy();
+                            getGame().forEachOnlinePlayer((p, t) -> {
+                                p.showTitle(Title.title(
+                                        Component.text("Fight!", NamedTextColor.GREEN),
+                                        Component.text("Organization is key.", NamedTextColor.YELLOW),
+                                        Title.Times.times(Ticks.duration(0), Ticks.duration(30), Ticks.duration(20))
+                                ));
+                            });
+                        }
+                    }
+                }
+            };
+            options.add(waveDefenseOption);
+            readyUpOption.setWhenAllReady(() -> {
+                waveDefenseOption.setCurrentDelay(1);
+                readyUpOption.getNpc().destroy();
             });
             options.add(new ItemOption());
-            options.add(new WinAfterTimeoutOption(900, 50, "spec"));
+            options.add(new WinAfterTimeoutOption(600, 50, "spec"));
             options.add(new TartarusOption());
 //            options.add(new SafeZoneOption(1));
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(30, Team.BLUE)
-                    .onPerMobKill(Mob.EVENT_ZEUS, 500)
-                    .onPerMobKill(Mob.EVENT_POSEIDON, 500)
-                    .onPerMobKill(Mob.EVENT_HADES, 500)
-
-            );
-            options.add(new CurrencyOnEventOption()
-                    .startWith(750000)
-                    .onKill(500)
                     .onPerMobKill(Mob.EVENT_ZEUS, 5000)
                     .onPerMobKill(Mob.EVENT_POSEIDON, 5000)
                     .onPerMobKill(Mob.EVENT_HADES, 5000)
+
+            );
+            options.add(new CurrencyOnEventOption()
+                            .startWith(750000)
+                            .onKill(500)
+//                    .onPerMobKill(Mob.EVENT_ZEUS, 5000)
+//                    .onPerMobKill(Mob.EVENT_POSEIDON, 5000)
+//                    .onPerMobKill(Mob.EVENT_HADES, 5000)
             );
             options.add(new CoinGainOption()
                     .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{

@@ -1243,7 +1243,7 @@ public enum GameEvents {
     public void createNPC() {
         NPCManager.registerTrait(GameEventTrait.class, "GameEventTrait");
 
-        npc = NPCManager.npcRegistry.createNPC(EntityType.ZOMBIE, "event");
+        npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.ZOMBIE, "event");
         npc.addTrait(GameEventTrait.class);
         editNPC(npc);
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);

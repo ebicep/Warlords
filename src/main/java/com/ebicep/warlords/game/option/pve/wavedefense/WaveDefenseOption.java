@@ -78,12 +78,17 @@ public class WaveDefenseOption implements PveOption {
     @Nullable
     private BukkitTask spawner;
     private boolean pauseMobSpawn = false;
+    private int currentDelay = 0;
 
     public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty) {
+        this(team, waves, difficulty, difficulty.getMaxWaves());
+    }
+
+    public WaveDefenseOption(Team team, WaveList waves, DifficultyIndex difficulty, int maxWave) {
         this.team = team;
         this.waves = waves;
         this.difficulty = difficulty;
-        this.maxWave = difficulty.getMaxWaves();
+        this.maxWave = maxWave;
     }
 
     @Override
@@ -279,6 +284,16 @@ public class WaveDefenseOption implements PveOption {
         startSpawnTask();
     }
 
+    public float getSpawnCountMultiplier(int playerCount) {
+        return switch (playerCount) {
+            case 2 -> 1.25f;
+            case 3, 4 -> 1.5f;
+            case 5, 6 -> 2;
+            case 7, 8 -> 2.5f;
+            default -> 1;
+        };
+    }
+
     protected Pair<Float, Component> getWaveOpening() {
         float soundPitch = 0.8f;
         Component wavePrefix = Component.text("Wave " + waveCounter, NamedTextColor.YELLOW);
@@ -319,16 +334,6 @@ public class WaveDefenseOption implements PveOption {
         return new Pair<>(soundPitch, wavePrefix);
     }
 
-    public float getSpawnCountMultiplier(int playerCount) {
-        return switch (playerCount) {
-            case 2 -> 1.25f;
-            case 3, 4 -> 1.5f;
-            case 5, 6 -> 2;
-            case 7, 8 -> 2.5f;
-            default -> 1;
-        };
-    }
-
     public void startSpawnTask() {
         if (spawner != null) {
             spawner.cancel();
@@ -343,7 +348,7 @@ public class WaveDefenseOption implements PveOption {
             spawnCount *= getSpawnCountMultiplier((int) game.warlordsPlayers().count());
         }
 
-        int spawnTickDelay = currentWave.getDelay();
+        currentDelay = currentWave.getDelay();
         int spawnTickPeriod = currentWave.getSpawnTickPeriod();
         spawner = new GameRunnable(game) {
             WarlordsEntity lastSpawn = null;
@@ -357,6 +362,12 @@ public class WaveDefenseOption implements PveOption {
                 }
 
                 if (pauseMobSpawn) {
+                    return;
+                }
+
+                if (currentDelay > 0) {
+                    currentDelay--;
+                    onSpawnDelayChange(currentDelay);
                     return;
                 }
 
@@ -399,7 +410,11 @@ public class WaveDefenseOption implements PveOption {
                 return randomSpawnLocation != null ? randomSpawnLocation : lastLocation;
             }
 
-        }.runTaskTimer(spawnTickDelay, spawnTickPeriod);
+        }.runTaskTimer(0, spawnTickPeriod);
+    }
+
+    protected void onSpawnDelayChange(int newTickDelay) {
+
     }
 
     protected void modifyStats(WarlordsNPC warlordsNPC) {
@@ -610,4 +625,7 @@ public class WaveDefenseOption implements PveOption {
         this.spawnCount = spawnCount;
     }
 
+    public void setCurrentDelay(int currentDelay) {
+        this.currentDelay = currentDelay;
+    }
 }
