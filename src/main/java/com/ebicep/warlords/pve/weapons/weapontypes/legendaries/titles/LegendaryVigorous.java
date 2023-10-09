@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Transient;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -126,7 +127,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "LegendaryVigorous",
                     "VIGOR",

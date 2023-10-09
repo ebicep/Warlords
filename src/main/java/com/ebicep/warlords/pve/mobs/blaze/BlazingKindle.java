@@ -18,6 +18,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class BlazingKindle extends AbstractBlaze implements IntermediateMob {
@@ -103,7 +104,7 @@ public class BlazingKindle extends AbstractBlaze implements IntermediateMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
             wp.subtractEnergy(name, energyCost, false);
 
             Location loc = wp.getLocation();

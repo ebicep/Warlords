@@ -144,7 +144,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull @javax.annotation.Nullable Player player) {
         shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
         return super.onActivate(shooter, player);
     }

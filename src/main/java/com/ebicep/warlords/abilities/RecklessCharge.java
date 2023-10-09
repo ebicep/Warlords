@@ -30,6 +30,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
 

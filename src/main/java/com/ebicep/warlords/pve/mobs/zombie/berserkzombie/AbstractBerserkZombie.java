@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public abstract class AbstractBerserkZombie extends AbstractZombie {
@@ -73,7 +74,7 @@ public abstract class AbstractBerserkZombie extends AbstractZombie {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
             boolean onActivate = super.onActivate(wp, player);
             if (onActivate) {
                 PacketUtils.playRightClickAnimationForPlayer(((CraftEntity) wp.getEntity()).getHandle(),

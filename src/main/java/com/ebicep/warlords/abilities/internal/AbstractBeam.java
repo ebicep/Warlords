@@ -47,7 +47,7 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull @javax.annotation.Nullable Player player) {
         List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
         for (Location locationsToFireShot : locationsToFireShots) {
             Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, .85, .5).clone();

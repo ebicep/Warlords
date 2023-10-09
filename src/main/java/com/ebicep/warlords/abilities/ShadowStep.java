@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -58,7 +59,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         Location playerLoc = wp.getLocation();
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(playerLoc, "rogue.drainingmiasma.activation", 1, 2);

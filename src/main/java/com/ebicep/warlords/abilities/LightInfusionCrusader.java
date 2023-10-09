@@ -13,6 +13,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 
 public class LightInfusionCrusader extends AbstractLightInfusion implements CanReduceCooldowns {
@@ -22,7 +23,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 

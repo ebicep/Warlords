@@ -78,7 +78,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         if (wp.getCarriedFlag() != null) {
             wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
             return false;

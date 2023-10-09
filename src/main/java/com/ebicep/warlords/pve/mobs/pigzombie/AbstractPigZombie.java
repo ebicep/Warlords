@@ -15,6 +15,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class AbstractPigZombie extends AbstractMob<CustomPigZombie> {
@@ -57,7 +58,7 @@ public abstract class AbstractPigZombie extends AbstractMob<CustomPigZombie> {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
             wp.subtractEnergy(name, energyCost, false);
 
             Location location = wp.getLocation();

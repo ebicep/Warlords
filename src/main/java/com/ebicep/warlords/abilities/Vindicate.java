@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -71,7 +72,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
         Utils.playGlobalSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);

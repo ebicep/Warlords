@@ -36,6 +36,7 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -100,7 +101,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         Block targetBlock = Utils.getTargetBlock(player, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;

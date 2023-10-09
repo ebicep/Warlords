@@ -22,6 +22,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,7 +72,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         AtomicInteger damageInstances = new AtomicInteger();
         Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);

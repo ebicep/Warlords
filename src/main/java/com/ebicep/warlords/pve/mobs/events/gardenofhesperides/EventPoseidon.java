@@ -24,6 +24,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class EventPoseidon extends AbstractZombie implements BossMinionMob, God 
                 maxMeleeDamage,
                 new EarthenSpike(600, 700, 6) {
                     @Override
-                    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+                    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
                         List<WarlordsEntity> spiked = new ArrayList<>();
                         float rad = 10;
                         for (WarlordsEntity spikeTarget : PlayerFilter

@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 
 public class LightInfusionProtector extends AbstractLightInfusion {
@@ -24,7 +25,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 

@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration {
@@ -88,7 +89,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 

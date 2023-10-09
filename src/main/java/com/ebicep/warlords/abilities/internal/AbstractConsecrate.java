@@ -81,7 +81,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
 
         Location location = player.getLocation().clone();

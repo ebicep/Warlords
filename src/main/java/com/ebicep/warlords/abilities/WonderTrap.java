@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class WonderTrap extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         WonderTrap tempTrap = new WonderTrap();
 
         Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 0.6f);

@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ZombieKnight extends AbstractZombie implements AdvancedMob {
@@ -97,7 +98,7 @@ public class ZombieKnight extends AbstractZombie implements AdvancedMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
             wp.subtractEnergy(name, energyCost, false);
 
             for (WarlordsEntity we : PlayerFilter

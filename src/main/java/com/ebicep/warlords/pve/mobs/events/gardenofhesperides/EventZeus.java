@@ -25,6 +25,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class EventZeus extends AbstractZombie implements BossMinionMob, God {
 
@@ -149,7 +150,7 @@ public class EventZeus extends AbstractZombie implements BossMinionMob, God {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "ROD DMG",

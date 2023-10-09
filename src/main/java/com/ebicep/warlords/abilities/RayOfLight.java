@@ -127,7 +127,7 @@ public class RayOfLight extends AbstractBeam {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull @javax.annotation.Nullable Player player) {
         int hexStacks = (int) new CooldownFilter<>(shooter, RegularCooldown.class)
                 .filterCooldownClass(MercifulHex.class)
                 .stream()

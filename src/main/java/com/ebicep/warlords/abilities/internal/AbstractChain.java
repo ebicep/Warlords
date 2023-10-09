@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +46,7 @@ public abstract class AbstractChain extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer, @Nonnull @Nullable Player player) {
         Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer);
         int hitCounter = entitiesHit.size();
         if (hitCounter != 0) {

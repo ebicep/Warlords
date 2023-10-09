@@ -21,6 +21,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Duration {
@@ -64,7 +65,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player p) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player p) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
 

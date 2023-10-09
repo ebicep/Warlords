@@ -19,6 +19,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -185,7 +186,7 @@ public class SlimyAnomaly extends AbstractSlime implements BasicMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
             wp.subtractEnergy(name, energyCost, false);
 
             for (WarlordsEntity enemy : PlayerFilter

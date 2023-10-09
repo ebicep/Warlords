@@ -7,6 +7,7 @@ import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class AbstractPveAbility extends AbstractAbility {
@@ -48,7 +49,7 @@ public abstract class AbstractPveAbility extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         if (timesUsed > 1) { // used more than once means cached pveOption is null
             return onPveActivate(wp, pveOption);
         }

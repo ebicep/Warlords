@@ -37,7 +37,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         AtomicBoolean hitPlayer = new AtomicBoolean(false);
         float radius = hitbox.getCalculatedValue();
         PlayerFilter.entitiesAround(wp, radius, radius, radius)

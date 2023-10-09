@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +65,7 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
 
         Location standLocation = LocationUtils.getGroundLocation(player);

@@ -75,7 +75,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         Block targetBlock = Utils.getTargetBlock(player, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;

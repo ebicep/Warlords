@@ -29,6 +29,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -64,7 +65,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
 
         Location loc = wp.getLocation();

@@ -23,6 +23,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         Set<WarlordsEntity> teammatesNear = PlayerFilter
                 .entitiesAround(wp, castRange, castRange, castRange)
                 .aliveTeammatesOfExcludingSelf(wp)

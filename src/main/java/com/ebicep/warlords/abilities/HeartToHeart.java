@@ -71,7 +71,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         float radius = getHitBoxRadius().getCalculatedValue();
         float verticalRadius = getHitBoxRadius().getCalculatedValue();
         if (wp.hasFlag()) {

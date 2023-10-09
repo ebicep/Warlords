@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +57,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         Block targetBlock = Utils.getTargetBlock(player, 15);
         if (targetBlock.getType() == Material.AIR) {
             return false;

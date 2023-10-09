@@ -24,6 +24,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +39,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
 

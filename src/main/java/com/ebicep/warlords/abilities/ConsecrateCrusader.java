@@ -20,6 +20,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,7 +44,7 @@ public class ConsecrateCrusader extends AbstractConsecrate {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @Nullable Player player) {
         if (!pveMasterUpgrade2) {
             return super.onActivate(wp, player);
         }

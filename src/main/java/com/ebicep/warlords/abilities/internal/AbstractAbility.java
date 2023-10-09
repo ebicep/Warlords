@@ -124,7 +124,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     /**
      * @return whether the ability has to go on cooldown after activation.
      */
-    public abstract boolean onActivate(@Nonnull WarlordsEntity wp, Player player);
+    public abstract boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player);
 
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return null;
