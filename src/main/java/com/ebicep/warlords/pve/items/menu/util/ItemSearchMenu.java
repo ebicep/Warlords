@@ -129,7 +129,6 @@ public class ItemSearchMenu extends Menu {
                         .name(Component.text("Your Drops", NamedTextColor.GREEN))
                         .lore(
                                 MobDrop.ZENITH_STAR.getCostColoredName(MobDrop.ZENITH_STAR.getFromPlayer(databasePlayer)),
-                                Currencies.CELESTIAL_BRONZE.getCostColoredName(Currencies.CELESTIAL_BRONZE.getFromPlayer(databasePlayer)),
                                 Currencies.SCRAP_METAL.getCostColoredName(Currencies.SCRAP_METAL.getFromPlayer(databasePlayer))
                         )
                         .get(),

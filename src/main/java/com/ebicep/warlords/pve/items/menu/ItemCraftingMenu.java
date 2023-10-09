@@ -55,10 +55,9 @@ public class ItemCraftingMenu {
         ));
         put(ItemTier.OMEGA, new TierCostInfo(
                 new LinkedHashMap<>() {{
-                    put(Currencies.SYNTHETIC_SHARD, 25_000L);
+                    put(Currencies.SYNTHETIC_SHARD, 20_000L);
                     put(Currencies.LEGEND_FRAGMENTS, 5_000L);
-                    put(MobDrop.ZENITH_STAR, 10L);
-                    put(Currencies.CELESTIAL_BRONZE, 5L);
+                    put(MobDrop.ZENITH_STAR, 8L);
                 }},
                 new Pair<>(1, 2),
                 new ArrayList<>() {{
