@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
 import com.ebicep.warlords.pve.mobs.player.Decoy;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -94,9 +95,11 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 wp.sendMessage(Component.text(" You cannot Soul Switch with a player holding the flag!", NamedTextColor.RED));
                 continue;
             }
-            if (swapTarget instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof Unswappable) {
-                wp.sendMessage(Component.text(" You cannot Soul Switch with that mob!", NamedTextColor.RED));
-                continue;
+            if (swapTarget instanceof WarlordsNPC warlordsNPC) {
+                if (warlordsNPC.getMob() instanceof Unswappable || warlordsNPC.getMob().getDynamicFlags().contains(DynamicFlags.UNSWAPPABLE)) {
+                    wp.sendMessage(Component.text(" You cannot Soul Switch with that mob!", NamedTextColor.RED));
+                    continue;
+                }
             }
             wp.subtractEnergy(name, energyCost, false);
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);

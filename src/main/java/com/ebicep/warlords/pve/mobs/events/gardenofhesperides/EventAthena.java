@@ -1,9 +1,12 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -11,11 +14,19 @@ import com.ebicep.warlords.pve.mobs.abilities.AbstractSpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -81,6 +92,16 @@ public class EventAthena extends AbstractZombie implements BossMob, LesserGod {
     }
 
     @Override
+    public Component getDescription() {
+        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
+    }
+
+    @Override
+    public NamedTextColor getColor() {
+        return NamedTextColor.DARK_PURPLE;
+    }
+
+    @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
 
     }
@@ -93,7 +114,17 @@ public class EventAthena extends AbstractZombie implements BossMob, LesserGod {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (pveOption.mobCount() > 1) {
-            //TODO animation
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10, 1.7f);
+            pveOption.getMobs().forEach(mob -> {
+                if (mob == this) {
+                    return;
+                }
+                EffectUtils.playParticleLinkAnimation(
+                        mob.getLivingEntity().getLocation(),
+                        warlordsNPC.getLocation(),
+                        Particle.ENCHANTMENT_TABLE
+                );
+            });
             event.setCancelled(true);
             return;
         }
@@ -114,32 +145,56 @@ public class EventAthena extends AbstractZombie implements BossMob, LesserGod {
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             wp.subtractEnergy(name, energyCost, false);
-            //TODO spear in ground animation
-            new FallingBlockWaveEffect(wp.getLocation().add(0, 1, 0), radius, 1, Material.COARSE_DIRT).play();
-            PlayerFilter.entitiesAround(wp, radius, radius, radius)
-                        .aliveEnemiesOf(wp)
-                        .forEach(warlordsEntity -> {
-                            warlordsEntity.addSpeedModifier(wp, name, -15, 40);
-                            warlordsEntity.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
-                            );
-                        });
+            ItemStack item;
+            EntityEquipment entityEquipment = wp.getEntity().getEquipment();
+            if (entityEquipment != null) {
+                item = entityEquipment.getItemInMainHand();
+                entityEquipment.setItemInHand(null);
+            } else {
+                item = Weapons.NEW_LEAF_AXE.getItem();
+            }
+            double yOffset = 5;
+            int animationTicks = 10;
+            ArmorStand stand = Utils.spawnArmorStand(wp.getLocation().add(0, yOffset, 0), armorStand -> {
+                armorStand.getEquipment().setHelmet(item);
+                armorStand.setHeadPose(new EulerAngle(Math.toRadians(180), 0, 0));
+            });
+            Utils.playGlobalSound(wp.getLocation(), "rogue.healingremedy.impact", 500, 1.2f);
+            if (wp instanceof WarlordsNPC warlordsNPC) {
+                warlordsNPC.setStunTicks(animationTicks);
+            }
+            new GameRunnable(wp.getGame()) {
+                int ticksElapsed = 0;
+
+                @Override
+                public void run() {
+                    stand.teleport(stand.getLocation().add(0, -yOffset / (animationTicks * .9), 0));
+                    if (ticksElapsed++ == animationTicks) {
+                        stand.remove();
+                        EffectUtils.strikeLightning(wp.getLocation(), false, 2);
+                        Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
+                        new FallingBlockWaveEffect(wp.getLocation().add(0, 1.1, 0), radius, 1, Material.COARSE_DIRT).play();
+                        PlayerFilter.entitiesAround(wp, radius, radius, radius)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(warlordsEntity -> {
+                                        warlordsEntity.addSpeedModifier(wp, name, -15, 40);
+                                        warlordsEntity.addDamageInstance(
+                                                wp,
+                                                name,
+                                                minDamageHeal,
+                                                maxDamageHeal,
+                                                critChance,
+                                                critMultiplier
+                                        );
+                                    });
+                        if (entityEquipment != null) {
+                            entityEquipment.setItemInMainHand(item);
+                        }
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(0, 0);
             return true;
         }
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
-    }
-
-    @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.DARK_PURPLE;
     }
 }

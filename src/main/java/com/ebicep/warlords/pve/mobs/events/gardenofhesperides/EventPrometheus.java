@@ -83,6 +83,7 @@ public class EventPrometheus extends AbstractZombie implements BossMob, LesserGo
                     public void run() {
                         if (warlordsNPC.isDead()) {
                             this.cancel();
+                            return;
                         }
 
                         barrageOfFlames();

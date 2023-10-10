@@ -15,8 +15,10 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -103,7 +105,7 @@ public class EventPoseidon extends AbstractZombie implements BossMob, God {
                     }
                 },
                 new GroundSlamBerserker(558, 616, 10, 10),
-                new LastStand(60, 60)
+                new LastStand(60f, 60)
         );
     }
 
@@ -131,15 +133,13 @@ public class EventPoseidon extends AbstractZombie implements BossMob, God {
                 return new Listener() {
                     @EventHandler(priority = EventPriority.HIGHEST)
                     public void onDeath(WarlordsDeathEvent event) {
-                        if (pveOption.getMobs().size() != 1) {
-                            return;
-                        }
                         WarlordsEntity dead = event.getWarlordsEntity();
                         if (!(dead instanceof WarlordsNPC npc) || dead == warlordsNPC) {
                             return;
                         }
                         AbstractMob<?> npcMob = npc.getMob();
                         if (npcMob instanceof EventHades) {
+                            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, .5f);
                             float healing = warlordsNPC.getHealth() * 0.25f;
                             warlordsNPC.addHealingInstance(
                                     npc,
@@ -150,6 +150,7 @@ public class EventPoseidon extends AbstractZombie implements BossMob, God {
                                     100
                             );
                         } else if (npcMob instanceof EventZeus) {
+                            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_PHANTOM_AMBIENT, 2, .5f);
                             warlordsNPC.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
                                 boulder.setPveMasterUpgrade(true);
                                 boulder.setMinDamageHeal(720);
@@ -175,6 +176,7 @@ public class EventPoseidon extends AbstractZombie implements BossMob, God {
     @Override
     public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
         if (event.isDead()) {
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 10, .5f);
             warlordsNPC.addSpeedModifier(warlordsNPC, "Purified", 50, 100, "BASE");
         }
     }

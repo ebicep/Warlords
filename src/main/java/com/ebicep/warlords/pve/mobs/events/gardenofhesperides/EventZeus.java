@@ -18,7 +18,9 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -86,15 +88,13 @@ public class EventZeus extends AbstractZombie implements BossMob, God {
                 return new Listener() {
                     @EventHandler(priority = EventPriority.HIGHEST)
                     public void onDeath(WarlordsDeathEvent event) {
-                        if (pveOption.getMobs().size() != 1) {
-                            return;
-                        }
                         WarlordsEntity dead = event.getWarlordsEntity();
                         if (!(dead instanceof WarlordsNPC npc) || dead == warlordsNPC) {
                             return;
                         }
                         AbstractMob<?> npcMob = npc.getMob();
                         if (npcMob instanceof EventHades) {
+                            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, .5f);
                             float healing = warlordsNPC.getHealth() * 0.25f;
                             warlordsNPC.addHealingInstance(
                                     npc,
@@ -105,6 +105,7 @@ public class EventZeus extends AbstractZombie implements BossMob, God {
                                     100
                             );
                         } else if (npcMob instanceof EventPoseidon) {
+                            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_DROWNED_AMBIENT, 2, .5f);
                             warlordsNPC.getAbilitiesMatching(ZeusLightningRod.class).forEach(lightningRod -> {
                                 lightningRod.setHealthRestore(10);
                                 lightningRod.setDamageBuff(lightningRod.getDamageBuff() + .1f);
@@ -131,6 +132,7 @@ public class EventZeus extends AbstractZombie implements BossMob, God {
     @Override
     public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
         if (event.isDead()) {
+            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 10, .5f);
             warlordsNPC.addSpeedModifier(warlordsNPC, "Purified", 50, 100, "BASE");
         }
     }

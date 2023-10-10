@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -9,7 +10,9 @@ import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 
@@ -70,13 +73,31 @@ public class EventTerasDryad extends AbstractZombie implements BossMinionMob, Te
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             wp.subtractEnergy(name, energyCost, false);
-            //TODO animation
+            Utils.playGlobalSound(wp.getLocation(), "mage.waterbolt.impact", 2, 1.5f);
+            EffectUtils.displayParticle(
+                    Particle.HEART,
+                    wp.getLocation().add(0, 2, 0),
+                    10,
+                    .5,
+                    .1,
+                    .5,
+                    0
+            );
             PlayerFilter.playingGame(wp.getGame())
                         .aliveTeammatesOfExcludingSelf(wp)
                         .forEach(warlordsEntity -> {
                             if (warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventCronus) {
                                 return;
                             }
+                            EffectUtils.displayParticle(
+                                    Particle.VILLAGER_HAPPY,
+                                    warlordsEntity.getLocation().add(0, 1.25, 0),
+                                    10,
+                                    .5,
+                                    .5,
+                                    .5,
+                                    0
+                            );
                             warlordsEntity.addHealingInstance(
                                     wp,
                                     name,
