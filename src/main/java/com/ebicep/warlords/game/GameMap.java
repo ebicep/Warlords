@@ -4167,7 +4167,7 @@ public enum GameMap {
     TARTARUS(
             "Tartarus",
             4,
-            1, //TODO
+            2,
             120 * SECOND,
             "Tartarus",
             2,

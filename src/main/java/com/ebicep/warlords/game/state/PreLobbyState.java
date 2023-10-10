@@ -519,8 +519,9 @@ public class PreLobbyState implements State, TimerDebugAble {
     }
 
     public String getTimeLeftString() {
-        int time = timer / 20;
-        return (time < 10 ? "00:0" : "00:") + time;
+        int seconds = timer / 20;
+        int minutes = seconds / 60;
+        return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds % 60 < 10 ? "0" : "") + seconds % 60;
     }
 
     @Override

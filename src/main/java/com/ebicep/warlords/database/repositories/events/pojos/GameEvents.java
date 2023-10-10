@@ -34,6 +34,9 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.*;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
@@ -1152,6 +1155,11 @@ public enum GameEvents {
                             .get(),
                     (m, e) -> {
                         if (privateGame) {
+                            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+                            if (partyPlayerPair == null || partyPlayerPair.getA().getPartyPlayers().size() < 2) {
+                                player.sendMessage(Component.text("At least 2 players is required to play this gamemode!", NamedTextColor.RED));
+                                return;
+                            }
                             GameStartCommand.startGamePvEEvent(player,
                                     queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.TARTARUS)
                                                                           .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
