@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
+import com.ebicep.warlords.pve.mobs.flags.ForceGivesEventPoints;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
@@ -27,7 +28,7 @@ import org.bukkit.util.Vector;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EventHades extends AbstractZombie implements BossMob, God {
+public class EventHades extends AbstractZombie implements BossMob, God, ForceGivesEventPoints {
 
     private int resurrectionTicksLeft = 2 * 60 * 20;
 

@@ -19,6 +19,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.flags.ForceGivesEventPoints;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.text.Component;
@@ -100,10 +101,14 @@ public class EventPointsOption implements Option, Listener {
     public void onKill(WarlordsDeathEvent event) {
         WarlordsEntity deadEntity = event.getWarlordsEntity();
         WarlordsEntity killer = event.getKiller();
-        if (killer == null) {
+        if (!(deadEntity instanceof WarlordsNPC warlordsNPC)) {
             return;
         }
-        if (!(deadEntity instanceof WarlordsNPC)) {
+        if (warlordsNPC.getMob() instanceof ForceGivesEventPoints) {
+            addKillPoints(warlordsNPC, killer);
+            return;
+        }
+        if (killer == null) {
             return;
         }
         if (Objects.equals(deadEntity, killer)) {
@@ -112,18 +117,34 @@ public class EventPointsOption implements Option, Listener {
         addKillPoints((WarlordsNPC) deadEntity, killer);
     }
 
-    private void addKillPoints(WarlordsNPC deadEntity, WarlordsEntity killer) {
-        if (onKill != 0) {
-            PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
-                               .matchingTeam(killer.getTeam())
-                               .forEach(warlordsPlayer -> addTo(warlordsPlayer, onKill));
-        }
-        if (!perMobKill.isEmpty()) {
-            Integer mobPoint = perMobKill.get(deadEntity.getMob().getMobRegistry());
-            if (mobPoint != null) {
-                PlayerFilterGeneric.playingGameWarlordsPlayers(killer.getGame())
+    private void addKillPoints(WarlordsNPC deadEntity, @Nullable WarlordsEntity killer) {
+        if (killer == null) {
+            if (onKill != 0) {
+                PlayerFilterGeneric.playingGameWarlordsPlayers(deadEntity.getGame())
+                                   .enemiesOf(deadEntity)
+                                   .forEach(warlordsPlayer -> addTo(warlordsPlayer, onKill));
+            }
+            if (!perMobKill.isEmpty()) {
+                Integer mobPoint = perMobKill.get(deadEntity.getMob().getMobRegistry());
+                if (mobPoint != null) {
+                    PlayerFilterGeneric.playingGameWarlordsPlayers(deadEntity.getGame())
+                                       .enemiesOf(deadEntity)
+                                       .forEach(warlordsPlayer -> addTo(warlordsPlayer, mobPoint));
+                }
+            }
+        } else {
+            if (onKill != 0) {
+                PlayerFilterGeneric.playingGameWarlordsPlayers(deadEntity.getGame())
                                    .matchingTeam(killer.getTeam())
-                                   .forEach(warlordsPlayer -> addTo(warlordsPlayer, mobPoint));
+                                   .forEach(warlordsPlayer -> addTo(warlordsPlayer, onKill));
+            }
+            if (!perMobKill.isEmpty()) {
+                Integer mobPoint = perMobKill.get(deadEntity.getMob().getMobRegistry());
+                if (mobPoint != null) {
+                    PlayerFilterGeneric.playingGameWarlordsPlayers(deadEntity.getGame())
+                                       .matchingTeam(killer.getTeam())
+                                       .forEach(warlordsPlayer -> addTo(warlordsPlayer, mobPoint));
+                }
             }
         }
     }
