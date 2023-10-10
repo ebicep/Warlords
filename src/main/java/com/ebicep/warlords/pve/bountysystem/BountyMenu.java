@@ -150,6 +150,7 @@ public class BountyMenu {
         }
         BountyUtils.BountyInfo bountyInfo = BountyUtils.BOUNTY_COLLECTION_INFO.get(bountyInfoName);
         if (bountiesStarted >= bountyInfo.maxBountiesStarted()) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
             player.sendMessage(Component.text("You can only accept " + bountyInfo.maxBountiesStarted() + " " + bountyInfoName + " bounties at a time!",
                     NamedTextColor.RED
             ));
@@ -161,6 +162,7 @@ public class BountyMenu {
             Currencies currency = currenciesLongEntry.getKey();
             Long cost = currenciesLongEntry.getValue();
             if (lifetimeDatabasePlayer.getPveStats().getCurrencyValue(currency) < cost) {
+                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                 player.sendMessage(Component.text("You need ", NamedTextColor.RED)
                                             .append(currency.getCostColoredName(cost))
                                             .append(Component.text(" to start this bounty!"))
