@@ -168,6 +168,15 @@ public abstract class AbstractItem {
 
     protected void addStatPoolAndModifier(ItemBuilder itemBuilder, BasicStatPool obfuscatedStat) {
         itemBuilder.addLore(getStatPoolLore(obfuscatedStat));
+        if (obfuscatedStat != null) {
+            itemBuilder.addLore(
+                    Component.empty(),
+                    Component.text("???????", NamedTextColor.GREEN),
+                    Component.text("  ????", NamedTextColor.GREEN).append(Component.text(" ?????????", NamedTextColor.GRAY))
+            );
+
+            return;
+        }
         if (aspectModifier1 != null) {
             itemBuilder.addLore(Component.empty());
             boolean doubleModifier = aspectModifier2 != null;

@@ -220,13 +220,7 @@ public class ItemCraftingMenu {
             ItemStack craftedItemObfuscated = craftedItem.generateItemStackWithObfuscatedStat(otherStat);
             itemBuilder = new ItemBuilder(craftedItemObfuscated)
                     .name(Component.text("Click to Craft " + craftedItem.getName(), NamedTextColor.GREEN))
-                    .addLore(Component.empty())
-                    .addLore(
-                            WordWrap.wrap(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
-                                            "It will also have an additional random stat and become reblessed.", NamedTextColor.GRAY),
-                                    160
-                            )
-                    );
+                    .addLore(Component.empty());
         } else {
             itemBuilder = new ItemBuilder(Material.BARRIER)
                     .name(Component.text("Click to Craft Item", NamedTextColor.GREEN))
@@ -234,14 +228,14 @@ public class ItemCraftingMenu {
                             ItemMenuUtil.getRequirementMetString(requirementsMet, "Required Item" + (requirements.size() != 1 ? "s" : "") + " Selected"),
                             ItemMenuUtil.getRequirementMetString(enoughMobDrops, "Enough Mob Drops"),
                             Component.empty()
-                    )
-                    .addLore(
-                            WordWrap.wrap(Component.text("Crafted Item will inherit the type, blessing, and stats pool of the highest tiered selected item. " +
-                                            "It will also have an additional random stat and become reblessed.", NamedTextColor.GRAY),
-                                    160
-                            )
                     );
         }
+        itemBuilder.addLore(
+                WordWrap.wrap(Component.text("Crafted Item will inherit the type and stats pool of the highest tiered selected item. " +
+                                "It will also have an additional random stat and its modifier will be randomized.", NamedTextColor.GRAY),
+                        160
+                )
+        );
         menu.setItem(6, 2,
                 itemBuilder.get(),
                 (m, e) -> {

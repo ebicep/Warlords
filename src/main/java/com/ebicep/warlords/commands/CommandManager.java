@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands;
 
 import co.aikar.commands.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import com.ebicep.customentities.npc.NPCCommand;
 import com.ebicep.jda.BotCommand;
 import com.ebicep.jda.BotManager;
 import com.ebicep.jda.queuesystem.QueueCommand;
@@ -540,6 +541,8 @@ public class CommandManager {
     }
 
     public static void registerCommands() {
+        manager.registerCommand(new NPCCommand());
+
         manager.registerCommand(new GameDebugCommand());
         manager.registerCommand(new GameInfoCommand());
         manager.registerCommand(new GameKillCommand());

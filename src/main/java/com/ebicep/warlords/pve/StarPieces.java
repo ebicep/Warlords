@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,7 +46,7 @@ public enum StarPieces {
     ),
     ASCENDANT(Currencies.ASCENDANT_STAR_PIECE,
             60,
-            null
+            new LinkedHashMap<>()
 //            new LinkedHashMap<>() {{
 //                put(Currencies.LEGENDARY_STAR_PIECE, 3L);
 //                put(Currencies.COIN, 2_000_000L);
@@ -123,9 +124,10 @@ public enum StarPieces {
 
     public final Currencies currency;
     public final int starPieceBonusValue;
+    @Nonnull
     public final LinkedHashMap<Currencies, Long> synthesisCosts;
 
-    StarPieces(Currencies currency, int starPieceBonusValue, LinkedHashMap<Currencies, Long> synthesisCosts) {
+    StarPieces(Currencies currency, int starPieceBonusValue, @Nonnull LinkedHashMap<Currencies, Long> synthesisCosts) {
         this.currency = currency;
         this.starPieceBonusValue = starPieceBonusValue;
         this.synthesisCosts = synthesisCosts;
