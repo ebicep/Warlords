@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -34,9 +35,37 @@ public class WinAfterTimeoutOption implements Option {
 
     public static final int DEFAULT_TIME_REMAINING = 900;
     public static final Team DEFAULT_WINNER = null;
+
+    public static OptionalInt getTimeRemaining(@Nonnull Game game) {
+        for (Option option : game.getOptions()) {
+            if (option instanceof WinAfterTimeoutOption drawAfterTimeoutOption) {
+                return OptionalInt.of(drawAfterTimeoutOption.getTimeRemaining());
+            }
+        }
+        return OptionalInt.empty();
+    }
+
+    /**
+     * Gets the time remaining in second
+     *
+     * @return the time remaining
+     */
+    public int getTimeRemaining() {
+        return timeRemaining;
+    }
+
+    /**
+     * Sets the time remaining in seconds
+     *
+     * @param timeRemaining the time remaining
+     */
+    public void setTimeRemaining(int timeRemaining) {
+        this.timeRemaining = timeRemaining;
+        this.timeInitial = timeRemaining;
+    }
+
     private int scoreboardPriority = 10;
     private String scoreboardGroup = "timeout";
-
     private int timeRemaining;
     private int timeInitial;
     private SimpleScoreboardHandler scoreboard;
@@ -45,6 +74,11 @@ public class WinAfterTimeoutOption implements Option {
 
     public WinAfterTimeoutOption() {
         this(DEFAULT_TIME_REMAINING, DEFAULT_WINNER);
+    }
+
+    public WinAfterTimeoutOption(int timeRemaining, Team winner) {
+        this.timeRemaining = timeRemaining;
+        this.timeInitial = timeRemaining;
     }
 
     public WinAfterTimeoutOption(int timeRemaining) {
@@ -61,11 +95,6 @@ public class WinAfterTimeoutOption implements Option {
         this(DEFAULT_TIME_REMAINING, winner);
     }
 
-    public WinAfterTimeoutOption(int timeRemaining, Team winner) {
-        this.timeRemaining = timeRemaining;
-        this.timeInitial = timeRemaining;
-    }
-
     /**
      * Computes the time elapsed in seconds
      *
@@ -73,24 +102,6 @@ public class WinAfterTimeoutOption implements Option {
      */
     public int getTimeElapsed() {
         return timeInitial - timeRemaining;
-    }
-
-    /**
-     * Sets the time remaining in seconds
-     *
-     * @param timeRemaining the time remaining
-     */
-    public void setTimeRemaining(int timeRemaining) {
-        this.timeRemaining = timeRemaining;
-        this.timeInitial = timeRemaining;
-    }
-
-    /**
-     * Gets the time remaining in second
-     * @return the time remaining
-     */
-    public int getTimeRemaining() {
-        return timeRemaining;
     }
 
     public Team getWinner() {
@@ -113,7 +124,7 @@ public class WinAfterTimeoutOption implements Option {
             public void skipTimer(int delay) {
                 timeRemaining -= delay / 20;
             }
-            
+
         }.register(game);
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(scoreboardPriority, scoreboardGroup) {
             @Nonnull
@@ -122,6 +133,8 @@ public class WinAfterTimeoutOption implements Option {
                 final EnumSet<Team> teams = TeamMarker.getTeams(game);
 
                 Team winner = null;
+                int highestScore = Integer.MIN_VALUE;
+                int highestWinInSeconds = Integer.MAX_VALUE;
                 if (teams.size() > 1) {
                     List<PointPredicterMarker> predictionMarkers = game
                             .getMarkers(PointPredicterMarker.class);
@@ -129,12 +142,9 @@ public class WinAfterTimeoutOption implements Option {
                                                    .stream()
                                                    .filter(e -> e instanceof WinByPointsOption)
                                                    .mapToInt(e -> ((WinByPointsOption) e).getPointLimit())
-                            .sorted()
-                            .findFirst()
-                            .orElse(Integer.MAX_VALUE);
-
-                    int highestScore = Integer.MIN_VALUE;
-                    int highestWinInSeconds = Integer.MAX_VALUE;
+                                                   .sorted()
+                                                   .findFirst()
+                                                   .orElse(Integer.MAX_VALUE);
                     for (Team team : teams) {
                         int points = game.getPoints(team);
                         int winInSeconds;
@@ -143,7 +153,8 @@ public class WinAfterTimeoutOption implements Option {
                         } else {
                             double pointsPerMinute = predictionMarkers
                                     .stream()
-                                    .mapToDouble(e -> e.predictPointsNextMinute(team)).sum();
+                                    .mapToDouble(e -> e.predictPointsNextMinute(team))
+                                    .sum();
                             int pointsRemaining = scoreNeededToEndGame - points;
                             int winInSecondsCalculated = pointsPerMinute <= 0 ? Integer.MAX_VALUE : (int) (pointsRemaining / pointsPerMinute * 60);
                             int pointsAfterTimeIsOver = (int) (points + timeRemaining * pointsPerMinute / 60);
@@ -171,6 +182,8 @@ public class WinAfterTimeoutOption implements Option {
                             }
                         }
                     }
+                } else {
+                    highestWinInSeconds = timeRemaining;
                 }
 
                 TextComponent.Builder message = Component.text();
@@ -180,7 +193,7 @@ public class WinAfterTimeoutOption implements Option {
                 } else {
                     message.append(Component.text("Time Left: ", NamedTextColor.WHITE));
                 }
-                message.append(Component.text(StringUtils.formatTimeLeft(timeRemaining), NamedTextColor.GREEN));
+                message.append(Component.text(StringUtils.formatTimeLeft(highestWinInSeconds), NamedTextColor.GREEN));
                 return Collections.singletonList(message.build());
             }
         });
@@ -191,6 +204,10 @@ public class WinAfterTimeoutOption implements Option {
         this.runTaskTimer = new GameRunnable(game) {
             @Override
             public void run() {
+                if (game.isState(EndState.class)) {
+                    cancel();
+                    return;
+                }
                 timeRemaining--;
                 if (timeRemaining <= 0) {
                     Team leader;
@@ -231,14 +248,5 @@ public class WinAfterTimeoutOption implements Option {
             runTaskTimer.cancel();
             runTaskTimer = null;
         }
-    }
-    
-    public static OptionalInt getTimeRemaining(@Nonnull Game game) {
-        for (Option option : game.getOptions()) {
-            if (option instanceof WinAfterTimeoutOption drawAfterTimeoutOption) {
-                return OptionalInt.of(drawAfterTimeoutOption.getTimeRemaining());
-            }
-        }
-        return OptionalInt.empty();
     }
 }

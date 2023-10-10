@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.PointPredicterMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pvp.InterceptionPointOption;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -236,6 +237,10 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
             new GameRunnable(game) {
                 @Override
                 public void run() {
+                    if (game.isState(EndState.class)) {
+                        cancel();
+                        return;
+                    }
                     Map<Team, Integer> newCachedTeamScoreIncrease = new HashMap<>();
                     for (Option option : game.getOptions()) {
                         if (option instanceof InterceptionPointOption intersectionPointOption) {
