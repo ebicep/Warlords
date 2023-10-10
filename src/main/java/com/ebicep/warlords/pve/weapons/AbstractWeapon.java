@@ -28,7 +28,7 @@ import java.util.UUID;
 public abstract class AbstractWeapon {
 
     public static final TextComponent GREEN_ARROW = Component.text(" > ", NamedTextColor.DARK_GREEN);
-    protected static final DecimalFormat DECIMAL_FORMAT_TITLE = new DecimalFormat("#.##");
+    protected static final DecimalFormat DECIMAL_FORMAT_TITLE = new DecimalFormat("#,###.##");
 
     static {
         DECIMAL_FORMAT_TITLE.setDecimalSeparatorAlwaysShown(false);

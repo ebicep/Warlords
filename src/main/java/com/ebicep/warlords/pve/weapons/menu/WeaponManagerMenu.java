@@ -241,7 +241,7 @@ public class WeaponManagerMenu {
                         )
                         .addLore(Component.textOfChildren(
                                         Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                        Component.text("to change filter by", NamedTextColor.GREEN)
+                                        Component.text("to change rarity filter", NamedTextColor.GREEN)
                                 ),
                                 Component.empty()
                         )

@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration {
 
@@ -314,7 +315,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
         OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
         Location location = victim.getLocation();
-        Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
+        Location spawnLocation = generateSpawnLocation(location, orbsOfLife.getSpawnedOrbs().stream().map(orb -> orb.getArmorStand().getLocation()).toList());
 
         OrbOfLife orb = new OrbOfLife(spawnLocation, cooldown.getFrom(), orbsOfLife.getOrbTickMultiplier(), orbsOfLife);
         orbsOfLife.getSpawnedOrbs().add(orb);
@@ -329,10 +330,10 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         this.orbsProduced += amount;
     }
 
-    public Location generateSpawnLocation(Location location) {
+    public static Location generateSpawnLocation(Location location, List<Location> previousLocations) {
         Location spawnLocation;
         int counter = 0;
-        Random rand = new Random();
+        ThreadLocalRandom rand = ThreadLocalRandom.current();
         do {
             counter++;
             //generate random  position in circle
@@ -340,7 +341,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
             double x = SPAWN_RADIUS * Math.cos(angle) + (rand.nextDouble() - .5);
             double z = SPAWN_RADIUS * Math.sin(angle) + (rand.nextDouble() - .5);
             spawnLocation = location.clone().add(x, 0, z);
-        } while (counter < 50 && (orbsInsideBlock(spawnLocation) || nearLocation(spawnLocation)));
+        } while (counter < 50 && (orbsInsideBlock(spawnLocation) || nearLocation(spawnLocation, previousLocations)));
         return spawnLocation;
     }
 
@@ -352,13 +353,13 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return orbsProduced;
     }
 
-    public boolean orbsInsideBlock(Location location) {
+    public static boolean orbsInsideBlock(Location location) {
         return location.getBlock().getType() != Material.AIR;
     }
 
-    public boolean nearLocation(Location location) {
-        for (OrbPassenger orb : spawnedOrbs) {
-            double distance = orb.getArmorStand().getLocation().distanceSquared(location);
+    public static boolean nearLocation(Location location, List<Location> previousLocations) {
+        for (Location previousLocation : previousLocations) {
+            double distance = previousLocation.distanceSquared(location);
             if (distance < 1) {
                 return true;
             }

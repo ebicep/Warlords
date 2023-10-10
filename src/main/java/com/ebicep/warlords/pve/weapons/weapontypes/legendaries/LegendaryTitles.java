@@ -30,6 +30,9 @@ public enum LegendaryTitles {
     INCENDIARY("Incendiary", LegendaryIncendiary.class, LegendaryIncendiary::new, LegendaryIncendiary::new, Material.YELLOW_STAINED_GLASS_PANE),
     INANITION("Inanition", LegendaryInanition.class, LegendaryInanition::new, LegendaryInanition::new, Material.LIME_STAINED_GLASS_PANE),
     EGOISM("Egoism", LegendaryEgoism.class, LegendaryEgoism::new, LegendaryEgoism::new, Material.PINK_STAINED_GLASS_PANE),
+    FULCRUM("Fulcrum", LegendaryFulcrum.class, LegendaryFulcrum::new, LegendaryFulcrum::new, Material.GRAY_STAINED_GLASS_PANE),
+    PARADOX("Paradox", LegendaryParadox.class, LegendaryParadox::new, LegendaryParadox::new, Material.LIGHT_BLUE_STAINED_GLASS_PANE),
+    VIBRANT("Vibrant", LegendaryVibrant.class, LegendaryVibrant::new, LegendaryVibrant::new, Material.PURPLE_STAINED_GLASS_PANE),
 
     ;
 
