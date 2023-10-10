@@ -20,6 +20,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -186,6 +187,7 @@ public class BountyMenu {
                     for (Map.Entry<Currencies, Long> currenciesLongEntry : bountyCost.entrySet()) {
                         lifetimeDatabasePlayer.getPveStats().subtractCurrency(currenciesLongEntry.getKey(), currenciesLongEntry.getValue());
                     }
+                    player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                     bounty.setStarted(true);
                     BountyUtils.sendBountyMessage(
                             player,
@@ -206,6 +208,7 @@ public class BountyMenu {
     }
 
     private static void claimBounty(Player player, PlayersCollections collection, DatabasePlayer databasePlayer, AbstractBounty bounty, String bountyInfoName) {
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
         bounty.claim(databasePlayer, collection, bountyInfoName);
         BountyUtils.sendBountyMessage(
                 player,

@@ -10,6 +10,7 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -58,7 +59,7 @@ public class RewardInventory {
                             (m, e) -> {
                                 reward.giveToPlayer(databasePlayer);
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-
+                                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
                                 sendRewardMessage(
                                         player.getUniqueId(),
                                         Component.text("Claimed: ", NamedTextColor.GREEN)
@@ -83,6 +84,8 @@ public class RewardInventory {
             menu.setItem(3, 5,
                     Menu.CLAIM_ALL,
                     (m, e) -> {
+                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2f);
+
                         for (AbstractReward reward : rewards) {
                             reward.giveToPlayer(databasePlayer);
 
