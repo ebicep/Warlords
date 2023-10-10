@@ -1060,7 +1060,8 @@ public enum GameMap {
             options.add(new InterceptionPointOption("Valley", loc.addXYZ(-22.5, 62, -69.5)));
 
             options.add(new AbstractScoreOnEventOption.OnInterceptionCapture(25));
-            options.add(new AbstractScoreOnEventOption.OnInterceptionTimer(1));
+            AbstractScoreOnEventOption.OnInterceptionTimer scoreOnEventOption = new AbstractScoreOnEventOption.OnInterceptionTimer(1);
+            options.add(scoreOnEventOption);
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-114.5, 89.5, 0.5, -90, 0), Team.RED));
@@ -1068,7 +1069,18 @@ public enum GameMap {
             options.add(new GateOption(loc.addXYZ(-100, 89, 4), loc.addXYZ(-100, 93, -3)));
             options.add(new GateOption(loc.addXYZ(100, 89, 4), loc.addXYZ(100, 93, -3)));
 
-            options.add(new WinByPointsOption(1500));
+            options.add(new WinByPointsOption(1500) {
+                @Override
+                protected Component modifyScoreboardLine(Team team, Component component) {
+                    Map<Team, Integer> cachedTeamScoreIncrease = scoreOnEventOption.getCachedTeamScoreIncrease();
+                    Integer increase = cachedTeamScoreIncrease.get(team);
+                    if (increase != null) {
+                        return component.append(Component.text(" +" + increase, NamedTextColor.AQUA)
+                                                         .append(Component.text("/s", NamedTextColor.GOLD)));
+                    }
+                    return component;
+                }
+            });
             if (addons.contains(GameAddon.DOUBLE_TIME)) {
                 options.add(new WinAfterTimeoutOption(2400));
             } else {
@@ -1080,7 +1092,7 @@ public enum GameMap {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+//            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }

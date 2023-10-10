@@ -18,9 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
 
 public abstract class AbstractScoreOnEventOption<T> implements Option {
@@ -206,6 +204,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
 
     public static class OnInterceptionTimer extends AbstractScoreOnEventOption<InterceptionPointOption> {
         public static int DEFAULT_SCORE = 1;
+        private Map<Team, Integer> cachedTeamScoreIncrease = new HashMap<>();
 
         public OnInterceptionTimer() {
             this(DEFAULT_SCORE);
@@ -237,15 +236,22 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
             new GameRunnable(game) {
                 @Override
                 public void run() {
+                    Map<Team, Integer> newCachedTeamScoreIncrease = new HashMap<>();
                     for (Option option : game.getOptions()) {
                         if (option instanceof InterceptionPointOption intersectionPointOption) {
                             if (intersectionPointOption.getTeamOwning() != null) {
+                                newCachedTeamScoreIncrease.merge(intersectionPointOption.getTeamOwning(), scoreIncrease, Integer::sum);
                                 giveScore(intersectionPointOption, intersectionPointOption.getTeamOwning(), scoreIncrease);
                             }
                         }
                     }
-				}
-			}.runTaskTimer(20, 20);
+                    cachedTeamScoreIncrease = newCachedTeamScoreIncrease;
+                }
+            }.runTaskTimer(20, 20);
+        }
+
+        public Map<Team, Integer> getCachedTeamScoreIncrease() {
+            return cachedTeamScoreIncrease;
         }
     }
 }

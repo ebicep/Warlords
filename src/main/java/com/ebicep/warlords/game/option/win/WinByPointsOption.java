@@ -3,13 +3,13 @@ package com.ebicep.warlords.game.option.win;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WinByPointsOption implements Option, Listener {
@@ -42,16 +43,23 @@ public class WinByPointsOption implements Option, Listener {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                TextComponent.Builder component = Component.text();
+                List<Component> components = new ArrayList<>();
                 TeamMarker.getTeams(game)
                           .forEach(team -> {
-                              component.append(team.coloredPrefix().append(Component.text(": "))
-                                                   .append(Component.text(game.getPoints(team), NamedTextColor.AQUA))
-                                                   .append(Component.text("/" + pointLimit, NamedTextColor.GOLD)));
+                              Component component = team.coloredPrefix()
+                                                        .append(Component.text(": "))
+                                                        .append(Component.text(game.getPoints(team), NamedTextColor.AQUA))
+                                                        .append(Component.text("/" + pointLimit, NamedTextColor.GOLD));
+                              component = modifyScoreboardLine(team, component);
+                              components.add(component);
                           });
-                return component.build().children();
+                return components;
             }
         });
+    }
+
+    protected Component modifyScoreboardLine(Team team, Component component) {
+        return component;
     }
 
     public int getPointLimit() {
