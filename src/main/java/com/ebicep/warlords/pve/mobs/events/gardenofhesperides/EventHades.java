@@ -81,7 +81,7 @@ public class EventHades extends AbstractZombie implements BossMob, God {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (option.getMobs().size() != 1 || !option.getMobs().contains(this)) {
-            //  return;
+            return;
         }
         resurrectionTicksLeft--;
         if (resurrectionTicksLeft == 0) {

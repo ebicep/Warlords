@@ -7,8 +7,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -16,6 +18,8 @@ import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -29,6 +33,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EventPoseidon extends AbstractZombie implements BossMob, God {
 
@@ -85,7 +90,25 @@ public class EventPoseidon extends AbstractZombie implements BossMob, God {
                     @Override
                     protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
                         super.onSpikeTarget(caster, spikeTarget);
-                        CripplingStrike.cripple(caster, spikeTarget, name, 2 * 20);
+                        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(spikeTarget, RegularCooldown.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
+                                .findAny();
+                        if (optionalCripplingStrike.isPresent()) {
+                            CripplingStrike cripplingStrike = optionalCripplingStrike.get();
+                            spikeTarget.getCooldownManager().removeCooldown(CripplingStrike.class, true);
+                            CripplingStrike.cripple(caster,
+                                    spikeTarget,
+                                    name,
+                                    new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
+                                    2 * 20,
+                                    convertToDivisionDecimal(10) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(5)
+                            );
+                        } else {
+                            spikeTarget.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
+                                                             .append(Component.text("crippled", NamedTextColor.RED))
+                                                             .append(Component.text(".", NamedTextColor.GRAY)));
+                            CripplingStrike.cripple(caster, spikeTarget, name, 2 * 20, convertToDivisionDecimal(10));
+                        }
                     }
                 },
                 new Boulder(551, 773, 5, 5) {
