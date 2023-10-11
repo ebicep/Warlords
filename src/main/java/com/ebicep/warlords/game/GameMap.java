@@ -1052,14 +1052,24 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(8.5, 73.5, -104.5), 45, 30));
 
             options.add(new InterceptionOption());
-            options.add(new InterceptionPointOption("Eclipse", loc.addXYZ(0.5, 85, 0.5)));
-            options.add(new InterceptionPointOption("Glacier", loc.addXYZ(23.5, 62, 70.5)));
-            options.add(new InterceptionPointOption("Sun", loc.addXYZ(-18.5, 67, 134.5)));
-            options.add(new InterceptionPointOption("Moon", loc.addXYZ(19.5, 67, -133.5)));
-            options.add(new InterceptionPointOption("Valley", loc.addXYZ(-22.5, 62, -69.5)));
+            InterceptionPointOption eclipse = new InterceptionPointOption("Eclipse", loc.addXYZ(0.5, 85, 0.5));
+            InterceptionPointOption glacier = new InterceptionPointOption("Glacier", loc.addXYZ(23.5, 62, 70.5));
+            InterceptionPointOption sun = new InterceptionPointOption("Sun", loc.addXYZ(-18.5, 67, 134.5));
+            InterceptionPointOption moon = new InterceptionPointOption("Moon", loc.addXYZ(19.5, 67, -133.5));
+            InterceptionPointOption valley = new InterceptionPointOption("Valley", loc.addXYZ(-22.5, 62, -69.5));
+            options.add(eclipse);
+            options.add(glacier);
+            options.add(sun);
+            options.add(moon);
+            options.add(valley);
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-114.5, 89.5, 0.5, -90, 0), Team.RED));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(0.5, 77, -14.5, 180, 0), eclipse));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(52.5, 66, 62.5, 90, 0), glacier));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-23.5, 70, 170.5, 180, 0), sun));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(25.5, 70, -167.5, 0, 0), moon));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-51.5, 66, -60.5, -90, 0), valley));
 
             options.add(new GateOption(loc.addXYZ(-100, 89, 4), loc.addXYZ(-100, 93, -3)));
             options.add(new GateOption(loc.addXYZ(100, 89, 4), loc.addXYZ(100, 93, -3)));

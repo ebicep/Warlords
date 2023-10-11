@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
+import com.ebicep.warlords.game.option.pvp.InterceptionPointOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -25,6 +26,31 @@ public class SpawnpointOption extends MarkerOption {
                 location,
                 (p) -> p.getTeam() == team ? 0 : BAD_TEAM_PENALTY,
                 Arrays.asList(Component.text("Type: for-team"), Component.text("Team: " + team))
+        );
+    }
+
+    public static SpawnpointOption interceptionPoint(Location location, InterceptionPointOption interceptionPointOption) {
+        return new SpawnpointOption(
+                location,
+                (p) -> {
+                    if (p.getTeam() == null) {
+                        return -10;
+                    }
+                    boolean inConflict = interceptionPointOption.isInConflict();
+                    if (inConflict) { // enemy + team on point
+                        return 10;
+                    }
+                    Team teamOwning = interceptionPointOption.getTeamOwning();
+                    Team teamInCircle = interceptionPointOption.getTeamInCircle();
+                    if (p.getTeam() == teamOwning) {
+                        if (teamInCircle != teamOwning) { // enemy capping
+                            return 10;
+                        }
+                        return 5; // own point
+                    }
+                    return -10; // enemy point or uncaptured
+                },
+                Arrays.asList(Component.text("Type: interception-point"), Component.text("Interception point: " + interceptionPointOption))
         );
     }
 
