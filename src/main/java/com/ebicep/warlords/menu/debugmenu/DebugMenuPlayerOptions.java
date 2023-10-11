@@ -110,7 +110,7 @@ public class DebugMenuPlayerOptions {
                     sendDebugMessage(player, Component.text("Killed " + targetName, NamedTextColor.GREEN));
                 }
         );
-        firstRow.add(new ItemBuilder((PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam().enemy().item))
+        firstRow.add(new ItemBuilder((PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam().enemy().woolItem))
                         .name(Component.text("Swap to the ", NamedTextColor.GREEN)
                                        .append(PlayerSettings.getPlayerSettings(player.getUniqueId())
                                                              .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix())

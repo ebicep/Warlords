@@ -37,7 +37,7 @@ public class DebugMenuTeamOptions {
             Team team = teamListEntry.getKey();
             List<WarlordsEntity> warlordsEntities = teamListEntry.getValue();
             menu.setItem(i % 7 + 1, i / 7 + 1,
-                    new ItemBuilder(team.item)
+                    new ItemBuilder(team.woolItem)
                             .name(team.chatTagColored)
                             .lore(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
                             .get(),
@@ -138,7 +138,7 @@ public class DebugMenuTeamOptions {
         menu.setItem(3, 5, MENU_BACK, (m, e) -> openTeamSelectorMenu(player, game));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(5, 5,
-                new ItemBuilder(team.item)
+                new ItemBuilder(team.woolItem)
                         .name(team.chatTagColored)
                         .lore(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
                         .get(),

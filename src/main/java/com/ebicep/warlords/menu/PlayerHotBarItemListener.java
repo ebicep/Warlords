@@ -138,7 +138,7 @@ public class PlayerHotBarItemListener implements Listener {
                               .findFirst()
                               .ifPresent(regularGamePlayer -> setItem(player,
                                       0,
-                                      new ItemBuilder(regularGamePlayer.getTeam().item).name(Component.text("Team Builder", NamedTextColor.GREEN)).get()
+                                      new ItemBuilder(regularGamePlayer.getTeam().woolItem).name(Component.text("Team Builder", NamedTextColor.GREEN)).get()
                               ));
                 }
             }

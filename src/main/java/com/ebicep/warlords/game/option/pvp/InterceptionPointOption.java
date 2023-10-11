@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -24,8 +25,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.block.Block;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -53,12 +58,14 @@ public class InterceptionPointOption implements Option {
     private Team teamInCircle = null;
     @Nonnegative
     private double captureProgress = 0;
-    private boolean inConflict = false;
+    private boolean inConflict = false; // if multiple teams on point at once
     private double captureSpeed;
     private SimpleScoreboardHandler scoreboard;
-    private ArmorStand[] middle = new ArmorStand[4];
+    private BlockDisplay[] woolDisplay = new BlockDisplay[4];
     @Nullable
     private CircleEffect effectPlayer;
+    private Block glassBlock;
+
 
     public InterceptionPointOption(String name, Location location) {
         this(name, location, DEFAULT_MIN_CAPTURE_RADIUS, DEFAULT_MAX_CAPTURE_RADIUS, DEFAULT_CAPTURE_SPEED);
@@ -73,6 +80,7 @@ public class InterceptionPointOption implements Option {
     ) {
         this.name = name;
         this.location = location;
+        this.glassBlock = location.clone().subtract(0, .5, 0).getBlock();
         this.maxCaptureRadius = maxCaptureRadius;
         this.minCaptureRadius = minCaptureRadius;
         this.captureSpeed = captureSpeed;
@@ -85,6 +93,7 @@ public class InterceptionPointOption implements Option {
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
+        game.getPreviousBlocks().putIfAbsent(new LocationUtils.LocationBlockHolder(location), glassBlock.getType());
         game.registerGameMarker(CompassTargetMarker.class, new CompassTargetMarker() {
             @Override
             public int getCompassTargetPriority(WarlordsEntity player) {
@@ -138,7 +147,7 @@ public class InterceptionPointOption implements Option {
                 TextComponent.Builder component = Component.text();
                 component.append(Component.text(
                         name,
-                        teamAttacking == null ? NamedTextColor.GRAY : teamAttacking.teamColor()
+                        NamedTextColor.GOLD//teamAttacking == null ? NamedTextColor.GRAY : teamAttacking.teamColor()
                 ));
                 component.append(Component.text(": ", NamedTextColor.WHITE));
                 component.append(Component.text(
@@ -152,15 +161,21 @@ public class InterceptionPointOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
-        Location clone = this.location.clone();
-        clone.add(0, -1.7, 0);
-        for (int i = middle.length - 1; i >= 0; i--) {
+        Location clone = this.location.getBlock().getLocation().clone();
+        clone.add(.175, -.35, .175);
+        for (int i = woolDisplay.length - 1; i >= 0; i--) {
             clone.add(0, this.captureProgress * 1 + 0.25, 0);
-            middle[i] = Utils.spawnArmorStand(clone, null);
+            woolDisplay[i] = clone.getWorld().spawn(clone, BlockDisplay.class, false, blockDisplay -> {
+                blockDisplay.setBlock(Material.WHITE_WOOL.createBlockData());
+                blockDisplay.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(.65f), new AxisAngle4f()));
+            });
         }
         updateArmorStandsAndEffect(null);
         scoreboard.registerChangeHandler(this::updateArmorStandsAndEffect);
         new GameRunnable(game) {
+
+            int ticksElapsed = 0;
+
             @Override
             public void run() {
                 Stream<WarlordsEntity> computePlayers = computePlayers();
@@ -169,19 +184,33 @@ public class InterceptionPointOption implements Option {
                 if (effectPlayer != null) {
                     effectPlayer.playEffects();
                 }
+                Material newGlassBlock;
+                if (ticksElapsed % 20 == 0) {
+                    if (inConflict) {
+                        newGlassBlock = Material.PURPLE_STAINED_GLASS;
+                    } else if (teamInCircle != teamOwning) {
+                        newGlassBlock = ticksElapsed % 40 == 0 ? teamInCircle.glassItem.getType() : Material.WHITE_STAINED_GLASS;
+                    } else {
+                        newGlassBlock = teamOwning != null ? teamOwning.glassItem.getType() : Material.WHITE_STAINED_GLASS;
+                    }
+                    if (newGlassBlock != glassBlock.getType()) {
+                        glassBlock.setType(newGlassBlock);
+                    }
+                }
+                ticksElapsed++;
             }
         }.runTaskTimer(1, 1);
     }
 
     private void updateArmorStandsAndEffect(ScoreboardHandler handler) {
-        Location clone = this.location.clone();
-        clone.add(0, -1.7, 0);
-        for (int i = middle.length - 1; i >= 0; i--) {
+        Location clone = this.location.getBlock().getLocation().clone();
+        clone.add(.175, -.35, .175);
+        for (int i = woolDisplay.length - 1; i >= 0; i--) {
             clone.add(0, this.captureProgress * 1 + 0.25, 0);
-            middle[i].teleport(clone);
+            woolDisplay[i].teleport(clone);
             ItemStack item = getItem(i == 0 ? this.inConflict ? null : this.teamAttacking : this.teamOwning);
-            if (!item.equals(middle[i].getEquipment().getHelmet())) {
-                middle[i].getEquipment().setHelmet(item);
+            if (!item.getType().equals(woolDisplay[i].getBlock().getMaterial())) {
+                woolDisplay[i].setBlock(item.getType().createBlockData());
             }
         }
         double computedCurrentRadius = this.computeCurrentRadius();
@@ -298,7 +327,7 @@ public class InterceptionPointOption implements Option {
     }
 
     private ItemStack getItem(Team team) {
-        return team == null ? NEUTRAL_ITEM_STACK : team.getItem();
+        return team == null ? NEUTRAL_ITEM_STACK : team.getWoolItem();
     }
 
     protected double computeCurrentRadius() {

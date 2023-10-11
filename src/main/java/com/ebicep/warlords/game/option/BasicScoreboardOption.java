@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -22,11 +23,13 @@ public class BasicScoreboardOption implements Option {
     public void register(@Nonnull Game game) {
         game.registerGameMarker(ScoreboardHandler.class, getDateScoreboard(game));
         game.registerGameMarker(ScoreboardHandler.class, getVersionScoreboard(game));
-        switch (game.getGameMode()) {
-            case INTERCEPTION, SIMULATION_TRIAL, CAPTURE_THE_FLAG, TEAM_DEATHMATCH, DEBUG ->
-                    game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game));
+        GameMode gameMode = game.getGameMode();
+        switch (gameMode) {
+            case INTERCEPTION, SIMULATION_TRIAL, CAPTURE_THE_FLAG, TEAM_DEATHMATCH, DEBUG -> game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game));
         }
-        game.registerGameMarker(ScoreboardHandler.class, getSpecScoreboard(game));
+        if (gameMode != GameMode.INTERCEPTION) {
+            game.registerGameMarker(ScoreboardHandler.class, getSpecScoreboard(game));
+        }
     }
 
     private static SimpleScoreboardHandler getDateScoreboard(Game game) {
@@ -47,18 +50,12 @@ public class BasicScoreboardOption implements Option {
         return simpleScoreboardHandler;
     }
 
-    private static SimpleScoreboardHandler getSpecScoreboard(Game game) {
-        return new SimpleScoreboardHandler(Integer.MAX_VALUE - 20, "spec") {
+    private static SimpleScoreboardHandler getVersionScoreboard(Game game) {
+        return new SimpleScoreboardHandler(Integer.MAX_VALUE, "version") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                if (player == null) {
-                    return Collections.singletonList(Component.empty());
-                }
-                return Collections.singletonList(
-                        Component.text("Spec: ", NamedTextColor.WHITE)
-                                 .append(Component.text(player.getSpec().getClass().getSimpleName(), NamedTextColor.GREEN))
-                );
+                return Collections.singletonList(Component.text(Warlords.VERSION, NamedTextColor.YELLOW));
             }
         };
     }
@@ -82,12 +79,18 @@ public class BasicScoreboardOption implements Option {
         };
     }
 
-    private static SimpleScoreboardHandler getVersionScoreboard(Game game) {
-        return new SimpleScoreboardHandler(Integer.MAX_VALUE, "version") {
+    private static SimpleScoreboardHandler getSpecScoreboard(Game game) {
+        return new SimpleScoreboardHandler(Integer.MAX_VALUE - 20, "spec") {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(Component.text(Warlords.VERSION, NamedTextColor.YELLOW));
+                if (player == null) {
+                    return Collections.singletonList(Component.empty());
+                }
+                return Collections.singletonList(
+                        Component.text("Spec: ", NamedTextColor.WHITE)
+                                 .append(Component.text(player.getSpec().getClass().getSimpleName(), NamedTextColor.GREEN))
+                );
             }
         };
     }

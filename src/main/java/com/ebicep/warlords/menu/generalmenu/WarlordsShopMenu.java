@@ -492,7 +492,7 @@ public class WarlordsShopMenu {
         List<Team> values = new ArrayList<>(Arrays.asList(Team.values()));
         for (int i = 0; i < values.size(); i++) {
             Team team = values.get(i);
-            ItemBuilder builder = new ItemBuilder(team.getItem())
+            ItemBuilder builder = new ItemBuilder(team.getWoolItem())
                     .name(Component.text(team.getName(), team.teamColor));
             List<Component> lore = new ArrayList<>();
             if (team == selectedTeam) {

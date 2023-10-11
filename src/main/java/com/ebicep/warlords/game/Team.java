@@ -13,8 +13,24 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public enum Team {
-    BLUE("Blue", "BLU", NamedTextColor.BLUE, ChatColor.BLUE, Color.fromRGB(51, 76, 178), new ItemStack(Material.BLUE_WOOL)),
-    RED("Red", "RED", NamedTextColor.RED, ChatColor.RED, Color.fromRGB(153, 51, 51), new ItemStack(Material.RED_WOOL)),
+    BLUE(
+            "Blue",
+            "BLU",
+            NamedTextColor.BLUE,
+            ChatColor.BLUE,
+            Color.fromRGB(51, 76, 178),
+            new ItemStack(Material.BLUE_WOOL),
+            new ItemStack(Material.BLUE_STAINED_GLASS)
+    ),
+    RED(
+            "Red",
+            "RED",
+            NamedTextColor.RED,
+            ChatColor.RED,
+            Color.fromRGB(153, 51, 51),
+            new ItemStack(Material.RED_WOOL),
+            new ItemStack(Material.RED_STAINED_GLASS)
+    ),
 
     ;
     private static final Team[] inverseMapping;
@@ -32,17 +48,19 @@ public enum Team {
     public final Component chatTagColored;
     public final Component chatTagBoldColored;
     public final Color armorColor;
-    public final ItemStack item;
+    public final ItemStack woolItem;
+    public final ItemStack glassItem;
 
-    Team(String name, String chatTag, NamedTextColor teamColor, ChatColor oldTeamColor, Color armorColor, ItemStack item) {
+    Team(String name, String chatTag, NamedTextColor teamColor, ChatColor oldTeamColor, Color armorColor, ItemStack woolItem, ItemStack glassItem) {
         this.name = name;
         this.teamColor = teamColor;
         this.chatTag = chatTag;
         this.oldTeamColor = oldTeamColor;
+        this.glassItem = glassItem;
         this.chatTagColored = Component.text(chatTag, teamColor);
         this.chatTagBoldColored = Component.text(chatTag, teamColor, TextDecoration.BOLD);
         this.armorColor = armorColor;
-        this.item = item;
+        this.woolItem = woolItem;
     }
 
     @Nonnull
@@ -96,8 +114,8 @@ public enum Team {
     }
 
     @Nonnull
-    public ItemStack getItem() {
-        return item;
+    public ItemStack getWoolItem() {
+        return woolItem;
     }
 
     /**
