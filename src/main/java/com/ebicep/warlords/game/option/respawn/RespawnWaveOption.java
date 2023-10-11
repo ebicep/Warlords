@@ -21,52 +21,20 @@ public class RespawnWaveOption implements Option, Listener {
     public static final int DEFAULT_INITIAL_DELAY = 0;
     public static final int DEFAULT_TASK_PERIOD = 12;
     public static final int DEFAULT_MIN_RESPAWN_TIMER = 5;
-    
-    private int initialDelay;
-    private int taskPeriod;
-    private int minRespawnTimer;
+
+    private final int initialDelay;
+    private final int taskPeriod;
+    private final int minRespawnTimer;
     private int currentTimer = 0;
 
     public RespawnWaveOption() {
         this(DEFAULT_INITIAL_DELAY, DEFAULT_TASK_PERIOD, DEFAULT_MIN_RESPAWN_TIMER);
     }
-            
+
     public RespawnWaveOption(int initialTaskDelay, int taskPeriod, int minRespawnTimer) {
         this.initialDelay = initialTaskDelay;
         this.taskPeriod = taskPeriod;
         this.minRespawnTimer = minRespawnTimer;
-    }
-
-    public int getInitialDelay() {
-        return initialDelay;
-    }
-
-    public void setInitialDelay(int initialDelay) {
-        this.initialDelay = initialDelay;
-    }
-
-    public int getTaskPeriod() {
-        return taskPeriod;
-    }
-
-    public void setTaskPeriod(int taskPeriod) {
-        this.taskPeriod = taskPeriod;
-    }
-
-    public int getMinRespawnTimer() {
-        return minRespawnTimer;
-    }
-
-    public void setMinRespawnTimer(int minRespawnTimer) {
-        this.minRespawnTimer = minRespawnTimer;
-    }
-
-    public int getCurrentTimer() {
-        return currentTimer;
-    }
-
-    public void setCurrentTimer(int currentTimer) {
-        this.currentTimer = currentTimer;
     }
 
     @Override

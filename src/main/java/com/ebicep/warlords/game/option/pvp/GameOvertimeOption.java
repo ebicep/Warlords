@@ -27,18 +27,18 @@ import java.util.List;
 public class GameOvertimeOption implements Option, Listener {
 
     private static final int OVERTIME_POINT = 20;
-    private static final int OVERTIME_TIME = 60;
+    private static final int OVERTIME_SECONDS = 60;
     private boolean wasActivated = false;
     private int overTimePoints;
     private int overTimeTime;
 
     public GameOvertimeOption() {
-        this(OVERTIME_POINT, OVERTIME_TIME);
+        this(OVERTIME_POINT, OVERTIME_SECONDS);
     }
 
-    public GameOvertimeOption(int overTimePoints, int overTimeTime) {
+    public GameOvertimeOption(int overTimePoints, int overTimeSeconds) {
         this.overTimePoints = overTimePoints;
-        this.overTimeTime = overTimeTime;
+        this.overTimeTime = overTimeSeconds;
     }
 
     public boolean isWasActivated() {

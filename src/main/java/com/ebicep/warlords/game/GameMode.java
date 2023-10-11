@@ -18,11 +18,15 @@ import com.ebicep.warlords.game.option.pve.BountyOption;
 import com.ebicep.warlords.game.option.pve.tutorial.TutorialOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
+import com.ebicep.warlords.game.option.pvp.GameOvertimeOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
+import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
+import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
+import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
@@ -43,10 +47,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.MENU_CLOSE;
@@ -122,6 +123,7 @@ public enum GameMode {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = super.initMap(map, loc, addons);
+            int points = 1500;
 
             Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(
@@ -130,8 +132,8 @@ public enum GameMode {
                     base.append(Component.text("Capture the marked points to")),
                     base.append(Component.text("earn points! The first team with a")),
                     base.append(Component.text("score of "))
-                        .append(Component.text("1500 ", NamedTextColor.AQUA, TextDecoration.BOLD))
-                        .append(base.append(Component.text("wins!"))),
+                        .append(Component.text(points, NamedTextColor.AQUA, TextDecoration.BOLD))
+                        .append(base.append(Component.text(" wins!"))),
                     Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
@@ -143,6 +145,33 @@ public enum GameMode {
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
+
+            options.add(new AbstractScoreOnEventOption.OnInterceptionCapture(25));
+            AbstractScoreOnEventOption.OnInterceptionTimer scoreOnEventOption = new AbstractScoreOnEventOption.OnInterceptionTimer(1);
+            options.add(scoreOnEventOption);
+            options.add(new WinByPointsOption(points) {
+                @Override
+                protected Component modifyScoreboardLine(Team team, Component component) {
+                    Map<Team, Integer> cachedTeamScoreIncrease = scoreOnEventOption.getCachedTeamScoreIncrease();
+                    Integer increase = cachedTeamScoreIncrease.get(team);
+                    if (increase != null) {
+                        return component.append(Component.text(" +" + increase, NamedTextColor.AQUA)
+                                                         .append(Component.text("/s", NamedTextColor.GOLD)));
+                    }
+                    return component;
+                }
+            });
+            if (addons.contains(GameAddon.DOUBLE_TIME)) {
+                options.add(new WinAfterTimeoutOption(2400));
+            } else {
+                options.add(new WinAfterTimeoutOption(1200));
+            }
+            options.add(new GameOvertimeOption(100, 90));
+            options.add(new RespawnWaveOption(0, 17, 8));
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
             return options;
         }
     },
