@@ -119,7 +119,7 @@ public class WeaponOption implements Option {
         ItemBuilder itemBuilder = new ItemBuilder(weaponSkin.getItem())
                 .name(Component.text(weapon.getName(), NamedTextColor.GREEN)
                                .append(Component.text(" - ", NamedTextColor.GRAY))
-                               .append(Component.text(" Right-Click!", NamedTextColor.YELLOW)))
+                               .append(Component.text("Right-Click!", NamedTextColor.YELLOW)))
                 .unbreakable();
 
         itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)

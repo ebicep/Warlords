@@ -29,7 +29,10 @@ import java.util.UUID;
 public class HorseOption implements Option, Listener {
 
     public static final ItemStack HORSE_ITEM = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
-            .name(Component.text("Mount ", NamedTextColor.GREEN).append(Component.text("- Right-Click!", NamedTextColor.GRAY)))
+            .name(Component.text("Mount", NamedTextColor.GREEN)
+                           .append(Component.text(" - ", NamedTextColor.GRAY))
+                           .append(Component.text("Right-Click!", NamedTextColor.YELLOW))
+            )
             .lore(Component.text("Cooldown: ", NamedTextColor.GRAY)
                            .append(Component.text("15 seconds", NamedTextColor.AQUA)),
                     Component.empty(),

@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 public class InterceptionOption implements Option {
 
     public static final ItemStack COMPASS = new ItemBuilder(Material.COMPASS)
-            .name(Component.text("Point Finder", NamedTextColor.GREEN))
+            .name(Component.text("Point Information", NamedTextColor.GREEN))
             .unbreakable()
             .get();
 
