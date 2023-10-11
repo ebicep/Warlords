@@ -127,7 +127,7 @@ public class PowerupOption implements Option {
                                 currentCooldown = cooldown;
                             });
                 }
-                if (ticksElapsed % 20 == 0) {
+                if (ticksElapsed % 20 == 0 && currentCooldown != 0) {
                     currentCooldown--;
                     if (currentCooldown == 0) {
                         if (randomPowerup) {
