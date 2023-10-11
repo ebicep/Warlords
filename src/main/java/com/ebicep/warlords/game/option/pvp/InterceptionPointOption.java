@@ -146,10 +146,9 @@ public class InterceptionPointOption implements Option {
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 TextComponent.Builder component = Component.text();
                 component.append(Component.text(
-                        name,
-                        NamedTextColor.GOLD//teamAttacking == null ? NamedTextColor.GRAY : teamAttacking.teamColor()
+                        name + ": ",
+                        NamedTextColor.GOLD
                 ));
-                component.append(Component.text(": ", NamedTextColor.WHITE));
                 component.append(Component.text(
                         (int) Math.floor(captureProgress * 100) + "%",
                         teamInCircle == null ? NamedTextColor.GRAY : teamInCircle.teamColor()
