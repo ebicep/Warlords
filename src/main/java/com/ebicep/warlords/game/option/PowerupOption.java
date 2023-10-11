@@ -6,11 +6,10 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -34,68 +33,50 @@ public class PowerupOption implements Option {
     public static int DEFAULT_MAX_COOLDOWN = 45;
 
     @Nonnull
-    private Location location;
+    private final Location location;
     @Nonnull
-    private PowerupType type;
+    private PowerUp type;
     @Nullable
     private ArmorStand entity;
     @Nonnegative
-    private int duration;
+    private int currentCooldown;
     @Nonnegative
     private int cooldown;
-    @Nonnegative
-    private int maxCooldown;
-    private boolean hasStarted = false;
     private boolean randomPowerup = false;
-    @Nonnull
-    private Game game;
+
 
     public PowerupOption(
             @Nonnull Location location,
-            @Nonnegative int maxCooldown,
+            @Nonnegative int cooldown,
             @Nonnegative int timeToSpawn
     ) {
-        this.location = Objects.requireNonNull(location, "location");
-        this.type = PowerupType.getRandomPowerupType();
-        this.duration = type.duration;
-        this.maxCooldown = maxCooldown;
-        this.cooldown = timeToSpawn * 4;
+        this(location, PowerUp.getRandomPowerupType(), cooldown, timeToSpawn);
         this.randomPowerup = true;
     }
 
-    public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type, @Nonnegative int maxCooldown, @Nonnegative int timeToSpawn) {
+    public PowerupOption(
+            @Nonnull Location location,
+            @Nonnull PowerUp type,
+            @Nonnegative int cooldown,
+            @Nonnegative int timeToSpawn
+    ) {
         this.location = Objects.requireNonNull(location, "location");
         this.type = Objects.requireNonNull(type, "type");
-        this.maxCooldown = maxCooldown;
-        this.cooldown = timeToSpawn * 4;
+        this.cooldown = cooldown;
+        this.currentCooldown = timeToSpawn;
     }
 
     public PowerupOption(@Nonnull Location location) {
-        this(location, PowerupType.getRandomPowerupType());
+        this(location, PowerUp.getRandomPowerupType());
         this.randomPowerup = true;
     }
 
-    public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type) {
-        this(location, type, type.getDuration(), DEFAULT_MAX_COOLDOWN, DEFAULT_TIME_TO_SPAWN);
-    }
-
-    public PowerupOption(
-            @Nonnull Location location,
-            @Nonnull PowerupType type,
-            @Nonnegative int duration,
-            @Nonnegative int maxCooldown,
-            @Nonnegative int timeToSpawn
-    ) {
-        this.location = Objects.requireNonNull(location, "location");
-        this.type = Objects.requireNonNull(type, "type");
-        this.duration = duration;
-        this.maxCooldown = maxCooldown;
-        this.cooldown = timeToSpawn * 4;
+    public PowerupOption(@Nonnull Location location, @Nonnull PowerUp type) {
+        this(location, type, DEFAULT_MAX_COOLDOWN, DEFAULT_TIME_TO_SPAWN);
     }
 
     @Override
     public void register(@Nonnull Game game) {
-        this.game = game;
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(
                 () -> type.getDebugMaterial(),
                 this::getClass,
@@ -103,61 +84,62 @@ public class PowerupOption implements Option {
                 this::getLocation,
                 () -> Arrays.asList(
                         Component.text("Type: " + this.getType()),
+                        Component.text("Current Cooldown: " + this.getCurrentCooldown()),
                         Component.text("Cooldown: " + this.getCooldown()),
-                        Component.text("Duration: " + this.getDuration()),
-                        Component.text("Max cooldown: " + this.getMaxCooldown()),
-                        Component.text("Entity: " + this.getEntity())
+                        Component.text("Entity: " + this.getEntity()),
+                        Component.text("Randomized: " + this.isRandomPowerup())
                 )
         ));
         game.registerGameMarker(TimerSkipAbleMarker.class, new TimerSkipAbleMarker() {
             @Override
             public int getDelay() {
-                return cooldown * 20;
+                return currentCooldown * 20;
             }
 
             @Override
             public void skipTimer(int delayInTicks) {
-                cooldown = Math.max(cooldown - delayInTicks / 20, 0);
-                if (cooldown == 0) {
+                currentCooldown = Math.max(currentCooldown - delayInTicks / 20, 0);
+                if (currentCooldown == 0) {
                     spawn();
                 }
             }
-
         });
     }
 
     @Override
     public void start(@Nonnull Game game) {
-        hasStarted = true;
-        if (cooldown == 0) {
+        if (currentCooldown == 0) {
             spawn();
         }
         new GameRunnable(game) {
+            int ticksElapsed = 0;
+
             @Override
             public void run() {
-                if (cooldown == 0) {
-                    PlayerFilter.entitiesAround(location, 1.6, 1.6, 1.6)
-                                .isAlive()
-                                .first((nearPlayer) -> {
-                                    if (nearPlayer instanceof WarlordsPlayer) {
-                                        type.onPickUp(PowerupOption.this, nearPlayer);
-                                        remove();
-                                        cooldown = maxCooldown * 4;
-                                    }
-                                });
-                } else {
-                    cooldown--;
-                    if (cooldown == 0) {
+                if (ticksElapsed % 5 == 0 && currentCooldown == 0) {
+                    PlayerFilterGeneric
+                            .entitiesAround(location, 1.6, 1.6, 1.6)
+                            .warlordsPlayers()
+                            .isAlive()
+                            .first((nearPlayer) -> {
+                                type.onPickUp(PowerupOption.this, nearPlayer);
+                                remove();
+                                currentCooldown = cooldown;
+                            });
+                }
+                if (ticksElapsed % 20 == 0) {
+                    currentCooldown--;
+                    if (currentCooldown == 0) {
                         if (randomPowerup) {
-                            type = PowerupType.getRandomPowerupType();
-                            duration = type.getDuration();
+                            type = PowerUp.getRandomPowerupType();
                         }
                         spawn();
                     }
                 }
+                ticksElapsed++;
             }
 
-        }.runTaskTimer(0, 5);
+        }.runTaskTimer(0, 0);
     }
 
     private void remove() {
@@ -173,44 +155,25 @@ public class PowerupOption implements Option {
         return location;
     }
 
-    public void setLocation(Location location) {
-        if (hasStarted) {
-            throw new IllegalStateException("Cannot change location after starting.");
-        }
-        this.location = location;
-    }
-
     @Nonnull
-    public PowerupType getType() {
+    public PowerUp getType() {
         return type;
     }
 
-    public void setType(PowerupType type) {
-        if (hasStarted) {
-            throw new IllegalStateException("Cannot change type after starting.");
-        }
-        this.type = type;
-        this.remove();
+    public int getCurrentCooldown() {
+        return currentCooldown;
     }
 
     public int getCooldown() {
         return cooldown;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(@Nonnegative int duration) {
-        this.duration = duration;
-    }
-
-    public int getMaxCooldown() {
-        return maxCooldown;
-    }
-
-    public @org.jetbrains.annotations.Nullable ArmorStand getEntity() {
+    public @Nullable ArmorStand getEntity() {
         return entity;
+    }
+
+    public boolean isRandomPowerup() {
+        return randomPowerup;
     }
 
     private void spawn() {
@@ -221,31 +184,10 @@ public class PowerupOption implements Option {
             armorStand.setCustomNameVisible(true);
             type.setNameAndItem(this, armorStand);
         });
-
         Utils.playGlobalSound(location, "ctf.powerup.spawn", 2, 1);
     }
 
-    public void setMaxCooldown(@Nonnegative int maxCooldown) {
-        this.maxCooldown = maxCooldown;
-    }
-
-    public void setCooldown(@Nonnegative int cooldown) {
-        this.cooldown = cooldown;
-        if (cooldown == 0 && cooldown != 0) {
-            remove();
-        }
-        if (cooldown != 0 && cooldown == 0 && hasStarted) {
-            spawn();
-        }
-    }
-
-    public void setTypeAndDuration(PowerupType type) {
-        setType(type);
-        this.duration = type.getDuration();
-        this.remove();
-    }
-
-    public enum PowerupType {
+    public enum PowerUp {
         SPEED(NamedTextColor.YELLOW, 10, Material.YELLOW_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
@@ -262,16 +204,16 @@ public class PowerupOption implements Option {
                         cooldownManager -> {
                             we.sendMessage(getWornOffMessage());
                         },
-                        option.getDuration() * 20
+                        getTickDuration()
                 );
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text("SPEED", NamedTextColor.AQUA, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+40% ", NamedTextColor.GREEN))
                                         .append(Component.text("Speed for "))
-                                        .append(Component.text(option.getDuration(), NamedTextColor.GREEN))
+                                        .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
-                we.addSpeedModifier(we, "Speed Powerup", 40, option.getDuration() * 20, "BASE");
+                we.addSpeedModifier(we, "Speed Powerup", 40, getTickDuration(), "BASE");
                 Utils.playGlobalSound(option.getLocation(), "ctf.powerup.speed", 2, 1);
             }
 
@@ -298,7 +240,7 @@ public class PowerupOption implements Option {
                         cooldownManager -> {
                             we.sendMessage(getWornOffMessage());
                         },
-                        option.getDuration() * 20,
+                        getTickDuration(),
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 20 == 0) {
                                 float heal = we.getMaxHealth() * .08f;
@@ -319,7 +261,7 @@ public class PowerupOption implements Option {
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+8% ", NamedTextColor.GREEN))
                                         .append(Component.text("Health per second for "))
-                                        .append(Component.text(option.getDuration(), NamedTextColor.GREEN))
+                                        .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
             }
 
@@ -346,7 +288,7 @@ public class PowerupOption implements Option {
                         cooldownManager -> {
                             we.sendMessage(getWornOffMessage());
                         },
-                        option.getDuration() * 20
+                        getTickDuration()
                 ) {
                     @Override
                     public float multiplyEnergyGainPerTick(float energyGainPerTick) {
@@ -358,7 +300,7 @@ public class PowerupOption implements Option {
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+50% ", NamedTextColor.GREEN))
                                         .append(Component.text("Energy gain for "))
-                                        .append(Component.text(option.getDuration(), NamedTextColor.GREEN))
+                                        .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
             }
 
@@ -385,7 +327,7 @@ public class PowerupOption implements Option {
                         cooldownManager -> {
                             we.sendMessage(getWornOffMessage());
                         },
-                        option.getDuration() * 20
+                        getTickDuration()
                 ) {
                     @Override
                     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -397,7 +339,7 @@ public class PowerupOption implements Option {
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+20% ", NamedTextColor.GREEN))
                                         .append(Component.text("Damage for "))
-                                        .append(Component.text(option.getDuration(), NamedTextColor.GREEN))
+                                        .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
             }
 
@@ -425,7 +367,7 @@ public class PowerupOption implements Option {
                         cooldownManager -> {
                             we.sendMessage(getWornOffMessage());
                         },
-                        option.getDuration() * 20
+                        getTickDuration()
                 ) {
                     @Override
                     public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
@@ -437,7 +379,7 @@ public class PowerupOption implements Option {
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+25% ", NamedTextColor.GREEN))
                                         .append(Component.text("Cooldown reduction for "))
-                                        .append(Component.text(option.getDuration(), NamedTextColor.GREEN))
+                                        .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
             }
 
@@ -474,20 +416,20 @@ public class PowerupOption implements Option {
             }
         };
 
-        public static final PowerupType[] VALUES = values();
-        public static final PowerupType[] DEFAULT_POWERUPS = {ENERGY, HEALING};
+        public static final PowerUp[] VALUES = values();
+        public static final PowerUp[] DEFAULT_POWERUPS = {ENERGY, HEALING};
 
-        public static PowerupType getRandomPowerupType() {
+        public static PowerUp getRandomPowerupType() {
             return DEFAULT_POWERUPS[ThreadLocalRandom.current().nextInt(DEFAULT_POWERUPS.length)];
         }
 
         private final NamedTextColor textColor;
-        private final int duration;
+        private final int secondDuration;
         private final Material debugMaterial;
 
-        PowerupType(NamedTextColor textColor, int duration, Material debugMaterial) {
+        PowerUp(NamedTextColor textColor, int secondDuration, Material debugMaterial) {
             this.textColor = textColor;
-            this.duration = duration;
+            this.secondDuration = secondDuration;
             this.debugMaterial = debugMaterial;
         }
 
@@ -497,8 +439,12 @@ public class PowerupOption implements Option {
                             .append(Component.text(" powerup has worn off."));
         }
 
-        public int getDuration() {
-            return duration;
+        public int getSecondDuration() {
+            return secondDuration;
+        }
+
+        public int getTickDuration() {
+            return secondDuration * 20;
         }
 
         public Material getDebugMaterial() {
