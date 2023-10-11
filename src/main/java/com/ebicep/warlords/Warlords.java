@@ -15,7 +15,6 @@ import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.LobbyGameOption;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.guilds.GuildListener;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -45,10 +44,7 @@ import net.luckperms.api.event.EventBus;
 import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -467,8 +463,8 @@ public class Warlords extends JavaPlugin {
                     Player player = we.getEntity() instanceof Player ? (Player) we.getEntity() : null;
                     if (player != null) {
                         //ACTION BAR
-                        if (player.getInventory().getItemInMainHand().equals(FlagSpawnPointOption.COMPASS)) {
-                            we.displayFlagActionBar(player);
+                        if (player.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
+                            we.displayCompassActionBar(player);
                         } else {
                             we.displayActionBar();
                         }

@@ -23,7 +23,7 @@ public class InterceptionTrait extends WarlordsTrait {
                 ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.INTERCEPTION) + " Players"
         );
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.INTERCEPTION) + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.BLUE + ChatColor.BOLD.toString() + "Domination");
+        hologramTrait.setLine(2, ChatColor.BLUE + ChatColor.BOLD.toString() + "Interception");
         hologramTrait.setLine(3, ChatColor.RED + ChatColor.BOLD.toString() + "IN DEVELOPMENT");
     }
 

@@ -1051,6 +1051,7 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(-50.5, 67.5, -84.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(8.5, 73.5, -104.5), 45, 30));
 
+            options.add(new InterceptionOption());
             options.add(new InterceptionPointOption("Eclipse", loc.addXYZ(0.5, 85, 0.5)));
             options.add(new InterceptionPointOption("Glacier", loc.addXYZ(23.5, 62, 70.5)));
             options.add(new InterceptionPointOption("Sun", loc.addXYZ(-18.5, 67, 134.5)));

@@ -2660,7 +2660,7 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public void displayFlagActionBar(@Nonnull Player player) {
+    public void displayCompassActionBar(@Nonnull Player player) {
         if (this.compassTarget != null) {
             player.sendActionBar(this.compassTarget.getToolbarName(this));
         } else {
