@@ -22,6 +22,17 @@ public class LocationCommand extends BaseCommand {
         Location location = player.getLocation();
         String locationString = NumberFormat.formatOptionalTenths(roundToHalf(location.getX())) + ", " +
                 NumberFormat.formatOptionalTenths(roundToHalf(location.getY())) + ", " +
+                NumberFormat.formatOptionalTenths(roundToHalf(location.getZ()));
+        player.sendMessage(Component.text(locationString, NamedTextColor.AQUA, TextDecoration.BOLD)
+                                    .clickEvent(ClickEvent.copyToClipboard(locationString)));
+    }
+
+    @CommandAlias("mylocation2")
+    @Description("Prints your current location with pitch and yaw, click to copy to clipboard")
+    public void myLocation2(Player player) {
+        Location location = player.getLocation();
+        String locationString = NumberFormat.formatOptionalTenths(roundToHalf(location.getX())) + ", " +
+                NumberFormat.formatOptionalTenths(roundToHalf(location.getY())) + ", " +
                 NumberFormat.formatOptionalTenths(roundToHalf(location.getZ())) + ", " +
                 NumberFormat.formatOptionalTenths(roundToHalf(location.getYaw())) + ", " +
                 NumberFormat.formatOptionalTenths(roundToHalf(location.getPitch()));

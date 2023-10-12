@@ -809,28 +809,27 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(425.5, 15.5, 272.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(455.5, 67.5, 423.5), 45, 30));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(173.5, 67, 426.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(736.5, 67, 450.5, -180, 0), Team.RED));
+            InterceptionPointOption farm = new InterceptionPointOption("Farm", loc.addXYZ(585.5, 54, 479.5));
+            InterceptionPointOption lumbermill = new InterceptionPointOption("Lumbermill", loc.addXYZ(449.5, 96, 587.5));
+            InterceptionPointOption blacksmith = new InterceptionPointOption("Blacksmith", loc.addXYZ(441.5, 65, 447.5));
+            InterceptionPointOption mines = new InterceptionPointOption("Mines", loc.addXYZ(439.5, 12, 290.5));
+            InterceptionPointOption stables = new InterceptionPointOption("Stables", loc.addXYZ(320.5, 56, 454.5));
+            options.add(farm);
+            options.add(lumbermill);
+            options.add(blacksmith);
+            options.add(mines);
+            options.add(stables);
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-114.5, 89.5, 0.5, -90, 0), Team.RED));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(621.5, 56, 448.5, 0, 0), farm));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(452.5, 96, 625.5, -180, 0), lumbermill));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(463.5, 63, 387, 0, 0), blacksmith));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(425.5, 32, 258.5, -90, 0), mines));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(290.5, 56, 418.5, 0, 0), stables));
 
             options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
             options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
-
-            options.add(new WinByPointsOption(2000));
-            options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIME)) {
-                options.add(new WinAfterTimeoutOption(1800));
-            } else {
-                options.add(new WinAfterTimeoutOption());
-            }
-            options.add(new GameOvertimeOption());
-            options.add(new AbstractScoreOnEventOption.FlagCapture());
-            options.add(new AbstractScoreOnEventOption.OnKill());
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
             return options;
         }
@@ -850,35 +849,35 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-24.5, 64, -110.5, 0, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(25.5, 64, 111.5, -180, 0), Team.RED).asOption());
 
             options.add(new PowerupOption(loc.addXYZ(116.5, 55.5, -12.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(-116.5, 53.5, -11.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(87.5, 84.5, -101.5), PowerUp.HEALING, 45, 30));
             options.add(new PowerupOption(loc.addXYZ(-136.5, 84.5, 93.5), PowerUp.HEALING, 45, 30));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+            InterceptionPointOption watchTower = new InterceptionPointOption("Watch Tower", loc.addXYZ(-97.5, 53, -9.5));
+            InterceptionPointOption workshop = new InterceptionPointOption("Workshop", loc.addXYZ(-107.5, 83, 94.5));
+            InterceptionPointOption ruins = new InterceptionPointOption("Ruins", loc.addXYZ(0.5, 86, 0.5));
+            InterceptionPointOption house = new InterceptionPointOption("House", loc.addXYZ(108.5, 83, -93.5));
+            InterceptionPointOption lumbermill = new InterceptionPointOption("Lumbermill", loc.addXYZ(98.5, 51, 10.5));
+            options.add(watchTower);
+            options.add(workshop);
+            options.add(ruins);
+            options.add(house);
+            options.add(lumbermill);
 
-            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
-            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-114.5, 89.5, 0.5, -90, 0), Team.RED));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-111, 52, 13.5, -90, 0), watchTower));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-81.5, 83, 119.5, 90, 0), workshop));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(0.5, 83, -32.5, 0, 0), ruins));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(86.5, 83, -121.5, -90, 0), house));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(94.5, 54, 32.5, 180, 0), lumbermill));
 
-            options.add(new WinByPointsOption(1000));
-            options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIME)) {
-                options.add(new WinAfterTimeoutOption(1800));
-            } else {
-                options.add(new WinAfterTimeoutOption());
-            }
-            options.add(new GameOvertimeOption());
-            options.add(new AbstractScoreOnEventOption.OnKill(15));
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+            options.add(new GateOption(loc.addXYZ(-18.5, 71, -96.5), loc.addXYZ(-30.5, 64, -96.5)));
+            options.add(new GateOption(loc.addXYZ(18.5, 69, 99.5), loc.addXYZ(32.5, 64, 99.5)));
 
             return options;
         }
@@ -890,7 +889,7 @@ public enum GameMap {
             18,
             60 * SECOND,
             "Scorched",
-            0,
+            1,
             GameMode.INTERCEPTION
     ) {
         @Override
@@ -898,33 +897,33 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 43, -141.5, 0, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 43, 144.5, 180, 0), Team.RED).asOption());
 
             options.add(new PowerupOption(loc.addXYZ(113.5, 55.5, 5.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(-112.5, 55.5, 5.5), 45, 30));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+            InterceptionPointOption towers = new InterceptionPointOption("Towers", loc.addXYZ(0.5, 44, 60.5));
+            InterceptionPointOption gate = new InterceptionPointOption("Gate", loc.addXYZ(89.5, 54, 0.55));
+            InterceptionPointOption crater = new InterceptionPointOption("Crater", loc.addXYZ(0.5, 28, 0.5));
+            InterceptionPointOption aviary = new InterceptionPointOption("Aviary", loc.addXYZ(-88.5, 54, 0.5));
+            InterceptionPointOption throne = new InterceptionPointOption("Throne", loc.addXYZ(0.5, 44, -59.5));
+            options.add(towers);
+            options.add(gate);
+            options.add(crater);
+            options.add(aviary);
+            options.add(throne);
 
-            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
-            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 43, 144.5, 180, 0), Team.RED));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-0.5, 33, 72.5, 0, 0), towers));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(101.5, 54, 25.5, 135, 0), gate));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(0.5, 31, 32.5, -180, 0), crater));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-113.5, 54, -10.5, -90, 0), aviary));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(0.5, 33, -73.5, -180, 0), throne));
 
-            options.add(new WinByPointsOption(1000));
-            options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIME)) {
-                options.add(new WinAfterTimeoutOption(1800));
-            } else {
-                options.add(new WinAfterTimeoutOption());
-            }
-            options.add(new GameOvertimeOption());
-            options.add(new AbstractScoreOnEventOption.OnKill(15));
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+            options.add(new GateOption(loc.addXYZ(-3.5, 43, -116.57), loc.addXYZ(4.5, 47, -116.5), Material.IRON_BARS));
+            options.add(new GateOption(loc.addXYZ(-4.5, 43, 117.5), loc.addXYZ(5.5, 47, 117.5), Material.IRON_BARS));
 
             return options;
         }
@@ -944,8 +943,8 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(174.5, 74, -0.5, 90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-170.5, 72, 2.5, -90, 0), Team.RED).asOption());
 
             options.add(new PowerupOption(loc.addXYZ(-60.5, 78.5, -94.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(-31.5, 66.5, 84.5), 45, 30));
@@ -953,27 +952,27 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(33.5, 66.5, -84.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(61.5, 78.5, 95.5), 45, 30));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+            InterceptionPointOption apollo = new InterceptionPointOption("Apollo", loc.addXYZ(62.5, 79, 81.5));
+            InterceptionPointOption pond = new InterceptionPointOption("Pond", loc.addXYZ(48.5, 66, -67.5));
+            InterceptionPointOption altar = new InterceptionPointOption("Altar", loc.addXYZ(0.5, 73, 0.5));
+            InterceptionPointOption inferno = new InterceptionPointOption("Inferno", loc.addXYZ(-47.5, 65, 68.5));
+            InterceptionPointOption monument = new InterceptionPointOption("Monument", loc.addXYZ(-61.5, 78, -80.5));
+            options.add(apollo);
+            options.add(pond);
+            options.add(altar);
+            options.add(inferno);
+            options.add(monument);
 
-            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
-            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(174.5, 74, -0.5, 90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-170.5, 72, 2.5, -90, 0), Team.RED));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(62.5, 74, 32.5, 0, 0), apollo));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(71.5, 66, -86.5, 45, 0), pond));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-20.5, 76, -1.5, -90, 0), altar));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-70.5, 66, 85.5, -125, 0), inferno));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-61.5, 74, -31.5, -180, 0), monument));
 
-            options.add(new WinByPointsOption(1000));
-            options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIME)) {
-                options.add(new WinAfterTimeoutOption(1800));
-            } else {
-                options.add(new WinAfterTimeoutOption());
-            }
-            options.add(new GameOvertimeOption());
-            options.add(new AbstractScoreOnEventOption.OnKill(15));
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+            options.add(new GateOption(loc.addXYZ(155.5, 74, 2.5), loc.addXYZ(155.5, 78, -3.5)));
+            options.add(new GateOption(loc.addXYZ(-156.5, 72, 8.5), loc.addXYZ(-156.5, 76, -3.5)));
 
             return options;
         }
@@ -993,8 +992,8 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-208.5, 62, -57.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(216.5, 67, 58.5, 90, 0), Team.RED).asOption());
 
             options.add(new PowerupOption(loc.addXYZ(58.5, 62.5, 63.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(14.5, 54.5, -11.5), 45, 30));
@@ -1002,27 +1001,28 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(-59.5, 55.5, -88.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(-114.5, 81.5, 115.5), 45, 30));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+            InterceptionPointOption shrine = new InterceptionPointOption("Shrine", loc.addXYZ(76.5, 65, 88.5));
+            InterceptionPointOption tomb = new InterceptionPointOption("Tomb", loc.addXYZ(99.5, 44, -98.5));
+            InterceptionPointOption chasm = new InterceptionPointOption("Chasm", loc.addXYZ(0.5, 54, 0.5));
+            InterceptionPointOption leo = new InterceptionPointOption("Leo", loc.addXYZ(-114.5, 79, 98.5));
+            InterceptionPointOption ruins = new InterceptionPointOption("Ruins", loc.addXYZ(-77.5, 58, -83.5));
+            options.add(shrine);
+            options.add(tomb);
+            options.add(chasm);
+            options.add(leo);
+            options.add(ruins);
 
-            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
-            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-208.5, 62, -57.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(216.5, 67, 58.5, 90, 0), Team.RED));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(82.5, 63, 107.5, -180, 0), shrine));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(132.5, 46, -94.5, 91, 0), tomb));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-23.5, 56, 27.5, -180, 0), chasm));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-138.5, 78, 89.5, -90, 0), leo));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-107.5, 62, -81.5, -90, 0), ruins));
 
-            options.add(new WinByPointsOption(1000));
-            options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIME)) {
-                options.add(new WinAfterTimeoutOption(1800));
-            } else {
-                options.add(new WinAfterTimeoutOption());
-            }
-            options.add(new GameOvertimeOption());
-            options.add(new AbstractScoreOnEventOption.OnKill(15));
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
 
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+            options.add(new GateOption(loc.addXYZ(-175.5, 63, -50.5), loc.addXYZ(-175.5, 67, -64.5), Material.IRON_BARS));
+            options.add(new GateOption(loc.addXYZ(178.5, 67, 65.5), loc.addXYZ(178.5, 73, 51.5), Material.IRON_BARS));
 
             return options;
         }
@@ -1051,7 +1051,6 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(-50.5, 67.5, -84.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(8.5, 73.5, -104.5), 45, 30));
 
-            options.add(new InterceptionOption());
             InterceptionPointOption eclipse = new InterceptionPointOption("Eclipse", loc.addXYZ(0.5, 85, 0.5));
             InterceptionPointOption glacier = new InterceptionPointOption("Glacier", loc.addXYZ(23.5, 62, 70.5));
             InterceptionPointOption sun = new InterceptionPointOption("Sun", loc.addXYZ(-18.5, 67, 134.5));
@@ -1092,8 +1091,8 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(117.5, 5, -122.5, 0, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-211.5, 7, -119.5, 0, 0), Team.RED).asOption());
 
             options.add(new PowerupOption(loc.addXYZ(-41.5, 19.5, 4.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(65.5, 7.5, 56.5), 45, 30));
@@ -1101,27 +1100,29 @@ public enum GameMap {
             options.add(new PowerupOption(loc.addXYZ(-179.5, 14.5, 59.5), 45, 30));
             options.add(new PowerupOption(loc.addXYZ(-67.5, 4.5, -121.5), 45, 30));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-93.5, 81.5, 0.5, -90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(111.5, 83.5, 0.5, 90, 0), Team.RED));
+            InterceptionPointOption bridge = new InterceptionPointOption("Bridge", loc.addXYZ(-46.5, 4, -114.5));
+            InterceptionPointOption stables = new InterceptionPointOption("Stables", loc.addXYZ(85.5, 8, 57.5));
+            InterceptionPointOption stump = new InterceptionPointOption("Stump", loc.addXYZ(-50.5, 13, -4.5));
+            InterceptionPointOption butchers = new InterceptionPointOption("Butchers", loc.addXYZ(-199.5, 7, 37.5));
+            InterceptionPointOption quarry = new InterceptionPointOption("Quarry", loc.addXYZ(-47.5, 3, 59.5));
+            options.add(bridge);
+            options.add(stables);
+            options.add(stump);
+            options.add(butchers);
+            options.add(quarry);
 
-            options.add(new GateOption(loc.addXYZ(183, 67, 447), loc.addXYZ(183, 64, 443)));
-            options.add(new GateOption(loc.addXYZ(727, 67, 437), loc.addXYZ(727, 64, 441)));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(117.5, 5, -122.5, 0, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-211.5, 7, -119.5, 0, 0), Team.RED));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-52.5, 5, -93.5, -180, 0), bridge));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(67.5, 7, 26.5, -30, 0), stables));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-59.5, 12, -34.5, 0, 0), stump));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-171.5, 7, 21, 60, 0), butchers));
+            options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-58.5, 4, 65.5, -118, 0), quarry));
 
-            options.add(new WinByPointsOption(1000));
-            options.add(new MercyWinOption());
-            if (addons.contains(GameAddon.DOUBLE_TIME)) {
-                options.add(new WinAfterTimeoutOption(1800));
-            } else {
-                options.add(new WinAfterTimeoutOption());
-            }
-            options.add(new GameOvertimeOption());
-            options.add(new AbstractScoreOnEventOption.OnKill(15));
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+            options.add(new GateOption(loc.addXYZ(101.5, 6, -95.5), loc.addXYZ(105.5, 13, -95.53)));
+            options.add(new GateOption(loc.addXYZ(124.5, 6, -93.5), loc.addXYZ(129.5, 13, -93.5)));
+            options.add(new GateOption(loc.addXYZ(-202.5, 7, -87.5), loc.addXYZ(-195.5, 15, -87.5)));
+            options.add(new GateOption(loc.addXYZ(-225.5, 7, -88.5), loc.addXYZ(-218.5, 15, -88.5)));
 
             return options;
         }

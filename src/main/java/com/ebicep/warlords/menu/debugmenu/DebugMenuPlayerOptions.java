@@ -273,6 +273,14 @@ public class DebugMenuPlayerOptions {
         }.runTaskLater(Warlords.getInstance(), 1);
     }
 
+    public static void setSpec(Player player, WarlordsEntity target, Specializations selectedSpec, SkillBoosts skillBoost) {
+        target.setSpec(selectedSpec, skillBoost);
+        sendDebugMessage(player, Component.text("Changed ", NamedTextColor.GREEN)
+                                          .append(target.getColoredName())
+                                          .append(Component.text("'s spec to " + selectedSpec.name))
+        );
+    }
+
     static class PlayerOptionMenus {
 
         public static void openCooldownsMenu(Player player, WarlordsEntity target) {
@@ -415,7 +423,8 @@ public class DebugMenuPlayerOptions {
                     target.teleport(marker.getLocation());
                     sendDebugMessage(player, Component.text("Teleported ", NamedTextColor.GREEN)
                                                       .append(target.getColoredName())
-                                                      .append(Component.text(" to " + marker.getName()))
+                                                      .append(Component.text(" to "))
+                                                      .append(marker.getName())
                     );
                 });
 
@@ -733,14 +742,6 @@ public class DebugMenuPlayerOptions {
                 menu.openForPlayer(player);
             }
         }
-    }
-
-    public static void setSpec(Player player, WarlordsEntity target, Specializations selectedSpec, SkillBoosts skillBoost) {
-        target.setSpec(selectedSpec, skillBoost);
-        sendDebugMessage(player, Component.text("Changed ", NamedTextColor.GREEN)
-                                          .append(target.getColoredName())
-                                          .append(Component.text("'s spec to " + selectedSpec.name))
-        );
     }
 
 }

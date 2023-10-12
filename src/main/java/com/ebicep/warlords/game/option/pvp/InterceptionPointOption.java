@@ -93,7 +93,7 @@ public class InterceptionPointOption implements Option {
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
-        game.getPreviousBlocks().putIfAbsent(new LocationUtils.LocationBlockHolder(location), glassBlock.getType());
+        game.getPreviousBlocks().putIfAbsent(new LocationUtils.LocationBlockHolder(glassBlock.getLocation()), glassBlock.getType());
         game.registerGameMarker(CompassTargetMarker.class, new CompassTargetMarker() {
             @Override
             public int getCompassTargetPriority(WarlordsEntity player) {

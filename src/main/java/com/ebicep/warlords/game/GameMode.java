@@ -20,6 +20,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
 import com.ebicep.warlords.game.option.pvp.GameOvertimeOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.InterceptionOption;
 import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
@@ -141,6 +142,9 @@ public enum GameMode {
                     Component.text("GO!", NamedTextColor.GREEN),
                     Component.text("Capture the marked points!", NamedTextColor.YELLOW)
             ));
+
+            options.add(new InterceptionOption());
+
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
