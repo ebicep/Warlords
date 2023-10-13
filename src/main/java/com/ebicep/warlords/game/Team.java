@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game;
 
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -20,7 +21,8 @@ public enum Team {
             ChatColor.BLUE,
             Color.fromRGB(51, 76, 178),
             new ItemStack(Material.BLUE_WOOL),
-            new ItemStack(Material.BLUE_STAINED_GLASS)
+            new ItemStack(Material.BLUE_STAINED_GLASS),
+            BossBar.Color.BLUE
     ),
     RED(
             "Red",
@@ -29,7 +31,8 @@ public enum Team {
             ChatColor.RED,
             Color.fromRGB(153, 51, 51),
             new ItemStack(Material.RED_WOOL),
-            new ItemStack(Material.RED_STAINED_GLASS)
+            new ItemStack(Material.RED_STAINED_GLASS),
+            BossBar.Color.RED
     ),
 
     ;
@@ -50,13 +53,15 @@ public enum Team {
     public final Color armorColor;
     public final ItemStack woolItem;
     public final ItemStack glassItem;
+    public final BossBar.Color bossBarColor;
 
-    Team(String name, String chatTag, NamedTextColor teamColor, ChatColor oldTeamColor, Color armorColor, ItemStack woolItem, ItemStack glassItem) {
+    Team(String name, String chatTag, NamedTextColor teamColor, ChatColor oldTeamColor, Color armorColor, ItemStack woolItem, ItemStack glassItem, BossBar.Color bossBarColor) {
         this.name = name;
         this.teamColor = teamColor;
         this.chatTag = chatTag;
         this.oldTeamColor = oldTeamColor;
         this.glassItem = glassItem;
+        this.bossBarColor = bossBarColor;
         this.chatTagColored = Component.text(chatTag, teamColor);
         this.chatTagBoldColored = Component.text(chatTag, teamColor, TextDecoration.BOLD);
         this.armorColor = armorColor;

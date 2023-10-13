@@ -576,6 +576,41 @@ public enum GameMode {
             return options;
         }
     },
+    SIEGE(
+            "Siege",
+            "Siege",
+            null,//new ItemStack(Material.ZOMBIE_HEAD),
+            null,
+            null,
+            1,
+            true
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    base.append(Component.text("Something about payload here!")),
+                    Component.empty()
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Siege!", NamedTextColor.YELLOW)
+            ));
+
+            options.add(new GameFreezeOption());
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WeaponOption());
+            options.add(new ApplySkillBoostOption());
+            options.add(new HorseOption());
+
+            return options;
+        }
+    },
 
     ;
 
