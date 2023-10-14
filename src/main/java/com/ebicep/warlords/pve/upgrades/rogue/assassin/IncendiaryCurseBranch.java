@@ -53,7 +53,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Unforseen Curse",
+                "Unforeseen Curse",
                 "Incendiary Curse - Master Upgrade",
                 """
                         Increase the Blindness duration by 2s. Additionally, every enemy blinded by Incendiary Curse gives 5 energy.
