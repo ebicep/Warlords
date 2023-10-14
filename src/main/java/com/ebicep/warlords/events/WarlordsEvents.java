@@ -201,9 +201,11 @@ public class WarlordsEvents implements Listener {
             player.removePotionEffect(PotionEffectType.BLINDNESS);
             player.removePotionEffect(PotionEffectType.SLOW);
             player.removePotionEffect(PotionEffectType.ABSORPTION);
-            for (BossBar bossBar : player.activeBossBars()) {
-                player.hideBossBar(bossBar);
-            }
+
+            List<BossBar> bossBars = new ArrayList<>();
+            player.activeBossBars().forEach(bossBars::add);
+            bossBars.forEach(player::hideBossBar);
+
             player.setGameMode(GameMode.ADVENTURE);
             player.setMaxHealth(20);
             player.setHealth(20);
