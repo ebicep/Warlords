@@ -31,7 +31,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.waves.FixedWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.SimpleWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.StaticWaveList;
 import com.ebicep.warlords.game.option.pvp.*;
-import com.ebicep.warlords.game.option.pvp.siege.SiegePoint;
+import com.ebicep.warlords.game.option.pvp.siege.SiegeOption;
 import com.ebicep.warlords.game.option.raid.RaidOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
@@ -4805,14 +4805,13 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 1, 18, 180, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 1, -32.5, 0, 0), Team.RED));
 
-            World world = loc.getWorld();
-            options.add(new SiegePoint(loc.addXYZ(0.5, 1, -7.5)));
+            options.add(new SiegeOption(loc.addXYZ(0.5, 1, -7.5))
+                    .addPayloadStart(Team.BLUE, loc.addXYZ(0.5, 1, -7.5, 180, 0))
+                    .addPayloadStart(Team.RED, loc.addXYZ(0.5, 1, -7.5, 0, 0))
+            );
 
-            options.add(new RespawnWaveOption()); //TODO
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
+            options.add(new GateOption(loc, -5, 1, 15, 5, 10, 15));
+            options.add(new GateOption(loc, -5, 1, -30, 5, 10, -30));
 
             return options;
         }

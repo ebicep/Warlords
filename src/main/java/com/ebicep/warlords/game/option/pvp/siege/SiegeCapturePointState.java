@@ -2,24 +2,23 @@ package com.ebicep.warlords.game.option.pvp.siege;
 
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.MathUtils;
-import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,55 +28,77 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SiegePoint implements Option {
+public class SiegeCapturePointState implements SiegeState, Listener {
 
     public static final double RADIUS = 5;
-    public static final float CAPTURE_RATE = 3.5f;
+    public static final float CAPTURE_RATE = 13.5f;
 
-    private final Location location;
+    private final SiegeOption siegeOption;
     private final Map<Team, TeamCaptureData> teamCapturePercentage = new HashMap<>();
     private Game game;
     private Team capturingTeam;
     private CircleEffect circleEffect;
 
-    public SiegePoint(Location location) {
-        this.location = location;
-    }
-
-    @Override
-    public void register(@Nonnull Game game) {
-        this.game = game;
-        TeamMarker.getTeams(game).forEach(team -> teamCapturePercentage.put(team, new TeamCaptureData(team, 0, 0)));
-        this.circleEffect = new CircleEffect(
-                game,
-                null,
-                location,
-                RADIUS,
-                new CircumferenceEffect(Particle.CRIT).particles(20)
-        );
+    public SiegeCapturePointState(SiegeOption siegeOption) {
+        this.siegeOption = siegeOption;
     }
 
     @Override
     public void start(@Nonnull Game game) {
-        new GameRunnable(game) {
+        this.game = game;
+        game.registerEvents(this);
+        TeamMarker.getTeams(game).forEach(team -> teamCapturePercentage.put(team, new TeamCaptureData(team, 0, 0)));
+        this.circleEffect = new CircleEffect(
+                game,
+                null,
+                siegeOption.getLocation(),
+                RADIUS,
+                .05,
+                new CircumferenceEffect(Particle.CRIT).particles(20)
+        );
+        game.forEachOnlinePlayer((player, team) -> showBossBar(player));
+    }
 
-            int ticksElapsed = 0;
+    @Override
+    public boolean tick(int ticksElapsed) {
+        if (circleEffect != null) {
+            circleEffect.playEffects();
+        }
+        capturingTeam = getCapturingTeam(getPlayersAroundPoint());
+        boolean teamCaptured = updateTeamCapturePercentage();
+        if (teamCaptured) {
+            game.addPoints(capturingTeam, 1);
+            hideBossBars();
+            return true;
+        }
+        return false;
+    }
 
-            @Override
-            public void run() {
-                if (game.isState(EndState.class)) {
-                    return;
-                }
-                if (circleEffect != null) {
-                    circleEffect.playEffects();
-                }
-                capturingTeam = getCapturingTeam(getPlayersAroundPoint());
-                updateTeamCapturePercentage();
-                ticksElapsed++;
-            }
+    @Override
+    public void end() {
+        hideBossBars();
+        HandlerList.unregisterAll(this);
+    }
 
+    @Override
+    public SiegeState getNextState() {
+        return new SiegePayloadState(siegeOption, capturingTeam);
+    }
 
-        }.runTaskTimer(1, 0);
+    @Override
+    public Component getSidebarComponent(int ticksElapsed) {
+        return Component.text("Time Elapsed: ", NamedTextColor.WHITE)
+                        .append(Component.text(StringUtils.formatTimeLeft(ticksElapsed / 20), NamedTextColor.GREEN));
+    }
+
+    @Override
+    public int maxSeconds() {
+        return -1;
+    }
+
+    @Override
+    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        showBossBar(player);
     }
 
     @Nullable
@@ -95,17 +116,19 @@ public class SiegePoint implements Option {
     }
 
     protected Stream<WarlordsEntity> getPlayersAroundPoint() {
-        return PlayerFilter.entitiesAround(location, RADIUS, RADIUS, RADIUS)
+        return PlayerFilter.entitiesAround(siegeOption.getLocation(), RADIUS, RADIUS, RADIUS)
                            .stream()
                            .filter(wp -> wp.getGame() == game && wp.isAlive());
     }
 
-    private void updateTeamCapturePercentage() {
-        teamCapturePercentage.forEach((team, teamCaptureData) -> {
+    private boolean updateTeamCapturePercentage() {
+        for (Map.Entry<Team, TeamCaptureData> entry : teamCapturePercentage.entrySet()) {
+            Team team = entry.getKey();
+            TeamCaptureData teamCaptureData = entry.getValue();
             if (team == capturingTeam) {
                 teamCaptureData.standingTimer++;
                 if (teamCaptureData.standingTimer < 20) {
-                    return;
+                    continue;
                 }
                 teamCaptureData.standingTimer = 0;
                 teamCaptureData.percentage += CAPTURE_RATE;
@@ -113,29 +136,26 @@ public class SiegePoint implements Option {
                         .progress(MathUtils.clamp(teamCaptureData.percentage / 100, 0, 1))
                         .name(Component.text(Math.round(teamCaptureData.percentage) + "%", NamedTextColor.WHITE));
                 if (!(teamCaptureData.percentage >= 100)) {
-                    return;
+                    continue;
                 }
-                WarlordsGameTriggerWinEvent event = new WarlordsGameTriggerWinEvent(game, SiegePoint.this, capturingTeam);
-                Bukkit.getPluginManager().callEvent(event);
-                hideBossBars();
-                return;
+                return true;
             }
             teamCaptureData.standingTimer = 0;
-        });
+        }
+        return false;
     }
 
     private void hideBossBars() {
         game.forEachOnlinePlayer((player, team) -> teamCapturePercentage.forEach((t, teamCaptureData) -> player.hideBossBar(teamCaptureData.bossBar)));
     }
 
-    @Override
-    public void onGameEnding(@Nonnull Game game) {
-        hideBossBars();
+    private void showBossBar(Player player) {
+        teamCapturePercentage.forEach((team, teamCaptureData) -> player.showBossBar(teamCaptureData.bossBar));
     }
 
-    @Override
-    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        teamCapturePercentage.forEach((team, teamCaptureData) -> player.showBossBar(teamCaptureData.bossBar));
+    @EventHandler
+    public void onRespawnGive(WarlordsGiveRespawnEvent event) {
+        event.getRespawnTimer().set(10);
     }
 
     static final class TeamCaptureData {

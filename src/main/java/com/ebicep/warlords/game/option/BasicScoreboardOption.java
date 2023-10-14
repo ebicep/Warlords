@@ -25,7 +25,7 @@ public class BasicScoreboardOption implements Option {
         game.registerGameMarker(ScoreboardHandler.class, getVersionScoreboard(game));
         GameMode gameMode = game.getGameMode();
         switch (gameMode) {
-            case INTERCEPTION, SIMULATION_TRIAL, CAPTURE_THE_FLAG, TEAM_DEATHMATCH, DEBUG -> game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game));
+            case INTERCEPTION, SIMULATION_TRIAL, CAPTURE_THE_FLAG, TEAM_DEATHMATCH, DEBUG, SIEGE -> game.registerGameMarker(ScoreboardHandler.class, getStatsScoreboard(game));
         }
         if (gameMode != GameMode.INTERCEPTION) {
             game.registerGameMarker(ScoreboardHandler.class, getSpecScoreboard(game));

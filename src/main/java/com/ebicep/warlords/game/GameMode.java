@@ -593,7 +593,7 @@ public enum GameMode {
             options.add(TextOption.Type.CHAT_CENTERED.create(
                     Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
                     Component.empty(),
-                    base.append(Component.text("Something about payload here!")),
+                    base.append(Component.text("Something about siege here!")),
                     Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(
@@ -602,11 +602,19 @@ public enum GameMode {
                     Component.text("Siege!", NamedTextColor.YELLOW)
             ));
 
+            options.add(new WinByPointsOption(4));
+
             options.add(new GameFreezeOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
+
+            options.add(new RespawnWaveOption()); // timers handled by siegeoption
+            options.add(new RespawnProtectionOption(5, 10, false));
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
 
             return options;
         }

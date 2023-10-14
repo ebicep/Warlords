@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -21,16 +22,24 @@ public class PayloadBrain {
         add(locationBuilder -> locationBuilder.forward(1).addY(1));
         add(locationBuilder -> locationBuilder.forward(1).addY(-1));
     }};
-    private static final double MOVE_PER_TICK = 0.15;//25; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
+    public static final double DEFAULT_FORWARD_MOVE_PER_TICK = 0.15;//25; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
 
     private final Location start;
     private final List<Location> path = new ArrayList<>();
     private final Location currentLocation;
+    private final double forwardMovePerTick;
+    private final double backwardMovePerTick;
     private double currentPathIndex = 0;
 
-    public PayloadBrain(Location start) {
+    public PayloadBrain(@Nonnull Location start) {
+        this(start, DEFAULT_FORWARD_MOVE_PER_TICK, 0);
+    }
+
+    public PayloadBrain(@Nonnull Location start, double forwardMovePerTick, double backwardMovePerTick) {
         this.start = start;
         this.currentLocation = start.clone();
+        this.forwardMovePerTick = forwardMovePerTick;
+        this.backwardMovePerTick = backwardMovePerTick;
         ChatUtils.MessageType.WARLORDS.sendMessage("Start: " + start);
         findPath();
 //        for (Location location : path) {
@@ -78,7 +87,7 @@ public class PayloadBrain {
     /**
      * @return true if the path is complete / reached end
      */
-    public boolean tick() {
+    public boolean tick(int netEscorting) {
         if (currentPathIndex >= path.size()) {
             return true;
         }
@@ -92,8 +101,9 @@ public class PayloadBrain {
         LocationBuilder location = new LocationBuilder(currentLocation);
         Vector direction = nextPathLocation.toVector().subtract(location.toVector()).normalize();
         currentLocation.setDirection(direction);
-        currentLocation.add(direction.multiply(MOVE_PER_TICK));
-        currentPathIndex += MOVE_PER_TICK;
+        double move = netEscorting > 0 ? this.forwardMovePerTick : -this.backwardMovePerTick;
+        currentLocation.add(direction.multiply(move));
+        currentPathIndex += move;
         return false;
     }
 

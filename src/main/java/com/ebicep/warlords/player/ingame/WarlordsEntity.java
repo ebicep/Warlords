@@ -1852,7 +1852,7 @@ public abstract class WarlordsEntity {
         return respawnTickTimer;
     }
 
-    public void setRespawnTickTimer(int respawnTickTimer) {
+    public void setRespawnTimerSeconds(int respawnTickTimer) {
         //convert respawntimer to ticks
         this.respawnTickTimer = respawnTickTimer * 20;
     }
@@ -2757,7 +2757,7 @@ public abstract class WarlordsEntity {
         if (entity instanceof Player) {
             entity.clearTitle();
         }
-        setRespawnTickTimer(-1);
+        setRespawnTimerSeconds(-1);
         setEnergy(getMaxEnergy() / 2);
         dead = false;
         teleport(respawnPoint);

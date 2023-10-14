@@ -29,19 +29,25 @@ public class RespawnProtectionOption implements Option, Listener {
     private int protectionTime;
     private int radius;
     private int radiusSquared;
+    private boolean removeHorse;
 
     public RespawnProtectionOption() {
-        this(DEFAULT_PROTECTION_TIME, DEFAULT_RADIUS);
+        this(DEFAULT_PROTECTION_TIME, DEFAULT_RADIUS, true);
+    }
+
+    public RespawnProtectionOption(boolean removeHorse) {
+        this(DEFAULT_PROTECTION_TIME, DEFAULT_RADIUS, removeHorse);
     }
 
     public RespawnProtectionOption(int protectionTime) {
-        this(protectionTime, DEFAULT_RADIUS);
+        this(protectionTime, DEFAULT_RADIUS, true);
     }
 
-    public RespawnProtectionOption(int protectionTime, int radius) {
+    public RespawnProtectionOption(int protectionTime, int radius, boolean removeHorse) {
         this.protectionTime = protectionTime;
         this.radius = radius;
         this.radiusSquared = radius * radius;
+        this.removeHorse = removeHorse;
     }
 
     public int getRadius() {
@@ -95,11 +101,12 @@ public class RespawnProtectionOption implements Option, Listener {
     
     @EventHandler()
     public void onEvent(WarlordsDamageHealingEvent event) {
-        if (spawnProtection.containsKey(event.getWarlordsEntity())) {
-            if (event.getAttacker().getTeam() != event.getWarlordsEntity().getTeam()) {
-                event.getWarlordsEntity().removeHorse();
-            }
-            event.setCancelled(true);
+        if (!spawnProtection.containsKey(event.getWarlordsEntity())) {
+            return;
         }
+        if (removeHorse && event.getAttacker().getTeam() != event.getWarlordsEntity().getTeam()) {
+            event.getWarlordsEntity().removeHorse();
+        }
+        event.setCancelled(true);
     }
 }

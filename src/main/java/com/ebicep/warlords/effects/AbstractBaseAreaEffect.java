@@ -11,6 +11,7 @@ public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implemen
     @Nonnull
     protected Location center;
     protected final List<T> effects = new ArrayList<>();
+    protected double additionalYOffset = 0;
 
     @Nonnull
     public Location getCenter() {
@@ -18,7 +19,7 @@ public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implemen
     }
 
     public void setCenter(@Nonnull Location center) {
-        center.setY(center.getBlockY() + 0.01);
+        center.setY(center.getBlockY() + 0.01 + additionalYOffset);
         this.center = center;
     }
 

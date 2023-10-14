@@ -173,7 +173,7 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
                     return;
                 }
                 if (delay == 0) {
-                    openGates();
+                    openGates0();
                     cancel();
                 }
                 if (shouldBroadcast) {
@@ -222,14 +222,14 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
         if (this.delay > 0) {
             this.delay -= delay / 20;
             if (delay <= 0) {
-                openGates();
+                openGates0();
             }
         }
     }
 
-    public void openGates() {
+    private void openGates0() {
         delay = -1;
-        changeGate(closed, open);
+        openGates();
         if (this.shouldBroadcast) {
             for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
                 Player player = entry.getKey();
@@ -237,6 +237,14 @@ public class GateOption extends AbstractCuboidOption implements TimerSkipAbleMar
                 sendMessage(player, false, Component.text("Gates opened! ", NamedTextColor.YELLOW).append(Component.text("FIGHT!", NamedTextColor.RED)));
             }
         }
+    }
+
+    public void openGates() {
+        changeGate(closed, open);
+    }
+
+    public void closeGates() {
+        changeGate(open, closed);
     }
 
     @Nullable

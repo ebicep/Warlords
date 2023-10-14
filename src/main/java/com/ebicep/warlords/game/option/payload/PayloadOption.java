@@ -38,7 +38,7 @@ public class PayloadOption implements PveOption {
     private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final PayloadBrain brain;
-    private final PayloadRenderer renderer = new PayloadRenderer();
+    private final PayloadRendererCoalCart renderer = new PayloadRendererCoalCart();
     private final PayloadSpawns spawns;
     private final BossBar bossBar = BossBar.bossBar(Component.empty(), 0, BossBar.Color.BLUE, BossBar.Overlay.NOTCHED_10);
     private final Team escortingTeam;
@@ -108,7 +108,7 @@ public class PayloadOption implements PveOption {
 
                 int netEscorting = getNetEscorting(oldLocation);
                 if (netEscorting > 0) {
-                    boolean reachedEnd = brain.tick();
+                    boolean reachedEnd = brain.tick(netEscorting);
                     if (reachedEnd) {
                         Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, PayloadOption.this, escortingTeam));
                     }

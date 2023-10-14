@@ -118,13 +118,13 @@ public class GameDebugCommand extends BaseCommand {
         });
     }
 
-    @CommandAlias("gamedebugevent|gdevent")
-    @Description("Auto starts latest event game")
+    @CommandAlias("gamedebugsiege|gds")
+    @Description("Auto starts siege game")
     public void gameDebugEvent(@Conditions("outsideGame") Player player) {
         GameStartCommand.startGame(player, false, queueEntryBuilder -> {
             queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
-            queueEntryBuilder.setGameMode(GameMode.EVENT_WAVE_DEFENSE);
-            queueEntryBuilder.setMap(GameMap.ACROPOLIS);
+            queueEntryBuilder.setGameMode(GameMode.SIEGE);
+            queueEntryBuilder.setMap(GameMap.PAYLOAD2);
             queueEntryBuilder.setOnResult((queueResult, game) -> {
                 game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
             });
