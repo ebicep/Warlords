@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.minecraft.core.BlockPos;
@@ -297,6 +298,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nullable Player player) {
+        ChatUtils.MessageType.WARLORDS.sendMessage(shooter + " used " + name);
         shooter.subtractEnergy(name, energyCost, false);
 
         fire(shooter, shooter.getEyeLocation());

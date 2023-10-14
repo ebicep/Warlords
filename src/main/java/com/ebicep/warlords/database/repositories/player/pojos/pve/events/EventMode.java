@@ -26,4 +26,11 @@ public interface EventMode {
 
     List<AbstractBounty> getActiveBounties();
 
+    default List<AbstractBounty> getTrackableBounties() {
+        return getActiveBounties().stream()
+                                  .filter(abstractBounty -> abstractBounty != null && abstractBounty.isStarted() && abstractBounty.getProgress() != null)
+                                  .toList();
+    }
+
+
 }

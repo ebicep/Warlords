@@ -20,7 +20,7 @@ public class ZombieVanguard extends AbstractZombie implements AdvancedMob {
                 "Zombie Vanguard",
                 7000,
                 0.4f,
-                80,
+                10,
                 500,
                 700
         );

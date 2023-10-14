@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.bountysystem.trackers;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.EventShopPurchaseEvent;
@@ -50,7 +51,12 @@ public interface TracksOutsideGame {
                     if (bountyInfo == null) {
                         continue;
                     }
-                    DatabaseManager.getPlayer(uuid, activeCollection, this::refreshTracker);
+                    DatabaseManager.getPlayer(uuid, activeCollection, databasePlayer -> {
+                        refreshTracker(databasePlayer);
+                        if (activeCollection == PlayersCollections.LIFETIME) {
+                            refreshEventTracker(databasePlayer);
+                        }
+                    });
                 }
             }
 
@@ -68,6 +74,28 @@ public interface TracksOutsideGame {
                             return oldValue;
                         }
                 );
+
+            }
+
+            private void refreshEventTracker(DatabasePlayer databasePlayer) {
+                if (DatabaseGameEvent.eventIsActive()) {
+                    DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+                    CACHED_ONLINE_PLAYER_TRACKERS.merge(
+                            databasePlayer.getUuid(),
+                            currentGameEvent.getEvent().eventsStatsFunction
+                                    .apply(databasePlayer.getPveStats().getEventStats())
+                                    .get(currentGameEvent.getStartDateSecond())
+                                    .getTrackableBounties()
+                                    .stream()
+                                    .filter(TracksOutsideGame.class::isInstance)
+                                    .map(TracksOutsideGame.class::cast)
+                                    .collect(Collectors.toSet()),
+                            (oldValue, newValue) -> {
+                                oldValue.addAll(newValue);
+                                return oldValue;
+                            }
+                    );
+                }
             }
 
             @EventHandler
@@ -89,30 +117,6 @@ public interface TracksOutsideGame {
             public void onWeaponSalvagePost(WeaponSalvageEvent.Post event) {
                 quicklyValidate();
                 runTracker(event.getUUID(), tracker -> tracker.onWeaponSalvage(event.getWeapon()));
-            }
-
-            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-            public void onLegendaryWeaponCraft(LegendaryWeaponCraftEvent event) {
-                quicklyValidate();
-                runTracker(event.getUUID(), tracker -> tracker.onLegendaryWeaponCraft(event.getAbstractLegendaryWeapon()));
-            }
-
-            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-            public void onWeaponTitlePurchase(WeaponTitlePurchaseEvent event) {
-                quicklyValidate();
-                runTracker(event.getUUID(), tracker -> tracker.onWeaponTitlePurchase(event.getAbstractLegendaryWeapon()));
-            }
-
-            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-            public void onSpecPrestige(SpecPrestigeEvent event) {
-                quicklyValidate();
-                runTracker(event.getUUID(), TracksOutsideGame::onSpecPrestige);
-            }
-
-            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-            public void onEventShopPurchase(EventShopPurchaseEvent event) {
-                quicklyValidate();
-                runTracker(event.getUUID(), tracker -> tracker.onEventShopPurchase(event.getBought()));
             }
 
             private void quicklyValidate() {
@@ -156,6 +160,30 @@ public interface TracksOutsideGame {
             }
 
             @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onLegendaryWeaponCraft(LegendaryWeaponCraftEvent event) {
+                quicklyValidate();
+                runTracker(event.getUUID(), tracker -> tracker.onLegendaryWeaponCraft(event.getAbstractLegendaryWeapon()));
+            }
+
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onWeaponTitlePurchase(WeaponTitlePurchaseEvent event) {
+                quicklyValidate();
+                runTracker(event.getUUID(), tracker -> tracker.onWeaponTitlePurchase(event.getAbstractLegendaryWeapon()));
+            }
+
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onSpecPrestige(SpecPrestigeEvent event) {
+                quicklyValidate();
+                runTracker(event.getUUID(), TracksOutsideGame::onSpecPrestige);
+            }
+
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onEventShopPurchase(EventShopPurchaseEvent event) {
+                quicklyValidate();
+                runTracker(event.getUUID(), tracker -> tracker.onEventShopPurchase(event.getBought()));
+            }
+
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
             public void onSupplyDropCall(SupplyDropCallEvent event) {
                 quicklyValidate();
                 runTracker(event.getUUID(), tracker -> tracker.onSupplyDropCall(event.getAmount()));
@@ -165,9 +193,6 @@ public interface TracksOutsideGame {
     }
 
     default void onWeaponSalvage(AbstractWeapon weapon) {
-    }
-
-    default void onSupplyDropCall(long amount) {
     }
 
     default void onLegendaryWeaponCraft(AbstractLegendaryWeapon weapon) {
@@ -180,6 +205,9 @@ public interface TracksOutsideGame {
     }
 
     default void onEventShopPurchase(SpendableBuyShop shop) {
+    }
+
+    default void onSupplyDropCall(long amount) {
     }
 
 }

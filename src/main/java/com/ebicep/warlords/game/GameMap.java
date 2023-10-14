@@ -4033,7 +4033,7 @@ public enum GameMap {
                     .loop(6, 21, 5)
                     .loop(6, 25, 5)
                     ,
-                    DifficultyIndex.EVENT, 1
+                    DifficultyIndex.EVENT
             ) {
                 @Override
                 public void register(@Nonnull Game game) {

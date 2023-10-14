@@ -86,7 +86,7 @@ public abstract class AbstractBounty implements RewardSpendable, BountyCost {
         }
         return Collections.singletonList(Component.textOfChildren(
                 Component.text("Progress: ", NamedTextColor.GRAY),
-                Component.text(value, NamedTextColor.GOLD),
+                Component.text(NumberFormat.addCommaAndRound(value), NamedTextColor.GOLD),
                 Component.text("/", NamedTextColor.AQUA),
                 Component.text(NumberFormat.addCommaAndRound(getTarget()), NamedTextColor.GOLD)
         ));
