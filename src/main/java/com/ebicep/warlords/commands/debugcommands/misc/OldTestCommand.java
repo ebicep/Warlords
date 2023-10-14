@@ -9,15 +9,10 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Transformation;
-import org.joml.AxisAngle4f;
-import org.joml.Vector3f;
 
 import java.awt.*;
 
@@ -112,10 +107,6 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
-            player.getWorld().spawn(player.getLocation().getBlock().getLocation().add(.2, 0, .2), BlockDisplay.class, false, blockDisplay -> {
-                blockDisplay.setBlock(Material.WHITE_WOOL.createBlockData());
-                blockDisplay.setTransformation(new Transformation(new Vector3f(), new AxisAngle4f(), new Vector3f(.65f), new AxisAngle4f()));
-            });
 
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {
 //                for (Currencies value : Currencies.VALUES) {

@@ -23,10 +23,8 @@ public class PacketUtils {
     public static final ProtocolManager PROTOCOL_MANAGER = ProtocolLibrary.getProtocolManager();
 
     public static void init(Warlords instance) {
-        ProtocolManager protocolManager;
-        protocolManager = ProtocolLibrary.getProtocolManager();
-        protocolManager.removePacketListeners(instance);
-        protocolManager.addPacketListener(
+        PROTOCOL_MANAGER.removePacketListeners(instance);
+        PROTOCOL_MANAGER.addPacketListener(
                 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Server.WORLD_PARTICLES) {
                     int counter = 0;
 
@@ -47,7 +45,7 @@ public class PacketUtils {
                 Sound.ENTITY_PLAYER_ATTACK_NODAMAGE,
                 Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK
         );
-        protocolManager.addPacketListener(
+        PROTOCOL_MANAGER.addPacketListener(
 
                 new PacketAdapter(instance, PacketType.Play.Server.NAMED_SOUND_EFFECT) {
                     @Override

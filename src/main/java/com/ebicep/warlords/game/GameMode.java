@@ -616,6 +616,8 @@ public enum GameMode {
 
             options.add(new BasicScoreboardOption());
 
+            options.add(new GlowingTeamOption());
+
             return options;
         }
     },
