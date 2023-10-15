@@ -30,7 +30,7 @@ public class FlemingAlmanac extends SpecialOmegaTome implements AppliesToWarlord
 
     @Override
     public String getBonus() {
-        return "Triples the amount of coins you gain but halve the amount of Legend Fragments you gain.";
+        return "Triple the amount of coins you gain but halve the amount of Legend Fragments you gain.";
     }
 
     @Override

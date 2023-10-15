@@ -19,7 +19,7 @@ public class LeafGrimoire extends SpecialGammaTome implements CraftsInto.CraftsB
 
     @Override
     public String getName() {
-        return "4-Leaf Grimiore";
+        return "4-Leaf Grimoire";
     }
 
     @Override

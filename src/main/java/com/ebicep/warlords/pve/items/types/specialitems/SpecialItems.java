@@ -63,6 +63,16 @@ public enum SpecialItems {
     SLIPPERY_SHIELD(SlipperyShield::new),
     STALWART_CHAKRAM(StalwartChakram::new),
     THORNY_CHAKRAM(ThornyChakram::new),
+    SUBSTITUTION_BRACER(SubstitutionBracer::new),
+    OCULAR_BRACER(OcularBracer::new),
+    TYPE_BRACER(TypeBracer::new),
+    INTANGIBLE_GRIMOIRE(IntangibleGrimoire::new),
+    LEAF_GRIMOIRE(LeafGrimoire::new),
+    TRANSLUCENT_GRIMIORE(TranslucentGrimiore::new),
+    CHAOS_SIGIL(ChaosSigil::new),
+    SECURITY_SIGIL(SecuritySigil::new),
+    ILLUMINATING_SIGIL(IlluminatingSigil::new),
+
     //DELTA
     SOOTHSAYERS_PALMS(SoothsayersPalms::new),
     SAMSONS_FISTS(SamsonsFists::new),
@@ -71,7 +81,7 @@ public enum SpecialItems {
     MULTIPURPOSE_KNUCKLES(MultipurposeKnuckles::new),
     DIABOLICAL_RINGS(DiabolicalRings::new),
 
-    FIREWATER_ALMANAC(FirewaterAlmanac::new), //TODO
+    FIREWATER_GRIMIORE(FirewaterAlmanac::new),
     THE_PRESENT_TESTAMENT(ThePresentTestament::new),
     A_GUIDE_TO_MMA(AGuideToMMA::new),
     GHOUL_TOME(PansTome::new),
@@ -154,7 +164,16 @@ public enum SpecialItems {
             OVERGROWN_BUCKLER,
             SLIPPERY_SHIELD,
             STALWART_CHAKRAM,
-            THORNY_CHAKRAM
+            THORNY_CHAKRAM,
+            SUBSTITUTION_BRACER,
+            OCULAR_BRACER,
+            TYPE_BRACER,
+            INTANGIBLE_GRIMOIRE,
+            LEAF_GRIMOIRE,
+            TRANSLUCENT_GRIMIORE,
+            CHAOS_SIGIL,
+            SECURITY_SIGIL,
+            ILLUMINATING_SIGIL,
     };
     public static final SpecialItems[] DELTA_ITEMS = {
             SOOTHSAYERS_PALMS,
@@ -163,7 +182,7 @@ public enum SpecialItems {
             GARDENING_GLOVES,
             MULTIPURPOSE_KNUCKLES,
             DIABOLICAL_RINGS,
-            FIREWATER_ALMANAC,
+            FIREWATER_GRIMIORE,
             THE_PRESENT_TESTAMENT,
             A_GUIDE_TO_MMA,
             GHOUL_TOME,
