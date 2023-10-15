@@ -85,9 +85,18 @@ public class PayloadBrain {
 
 
     /**
+     * @param netEscorting if 0 then no movement, if positive then forward, if negative then backward
      * @return true if the path is complete / reached end
      */
     public boolean tick(int netEscorting) {
+        return tick(netEscorting > 0 ? this.forwardMovePerTick : -this.backwardMovePerTick);
+    }
+
+    /**
+     * @param movePerTick how much the payload should move
+     * @return true if the path is complete / reached end
+     */
+    public boolean tick(double movePerTick) {
         if (currentPathIndex >= path.size()) {
             return true;
         }
@@ -101,9 +110,8 @@ public class PayloadBrain {
         LocationBuilder location = new LocationBuilder(currentLocation);
         Vector direction = nextPathLocation.toVector().subtract(location.toVector()).normalize();
         currentLocation.setDirection(direction);
-        double move = netEscorting > 0 ? this.forwardMovePerTick : -this.backwardMovePerTick;
-        currentLocation.add(direction.multiply(move));
-        currentPathIndex += move;
+        currentLocation.add(direction.multiply(movePerTick));
+        currentPathIndex += movePerTick;
         return false;
     }
 
@@ -121,5 +129,9 @@ public class PayloadBrain {
 
     public double getCurrentPathIndex() {
         return currentPathIndex;
+    }
+
+    public double getBackwardMovePerTick() {
+        return backwardMovePerTick;
     }
 }

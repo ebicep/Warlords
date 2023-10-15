@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.pvp.siege;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.ClosedState;
@@ -48,6 +49,20 @@ public class SiegeOption implements Option {
                 return Collections.singletonList(state.getSidebarComponent(ticksElapsed));
             }
         });
+        game.registerGameMarker(TimerSkipAbleMarker.class, new TimerSkipAbleMarker() {
+            @Override
+            public int getDelay() {
+                return 0;
+            }
+
+            @Override
+            public void skipTimer(int delayInTicks) {
+                if (state == null || !(state instanceof TimerSkipAbleMarker timerSkipAbleMarker)) {
+                    return;
+                }
+                timerSkipAbleMarker.skipTimer(delayInTicks);
+            }
+        });
     }
 
     @Override
@@ -69,10 +84,7 @@ public class SiegeOption implements Option {
                     this.cancel();
                     return;
                 }
-                state.end();
-                state = state.getNextState();
-                state.start(game);
-                ticksElapsed = 0;
+                gotoNextState();
             }
         }.runTaskTimer(20, 0);
     }
@@ -87,6 +99,13 @@ public class SiegeOption implements Option {
             return;
         }
         state.updateInventory(warlordsPlayer, player);
+    }
+
+    private void gotoNextState() {
+        state.end();
+        state = state.getNextState();
+        state.start(game);
+        ticksElapsed = 0;
     }
 
     public Map<Team, Location> getTeamPayloadStart() {

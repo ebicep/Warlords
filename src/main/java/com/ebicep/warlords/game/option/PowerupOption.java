@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
@@ -13,9 +14,11 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 
@@ -188,7 +191,7 @@ public class PowerupOption implements Option {
     }
 
     public enum PowerUp {
-        SPEED(NamedTextColor.YELLOW, 10, Material.YELLOW_WOOL) {
+        SPEED("SPEED", NamedTextColor.YELLOW, 10, Material.YELLOW_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(SpeedPowerup.class, false);
@@ -223,8 +226,7 @@ public class PowerupOption implements Option {
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.YELLOW_WOOL));
             }
         },
-
-        HEALING(NamedTextColor.GREEN, 5, Material.GREEN_WOOL) {
+        HEALING("HEALING", NamedTextColor.GREEN, 5, Material.GREEN_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(HealingPowerup.class, false);
@@ -271,8 +273,7 @@ public class PowerupOption implements Option {
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.GREEN_WOOL));
             }
         },
-
-        ENERGY(NamedTextColor.GOLD, 30, Material.ORANGE_WOOL) {
+        ENERGY("ENERGY", NamedTextColor.GOLD, 30, Material.ORANGE_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(EnergyPowerup.class, false);
@@ -310,8 +311,7 @@ public class PowerupOption implements Option {
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.ORANGE_WOOL));
             }
         },
-
-        DAMAGE(NamedTextColor.RED, 30, Material.RED_WOOL) {
+        DAMAGE("DAMAGE", NamedTextColor.RED, 30, Material.RED_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(DamagePowerup.class, false);
@@ -349,8 +349,7 @@ public class PowerupOption implements Option {
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.RED_WOOL));
             }
         },
-
-        COOLDOWN(NamedTextColor.AQUA, 30, Material.LIGHT_BLUE_WOOL) {
+        COOLDOWN("COOLDOWN", NamedTextColor.AQUA, 30, Material.LIGHT_BLUE_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(CooldownPowerup.class, false);
@@ -389,8 +388,7 @@ public class PowerupOption implements Option {
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.LIGHT_BLUE_WOOL));
             }
         },
-
-        SELF_DAMAGE(NamedTextColor.DARK_RED, 0, Material.RED_WOOL) {
+        SELF_DAMAGE("SELF DAMAGE", NamedTextColor.DARK_RED, 0, Material.RED_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.addDamageInstance(we, "Self Damage Powerup", 5000, 5000, 0, 100);
@@ -402,8 +400,7 @@ public class PowerupOption implements Option {
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.RED_WOOL));
             }
         },
-
-        SELF_HEAL(NamedTextColor.DARK_GREEN, 0, Material.GREEN_WOOL) {
+        SELF_HEAL("SELF HEAL", NamedTextColor.DARK_GREEN, 0, Material.GREEN_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, 0, 100);
@@ -414,7 +411,55 @@ public class PowerupOption implements Option {
                 armorStand.customName(Component.text("5000 SELF HEAL", NamedTextColor.DARK_GREEN, TextDecoration.BOLD));
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.GREEN_WOOL));
             }
-        };
+        },
+        PAYLOAD_BATTERY("PAYLOAD BATTERY", TextColor.color(255, 249, 23), 25, Material.YELLOW_TERRACOTTA) {
+            @Override
+            public void onPickUp(PowerupOption option, WarlordsEntity we) {
+                Runnable speedModifier = we.addSpeedModifier(we, "Payload Battery", -15, getTickDuration(), "BASE");
+                we.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Payload Battery",
+                        "BATTERY",
+                        CooldownPowerup.class,
+                        CooldownPowerup.COOLDOWN_POWERUP,
+                        we,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {
+
+                        },
+                        cooldownManager -> {
+                            we.sendMessage(getWornOffMessage());
+                            speedModifier.run();
+                        },
+                        getTickDuration(),
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 10 == 0) {
+                                EffectUtils.displayParticle(
+                                        Particle.ELECTRIC_SPARK,
+                                        we.getLocation().add(0, 1.2, 0),
+                                        5,
+                                        .3,
+                                        .3,
+                                        .3,
+                                        0
+                                );
+                            }
+                        })
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 1.1f;
+                    }
+                });
+            }
+
+            @Override
+            public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
+                armorStand.customName(Component.text("BATTERY", getTextColor(), TextDecoration.BOLD));
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.YELLOW_TERRACOTTA));
+            }
+        },
+
+        ;
 
         public static final PowerUp[] VALUES = values();
         public static final PowerUp[] DEFAULT_POWERUPS = {ENERGY, HEALING};
@@ -423,11 +468,13 @@ public class PowerupOption implements Option {
             return DEFAULT_POWERUPS[ThreadLocalRandom.current().nextInt(DEFAULT_POWERUPS.length)];
         }
 
-        private final NamedTextColor textColor;
+        private final String name;
+        private final TextColor textColor;
         private final int secondDuration;
         private final Material debugMaterial;
 
-        PowerUp(NamedTextColor textColor, int secondDuration, Material debugMaterial) {
+        PowerUp(String name, TextColor textColor, int secondDuration, Material debugMaterial) {
+            this.name = name;
             this.textColor = textColor;
             this.secondDuration = secondDuration;
             this.debugMaterial = debugMaterial;
@@ -435,8 +482,12 @@ public class PowerupOption implements Option {
 
         public Component getWornOffMessage() {
             return Component.text("Your ", NamedTextColor.GOLD)
-                            .append(Component.text(name(), textColor, TextDecoration.BOLD))
+                            .append(Component.text(name, textColor, TextDecoration.BOLD))
                             .append(Component.text(" powerup has worn off."));
+        }
+
+        public TextColor getTextColor() {
+            return textColor;
         }
 
         public int getSecondDuration() {

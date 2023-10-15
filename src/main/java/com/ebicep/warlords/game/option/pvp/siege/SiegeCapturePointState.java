@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.MathUtils;
@@ -28,10 +29,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SiegeCapturePointState implements SiegeState, Listener {
+public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAbleMarker {
 
     public static final double RADIUS = 5;
-    public static final float CAPTURE_RATE = 13.5f;
+    public static final float CAPTURE_RATE = 33.5f;
 
     private final SiegeOption siegeOption;
     private final Map<Team, TeamCaptureData> teamCapturePercentage = new HashMap<>();
@@ -131,11 +132,8 @@ public class SiegeCapturePointState implements SiegeState, Listener {
                     continue;
                 }
                 teamCaptureData.standingTimer = 0;
-                teamCaptureData.percentage += CAPTURE_RATE;
-                teamCaptureData.bossBar
-                        .progress(MathUtils.clamp(teamCaptureData.percentage / 100, 0, 1))
-                        .name(Component.text(Math.round(teamCaptureData.percentage) + "%", NamedTextColor.WHITE));
-                if (!(teamCaptureData.percentage >= 100)) {
+                teamCaptureData.addPercentage(CAPTURE_RATE);
+                if (teamCaptureData.percentage < 100) {
                     continue;
                 }
                 return true;
@@ -158,6 +156,11 @@ public class SiegeCapturePointState implements SiegeState, Listener {
         event.getRespawnTimer().set(10);
     }
 
+    @Override
+    public void skipTimer(int delayInTicks) {
+        teamCapturePercentage.forEach((team, teamCaptureData) -> teamCaptureData.setPercentage(99));
+    }
+
     static final class TeamCaptureData {
         private final BossBar bossBar;
         private float percentage;
@@ -172,6 +175,21 @@ public class SiegeCapturePointState implements SiegeState, Listener {
             );
             this.percentage = percentage;
             this.standingTimer = standingTimer;
+        }
+
+        public void setPercentage(float percentage) {
+            this.percentage = percentage;
+            updateBossBar();
+        }
+
+        public void addPercentage(float percentage) {
+            this.percentage += percentage;
+            updateBossBar();
+        }
+
+        public void updateBossBar() {
+            bossBar.progress(MathUtils.clamp(percentage / 100, 0, 1))
+                   .name(Component.text(Math.round(percentage) + "%", NamedTextColor.WHITE));
         }
 
     }

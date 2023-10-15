@@ -6,15 +6,20 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.payload.Payload;
 import com.ebicep.warlords.game.option.payload.PayloadBrain;
 import com.ebicep.warlords.game.option.payload.PayloadRendererCoalCart;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.StringUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -22,13 +27,14 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
 
-public class SiegePayloadState implements SiegeState, Listener {
+public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMarker {
 
     private final SiegeOption siegeOption;
     private final Team escortingTeam;
     private Game game;
     private Payload payload;
     private int transitionTickDelay = 0; // for animations/title screens
+    private int ticksElapsedAtTransition = -1;
 
     public SiegePayloadState(SiegeOption siegeOption, Team escortingTeam) {
         this.siegeOption = siegeOption;
@@ -43,7 +49,62 @@ public class SiegePayloadState implements SiegeState, Listener {
                 new PayloadBrain(siegeOption.getTeamPayloadStart().get(escortingTeam), PayloadBrain.DEFAULT_FORWARD_MOVE_PER_TICK, .05),
                 new PayloadRendererCoalCart(),
                 escortingTeam
-        );
+        ) {
+            @Override
+            public boolean tick(int ticksElapsed) {
+                Pair<Integer, Double> payloadInfo = getPayloadMove(brain.getCurrentLocation());
+                int netEscorting = payloadInfo.getA();
+                double payloadMove = payloadInfo.getB();
+                if (payloadMove != 0) {
+                    boolean reachedEnd = brain.tick(payloadMove);
+                    if (reachedEnd) {
+                        return true;
+                    }
+                }
+                renderEffects(ticksElapsed);
+                showBossBar(netEscorting);
+                return false;
+            }
+
+            // returns net escorting + to move per tick
+            private Pair<Integer, Double> getPayloadMove(Location oldLocation) {
+                int escorting = 0;
+                int escortingBatteries = 0;
+                int nonEscorting = 0;
+                int nonEscortingBatteries = 0;
+                for (WarlordsEntity warlordsEntity : PlayerFilterGeneric
+                        .entitiesAround(oldLocation, MOVE_RADIUS, MOVE_RADIUS, MOVE_RADIUS)
+                ) {
+                    if (warlordsEntity.getTeam() == escortingTeam) {
+                        escorting++;
+                        if (warlordsEntity.getCooldownManager().hasCooldownFromName("Payload Battery")) {
+                            escortingBatteries++;
+                        }
+                    } else {
+                        nonEscorting++;
+                        if (warlordsEntity.getCooldownManager().hasCooldownFromName("Payload Battery")) {
+                            nonEscortingBatteries++;
+                        }
+                    }
+                }
+                int netEscorting = escorting - nonEscorting;
+                int netEscortBatteries = escortingBatteries - nonEscortingBatteries;
+                // contested
+                if (netEscorting == 0) {
+                    if (escortingBatteries == nonEscortingBatteries) {
+                        return new Pair<>(netEscorting, 0.0);
+                    }
+                    return new Pair<>(netEscorting, netEscortBatteries * PayloadBrain.DEFAULT_FORWARD_MOVE_PER_TICK / 2);
+                }
+                if (escorting > nonEscorting) {
+                    return new Pair<>(netEscorting, PayloadBrain.DEFAULT_FORWARD_MOVE_PER_TICK * (netEscortBatteries > 0 ? 1.5 : 1));
+                }
+                if (nonEscorting > escorting) {
+                    return new Pair<>(netEscorting, -brain.getBackwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
+                }
+                return new Pair<>(netEscorting, 0.0);
+            }
+        };
         game.registerEvents(this);
     }
 
@@ -57,12 +118,14 @@ public class SiegePayloadState implements SiegeState, Listener {
             payload.renderEffects(ticksElapsed);
             return false;
         }
-        if (ticksElapsed >= maxSeconds()) {
+        if (ticksElapsed / 20 >= maxSeconds()) {
+            ticksElapsedAtTransition = ticksElapsed;
             onPayloadDefended();
             return false;
         }
         boolean captured = payload.tick(ticksElapsed);
         if (captured) {
+            ticksElapsedAtTransition = ticksElapsed;
             onPayloadCapture();
         }
         return false;
@@ -81,8 +144,9 @@ public class SiegePayloadState implements SiegeState, Listener {
 
     @Override
     public Component getSidebarComponent(int ticksElapsed) {
+        int seconds = Math.max(maxSeconds() - (ticksElapsedAtTransition != -1 ? ticksElapsedAtTransition : ticksElapsed) / 20, 0);
         return Component.text("Time Left: ", NamedTextColor.WHITE)
-                        .append(Component.text(StringUtils.formatTimeLeft(maxSeconds() - ticksElapsed / 20), NamedTextColor.GREEN));
+                        .append(Component.text(StringUtils.formatTimeLeft(seconds), NamedTextColor.GREEN));
     }
 
     @Override
@@ -136,5 +200,11 @@ public class SiegePayloadState implements SiegeState, Listener {
     public void onRespawnGive(WarlordsGiveRespawnEvent event) {
         Team team = event.getWarlordsEntity().getTeam();
         event.getRespawnTimer().set(team == escortingTeam ? 8 : 12);
+    }
+
+    @Override
+    public void skipTimer(int delayInTicks) {
+        PayloadBrain payloadBrain = payload.getBrain();
+        payloadBrain.tick(PayloadBrain.DEFAULT_FORWARD_MOVE_PER_TICK * 15);
     }
 }

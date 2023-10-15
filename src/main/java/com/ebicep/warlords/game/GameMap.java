@@ -4805,6 +4805,8 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 1, 18, 180, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 1, -32.5, 0, 0), Team.RED));
 
+            options.add(new PowerupOption(loc.addXYZ(10, 1.5, 0), PowerUp.PAYLOAD_BATTERY, 45, 10));
+
             options.add(new SiegeOption(loc.addXYZ(0.5, 1, -7.5))
                     .addPayloadStart(Team.BLUE, loc.addXYZ(0.5, 1, -7.5, 180, 0))
                     .addPayloadStart(Team.RED, loc.addXYZ(0.5, 1, -7.5, 0, 0))

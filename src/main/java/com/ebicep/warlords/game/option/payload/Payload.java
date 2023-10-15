@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.payload;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,13 +13,13 @@ import javax.annotation.Nonnull;
 
 public class Payload {
 
-    private static final double MOVE_RADIUS = 3;
+    protected static final double MOVE_RADIUS = 3;
     private static final int BOSS_BAR_FILL_SPACE = 45;
     private static final int BOSS_BAR_ESCORT_SPACE = 6;
     @Nonnull
     private final Game game;
     @Nonnull
-    private final PayloadBrain brain;
+    protected final PayloadBrain brain;
     private final PayloadRenderer renderer;
     private final BossBar bossBar;
     @Nonnull
@@ -37,17 +36,11 @@ public class Payload {
     }
 
     public boolean tick(int ticksElapsed) {
-//        if (game.getState(EndState.class).isPresent()) {
-//            return true;
-//        }
-        Location oldLocation = brain.getCurrentLocation();
-
-        int netEscorting = getNetEscorting(oldLocation);
+        int netEscorting = getNetEscorting(brain.getCurrentLocation());
         if (netEscorting != 0) {
             boolean reachedEnd = brain.tick(netEscorting);
             if (reachedEnd) {
                 return true;
-                //Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, Payload.this, escortingTeam));
             }
         }
         renderEffects(ticksElapsed);
@@ -68,12 +61,11 @@ public class Payload {
         hideBossBar();
     }
 
-    private int getNetEscorting(Location oldLocation) {
+    protected int getNetEscorting(Location oldLocation) {
         int escorting = 0;
         int nonEscorting = 0;
         for (WarlordsEntity warlordsEntity : PlayerFilterGeneric
                 .entitiesAround(oldLocation, MOVE_RADIUS, MOVE_RADIUS, MOVE_RADIUS)
-                .filter(e -> Warlords.getPlayer(e.getUuid()) != null)
         ) {
             if (warlordsEntity.getTeam() == escortingTeam) {
                 escorting++;
@@ -84,7 +76,7 @@ public class Payload {
         return escorting - nonEscorting;
     }
 
-    private void showBossBar(int netEscorting) {
+    protected void showBossBar(int netEscorting) {
         float progress = (float) (brain.getCurrentPathIndex() / brain.getPath().size());
         String pushing = "";
         boolean escorting = netEscorting > 0;
@@ -110,7 +102,7 @@ public class Payload {
     }
 
     @Nonnull
-    public Team getEscortingTeam() {
-        return escortingTeam;
+    public PayloadBrain getBrain() {
+        return brain;
     }
 }

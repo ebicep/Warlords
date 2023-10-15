@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.pvp.siege;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.cuboid.GateOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
+import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.util.java.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,10 +11,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class SiegeWaitState implements SiegeState {
+public class SiegeWaitState implements SiegeState, TimerSkipAbleMarker {
 
     private final SiegeOption siegeOption;
     private Game game;
+    private boolean skipped = false;
 
     public SiegeWaitState(SiegeOption siegeOption) {
         this.siegeOption = siegeOption;
@@ -34,7 +36,7 @@ public class SiegeWaitState implements SiegeState {
 
     @Override
     public boolean tick(int ticksElapsed) {
-        return false;
+        return ticksElapsed >= maxSeconds() * 20 || skipped;
     }
 
     @Override
@@ -60,5 +62,10 @@ public class SiegeWaitState implements SiegeState {
     @Override
     public int maxSeconds() {
         return 30;
+    }
+
+    @Override
+    public void skipTimer(int delayInTicks) {
+        skipped = true;
     }
 }
