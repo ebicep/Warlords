@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.events.EventShopPurchaseEvent;
 import com.ebicep.warlords.events.WeaponTitlePurchaseEvent;
 import com.ebicep.warlords.events.player.*;
@@ -80,11 +81,15 @@ public interface TracksOutsideGame {
             private void refreshEventTracker(DatabasePlayer databasePlayer) {
                 if (DatabaseGameEvent.eventIsActive()) {
                     DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+                    EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction
+                            .apply(databasePlayer.getPveStats().getEventStats())
+                            .get(currentGameEvent.getStartDateSecond());
+                    if (eventMode == null) {
+                        return;
+                    }
                     CACHED_ONLINE_PLAYER_TRACKERS.merge(
                             databasePlayer.getUuid(),
-                            currentGameEvent.getEvent().eventsStatsFunction
-                                    .apply(databasePlayer.getPveStats().getEventStats())
-                                    .get(currentGameEvent.getStartDateSecond())
+                            eventMode
                                     .getTrackableBounties()
                                     .stream()
                                     .filter(TracksOutsideGame.class::isInstance)
