@@ -124,10 +124,20 @@ public abstract class PveRewards<T extends PveOption> {
 
     protected abstract void storeIllusionShardGainInternal();
 
+    /**
+     * Adds extra legend fragment gain based on the player's spec and prestige
+     * <p>If current spec then 3 per prestige</p>
+     * <p>If other spec then 2 per prestige</p>
+     *
+     * @param per5               this number divided by 25 (integer div) is the multiplier for the legend fragment gain
+     * @param currentSpec        spec of the player
+     * @param databasePlayer     database player
+     * @param legendFragmentGain current legend fragment gain
+     */
     protected void addExtraFragmentGain(int per5, Specializations currentSpec, DatabasePlayer databasePlayer, AtomicLong legendFragmentGain) {
         legendFragmentGain.updateAndGet(v -> (long) (v * difficulty.getRewardsMultiplier()));
         //warlordsPlayer.sendMessage("Legend Fragment Gain After Rewards Multiplier: " + legendFragmentGain.get());
-        int specPrestigeBonus = databasePlayer.getSpec(currentSpec).getPrestige() * 5;
+        int specPrestigeBonus = databasePlayer.getSpec(currentSpec).getPrestige() * 3;
         int otherSpecPrestigeBonus = 0;
         for (Specializations value : Specializations.VALUES) {
             if (value != currentSpec) {
