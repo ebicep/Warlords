@@ -59,6 +59,6 @@ public class SiegeWaitState implements SiegeState {
 
     @Override
     public int maxSeconds() {
-        return 20;
+        return 30;
     }
 }
