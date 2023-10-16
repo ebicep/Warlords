@@ -1060,7 +1060,9 @@ public abstract class WarlordsEntity {
         }
         if (this == attacker || isTeammate(attacker)) {
             float maxHealth = this.maxHealth;
-            if (this == attacker && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF) || isTeammate(attacker) && flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS)) {
+            boolean overhealSelf = this == attacker && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF);
+            boolean overhealOthers = this != attacker && isTeammate(attacker) && flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
+            if (overhealSelf || overhealOthers) {
                 maxHealth *= 1.1;
             }
             if (this.health + healValue > maxHealth) {
