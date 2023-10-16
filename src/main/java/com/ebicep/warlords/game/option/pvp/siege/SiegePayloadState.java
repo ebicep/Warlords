@@ -82,9 +82,9 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                         }
                     } else {
                         nonEscorting++;
-                        if (warlordsEntity.getCooldownManager().hasCooldownFromName("Payload Battery")) {
-                            nonEscortingBatteries++;
-                        }
+//                        if (warlordsEntity.getCooldownManager().hasCooldownFromName("Payload Battery")) {
+//                            nonEscortingBatteries++;
+//                        }
                     }
                 }
                 int netEscorting = escorting - nonEscorting;

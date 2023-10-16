@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.kyori.adventure.text.Component;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
@@ -107,6 +108,9 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
+            player.sendMessage(Component.text("TEST")
+                                        .append(Component.newline())
+                                        .append(Component.text("WORLD")));
 
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {
 //                for (Currencies value : Currencies.VALUES) {

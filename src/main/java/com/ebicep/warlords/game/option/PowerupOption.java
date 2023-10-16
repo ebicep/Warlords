@@ -432,24 +432,35 @@ public class PowerupOption implements Option {
                         },
                         getTickDuration(),
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksElapsed % 10 == 0) {
+                            if (ticksElapsed % 5 == 0) {
                                 EffectUtils.displayParticle(
                                         Particle.ELECTRIC_SPARK,
                                         we.getLocation().add(0, 1.2, 0),
-                                        5,
-                                        .3,
-                                        .3,
-                                        .3,
+                                        8,
+                                        .4,
+                                        .4,
+                                        .4,
                                         0
                                 );
                             }
                         })
                 ) {
                     @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                         return currentDamageValue * 1.1f;
                     }
                 });
+                we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
+                                        .append(Component.text(name, textColor, TextDecoration.BOLD))
+                                        .append(Component.text(" powerup! Lasts for "))
+                                        .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
+                                        .append(Component.text(" seconds!"))
+                                        .append(Component.newline()
+                                                         .append(Component.text("   +50% ", textColor))
+                                                         .append(Component.text("Payload push speed and now slightly push the payload even if contested")))
+                                        .append(Component.newline().append(Component.text("   +10% ", NamedTextColor.DARK_RED)).append(Component.text("Damage taken")))
+                                        .append(Component.newline().append(Component.text("   -15% ", NamedTextColor.YELLOW)).append(Component.text("Speed")))
+                );
             }
 
             @Override
@@ -468,10 +479,10 @@ public class PowerupOption implements Option {
             return DEFAULT_POWERUPS[ThreadLocalRandom.current().nextInt(DEFAULT_POWERUPS.length)];
         }
 
-        private final String name;
-        private final TextColor textColor;
-        private final int secondDuration;
-        private final Material debugMaterial;
+        protected final String name;
+        protected final TextColor textColor;
+        protected final int secondDuration;
+        protected final Material debugMaterial;
 
         PowerUp(String name, TextColor textColor, int secondDuration, Material debugMaterial) {
             this.name = name;
