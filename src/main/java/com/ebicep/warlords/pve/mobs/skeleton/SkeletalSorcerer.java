@@ -59,7 +59,8 @@ public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball(5.5f), new BlightedScorch()
+                new Fireball(5.5f),
+                new BlightedScorch()
         );
     }
 
@@ -100,6 +101,7 @@ public class SkeletalSorcerer extends AbstractSkeleton implements ChampionMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         receiver.getCooldownManager().removePreviousWounding();
+        receiver.getCooldownManager().removeCooldownByName(name);
         receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "WND",
