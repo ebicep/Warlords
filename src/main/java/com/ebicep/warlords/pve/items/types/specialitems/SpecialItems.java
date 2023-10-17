@@ -92,7 +92,7 @@ public enum SpecialItems {
     CROSS_NECKLACE_CHARM(CrossNecklaceCharm::new),
     PRIDWENS_BULWARK(PridwensBulwark::new),
     AERIAL_AEGIS(AerialAegis::new),
-    SHIELD_OF_SNATCHING(ShieldOfSnatching::new),
+    SHIELD_OF_PILLAGING(ShieldOfSnatching::new),
     OTHERWORLDLY_AMULET(OtherworldlyAmulet::new),
 
     //OMEGA
@@ -191,7 +191,7 @@ public enum SpecialItems {
             CROSS_NECKLACE_CHARM,
             PRIDWENS_BULWARK,
             AERIAL_AEGIS,
-            SHIELD_OF_SNATCHING,
+            SHIELD_OF_PILLAGING,
             OTHERWORLDLY_AMULET,
     };
     public static final SpecialItems[] OMEGA_ITEMS = {

@@ -29,7 +29,7 @@ public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWar
 
     @Override
     public String getBonus() {
-        return "For every target you kill, you have a 1% chance to fully restore yourself.";
+        return "For every target you kill, you have a 2% chance to fully restore yourself.";
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWar
                 if (!event.getAttacker().equals(warlordsPlayer) || !event.isDead()) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextDouble() > .01) {
+                if (ThreadLocalRandom.current().nextDouble() > .02) {
                     return;
                 }
                 float healthMissing = warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth();

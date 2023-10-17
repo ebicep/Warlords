@@ -1,20 +1,16 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
-import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveMobDropEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.ChakramOfBlades;
-import com.ebicep.warlords.pve.mobs.MobDrop;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto {
 
@@ -32,39 +28,39 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
 
     @Override
     public String getBonus() {
-        return "25% chance of stealing someone else's Zenith Star drop.";
+        return "For every player below 50% health, you heal 5% more health.";
     }
 
     @Override
     public String getName() {
-        return "Shield of Snatching";
+        return "Shield of Pillaging";
     }
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        warlordsPlayer.getGame().registerEvents(new Listener() {
-            int timesStolen = 0;
+        warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                getName(),
+                null,
+                ShieldOfSnatching.class,
+                null,
+                warlordsPlayer,
+                CooldownTypes.ITEM,
+                cooldownManager -> {
 
-            @EventHandler
-            public void onMobDrop(WarlordsGiveMobDropEvent event) {
-                if (Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
-                    return;
-                }
-                if (event.getMobDrop() != MobDrop.ZENITH_STAR) {
-                    return;
-                }
-                if (ThreadLocalRandom.current().nextDouble() > 0.25) {
-                    return;
-                }
-                if (timesStolen > 0) {
-                    return;
-                }
-                if (warlordsPlayer.getEntity() instanceof Player) {
-                    timesStolen++;
-                    event.getStolenBy().add(warlordsPlayer);
-                }
+                },
+                false
+        ) {
+            @Override
+            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                return currentHealValue * (1 + playersBelow50Percent() * 0.05f);
             }
 
+            private long playersBelow50Percent() {
+                return warlordsPlayer.getGame()
+                                     .warlordsPlayers()
+                                     .filter(p -> p.getHealth() / p.getMaxHealth() < 0.5)
+                                     .count();
+            }
         });
     }
 
