@@ -697,6 +697,15 @@ public enum Mob {
             Weapons.NEW_LEAF_SCYTHE.getItem()
     )),
 
+    //test
+    TEST_DUMMY(TestDummy.class, TestDummy::new, TestDummy::new, new Utils.SimpleEntityEquipment(
+            null,
+            null,
+            null,
+            null,
+            null
+    )),
+
     ;
 
     public static final Mob[] VALUES = values();
