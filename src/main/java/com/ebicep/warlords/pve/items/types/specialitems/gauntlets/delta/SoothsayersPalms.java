@@ -9,6 +9,8 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.items.types.specialitems.gauntlets.omega.LilithsClaws;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -71,6 +73,10 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
                 ability.setEnergyCost(energyCost);
                 ability.addTimesUsed();
                 AbstractPlayerClass.sendRightClickPacket(player);
+                AbstractItem.sendItemMessage(
+                        player,
+                        getHoverComponent().append(Component.text(" randomly activated " + ability.getName() + "!", NamedTextColor.GRAY))
+                );
             }
         });
 
