@@ -4177,6 +4177,11 @@ public enum GameMap {
                     Component.text("Kill the gods as fast as possible!", NamedTextColor.YELLOW, TextDecoration.BOLD),
                     Component.empty()
             ));
+            options.add(TextOption.Type.TITLE.create(
+                    0,
+                    Component.text("Grace Period!", NamedTextColor.GREEN),
+                    Component.text("Buy upgrades and prepare", NamedTextColor.YELLOW)
+            ));
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(108.5, 33, 61.5), Team.BLUE).asOption());
