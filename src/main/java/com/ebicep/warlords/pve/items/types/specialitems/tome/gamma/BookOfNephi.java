@@ -13,7 +13,7 @@ public class BookOfNephi extends SpecialGammaTome implements CraftsInto.CraftsTh
     }
 
     public BookOfNephi(Set<BasicStatPool> basicStatPools) {
-
+        super(basicStatPools);
     }
 
     @Override
