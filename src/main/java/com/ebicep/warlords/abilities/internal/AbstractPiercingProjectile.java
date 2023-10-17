@@ -128,6 +128,15 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
      */
     @Nullable
     protected HitResult checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsEntity shooter) {
+        if (speed.isZero()) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Projectile speed is zero - " +
+                    getName() + " - " + shooter + " - " + shooter.getSpecClass() + " - " +
+                    currentLocation + " - " + speed + " - " +
+                    projectile.getStartingLocation()
+            );
+            projectile.cancel();
+            return null;
+        }
         Vec3 currentPosition;
         if (projectile.getTicksLived() == 0) {
             // for initially shooting entities directly in front of player
@@ -325,7 +334,6 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     }
 
     /**
-     * @param player Player that fires the shots
      * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
      */
     public List<Location> getLocationsToFireShots(Location startingLocation) {
@@ -365,6 +373,12 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
     protected abstract float getSoundPitch();
 
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        hitboxInflation.tick();
+        super.runEveryTick(warlordsEntity);
+    }
+
     public int getDirectHits() {
         return directHits;
     }
@@ -403,12 +417,6 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     public void setMaxDistance(double maxDistance) {
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        hitboxInflation.tick();
-        super.runEveryTick(warlordsEntity);
     }
 
     @Override
