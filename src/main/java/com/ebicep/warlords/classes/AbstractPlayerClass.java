@@ -282,26 +282,6 @@ public abstract class AbstractPlayerClass {
         return abilities.get(0);
     }
 
-    @Deprecated
-    public AbstractAbility getRed() {
-        return abilities.get(1);
-    }
-
-    @Deprecated
-    public void setRed(AbstractAbility red) {
-        this.abilities.set(1, red);
-    }
-
-    @Deprecated
-    public AbstractAbility getBlue() {
-        return abilities.get(3);
-    }
-
-    @Deprecated
-    public void setBlue(AbstractAbility blue) {
-        this.abilities.set(3, blue);
-    }
-
     public String getName() {
         return name;
     }
