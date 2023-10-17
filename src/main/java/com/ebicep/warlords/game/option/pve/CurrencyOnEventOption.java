@@ -115,7 +115,7 @@ public class CurrencyOnEventOption implements Option, Listener {
         if (currencyOnKill == 0 || !(mob instanceof WarlordsNPC warlordsNPC)) {
             return;
         }
-        if (!perMobKill.containsKey(warlordsNPC.getMob().getMobRegistry()) || warlordsNPC.getMob().getDynamicFlags().contains(DynamicFlags.NO_INSIGNIA)) {
+        if (warlordsNPC.getMob().getDynamicFlags().contains(DynamicFlags.NO_INSIGNIA)) {
             return;
         }
 
