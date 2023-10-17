@@ -3,12 +3,16 @@ package com.ebicep.warlords.commands.debugcommands.ingame;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
+import com.ebicep.warlords.util.chat.ChatChannels;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -22,8 +26,16 @@ public class SpawnTestDummyCommand extends BaseCommand {
     @CommandCompletion("@gameteams @boolean")
     @Syntax("<team> <takeDamage>")
     @Description("Spawns a test dummy on the specified team and true/false for whether it will take damage")
-    public void spawnTestDummy(@Conditions("requireGame:withAddon=PRIVATE_GAME") WarlordsPlayer warlordsPlayer, @Values("@gameteams") Team team, @Values("@boolean") Boolean takeDamage) {
+    public void spawnTestDummy(
+            @Conditions("requireGame:withAddon=PRIVATE_GAME") WarlordsPlayer warlordsPlayer,
+            @Values("@gameteams") Team team,
+            @Values("@boolean") Boolean takeDamage
+    ) {
         Game game = warlordsPlayer.getGame();
+        if (GameMode.isPvE(game.getGameMode())) {
+            ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("Spawning test dummies in pve is disabled", NamedTextColor.RED));
+            return;
+        }
         WarlordsEntity testDummy = game.addNPC(new WarlordsNPC(
                 "testdummy",
                 WarlordsNPC.spawnZombieNoAI(warlordsPlayer.getLocation(), null),
