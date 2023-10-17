@@ -448,11 +448,7 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
             @Override
             public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                pveStats.getItemsManager().getItemInventory().forEach(item -> {
-                    //TODO blessings / bronze etc
-//                item.applyRandomModifier();
-//                item.setLegacyRemodified(true);
-                });
+                pveStats.getItemsManager().getItemInventory().forEach(item -> item.applyRandomModifier());
                 return true;
             }
         },

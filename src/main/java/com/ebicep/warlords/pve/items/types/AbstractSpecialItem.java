@@ -24,7 +24,7 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
 
     @Field("upgrade_tree_bonus")
     @Nullable
-    private UpgradeTreeBonus upgradeTreeBonus = null;
+    private UpgradeTreeBonus upgradeTreeBonus;
 
     public AbstractSpecialItem() {
         super();

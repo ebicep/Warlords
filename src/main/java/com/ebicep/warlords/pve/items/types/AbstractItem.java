@@ -53,9 +53,6 @@ public abstract class AbstractItem {
     protected HashMap<BasicStatPool, Integer> statPoolValues;
     @Deprecated
     protected int modifier;
-    @Field("legacy_remodified")
-    @Deprecated
-    protected boolean legacyRemodified = false;
     @Field("aspect_modifier_1")
     @Nullable
     protected Aspect aspectModifier1 = null;
@@ -431,11 +428,4 @@ public abstract class AbstractItem {
         return aspectModifier2;
     }
 
-    public boolean isLegacyRemodified() {
-        return legacyRemodified;
-    }
-
-    public void setLegacyRemodified(boolean legacyRemodified) {
-        this.legacyRemodified = legacyRemodified;
-    }
 }
