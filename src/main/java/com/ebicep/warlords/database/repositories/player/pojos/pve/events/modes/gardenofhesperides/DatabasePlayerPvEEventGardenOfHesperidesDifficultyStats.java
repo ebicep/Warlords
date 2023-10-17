@@ -45,6 +45,8 @@ public class DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats extends PvE
     private DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats acropolisStats = new DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats();
     @Field("tartarus_stats")
     private DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats tartarusStats = new DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats();
+    @Field("tartarus_auto_ready")
+    private boolean tartarusAutoReady = false;
 
     @Field("completed_bounties")
     private Map<Bounty, Long> completedBounties = new HashMap<>();
@@ -217,5 +219,13 @@ public class DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats extends PvE
 
     public void setTartarusStats(DatabasePlayerPvEEventGardenOfHesperidesTartarusDifficultyStats tartarusStats) {
         this.tartarusStats = tartarusStats;
+    }
+
+    public boolean isTartarusAutoReady() {
+        return tartarusAutoReady;
+    }
+
+    public void setTartarusAutoReady(boolean tartarusAutoReady) {
+        this.tartarusAutoReady = tartarusAutoReady;
     }
 }

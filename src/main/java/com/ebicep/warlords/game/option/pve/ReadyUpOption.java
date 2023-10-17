@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.option.pve;
 
 import com.ebicep.customentities.npc.WarlordsTrait;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabasePlayerPvEEventGardenOfHesperidesStats;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.menu.Menu;
@@ -9,15 +11,19 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -60,22 +66,55 @@ public class ReadyUpOption implements Option {
     @Override
     public void start(@Nonnull Game game) {
         createNPC(game);
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                if (checkAllReady()) {
+                    onAllReady();
+                }
+            }
+        }.runTaskLater(30);
     }
 
     protected void createNPC(@Nonnull Game game) {
     }
 
-    @Override
-    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            readyPlayers.put(player, false);
-        }
+    private boolean checkAllReady() {
+        return readyPlayers.values().stream().allMatch(b -> b);
+    }
+
+    private void onAllReady() {
+        game.forEachOnlinePlayer((p, team) -> p.closeInventory());
+        whenAllReady.run();
     }
 
     @Override
     public void onGameCleanup(@Nonnull Game game) {
         if (npc != null) {
             npc.destroy();
+        }
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
+                DatabasePlayerPvEEventGardenOfHesperidesStats gardenOfHesperidesStats = databasePlayer.getPveStats().getEventStats().getGardenOfHesperidesStats();
+                boolean tartarusAutoReady = gardenOfHesperidesStats.isTartarusAutoReady();
+                readyPlayers.put(player, tartarusAutoReady);
+                if (tartarusAutoReady) {
+                    sendNPCMessage(Component.textOfChildren(
+                            Component.text(player.getName(), NamedTextColor.AQUA),
+                            Component.text(" is now ready", NamedTextColor.GREEN)
+                    ));
+                    player.sendMessage(Component.text("[Click to disable auto ready]", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                                .clickEvent(ClickEvent.callback(audience -> gardenOfHesperidesStats.setTartarusAutoReady(false))));
+                }
+            });
+            // safety
+            if (!readyPlayers.containsKey(player)) {
+                readyPlayers.put(player, false);
+            }
         }
     }
 
@@ -139,9 +178,8 @@ public class ReadyUpOption implements Option {
                                         Component.text(ready ? " is no longer ready" : " is now ready", ready ? NamedTextColor.RED : NamedTextColor.GREEN)
                                 )
                         );
-                        if (readyPlayers.values().stream().allMatch(b -> b)) {
-                            game.forEachOnlinePlayer((p, team) -> p.closeInventory());
-                            whenAllReady.run();
+                        if (checkAllReady()) {
+                            onAllReady();
                         } else {
                             // reopen/update for other players
                             game.forEachOnlinePlayer((p, team) -> {
@@ -180,6 +218,31 @@ public class ReadyUpOption implements Option {
         }
 
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+        DatabaseManager.getPlayer(player, databasePlayer -> {
+            DatabasePlayerPvEEventGardenOfHesperidesStats gardenOfHesperidesStats = databasePlayer.getPveStats().getEventStats().getGardenOfHesperidesStats();
+            boolean tartarusAutoReady = gardenOfHesperidesStats.isTartarusAutoReady();
+            ItemBuilder itemBuilder = new ItemBuilder(Material.DIAMOND)
+                    .name(Component.text("Auto Ready", NamedTextColor.AQUA))
+                    .lore(
+                            Component.text("Automatically ready up when joining", NamedTextColor.GRAY),
+                            Component.empty(),
+                            Component.text("Currently: ", NamedTextColor.GRAY)
+                                     .append(Component.text(tartarusAutoReady ? "Enabled" : "Disabled", tartarusAutoReady ? NamedTextColor.GREEN : NamedTextColor.RED)),
+                            Component.empty(),
+                            Component.text("Click to toggle", NamedTextColor.YELLOW)
+                    );
+            if (tartarusAutoReady) {
+                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+            }
+            menu.setItem(5, 4,
+                    itemBuilder.get(),
+                    (m, e) -> {
+                        gardenOfHesperidesStats.setTartarusAutoReady(!tartarusAutoReady);
+                        openReadyUpMenu(player, page);
+                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                    }
+            );
+        });
         menu.openForPlayer(player);
     }
 
