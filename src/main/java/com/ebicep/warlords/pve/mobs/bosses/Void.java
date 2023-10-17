@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -38,6 +39,9 @@ public class Void extends AbstractSkeleton implements BossMob {
     private boolean timedDamageTriggerTwo = false;
     private boolean preventArmageddon = false;
     private boolean boltaroPhaseTrigger = false;
+    private PrismGuard prismGuard = new PrismGuard() {{
+        setTickDuration(200);
+    }};
 
     public Void(Location spawnLocation) {
         this(spawnLocation, "Void", 100000, 0.24f, 20, 3000, 4000);
@@ -330,7 +334,7 @@ public class Void extends AbstractSkeleton implements BossMob {
                                                                                       .withColor(Color.WHITE)
                                                                                       .with(FireworkEffect.Type.BALL_LARGE)
                                                                                       .build());
-                    warlordsNPC.getSpec().getBlue().onActivate(warlordsNPC, null);
+                    prismGuard.onActivate(warlordsNPC, null);
                     preventArmageddon = false;
                     this.cancel();
                     return;
