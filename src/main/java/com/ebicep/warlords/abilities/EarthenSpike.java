@@ -53,7 +53,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     private double verticalVelocity = .625;
 
     public EarthenSpike() {
-        this(404, 562, 6, 0);
+        this(404, 562, 0, 0);
     }
 
     public EarthenSpike(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
