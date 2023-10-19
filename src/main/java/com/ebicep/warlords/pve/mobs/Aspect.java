@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -127,7 +128,7 @@ public enum Aspect {
         @Override
         public void apply(WarlordsEntity warlordsEntity) {
             warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                    "Aspect - Armoured",
+                    "Aspect - Infernal",
                     null,
                     Aspect.class,
                     null,
@@ -143,6 +144,9 @@ public enum Aspect {
                 @Override
                 public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                     if (Aspect.isNegated(warlordsEntity)) {
+                        return;
+                    }
+                    if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                         return;
                     }
                     WarlordsEntity receiver = event.getWarlordsEntity();
@@ -175,7 +179,8 @@ public enum Aspect {
                                             healthDamage,
                                             healthDamage,
                                             0,
-                                            100
+                                            100,
+                                            EnumSet.of(InstanceFlags.RECURSIVE)
                                     );
                                 }
                             })
