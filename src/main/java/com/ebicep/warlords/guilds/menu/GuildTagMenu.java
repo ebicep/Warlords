@@ -7,7 +7,7 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.tag.GuildLogTagNameColor;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import de.rapha149.signgui.SignGUI;
+import io.github.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -55,13 +55,13 @@ public class GuildTagMenu {
                         .name(Component.text("Change Tag Name", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
-                    new SignGUI()
-                            .lines("", "Enter Tag Name", "Max 6", "Characters")
-                            .onFinish((p, lines) -> {
-                                String newTagName = lines[0];
-                                player.performCommand("guild tag " + newTagName);
-                                return null;
-                            }).open(player);
+                    SignGUI.builder()
+                           .setLines("", "Enter Tag Name", "Max 6", "Characters")
+                           .setHandler((p, lines) -> {
+                               String newTagName = lines.getLine(0);
+                               player.performCommand("guild tag " + newTagName);
+                               return null;
+                           }).build().open(player);
                 }
         );
 

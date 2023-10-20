@@ -3,7 +3,7 @@ package com.ebicep.customentities.nms.pve;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Pillager;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 
 public class CustomPillager extends Pillager implements CustomEntity<CustomPillager> {
 

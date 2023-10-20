@@ -13,7 +13,7 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.warlords.Utils;
-import de.rapha149.signgui.SignGUI;
+import io.github.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -337,32 +337,32 @@ public class DebugMenuGameOptions {
                     (m, e) -> {
                         for (Option option : game.getOptions()) {
                             if (option instanceof WinAfterTimeoutOption) {
-                                new SignGUI()
-                                        .lines("", "^^^^^^^", "Enter new Time Left", "XX:XX")
-                                        .onFinish((p, lines) -> {
-                                            new BukkitRunnable() {
-                                                @Override
-                                                public void run() {
-                                                    String time = lines[0];
-                                                    try {
-                                                        if (!time.contains(":")) {
-                                                            throw new Exception();
-                                                        }
-                                                        int minutes = Integer.parseInt(time.split(":")[0]);
-                                                        int seconds = Integer.parseInt(time.split(":")[1]);
+                                SignGUI.builder()
+                                       .setLines("", "^^^^^^^", "Enter new Time Left", "XX:XX")
+                                       .setHandler((p, lines) -> {
+                                           new BukkitRunnable() {
+                                               @Override
+                                               public void run() {
+                                                   String time = lines.getLine(0);
+                                                   try {
+                                                       if (!time.contains(":")) {
+                                                           throw new Exception();
+                                                       }
+                                                       int minutes = Integer.parseInt(time.split(":")[0]);
+                                                       int seconds = Integer.parseInt(time.split(":")[1]);
                                                         if (minutes < 0 || seconds < 0) {
                                                             throw new Exception();
                                                         }
-                                                        ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
-                                                        sendDebugMessage(player, Component.text("Set timer of game " + game.getGameId() + " to " + time, NamedTextColor.GREEN));
-                                                    } catch (Exception exception) {
-                                                        p.sendMessage(Component.text("Invalid time", NamedTextColor.RED));
-                                                    }
-                                                    openTimerMenu(player, game);
-                                                }
-                                            }.runTaskLater(Warlords.getInstance(), 1);
-                                            return null;
-                                        }).open(player);
+                                                       ((WinAfterTimeoutOption) option).setTimeRemaining(minutes * 60 + seconds);
+                                                       sendDebugMessage(player, Component.text("Set timer of game " + game.getGameId() + " to " + time, NamedTextColor.GREEN));
+                                                   } catch (Exception exception) {
+                                                       p.sendMessage(Component.text("Invalid time", NamedTextColor.RED));
+                                                   }
+                                                   openTimerMenu(player, game);
+                                               }
+                                           }.runTaskLater(Warlords.getInstance(), 1);
+                                           return null;
+                                       }).build().open(player);
                                 break;
                             }
                         }
@@ -384,29 +384,29 @@ public class DebugMenuGameOptions {
                                 .name(Component.text(team.name, team.teamColor))
                                 .get(),
                         (m, e) -> {
-                            new SignGUI()
-                                    .lines("", "^^^^^^^", "Enter new score", "Team: " + team.getName())
-                                    .onFinish((p, lines) -> {
+                            SignGUI.builder()
+                                   .setLines("", "^^^^^^^", "Enter new score", "Team: " + team.getName())
+                                   .setHandler((p, lines) -> {
 
-                                        new BukkitRunnable() {
-                                            @Override
-                                            public void run() {
-                                                String line = lines[0];
-                                                try {
-                                                    int score = Integer.parseInt(line);
-                                                    if (score < 0) {
-                                                        throw new NumberFormatException();
-                                                    }
-                                                    game.setPoints(team, score);
-                                                    sendDebugMessage(player, Component.text("Set score of team " + team.getName() + " to " + score, NamedTextColor.GREEN));
-                                                } catch (NumberFormatException exception) {
-                                                    p.sendMessage(Component.text("Invalid score", NamedTextColor.RED));
-                                                }
-                                                openTeamScoreEditorMenu(player, game);
-                                            }
-                                        }.runTaskLater(Warlords.getInstance(), 1);
-                                        return null;
-                                    }).open(player);
+                                       new BukkitRunnable() {
+                                           @Override
+                                           public void run() {
+                                               String line = lines.getLine(0);
+                                               try {
+                                                   int score = Integer.parseInt(line);
+                                                   if (score < 0) {
+                                                       throw new NumberFormatException();
+                                                   }
+                                                   game.setPoints(team, score);
+                                                   sendDebugMessage(player, Component.text("Set score of team " + team.getName() + " to " + score, NamedTextColor.GREEN));
+                                               } catch (NumberFormatException exception) {
+                                                   p.sendMessage(Component.text("Invalid score", NamedTextColor.RED));
+                                               }
+                                               openTeamScoreEditorMenu(player, game);
+                                           }
+                                       }.runTaskLater(Warlords.getInstance(), 1);
+                                       return null;
+                                   }).build().open(player);
                         }
                 );
                 x++;

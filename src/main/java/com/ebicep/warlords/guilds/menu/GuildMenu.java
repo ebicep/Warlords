@@ -15,7 +15,7 @@ import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
-import de.rapha149.signgui.SignGUI;
+import io.github.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -224,23 +224,23 @@ public class GuildMenu {
             Long playerCoins = databasePlayer.getPveStats().getCurrencyValue(Currencies.COIN);
 
             int maxCoinsCanConvert = (int) ((10000 - dailyCoinsConverted) * coinConversionRatio);
-            new SignGUI()
-                    .lines("",
-                            "Bal: " + NumberFormat.addCommaAndRound(playerCoins),
-                            "Max: " + NumberFormat.addCommaAndRound(maxCoinsCanConvert),
-                            "Ratio: " + coinConversionRatio + ":1"
-                    )
-                    .onFinish((p, lines) -> {
-                        int playerCoinsToConvert;
-                        try {
-                            playerCoinsToConvert = Integer.parseInt(lines[0]);
-                        } catch (NumberFormatException ex) {
-                            player.sendMessage(Component.text("Invalid Number!", NamedTextColor.RED));
-                            openGuildMenuAfterTick(guild, player);
-                            return null;
-                        }
-                        if (playerCoinsToConvert <= 0) {
-                            player.sendMessage(Component.text("You must enter a positive number.", NamedTextColor.RED));
+            SignGUI.builder()
+                   .setLines("",
+                           "Bal: " + NumberFormat.addCommaAndRound(playerCoins),
+                           "Max: " + NumberFormat.addCommaAndRound(maxCoinsCanConvert),
+                           "Ratio: " + coinConversionRatio + ":1"
+                   )
+                   .setHandler((p, lines) -> {
+                       int playerCoinsToConvert;
+                       try {
+                           playerCoinsToConvert = Integer.parseInt(lines.getLine(0));
+                       } catch (NumberFormatException ex) {
+                           player.sendMessage(Component.text("Invalid Number!", NamedTextColor.RED));
+                           openGuildMenuAfterTick(guild, player);
+                           return null;
+                       }
+                       if (playerCoinsToConvert <= 0) {
+                           player.sendMessage(Component.text("You must enter a positive number.", NamedTextColor.RED));
                             openGuildMenuAfterTick(guild, player);
                             return null;
                         }
@@ -300,8 +300,8 @@ public class GuildMenu {
 
                             }
                         }.runTaskLater(Warlords.getInstance(), 1);
-                        return null;
-                    }).open(player);
+                       return null;
+                   }).build().open(player);
         });
 
     }

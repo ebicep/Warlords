@@ -20,7 +20,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
-import de.rapha149.signgui.SignGUI;
+import io.github.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -296,26 +296,26 @@ public class ItemEquipMenu {
                     if (itemsManager.getLoadouts().size() >= 15) {
                         player.sendMessage(Component.text("You can only have up to 15 loadouts!", NamedTextColor.RED));
                     } else {
-                        new SignGUI()
-                                .lines("", "Enter", "Loadout Name", "")
-                                .onFinish((p, lines) -> {
-                                    String name = lines[0];
-                                    if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                        player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
-                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                        return null;
-                                    }
-                                    if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                        player.sendMessage(Component.text("You already have a loadout with that name!", NamedTextColor.RED));
-                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                        return null;
-                                    }
-                                    ItemLoadout newLoadout = new ItemLoadout(name);
-                                    loadouts.add(newLoadout);
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    openItemLoadoutMenuAfterTick(player, databasePlayer, newLoadout);
-                                    return null;
-                                }).open(player);
+                        SignGUI.builder()
+                               .setLines("", "Enter", "Loadout Name", "")
+                               .setHandler((p, lines) -> {
+                                   String name = lines.getLine(0);
+                                   if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                       player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                       player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                       return null;
+                                   }
+                                   if (loadouts.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
+                                       player.sendMessage(Component.text("You already have a loadout with that name!", NamedTextColor.RED));
+                                       player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                       return null;
+                                   }
+                                   ItemLoadout newLoadout = new ItemLoadout(name);
+                                   loadouts.add(newLoadout);
+                                   DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                   openItemLoadoutMenuAfterTick(player, databasePlayer, newLoadout);
+                                   return null;
+                               }).build().open(player);
                     }
                 }
         );
@@ -329,25 +329,25 @@ public class ItemEquipMenu {
                         player.sendMessage(Component.text("You cannot rename the default loadout!", NamedTextColor.RED));
                         return;
                     }
-                    new SignGUI()
-                            .lines("", "Enter", "Loadout Name", "")
-                            .onFinish((p, lines) -> {
-                                String name = lines[0];
-                                if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                    player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
-                                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                    return null;
-                                }
-                                if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                                    player.sendMessage(Component.text("You already have a loadout with that name!", NamedTextColor.RED));
-                                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                    return null;
-                                }
-                                itemLoadout.setName(name);
-                                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                openItemLoadoutMenuAfterTick(player, databasePlayer, itemLoadout);
-                                return null;
-                            }).open(player);
+                    SignGUI.builder()
+                           .setLines("", "Enter", "Loadout Name", "")
+                           .setHandler((p, lines) -> {
+                               String name = lines.getLine(0);
+                               if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                   player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                   player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                   return null;
+                               }
+                               if (loadouts.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                                   player.sendMessage(Component.text("You already have a loadout with that name!", NamedTextColor.RED));
+                                   player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                   return null;
+                               }
+                               itemLoadout.setName(name);
+                               DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                               openItemLoadoutMenuAfterTick(player, databasePlayer, itemLoadout);
+                               return null;
+                           }).build().open(player);
                 }
         );
 

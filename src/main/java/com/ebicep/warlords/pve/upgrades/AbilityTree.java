@@ -12,7 +12,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.DefaultFontInfo;
 import com.ebicep.warlords.util.java.NumberFormat;
-import de.rapha149.signgui.SignGUI;
+import io.github.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -130,27 +130,27 @@ public class AbilityTree {
                         if (autoUpgradeProfiles.size() >= 8) {
                             warlordsPlayer.sendMessage(Component.text("You can only have up to 8 profiles per spec!", NamedTextColor.RED));
                         } else {
-                            new SignGUI()
-                                    .lines("", "Enter", "Profile Name", "")
-                                    .onFinish((p, lines) -> {
-                                        String name = lines[0];
-                                        if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                            warlordsPlayer.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
-                                            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                            return null;
-                                        }
-                                        if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
-                                            warlordsPlayer.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
-                                            warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                            return null;
-                                        }
-                                        AutoUpgradeProfile newProfile = new AutoUpgradeProfile(name);
-                                        autoUpgradeProfiles.add(newProfile);
-                                        autoUpgradeProfile = newProfile;
-                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                        openAbilityTreeAfterTick();
-                                        return null;
-                                    }).open(player);
+                            SignGUI.builder()
+                                   .setLines("", "Enter", "Profile Name", "")
+                                   .setHandler((p, lines) -> {
+                                       String name = lines.getLine(0);
+                                       if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                           warlordsPlayer.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                           warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                           return null;
+                                       }
+                                       if (autoUpgradeProfiles.stream().anyMatch(i -> i.getName().equalsIgnoreCase(name))) {
+                                           warlordsPlayer.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
+                                           warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                           return null;
+                                       }
+                                       AutoUpgradeProfile newProfile = new AutoUpgradeProfile(name);
+                                       autoUpgradeProfiles.add(newProfile);
+                                       autoUpgradeProfile = newProfile;
+                                       DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                       openAbilityTreeAfterTick();
+                                       return null;
+                                   }).build().open(player);
                         }
                     }
             );
@@ -160,25 +160,25 @@ public class AbilityTree {
                             .lore(WordWrap.wrap(Component.text("Rename the current profile.", NamedTextColor.GRAY), 150))
                             .get(),
                     (m, e) -> {
-                        new SignGUI()
-                                .lines("", "Enter", "Profile Name", "")
-                                .onFinish((p, lines) -> {
-                                    String name = lines[0];
-                                    if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                        player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
-                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                        return null;
-                                    }
-                                    if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                                        player.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
-                                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                        return null;
-                                    }
-                                    autoUpgradeProfile.setName(name);
-                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    openAbilityTreeAfterTick();
-                                    return null;
-                                }).open(player);
+                        SignGUI.builder()
+                               .setLines("", "Enter", "Profile Name", "")
+                               .setHandler((p, lines) -> {
+                                   String name = lines.getLine(0);
+                                   if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                       player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                       player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                       return null;
+                                   }
+                                   if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                                       player.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
+                                       player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                       return null;
+                                   }
+                                   autoUpgradeProfile.setName(name);
+                                   DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                   openAbilityTreeAfterTick();
+                                   return null;
+                               }).build().open(player);
                     }
             );
             menu.setItem(5, 4,

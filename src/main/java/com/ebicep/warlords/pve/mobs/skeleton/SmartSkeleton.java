@@ -12,7 +12,7 @@ import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 
 public class SmartSkeleton extends AbstractMob implements ChampionMob {
 

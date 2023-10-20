@@ -17,7 +17,7 @@ import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import de.rapha149.signgui.SignGUI;
+import io.github.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -58,24 +58,24 @@ public class CompensateCommand extends BaseCommand {
                         String[] text = new String[]{"", "", "", ""};
                         String[] currencyNameSplit = currency.name.split(" ");
                         System.arraycopy(currencyNameSplit, 0, text, 1, currencyNameSplit.length);
-                        new SignGUI()
-                                .lines(text)
-                                .onFinish((p, lines) -> {
-                                    String amount = lines[0];
-                                    try {
-                                        int amountInt = Integer.parseInt(amount);
-                                        compensation.put(currency, (long) amountInt);
-                                    } catch (Exception exception) {
-                                        p.sendMessage(Component.text("Invalid Amount", NamedTextColor.RED));
-                                    }
-                                    new BukkitRunnable() {
-                                        @Override
-                                        public void run() {
-                                            openCompensateMenu(p, compensation, compensatedPlayers);
-                                        }
-                                    }.runTaskLater(Warlords.getInstance(), 1);
-                                    return null;
-                                }).open(player);
+                        SignGUI.builder()
+                               .setLines(text)
+                               .setHandler((p, lines) -> {
+                                   String amount = lines.getLine(0);
+                                   try {
+                                       int amountInt = Integer.parseInt(amount);
+                                       compensation.put(currency, (long) amountInt);
+                                   } catch (Exception exception) {
+                                       p.sendMessage(Component.text("Invalid Amount", NamedTextColor.RED));
+                                   }
+                                   new BukkitRunnable() {
+                                       @Override
+                                       public void run() {
+                                           openCompensateMenu(p, compensation, compensatedPlayers);
+                                       }
+                                   }.runTaskLater(Warlords.getInstance(), 1);
+                                   return null;
+                               }).build().open(player);
                     }
             );
 
@@ -93,21 +93,21 @@ public class CompensateCommand extends BaseCommand {
                                              "All " + compensatedPlayers.size() + " Players", NamedTextColor.AQUA))
                         .get(),
                 (m, e) -> {
-                    new SignGUI()
-                            .lines("", "Enter", "Player", "Name")
-                            .onFinish((p, lines) -> {
-                                String playerName = lines[0];
-                                for (DatabasePlayer databasePlayer : compensatedPlayers) {
-                                    if (databasePlayer.getName().equalsIgnoreCase(playerName)) {
-                                        openCompensateMenu(player, compensation, List.of(databasePlayer));
-                                        return null;
-                                    }
-                                }
-                                ChatChannels.sendDebugMessage(player,
-                                        Component.text(playerName, NamedTextColor.AQUA).append(Component.text(" was not found for compensation", NamedTextColor.RED))
-                                );
-                                return null;
-                            }).open(player);
+                    SignGUI.builder()
+                           .setLines("", "Enter", "Player", "Name")
+                           .setHandler((p, lines) -> {
+                               String playerName = lines.getLine(0);
+                               for (DatabasePlayer databasePlayer : compensatedPlayers) {
+                                   if (databasePlayer.getName().equalsIgnoreCase(playerName)) {
+                                       openCompensateMenu(player, compensation, List.of(databasePlayer));
+                                       return null;
+                                   }
+                               }
+                               ChatChannels.sendDebugMessage(player,
+                                       Component.text(playerName, NamedTextColor.AQUA).append(Component.text(" was not found for compensation", NamedTextColor.RED))
+                               );
+                               return null;
+                           }).build().open(player);
                 }
         );
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
@@ -145,22 +145,22 @@ public class CompensateCommand extends BaseCommand {
                         .get(),
                 (m, e) -> {
                     if (!e.isShiftClick()) {
-                        new SignGUI()
-                                .lines("", "Enter Reward", "Title", "Blank to Cancel")
-                                .onFinish((p, lines) -> {
-                                    String title = lines[0];
-                                    if (title.isEmpty()) {
-                                        ChatChannels.sendDebugMessage(player, Component.text("Blank title, compensation cancelled", NamedTextColor.RED));
-                                        return null;
-                                    }
-                                    new BukkitRunnable() {
-                                        @Override
-                                        public void run() {
-                                            compensate(player, compensation, compensatedPlayers, title);
-                                        }
-                                    }.runTaskLater(Warlords.getInstance(), 1);
-                                    return null;
-                                }).open(player);
+                        SignGUI.builder()
+                               .setLines("", "Enter Reward", "Title", "Blank to Cancel")
+                               .setHandler((p, lines) -> {
+                                   String title = lines.getLine(0);
+                                   if (title.isEmpty()) {
+                                       ChatChannels.sendDebugMessage(player, Component.text("Blank title, compensation cancelled", NamedTextColor.RED));
+                                       return null;
+                                   }
+                                   new BukkitRunnable() {
+                                       @Override
+                                       public void run() {
+                                           compensate(player, compensation, compensatedPlayers, title);
+                                       }
+                                   }.runTaskLater(Warlords.getInstance(), 1);
+                                   return null;
+                               }).build().open(player);
                     } else {
                         compensate(player, compensation, compensatedPlayers, null);
                     }

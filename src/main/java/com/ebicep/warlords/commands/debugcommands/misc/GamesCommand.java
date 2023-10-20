@@ -16,7 +16,8 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.warlords.Utils;
-import de.rapha149.signgui.SignGUI;
+import io.github.rapha149.signgui.SignGUI;
+import io.github.rapha149.signgui.SignGUIAction;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -140,34 +141,34 @@ public class GamesCommand extends BaseCommand {
                             .name(Component.text("Edit Blue Score", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
-                        new SignGUI()
-                                .lines("", "0 <= X <= 1000", "Current Blue", "Score: " + ((DatabaseGameCTF) game).getBluePoints())
-                                .onFinish((p, lines) -> {
-                                    String score = lines[0];
-                                    try {
-                                        int newScore = Integer.parseInt(score);
-                                        if (newScore < 0 || newScore > 1000) {
-                                            p.sendMessage(Component.text("Score must be between 0 and 1000", NamedTextColor.RED));
-                                            return lines;
-                                        }
-                                        player.sendMessage(Component.text("Setting Score: ", NamedTextColor.GREEN)
-                                                                    .append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
-                                        p.sendMessage(Component.text("Old Blue: ", NamedTextColor.GREEN)
-                                                               .append(Component.text(((DatabaseGameCTF) game).getBluePoints(), NamedTextColor.BLUE)));
+                        SignGUI.builder()
+                               .setLines("", "0 <= X <= 1000", "Current Blue", "Score: " + ((DatabaseGameCTF) game).getBluePoints())
+                               .setHandler((p, lines) -> {
+                                   String score = lines.getLine(0);
+                                   try {
+                                       int newScore = Integer.parseInt(score);
+                                       if (newScore < 0 || newScore > 1000) {
+                                           p.sendMessage(Component.text("Score must be between 0 and 1000", NamedTextColor.RED));
+                                           return Collections.singletonList(SignGUIAction.displayNewLines(lines.getLines()));
+                                       }
+                                       player.sendMessage(Component.text("Setting Score: ", NamedTextColor.GREEN)
+                                                                   .append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
+                                       p.sendMessage(Component.text("Old Blue: ", NamedTextColor.GREEN)
+                                                              .append(Component.text(((DatabaseGameCTF) game).getBluePoints(), NamedTextColor.BLUE)));
                                         p.sendMessage(Component.text("New Blue: ", NamedTextColor.GREEN)
                                                                .append(Component.text(newScore, NamedTextColor.BLUE)));
                                         ((DatabaseGameCTF) game).setBluePoints(newScore);
-                                    } catch (Exception e1) {
-                                        p.sendMessage(Component.text("Invalid Score", NamedTextColor.GREEN));
-                                    }
-                                    new BukkitRunnable() {
-                                        @Override
-                                        public void run() {
-                                            openGameEditorMenu(player, game);
-                                        }
-                                    }.runTaskLater(Warlords.getInstance(), 1);
-                                    return null;
-                                }).open(player);
+                                   } catch (Exception e1) {
+                                       p.sendMessage(Component.text("Invalid Score", NamedTextColor.GREEN));
+                                   }
+                                   new BukkitRunnable() {
+                                       @Override
+                                       public void run() {
+                                           openGameEditorMenu(player, game);
+                                       }
+                                   }.runTaskLater(Warlords.getInstance(), 1);
+                                   return null;
+                               }).build().open(player);
                     }
             );
             menu.setItem(5, 2,
@@ -175,34 +176,34 @@ public class GamesCommand extends BaseCommand {
                             .name(Component.text("Edit Red Score", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
-                        new SignGUI()
-                                .lines("", "0 <= X <= 1000", "Current Red", "Score: " + ((DatabaseGameCTF) game).getRedPoints())
-                                .onFinish((p, lines) -> {
-                                    String score = lines[0];
-                                    try {
-                                        int newScore = Integer.parseInt(score);
-                                        if (newScore < 0 || newScore > 1000) {
-                                            p.sendMessage(Component.text("Score must be between 0 and 1000", NamedTextColor.RED));
-                                            return null;
-                                        }
-                                        player.sendMessage(Component.text("Setting Score: ", NamedTextColor.GREEN)
-                                                                    .append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
-                                        p.sendMessage(Component.text("Old Red: ", NamedTextColor.GREEN)
-                                                               .append(Component.text(((DatabaseGameCTF) game).getRedPoints(), NamedTextColor.RED)));
+                        SignGUI.builder()
+                               .setLines("", "0 <= X <= 1000", "Current Red", "Score: " + ((DatabaseGameCTF) game).getRedPoints())
+                               .setHandler((p, lines) -> {
+                                   String score = lines.getLine(0);
+                                   try {
+                                       int newScore = Integer.parseInt(score);
+                                       if (newScore < 0 || newScore > 1000) {
+                                           p.sendMessage(Component.text("Score must be between 0 and 1000", NamedTextColor.RED));
+                                           return null;
+                                       }
+                                       player.sendMessage(Component.text("Setting Score: ", NamedTextColor.GREEN)
+                                                                   .append(Component.text(game.getDate(), NamedTextColor.YELLOW)));
+                                       p.sendMessage(Component.text("Old Red: ", NamedTextColor.GREEN)
+                                                              .append(Component.text(((DatabaseGameCTF) game).getRedPoints(), NamedTextColor.RED)));
                                         p.sendMessage(Component.text("New Red: ", NamedTextColor.GREEN)
                                                                .append(Component.text(newScore, NamedTextColor.RED)));
                                         ((DatabaseGameCTF) game).setRedPoints(newScore);
-                                    } catch (Exception e1) {
-                                        p.sendMessage(Component.text("Invalid Score", NamedTextColor.RED));
-                                    }
-                                    new BukkitRunnable() {
-                                        @Override
-                                        public void run() {
-                                            openGameEditorMenu(player, game);
-                                        }
-                                    }.runTaskLater(Warlords.getInstance(), 1);
-                                    return null;
-                                }).open(player);
+                                   } catch (Exception e1) {
+                                       p.sendMessage(Component.text("Invalid Score", NamedTextColor.RED));
+                                   }
+                                   new BukkitRunnable() {
+                                       @Override
+                                       public void run() {
+                                           openGameEditorMenu(player, game);
+                                       }
+                                   }.runTaskLater(Warlords.getInstance(), 1);
+                                   return null;
+                               }).build().open(player);
                     }
             );
         }
