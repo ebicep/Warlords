@@ -9,14 +9,14 @@ import javax.annotation.Nonnull;
 
 public class WarlordsMobSpawnEvent extends AbstractWarlordsGameEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final AbstractMob<?> mob;
+    private final AbstractMob mob;
 
-    public WarlordsMobSpawnEvent(Game game, AbstractMob<?> mob) {
+    public WarlordsMobSpawnEvent(Game game, AbstractMob mob) {
         super(game);
         this.mob = mob;
     }
 
-    public AbstractMob<?> getMob() {
+    public AbstractMob getMob() {
         return mob;
     }
 

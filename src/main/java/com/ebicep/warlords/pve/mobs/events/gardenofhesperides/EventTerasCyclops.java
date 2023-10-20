@@ -5,13 +5,13 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 
-public class EventTerasCyclops extends AbstractZombie implements BossMinionMob, Teras {
+public class EventTerasCyclops extends AbstractMob implements BossMinionMob, Teras {
 
     public EventTerasCyclops(Location spawnLocation) {
         this(spawnLocation, "Teras Cyclops", 3500, 0.4f, 10, 550, 650);

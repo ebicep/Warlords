@@ -27,11 +27,11 @@ import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -110,14 +110,14 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 toConvert.forEach(convertedEnemy -> {
                     EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, Particle.VILLAGER_HAPPY, 1);
                     convertedEnemy.setTeam(Team.BLUE);
-                    AbstractMob<?> mob = convertedEnemy.getMob();
+                    AbstractMob mob = convertedEnemy.getMob();
                     updateMobEquipment(mob, player);
                     //removing teammate mobs that are aggroed on converted target
                     PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                        .aliveTeammatesOf(player)
                                        .filter(teammate -> {
-                                           LivingEntity target = teammate.getMob().getTarget();
-                                           return target != null && Objects.equals(target.getBukkitEntity(), convertedEnemy.getEntity());
+                                           Entity target = teammate.getMob().getTarget();
+                                           return target != null && Objects.equals(target, convertedEnemy.getEntity());
                                        })
                                        .forEach(teammate -> teammate.getMob().removeTarget());
                     mob.removeTarget();
@@ -128,7 +128,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     @Override
                     public void run() {
                         toConvert.forEach(convertedEnemy -> {
-                            AbstractMob<?> mob = convertedEnemy.getMob();
+                            AbstractMob mob = convertedEnemy.getMob();
                             if (pveOption.getMobs().contains(mob)) {
                                 mob.getWarlordsNPC().die(mob.getWarlordsNPC());
                             }
@@ -143,7 +143,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
 
         new GameRunnable(game) {
 
-            final HashSet<AbstractMob<?>> allSpawnedMobs = new HashSet<>();
+            final HashSet<AbstractMob> allSpawnedMobs = new HashSet<>();
             int ticksElapsed = -1;
             int shiftTickTime = 0;
 
@@ -184,9 +184,9 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     return;
                 }
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 2);
-                HashSet<AbstractMob<?>> spawnedMobs = new HashSet<>();
+                HashSet<AbstractMob> spawnedMobs = new HashSet<>();
                 for (int i = 0; i < spawnAmount; i++) {
-                    AbstractMob<?> mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.PIG_DISCIPLE).createMob(player.getLocation());
+                    AbstractMob mob = DIFFICULTY_SPAWNS.getOrDefault(difficulty, Mob.PIG_DISCIPLE).createMob(player.getLocation());
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);
@@ -209,7 +209,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
 
     }
 
-    private static void updateMobEquipment(AbstractMob<?> mob, WarlordsPlayer player) {
+    private static void updateMobEquipment(AbstractMob mob, WarlordsPlayer player) {
         mob.setEquipment(new Utils.SimpleEntityEquipment(
                 HeadUtils.getHead(player.getUuid()),
                 CHESTPLATE,

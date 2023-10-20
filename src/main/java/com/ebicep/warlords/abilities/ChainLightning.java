@@ -187,9 +187,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
 
         PlayerFilter filter = firstCheck ?
                               PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
-                                          .filter(e -> LocationUtils.isLookingAtChain(wp.getEntity(), e.getEntity()) && LocationUtils.hasLineOfSight(wp.getEntity(),
-                                                  e.getEntity()
-                                          )) :
+                                          .filter(e -> LocationUtils.isLookingAtChain(wp, e) && LocationUtils.hasLineOfSight(wp, e)) :
                               PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange)
                                           .lookingAtFirst(wp);
 

@@ -35,7 +35,7 @@ public class PayloadOption implements PveOption {
     private static final double MOVE_RADIUS = 5;
     private static final int BOSS_BAR_FILL_SPACE = 45;
     private static final int BOSS_BAR_ESCORT_SPACE = 6;
-    private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AbstractMob, Integer> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final PayloadBrain brain;
     private final PayloadRendererCoalCart renderer = new PayloadRendererCoalCart();
@@ -64,7 +64,7 @@ public class PayloadOption implements PveOption {
                 WarlordsEntity killer = event.getKiller();
 
                 if (we instanceof WarlordsNPC) {
-                    AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
+                    AbstractMob mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.containsKey(mobToRemove)) {
                         mobToRemove.onDeath(killer, we.getDeathLocation(), PayloadOption.this);
                         new GameRunnable(game) {
@@ -179,7 +179,7 @@ public class PayloadOption implements PveOption {
     }
 
     @Override
-    public Set<AbstractMob<?>> getMobs() {
+    public Set<AbstractMob> getMobs() {
         return mobs.keySet();
     }
 
@@ -189,12 +189,12 @@ public class PayloadOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
         return mobs;
     }
 
     @Override
-    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+    public void spawnNewMob(AbstractMob mob, Team team) {
         mob.toNPC(game, team, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
         mobs.put(mob, ticksElapsed.get());

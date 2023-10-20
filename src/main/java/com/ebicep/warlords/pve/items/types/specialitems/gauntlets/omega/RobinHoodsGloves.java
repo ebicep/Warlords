@@ -45,7 +45,7 @@ public class RobinHoodsGloves extends SpecialOmegaGauntlet implements AppliesToW
 
             @EventHandler(priority = EventPriority.HIGHEST)
             public void onRewardDrop(WarlordsDropItemEvent event) {
-                AbstractMob<?> deadMob = event.getDeadMob();
+                AbstractMob deadMob = event.getDeadMob();
                 if (Arrays.stream(Mob.BOSSES).noneMatch(mobs -> Objects.equals(mobs.mobClass, deadMob.getClass()))) {
                     return;
                 }

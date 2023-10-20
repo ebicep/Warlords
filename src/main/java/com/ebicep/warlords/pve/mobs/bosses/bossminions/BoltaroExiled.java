@@ -5,15 +5,15 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
-public class BoltaroExiled extends AbstractZombie implements BossMinionMob {
+public class BoltaroExiled extends AbstractMob implements BossMinionMob {
 
     public BoltaroExiled(Location spawnLocation) {
         this(spawnLocation, "Exiled Apostate", 4000, 0.3f, 5, 200, 250);

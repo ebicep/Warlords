@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
@@ -18,7 +19,7 @@ import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 
-public class Illumination extends AbstractMagmaCube implements AdvancedMob {
+public class Illumination extends AbstractMob implements AdvancedMob {
 
     public Illumination(Location spawnLocation) {
         super(

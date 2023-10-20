@@ -3,9 +3,9 @@ package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -13,7 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 
-public class EventEggSac extends AbstractZombie implements BossMinionMob {
+public class EventEggSac extends AbstractMob implements BossMinionMob {
 
     public static boolean ARMOR_STAND = true;
 

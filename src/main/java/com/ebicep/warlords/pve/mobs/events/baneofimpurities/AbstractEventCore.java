@@ -7,28 +7,28 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.trait.Gravity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.EnumSet;
 
-public abstract class AbstractEventCore extends AbstractZombie implements BossMob, Unswappable {
+public abstract class AbstractEventCore extends AbstractMob implements BossMob, Unswappable {
 
     private final int killTime;
     private final RandomCollection<Mob> summonList;
@@ -36,16 +36,11 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
     public AbstractEventCore(
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             int killTime,
             RandomCollection<Mob> summonList
     ) {
-        super(spawnLocation, name, maxHealth, 0, 0, 0, 0);
-        this.killTime = killTime;
-        this.summonList = summonList;
-        livingEntity.setGravity(false);
-        entity.resetAI();
+        this(spawnLocation, name, maxHealth, 0, 0, 0, 0, killTime, summonList);
     }
 
     public AbstractEventCore(
@@ -56,15 +51,22 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
             int damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
-            EntityEquipment ee,
             int killTime,
             RandomCollection<Mob> summonList
     ) {
         super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage);
         this.killTime = killTime;
         this.summonList = summonList;
-        livingEntity.setGravity(false);
-        entity.resetAI();
+    }
+
+    @Override
+    public void giveGoals() {
+
+    }
+
+    @Override
+    public void onNPCCreate() {
+        npc.getOrAddTrait(Gravity.class).gravitate(true);
     }
 
     @Override
@@ -166,7 +168,7 @@ public abstract class AbstractEventCore extends AbstractZombie implements BossMo
         // spin + elevate then explode
         new GameRunnable(warlordsNPC.getGame()) {
 
-            float yaw = warlordsNPC.getEntity().getBodyYaw();
+            float yaw = warlordsNPC.getEntity().getLocation().getYaw();
 
             @Override
             public void run() {

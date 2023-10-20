@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TreasureHuntOption implements PveOption {
 
     private Game game;
-    private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AbstractMob, Integer> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private Random random;
     private Floor floor;
@@ -86,7 +86,7 @@ public class TreasureHuntOption implements PveOption {
     }
 
     @Override
-    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+    public void spawnNewMob(AbstractMob mob, Team team) {
         mob.toNPC(game, team, warlordsNPC -> {});
         game.addNPC(mob.getWarlordsNPC());
         mobs.put(mob, ticksElapsed.get());
@@ -94,7 +94,7 @@ public class TreasureHuntOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
         return mobs;
     }
 
@@ -104,7 +104,7 @@ public class TreasureHuntOption implements PveOption {
     }
 
     @Override
-    public Set<AbstractMob<?>> getMobs() {
+    public Set<AbstractMob> getMobs() {
         return mobs.keySet();
     }
 

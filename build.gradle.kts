@@ -82,7 +82,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.3-SNAPSHOT")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.15")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT") {
+    compileOnly("net.citizensnpcs:citizens-main:2.0.33-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")

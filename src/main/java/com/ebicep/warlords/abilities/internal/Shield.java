@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,7 +33,7 @@ public class Shield implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onAddCooldown(WarlordsAddCooldownEvent event) {
         WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-        org.bukkit.entity.LivingEntity livingEntity = warlordsEntity.getEntity();
+        Entity entity = warlordsEntity.getEntity();
         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
         if (!(cooldown.getCooldownObject() instanceof Shield shield)) {
             return;
@@ -40,7 +41,7 @@ public class Shield implements Listener {
         Consumer<CooldownManager> oldRemoveForce = cooldown.getOnRemoveForce();
         cooldown.setOnRemoveForce(cooldownManager -> {
             WarlordsEntity we = cooldownManager.getWarlordsEntity();
-            if (livingEntity instanceof Player player) {
+            if (entity instanceof Player player) {
                 if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Shield.class).stream().count() == 1) {
                     ((CraftPlayer) player).getHandle().setAbsorptionAmount(0);
                 } else {
@@ -54,7 +55,7 @@ public class Shield implements Listener {
             }
             oldRemoveForce.accept(cooldownManager);
         });
-        if (livingEntity instanceof Player player) {
+        if (entity instanceof Player player) {
             double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                     .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
                     .mapToDouble(Shield::getShieldHealth)

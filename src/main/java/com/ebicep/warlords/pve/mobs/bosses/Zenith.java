@@ -6,13 +6,13 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.abilities.ThunderCloudAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -23,7 +23,7 @@ import org.bukkit.*;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 
-public class Zenith extends AbstractZombie implements BossMob {
+public class Zenith extends AbstractMob implements BossMob {
 
     public Zenith(Location spawnLocation) {
         super(spawnLocation,

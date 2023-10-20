@@ -13,7 +13,6 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnSouls;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Ghoulcaller extends AbstractZombie implements BossMob {
+public class Ghoulcaller extends AbstractMob implements BossMob {
 
     private static final HashMap<Integer, Pair<Float, Float>> PLAYER_COUNT_DAMAGE_VALUES = new HashMap<>() {{
         put(1, new Pair<>(736f, 778f));
@@ -132,7 +131,7 @@ public class Ghoulcaller extends AbstractZombie implements BossMob {
                 locations = SpawnSouls.generateSpawnLocations(option);
                 soul = SpawnSouls.SOULS.get(ThreadLocalRandom.current().nextInt(SpawnSouls.SOULS.size()));
             }
-            AbstractMob<?> spawnedMob = soul.createMob(locations.remove(0));
+            AbstractMob spawnedMob = soul.createMob(locations.remove(0));
             option.spawnNewMob(spawnedMob);
         }
     }

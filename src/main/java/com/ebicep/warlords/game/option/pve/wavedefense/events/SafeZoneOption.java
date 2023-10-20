@@ -19,7 +19,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -148,10 +148,10 @@ public class SafeZoneOption implements Option {
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-                    wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+                    wp.removePotionEffect(PotionEffectType.INVISIBILITY);
                     wp.updateArmor();
 
-                    LivingEntity wpEntity = wp.getEntity();
+                    Entity wpEntity = wp.getEntity();
                     if (wpEntity instanceof Player) {
                         PlayerFilter.playingGame(wp.getGame())
                                     .enemiesOf(wp)
@@ -167,7 +167,7 @@ public class SafeZoneOption implements Option {
                     if (ticksElapsed % 5 == 0) {
                         wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
 
-                        LivingEntity wpEntity = wp.getEntity();
+                        Entity wpEntity = wp.getEntity();
                         if (wpEntity instanceof Player) {
                             ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
                             PlayerFilter.playingGame(wp.getGame())

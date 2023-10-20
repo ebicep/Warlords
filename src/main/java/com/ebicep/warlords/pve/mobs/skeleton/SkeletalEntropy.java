@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -13,7 +14,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
-public class SkeletalEntropy extends AbstractSkeleton implements AdvancedMob {
+public class SkeletalEntropy extends AbstractMob implements AdvancedMob {
     public SkeletalEntropy(Location spawnLocation) {
         super(
                 spawnLocation,

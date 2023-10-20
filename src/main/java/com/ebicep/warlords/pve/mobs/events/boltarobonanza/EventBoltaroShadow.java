@@ -5,8 +5,8 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
@@ -16,7 +16,7 @@ import org.bukkit.Sound;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EventBoltaroShadow extends AbstractSkeleton implements BossMinionMob {
+public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
 
     private boolean forceSplit = false;
     private int split;

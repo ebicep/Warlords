@@ -14,15 +14,14 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class EventPoseidon extends AbstractZombie implements BossMob, God {
+public class EventPoseidon extends AbstractMob implements BossMob, God {
 
     public EventPoseidon(Location spawnLocation) {
         this(spawnLocation, "Poseidon", 75000, .33f, 15, 725, 846);
@@ -67,7 +66,7 @@ public class EventPoseidon extends AbstractZombie implements BossMob, God {
                                 .entitiesAround(wp, rad, rad, rad)
                                 .aliveEnemiesOf(wp)
                         ) {
-                            if (!LocationUtils.hasLineOfSight(wp.getEntity(), spikeTarget.getEntity())) {
+                            if (!LocationUtils.hasLineOfSight(wp, spikeTarget)) {
                                 continue;
                             }
 
@@ -117,10 +116,10 @@ public class EventPoseidon extends AbstractZombie implements BossMob, God {
                         Location location = we.getLocation();
                         Vector speed = we.getLocation().getDirection().normalize().multiply(.25).setY(.01);
                         if (we instanceof WarlordsNPC npc && npc.getMob() != null) {
-                            AbstractMob<?> npcMob = npc.getMob();
-                            LivingEntity target = npcMob.getTarget();
+                            AbstractMob npcMob = npc.getMob();
+                            Entity target = npcMob.getTarget();
                             if (target != null) {
-                                double distance = location.distance(target.getBukkitLivingEntity().getLocation());
+                                double distance = location.distance(target.getLocation());
                                 speed.setY(distance * .0025);
                             }
                         }
@@ -160,7 +159,7 @@ public class EventPoseidon extends AbstractZombie implements BossMob, God {
                         if (!(dead instanceof WarlordsNPC npc) || dead == warlordsNPC) {
                             return;
                         }
-                        AbstractMob<?> npcMob = npc.getMob();
+                        AbstractMob npcMob = npc.getMob();
                         if (npcMob instanceof EventHades) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, .5f);
                             float healing = warlordsNPC.getHealth() * 0.25f;

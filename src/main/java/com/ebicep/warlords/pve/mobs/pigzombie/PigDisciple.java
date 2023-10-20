@@ -3,11 +3,12 @@ package com.ebicep.warlords.pve.mobs.pigzombie;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import org.bukkit.Location;
 
-public class PigDisciple extends AbstractPigZombie implements BasicMob {
+public class PigDisciple extends AbstractMob implements BasicMob {
 
     public PigDisciple(Location spawnLocation) {
         super(

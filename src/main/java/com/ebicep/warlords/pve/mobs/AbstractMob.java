@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs;
 
-import com.ebicep.customentities.nms.pve.CustomEntity;
+import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsEntityGoal;
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -22,11 +23,17 @@ import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.google.common.util.concurrent.AtomicDouble;
+import net.citizensnpcs.api.ai.EntityTarget;
+import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.ai.event.CancelReason;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -34,7 +41,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -47,13 +54,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
-public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
+public abstract class AbstractMob implements Mob {
 
-    protected final T entity;
-    protected final net.minecraft.world.entity.Mob mob;
-    protected final LivingEntity livingEntity;
     protected final Location spawnLocation;
     protected final String name;
     protected final int maxHealth;
@@ -61,6 +64,7 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected final int damageResistance;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
+    protected NPC npc;
     protected EntityEquipment equipment;
     @Nullable
     protected Aspect aspect;
@@ -75,7 +79,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
     protected MobPlayerClass playerClass;
 
     public AbstractMob(
-            T entity,
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -85,7 +88,6 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
             float maxMeleeDamage,
             AbstractAbility... abilities
     ) {
-        this.entity = entity;
         this.spawnLocation = spawnLocation;
         this.name = name;
         com.ebicep.warlords.pve.mobs.Mob mobRegistry = getMobRegistry();
@@ -98,49 +100,36 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
-
-        entity.spawn(spawnLocation);
-
-        this.mob = entity.get();
-        this.mob.persist = true;
-
-        this.livingEntity = (LivingEntity) mob.getBukkitEntity();
-
-        updateEquipment();
-
-        if (getDescription() != null) {
-            bossBar.name(Component.text(name, getColor()));
-        }
     }
 
     public abstract com.ebicep.warlords.pve.mobs.Mob getMobRegistry();
 
-    public void updateEquipment() {
-        EntityEquipment equipment = livingEntity.getEquipment();
-        if (equipment == null) {
-            return;
-        }
-        if (this.equipment != null) {
-            equipment.setBoots(this.equipment.getBoots());
-            equipment.setLeggings(this.equipment.getLeggings());
-            equipment.setChestplate(this.equipment.getChestplate());
-            equipment.setHelmet(this.equipment.getHelmet());
-            equipment.setItemInMainHand(this.equipment.getItemInMainHand());
-        }
-    }
-
-    public Component getDescription() {
-        return null;
-    }
-
-    public NamedTextColor getColor() {
-        return NamedTextColor.WHITE;
-    }
-
     public WarlordsNPC toNPC(Game game, Team team, Consumer<WarlordsNPC> modifyStats) {
+        this.npc = NPCManager.NPC_REGISTRY.createNPC(getMobRegistry().entityType, name);
+        if (getDescription() != null) {
+//            BossBarTrait bossBarTrait = this.npc.getOrAddTrait(BossBarTrait.class);
+//            bossBarTrait.setTitle(LegacyComponentSerializer.legacySection().serialize(
+//                    Component.text(name, getColor())
+//            ));
+//            //TODO track health or just revert to old system
+        }
+        NavigatorParameters localParameters = this.npc.getNavigator().getLocalParameters();
+        localParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
+        localParameters.attackRange(1.3)
+                       .updatePathRate(10)
+                       .distanceMargin(.7);
+        this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
+        this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
+
+        giveGoals();
+        onNPCCreate();
+        updateEquipment();
+
+        this.npc.spawn(spawnLocation);
+
         this.warlordsNPC = new WarlordsNPC(
                 name,
-                livingEntity,
+                npc,
                 game,
                 team,
                 maxHealth,
@@ -162,6 +151,37 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return warlordsNPC;
     }
 
+    public Component getDescription() {
+        return null;
+    }
+
+    public NamedTextColor getColor() {
+        return NamedTextColor.WHITE;
+    }
+
+    public void giveGoals() {
+        //TODO wander? - waypoints trait
+//        npc.getNavigator().getLocalParameters()
+//           .avoidWater(true);
+        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 40), 1);
+    }
+
+    public void onNPCCreate() {
+
+    }
+
+    public void updateEquipment() {
+        if (npc == null || equipment == null) {
+            return;
+        }
+        Equipment equipmentTrait = npc.getOrAddTrait(Equipment.class);
+        equipmentTrait.set(Equipment.EquipmentSlot.HAND, this.equipment.getItemInMainHand());
+        equipmentTrait.set(Equipment.EquipmentSlot.HELMET, this.equipment.getHelmet());
+        equipmentTrait.set(Equipment.EquipmentSlot.CHESTPLATE, this.equipment.getChestplate());
+        equipmentTrait.set(Equipment.EquipmentSlot.LEGGINGS, this.equipment.getLeggings());
+        equipmentTrait.set(Equipment.EquipmentSlot.BOOTS, this.equipment.getBoots());
+    }
+
     public void onSpawn(PveOption option) {
         this.pveOption = option;
         Component description = getDescription();
@@ -173,11 +193,15 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
                     20, 30, 20
             );
         }
-        if (!bossBar.name().equals(Component.empty())) {
+        if (getDescription() != null) {
+            bossBar.name(Component.text(name, getColor()));
             showBossBar = true;
         }
         // null checks to handle manual spawns with aspects
-        if (this.aspect == null && ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option) && !(this instanceof BossMob)) {
+        if (this.aspect == null &&
+                ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option) &&
+                !(this instanceof BossMob || this instanceof PlayerMob)
+        ) {
             this.aspect = Aspect.VALUES[ThreadLocalRandom.current().nextInt(Aspect.VALUES.length)];
         }
         if (this.aspect != null) {
@@ -189,12 +213,9 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         return Component.text(name, getColor());
     }
 
-    public AbstractMob<T> prependOperation(UnaryOperator<WarlordsNPC> mapper) {
-        mapper.apply(this.warlordsNPC);
-        return this;
-    }
+    public void whileAlive(int ticksElapsed, PveOption option) {
 
-    public abstract void whileAlive(int ticksElapsed, PveOption option);
+    }
 
     public void activateAbilities() {
         if (!(warlordsNPC.getSpec() instanceof MobPlayerClass)) {
@@ -222,13 +243,17 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         });
     }
 
-    public abstract void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event);
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+
+    }
 
     public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
 
     }
 
-    public abstract void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event);
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+
+    }
 
     public void onFinalDamageTaken(WarlordsDamageHealingFinalEvent event) {
 
@@ -415,33 +440,34 @@ public abstract class AbstractMob<T extends CustomEntity<?>> implements Mob {
         }
     }
 
-    public net.minecraft.world.entity.LivingEntity getTarget() {
-        return this.entity.getTarget();
+    public Entity getTarget() {
+        EntityTarget entityTarget = npc.getNavigator().getEntityTarget();
+        return entityTarget == null ? null : entityTarget.getTarget();
     }
 
     public void setTarget(WarlordsEntity target) {
-        this.entity.setTarget((net.minecraft.world.entity.LivingEntity) ((CraftEntity) target.getEntity()).getHandle());
+        npc.getNavigator().setTarget(target.getEntity(), true);
     }
 
     public void setTarget(LivingEntity target) {
-        this.entity.setTarget((((net.minecraft.world.entity.LivingEntity) ((CraftEntity) target).getHandle())));
+        npc.getNavigator().setTarget(target, true);
     }
 
     public void removeTarget() {
-        this.entity.removeTarget();
+        npc.getNavigator().cancelNavigation(CancelReason.PLUGIN);
     }
 
-    public T getEntity() {
-        return entity;
+    public void toggleStun(boolean stun) {
+        if (stun) {
+            //npc.getNavigator().cancelNavigation(CancelReason.PLUGIN);
+        }
+        npc.getNavigator().setPaused(stun);
     }
 
-    public net.minecraft.world.entity.Mob getMob() {
-        return mob;
+    public NPC getNpc() {
+        return npc;
     }
 
-    public LivingEntity getLivingEntity() {
-        return livingEntity;
-    }
 
     public WarlordsNPC getWarlordsNPC() {
         return warlordsNPC;

@@ -70,11 +70,11 @@ public class SpawnSouls extends AbstractSpawnMobAbility {
     }
 
     @Override
-    public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
+    public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
         if (randomSpawnLocations.isEmpty()) {
             randomSpawnLocations = generateSpawnLocations(pveOption);
         }
-        AbstractMob<?> spawnedMob = randomSoulToSpawn.createMob(randomSpawnLocations.remove(0));
+        AbstractMob spawnedMob = randomSoulToSpawn.createMob(randomSpawnLocations.remove(0));
         spawnedMob.getDynamicFlags().add(DynamicFlags.NO_INSIGNIA);
         return spawnedMob;
     }

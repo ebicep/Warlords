@@ -13,7 +13,7 @@ public class DelegatingWave implements Wave {
     }
 
     @Override
-    public AbstractMob<?> spawnMonster(Location loc) {
+    public AbstractMob spawnMonster(Location loc) {
         return w.spawnMonster(loc);
     }
 

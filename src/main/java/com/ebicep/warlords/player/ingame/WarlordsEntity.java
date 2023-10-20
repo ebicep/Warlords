@@ -92,7 +92,7 @@ public abstract class WarlordsEntity {
     protected UUID uuid;
     protected AbstractPlayerClass spec;
     protected float walkSpeed = 1;
-    protected LivingEntity entity;
+    protected Entity entity;
     protected Specializations specClass;
     @Nullable
     protected CompassTargetMarker compassTarget;
@@ -108,7 +108,7 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
-    private final Location deathLocation;
+    private Location deathLocation;
     private Vector currentVector;
     private Team team;
     private int regenTickTimer;
@@ -163,7 +163,7 @@ public abstract class WarlordsEntity {
     public WarlordsEntity(
             @Nonnull UUID uuid,
             @Nonnull String name,
-            @Nonnull LivingEntity entity,
+            @Nonnull Entity entity,
             @Nonnull Game game,
             @Nonnull Team team,
             @Nonnull Specializations specClass
@@ -175,7 +175,7 @@ public abstract class WarlordsEntity {
     public WarlordsEntity(
             @Nonnull UUID uuid,
             @Nonnull String name,
-            @Nonnull LivingEntity entity,
+            @Nonnull Entity entity,
             @Nonnull Game game,
             @Nonnull Team team,
             @Nonnull AbstractPlayerClass playerClass
@@ -1303,11 +1303,11 @@ public abstract class WarlordsEntity {
     }
 
     @Nonnull
-    public LivingEntity getEntity() {
+    public Entity getEntity() {
         return this.entity;
     }
 
-    public void setEntity(LivingEntity entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 
@@ -1518,7 +1518,7 @@ public abstract class WarlordsEntity {
      * @param entity   which entity is assigned to the hurt animation?
      * @param attacker what warlords player should play the hurt animation?
      */
-    public void playHurtAnimation(LivingEntity entity, WarlordsEntity attacker) {
+    public void playHurtAnimation(Entity entity, WarlordsEntity attacker) {
         ServerLevel serverLevel = ((CraftWorld) entity.getWorld()).getHandle();
         serverLevel.broadcastDamageEvent(((CraftEntity) entity).getHandle(), serverLevel.damageSources().generic());
         for (Player player1 : attacker.getWorld().getPlayers()) {
@@ -1562,7 +1562,7 @@ public abstract class WarlordsEntity {
         if (entity instanceof Player player) {
             player.setGameMode(GameMode.SPECTATOR);
             //removing yellow hearts
-            entity.setAbsorptionAmount(0);
+            player.setAbsorptionAmount(0);
             ItemStack item = player.getInventory().getItem(0);
             //removing sg shiny weapon
             if (item != null) {
@@ -1820,10 +1820,10 @@ public abstract class WarlordsEntity {
     }
 
     public void showDeathAnimation() {
-        if (!(this.entity instanceof Player player)) {
-            this.entity.damage(200);
-        } else {
-            // TODO: Fix zombie not dying upon spawn
+//        if (!(this.entity instanceof Player player)) {
+//            this.entity.damage(200);
+//        } else {
+        // TODO: Fix zombie not dying upon spawn
 //            Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class, false, z -> {
 //                EntityEquipment equipment = z.getEquipment();
 //                PlayerInventory playerInventory = player.getInventory();
@@ -1835,7 +1835,7 @@ public abstract class WarlordsEntity {
 //            });
 //            zombie.setAI(false);
 //            zombie.damage(2000);
-        }
+//        }
     }
 
     public void heal() {
@@ -2214,7 +2214,10 @@ public abstract class WarlordsEntity {
 
     @Nonnull
     public Location getEyeLocation() {
-        return this.entity.getEyeLocation();
+        if (entity instanceof LivingEntity livingEntity) {
+            return livingEntity.getEyeLocation();
+        }
+        return this.entity.getLocation();
     }
 
     public boolean isWasSneaking() {
@@ -2333,10 +2336,24 @@ public abstract class WarlordsEntity {
                 return false;
             }
         }
-        LivingEntity livingEntity = this.getEntity();
-        livingEntity.removePotionEffect(potionEffect.getType());
-        livingEntity.addPotionEffect(potionEffect);
+        if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.removePotionEffect(potionEffect.getType());
+            livingEntity.addPotionEffect(potionEffect);
+        }
         return true;
+    }
+
+    public void removePotionEffect(PotionEffectType type) {
+        if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.removePotionEffect(type);
+        }
+    }
+
+    public boolean hasPotionEffect(PotionEffectType type) {
+        if (entity instanceof LivingEntity livingEntity) {
+            return livingEntity.hasPotionEffect(type);
+        }
+        return false;
     }
 
     public World getWorld() {
@@ -2392,8 +2409,8 @@ public abstract class WarlordsEntity {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
             player.setWalkSpeed(this.walkSpeed);
-        } else {
-            entity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
+        } else if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
         }
     }
 

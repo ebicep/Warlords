@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.HelpEntry;
-import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -16,8 +15,6 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
 import com.ebicep.warlords.pve.mobs.*;
-import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventCronus;
-import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventTerasSiren;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -27,10 +24,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.world.entity.Entity;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -38,13 +33,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 @CommandAlias("mob")
 @CommandPermission("group.administrator")
 public class MobCommand extends BaseCommand {
 
-    public static final Set<AbstractMob<?>> SPAWNED_MOBS = new HashSet<>();
+    public static final Set<AbstractMob> SPAWNED_MOBS = new HashSet<>();
 
     @Subcommand("menu")
     public void menu(Player player) {
@@ -63,7 +60,7 @@ public class MobCommand extends BaseCommand {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
             if (option instanceof PveOption pveOption) {
                 for (int i = 0; i < amount; i++) {
-                    AbstractMob<?> mob = mobType.createMob(player.getLocation());
+                    AbstractMob mob = mobType.createMob(player.getLocation());
                     if (aspect != null) {
                         mob.setAspect(aspect);
                     }
@@ -88,7 +85,7 @@ public class MobCommand extends BaseCommand {
             if (option instanceof PveOption pveOption) {
                 ChatChannels.sendDebugMessage(player, Component.text("Spawning " + mobGroup.name() + " mobs", NamedTextColor.GREEN));
                 for (Mob mob : mobGroup.mobs) {
-                    AbstractMob<?> abstractMob = mob.createMob(player.getLocation());
+                    AbstractMob abstractMob = mob.createMob(player.getLocation());
                     if (aspect != null) {
                         abstractMob.setAspect(aspect);
                     }
@@ -109,7 +106,7 @@ public class MobCommand extends BaseCommand {
         SPAWNED_MOBS.clear();
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
             if (option instanceof PveOption pveOption) {
-                AbstractMob<?> mob = mobType.createMob(player.getLocation());
+                AbstractMob mob = mobType.createMob(player.getLocation());
                 pveOption.spawnNewMob(mob, Team.BLUE);
                 SPAWNED_MOBS.add(mob);
                 ChatChannels.sendDebugMessage(player, Component.text("Spawned Test Mob - " + mob.getWarlordsNPC().getUuid(), NamedTextColor.GREEN));
@@ -141,7 +138,7 @@ public class MobCommand extends BaseCommand {
 
     @Subcommand("speed")
     public void giveSpeed(@Conditions("requireGame:gamemode=PVE") Player player, Integer speed) {
-        for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
+        for (AbstractMob spawnedMob : SPAWNED_MOBS) {
             spawnedMob.getWarlordsNPC().addSpeedModifier(null, "Test", speed, 30 * 20, "BASE");
         }
         ChatChannels.sendDebugMessage(player,
@@ -154,7 +151,7 @@ public class MobCommand extends BaseCommand {
     @Subcommand("target")
     @CommandCompletion("@warlordsplayers")
     public void target(@Conditions("requireGame:gamemode=PVE") Player player, WarlordsPlayer target) {
-        for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
+        for (AbstractMob spawnedMob : SPAWNED_MOBS) {
             spawnedMob.setTarget(target);
         }
         ChatChannels.sendDebugMessage(player, Component.text("Set Target: ", NamedTextColor.GREEN)
@@ -165,7 +162,7 @@ public class MobCommand extends BaseCommand {
     @Subcommand("targetnpc")
     @CommandCompletion("@warlordsnpcs")
     public void target(@Conditions("requireGame:gamemode=PVE") Player player, WarlordsNPC target) {
-        for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
+        for (AbstractMob spawnedMob : SPAWNED_MOBS) {
             spawnedMob.setTarget(target);
         }
         ChatChannels.sendDebugMessage(player,
@@ -216,10 +213,7 @@ public class MobCommand extends BaseCommand {
     public void noAi(@Conditions("requireGame:gamemode=PVE") Player player, Boolean ai) {
         for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
             if (option instanceof PveOption pveOption) {
-                pveOption.getMobs()
-                         .stream()
-                         .map(abstractMob -> abstractMob.getEntity().get())
-                         .forEach(entityInsentient -> entityInsentient.setNoAi(ai));
+                pveOption.getMobs().forEach(mob -> mob.toggleStun(ai));
                 ChatChannels.sendDebugMessage(player,
                         Component.text("Set All Mob NoAI to ", NamedTextColor.GREEN)
                                  .append(Component.text(ai, NamedTextColor.YELLOW))
@@ -241,8 +235,8 @@ public class MobCommand extends BaseCommand {
                          .findFirst()
                          .ifPresent(warlordsNPC -> {
                              ChatChannels.sendDebugMessage(player, Component.text(warlordsNPC + " - " + warlordsNPC.getLocation(), NamedTextColor.GREEN));
-                             AbstractMob<?> mob = warlordsNPC.getMob();
-                             mob.getLivingEntity().remove();
+                             AbstractMob mob = warlordsNPC.getMob();
+                             mob.getNpc().destroy();
                              WarlordsPlayerDisguised playerDisguised = new WarlordsPlayerDisguised(player, warlordsNPC);
                              Warlords.getPlayers().put(player.getUniqueId(), playerDisguised);
                              game.getPlayers().put(player.getUniqueId(), warlordsNPC.getTeam());
@@ -260,7 +254,7 @@ public class MobCommand extends BaseCommand {
         Location location = player.getLocation();
         for (Mob value : Mob.VALUES) {
             JsonObject mobObject = new JsonObject();
-            AbstractMob<?> mob = value.createMobLegacy.apply(location.add(200, 100, 200));
+            AbstractMob mob = value.createMobLegacy.apply(location.add(200, 100, 200));
             mobObject.addProperty("name", mob.getName());
             mobObject.addProperty("max_health", mob.getMaxHealth());
             mobObject.addProperty("walk_speed", mob.getWalkSpeed());
@@ -268,7 +262,6 @@ public class MobCommand extends BaseCommand {
             mobObject.addProperty("min_melee_damage", mob.getMinMeleeDamage());
             mobObject.addProperty("max_melee_damage", mob.getMaxMeleeDamage());
             jsonObject.add(value.name(), mobObject);
-            mob.getMob().remove(Entity.RemovalReason.DISCARDED);
         }
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         System.out.println(gson.toJson(jsonObject));
@@ -317,54 +310,8 @@ public class MobCommand extends BaseCommand {
 
     @Subcommand("moveto")
     public void moveTo(Player player) {
-        for (AbstractMob<?> spawnedMob : SPAWNED_MOBS) {
-            spawnedMob.getMob().getNavigation().moveTo(((CraftEntity) player).getHandle(), 2);
-        }
-    }
-
-    @Subcommand("moveto2")
-    public void moveTo2(Player player) {
-        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
-        for (Option option : game.getOptions()) {
-            if (!(option instanceof PveOption pveOption)) {
-                continue;
-            }
-            List<EventTerasSiren> sirens = new ArrayList<>();
-            EventCronus cronus = null;
-            for (AbstractMob<?> mob : pveOption.getMobs()) {
-                if (mob instanceof EventTerasSiren) {
-                    sirens.add((EventTerasSiren) mob);
-                } else if (mob instanceof EventCronus) {
-                    cronus = (EventCronus) mob;
-                }
-            }
-            if (cronus == null) {
-                return;
-            }
-            for (EventTerasSiren siren : sirens) {
-                net.minecraft.world.entity.Mob cronusMob = cronus.getMob();
-                ChatChannels.sendDebugMessage(player, Component.text("Moving: " + siren.getMob().getNavigation().moveTo(cronusMob, 2), NamedTextColor.GREEN));
-            }
-        }
-    }
-
-    @Subcommand("resetai")
-    public void resetAI(Player player) {
-        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
-        for (Option option : game.getOptions()) {
-            if (!(option instanceof PveOption pveOption)) {
-                continue;
-            }
-            List<EventTerasSiren> sirens = new ArrayList<>();
-            for (AbstractMob<?> mob : pveOption.getMobs()) {
-                if (mob instanceof EventTerasSiren) {
-                    sirens.add((EventTerasSiren) mob);
-                }
-            }
-            for (EventTerasSiren siren : sirens) {
-                siren.getEntity().resetAI();
-                ChatChannels.sendDebugMessage(player, Component.text("Reset AI: " + siren.getMob().toString(), NamedTextColor.GREEN));
-            }
+        for (AbstractMob spawnedMob : SPAWNED_MOBS) {
+            spawnedMob.getNpc().getNavigator().setTarget(player.getLocation());
         }
     }
 

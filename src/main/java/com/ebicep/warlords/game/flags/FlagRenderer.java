@@ -19,7 +19,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -158,7 +157,7 @@ public class FlagRenderer {
 
         } else if (this.lastLocation instanceof PlayerFlagLocation flag) {
             runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier(flag.getPlayer(), "FLAG", -20, 0, true));
-            LivingEntity entity = ((PlayerFlagLocation) this.lastLocation).getPlayer().getEntity();
+            Entity entity = ((PlayerFlagLocation) this.lastLocation).getPlayer().getEntity();
             if (entity instanceof Player player) {
                 this.affectedPlayers.add(player);
                 ItemStack item = new ItemStack(info.getTeam() == Team.BLUE ? Material.BLUE_BANNER : Material.RED_BANNER);

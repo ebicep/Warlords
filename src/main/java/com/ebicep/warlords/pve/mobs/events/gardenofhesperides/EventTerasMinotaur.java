@@ -4,12 +4,12 @@ import com.ebicep.warlords.abilities.GroundSlamBerserker;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import org.bukkit.Location;
 
-public class EventTerasMinotaur extends AbstractZombie implements BossMinionMob, Teras {
+public class EventTerasMinotaur extends AbstractMob implements BossMinionMob, Teras {
 
     public EventTerasMinotaur(Location spawnLocation) {
         this(spawnLocation, "Teras Minotaur", 2800, 0.38f, 10, 400, 600);

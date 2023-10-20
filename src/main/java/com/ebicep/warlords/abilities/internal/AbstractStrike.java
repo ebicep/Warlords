@@ -46,7 +46,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                     .requireLineOfSight(wp)
                     .lookingAtFirst(wp)
                     .first((nearPlayer) -> {
-                        if (LocationUtils.isLookingAt(wp.getEntity(), nearPlayer.getEntity()) && LocationUtils.hasLineOfSight(wp.getEntity(), nearPlayer.getEntity())) {
+                        if (LocationUtils.isLookingAt(wp, nearPlayer) && LocationUtils.hasLineOfSight(wp, nearPlayer)) {
                             addTimesUsed();
                             AbstractPlayerClass.sendRightClickPacket(player);
                             playSoundAndEffect(nearPlayer.getLocation());

@@ -3,11 +3,12 @@ package com.ebicep.warlords.pve.mobs.zombie;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
 import org.bukkit.Location;
 
-public class WanderKnights extends AbstractZombie implements IntermediateMob {
+public class WanderKnights extends AbstractMob implements IntermediateMob {
 
     public WanderKnights(Location spawnLocation) {
         super(

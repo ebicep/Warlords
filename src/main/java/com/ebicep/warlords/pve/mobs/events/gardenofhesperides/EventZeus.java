@@ -17,7 +17,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -29,7 +28,7 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class EventZeus extends AbstractZombie implements BossMob, God {
+public class EventZeus extends AbstractMob implements BossMob, God {
 
     public EventZeus(Location spawnLocation) {
         this(spawnLocation, "Zeus", 100000, .33f, 20, 825, 946);
@@ -92,7 +91,7 @@ public class EventZeus extends AbstractZombie implements BossMob, God {
                         if (!(dead instanceof WarlordsNPC npc) || dead == warlordsNPC) {
                             return;
                         }
-                        AbstractMob<?> npcMob = npc.getMob();
+                        AbstractMob npcMob = npc.getMob();
                         if (npcMob instanceof EventHades) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, .5f);
                             float healing = warlordsNPC.getHealth() * 0.25f;

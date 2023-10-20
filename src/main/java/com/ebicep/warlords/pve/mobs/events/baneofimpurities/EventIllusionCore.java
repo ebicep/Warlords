@@ -3,9 +3,6 @@ package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.RandomCollection;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -15,12 +12,6 @@ public class EventIllusionCore extends AbstractEventCore {
         super(
                 spawnLocation,
                 "Illusion Core",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.ENCHANTMENT_CUBE),
-                        null,
-                        null,
-                        null
-                ),
                 200000,
                 30,
                 new RandomCollection<Mob>()
@@ -48,12 +39,6 @@ public class EventIllusionCore extends AbstractEventCore {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.ENCHANTMENT_CUBE),
-                        null,
-                        null,
-                        null
-                ),
                 30,
                 new RandomCollection<Mob>()
                         .add(0.3, Mob.ZOMBIE_LANCER)

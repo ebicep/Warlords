@@ -210,9 +210,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         Location loc = this.getLocation();
 
         if (player == null) {
-            if (this.entity instanceof Player) {
-                ((Player) this.entity).getInventory().setHeldItemSlot(0);
-                this.entity = spawnJimmy(loc, this.entity.getEquipment());
+            if (this.entity instanceof Player p) {
+                p.getInventory().setHeldItemSlot(0);
+                this.entity = spawnJimmy(loc, p.getEquipment());
                 Warlords.setRejoinPoint(uuid, loc);
             }
         } else {
@@ -312,7 +312,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                                    .stream()
                                    .map(WarlordsNPC::getMob)
                                    .filter(Objects::nonNull)
-                                   .filter(abstractMob -> abstractMob.getTarget() != null && abstractMob.getTarget().getUUID().equals(uuid))
+                                   .filter(abstractMob -> abstractMob.getTarget() != null && abstractMob.getTarget().getUniqueId().equals(uuid))
                                    .forEach(AbstractMob::removeTarget);
             }
         }
@@ -382,7 +382,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             }.runTaskLater(Warlords.getInstance(), 1);
         } else {
             this.entity.remove();
-            this.entity = spawnJimmy(this.entity.getLocation(), this.entity.getEquipment());
+            this.entity = spawnJimmy(this.entity.getLocation(), null);
         }
     }
 

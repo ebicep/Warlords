@@ -15,7 +15,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -95,7 +95,7 @@ public class InterchangeModeOption implements Option {
         WarlordsEntity secondPlayer = teamPlayers.get(0);
         String secondPlayerName = secondPlayer.getName();
         UUID secondPlayerUuid = secondPlayer.getUuid();
-        LivingEntity secondPlayerEntity = secondPlayer.getEntity();
+        Entity secondPlayerEntity = secondPlayer.getEntity();
 
         for (int i = 0; i < teamPlayers.size() - 1; i++) {
             transferPlayerStats(teamPlayers.get(i), teamPlayers.get(i + 1),

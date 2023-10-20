@@ -70,63 +70,145 @@ public class LocationUtils {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(4)
                 .addY(.7);
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.925;
+        return lookingAt(player2, eye, 0.925);
+    }
+
+    private static boolean lookingAt(LivingEntity player2, Location eye, double dot) {
+        return getDotToLocation(eye, player2.getEyeLocation()) > dot;
     }
 
     public static boolean isLookingAtIntervene(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(4)
                 .addY(.7);
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.96;
+        return lookingAt(player2, eye, 0.96);
     }
 
     public static boolean isLookingAtMark(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(5)
                 .addY(.7);
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.95;
+        return lookingAt(player2, eye, 0.95);
     }
 
     public static boolean isLineOfSightAssassin(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(1)
                 .addY(.7);
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.7;
+        return lookingAt(player2, eye, 0.7);
     }
 
     public static boolean isLineOfSightVindicator(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(2)
                 .addY(.7);
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.78;
+        return lookingAt(player2, eye, 0.78);
     }
 
     public static boolean isLookingAtChain(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(4)
                 .addY(.7);
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.95 + (player1.getLocation().distanceSquared(player2.getLocation()) / 10000);
+        return lookingAt(player2, eye, 0.95 + (player1.getLocation().distanceSquared(player2.getLocation()) / 10000));
     }
 
     public static boolean isLookingAtWave(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .addY(.7)
                 .pitch(0);
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.91;
+        return lookingAt(player2, eye, 0.91);
+    }
+
+    public static boolean hasLineOfSight(LivingEntity player, LivingEntity player2) {
+        return player.hasLineOfSight(player2);
+    }
+
+    public static double getDotToPlayer(WarlordsEntity player1, WarlordsEntity player2, double yIncrease) {
+        return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease), player2.getEyeLocation());
+    }
+
+    public static double getDotToPlayerEye(WarlordsEntity player1, WarlordsEntity player2) {
+        return getDotToLocation(player1.getEyeLocation(), player2.getEyeLocation());
+    }
+
+    public static double getDotToPlayerCenter(WarlordsEntity player1, WarlordsEntity player2) {
+        return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(.7), player2.getEyeLocation());
+    }
+
+    public static boolean isLookingAt(WarlordsEntity player1, WarlordsEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(4)
+                .addY(.7);
+        return lookingAt(player2, eye, 0.925);
+    }
+
+    private static boolean lookingAt(WarlordsEntity player2, Location eye, double dot) {
+        return getDotToLocation(eye, player2.getEyeLocation()) > dot;
+    }
+
+    public static boolean isLookingAtIntervene(WarlordsEntity player1, WarlordsEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(4)
+                .addY(.7);
+        return lookingAt(player2, eye, 0.96);
+    }
+
+    public static boolean isLookingAtMark(WarlordsEntity player1, WarlordsEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(5)
+                .addY(.7);
+        return lookingAt(player2, eye, 0.95);
+    }
+
+    public static boolean isLineOfSightAssassin(WarlordsEntity player1, WarlordsEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(1)
+                .addY(.7);
+        return lookingAt(player2, eye, 0.7);
+    }
+
+    public static boolean isLineOfSightVindicator(WarlordsEntity player1, WarlordsEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(2)
+                .addY(.7);
+        return lookingAt(player2, eye, 0.78);
+    }
+
+    public static boolean isLookingAtChain(WarlordsEntity player1, WarlordsEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(4)
+                .addY(.7);
+        return lookingAt(player2, eye, 0.95 + (player1.getLocation().distanceSquared(player2.getLocation()) / 10000));
+    }
+
+    public static boolean isLookingAtWave(WarlordsEntity player1, WarlordsEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .addY(.7)
+                .pitch(0);
+        return lookingAt(player2, eye, 0.91);
+    }
+
+    public static boolean hasLineOfSight(WarlordsEntity player1, WarlordsEntity player2) {
+        Entity entity1 = player1.getEntity();
+        Entity entity2 = player2.getEntity();
+        if (entity1 instanceof LivingEntity livingEntity) {
+            return livingEntity.hasLineOfSight(entity2);
+        } else if (entity2 instanceof LivingEntity livingEntity) {
+            return livingEntity.hasLineOfSight(entity1);
+        } else {
+            return false;
+        }
     }
 
     // Linear Interpolation
     // https://en.wikipedia.org/wiki/Linear_interpolation
+
     public static double lerp(double a, double b, double target) {
         return a + target * (b - a);
     }
 
     public static float lerp(float point1, float point2, float alpha) {
         return point1 + alpha * (point2 - point1);
-    }
-
-    public static boolean hasLineOfSight(LivingEntity player, LivingEntity player2) {
-        return player.hasLineOfSight(player2);
     }
 
     public static Comparator<Entity> sortClosestBy(Location loc) {

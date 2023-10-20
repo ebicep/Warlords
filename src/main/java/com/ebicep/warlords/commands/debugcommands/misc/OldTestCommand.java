@@ -1,8 +1,9 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -16,7 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
-import java.util.UUID;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -110,9 +110,17 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
-            DatabaseManager.getPlayer(UUID.fromString("931d683f-b7cb-4770-a1b6-d39d89cd2d3a"), databasePlayer -> {
-                ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer);
-            });
+//            DatabaseManager.getPlayer(UUID.fromString("931d683f-b7cb-4770-a1b6-d39d89cd2d3a"), databasePlayer -> {
+//                ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer);
+//            });
+
+            Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+
+
+//
+//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.WOLF, "TEST");
+//            npc.spawn(player.getLocation());
+
 
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {
 //                for (Currencies value : Currencies.VALUES) {
@@ -379,6 +387,4 @@ public class OldTestCommand implements CommandExecutor {
 
         return true;
     }
-
-
 }

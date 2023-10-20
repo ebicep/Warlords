@@ -3,12 +3,12 @@ package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import org.bukkit.Location;
 
-public class EventNarmerAcolyte extends AbstractZombie implements BossMinionMob {
+public class EventNarmerAcolyte extends AbstractMob implements BossMinionMob {
 
     public EventNarmerAcolyte(Location spawnLocation) {
         super(spawnLocation,

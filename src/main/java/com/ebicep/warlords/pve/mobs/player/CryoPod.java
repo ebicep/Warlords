@@ -1,45 +1,52 @@
 package com.ebicep.warlords.pve.mobs.player;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.citizensnpcs.trait.ArmorStandTrait;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 
-public class CryoPod extends AbstractZombie implements BasicMob {
+public class CryoPod extends AbstractMob implements PlayerMob {
+
+    public CryoPod(Location spawnLocation) {
+        this(spawnLocation, "Cryopod", 20000, 0, 0, 0, 0);
+    }
 
     public CryoPod(Location spawnLocation, String playerName) {
+        this(spawnLocation, playerName + "'s Cryopod", 20000, 0, 0, 0, 0);
+    }
+
+    public CryoPod(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
         super(
                 spawnLocation,
-                playerName + "'s Cryopod",
-                20000,
-                0,
-                0,
-                0,
-                0
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
         );
     }
 
     @Override
     public Mob getMobRegistry() {
-        return null;
+        return Mob.CRYOPOD;
     }
 
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        warlordsNPC.getEntity().remove();
-        ArmorStand armorStand = warlordsNPC.getWorld().spawn(warlordsNPC.getLocation(), ArmorStand.class);
-        armorStand.setGravity(false);
-        armorStand.setVisible(false);
-        armorStand.setCustomName(name);
-        warlordsNPC.setEntity(armorStand);
-        warlordsNPC.updateEntity();
 
         PlayerFilter.entitiesAround(warlordsNPC.getLocation(), 15, 15, 15)
                     .aliveEnemiesOf(warlordsNPC)
@@ -51,37 +58,11 @@ public class CryoPod extends AbstractZombie implements BasicMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
+    public void onNPCCreate() {
+        super.onNPCCreate();
+        ArmorStandTrait armorStandTrait = npc.getOrAddTrait(ArmorStandTrait.class);
+        armorStandTrait.setGravity(false);
+        armorStandTrait.setVisible(false);
     }
 
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public double weaponDropRate() {
-        return 0;
-    }
-
-    @Override
-    public int commonWeaponDropChance() {
-        return 0;
-    }
-
-    @Override
-    public int rareWeaponDropChance() {
-        return 0;
-    }
-
-    @Override
-    public int epicWeaponDropChance() {
-        return 0;
-    }
 }

@@ -6,7 +6,7 @@ import org.bukkit.Location;
 
 public interface Wave {
 
-    AbstractMob<?> spawnMonster(Location loc);
+    AbstractMob spawnMonster(Location loc);
 
     int getMonsterCount();
 

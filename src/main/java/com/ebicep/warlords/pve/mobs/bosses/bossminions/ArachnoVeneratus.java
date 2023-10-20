@@ -3,12 +3,12 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.spider.AbstractSpider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import org.bukkit.Location;
 
-public class ArachnoVeneratus extends AbstractSpider implements BossMinionMob {
+public class ArachnoVeneratus extends AbstractMob implements BossMinionMob {
 
     public ArachnoVeneratus(Location spawnLocation) {
         this(spawnLocation, "Arachno Veneratus", 3000, 0.45f, 5, 350, 500);

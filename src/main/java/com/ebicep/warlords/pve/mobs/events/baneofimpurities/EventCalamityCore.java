@@ -3,24 +3,14 @@ package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.java.RandomCollection;
-import com.ebicep.warlords.util.pve.SkullID;
-import com.ebicep.warlords.util.pve.SkullUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
 public class EventCalamityCore extends AbstractEventCore {
 
     public EventCalamityCore(Location spawnLocation) {
-        super(
-                spawnLocation,
+        super(spawnLocation,
                 "Exiled Core",
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.EXPLOSION),
-                        null,
-                        null,
-                        null
-                ),
                 300000,
                 60,
                 new RandomCollection<Mob>()
@@ -41,20 +31,13 @@ public class EventCalamityCore extends AbstractEventCore {
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
-        super(
-                spawnLocation,
+        super(spawnLocation,
                 name,
                 maxHealth,
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Utils.SimpleEntityEquipment(
-                        SkullUtils.getSkullFrom(SkullID.EXPLOSION),
-                        null,
-                        null,
-                        null
-                ),
                 60,
                 new RandomCollection<Mob>()
                         .add(0.2, Mob.OVERGROWN_ZOMBIE)

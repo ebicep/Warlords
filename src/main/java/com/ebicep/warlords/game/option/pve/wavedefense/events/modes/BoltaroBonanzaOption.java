@@ -42,7 +42,7 @@ public class BoltaroBonanzaOption implements Option, EventGameEndOption {
 
             @EventHandler
             public void onMobSpawn(WarlordsMobSpawnEvent event) {
-                AbstractMob<?> mob = event.getMob();
+                AbstractMob mob = event.getMob();
                 if (mob instanceof EventBoltaroShadow) {
                     int split = ((EventBoltaroShadow) mob).getSplit();
                     if (split > highestSplitValue.get()) {

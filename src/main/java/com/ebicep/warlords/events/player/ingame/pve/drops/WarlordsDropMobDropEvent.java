@@ -16,7 +16,7 @@ public class WarlordsDropMobDropEvent extends AbstractWarlordsDropRewardEvent {
 
     public WarlordsDropMobDropEvent(
             WarlordsEntity player,
-            AbstractMob<?> deadMob,
+            AbstractMob deadMob,
             AtomicDouble dropRate,
             MobDrop mobDrop
     ) {

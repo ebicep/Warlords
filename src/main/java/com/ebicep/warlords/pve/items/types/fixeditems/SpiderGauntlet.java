@@ -53,7 +53,7 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
                 WarlordsEntity victim = event.getWarlordsEntity();
                 WarlordsEntity attacker = event.getAttacker();
                 if (victim instanceof WarlordsNPC warlordsNPC && Objects.equals(attacker, warlordsPlayer)) {
-                    AbstractMob<?> mob = warlordsNPC.getMob();
+                    AbstractMob mob = warlordsNPC.getMob();
                     if (mob instanceof Spider || mob instanceof EventEggSac) {
                         return currentDamageValue * 1.3f;
                     }

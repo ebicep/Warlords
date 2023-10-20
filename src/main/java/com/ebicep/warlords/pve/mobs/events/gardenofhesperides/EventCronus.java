@@ -10,7 +10,6 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -23,7 +22,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-public class EventCronus extends AbstractZombie implements BossMob, LesserGod {
+public class EventCronus extends AbstractMob implements BossMob, LesserGod {
 
     private static final List<Mob> INITIAL_SPAWN = Arrays.asList(Mob.EVENT_TERAS_CYCLOPS, Mob.EVENT_TERAS_MINOTAUR, Mob.EVENT_TERAS_SIREN, Mob.EVENT_TERAS_DRYAD);
     private boolean healthCheck = false;
@@ -80,7 +79,7 @@ public class EventCronus extends AbstractZombie implements BossMob, LesserGod {
                 for (Mob mob : INITIAL_SPAWN) {
                     List<Location> spawnLocations = LocationUtils.getCircle(warlordsNPC.getLocation(), 3, option.playerCount());
                     for (Location location : spawnLocations) {
-                        AbstractMob<?> createdMob = mob.createMob(location);
+                        AbstractMob createdMob = mob.createMob(location);
                         if (createdMob instanceof EventTerasSiren siren) {
                             siren.setCronus(EventCronus.this);
                         }

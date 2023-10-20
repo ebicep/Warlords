@@ -30,7 +30,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -220,7 +220,7 @@ public class TutorialOption implements Option {
 
             @Override
             public void run() {
-                LivingEntity entity = warlordsPlayer.getEntity();
+                Entity entity = warlordsPlayer.getEntity();
                 if (!(entity instanceof Player p)) {
                     return;
                 }
@@ -337,7 +337,7 @@ public class TutorialOption implements Option {
                                     spawnLocation.clone().left(5)
                             );
                             for (Location loc : locations) {
-                                AbstractMob<?> mob = Mob.ZOMBIE_LANCER.createMob(loc);
+                                AbstractMob mob = Mob.ZOMBIE_LANCER.createMob(loc);
                                 testDummies.add(game.addNPC(mob.toNPC(game, Team.RED, warlordsNPC -> {})));
                                 mob.setTarget(warlordsPlayer);
                             }
@@ -424,13 +424,7 @@ public class TutorialOption implements Option {
         testDummies.forEach(warlordsNPC -> game.removePlayer(warlordsNPC.getUuid()));
         testDummies.clear();
         for (Location location : locations) {
-            WarlordsNPC testDummy = game.addNPC(new WarlordsNPC(
-                    "TestDummy",
-                    WarlordsNPC.spawnZombieNoAI(location, null),
-                    game,
-                    Team.RED,
-                    Specializations.PYROMANCER
-            ));
+            WarlordsNPC testDummy = game.addNPC(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation()).toNPC(game, Team.RED, warlordsNPC -> {}));
             testDummy.setTakeDamage(true);
             testDummy.setMaxBaseHealth(100);
             testDummy.setHealth(100);
