@@ -10,12 +10,12 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnSouls;
 import com.ebicep.warlords.pve.mobs.abilities.ThunderCloudAbility;
 import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
-import com.ebicep.warlords.pve.mobs.skeleton.AbstractSkeleton;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -29,7 +29,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Void extends AbstractSkeleton implements BossMob {
+public class Void extends AbstractMob implements BossMob {
 
     AtomicInteger damageToDeal = new AtomicInteger(0);
     private final int stormRadius = 10;

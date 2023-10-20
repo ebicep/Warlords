@@ -91,7 +91,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (!LocationUtils.isLookingAt(player, spikeTarget.getEntity()) || !LocationUtils.hasLineOfSight(player, spikeTarget.getEntity())) {
+            if (!LocationUtils.isLookingAt(wp, spikeTarget) || !LocationUtils.hasLineOfSight(wp, spikeTarget)) {
                 continue;
             }
 

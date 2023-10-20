@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RaidOption implements PveOption {
 
     private SimpleScoreboardHandler scoreboard;
-    private final Set<AbstractMob<?>> mobs = new HashSet<>();
+    private final Set<AbstractMob> mobs = new HashSet<>();
     private Raid raid;
     private Game game;
 
@@ -36,7 +36,7 @@ public class RaidOption implements PveOption {
     }
 
     @Override
-    public Set<AbstractMob<?>> getMobs() {
+    public Set<AbstractMob> getMobs() {
         return null;
     }
 
@@ -45,14 +45,14 @@ public class RaidOption implements PveOption {
         return 0;
     }
 
-    public void spawnNewMob(AbstractMob<?> abstractMob) {
+    public void spawnNewMob(AbstractMob abstractMob) {
         //abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
         game.addNPC(abstractMob.getWarlordsNPC());
         mobs.add(abstractMob);
     }
 
     @Override
-    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+    public void spawnNewMob(AbstractMob mob, Team team) {
 
     }
 
@@ -62,7 +62,7 @@ public class RaidOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
         return null;
     }
 

@@ -80,7 +80,7 @@ public class AvengersStrike extends AbstractStrike {
         float healthDamage = 0;
         if (nearPlayer instanceof WarlordsNPC warlordsNPC) {
             if (pveMasterUpgrade) {
-                AbstractMob<?> mob = warlordsNPC.getMob();
+                AbstractMob mob = warlordsNPC.getMob();
                 if (mob.getLevel() <= 3) {
                     multiplier += 0.4f;
                 } else if (mob.getLevel() == 4 || mob.getLevel() == 5) {

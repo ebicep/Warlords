@@ -18,7 +18,6 @@ import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmerAcolyte;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -34,7 +33,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Narmer extends AbstractZombie implements BossMob {
+public class Narmer extends AbstractMob implements BossMob {
 
     private final int executeRadius = 80;
     private final List<WarlordsEntity> acolytes = new ArrayList<>();
@@ -68,8 +67,8 @@ public class Narmer extends AbstractZombie implements BossMob {
                 new SpawnMobAbility(6, Mob.ZOMBIE_LANCER, true) {
 
                     @Override
-                    public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
-                        AbstractMob<?> spawnedMob = super.createMob(wp);
+                    public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
+                        AbstractMob spawnedMob = super.createMob(wp);
                         spawnedMob.getDynamicFlags().add(DynamicFlags.NO_INSIGNIA);
                         return spawnedMob;
                     }
@@ -156,7 +155,7 @@ public class Narmer extends AbstractZombie implements BossMob {
                 }
 
                 @Override
-                public void onMobCreate(AbstractMob<?> mobSpawned) {
+                public void onMobCreate(AbstractMob mobSpawned) {
                     mobSpawned.setTarget(customTarget);
                 }
             });
@@ -352,7 +351,7 @@ public class Narmer extends AbstractZombie implements BossMob {
         }
 
         @Override
-        public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
+        public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
             return new NarmerAcolyte(wp.getLocation());
         }
 

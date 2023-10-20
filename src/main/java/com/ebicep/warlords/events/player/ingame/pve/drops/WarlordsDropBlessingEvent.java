@@ -13,7 +13,7 @@ public class WarlordsDropBlessingEvent extends AbstractWarlordsDropRewardEvent {
 
     public WarlordsDropBlessingEvent(
             WarlordsEntity player,
-            AbstractMob<?> deadMob,
+            AbstractMob deadMob,
             AtomicDouble dropRate
     ) {
         super(player, deadMob, RewardType.BLESSING, dropRate);

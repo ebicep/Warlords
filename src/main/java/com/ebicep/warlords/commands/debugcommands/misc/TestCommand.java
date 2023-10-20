@@ -111,7 +111,7 @@ public class TestCommand extends BaseCommand {
                 }).syncLast(games -> {
                     HashMap<String, String> mobTiers = new HashMap<>();
                     for (Mobs value : Mobs.values()) {
-                        AbstractMob<?> mob = value.createMob.apply(Bukkit.getWorlds().get(0).getSpawnLocation());
+                        AbstractMob mob = value.createMob.apply(Bukkit.getWorlds().get(0).getSpawnLocation());
                         double dropRate = mob.dropRate();
                         switch ((int) dropRate) {
                             case 1:

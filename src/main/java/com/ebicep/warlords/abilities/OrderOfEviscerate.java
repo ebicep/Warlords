@@ -24,7 +24,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -160,7 +160,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (
                         Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getWarlordsEntity()) &&
-                                !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity().getEntity(), event.getAttacker().getEntity())
+                                !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getAttacker())
                 ) {
                     numberOfBackstabs++;
                     return currentDamageValue * (inPve ? 2 : 1.3f);
@@ -302,7 +302,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     public static void removeCloak(WarlordsEntity warlordsPlayer, boolean forceRemove) {
         if (warlordsPlayer.getCooldownManager().hasCooldownFromName("Cloaked") || forceRemove) {
             warlordsPlayer.getCooldownManager().removeCooldownByName("Cloaked");
-            warlordsPlayer.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+            warlordsPlayer.removePotionEffect(PotionEffectType.INVISIBILITY);
             warlordsPlayer.updateArmor();
         }
     }
@@ -329,9 +329,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-                    wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+                    wp.removePotionEffect(PotionEffectType.INVISIBILITY);
 
-                    LivingEntity wpEntity = wp.getEntity();
+                    Entity wpEntity = wp.getEntity();
                     if (wpEntity instanceof Player) {
                         PlayerFilter.playingGame(wp.getGame())
                                     .enemiesOf(wp)
@@ -346,7 +346,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     if (ticksElapsed % 5 == 0) {
                         wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
 
-                        LivingEntity wpEntity = wp.getEntity();
+                        Entity wpEntity = wp.getEntity();
                         if (wpEntity instanceof Player) {
                             ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
                             PlayerFilter.playingGame(wp.getGame())

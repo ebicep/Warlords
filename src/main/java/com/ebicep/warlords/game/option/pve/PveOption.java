@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.pve;
 
 import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -29,25 +30,24 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.citizensnpcs.trait.RotationTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.world.entity.ai.goal.WrappedGoal;
-import net.minecraft.world.entity.monster.Zombie;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public interface PveOption extends Option {
@@ -80,20 +80,25 @@ public interface PveOption extends Option {
     Game getGame();
 
     default void mobTick() {
-        for (AbstractMob<?> mob : new ArrayList<>(getMobs())) {
+        for (AbstractMob mob : new ArrayList<>(getMobs())) {
             mob.whileAlive(getTicksElapsed() - getMobsMap().get(mob), this);
             mob.activateAbilities();
+//            NPC npc = mob.getNpc();
+//            BossBarTrait bossBarTrait = npc.getTraitNullable(BossBarTrait.class);
+//            if (bossBarTrait != null) {
+//                bossBarTrait.;
+//            }
             if (mob.isShowBossBar()) {
                 mob.bossBar(getGame(), true);
             }
         }
     }
 
-    Set<AbstractMob<?>> getMobs();
+    Set<AbstractMob> getMobs();
 
     int getTicksElapsed();
 
-    ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap();
+    ConcurrentHashMap<AbstractMob, Integer> getMobsMap();
 
     default int playerCount() {
         return (int) getGame().warlordsPlayers().count();
@@ -114,11 +119,11 @@ public interface PveOption extends Option {
         return DifficultyIndex.NORMAL;
     }
 
-    default void spawnNewMob(AbstractMob<?> mob) {
+    default void spawnNewMob(AbstractMob mob) {
         spawnNewMob(mob, Team.RED);
     }
 
-    void spawnNewMob(AbstractMob<?> mob, Team team);
+    void spawnNewMob(AbstractMob mob, Team team);
 
     default boolean isPauseMobSpawn() {
         return false;
@@ -143,14 +148,14 @@ public interface PveOption extends Option {
                     return;
                 }
                 if (attacker instanceof WarlordsNPC) {
-                    AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
+                    AbstractMob mob = ((WarlordsNPC) attacker).getMob();
                     if (mob != null && getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
                         mob.onAttack(attacker, receiver, event);
                     }
                 }
 
                 if (receiver instanceof WarlordsNPC) {
-                    AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
+                    AbstractMob mob = ((WarlordsNPC) receiver).getMob();
                     if (mob != null && getMobsMap().containsKey(mob)) {
                         mob.onDamageTaken(receiver, attacker, event);
                     }
@@ -166,14 +171,14 @@ public interface PveOption extends Option {
                     return;
                 }
                 if (attacker instanceof WarlordsNPC) {
-                    AbstractMob<?> mob = ((WarlordsNPC) attacker).getMob();
+                    AbstractMob mob = ((WarlordsNPC) attacker).getMob();
                     if (mob != null && getMobsMap().containsKey(mob) && receiver != mob.getWarlordsNPC()) {
                         mob.onFinalAttack(event);
                     }
                 }
 
                 if (receiver instanceof WarlordsNPC) {
-                    AbstractMob<?> mob = ((WarlordsNPC) receiver).getMob();
+                    AbstractMob mob = ((WarlordsNPC) receiver).getMob();
                     if (mob != null && getMobsMap().containsKey(mob)) {
                         mob.onFinalDamageTaken(event);
                     }
@@ -215,48 +220,6 @@ public interface PveOption extends Option {
             }
 
             @EventHandler
-            public void onMobTarget(EntityTargetLivingEntityEvent event) {
-                if (!(event.getEntity() instanceof LivingEntity entityLiving)) {
-                    return;
-                }
-                if (getMobsMap().keySet().stream().noneMatch(abstractMob -> Objects.equals(abstractMob.getLivingEntity(), entityLiving))) {
-                    return;
-                }
-                if (entityLiving instanceof Mob) {
-                    LivingEntity newTarget = event.getTarget();
-                    LivingEntity oldTarget = ((Mob) entityLiving).getTarget();
-                    if (entityLiving.hasPotionEffect(PotionEffectType.BLINDNESS) && newTarget != null) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                    if (newTarget == null) {
-                        if (oldTarget instanceof Player) {
-                            //setting target to player zombie
-                            getGame().warlordsPlayers()
-                                     .filter(warlordsPlayer -> warlordsPlayer.getUuid().equals(oldTarget.getUniqueId()))
-                                     .findFirst()
-                                     .ifPresent(warlordsPlayer -> {
-                                         if (!(warlordsPlayer.getEntity() instanceof Player)) {
-                                             event.setTarget(warlordsPlayer.getEntity());
-                                         }
-                                     });
-                        }
-                    } else {
-                        if (oldTarget instanceof Zombie) {
-                            //makes sure player that rejoins is still the target
-                            getGame().warlordsPlayers()
-                                     .filter(warlordsPlayer -> warlordsPlayer.getEntity().equals(oldTarget))
-                                     .findFirst()
-                                     .ifPresent(warlordsPlayer -> event.setCancelled(true));
-                        }
-                        if (newTarget.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                            event.setCancelled(true);
-                        }
-                    }
-                }
-            }
-
-            @EventHandler
             public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
                 AbstractAbility ability = event.getAbility();
                 if (!(ability instanceof ProjectileAbility)) {
@@ -266,14 +229,17 @@ public interface PveOption extends Option {
                 if (!(warlordsEntity instanceof WarlordsNPC warlordsNPC) || warlordsNPC.getMob() == null) {
                     return;
                 }
-                AbstractMob<?> npcMob = warlordsNPC.getMob();
-                Set<WrappedGoal> availableGoals = npcMob.getMob().goalSelector.getAvailableGoals();
-                availableGoals.stream()
-                              .map(WrappedGoal::getGoal)
-                              .filter(PredictTargetFutureLocationGoal.class::isInstance)
-                              .findFirst()
-                              .map(PredictTargetFutureLocationGoal.class::cast)
-                              .ifPresent(PredictTargetFutureLocationGoal::lookAtPredicted);
+                AbstractMob npcMob = warlordsNPC.getMob();
+                Entity target = npcMob.getTarget();
+                WarlordsEntity targetWarlordsEntity = Warlords.getPlayer(target);
+                if (targetWarlordsEntity == null) {
+                    return;
+                }
+                Location predictFutureLocation = PredictTargetFutureLocationGoal.predictFutureLocation(warlordsEntity, targetWarlordsEntity);
+                Location lookAtLocation = PredictTargetFutureLocationGoal.lookAtLocation(warlordsEntity.getLocation(), predictFutureLocation);
+                RotationTrait rotationTrait = npcMob.getNpc().getOrAddTrait(RotationTrait.class);
+                rotationTrait.getGlobalParameters().headOnly(true);
+                rotationTrait.getPhysicalSession().rotateToFace(lookAtLocation);
             }
 
             @EventHandler
@@ -321,7 +287,7 @@ public interface PveOption extends Option {
 
     @Override
     default void onGameEnding(@Nonnull Game game) {
-        getMobs().forEach(mob -> mob.bossBar(game, false));
+        getMobs().forEach(mob -> mob.getNpc().destroy());
     }
 
     @Override
@@ -371,11 +337,6 @@ public interface PveOption extends Option {
                 ability.setInPve(true);
             }
         }
-    }
-
-    @Override
-    default void onPlayerQuit(Player player) {
-        getMobs().forEach(mob -> player.hideBossBar(mob.getBossBar()));
     }
 
     default List<Component> healthScoreboard(Game game) {

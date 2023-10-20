@@ -3,11 +3,12 @@ package com.ebicep.warlords.pve.mobs.spider;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import org.bukkit.Location;
 
-public class ArachnoVenari extends AbstractSpider implements BasicMob {
+public class ArachnoVenari extends AbstractMob implements BasicMob {
 
     public ArachnoVenari(Location spawnLocation) {
         super(

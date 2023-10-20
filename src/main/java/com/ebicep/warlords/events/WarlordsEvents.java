@@ -468,6 +468,12 @@ public class WarlordsEvents implements Listener {
         }
     }
 
+//    @EventHandler
+//    public void onPlayerInteractEntity2(PlayerInteractEntityEvent e) {
+//        System.out.println("HELLO");
+//        e.setCancelled(true);
+//    }
+
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         if (e.getRightClicked().getType() != EntityType.ARMOR_STAND) {

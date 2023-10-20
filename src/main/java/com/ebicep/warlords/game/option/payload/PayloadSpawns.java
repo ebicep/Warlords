@@ -29,7 +29,7 @@ public class PayloadSpawns {
         this.payloadSpawnWaves = payloadSpawnWaves;
     }
 
-    public void tick(double payloadProgress, Location payloadLocation, BiConsumer<AbstractMob<?>, Team> spawnMethod) {
+    public void tick(double payloadProgress, Location payloadLocation, BiConsumer<AbstractMob, Team> spawnMethod) {
         int payloadProgressCounter = (int) (payloadProgress * 10);
         if (payloadProgressCounter > payloadSpawnCounter) {
             if (!payloadSpawnWaves.isEmpty() && payloadProgressCounter - 1 < payloadSpawnWaves.size()) {
@@ -65,7 +65,7 @@ public class PayloadSpawns {
         return locations;
     }
 
-    private static void spawnMobs(BiConsumer<AbstractMob<?>, Team> spawnMethod, List<Pair<Integer, Mob>> spawns, List<Location> spawnLocationsNear) {
+    private static void spawnMobs(BiConsumer<AbstractMob, Team> spawnMethod, List<Pair<Integer, Mob>> spawns, List<Location> spawnLocationsNear) {
         int size = spawnLocationsNear.size();
         if (size == 0) {
             return;

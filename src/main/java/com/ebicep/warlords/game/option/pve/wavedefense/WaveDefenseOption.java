@@ -62,7 +62,7 @@ import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class WaveDefenseOption implements PveOption {
     protected static final int SCOREBOARD_PRIORITY = 5;
-    private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AbstractMob, Integer> mobs = new ConcurrentHashMap<>();
     private final Team team;
     private final WaveList waves;
     private final DifficultyIndex difficulty;
@@ -125,7 +125,7 @@ public class WaveDefenseOption implements PveOption {
                 WarlordsEntity killer = event.getKiller();
 
                 if (we instanceof WarlordsNPC) {
-                    AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
+                    AbstractMob mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.containsKey(mobToRemove)) {
                         mobToRemove.onDeath(killer, we.getDeathLocation(), WaveDefenseOption.this);
                         new GameRunnable(game) {
@@ -397,7 +397,7 @@ public class WaveDefenseOption implements PveOption {
             }
 
             public WarlordsEntity spawn(Location loc) {
-                AbstractMob<?> abstractMob = currentWave.spawnMonster(loc);
+                AbstractMob abstractMob = currentWave.spawnMonster(loc);
                 WarlordsNPC npc = abstractMob.toNPC(game, team, WaveDefenseOption.this::modifyStats);
                 game.addNPC(npc);
                 mobs.put(abstractMob, ticksElapsed.get());
@@ -526,7 +526,7 @@ public class WaveDefenseOption implements PveOption {
                 if (ticksElapsed.get() % 200 == 0) {
                     for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
                         Location location = marker.getLocation();
-                        for (AbstractMob<?> mob : new ArrayList<>(mobs.keySet())) {
+                        for (AbstractMob mob : new ArrayList<>(mobs.keySet())) {
                             if (mob.getWarlordsNPC().getLocation().getY() < -50) {
                                 mob.getWarlordsNPC().teleport(location);
                             }
@@ -547,7 +547,7 @@ public class WaveDefenseOption implements PveOption {
     }
 
     @Override
-    public Set<AbstractMob<?>> getMobs() {
+    public Set<AbstractMob> getMobs() {
         return mobs.keySet();
     }
 
@@ -557,7 +557,7 @@ public class WaveDefenseOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
         return mobs;
     }
 
@@ -577,7 +577,7 @@ public class WaveDefenseOption implements PveOption {
     }
 
     @Override
-    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+    public void spawnNewMob(AbstractMob mob, Team team) {
         game.addNPC(mob.toNPC(game, team, this::modifyStats));
         mobs.put(mob, ticksElapsed.get());
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));

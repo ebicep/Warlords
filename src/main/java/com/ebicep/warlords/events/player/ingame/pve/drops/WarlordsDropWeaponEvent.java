@@ -12,7 +12,7 @@ public class WarlordsDropWeaponEvent extends AbstractWarlordsDropRewardEvent {
 
     public WarlordsDropWeaponEvent(
             WarlordsEntity player,
-            AbstractMob<?> deadMob,
+            AbstractMob deadMob,
             AtomicDouble dropRate
     ) {
         super(player, deadMob, RewardType.WEAPON, dropRate);

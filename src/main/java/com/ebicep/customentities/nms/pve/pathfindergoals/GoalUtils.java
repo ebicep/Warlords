@@ -7,8 +7,13 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.GameType;
+import org.bukkit.entity.Entity;
+import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class GoalUtils {
@@ -24,5 +29,19 @@ public class GoalUtils {
                     (entity instanceof ServerPlayer p && p.gameMode.getGameModeForPlayer() == GameType.CREATIVE);
         });
         return list;
+    }
+
+    @Nonnull
+    public static List<Entity> getNearbyWarlordEntities(Entity entity, WarlordsEntity thisWarlordsEntity, double distance) {
+        @NotNull Collection<Entity> list = entity.getNearbyEntities(distance, distance, distance);
+        list.removeIf(e -> {
+            WarlordsEntity warlordsEntity = Warlords.getPlayer(e);
+            return warlordsEntity == null ||
+                    warlordsEntity.isDead() ||
+                    warlordsEntity.isTeammate(thisWarlordsEntity) ||
+                    warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) ||
+                    (e instanceof ServerPlayer p && p.gameMode.getGameModeForPlayer() == GameType.CREATIVE);
+        });
+        return new ArrayList<>(list);
     }
 }

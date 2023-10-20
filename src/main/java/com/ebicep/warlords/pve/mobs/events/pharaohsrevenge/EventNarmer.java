@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -26,7 +25,7 @@ import org.bukkit.event.Listener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventNarmer extends AbstractZombie implements BossMob {
+public class EventNarmer extends AbstractMob implements BossMob {
 
     private final int earthQuakeRadius = 12;
     private final int executeRadius = 80;
@@ -80,7 +79,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         }
 
         Location location = warlordsNPC.getLocation();
-        AbstractMob<?> ancestor;
+        AbstractMob ancestor;
         if (Math.random() < 0.5) {
             ancestor = new EventDjer(location);
         } else {
@@ -124,7 +123,7 @@ public class EventNarmer extends AbstractZombie implements BossMob {
         };
         if (bersekerToSpawn != null) {
             for (int i = 0; i < berserkerSpawnCount; i++) {
-                AbstractMob<?> berserker = bersekerToSpawn.createMob(warlordsNPC.getLocation());
+                AbstractMob berserker = bersekerToSpawn.createMob(warlordsNPC.getLocation());
                 option.spawnNewMob(berserker);
             }
         }

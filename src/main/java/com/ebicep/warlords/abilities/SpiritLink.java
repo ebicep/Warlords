@@ -82,7 +82,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
                 .lookingAtFirst(wp)
                 .soulBindedFirst(wp)
         ) {
-            if (LocationUtils.isLookingAtChain(wp.getEntity(), nearPlayer.getEntity()) && LocationUtils.hasLineOfSight(wp.getEntity(), nearPlayer.getEntity())) {
+            if (LocationUtils.isLookingAtChain(wp, nearPlayer) && LocationUtils.hasLineOfSight(wp, nearPlayer)) {
                 playersHit++;
                 if (nearPlayer.onHorse()) {
                     numberOfDismounts++;

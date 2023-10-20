@@ -6,10 +6,10 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -20,7 +20,7 @@ import org.bukkit.Particle;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EventPrometheus extends AbstractZombie implements BossMob, LesserGod {
+public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
 
     private int barrageOfFlamesDelay = 0;
     private boolean healthCheck = false;

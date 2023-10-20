@@ -4,13 +4,13 @@ import com.ebicep.warlords.abilities.CripplingStrike;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Spider;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import org.bukkit.Location;
 
-public class EventForsakenDegrader extends AbstractZombie implements BossMinionMob, Spider {
+public class EventForsakenDegrader extends AbstractMob implements BossMinionMob, Spider {
 
 
     public EventForsakenDegrader(Location spawnLocation) {

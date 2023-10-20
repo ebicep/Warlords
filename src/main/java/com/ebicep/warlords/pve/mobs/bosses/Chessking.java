@@ -1,29 +1,31 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.customentities.nms.pve.CustomSlime;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
-import com.ebicep.warlords.pve.mobs.slime.AbstractSlime;
 import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.trait.SlimeSize;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class Chessking extends AbstractSlime implements BossMob {
+public class Chessking extends AbstractMob implements BossMob {
 
     private static final int MAX_SLIMY_CHESS = 50;
 
@@ -89,9 +91,8 @@ public class Chessking extends AbstractSlime implements BossMob {
     }
 
     @Override
-    public void onSpawn(PveOption option) {
-        super.onSpawn(option);
-        this.entity.get().setSize(20, true);
+    public void onNPCCreate() {
+        npc.getOrAddTrait(SlimeSize.class).setSize(20);
     }
 
     @Override
@@ -111,13 +112,15 @@ public class Chessking extends AbstractSlime implements BossMob {
         } else {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 0.2f);
         }
-        CustomSlime customSlime = this.getEntity().get();
+        SlimeSize slimeSize = npc.getOrAddTrait(SlimeSize.class);
         float healthPercent = warlordsNPC.getHealth() / warlordsNPC.getMaxHealth();
-        int size = customSlime.getSize();
+        int size = slimeSize.getSize();
         int newSize = (int) (21 * healthPercent);
         if (size != newSize && 0 < newSize && newSize < 21) {
-            customSlime.setSize(newSize, true);
-            customSlime.setCustomJumpPower(1 + ((20 - newSize) * .02f));
+            slimeSize.setSize(newSize);
+            int zeroJumpAmplifier = -33;
+            float newJumpPower = 1 + ((20 - newSize) * .02f);
+            warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 99999, (int) (newJumpPower * 100 + zeroJumpAmplifier), true, false));
             warlordsNPC.getAbilitiesMatching(Belch.class)
                        .forEach(belch -> belch.setRange(9 - ((20 - newSize) * .2f)));
             warlordsNPC.getAbilitiesMatching(SpawnMobAbility.class)

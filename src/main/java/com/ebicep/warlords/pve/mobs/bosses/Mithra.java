@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -9,6 +8,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
@@ -16,7 +16,6 @@ import com.ebicep.warlords.pve.mobs.bosses.bossminions.ArachnoVeneratus;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.EggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -31,7 +30,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Mithra extends AbstractZombie implements BossMob {
+public class Mithra extends AbstractMob implements BossMob {
 
     private boolean flamePhaseTrigger = false;
     private boolean flamePhaseTriggerTwo = false;
@@ -87,7 +86,6 @@ public class Mithra extends AbstractZombie implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        entity.addGoalAI(2, new PredictTargetFutureLocationGoal(mob));
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new ArachnoVeneratus(spawnLocation));

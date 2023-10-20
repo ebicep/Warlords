@@ -1,18 +1,20 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
 import com.ebicep.customentities.nms.pve.pathfindergoals.StrafeGoal;
 import com.ebicep.customentities.nms.pve.pathfindergoals.TargetAggroWarlordsEntityGoal;
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.citizensnpcs.api.npc.NPC;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
 
-public class SmartSkeleton extends AbstractSkeleton implements ChampionMob {
+public class SmartSkeleton extends AbstractMob implements ChampionMob {
 
     public SmartSkeleton(Location spawnLocation) {
         super(
@@ -54,13 +56,22 @@ public class SmartSkeleton extends AbstractSkeleton implements ChampionMob {
     }
 
     @Override
+    public void giveGoals() {
+
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        entity.resetAI();
-        entity.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100);
-        entity.addGoalAI(1, new StrafeGoal(mob));
-        entity.addGoalAI(2, new PredictTargetFutureLocationGoal(mob));
-        entity.addTargetAI(1, new TargetAggroWarlordsEntityGoal(mob));
+        //TODO fix
+        Entity entity = ((CraftEntity) npc.getEntity()).getHandle();
+        if (entity instanceof net.minecraft.world.entity.Mob mob) {
+            mob.goalSelector.removeAllGoals(goal -> true);
+            mob.targetSelector.removeAllGoals(goal -> true);
+            mob.goalSelector.addGoal(1, new StrafeGoal(mob));
+            mob.targetSelector.addGoal(1, new TargetAggroWarlordsEntityGoal(mob));
+        }
+        this.npc.data().set(NPC.Metadata.USE_MINECRAFT_AI, true);
     }
 
     @Override

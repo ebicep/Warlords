@@ -14,19 +14,19 @@ public abstract class AbstractWarlordsDropRewardEvent extends AbstractWarlordsEn
         return handlers;
     }
 
-    private final AbstractMob<?> deadMob;
+    private final AbstractMob deadMob;
     private final RewardType rewardType;
     private final AtomicDouble dropRate;
     private double modifier = 1;
 
-    public AbstractWarlordsDropRewardEvent(WarlordsEntity player, AbstractMob<?> deadMob, RewardType rewardType, AtomicDouble dropRate) {
+    public AbstractWarlordsDropRewardEvent(WarlordsEntity player, AbstractMob deadMob, RewardType rewardType, AtomicDouble dropRate) {
         super(player);
         this.deadMob = deadMob;
         this.rewardType = rewardType;
         this.dropRate = dropRate;
     }
 
-    public AbstractMob<?> getDeadMob() {
+    public AbstractMob getDeadMob() {
         return deadMob;
     }
 

@@ -86,7 +86,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (!LocationUtils.isLookingAtMark(player, markTarget.getEntity()) || !LocationUtils.hasLineOfSight(player, markTarget.getEntity())) {
+            if (!LocationUtils.isLookingAtMark(wp, markTarget) || !LocationUtils.hasLineOfSight(wp, markTarget)) {
                 player.sendMessage(Component.text("Your mark was out of range or you did not target a player!", NamedTextColor.RED));
                 continue;
             }

@@ -4,12 +4,13 @@ import com.ebicep.warlords.abilities.CripplingStrike;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 
-public class SkeletalAnomaly extends AbstractSkeleton implements EliteMob {
+public class SkeletalAnomaly extends AbstractMob implements EliteMob {
 
     public SkeletalAnomaly(Location spawnLocation) {
         super(

@@ -10,7 +10,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -145,8 +144,8 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
     public PlayerFilterGeneric<T> lookingAtFirst(T user) {
         return sorted((wp1, wp2) -> {
             int output;
-            double wp1Dot = -LocationUtils.getDotToPlayer(user.getEntity(), wp1.getEntity(), 0);
-            double wp2Dot = -LocationUtils.getDotToPlayer(user.getEntity(), wp2.getEntity(), 0);
+            double wp1Dot = -LocationUtils.getDotToPlayer(user, wp1, 0);
+            double wp2Dot = -LocationUtils.getDotToPlayer(user, wp2, 0);
             output = Double.compare(wp1Dot, wp2Dot);
             if (Math.abs(wp1Dot - wp2Dot) < .0125) {
                 Location userLocation = user.getLocation();
@@ -377,36 +376,6 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
     @Nullable
     public T findFirstOrNull() {
         return findFirst().orElse(null);
-    }
-
-    @Nonnull
-    public PlayerFilterGeneric<T> requireLineOfSight(@Nonnull T warlordsEntity) {
-        return requireLineOfSight(warlordsEntity.getEntity());
-    }
-
-    @Nonnull
-    public PlayerFilterGeneric<T> requireLineOfSight(@Nonnull LivingEntity entity) {
-        return filter(wp -> LocationUtils.isLookingAt(entity, wp.getEntity()) && LocationUtils.hasLineOfSight(entity, wp.getEntity()));
-    }
-
-    @Nonnull
-    public PlayerFilterGeneric<T> requireLineOfSightIntervene(@Nonnull T warlordsPlayer) {
-        return requireLineOfSightIntervene(warlordsPlayer.getEntity());
-    }
-
-    @Nonnull
-    public PlayerFilterGeneric<T> requireLineOfSightIntervene(@Nonnull LivingEntity entity) {
-        return filter(wp -> LocationUtils.isLookingAtIntervene(entity, wp.getEntity()));
-    }
-
-    @Nonnull
-    public PlayerFilterGeneric<T> lookingAtWave(@Nonnull T warlordsEntity) {
-        return lookingAtWave(warlordsEntity.getEntity());
-    }
-
-    @Nonnull
-    public PlayerFilterGeneric<T> lookingAtWave(@Nonnull LivingEntity entity) {
-        return filter(wp -> LocationUtils.isLookingAtWave(entity, wp.getEntity()));
     }
 
     public List<T> toList() {

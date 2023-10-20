@@ -8,6 +8,7 @@ import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AdvancedVoidShred;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
@@ -20,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class VoidZombie extends AbstractZombie implements AdvancedMob {
+public class VoidZombie extends AbstractMob implements AdvancedMob {
 
     private static final int voidRadius = 4;
 

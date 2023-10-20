@@ -43,7 +43,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftEntity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -379,7 +379,7 @@ public class PlayingState implements State, TimerDebugAble {
             if (otherPlayer instanceof WarlordsPlayerDisguised || otherPlayer instanceof WarlordsNPC) {
                 return;
             }
-            LivingEntity entity = otherPlayer.getEntity();
+            Entity entity = otherPlayer.getEntity();
             UUID uuid = otherPlayer.getUuid();
             List<AbstractCooldown<?>> otherPlayerCooldowns = otherPlayer.getCooldownManager().getCooldowns();
             String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, otherPlayer.getSpecClass()));

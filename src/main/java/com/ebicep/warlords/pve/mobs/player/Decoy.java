@@ -1,28 +1,45 @@
 package com.ebicep.warlords.pve.mobs.player;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.trait.ArmorStandTrait;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-public class Decoy extends AbstractZombie implements BasicMob {
-    public Decoy(Location spawnLocation, String playerName, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, ItemStack weapon) {
+public class Decoy extends AbstractMob implements PlayerMob {
+
+    public Decoy(Location spawnLocation) {
+        this(spawnLocation, "Decoy", 5000, 0, 0, 0, 0);
+    }
+
+    public Decoy(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
         super(
                 spawnLocation,
-                playerName + "'s Decoy",
-                5000,
-                0,
-                0,
-                0,
-                0
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage
         );
+    }
+
+
+    public Decoy(Location spawnLocation, String playerName, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, ItemStack weapon) {
+        this(spawnLocation, playerName + "'s Decoy", 5000, 0, 0, 0, 0);
         this.equipment = new Utils.SimpleEntityEquipment(
                 helmet,
                 chestplate,
@@ -30,12 +47,11 @@ public class Decoy extends AbstractZombie implements BasicMob {
                 boots,
                 weapon
         );
-        updateEquipment();
     }
 
     @Override
     public Mob getMobRegistry() {
-        return null;
+        return Mob.DECOY;
     }
 
     @Override
@@ -52,37 +68,11 @@ public class Decoy extends AbstractZombie implements BasicMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
+    public void onNPCCreate() {
+        super.onNPCCreate();
+        ArmorStandTrait armorStandTrait = npc.getOrAddTrait(ArmorStandTrait.class);
+        armorStandTrait.setGravity(false);
+        armorStandTrait.setVisible(false);
     }
 
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public double weaponDropRate() {
-        return 0;
-    }
-
-    @Override
-    public int commonWeaponDropChance() {
-        return 0;
-    }
-
-    @Override
-    public int rareWeaponDropChance() {
-        return 0;
-    }
-
-    @Override
-    public int epicWeaponDropChance() {
-        return 0;
-    }
 }

@@ -5,11 +5,12 @@ import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
 import org.bukkit.Location;
 
-public class SkeletalPyromancer extends AbstractSkeleton implements EliteMob {
+public class SkeletalPyromancer extends AbstractMob implements EliteMob {
 
     public SkeletalPyromancer(Location spawnLocation) {
         super(

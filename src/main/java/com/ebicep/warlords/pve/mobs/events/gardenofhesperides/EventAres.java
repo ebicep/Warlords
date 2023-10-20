@@ -11,7 +11,6 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -21,7 +20,7 @@ import org.bukkit.Location;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EventAres extends AbstractZombie implements BossMob, LesserGod {
+public class EventAres extends AbstractMob implements BossMob, LesserGod {
 
     public EventAres(Location spawnLocation) {
         this(spawnLocation, "Ares", 25500, .4f, 20, 680, 740);
@@ -46,7 +45,7 @@ public class EventAres extends AbstractZombie implements BossMob, LesserGod {
                 maxMeleeDamage,
                 new SpawnMobAbility(10, Mob.INTERMEDIATE_WARRIOR_BERSERKER, 10) {
                     @Override
-                    public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
+                    public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
                         return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));
                     }
 
@@ -57,7 +56,7 @@ public class EventAres extends AbstractZombie implements BossMob, LesserGod {
                 },
                 new SpawnMobAbility(10, Mob.ADVANCED_WARRIOR_BERSERKER, 10) {
                     @Override
-                    public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
+                    public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
                         return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));
                     }
 

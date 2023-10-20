@@ -15,20 +15,20 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.ForceGivesEventPoints;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EventHades extends AbstractZombie implements BossMob, God, ForceGivesEventPoints {
+public class EventHades extends AbstractMob implements BossMob, God, ForceGivesEventPoints {
 
     private int resurrectionTicksLeft = 2 * 60 * 20;
 
@@ -60,10 +60,10 @@ public class EventHades extends AbstractZombie implements BossMob, God, ForceGiv
                         Location location = we.getLocation();
                         Vector speed = we.getLocation().getDirection().normalize().multiply(.3).setY(.01);
                         if (we instanceof WarlordsNPC npc && npc.getMob() != null) {
-                            AbstractMob<?> npcMob = npc.getMob();
-                            LivingEntity target = npcMob.getTarget();
+                            AbstractMob npcMob = npc.getMob();
+                            Entity target = npcMob.getTarget();
                             if (target != null) {
-                                double distance = location.distance(target.getBukkitLivingEntity().getLocation());
+                                double distance = location.distance(target.getLocation());
                                 speed.setY(distance * .003);
                             }
                         }
@@ -89,7 +89,7 @@ public class EventHades extends AbstractZombie implements BossMob, God, ForceGiv
             Mob resurrectedMob = ThreadLocalRandom.current().nextBoolean() ? Mob.EVENT_ZEUS : Mob.EVENT_POSEIDON;
             Location spawnLocation = LocationUtils.getGroundLocation(warlordsNPC.getLocation());
             Utils.playGlobalSound(spawnLocation, Sound.ENTITY_WARDEN_DIG, 10, .75f);
-            AbstractMob<?> resurrected = resurrectedMob.createMob(spawnLocation.clone().add(0, -2.99, 0));
+            AbstractMob resurrected = resurrectedMob.createMob(spawnLocation.clone().add(0, -2.99, 0));
             resurrected.getDynamicFlags().add(DynamicFlags.UNSWAPPABLE);
             pveOption.spawnNewMob(resurrected);
             resurrected.getWarlordsNPC().setHealth(resurrected.getWarlordsNPC().getMaxHealth() / 2f);
@@ -109,7 +109,7 @@ public class EventHades extends AbstractZombie implements BossMob, God, ForceGiv
                             0,
                             Material.DIRT.createBlockData()
                     );
-                    resurrected.getLivingEntity().teleport(resurrected.getLivingEntity().getLocation().add(0, .05, 0));
+                    resurrected.getNpc().teleport(resurrected.getNpc().getStoredLocation().add(0, .05, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
                     if (ticksElapsed++ == 60) {
                         if (resurrectedMob == Mob.EVENT_ZEUS) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_PHANTOM_AMBIENT, 10, .5f);

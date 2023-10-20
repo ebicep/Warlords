@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.weapons.weapontypes.CommonWeapon;
 import com.ebicep.warlords.util.java.NumberFormat;
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -27,8 +28,8 @@ public class WarlordsPlayerDisguised extends WarlordsPlayer {
         super(npc.getLocation(), player, npc.getGame(), npc.getTeam());
         this.npc = npc;
         EntityEquipment ee = npc.getMob().getEquipment();
-        AbstractMob<?> mob = npc.getMob();
-        this.disguise = new MobDisguise(mob.getEntity().getDisguiseType());
+        AbstractMob mob = npc.getMob();
+        this.disguise = new MobDisguise(DisguiseType.getType(mob.getMobRegistry().entityType));
         disguise.getWatcher().setCustomNameVisible(true);
         DisguiseAPI.disguiseToAll(player, disguise);
 

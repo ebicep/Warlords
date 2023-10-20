@@ -47,7 +47,6 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -385,6 +384,7 @@ public class Warlords extends JavaPlugin {
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
+        ChatUtils.MessageType.WARLORDS.sendMessage("citizensEnabled: " + citizensEnabled);
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
             ChatUtils.MessageType.WARLORDS.sendMessage("Hooked into LuckPerms");
@@ -418,9 +418,11 @@ public class Warlords extends JavaPlugin {
 
         PacketUtils.init(this);
 
-        Warlords.newChain()
-                .sync(NPCManager::createSupplyDropFairNPC)
-                .execute();
+        if (citizensEnabled) {
+            Warlords.newChain()
+                    .sync(NPCManager::createSupplyDropFairNPC)
+                    .execute();
+        }
 
         startWarlordsEntitiesLoop();
         startRestartReminderLoop();
@@ -497,7 +499,7 @@ public class Warlords extends JavaPlugin {
                         if (we.getGame().isFrozen()) {
                             continue;
                         }
-                        LivingEntity player = we.getEntity();
+                        Entity player = we.getEntity();
                         List<Location> locations = we.getLocations();
                         if (we.isDead() && !locations.isEmpty()) {
                             locations.add(locations.get(locations.size() - 1));

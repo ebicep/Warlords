@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -201,21 +202,22 @@ public class FlagSpawnPointOption implements Option {
 
             private void onPotentialFlagInteract(PlayerEvent event) {
                 WarlordsEntity wp = Warlords.getPlayer(event.getPlayer());
-                if (wp != null && wp.getGame() == game) {
-                    Location playerLocation = wp.getEntity().getEyeLocation();
-                    Vector direction = wp.getEntity().getLocation().getDirection().multiply(3);
-                    Vec3 from = new Vec3(
-                            playerLocation.getX(),
-                            playerLocation.getY(),
-                            playerLocation.getZ()
-                    );
-                    Vec3 to = new Vec3(
-                            playerLocation.getX() + direction.getX(),
-                            playerLocation.getY() + direction.getY(),
-                            playerLocation.getZ() + direction.getZ()
-                    );
-                    checkFlagInteract(playerLocation, wp, from, to, renderer);
+                if (wp == null || wp.getGame() != game || !(wp.getEntity() instanceof LivingEntity livingEntity)) {
+                    return;
                 }
+                Location playerLocation = livingEntity.getEyeLocation();
+                Vector direction = wp.getEntity().getLocation().getDirection().multiply(3);
+                Vec3 from = new Vec3(
+                        playerLocation.getX(),
+                        playerLocation.getY(),
+                        playerLocation.getZ()
+                );
+                Vec3 to = new Vec3(
+                        playerLocation.getX() + direction.getX(),
+                        playerLocation.getY() + direction.getY(),
+                        playerLocation.getZ() + direction.getZ()
+                );
+                checkFlagInteract(playerLocation, wp, from, to, renderer);
             }
 
             private void checkFlagInteract(Location playerLocation, WarlordsEntity wp, Vec3 from, Vec3 to, FlagRenderer render) {

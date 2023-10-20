@@ -42,12 +42,12 @@ public class FixedWave implements Wave {
     }
 
     @Override
-    public AbstractMob<?> spawnMonster(Location loc) {
+    public AbstractMob spawnMonster(Location loc) {
         if (spawnCounter >= spawnSettings.size()) {
             spawnCounter = 0;
         }
         SpawnSetting spawnSetting = spawnSettings.get(spawnCounter++);
-        AbstractMob<?> mob = spawnSetting.mob.createMob(spawnSetting.location() == null ? loc : spawnSetting.location());
+        AbstractMob mob = spawnSetting.mob.createMob(spawnSetting.location() == null ? loc : spawnSetting.location());
         if (mob instanceof BossMob) {
             loc.getWorld().spigot().strikeLightningEffect(loc, false);
         }

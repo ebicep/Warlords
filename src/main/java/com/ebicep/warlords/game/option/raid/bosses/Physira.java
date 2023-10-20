@@ -17,9 +17,9 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.witherskeleton.AbstractWitherSkeleton;
 import com.ebicep.warlords.pve.mobs.witherskeleton.CelestialOpus;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -42,10 +42,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Math.cos;
 
-public class Physira extends AbstractWitherSkeleton implements BossMob {
+public class Physira extends AbstractMob implements BossMob {
 
     private Listener listener;
-    List<WarlordsNPC> pylons = new ArrayList<>();;
+    List<WarlordsNPC> pylons = new ArrayList<>();
+    ;
 
     private BossAbilityPhase phaseOne;
     private BossAbilityPhase phaseTwo;

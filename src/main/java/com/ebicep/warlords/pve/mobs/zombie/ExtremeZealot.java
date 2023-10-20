@@ -3,11 +3,12 @@ package com.ebicep.warlords.pve.mobs.zombie;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import org.bukkit.Location;
 
-public class ExtremeZealot extends AbstractZombie implements ChampionMob {
+public class ExtremeZealot extends AbstractMob implements ChampionMob {
 
     public ExtremeZealot(Location spawnLocation) {
         super(

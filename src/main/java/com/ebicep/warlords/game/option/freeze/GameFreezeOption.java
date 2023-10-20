@@ -84,10 +84,7 @@ public class GameFreezeOption implements Option, Listener {
                     game.setUnfreezeCooldown(false);
                     for (Option option : game.getOptions()) {
                         if (option instanceof PveOption pveOption) {
-                            pveOption.getMobs()
-                                     .stream()
-                                     .map(abstractMob -> abstractMob.getEntity().get())
-                                     .forEach(mob -> mob.setNoAi(false));
+                            pveOption.getMobs().forEach(mob -> mob.toggleStun(true));
                         }
                     }
                     this.cancel();
@@ -134,10 +131,7 @@ public class GameFreezeOption implements Option, Listener {
         }
         for (Option option : game.getOptions()) {
             if (option instanceof PveOption pveOption) {
-                pveOption.getMobs()
-                         .stream()
-                         .map(abstractMob -> abstractMob.getEntity().get())
-                         .forEach(mob -> mob.setNoAi(true));
+                pveOption.getMobs().forEach(mob -> mob.toggleStun(false));
             }
         }
         Component message = game.getFrozenCauses().get(0);

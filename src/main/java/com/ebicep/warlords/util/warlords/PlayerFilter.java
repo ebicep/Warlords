@@ -9,7 +9,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -158,8 +157,8 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     public PlayerFilter lookingAtFirst(WarlordsEntity user) {
         return sorted((wp1, wp2) -> {
             int output;
-            double wp1Dot = -LocationUtils.getDotToPlayer(user.getEntity(), wp1.getEntity(), 0);
-            double wp2Dot = -LocationUtils.getDotToPlayer(user.getEntity(), wp2.getEntity(), 0);
+            double wp1Dot = -LocationUtils.getDotToPlayer(user, wp1, 0);
+            double wp2Dot = -LocationUtils.getDotToPlayer(user, wp2, 0);
             output = Double.compare(wp1Dot, wp2Dot);
             if (Math.abs(wp1Dot - wp2Dot) < .0125) {
                 Location userLocation = user.getLocation();
@@ -382,32 +381,17 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
 
     @Nonnull
     public PlayerFilter requireLineOfSight(@Nonnull WarlordsEntity warlordsPlayer) {
-        return requireLineOfSight(warlordsPlayer.getEntity());
-    }
-
-    @Nonnull
-    public PlayerFilter requireLineOfSight(@Nonnull LivingEntity entity) {
-        return filter(wp -> LocationUtils.isLookingAt(entity, wp.getEntity()) && LocationUtils.hasLineOfSight(entity, wp.getEntity()));
+        return filter(wp -> LocationUtils.isLookingAt(warlordsPlayer, wp) && LocationUtils.hasLineOfSight(warlordsPlayer, wp));
     }
 
     @Nonnull
     public PlayerFilter requireLineOfSightIntervene(@Nonnull WarlordsEntity warlordsPlayer) {
-        return requireLineOfSightIntervene(warlordsPlayer.getEntity());
-    }
-
-    @Nonnull
-    public PlayerFilter requireLineOfSightIntervene(@Nonnull LivingEntity entity) {
-        return filter(wp -> LocationUtils.isLookingAtIntervene(entity, wp.getEntity()));
+        return filter(wp -> LocationUtils.isLookingAtIntervene(warlordsPlayer, wp));
     }
 
     @Nonnull
     public PlayerFilter lookingAtWave(@Nonnull WarlordsEntity warlordsPlayer) {
-        return lookingAtWave(warlordsPlayer.getEntity());
-    }
-
-    @Nonnull
-    public PlayerFilter lookingAtWave(@Nonnull LivingEntity entity) {
-        return filter(wp -> LocationUtils.isLookingAtWave(entity, wp.getEntity()));
+        return filter(wp -> LocationUtils.isLookingAtWave(warlordsPlayer, wp));
     }
 
     public List<WarlordsEntity> toList() {

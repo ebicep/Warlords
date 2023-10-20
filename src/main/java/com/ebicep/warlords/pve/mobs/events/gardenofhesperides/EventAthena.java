@@ -4,7 +4,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -12,7 +11,6 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractSpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -24,8 +22,6 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import javax.annotation.Nonnull;
@@ -33,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class EventAthena extends AbstractZombie implements BossMob, LesserGod {
+public class EventAthena extends AbstractMob implements BossMob, LesserGod {
 
     private static final List<Mob> INITIAL_SPAWN = Arrays.asList(Mob.ZOMBIE_VANGUARD, Mob.ZOMBIE_LANCER, Mob.OVERGROWN_ZOMBIE, Mob.SCRUPULOUS_ZOMBIE);
     private boolean healthCheck = false;
@@ -70,7 +66,7 @@ public class EventAthena extends AbstractZombie implements BossMob, LesserGod {
                     }
 
                     @Override
-                    public AbstractMob<?> createMob(@Nonnull WarlordsEntity wp) {
+                    public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
                         if (spawnCounter % pveOption.getGame().warlordsPlayers().count() == 0 || spawnLocations.isEmpty()) {
                             Location randomSpawnLocation = pveOption.getRandomSpawnLocation(null);
                             if (randomSpawnLocation == null) {
@@ -120,7 +116,7 @@ public class EventAthena extends AbstractZombie implements BossMob, LesserGod {
                     return;
                 }
                 EffectUtils.playParticleLinkAnimation(
-                        mob.getLivingEntity().getLocation(),
+                        mob.getWarlordsNPC().getLocation(),
                         warlordsNPC.getLocation(),
                         Particle.ENCHANTMENT_TABLE
                 );
@@ -145,18 +141,18 @@ public class EventAthena extends AbstractZombie implements BossMob, LesserGod {
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             wp.subtractEnergy(name, energyCost, false);
-            ItemStack item;
-            EntityEquipment entityEquipment = wp.getEntity().getEquipment();
-            if (entityEquipment != null) {
-                item = entityEquipment.getItemInMainHand();
-                entityEquipment.setItemInHand(null);
-            } else {
-                item = Weapons.NEW_LEAF_AXE.getItem();
-            }
+//            ItemStack item; TODO
+//            EntityEquipment entityEquipment = wp.getEntity().getEquipment();
+//            if (entityEquipment != null) {
+//                item = entityEquipment.getItemInMainHand();
+//                entityEquipment.setItemInHand(null);
+//            } else {
+//                item = Weapons.NEW_LEAF_AXE.getItem();
+//            }
             double yOffset = 5;
             int animationTicks = 10;
             ArmorStand stand = Utils.spawnArmorStand(wp.getLocation().add(0, yOffset, 0), armorStand -> {
-                armorStand.getEquipment().setHelmet(item);
+//                armorStand.getEquipment().setHelmet(item);
                 armorStand.setHeadPose(new EulerAngle(Math.toRadians(180), 0, 0));
             });
             Utils.playGlobalSound(wp.getLocation(), "rogue.healingremedy.impact", 500, 1.2f);
@@ -187,9 +183,9 @@ public class EventAthena extends AbstractZombie implements BossMob, LesserGod {
                                                 critMultiplier
                                         );
                                     });
-                        if (entityEquipment != null) {
-                            entityEquipment.setItemInMainHand(item);
-                        }
+//                        if (entityEquipment != null) {
+//                            entityEquipment.setItemInMainHand(item);
+//                        }
                         this.cancel();
                     }
                 }

@@ -36,7 +36,7 @@ public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
     }
 
     public void spawnMob(@Nonnull WarlordsEntity wp) {
-        AbstractMob<?> mob = createMob(wp);
+        AbstractMob mob = createMob(wp);
         if (mob == null) {
             return;
         }
@@ -45,9 +45,9 @@ public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
         onMobSpawn(mob.getWarlordsNPC());
     }
 
-    public abstract AbstractMob<?> createMob(@Nonnull WarlordsEntity wp);
+    public abstract AbstractMob createMob(@Nonnull WarlordsEntity wp);
 
-    public void onMobCreate(AbstractMob<?> mobSpawned) {
+    public void onMobCreate(AbstractMob mobSpawned) {
 
     }
 

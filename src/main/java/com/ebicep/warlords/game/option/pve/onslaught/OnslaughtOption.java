@@ -56,7 +56,7 @@ public class OnslaughtOption implements PveOption {
     private final Team team;
     private final WaveList mobSet;
     private final AtomicInteger ticksElapsed = new AtomicInteger(200); //start at 200 to account for 10 second start delay
-    private final ConcurrentHashMap<AbstractMob<?>, Integer> mobs = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AbstractMob, Integer> mobs = new ConcurrentHashMap<>();
     private OnslaughtRewards onslaughtRewards;
     private HashMap<UUID, HashMap<Spendable, Long>> playerSyntheticPouch = new HashMap<>();
     private HashMap<UUID, HashMap<Spendable, Long>> playerAspirantPouch = new HashMap<>();
@@ -94,7 +94,7 @@ public class OnslaughtOption implements PveOption {
                 WarlordsEntity killer = event.getKiller();
 
                 if (we instanceof WarlordsNPC) {
-                    AbstractMob<?> mobToRemove = ((WarlordsNPC) we).getMob();
+                    AbstractMob mobToRemove = ((WarlordsNPC) we).getMob();
                     if (mobs.containsKey(mobToRemove)) {
                         mobToRemove.onDeath(killer, we.getDeathLocation(), OnslaughtOption.this);
                         new GameRunnable(game) {
@@ -242,7 +242,7 @@ public class OnslaughtOption implements PveOption {
 
             public WarlordsEntity spawn(Location loc) {
                 currentMobSet = mobSet.getWave((game.getState().getTicksElapsed() / 20) / 60, new Random());
-                AbstractMob<?> abstractMob = currentMobSet.spawnMonster(loc);
+                AbstractMob abstractMob = currentMobSet.spawnMonster(loc);
                 mobs.put(abstractMob, ticksElapsed.get());
                 WarlordsNPC wpc = abstractMob.toNPC(game, team, OnslaughtOption.this::modifyStats);
                 game.addNPC(wpc);
@@ -372,12 +372,12 @@ public class OnslaughtOption implements PveOption {
     }
 
     @Override
-    public Set<AbstractMob<?>> getMobs() {
+    public Set<AbstractMob> getMobs() {
         return mobs.keySet();
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob<?>, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
         return mobs;
     }
 
@@ -392,7 +392,7 @@ public class OnslaughtOption implements PveOption {
     }
 
     @Override
-    public void spawnNewMob(AbstractMob<?> mob) {
+    public void spawnNewMob(AbstractMob mob) {
         mob.toNPC(game, Team.RED, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
         mobs.put(mob, ticksElapsed.get());
@@ -400,7 +400,7 @@ public class OnslaughtOption implements PveOption {
     }
 
     @Override
-    public void spawnNewMob(AbstractMob<?> mob, Team team) {
+    public void spawnNewMob(AbstractMob mob, Team team) {
         mob.toNPC(game, team, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
         mobs.put(mob, ticksElapsed.get());

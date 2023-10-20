@@ -1,27 +1,24 @@
 package com.ebicep.warlords.player.ingame;
 
-import com.ebicep.customentities.nms.pve.CustomEntity;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.minecraft.world.entity.Mob;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -64,22 +61,44 @@ public final class WarlordsNPC extends WarlordsEntity {
     private float minMeleeDamage;
     private float maxMeleeDamage;
     private float damageResistance;
-    private AbstractMob<?> mob;
-    private int stunTicks;
+    private NPC npc;
+    private AbstractMob mob;
     private Component mobNamePrefix = Component.empty();
     private ArmorStand nameDisplay;
+    private int stunTicks;
 
     public WarlordsNPC(
             String name,
-            LivingEntity entity,
+            NPC npc,
             Game game,
             Team team,
-            Specializations specClass
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            AbstractMob warlordsMob,
+            AbstractPlayerClass playerClass
     ) {
-        super(entity.getUniqueId(), name, entity, game, team, specClass);
+        super(npc.getUniqueId(), name, npc.getEntity(), game, team, playerClass);
+        this.npc = npc;
+        this.mob = warlordsMob;
+        if (warlordsMob != null && warlordsMob.getLevel() > 0) {
+            mobNamePrefix = Component.textOfChildren(
+                    Component.text("[", NamedTextColor.GRAY),
+                    Component.text(warlordsMob.getLevel(), warlordsMob.getTextColor()),
+                    Component.text("] ", NamedTextColor.GRAY)
+            );
+        }
+        this.minMeleeDamage = minMeleeDamage;
+        this.maxMeleeDamage = maxMeleeDamage;
+        this.damageResistance = damageResistance;
+        this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
+        this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
+        setMaxBaseHealth(maxHealth);
     }
 
     @Nonnull
@@ -88,8 +107,10 @@ public final class WarlordsNPC extends WarlordsEntity {
             return Component.text(name, NamedTextColor.GRAY);
         }
         TextComponent.Builder builder = Component.text();
-        builder.append(mobNamePrefix)
-               .append(Component.text("- "));
+        if (!mobNamePrefix.equals(Component.empty())) {
+            builder.append(mobNamePrefix)
+                   .append(Component.text("- "));
+        }
 
         TextColor nameColor = NamedTextColor.GRAY;
         Aspect aspect = mob.getAspect();
@@ -108,39 +129,6 @@ public final class WarlordsNPC extends WarlordsEntity {
         return builder.build();
     }
 
-    public WarlordsNPC(
-            String name,
-            LivingEntity entity,
-            Game game,
-            Team team,
-            int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
-            float maxMeleeDamage,
-            AbstractMob<?> mob,
-            AbstractPlayerClass playerClass
-    ) {
-        super(entity.getUniqueId(), name, entity, game, team, playerClass);
-        this.mob = mob;
-        if (mob != null) {
-            mobNamePrefix = Component.textOfChildren(
-                    Component.text("[", NamedTextColor.GRAY),
-                    Component.text(mob.getLevel(), mob.getTextColor()),
-                    Component.text("] ", NamedTextColor.GRAY)
-            );
-        }
-        this.minMeleeDamage = minMeleeDamage;
-        this.maxMeleeDamage = maxMeleeDamage;
-        this.damageResistance = damageResistance;
-        this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
-        this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
-        updateEntity();
-        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-        setSpawnGrave(false);
-        setMaxBaseHealth(maxHealth);
-    }
-
     public Component getMobNamePrefix() {
         return mobNamePrefix;
     }
@@ -148,6 +136,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void die(@Nullable WarlordsEntity attacker) {
         super.die(attacker);
+        npc.destroy();
         nameDisplay.remove();
     }
 
@@ -172,6 +161,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         boolean applied = super.addPotionEffect(potionEffect);
         if (applied) {
             if (potionEffect.getType() == PotionEffectType.BLINDNESS && mob != null) {
+                setStunTicks(potionEffect.getDuration());
                 mob.removeTarget();
             }
         }
@@ -188,7 +178,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         // updating entity reference in case it was unloaded
         Entity updatedEntity = Bukkit.getEntity(uuid);
         if (!Objects.equals(updatedEntity, entity) && updatedEntity instanceof LivingEntity) {
-            this.entity = (LivingEntity) updatedEntity;
+            this.entity = updatedEntity;
         }
         super.runEveryTick();
         if (getStunTicks() > 0) {
@@ -223,13 +213,13 @@ public final class WarlordsNPC extends WarlordsEntity {
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
 
-        AttributeInstance attribute = entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
-        if (attribute != null) {
-            attribute.setBaseValue(100);
-        } else {
-            entity.registerAttribute(Attribute.GENERIC_FOLLOW_RANGE);
-            Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE)).setBaseValue(100);
-        }
+//        AttributeInstance attribute = entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+//        if (attribute != null) {
+//            attribute.setBaseValue(100);
+//        } else {
+//            entity.registerAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+//            Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE)).setBaseValue(100);
+//        }
     }
 
     @Override
@@ -256,24 +246,22 @@ public final class WarlordsNPC extends WarlordsEntity {
         if (mob == null) {
             return;
         }
-        CustomEntity<?> customEntity = mob.getEntity();
         if (stunTicks > 0) {
             if (this.stunTicks <= 0) {
-                customEntity.setStunned(true);
+                npc.data().set(NPC.Metadata.COLLIDABLE, false);
                 noAI.set(true);
             }
         } else {
             noAI.set(false);
         }
         if (noAI.get() != null) {
-            Mob entityInsentient = customEntity.get();
-            entityInsentient.setNoAi(noAI.get());
+            mob.toggleStun(noAI.get());
             //tick later to prevent collision issues
             if (!noAI.get()) {
                 new GameRunnable(game) {
                     @Override
                     public void run() {
-                        customEntity.setStunned(false);
+                        mob.toggleStun(false);
                     }
                 }.runTaskLater(1);
             }
@@ -284,7 +272,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         }
     }
 
-    public AbstractMob<?> getMob() {
+    public AbstractMob getMob() {
         return mob;
     }
 

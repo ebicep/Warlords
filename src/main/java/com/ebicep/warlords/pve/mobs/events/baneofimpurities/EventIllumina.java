@@ -11,11 +11,11 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.Illumina;
 import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -31,7 +31,7 @@ import org.bukkit.util.Vector;
 import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class EventIllumina extends AbstractZombie implements BossMob {
+public class EventIllumina extends AbstractMob implements BossMob {
 
     private final RandomCollection<Mob> summonList = new RandomCollection<Mob>()
             .add(0.1, Mob.EXTREME_ZEALOT)

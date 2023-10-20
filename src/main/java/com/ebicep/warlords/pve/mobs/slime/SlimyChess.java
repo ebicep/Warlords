@@ -5,10 +5,12 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.citizensnpcs.trait.SlimeSize;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -17,7 +19,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SlimyChess extends AbstractSlime implements AdvancedMob {
+public class SlimyChess extends AbstractMob implements AdvancedMob {
     public SlimyChess(Location spawnLocation) {
         super(
                 spawnLocation,
@@ -60,7 +62,11 @@ public class SlimyChess extends AbstractSlime implements AdvancedMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        this.entity.get().setSize(10, true);
+    }
+
+    @Override
+    public void onNPCCreate() {
+        npc.getOrAddTrait(SlimeSize.class).setSize(10);
     }
 
     @Override

@@ -172,4 +172,5 @@ public enum DifficultyIndex {
     public Function<PveOption, Float> getAspectChance() {
         return aspectChance;
     }
+
 }

@@ -5,10 +5,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -16,7 +16,7 @@ import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 
-public class EventTerasDryad extends AbstractZombie implements BossMinionMob, Teras {
+public class EventTerasDryad extends AbstractMob implements BossMinionMob, Teras {
 
     public EventTerasDryad(Location spawnLocation) {
         this(spawnLocation, "Teras Dryad", 3600, 0.25f, 0, 350, 450);

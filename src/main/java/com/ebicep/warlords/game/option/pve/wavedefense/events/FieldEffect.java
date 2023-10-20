@@ -185,7 +185,7 @@ public class FieldEffect implements Option {
                             if (!(event.getWarlordsEntity() instanceof WarlordsNPC)) {
                                 return;
                             }
-                            AbstractMob<?> mob = ((WarlordsNPC) event.getWarlordsEntity()).getMob();
+                            AbstractMob mob = ((WarlordsNPC) event.getWarlordsEntity()).getMob();
                             if (!(mob instanceof EventPoisonousSpider) && !(mob instanceof EventEggSac)) {
                                 return;
                             }

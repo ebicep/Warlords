@@ -3,10 +3,10 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -14,7 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 
-public class EggSac extends AbstractZombie implements BossMinionMob {
+public class EggSac extends AbstractMob implements BossMinionMob {
 
     public EggSac(Location spawnLocation) {
         this(spawnLocation, "Egg Sac", 10000, 0, 0, 0, 0);

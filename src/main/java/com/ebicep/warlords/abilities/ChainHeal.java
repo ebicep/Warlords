@@ -68,7 +68,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (!LocationUtils.isLookingAtChain(wp.getEntity(), chainTarget.getEntity())) {
+            if (!LocationUtils.isLookingAtChain(wp, chainTarget)) {
                 continue;
             }
             wp.addHealingInstance(

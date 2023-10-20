@@ -40,7 +40,7 @@ public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesTo
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        Map<AbstractMob<?>, Integer> repeatedAttacks = new ConcurrentHashMap<>();
+        Map<AbstractMob, Integer> repeatedAttacks = new ConcurrentHashMap<>();
         warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
                 null,
@@ -60,7 +60,7 @@ public class BreastplateBuckler extends SpecialOmegaBuckler implements AppliesTo
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
-                    AbstractMob<?> mob = warlordsNPC.getMob();
+                    AbstractMob mob = warlordsNPC.getMob();
                     float damageReduction = Math.max(1 - (repeatedAttacks.getOrDefault(mob, 0) * 0.02f), 0.8f);
                     repeatedAttacks.merge(mob, 1, Integer::sum);
                     return currentDamageValue * damageReduction;

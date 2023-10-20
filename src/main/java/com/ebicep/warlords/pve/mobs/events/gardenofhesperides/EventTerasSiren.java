@@ -1,18 +1,18 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.FollowWarlordsEntityGoal;
-import com.ebicep.customentities.nms.pve.pathfindergoals.TargetAggroWarlordsEntityGoal;
+import com.ebicep.customentities.nms.pve.pathfindergoals.NPCFollowWarlordsEntityGoal;
+import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsEntityGoal;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.pve.mobs.zombie.AbstractZombie;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.citizensnpcs.api.ai.GoalController;
 import org.bukkit.Location;
 
-public class EventTerasSiren extends AbstractZombie implements BossMinionMob, Teras {
+public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras {
 
     private EventCronus cronus;
 
@@ -48,13 +48,15 @@ public class EventTerasSiren extends AbstractZombie implements BossMinionMob, Te
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        if (cronus != null) {
-            entity.resetAI();
-            entity.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(100);
-            entity.addGoalAI(0, new FollowWarlordsEntityGoal(mob, cronus.getWarlordsNPC(), 1, 10));
-            entity.aiMeleeAttack(1);
-            entity.addTargetAI(1, new TargetAggroWarlordsEntityGoal(mob));
-        }
+    }
+
+    @Override
+    public void giveGoals() {
+        super.giveGoals();
+        GoalController goalController = npc.getDefaultGoalController();
+        goalController.clear();
+        goalController.addGoal(new NPCFollowWarlordsEntityGoal(npc, cronus.getWarlordsNPC(), 1, 10), 0);
+        goalController.addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 40), 1);
     }
 
     @Override
