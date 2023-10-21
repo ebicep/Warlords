@@ -261,7 +261,7 @@ public final class WarlordsNPC extends WarlordsEntity {
                 new GameRunnable(game) {
                     @Override
                     public void run() {
-                        mob.toggleStun(false);
+                        npc.data().set(NPC.Metadata.COLLIDABLE, true);
                     }
                 }.runTaskLater(1);
             }
