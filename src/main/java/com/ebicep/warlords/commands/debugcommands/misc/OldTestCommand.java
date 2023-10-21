@@ -1,8 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
@@ -114,12 +112,19 @@ public class OldTestCommand implements CommandExecutor {
 //                ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer);
 //            });
 
-            Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+            //  Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
 
 
 //
-//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.WOLF, "TEST");
+//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.ZOMBIE, "TEST");
+//            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+//            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+//            hologramTrait.setUseDisplayEntities(true);
+//            hologramTrait.addLine("HELLO WORLD");
+//            hologramTrait.addLine("TEST");
 //            npc.spawn(player.getLocation());
+//            npc.getNavigator().setTarget(player, true);
+//            npc.getNavigator().getLocalParameters().speedModifier(2);
 
 
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {

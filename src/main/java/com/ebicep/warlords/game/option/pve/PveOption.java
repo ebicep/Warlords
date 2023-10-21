@@ -83,14 +83,6 @@ public interface PveOption extends Option {
         for (AbstractMob mob : new ArrayList<>(getMobs())) {
             mob.whileAlive(getTicksElapsed() - getMobsMap().get(mob), this);
             mob.activateAbilities();
-//            NPC npc = mob.getNpc();
-//            BossBarTrait bossBarTrait = npc.getTraitNullable(BossBarTrait.class);
-//            if (bossBarTrait != null) {
-//                bossBarTrait.;
-//            }
-            if (mob.isShowBossBar()) {
-                mob.bossBar(getGame(), true);
-            }
         }
     }
 
@@ -286,7 +278,7 @@ public interface PveOption extends Option {
     }
 
     @Override
-    default void onGameEnding(@Nonnull Game game) {
+    default void onGameCleanup(@Nonnull Game game) {
         getMobs().forEach(mob -> mob.getNpc().destroy());
     }
 

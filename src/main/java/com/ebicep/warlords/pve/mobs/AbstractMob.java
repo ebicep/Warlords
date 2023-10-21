@@ -34,13 +34,16 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import net.kyori.adventure.bossbar.BossBar;
+import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -68,9 +71,6 @@ public abstract class AbstractMob implements Mob {
     protected EntityEquipment equipment;
     @Nullable
     protected Aspect aspect;
-    protected BossBar bossBar = BossBar.bossBar(Component.empty(), 1, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
-    protected boolean showBossBar;
-
     protected WarlordsNPC warlordsNPC;
     protected PveOption pveOption;
     protected EnumSet<DynamicFlags> dynamicFlags = EnumSet.noneOf(DynamicFlags.class);
@@ -107,11 +107,16 @@ public abstract class AbstractMob implements Mob {
     public WarlordsNPC toNPC(Game game, Team team, Consumer<WarlordsNPC> modifyStats) {
         this.npc = NPCManager.NPC_REGISTRY.createNPC(getMobRegistry().entityType, name);
         if (getDescription() != null) {
-//            BossBarTrait bossBarTrait = this.npc.getOrAddTrait(BossBarTrait.class);
-//            bossBarTrait.setTitle(LegacyComponentSerializer.legacySection().serialize(
-//                    Component.text(name, getColor())
-//            ));
-//            //TODO track health or just revert to old system
+            BossBarTrait bossBarTrait = this.npc.getOrAddTrait(BossBarTrait.class);
+            bossBarTrait.setTitle(LegacyComponentSerializer.legacySection().serialize(Component.text(name, getColor())));
+            bossBarTrait.setColor(BarColor.RED);
+            bossBarTrait.setStyle(BarStyle.SOLID);
+            bossBarTrait.setProgressProvider(() -> {
+                if (warlordsNPC == null) {
+                    return 0.0;
+                }
+                return Math.max(0.0, Math.min(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth(), 1));
+            });
         }
         NavigatorParameters localParameters = this.npc.getNavigator().getLocalParameters();
         localParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
@@ -193,10 +198,6 @@ public abstract class AbstractMob implements Mob {
                     20, 30, 20
             );
         }
-        if (getDescription() != null) {
-            bossBar.name(Component.text(name, getColor()));
-            showBossBar = true;
-        }
         // null checks to handle manual spawns with aspects
         if (this.aspect == null &&
                 ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option) &&
@@ -260,7 +261,6 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        bossBar(option.getGame(), false);
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
             return;
         }
@@ -271,17 +271,6 @@ public abstract class AbstractMob implements Mob {
         dropMobDrop(killer);
         dropItem(killer);
         dropBlessing(killer);
-    }
-
-    public void bossBar(Game game, boolean show) {
-        game.onlinePlayers().forEach(playerTeamEntry -> {
-            Player player = playerTeamEntry.getKey();
-            if (show) {
-                player.showBossBar(getBossBar());
-            } else {
-                player.hideBossBar(getBossBar());
-            }
-        });
     }
 
     public void dropWeapon(WarlordsEntity killer) {
@@ -417,10 +406,6 @@ public abstract class AbstractMob implements Mob {
                            });
     }
 
-    public BossBar getBossBar() {
-        return bossBar.progress(Math.max(0, Math.min(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth(), 1)));
-    }
-
     private void dropWeapon(WarlordsEntity killer, int bound) {
         AtomicDouble dropRate = new AtomicDouble(.01 * weaponDropRate() * killer.getGame().getGameMode().getDropModifier());
         AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropWeaponEvent(killer, this, dropRate);
@@ -483,10 +468,6 @@ public abstract class AbstractMob implements Mob {
 
     public void setEquipment(EntityEquipment equipment) {
         this.equipment = equipment;
-    }
-
-    public boolean isShowBossBar() {
-        return bossBar != null && showBossBar && !warlordsNPC.isDead();
     }
 
     @Nullable
