@@ -128,15 +128,6 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
      */
     @Nullable
     protected HitResult checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsEntity shooter) {
-        if (speed.isZero()) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Projectile speed is zero - " +
-                    getName() + " - " + shooter + " - " + shooter.getSpecClass() + " - " +
-                    currentLocation + " - " + speed + " - " +
-                    projectile.getStartingLocation()
-            );
-            projectile.cancel();
-            return null;
-        }
         Vec3 currentPosition;
         if (projectile.getTicksLived() == 0) {
             // for initially shooting entities directly in front of player
@@ -189,43 +180,54 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
             Location startingLocation = projectile.getStartingLocation();
             currentPosition = new Vec3(startingLocation.getX(), startingLocation.getY(), startingLocation.getZ());
         }
-        BlockIterator itr = new BlockIterator(currentLocation.getWorld(),
-                new Vector(currentPosition.x, currentPosition.y, currentPosition.z),
-                speed,
-                0,
-                (int) (projectileSpeed + 1)
-        );
-        while (itr.hasNext()) {
-            Block block = itr.next();
-            if (!block.getType().isSolid() || block.getType() == Material.BARRIER || block.getBlockData() instanceof Banner) {
-                continue;
+        try {
+            BlockIterator itr = new BlockIterator(currentLocation.getWorld(),
+                    new Vector(currentPosition.x, currentPosition.y, currentPosition.z),
+                    speed,
+                    0,
+                    (int) (projectileSpeed + 1)
+            );
+            while (itr.hasNext()) {
+                Block block = itr.next();
+                if (!block.getType().isSolid() || block.getType() == Material.BARRIER || block.getBlockData() instanceof Banner) {
+                    continue;
+                }
+                BlockPos pos = new BlockPos(block.getX(), block.getY(), block.getZ());
+                ServerLevel world = ((CraftWorld) block.getWorld()).getHandle();
+                BlockState blockData = world.getBlockState(pos);
+                VoxelShape collisionShape = blockData.getCollisionShape(world, pos);
+                if (collisionShape.isEmpty()) {
+                    continue;
+                }
+                BlockHitResult blockHitResult = collisionShape.clip(currentPosition, nextPosition, pos);
+                // Flags have no hitbox while they are considered solid??
+                if (blockHitResult == null) {
+                    continue;
+                }
+                if (!shouldEndProjectileOnHit(projectile, block)) {
+                    continue;
+                }
+                Vec3 location = blockHitResult.getLocation();
+                double distance = currentPosition.distanceToSqr(location);
+                if ((hit == null || distance < hitDistance)) {
+                    hitDistance = distance;
+                    hit = blockHitResult;
+                    currentLocation.set(location.x, location.y, location.z);
+                }
+                // If we hit this point, we either have collided with a
+                // player closer by, or we hit a block. Blocks are
+                // checked in order, so we can bail out early
+                break;
             }
-            BlockPos pos = new BlockPos(block.getX(), block.getY(), block.getZ());
-            ServerLevel world = ((CraftWorld) block.getWorld()).getHandle();
-            BlockState blockData = world.getBlockState(pos);
-            VoxelShape collisionShape = blockData.getCollisionShape(world, pos);
-            if (collisionShape.isEmpty()) {
-                continue;
-            }
-            BlockHitResult blockHitResult = collisionShape.clip(currentPosition, nextPosition, pos);
-            // Flags have no hitbox while they are considered solid??
-            if (blockHitResult == null) {
-                continue;
-            }
-            if (!shouldEndProjectileOnHit(projectile, block)) {
-                continue;
-            }
-            Vec3 location = blockHitResult.getLocation();
-            double distance = currentPosition.distanceToSqr(location);
-            if ((hit == null || distance < hitDistance)) {
-                hitDistance = distance;
-                hit = blockHitResult;
-                currentLocation.set(location.x, location.y, location.z);
-            }
-            // If we hit this point, we either have collided with a
-            // player closer by, or we hit a block. Blocks are
-            // checked in order, so we can bail out early
-            break;
+        } catch (Exception e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(
+                    getName() + " - " + shooter + " - " + shooter.getSpecClass() + " - " +
+                            currentLocation + " - " + speed + " - " +
+                            projectile.getStartingLocation()
+            );
+            projectile.cancel();
+            return null;
         }
 
         if (!PENDING_HITS.isEmpty()) {

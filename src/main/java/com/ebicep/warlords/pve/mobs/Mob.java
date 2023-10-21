@@ -703,13 +703,7 @@ public enum Mob {
     )),
 
     //misc
-    TEST_DUMMY(EntityType.ZOMBIE, TestDummy.class, TestDummy::new, TestDummy::new, new Utils.SimpleEntityEquipment(
-            null,
-            null,
-            null,
-            null,
-            null
-    )),
+    TEST_DUMMY(EntityType.ZOMBIE, TestDummy.class, TestDummy::new, TestDummy::new, null),
     CRYOPOD(EntityType.ARMOR_STAND, CryoPod.class, CryoPod::new, CryoPod::new, null),
     //decoy
     DECOY(EntityType.ARMOR_STAND, Decoy.class, Decoy::new, Decoy::new, null),

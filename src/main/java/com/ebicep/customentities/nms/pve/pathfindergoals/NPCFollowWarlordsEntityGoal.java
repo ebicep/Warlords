@@ -3,10 +3,7 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
-import net.citizensnpcs.api.ai.tree.Behavior;
-import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Location;
 
 public class NPCFollowWarlordsEntityGoal implements Goal {
 
@@ -27,7 +24,7 @@ public class NPCFollowWarlordsEntityGoal implements Goal {
 
     @Override
     public void run(GoalSelector goalSelector) {
-        goalSelector.
+//        goalSelector.
     }
 
     @Override
@@ -35,30 +32,30 @@ public class NPCFollowWarlordsEntityGoal implements Goal {
         return false;
     }
 
-    @Override
-    public BehaviorStatus run() {
-        double distance = npc.getStoredLocation().distanceSquared(warlordsEntity.getLocation());
-        if (distance < maxDistanceSquared) {
-            return BehaviorStatus.SUCCESS;
-        }
-        return BehaviorStatus.RUNNING;
-    }
-
-    @Override
-    public boolean shouldExecute() {
-        if (!npc.isSpawned()) {
-            return false;
-        }
-        if (warlordsEntity.isDead()) {
-            return false;
-        }
-        Location followingLocation = warlordsEntity.getLocation();
-        double distanceSquared = followingLocation.distanceSquared(npc.getStoredLocation());
-        boolean outsideRange = distanceSquared > maxDistanceSquared;
-        if (outsideRange) {
-            npc.getNavigator().setTarget(warlordsEntity.getEntity(), false);
-        }
-        return outsideRange;
-    }
+//    @Override
+//    public BehaviorStatus run() {
+//        double distance = npc.getStoredLocation().distanceSquared(warlordsEntity.getLocation());
+//        if (distance < maxDistanceSquared) {
+//            return BehaviorStatus.SUCCESS;
+//        }
+//        return BehaviorStatus.RUNNING;
+//    }
+//
+//    @Override
+//    public boolean shouldExecute() {
+//        if (!npc.isSpawned()) {
+//            return false;
+//        }
+//        if (warlordsEntity.isDead()) {
+//            return false;
+//        }
+//        Location followingLocation = warlordsEntity.getLocation();
+//        double distanceSquared = followingLocation.distanceSquared(npc.getStoredLocation());
+//        boolean outsideRange = distanceSquared > maxDistanceSquared;
+//        if (outsideRange) {
+//            npc.getNavigator().setTarget(warlordsEntity.getEntity(), false);
+//        }
+//        return outsideRange;
+//    }
 
 }
