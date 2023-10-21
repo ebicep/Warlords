@@ -190,7 +190,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     }
 
     @EventHandler
-    public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
+    public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
         if (transitionTickDelay > 0) {
             //event.setCancelled(true);
         }

@@ -187,13 +187,16 @@ public abstract class AbstractPlayerClass {
             return;
         }
         if (player.getLevel() >= ability.getEnergyCostValue() * wp.getEnergyModifier() && abilityCD) {
-            WarlordsAbilityActivateEvent event = new WarlordsAbilityActivateEvent(wp, player, ability);
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
+            WarlordsAbilityActivateEvent.Pre pre = new WarlordsAbilityActivateEvent.Pre(wp, player, ability);
+            Bukkit.getPluginManager().callEvent(pre);
+            if (pre.isCancelled()) {
                 return;
             }
             boolean shouldApplyCooldown = ability.onActivate(wp, player);
             if (shouldApplyCooldown) {
+                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability);
+                Bukkit.getPluginManager().callEvent(post);
+
                 ability.addTimesUsed();
                 if (!wp.isDisableCooldowns()) {
                     ability.setCurrentCooldown(ability.getCooldownValue());

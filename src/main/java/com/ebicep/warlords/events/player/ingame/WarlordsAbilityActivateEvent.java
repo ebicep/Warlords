@@ -8,9 +8,7 @@ import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 
-public class WarlordsAbilityActivateEvent extends AbstractWarlordsEntityEvent implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
+public abstract class WarlordsAbilityActivateEvent extends AbstractWarlordsEntityEvent implements Cancellable {
 
     private final Player player;
     private final AbstractAbility ability;
@@ -40,14 +38,43 @@ public class WarlordsAbilityActivateEvent extends AbstractWarlordsEntityEvent im
         this.cancelled = cancelled;
     }
 
-    @Nonnull
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
+    public static class Pre extends WarlordsAbilityActivateEvent {
+
+        private static final HandlerList handlers = new HandlerList();
+
+        public Pre(@Nonnull WarlordsEntity warlordsEntity, Player player, AbstractAbility ability) {
+            super(warlordsEntity, player, ability);
+        }
+
+        @Nonnull
+        @Override
+        public HandlerList getHandlers() {
+            return handlers;
+        }
+
+        public static HandlerList getHandlerList() {
+            return handlers;
+        }
+
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+    public static class Post extends WarlordsAbilityActivateEvent {
 
+        private static final HandlerList handlers = new HandlerList();
+
+        public Post(@Nonnull WarlordsEntity warlordsEntity, Player player, AbstractAbility ability) {
+            super(warlordsEntity, player, ability);
+        }
+
+        @Nonnull
+        @Override
+        public HandlerList getHandlers() {
+            return handlers;
+        }
+
+        public static HandlerList getHandlerList() {
+            return handlers;
+        }
+
+    }
 }

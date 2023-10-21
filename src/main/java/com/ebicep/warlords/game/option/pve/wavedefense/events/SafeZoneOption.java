@@ -111,7 +111,7 @@ public class SafeZoneOption implements Option {
         game.registerEvents(new Listener() {
 
             @EventHandler
-            public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
+            public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
                 WarlordsEntity player = event.getWarlordsEntity();
                 if (player.getCooldownManager().hasCooldownFromActionBarName("SAFE")) {
                     player.sendMessage(Component.text("You cannot use abilities while under the safe effect!", NamedTextColor.RED));

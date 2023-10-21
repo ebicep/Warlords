@@ -99,7 +99,7 @@ public class TutorialOption implements Option {
             }
 
             @EventHandler
-            public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
+            public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
                 if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
                     return;
                 }

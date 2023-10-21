@@ -215,7 +215,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
             protected Listener getListener() {
                 return new Listener() {
                     @EventHandler
-                    public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
+                    public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
                         if (event.getWarlordsEntity().equals(breathTarget)) {
                             event.setCancelled(true);
                         }

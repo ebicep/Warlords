@@ -212,7 +212,7 @@ public interface PveOption extends Option {
             }
 
             @EventHandler
-            public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
+            public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
                 AbstractAbility ability = event.getAbility();
                 if (!(ability instanceof ProjectileAbility)) {
                     return;

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.types;
 
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.modifiers.ItemModifier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
@@ -35,6 +36,10 @@ public abstract class AbstractItem {
     }
 
     public static void sendItemMessage(Player player, Component message) {
+        player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(message));
+    }
+
+    public static void sendItemMessage(WarlordsEntity player, Component message) {
         player.sendMessage(Component.text("Items", NamedTextColor.RED).append(ChatChannels.CHAT_ARROW).append(message));
     }
 

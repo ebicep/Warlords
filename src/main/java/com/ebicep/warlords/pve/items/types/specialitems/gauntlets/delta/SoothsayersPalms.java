@@ -51,7 +51,7 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler
-            public void onAbilityActivate(WarlordsAbilityActivateEvent event) {
+            public void onAbilityActivate(WarlordsAbilityActivateEvent.Post event) {
                 if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
                     return;
                 }

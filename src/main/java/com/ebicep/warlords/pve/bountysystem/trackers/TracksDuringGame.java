@@ -26,7 +26,7 @@ public interface TracksDuringGame {
             }
 
             @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-            public void onAbilityUsed(WarlordsAbilityActivateEvent event) {
+            public void onAbilityUsed(WarlordsAbilityActivateEvent.Pre event) {
                 trackers.forEach((uuid, tracksDuringGame) -> tracksDuringGame.forEach(track -> track.onAbilityUsed(uuid, event)));
             }
 
@@ -51,7 +51,7 @@ public interface TracksDuringGame {
 
     }
 
-    default void onAbilityUsed(UUID uuid, WarlordsAbilityActivateEvent event) {
+    default void onAbilityUsed(UUID uuid, WarlordsAbilityActivateEvent.Pre event) {
 
     }
 

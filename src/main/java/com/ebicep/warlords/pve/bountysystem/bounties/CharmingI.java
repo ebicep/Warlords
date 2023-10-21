@@ -41,7 +41,7 @@ public class CharmingI extends AbstractBounty implements TracksDuringGame, Daily
     }
 
     @Override
-    public void onAbilityUsed(UUID uuid, WarlordsAbilityActivateEvent event) {
+    public void onAbilityUsed(UUID uuid, WarlordsAbilityActivateEvent.Pre event) {
         if (!event.getWarlordsEntity().getUuid().equals(uuid)) {
             return;
         }

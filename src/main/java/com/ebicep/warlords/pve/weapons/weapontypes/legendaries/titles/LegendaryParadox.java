@@ -81,7 +81,7 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
             protected Listener getListener() {
                 return new Listener() {
                     @EventHandler
-                    public void onAbilityUse(WarlordsAbilityActivateEvent event) {
+                    public void onAbilityUse(WarlordsAbilityActivateEvent.Pre event) {
                         if (!event.getWarlordsEntity().equals(player)) {
                             return;
                         }
