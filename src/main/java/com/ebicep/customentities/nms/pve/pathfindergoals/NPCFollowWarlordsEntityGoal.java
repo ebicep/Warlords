@@ -3,21 +3,20 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
+import net.citizensnpcs.api.ai.tree.Behavior;
+import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 
 public class NPCFollowWarlordsEntityGoal implements Goal {
 
     private final WarlordsEntity warlordsEntity;
-    private final double speed;
     private final float maxDistanceSquared;
     private NPC npc;
 
-
-    public NPCFollowWarlordsEntityGoal(NPC npc, WarlordsEntity warlordsEntity, double speed, float maxDistance) {
+    public NPCFollowWarlordsEntityGoal(NPC npc, WarlordsEntity warlordsEntity, float maxDistance) {
         this.npc = npc;
         this.warlordsEntity = warlordsEntity;
-        this.speed = speed;
         this.maxDistanceSquared = maxDistance * maxDistance;
     }
 
@@ -28,14 +27,25 @@ public class NPCFollowWarlordsEntityGoal implements Goal {
 
     @Override
     public void run(GoalSelector goalSelector) {
-        double distance = npc.getStoredLocation().distanceSquared(warlordsEntity.getLocation());
-        if (distance < maxDistanceSquared) {
-            goalSelector.finish();
-        }
+        goalSelector.
     }
 
     @Override
     public boolean shouldExecute(GoalSelector goalSelector) {
+        return false;
+    }
+
+    @Override
+    public BehaviorStatus run() {
+        double distance = npc.getStoredLocation().distanceSquared(warlordsEntity.getLocation());
+        if (distance < maxDistanceSquared) {
+            return BehaviorStatus.SUCCESS;
+        }
+        return BehaviorStatus.RUNNING;
+    }
+
+    @Override
+    public boolean shouldExecute() {
         if (!npc.isSpawned()) {
             return false;
         }
@@ -50,4 +60,5 @@ public class NPCFollowWarlordsEntityGoal implements Goal {
         }
         return outsideRange;
     }
+
 }

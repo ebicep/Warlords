@@ -129,12 +129,6 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
         }.runTaskTimer(0, 5);
     }
 
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (!healthCheck && self.getHealth() / self.getMaxHealth() <= 0.5) {

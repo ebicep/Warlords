@@ -10,6 +10,10 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.ai.GoalController;
+import net.citizensnpcs.api.ai.tree.BehaviorStatus;
+import net.citizensnpcs.api.ai.tree.Composite;
+import net.citizensnpcs.api.ai.tree.IfElse;
+import net.citizensnpcs.api.ai.tree.Selector;
 import org.bukkit.Location;
 
 public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras {
@@ -46,17 +50,18 @@ public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras
     }
 
     @Override
-    public void onSpawn(PveOption option) {
-        super.onSpawn(option);
-    }
-
-    @Override
     public void giveGoals() {
         super.giveGoals();
         GoalController goalController = npc.getDefaultGoalController();
         goalController.clear();
-        goalController.addGoal(new NPCFollowWarlordsEntityGoal(npc, cronus.getWarlordsNPC(), 1, 10), 0);
-        goalController.addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 40), 1);
+//        goalController. TODO
+//        goalController.addBehavior(new NPCFollowWarlordsEntityGoal(npc, cronus.getWarlordsNPC(), 10), 1);
+//        goalController.addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 40), 2);
+    }
+
+    @Override
+    public void onSpawn(PveOption option) {
+        super.onSpawn(option);
     }
 
     @Override

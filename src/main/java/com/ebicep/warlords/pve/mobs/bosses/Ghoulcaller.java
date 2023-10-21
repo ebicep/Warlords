@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -72,7 +73,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
     }
 
     @Override
-    public NamedTextColor getColor() {
+    public TextColor getColor() {
         return NamedTextColor.RED;
     }
 

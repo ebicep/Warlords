@@ -23,6 +23,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.util.Vector;
 
@@ -96,7 +97,7 @@ public class Void extends AbstractMob implements BossMob {
     }
 
     @Override
-    public NamedTextColor getColor() {
+    public TextColor getColor() {
         return NamedTextColor.DARK_GRAY;
     }
 

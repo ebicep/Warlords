@@ -38,6 +38,7 @@ import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -121,7 +122,7 @@ public abstract class AbstractMob implements Mob {
         NavigatorParameters localParameters = this.npc.getNavigator().getLocalParameters();
         localParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
         localParameters.attackRange(1.3)
-                       .updatePathRate(10)
+                       .updatePathRate(7)
                        .distanceMargin(.7);
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
@@ -160,7 +161,7 @@ public abstract class AbstractMob implements Mob {
         return null;
     }
 
-    public NamedTextColor getColor() {
+    public TextColor getColor() {
         return NamedTextColor.WHITE;
     }
 
@@ -168,7 +169,7 @@ public abstract class AbstractMob implements Mob {
         //TODO wander? - waypoints trait
 //        npc.getNavigator().getLocalParameters()
 //           .avoidWater(true);
-        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 40), 1);
+        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 40), 2);
     }
 
     public void onNPCCreate() {

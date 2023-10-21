@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -89,22 +90,12 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
 
     @Override
     public Component getDescription() {
-        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
+        return Component.text("God of Wisdom", NamedTextColor.AQUA);
     }
 
     @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.DARK_PURPLE;
-    }
-
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
+    public TextColor getColor() {
+        return NamedTextColor.DARK_AQUA;
     }
 
     @Override

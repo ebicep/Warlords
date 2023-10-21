@@ -18,6 +18,9 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -139,12 +142,17 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
+    public double weaponDropRate() {
+        return BossMob.super.weaponDropRate() * 1.5;
     }
 
     @Override
-    public double weaponDropRate() {
-        return BossMob.super.weaponDropRate() * 1.5;
+    public Component getDescription() {
+        return Component.text("God of the Underworld", NamedTextColor.GRAY);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.DARK_GRAY;
     }
 }

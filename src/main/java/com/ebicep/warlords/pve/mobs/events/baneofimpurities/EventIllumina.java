@@ -23,6 +23,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
@@ -94,7 +95,7 @@ public class EventIllumina extends AbstractMob implements BossMob {
     }
 
     @Override
-    public NamedTextColor getColor() {
+    public TextColor getColor() {
         return NamedTextColor.BLUE;
     }
 

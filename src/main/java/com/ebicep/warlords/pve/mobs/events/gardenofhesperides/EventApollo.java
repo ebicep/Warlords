@@ -15,6 +15,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -80,21 +81,6 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
 
     }
 
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
     private static class PoisonArrow extends AbstractPveAbility {
 
         public PoisonArrow() {
@@ -131,12 +117,12 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
 
     @Override
     public Component getDescription() {
-        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
+        return Component.text("God of Everything..?", TextColor.color(255, 188, 54));
     }
 
     @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.DARK_PURPLE;
+    public TextColor getColor() {
+        return NamedTextColor.GOLD;
     }
 
 }

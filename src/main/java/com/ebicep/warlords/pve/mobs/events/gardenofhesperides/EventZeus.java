@@ -18,6 +18,9 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -117,11 +120,6 @@ public class EventZeus extends AbstractMob implements BossMob, God {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         if (event.getAbility().equals("Lightning Bolt")) {
             event.getFlags().add(InstanceFlags.PIERCE);
@@ -137,8 +135,13 @@ public class EventZeus extends AbstractMob implements BossMob, God {
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+    public Component getDescription() {
+        return Component.text("God of the Sky", NamedTextColor.WHITE);
+    }
 
+    @Override
+    public TextColor getColor() {
+        return TextColor.color(242, 242, 242);
     }
 
     @Override

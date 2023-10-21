@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -186,16 +187,6 @@ public class EventPoseidon extends AbstractMob implements BossMob, God {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
         if (event.isDead()) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 10, .5f);
@@ -204,12 +195,17 @@ public class EventPoseidon extends AbstractMob implements BossMob, God {
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
+    public double weaponDropRate() {
+        return BossMob.super.weaponDropRate() * 1.5;
     }
 
     @Override
-    public double weaponDropRate() {
-        return BossMob.super.weaponDropRate() * 1.5;
+    public Component getDescription() {
+        return Component.text("God of the Sea", TextColor.color(28,163,236));
+    }
+
+    @Override
+    public TextColor getColor() {
+        return TextColor.color(35,137,218);
     }
 }

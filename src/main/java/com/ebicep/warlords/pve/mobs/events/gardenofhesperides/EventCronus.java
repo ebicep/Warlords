@@ -15,6 +15,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -60,12 +61,12 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
 
     @Override
     public Component getDescription() {
-        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
+        return Component.text("God of Time", NamedTextColor.GREEN);
     }
 
     @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.DARK_PURPLE;
+    public TextColor getColor() {
+        return NamedTextColor.DARK_GREEN;
     }
 
     @Override
@@ -88,16 +89,6 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
                 }
             }
         }.runTaskLater(40);
-    }
-
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override

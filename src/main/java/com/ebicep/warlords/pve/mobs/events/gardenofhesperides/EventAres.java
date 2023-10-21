@@ -15,6 +15,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -90,11 +91,6 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         event.getFlags().add(InstanceFlags.PIERCE);
         receiver.getCooldownManager().removeCooldownByName("Ares Wounding");
@@ -126,17 +122,12 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public Component getDescription() {
-        return Component.text("Dude", NamedTextColor.LIGHT_PURPLE);
+        return Component.text("God of War", NamedTextColor.RED);
     }
 
     @Override
-    public NamedTextColor getColor() {
-        return NamedTextColor.DARK_PURPLE;
+    public TextColor getColor() {
+        return NamedTextColor.DARK_RED;
     }
 }

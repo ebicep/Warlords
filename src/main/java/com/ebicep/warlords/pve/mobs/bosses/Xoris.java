@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -52,7 +53,7 @@ public class Xoris extends AbstractMob implements BossMob {
     }
 
     @Override
-    public NamedTextColor getColor() {
+    public TextColor getColor() {
         return NamedTextColor.GRAY;
     }
 
