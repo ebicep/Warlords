@@ -58,7 +58,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new GhoulcallersFury(),
-                new SpawnSouls(7)
+                new SpawnSouls(10)
         );
     }
 
