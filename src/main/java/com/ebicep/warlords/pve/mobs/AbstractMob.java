@@ -122,8 +122,8 @@ public abstract class AbstractMob implements Mob {
         NavigatorParameters localParameters = this.npc.getNavigator().getLocalParameters();
         localParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
         localParameters.attackRange(1.3)
-                       .updatePathRate(7)
-                       .distanceMargin(.7);
+                       .updatePathRate(10)
+                       .distanceMargin(.9);
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
 
