@@ -59,7 +59,7 @@ public class VoltaicSoul extends AbstractMob implements BossMinionMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 40 == 0) {
+        if (ticksElapsed % 40 == 0 && hitBuildUp > 0) {
             hitBuildUp--;
         }
     }
