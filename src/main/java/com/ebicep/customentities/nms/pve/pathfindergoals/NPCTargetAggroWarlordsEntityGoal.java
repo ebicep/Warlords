@@ -31,6 +31,7 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
     private final double range;
     private NPC npc;
     private Entity target;
+    private WarlordsEntity warlordsEntityTarget;
 
     public NPCTargetAggroWarlordsEntityGoal(NPC npc, double range) {
         this.npc = npc;
@@ -45,6 +46,9 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
 
     @Override
     public BehaviorStatus run() {
+        if (warlordsEntityTarget.isDead()) {
+            return BehaviorStatus.SUCCESS;
+        }
         if (npc.getNavigator().getEntityTarget() == null) {
             return BehaviorStatus.FAILURE;
         }
@@ -87,6 +91,7 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
             return false;
         }
         this.target = randomCollection.next();
+        this.warlordsEntityTarget = Warlords.getPlayer(this.target);
         this.npc.getNavigator().setTarget(this.target, true);
         return true;
     }
