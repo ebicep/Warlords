@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class SpawnSouls extends AbstractSpawnMobAbility {
 
     public static final List<Mob> SOULS = Arrays.asList(Mob.AGONIZED_SOUL, Mob.DEPRESSED_SOUL, Mob.FURIOUS_SOUL, Mob.TORMENTED_SOUL, Mob.VOLTAIC_SOUL);
-    public static final int SPAWN_LIMIT = 75;
+    public static final int SPAWN_LIMIT = 50;
 
     public static List<Location> generateSpawnLocations(PveOption pveOption) {
         List<Location> locations;

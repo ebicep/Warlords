@@ -101,12 +101,12 @@ public class ThunderCloudAbility extends AbstractPveAbility {
                 effects.add(new CircleEffect(
                         game,
                         null,
-                        floorLocation,
+                        floorLocation.clone(),
                         this.size - i,
                         areaEffect
                 ));
                 if (i == 0) {
-                    floorLocation.add(random.nextDouble(1) - .5, 0, random.nextDouble(1) - .5);
+                    floorLocation.clone().add(random.nextDouble(1) - .5, 0, random.nextDouble(1) - .5);
                 }
             }
         }
