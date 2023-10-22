@@ -6,12 +6,14 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.events.EventShopPurchaseEvent;
+import com.ebicep.warlords.events.ItemCraftEvent;
 import com.ebicep.warlords.events.WeaponTitlePurchaseEvent;
 import com.ebicep.warlords.events.player.*;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyStartEvent;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -194,6 +196,12 @@ public interface TracksOutsideGame {
                 runTracker(event.getUUID(), tracker -> tracker.onSupplyDropCall(event.getAmount()));
             }
 
+            @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+            public void onItemCraft(ItemCraftEvent event) {
+                quicklyValidate();
+                runTracker(event.getUUID(), tracker -> tracker.onItemCraft(event.getItem()));
+            }
+
         };
     }
 
@@ -213,6 +221,9 @@ public interface TracksOutsideGame {
     }
 
     default void onSupplyDropCall(long amount) {
+    }
+
+    default void onItemCraft(AbstractItem item) {
     }
 
 }

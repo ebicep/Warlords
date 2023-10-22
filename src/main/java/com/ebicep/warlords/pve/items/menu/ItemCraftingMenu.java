@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.items.menu;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.events.ItemCraftEvent;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
@@ -24,6 +25,7 @@ import com.ebicep.warlords.util.java.TriConsumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
@@ -273,6 +275,7 @@ public class ItemCraftingMenu {
                                     currenciesLongEntry.getKey().subtractFromPlayer(databasePlayer, currenciesLongEntry.getValue());
                                 }
                                 pveStats.getItemsManager().addItem(itemToCraft);
+                                Bukkit.getServer().getPluginManager().callEvent(new ItemCraftEvent(player.getUniqueId(), itemToCraft));
                                 AbstractItem.sendItemMessage(player,
                                         Component.textOfChildren(Component.text("You crafted ", NamedTextColor.GRAY), itemToCraft.getHoverComponent())
                                 );

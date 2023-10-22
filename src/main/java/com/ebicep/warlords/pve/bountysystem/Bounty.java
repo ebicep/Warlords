@@ -62,6 +62,7 @@ public enum Bounty {
     SALVAGE_IV(SalvageIV.class, SalvageIV::new),
     SALVAGE_V(SalvageV.class, SalvageV::new),
     SALVAGE_VI(SalvageVI.class, SalvageVI::new),
+    MASONRY_I(MasonryI.class, MasonryI::new),
     ARTISAN_I(ArtisanI.class, ArtisanI::new),
     CONSUMER_I(ConsumerI.class, ConsumerI::new),
     BOUNDLESS_I(BoundlessI.class, BoundlessI::new),
