@@ -101,6 +101,18 @@ public abstract class AbstractItem {
         }
     }
 
+    public void applyRandomModifierOnly() {
+        aspectModifier1 = null;
+        aspectModifier2 = null;
+        switch (MODIFIER_CHANCE.next()) {
+            case 1 -> aspectModifier1 = Aspect.getRandomAspect(Collections.emptyList());
+            case 2 -> {
+                aspectModifier1 = Aspect.getRandomAspect(Collections.emptyList());
+                aspectModifier2 = Aspect.getRandomAspect(Collections.singletonList(aspectModifier1));
+            }
+        }
+    }
+
     public abstract AbstractItem clone();
 
     /**

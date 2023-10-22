@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
@@ -46,6 +47,7 @@ public class ItemCraftingMenu {
         put(ItemTier.DELTA, new TierCostInfo(
                 new LinkedHashMap<>() {{
                     put(Currencies.SYNTHETIC_SHARD, 10_000L);
+                    put(Currencies.SCRAP_METAL, 50L);
                     put(MobDrop.ZENITH_STAR, 2L);
                 }},
                 new Pair<>(1, 4),
@@ -59,6 +61,7 @@ public class ItemCraftingMenu {
                 new LinkedHashMap<>() {{
                     put(Currencies.SYNTHETIC_SHARD, 20_000L);
                     put(Currencies.LEGEND_FRAGMENTS, 5_000L);
+                    put(Currencies.SCRAP_METAL, 100L);
                     put(MobDrop.ZENITH_STAR, 8L);
                 }},
                 new Pair<>(1, 2),
@@ -77,6 +80,35 @@ public class ItemCraftingMenu {
         Menu menu = new Menu("Ethical Enya", 9 * 4);
 
         menu.setItem(2, 1,
+                new ItemBuilder(Material.CHIPPED_ANVIL)
+                        .name(Component.text("Reroll Aspect Modifier", NamedTextColor.GREEN))
+                        .lore(WordWrap.wrap(
+                                Component.text(
+                                        "Every Item comes with 0, 1, or 2 Aspect Modifiers. The modifier bonus depends on its type and gives a small bonus against mobs of its Aspect. Items with 2 modifiers has its bonus reduced by half.",
+                                        NamedTextColor.GRAY
+                                ),
+                                170
+                        ))
+                        .addLore(
+                                Component.empty(),
+                                Component.textOfChildren(
+                                        Component.text("Gauntlets", NamedTextColor.DARK_GREEN),
+                                        Component.text(" increase damage done.", NamedTextColor.GRAY)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("Tomes", NamedTextColor.DARK_GREEN),
+                                        Component.text(" negates the effect of the Aspect.", NamedTextColor.GRAY)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("Bucklers", NamedTextColor.DARK_GREEN),
+                                        Component.text(" decrease damage taken.", NamedTextColor.GRAY)
+                                )
+                        )
+                        .get(),
+                (m, e) -> ItemModifierMenu.openItemModifierMenu(player, databasePlayer, null)
+        );
+
+        menu.setItem(4, 1,
                 new ItemBuilder(Material.YELLOW_TERRACOTTA)
                         .name(Component.text("Delta Forging", NamedTextColor.GREEN))
                         .lore(Component.text("Craft a Delta Tiered Item", NamedTextColor.GRAY))
@@ -89,18 +121,8 @@ public class ItemCraftingMenu {
                         .name(Component.text("Omega Forging", NamedTextColor.GREEN))
                         .lore(Component.text("Craft an Omega Tiered Item", NamedTextColor.GRAY))
                         .get(),
-                (m, e) -> {
-                    //player.sendMessage(Component.text("The time for this has not yet come.", NamedTextColor.RED));
-                    openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>());
-                }
+                (m, e) -> openForgingMenu(player, databasePlayer, ItemTier.OMEGA, new HashMap<>())
         );
-//        menu.setItem(7, 1,
-//                new ItemBuilder(Material.ANVIL)
-//                        .name(Component.text("Celestial Smeltery", NamedTextColor.GREEN))
-//                        .lore(Component.text("Smelt Celestial Bronze", NamedTextColor.GRAY))
-//                        .get(),
-//                (m, e) -> openCelestialSmelteryMenu(player, databasePlayer, null)
-//        );
 
         menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
@@ -140,10 +162,10 @@ public class ItemCraftingMenu {
         menu.openForPlayer(player);
     }
 
-    private static void openItemSelectMenu(
+    public static void openItemSelectMenu(
             Player player,
             DatabasePlayer databasePlayer,
-            ItemTier tier,
+            @Nullable ItemTier tier,
             BiConsumer<Menu, InventoryClickEvent> back,
             TriConsumer<AbstractItem, Menu, InventoryClickEvent> onClick
     ) {
@@ -163,7 +185,7 @@ public class ItemCraftingMenu {
                                                         .getItemsManager()
                                                         .getItemInventory()
                                                         .stream()
-                                                        .filter(item -> item.getTier() == tier)
+                                                        .filter(item -> tier == null || item.getTier() == tier)
                                                         .filter(item -> !(item instanceof AbstractFixedItem))
                                                         .collect(Collectors.toList())),
                 databasePlayer,
