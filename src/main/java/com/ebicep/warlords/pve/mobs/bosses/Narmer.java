@@ -361,7 +361,7 @@ public class Narmer extends AbstractMob implements BossMob {
             long playerCount = pveOption.getGame().warlordsPlayers().count();
             DifficultyIndex difficulty = pveOption.getDifficulty();
             float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
-            return 2;//narmer.getAcolytes().size() < multiplier * playerCount ? 1 : 0;
+            return narmer.getAcolytes().size() < multiplier * playerCount ? 1 : 0;
         }
 
         @Override
