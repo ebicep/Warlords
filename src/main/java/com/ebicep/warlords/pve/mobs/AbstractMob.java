@@ -119,11 +119,12 @@ public abstract class AbstractMob implements Mob {
                 return Math.max(0.0, Math.min(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth(), 1));
             });
         }
-        NavigatorParameters localParameters = this.npc.getNavigator().getLocalParameters();
-        localParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
-        localParameters.attackRange(1.3)
-                       .updatePathRate(10)
-                       .distanceMargin(.9);
+        NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
+        defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
+        defaultParameters.attackRange(1)
+                         .updatePathRate(10)
+                         .distanceMargin(1)
+                         .speedModifier(.9f);
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
 
