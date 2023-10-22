@@ -26,7 +26,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -299,7 +298,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                     .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
                     .mapToDouble(Shield::getShieldHealth)
                     .sum();
-            ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
+            player.setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
         }
     }
 

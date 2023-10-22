@@ -6,7 +6,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,14 +42,14 @@ public class Shield implements Listener {
             WarlordsEntity we = cooldownManager.getWarlordsEntity();
             if (entity instanceof Player player) {
                 if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Shield.class).stream().count() == 1) {
-                    ((CraftPlayer) player).getHandle().setAbsorptionAmount(0);
+                    player.setAbsorptionAmount(0);
                 } else {
                     double totalShieldHealth = new CooldownFilter<>(we, RegularCooldown.class)
                             .filter(RegularCooldown::hasTicksLeft)
                             .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
                             .mapToDouble(Shield::getShieldHealth)
                             .sum();
-                    ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / we.getMaxHealth() * 40));
+                    player.setAbsorptionAmount((float) (totalShieldHealth / we.getMaxHealth() * 40));
                 }
             }
             oldRemoveForce.accept(cooldownManager);
@@ -61,7 +60,7 @@ public class Shield implements Listener {
                     .mapToDouble(Shield::getShieldHealth)
                     .sum();
             totalShieldHealth += shield.getShieldHealth();
-            ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
+            player.setAbsorptionAmount((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
         }
     }
 

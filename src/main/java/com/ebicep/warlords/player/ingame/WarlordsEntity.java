@@ -677,7 +677,7 @@ public abstract class WarlordsEntity {
                                 .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
                                 .mapToDouble(Shield::getShieldHealth)
                                 .sum();
-                        ((CraftPlayer) player).getHandle().setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
+                        player.setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
                     }
 
                     if (isMeleeHit) {
