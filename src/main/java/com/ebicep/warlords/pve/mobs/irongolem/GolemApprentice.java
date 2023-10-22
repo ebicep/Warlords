@@ -67,8 +67,10 @@ public class GolemApprentice extends AbstractMob implements AdvancedMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 0.5f);
-        receiver.setVelocity(name, new Vector(0, 0.5, 0), false);
+        if (event.getAbility().isEmpty()) {
+            Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 0.5f);
+            receiver.setVelocity(name, new Vector(0, 0.5, 0), false);
+        }
     }
 
     @Override
