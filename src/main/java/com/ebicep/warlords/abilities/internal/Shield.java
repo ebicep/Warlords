@@ -6,8 +6,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -32,44 +30,31 @@ public class Shield implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onAddCooldown(WarlordsAddCooldownEvent event) {
         WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-        Entity entity = warlordsEntity.getEntity();
         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
         if (!(cooldown.getCooldownObject() instanceof Shield shield)) {
             return;
         }
         Consumer<CooldownManager> oldRemoveForce = cooldown.getOnRemoveForce();
         cooldown.setOnRemoveForce(cooldownManager -> {
-            WarlordsEntity we = cooldownManager.getWarlordsEntity();
-            if (entity instanceof Player player) {
-                if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Shield.class).stream().count() == 1) {
-                    player.setAbsorptionAmount(0);
-                } else {
-                    double totalShieldHealth = new CooldownFilter<>(we, RegularCooldown.class)
-                            .filter(RegularCooldown::hasTicksLeft)
-                            .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                            .mapToDouble(Shield::getShieldHealth)
-                            .sum();
-                    player.setAbsorptionAmount((float) (totalShieldHealth / we.getMaxHealth() * 40));
-                }
+            if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Shield.class).stream().count() == 1) {
+                warlordsEntity.giveAbsorption(0);
+            } else {
+                double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                        .filter(RegularCooldown::hasTicksLeft)
+                        .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                        .mapToDouble(Shield::getShieldHealth)
+                        .sum();
+                warlordsEntity.giveAbsorption((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
             }
+
             oldRemoveForce.accept(cooldownManager);
         });
-        if (entity instanceof Player player) {
-            double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                    .mapToDouble(Shield::getShieldHealth)
-                    .sum();
-            totalShieldHealth += shield.getShieldHealth();
-            player.setAbsorptionAmount((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
-        }
-    }
-
-    public float getMaxShieldHealth() {
-        return maxShieldHealth;
-    }
-
-    public void setMaxShieldHealth(float maxShieldHealth) {
-        this.maxShieldHealth = maxShieldHealth;
+        double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                .mapToDouble(Shield::getShieldHealth)
+                .sum();
+        totalShieldHealth += shield.getShieldHealth();
+        warlordsEntity.giveAbsorption((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
     }
 
     public float getShieldHealth() {
@@ -78,6 +63,14 @@ public class Shield implements Listener {
 
     public void setShieldHealth(float shieldHealth) {
         this.shieldHealth = shieldHealth;
+    }
+
+    public float getMaxShieldHealth() {
+        return maxShieldHealth;
+    }
+
+    public void setMaxShieldHealth(float maxShieldHealth) {
+        this.maxShieldHealth = maxShieldHealth;
     }
 
     public String getName() {

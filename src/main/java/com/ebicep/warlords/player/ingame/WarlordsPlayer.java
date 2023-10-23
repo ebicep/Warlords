@@ -298,7 +298,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                     .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
                     .mapToDouble(Shield::getShieldHealth)
                     .sum();
-            player.setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
+            giveAbsorption((float) (totalShieldHealth / getMaxHealth() * 40));
         }
     }
 

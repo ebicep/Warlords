@@ -672,13 +672,11 @@ public abstract class WarlordsEntity {
                     doOnStaticAbility(ArcaneShield.class, ArcaneShield::addTimesBroken);
                     return Optional.empty();
                 } else {
-                    if (entity instanceof Player player) {
-                        double totalShieldHealth = new CooldownFilter<>(this, RegularCooldown.class)
-                                .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                                .mapToDouble(Shield::getShieldHealth)
-                                .sum();
-                        player.setAbsorptionAmount((float) (totalShieldHealth / getMaxHealth() * 40));
-                    }
+                    double totalShieldHealth = new CooldownFilter<>(this, RegularCooldown.class)
+                            .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                            .mapToDouble(Shield::getShieldHealth)
+                            .sum();
+                    giveAbsorption((float) (totalShieldHealth / getMaxHealth() * 40));
 
                     if (isMeleeHit) {
                         ownMessage.append(RECEIVE_ARROW_RED.append(Component.text(" You absorbed " + attacker.getName() + "'s melee hit.",
@@ -2945,4 +2943,26 @@ public abstract class WarlordsEntity {
     public int getBaseHitCooldownValue() {
         return 20;
     }
+
+    /**
+     * PotionEffectType.ABSORPTION gives 2 absorption hearts per amplifier, starting at amplifier 0
+     *
+     * @param amount The amount of absorption to give > 1 = 1 heart
+     */
+    public void giveAbsorption(double amount) {
+        giveAbsorption(amount, Integer.MAX_VALUE);
+    }
+
+    public void giveAbsorption(double amount, int tickDuration) {
+        if (entity instanceof Player player) {
+            player.removePotionEffect(PotionEffectType.ABSORPTION);
+            if (amount == 0) {
+                return;
+            }
+            int effectAmount = (int) (Math.ceil(amount / 2) - 1);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, tickDuration, effectAmount, false, false, false));
+            player.setAbsorptionAmount(amount);
+        }
+    }
+
 }
