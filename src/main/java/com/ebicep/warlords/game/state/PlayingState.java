@@ -254,6 +254,7 @@ public class PlayingState implements State, TimerDebugAble {
 
         List<WarlordsPlayer> players = PlayerFilterGeneric.playingGameWarlordsPlayers(game).toList();
         if (players.isEmpty()) {
+            ChatUtils.MessageType.GAME_DEBUG.sendMessage("No players in game, not adding game");
             return;
         }
 
