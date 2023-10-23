@@ -296,7 +296,6 @@ public abstract class AbstractMob implements Mob {
         dropWeapon(killer);
         dropMobDrop(killer);
         dropItem(killer);
-        dropBlessing(killer);
     }
 
     public void dropWeapon(WarlordsEntity killer) {
