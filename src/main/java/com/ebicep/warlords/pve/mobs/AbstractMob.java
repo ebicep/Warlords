@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsEntityGoal;
+import com.ebicep.customentities.nms.pve.pathfindergoals.TargetAggroWarlordsEntityGoal;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -40,11 +41,15 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -120,9 +125,6 @@ public abstract class AbstractMob implements Mob {
                 return Math.max(0.0, Math.min(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth(), 1));
             });
         }
-        if (getMobRegistry().entityType == EntityType.SLIME) {
-            this.npc.setUseMinecraftAI(true); //TODO
-        }
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
         defaultParameters.attackRange(1)
@@ -138,6 +140,20 @@ public abstract class AbstractMob implements Mob {
         updateEquipment();
 
         this.npc.spawn(spawnLocation);
+
+        if (getMobRegistry().entityType == EntityType.SLIME) {
+            this.npc.setUseMinecraftAI(true); //TODO
+            Entity entity = this.npc.getEntity();
+            if (((CraftEntity) entity).getHandle() instanceof net.minecraft.world.entity.Mob mob) {
+                mob.goalSelector.removeAllGoals(goal -> true);
+                mob.targetSelector.removeAllGoals(goal -> true);
+                mob.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(70);
+                if (mob instanceof PathfinderMob) {
+                    mob.goalSelector.addGoal(1, new MeleeAttackGoal((PathfinderMob) mob, 1, true));
+                }
+                mob.targetSelector.addGoal(2, new TargetAggroWarlordsEntityGoal(mob));
+            }
+        }
 
         this.warlordsNPC = new WarlordsNPC(
                 name,
