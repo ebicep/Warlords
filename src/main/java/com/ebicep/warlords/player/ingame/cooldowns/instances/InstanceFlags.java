@@ -16,6 +16,7 @@ public enum InstanceFlags {
     // Damage types - all effected by flag multiplier
     TRUE_DAMAGE, // does exact value damage regardless of shield/vene/reductions/dmg increase
     PIERCE, // ignores shield/vene, and victim dmg reductions
+    IGNORE_DAMAGE_REDUCTION_ONLY, // ignores victim dmg reductions
 
     NO_MESSAGE, // doesnt send dmg/heal message to any player
     NO_HIT_SOUND,

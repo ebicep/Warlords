@@ -349,6 +349,7 @@ public abstract class WarlordsEntity {
         EnumSet<InstanceFlags> flags = event.getFlags();
         boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
         boolean pierceDamage = flags.contains(InstanceFlags.PIERCE);
+        boolean ignoreDamageReduction = pierceDamage || flags.contains(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY);
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
@@ -492,7 +493,7 @@ public abstract class WarlordsEntity {
             appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
             for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                 float newDamageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
-                if (newDamageValue < damageValue && pierceDamage) { // pierce ignores victim dmg reduction
+                if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
                     continue;
                 }
                 damageValue = newDamageValue;
@@ -607,7 +608,7 @@ public abstract class WarlordsEntity {
                 appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                     float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
-                    if (newDamageValue < damageValue && pierceDamage) { // pierce ignores victim dmg reduction
+                    if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
                         continue;
                     }
                     damageValue = newDamageValue;
@@ -664,7 +665,7 @@ public abstract class WarlordsEntity {
                             isCrit ? 100 : 0,
                             100,
                             true,
-                            EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                            EnumSet.of(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, InstanceFlags.IGNORE_SELF_RES)
                     ));
 
                     addAbsorbed(-(shield.getShieldHealth()));
