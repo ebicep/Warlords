@@ -54,6 +54,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -183,7 +184,14 @@ public class WarlordsEvents implements Listener {
 
     public static void joinInteraction(Player player, boolean fromGame) {
         player.playerListName(null);
-        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(1024); // remove attack charge up / recoil
+        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+        if (attribute != null) {
+            attribute.setBaseValue(1024); // remove attack charge up / recoil
+        }
+        attribute = player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION);
+        if (attribute != null) {
+            attribute.setBaseValue(Integer.MAX_VALUE); // give absorption capability
+        }
         UUID uuid = player.getUniqueId();
         Location rejoinPoint = Warlords.getRejoinPoint(uuid);
         boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());

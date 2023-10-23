@@ -48,7 +48,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.sounds.SoundSource;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
@@ -2952,12 +2951,6 @@ public abstract class WarlordsEntity {
      */
     public void giveAbsorption(double amount) {
         if (entity instanceof Player player) {
-            AttributeInstance absorptionAttribute = player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION);
-            if (absorptionAttribute == null) {
-                player.registerAttribute(Attribute.GENERIC_MAX_ABSORPTION);
-                absorptionAttribute = player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION);
-            }
-            absorptionAttribute.setBaseValue(Integer.MAX_VALUE);
             player.setAbsorptionAmount(amount);
         }
     }
