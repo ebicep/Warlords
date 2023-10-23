@@ -48,6 +48,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.sounds.SoundSource;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
@@ -1559,8 +1560,6 @@ public abstract class WarlordsEntity {
 
         if (entity instanceof Player player) {
             player.setGameMode(GameMode.SPECTATOR);
-            //removing yellow hearts
-            player.setAbsorptionAmount(0);
             ItemStack item = player.getInventory().getItem(0);
             //removing sg shiny weapon
             if (item != null) {
@@ -1569,6 +1568,8 @@ public abstract class WarlordsEntity {
             //removing boner
             player.getInventory().remove(UndyingArmy.BONE);
         }
+        //removing yellow hearts
+        giveAbsorption(0);
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this, attacker));
 
         //giving out assists
@@ -2950,17 +2951,13 @@ public abstract class WarlordsEntity {
      * @param amount The amount of absorption to give > 1 = 1 heart
      */
     public void giveAbsorption(double amount) {
-        giveAbsorption(amount, Integer.MAX_VALUE);
-    }
-
-    public void giveAbsorption(double amount, int tickDuration) {
         if (entity instanceof Player player) {
-            player.removePotionEffect(PotionEffectType.ABSORPTION);
-            if (amount == 0) {
-                return;
+            AttributeInstance absorptionAttribute = player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION);
+            if (absorptionAttribute == null) {
+                player.registerAttribute(Attribute.GENERIC_MAX_ABSORPTION);
+                absorptionAttribute = player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION);
             }
-            int effectAmount = (int) (Math.ceil(amount / 2) - 1);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, tickDuration, effectAmount, false, false, false));
+            absorptionAttribute.setBaseValue(Integer.MAX_VALUE);
             player.setAbsorptionAmount(amount);
         }
     }
