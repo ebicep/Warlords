@@ -134,10 +134,8 @@ public abstract class AbstractMob implements Mob {
                          .speedModifier(.9f);
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
-        // stop spiders from climbing
-        if (getMobRegistry().entityType == EntityType.SLIME) {
-            this.npc.data().set(NPC.Metadata.FLYABLE, true);
-        }
+        // stop spiders from climbing and other stuff idk
+        this.npc.data().set(NPC.Metadata.FLYABLE, true);
 
         giveGoals();
         onNPCCreate();
