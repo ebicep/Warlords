@@ -9,6 +9,7 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,8 +30,7 @@ import java.util.List;
 public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
 
     private final double range;
-    private NPC npc;
-    private Entity target;
+    private final NPC npc;
     private WarlordsEntity warlordsEntityTarget;
 
     public NPCTargetAggroWarlordsEntityGoal(NPC npc, double range) {
@@ -41,7 +41,7 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
     @Override
     public void reset() {
         this.npc.getNavigator().cancelNavigation();
-        this.target = null;
+        this.warlordsEntityTarget = null;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
         if (npc.getNavigator().getEntityTarget() == null) {
             return BehaviorStatus.FAILURE;
         }
-        if (!target.isValid()) {
+        if (!warlordsEntityTarget.getEntity().isValid()) {
             return BehaviorStatus.SUCCESS;
         }
         return BehaviorStatus.RUNNING;
@@ -60,19 +60,30 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
 
     @Override
     public boolean shouldExecute() {
-        if (!npc.isSpawned()) {
+        warlordsEntityTarget = getTarget(npc, range);
+        if (warlordsEntityTarget == null) {
             return false;
+        }
+        Entity target = warlordsEntityTarget.getEntity();
+        npc.getNavigator().setTarget(target, true);
+        return true;
+    }
+
+    @Nullable
+    public static WarlordsEntity getTarget(NPC npc, double range) {
+        if (!npc.isSpawned()) {
+            return null;
         }
         Entity npcEntity = npc.getEntity();
         WarlordsEntity thisWarlordsEntity = Warlords.getPlayer(npcEntity);
         if (thisWarlordsEntity == null) {
-            return false;
+            return null;
         }
         Location location = npcEntity.getLocation();
         List<Entity> list = GoalUtils.getNearbyWarlordEntities(npcEntity, thisWarlordsEntity, range);
         list.sort(Comparator.comparingDouble(o -> o.getLocation().distanceSquared(location)));
         if (list.isEmpty()) {
-            return false;
+            return null;
         }
         Entity closestEntity = list.get(0);
         double distanceToClosest = location.distanceSquared(closestEntity.getLocation());
@@ -88,11 +99,8 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
             }
         }
         if (randomCollection.getSize() == 0) {
-            return false;
+            return null;
         }
-        this.target = randomCollection.next();
-        this.warlordsEntityTarget = Warlords.getPlayer(this.target);
-        this.npc.getNavigator().setTarget(this.target, true);
-        return true;
+        return Warlords.getPlayer(randomCollection.next());
     }
 }

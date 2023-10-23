@@ -16,15 +16,9 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Zombie;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -36,28 +30,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class WarlordsNPC extends WarlordsEntity {
 
-    public static Zombie spawnZombieNoAI(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
-            zombie.setAdult();
-            zombie.setCustomNameVisible(true);
-
-            if (inv != null) {
-                zombie.getEquipment().setBoots(inv.getBoots());
-                zombie.getEquipment().setLeggings(inv.getLeggings());
-                zombie.getEquipment().setChestplate(inv.getChestplate());
-                zombie.getEquipment().setHelmet(inv.getHelmet());
-                zombie.getEquipment().setItemInMainHand(inv.getItemInMainHand());
-            } else {
-                zombie.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-            }
-            zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0);
-            zombie.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(0);
-            //prevents zombie from moving
-            zombie.setAI(false);
-        });
-
-    }
-
     private float minMeleeDamage;
     private float maxMeleeDamage;
     private float damageResistance;
@@ -65,6 +37,8 @@ public final class WarlordsNPC extends WarlordsEntity {
     private AbstractMob mob;
     private Component mobNamePrefix = Component.empty();
     private ArmorStand nameDisplay;
+//    private HologramTrait hologramTrait;
+
     private int stunTicks;
 
     public WarlordsNPC(
@@ -82,6 +56,8 @@ public final class WarlordsNPC extends WarlordsEntity {
     ) {
         super(npc.getUniqueId(), name, npc.getEntity(), game, team, playerClass);
         this.npc = npc;
+//        this.hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+//        this.hologramTrait.setUseDisplayEntities(false); //TODO
         this.mob = warlordsMob;
         if (warlordsMob != null && warlordsMob.getLevel() > 0) {
             mobNamePrefix = Component.textOfChildren(
@@ -189,42 +165,32 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateHealth() {
         if (!isDead()) {
-            nameDisplay.customName(getNameComponent());
-            nameDisplay.teleport(entity.getLocation().add(0, entity.getHeight() + 0.275, 0));
-
+//            hologramTrait.setLine(0, LegacyComponentSerializer.legacySection().serialize(getNameComponent()));
+            if (nameDisplay == null) {
+                nameDisplay = Utils.spawnArmorStand(getLocation().add(0, entity.getHeight() + 0.275, 0), armorStand -> {
+                    armorStand.setMarker(true);
+                    armorStand.customName(getNameComponent());
+                    armorStand.setCustomNameVisible(true);
+                });
+            } else {
+                nameDisplay.customName(getNameComponent());
+                nameDisplay.teleport(entity.getLocation().add(0, entity.getHeight() + 0.275, 0));
+            }
             entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         }
     }
 
     @Override
     public void updateEntity() {
-        if (nameDisplay == null) {
-            nameDisplay = Utils.spawnArmorStand(getLocation().add(0, entity.getHeight() + 0.275, 0), armorStand -> {
-                armorStand.setMarker(true);
-                armorStand.customName(getNameComponent());
-                armorStand.setCustomNameVisible(true);
-            });
-        } else {
-            nameDisplay.customName(getNameComponent());
-            nameDisplay.teleport(entity.getLocation().add(0, entity.getHeight() + 0.275, 0));
-        }
-
-        entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+        updateHealth();
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-
-//        AttributeInstance attribute = entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
-//        if (attribute != null) {
-//            attribute.setBaseValue(100);
-//        } else {
-//            entity.registerAttribute(Attribute.GENERIC_FOLLOW_RANGE);
-//            Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_FOLLOW_RANGE)).setBaseValue(100);
-//        }
     }
 
     @Override
     public void setDamageResistance(int damageResistance) {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
+        updateHealth();
         nameDisplay.customName(getNameComponent());
     }
 

@@ -122,8 +122,9 @@ public abstract class AbstractMob implements Mob {
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
         defaultParameters.attackRange(1)
-                         .updatePathRate(10)
-                         .distanceMargin(1)
+                         .stuckAction(null) // disable tping to player if too far away
+                         .updatePathRate(5)
+                         .distanceMargin(.5)
                          .speedModifier(.9f);
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);

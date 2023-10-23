@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.NPCFollowWarlordsEntityGoal;
-import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsEntityGoal;
+import com.ebicep.customentities.nms.pve.pathfindergoals.NPCGuardWarlordsEntityGoal;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -10,10 +9,6 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.ai.GoalController;
-import net.citizensnpcs.api.ai.tree.BehaviorStatus;
-import net.citizensnpcs.api.ai.tree.Composite;
-import net.citizensnpcs.api.ai.tree.IfElse;
-import net.citizensnpcs.api.ai.tree.Selector;
 import org.bukkit.Location;
 
 public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras {
@@ -54,9 +49,7 @@ public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras
         super.giveGoals();
         GoalController goalController = npc.getDefaultGoalController();
         goalController.clear();
-//        goalController. TODO
-//        goalController.addBehavior(new NPCFollowWarlordsEntityGoal(npc, cronus.getWarlordsNPC(), 10), 1);
-//        goalController.addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 40), 2);
+        goalController.addBehavior(new NPCGuardWarlordsEntityGoal(npc, cronus.getWarlordsNPC(), 10), 2);
     }
 
     @Override

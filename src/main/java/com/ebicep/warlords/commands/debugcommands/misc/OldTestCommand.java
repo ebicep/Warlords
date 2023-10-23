@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -7,11 +8,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.HologramTrait;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
@@ -112,17 +116,18 @@ public class OldTestCommand implements CommandExecutor {
 //                ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer);
 //            });
 
-            //  Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+            //Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
 
 
 //
-//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.ZOMBIE, "TEST");
-//            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-//            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//            hologramTrait.setUseDisplayEntities(true);
-//            hologramTrait.addLine("HELLO WORLD");
-//            hologramTrait.addLine("TEST");
-//            npc.spawn(player.getLocation());
+            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.ZOMBIE, "TEST");
+            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+            hologramTrait.setUseDisplayEntities(true);
+            hologramTrait.addLine("HELLO");
+            hologramTrait.addLine("WORLD");
+            hologramTrait.addLine("123");
+            npc.spawn(player.getLocation());
 //            npc.getNavigator().setTarget(player, true);
 //            npc.getNavigator().getLocalParameters().speedModifier(2);
 
