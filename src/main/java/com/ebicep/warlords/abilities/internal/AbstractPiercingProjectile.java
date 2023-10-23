@@ -309,7 +309,6 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nullable Player player) {
-        ChatUtils.MessageType.WARLORDS.sendMessage(shooter + " used " + name);
         shooter.subtractEnergy(name, energyCost, false);
 
         fire(shooter, shooter.getEyeLocation());
