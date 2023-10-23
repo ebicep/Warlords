@@ -355,7 +355,7 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 250, 104, 255),
             Weapons.VORPAL_SWORD.getItem()
     )),
-    CHESSKING(EntityType.ZOMBIE, Chessking.class, Chessking::new, Chessking::new, null),
+    CHESSKING(EntityType.SLIME, Chessking.class, Chessking::new, Chessking::new, null),
     ILLUMINA(EntityType.ZOMBIE, Illumina.class, Illumina::new, Illumina::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.DEEP_DARK_WORM),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 120, 120, 200),
@@ -370,7 +370,7 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 230, 60, 60),
             Weapons.SILVER_PHANTASM_TRIDENT.getItem()
     )),
-    VOID(EntityType.ZOMBIE, Void.class, Void::new, Void::new, new Utils.SimpleEntityEquipment(
+    VOID(EntityType.SKELETON, Void.class, Void::new, Void::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.END_MONSTER),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 20, 20, 20),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 20, 20, 20),
@@ -388,7 +388,7 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 0),
             Weapons.DEMONBLADE.getItem()
     )),
-    BOLTARO_EXLIED(EntityType.ZOMBIE, BoltaroExiled.class, BoltaroExiled::new, BoltaroExiled::new, new Utils.SimpleEntityEquipment(
+    BOLTARO_EXLIED(EntityType.SKELETON, BoltaroExiled.class, BoltaroExiled::new, BoltaroExiled::new, new Utils.SimpleEntityEquipment(
             SkullUtils.getSkullFrom(SkullID.RED_EYE),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
