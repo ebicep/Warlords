@@ -72,7 +72,7 @@ public interface PveOption extends Option {
             }
         }
         if (!candidates.isEmpty()) {
-            return candidates.get((int) (Math.random() * candidates.size()));
+            return candidates.get((int) (Math.random() * candidates.size())).clone();
         }
         return null;
     }

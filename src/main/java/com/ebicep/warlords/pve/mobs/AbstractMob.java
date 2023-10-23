@@ -121,7 +121,7 @@ public abstract class AbstractMob implements Mob {
             });
         }
         if (getMobRegistry().entityType == EntityType.SLIME) {
-            this.npc.setUseMinecraftAI(true);
+            this.npc.setUseMinecraftAI(true); //TODO
         }
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
