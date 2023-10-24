@@ -255,7 +255,7 @@ public class ItemSearchMenu extends Menu {
         TIER("Tier", Comparator.comparing(AbstractItem::getTier)),
         TYPE("Type", Comparator.comparing(AbstractItem::getType)),
         ITEM_SCORE("Item Score", Comparator.comparing(AbstractItem::getItemScore)),
-        WEIGHT("Weight", Comparator.comparing(AbstractItem::getWeight)),
+//        WEIGHT("Weight", Comparator.comparing(AbstractItem::getWeight)),
 
         ;
 
