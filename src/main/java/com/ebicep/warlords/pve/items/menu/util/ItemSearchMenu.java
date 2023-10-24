@@ -174,7 +174,7 @@ public class ItemSearchMenu extends Menu {
         }
         filterLore.add(Component.empty());
         filterLore.add(Component.textOfChildren(
-                Component.text("CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                 Component.text(" to change", NamedTextColor.GRAY)
         ));
         setItem(5, 5,
