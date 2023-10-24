@@ -419,6 +419,10 @@ public enum Aspect {
 
     }
 
+    public Aspect next() {
+        return VALUES[(this.ordinal() + 1) % VALUES.length];
+    }
+
     public static class AspectNegationCooldown extends RegularCooldown<AspectNegationCooldown> {
 
         public static void giveAspectNegationCooldown(WarlordsEntity from, WarlordsEntity to, int ticks) {

@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -109,25 +110,26 @@ public class ItemFilterMenu {
                 }
         );
 
-        ItemSearchMenu.ModifierFilter modifierFilter = menuSettings.getModifierFilter();
+        Aspect aspectFilter = menuSettings.getAspectFilter();
         menu.setItem(4, 1,
-                new ItemBuilder(modifierFilter.itemStack)
-                        .name(Component.text("Modifier", NamedTextColor.GREEN))
-                        .lore(
-                                Arrays.stream(ItemSearchMenu.ModifierFilter.VALUES)
-                                      .map(value -> Component.text(value.name, modifierFilter == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                new ItemBuilder(aspectFilter == null ? Material.BARRIER : Material.ENCHANTED_BOOK)
+                        .name(Component.text("Aspect Modifier", NamedTextColor.GREEN))
+                        .lore(Component.text("None", aspectFilter == null ? NamedTextColor.AQUA : NamedTextColor.GRAY))
+                        .addLore(
+                                Arrays.stream(Aspect.VALUES)
+                                      .map(value -> Component.text(value.name, aspectFilter == value ? NamedTextColor.AQUA : NamedTextColor.GRAY))
                                       .collect(Collectors.toList())
                         )
                         .addLore(
                                 Component.empty(),
                                 Component.textOfChildren(
                                         Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                        Component.text(" to change modifier filter", NamedTextColor.GREEN)
+                                        Component.text(" to change aspect modifier filter", NamedTextColor.GREEN)
                                 )
                         )
                         .get(),
                 (m, e) -> {
-                    menuSettings.setModifierFilter(modifierFilter.next());
+                    menuSettings.setAspectFilter(aspectFilter == null ? Aspect.VALUES[0] : aspectFilter.next());
                     openItemFilterMenu(player, databasePlayer, backAction);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                 }

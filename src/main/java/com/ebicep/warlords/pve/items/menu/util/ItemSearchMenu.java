@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.TriConsumer;
@@ -160,8 +161,8 @@ public class ItemSearchMenu extends Menu {
         if (filterSettings.getTierFilter() != ItemTier.NONE) {
             filterLore.add(grayDash.append(Component.text(filterSettings.getTierFilter().name, NamedTextColor.GRAY)));
         }
-        if (filterSettings.getModifierFilter() != ModifierFilter.NONE) {
-            filterLore.add(grayDash.append(Component.text(filterSettings.getModifierFilter().name, NamedTextColor.GRAY)));
+        if (filterSettings.getAspectFilter() != null) {
+            filterLore.add(grayDash.append(Component.text(filterSettings.getAspectFilter().name, NamedTextColor.GRAY)));
         }
         if (filterSettings.getAddonFilter()) {
             filterLore.add(grayDash.append(Component.text("Selected Class Bonus", NamedTextColor.GRAY)));
@@ -348,7 +349,7 @@ public class ItemSearchMenu extends Menu {
             this.filterSettings.statPoolFilter = EnumSet.noneOf(BasicStatPool.class);
             this.filterSettings.tierFilter = ItemTier.NONE;
             this.filterSettings.typeFilter = ItemType.NONE;
-            this.filterSettings.modifierFilter = ModifierFilter.NONE;
+            this.filterSettings.aspectFilter = null;
             this.filterSettings.addonFilter = false;
             this.filterSettings.favoriteFilter = false;
             this.sortOption = SortOptions.DATE;
@@ -373,8 +374,9 @@ public class ItemSearchMenu extends Menu {
             if (filterSettings.typeFilter != ItemType.NONE) {
                 sortedItemInventory.removeIf(item -> item.getType() != filterSettings.typeFilter);
             }
-            if (filterSettings.modifierFilter != ModifierFilter.NONE) {
-                sortedItemInventory.removeIf(weapon -> !filterSettings.modifierFilter.filter.test(weapon));
+            Aspect aspectFilter = filterSettings.aspectFilter;
+            if (aspectFilter != null) {
+                sortedItemInventory.removeIf(item -> item.getAspectModifier1() == aspectFilter || item.getAspectModifier2() == aspectFilter);
             }
             if (filterSettings.addonFilter) {
                 sortedItemInventory.removeIf(item -> !(item instanceof ItemAddonClassBonus && ((ItemAddonClassBonus) item).getClasses() == selectedClass));
@@ -424,7 +426,7 @@ public class ItemSearchMenu extends Menu {
             public EnumSet<BasicStatPool> statPoolFilter = EnumSet.noneOf(BasicStatPool.class);
             public ItemTier tierFilter = ItemTier.NONE;
             public ItemType typeFilter = ItemType.NONE;
-            public ModifierFilter modifierFilter = ModifierFilter.NONE;
+            public Aspect aspectFilter = null;
             public boolean addonFilter = false; // false = none, true = class
             private boolean favoriteFilter = false;
 
@@ -451,12 +453,12 @@ public class ItemSearchMenu extends Menu {
                 this.typeFilter = typeFilter;
             }
 
-            public ModifierFilter getModifierFilter() {
-                return modifierFilter;
+            public Aspect getAspectFilter() {
+                return aspectFilter;
             }
 
-            public void setModifierFilter(ModifierFilter modifierFilter) {
-                this.modifierFilter = modifierFilter;
+            public void setAspectFilter(Aspect aspectFilter) {
+                this.aspectFilter = aspectFilter;
             }
 
             public boolean getAddonFilter() {
