@@ -413,7 +413,7 @@ public enum GameMap {
             12,
             60 * SECOND,
             "Gorge",
-            0,
+            1,
             GameMode.CAPTURE_THE_FLAG
     ) {
         @Override
@@ -4087,7 +4087,7 @@ public enum GameMap {
                 }
             });
             options.add(new ItemOption());
-            options.add(new WinAfterTimeoutOption(900, 50, "spec"));
+            options.add(new WinAfterTimeoutOption(600, 50, "spec"));
             options.add(new TheAcropolisOption());
 //            options.add(new SafeZoneOption(1));
             options.add(new EventPointsOption()
