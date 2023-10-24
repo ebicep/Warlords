@@ -91,16 +91,19 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
 
     public abstract String getDescription();
 
-    public abstract String getBonus();
-
-    public abstract String getName();
-
     public String getUpgradeTreeBonusDescription(int level) {
+        if (upgradeTreeBonus == null && getTier() == ItemTier.GAMMA) {
+            upgradeTreeBonus = getType().upgradeTreeBonuses[ThreadLocalRandom.current().nextInt(getType().upgradeTreeBonuses.length)];
+        }
         if (upgradeTreeBonus == null) {
             return "Invalid item. Please report it!";
         }
         return upgradeTreeBonus.getDescription(level);
     }
+
+    public abstract String getBonus();
+
+    public abstract String getName();
 
     public ItemStack generateItemStackWithObfuscatedStat(BasicStatPool stat) {
         return generateItemBuilderWithObfuscatedStat(stat).get();
