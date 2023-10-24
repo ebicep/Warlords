@@ -14,6 +14,9 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -55,6 +58,17 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
     public Mob getMobRegistry() {
         return Mob.EVENT_PROMETHEUS;
     }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("God of Fire", NamedTextColor.RED);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.DARK_RED;
+    }
+
 
     @Override
     public void onSpawn(PveOption option) {
