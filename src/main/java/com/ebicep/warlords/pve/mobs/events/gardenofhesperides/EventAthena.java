@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class EventAthena extends AbstractMob implements BossMob, LesserGod {
 
@@ -57,13 +58,13 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new Shockwave(),
-                new AbstractSpawnMobAbility("Athena Mobs", 10, 100, 2) {
+                new AbstractSpawnMobAbility("Athena Mobs", 45, 100, 2) {
                     private int spawnCounter = 0;
                     private List<Location> spawnLocations = new ArrayList<>();
 
                     @Override
                     public int getSpawnAmount() {
-                        return (int) (pveOption.getGame().warlordsPlayers().count() * INITIAL_SPAWN.size());
+                        return (int) (pveOption.getGame().warlordsPlayers().count());
                     }
 
                     @Override
@@ -75,7 +76,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                             }
                             spawnLocations = LocationUtils.getCircle(randomSpawnLocation, 3, pveOption.playerCount());
                         }
-                        Mob mobToSpawn = INITIAL_SPAWN.get(spawnCounter % INITIAL_SPAWN.size());
+                        Mob mobToSpawn = INITIAL_SPAWN.get(ThreadLocalRandom.current().nextInt(INITIAL_SPAWN.size()));
                         spawnCounter++;
                         return mobToSpawn.createMob(spawnLocations.remove(0));
                     }
