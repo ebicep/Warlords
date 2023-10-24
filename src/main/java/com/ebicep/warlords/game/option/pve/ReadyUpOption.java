@@ -17,6 +17,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -107,7 +108,8 @@ public class ReadyUpOption implements Option {
                             Component.text(player.getName(), NamedTextColor.AQUA),
                             Component.text(" is now ready", NamedTextColor.GREEN)
                     ));
-                    player.sendMessage(Component.text("[Click to disable auto ready]", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                    player.sendMessage(Component.text("[Click to Disable Auto Ready]", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                                .hoverEvent(HoverEvent.showText(Component.text("Disable Auto Ready", NamedTextColor.GREEN)))
                                                 .clickEvent(ClickEvent.callback(audience -> gardenOfHesperidesStats.setTartarusAutoReady(false))));
                 }
             });
