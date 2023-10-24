@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.*;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -38,7 +37,7 @@ import java.util.Optional;
 public class EventPoseidon extends AbstractMob implements BossMob, God {
 
     public EventPoseidon(Location spawnLocation) {
-        this(spawnLocation, "Poseidon", 75000, .33f, 15, 725, 846);
+        this(spawnLocation, "Poseidon", 225000, .33f, 25, 725, 846);
     }
 
     public EventPoseidon(

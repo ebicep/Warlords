@@ -7,9 +7,12 @@ import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
@@ -26,6 +29,9 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
@@ -36,7 +42,7 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
     private int resurrectionTicksLeft = 2 * 60 * 20;
 
     public EventHades(Location spawnLocation) {
-        this(spawnLocation, "Hades", 50000, .33f, 20, 524, 607);
+        this(spawnLocation, "Hades", 185000, .33f, 25, 524, 607);
     }
 
     public EventHades(
@@ -80,6 +86,39 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
     @Override
     public Mob getMobRegistry() {
         return Mob.EVENT_HADES;
+    }
+
+    @Override
+    public void onSpawn(PveOption option) {
+        super.onSpawn(option);
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Defeated Check",
+                null,
+                EventHades.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.INTERNAL,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+                    @EventHandler(priority = EventPriority.HIGHEST)
+                    public void onDeath(WarlordsDeathEvent event) {
+                        WarlordsEntity dead = event.getWarlordsEntity();
+                        if (!(dead instanceof WarlordsNPC npc) || dead == warlordsNPC) {
+                            return;
+                        }
+                        AbstractMob npcMob = npc.getMob();
+                        if (npcMob instanceof EventZeus || npcMob instanceof EventPoseidon) {
+                            resurrectionTicksLeft = 2 * 60 * 20; // 2 minutes
+                        }
+                    }
+                };
+            }
+        });
     }
 
     @Override

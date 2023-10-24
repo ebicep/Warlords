@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 public class EventZeus extends AbstractMob implements BossMob, God {
 
     public EventZeus(Location spawnLocation) {
-        this(spawnLocation, "Zeus", 100000, .33f, 20, 825, 946);
+        this(spawnLocation, "Zeus", 250000, .33f, 30, 825, 946);
     }
 
     public EventZeus(
@@ -109,7 +109,7 @@ public class EventZeus extends AbstractMob implements BossMob, God {
                         } else if (npcMob instanceof EventPoseidon) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_DROWNED_AMBIENT, 2, .5f);
                             warlordsNPC.getAbilitiesMatching(ZeusLightningRod.class).forEach(lightningRod -> {
-                                lightningRod.setHealthRestore(10);
+                                lightningRod.setHealthRestore(2);
                                 lightningRod.setDamageBuff(lightningRod.getDamageBuff() + .1f);
                             });
                         }
