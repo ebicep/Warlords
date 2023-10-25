@@ -376,7 +376,7 @@ public class ItemSearchMenu extends Menu {
             }
             Aspect aspectFilter = filterSettings.aspectFilter;
             if (aspectFilter != null) {
-                sortedItemInventory.removeIf(item -> item.getAspectModifier1() == aspectFilter || item.getAspectModifier2() == aspectFilter);
+                sortedItemInventory.removeIf(item -> item.getAspectModifier1() != aspectFilter && item.getAspectModifier2() != aspectFilter);
             }
             if (filterSettings.addonFilter) {
                 sortedItemInventory.removeIf(item -> !(item instanceof ItemAddonClassBonus && ((ItemAddonClassBonus) item).getClasses() == selectedClass));

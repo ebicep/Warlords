@@ -129,7 +129,7 @@ public class ItemFilterMenu {
                         )
                         .get(),
                 (m, e) -> {
-                    menuSettings.setAspectFilter(aspectFilter == null ? Aspect.VALUES[0] : aspectFilter.next());
+                    menuSettings.setAspectFilter(aspectFilter == null ? Aspect.VALUES[0] : aspectFilter == Aspect.VALUES[Aspect.VALUES.length - 1] ? null : aspectFilter.next());
                     openItemFilterMenu(player, databasePlayer, backAction);
                     DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                 }
