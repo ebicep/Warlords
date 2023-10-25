@@ -43,7 +43,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "Final Stand",
                 "Last Stand - Master Upgrade",
                 """
-                        -20% Cooldown Reduction
+                        +20% Cooldown Reduction
                                                 
                         Double the radius of Last Stand and take 50% less knockback while active.
                         """,
@@ -57,7 +57,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "Enduring Defense",
                 "Last Stand - Master Upgrade",
                 """
-                        -20% Cooldown Reduction
+                        +20% Cooldown Reduction
                                                 
                         Double the radius of Last Stand and shred 15% of all enemies damage resistance when activated (excluding bosses).
                         """,

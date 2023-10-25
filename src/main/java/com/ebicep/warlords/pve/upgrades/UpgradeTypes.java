@@ -31,7 +31,7 @@ public class UpgradeTypes {
 
         @Override
         public String getDescription0(String value) {
-            return value + "% Cooldown Reduction";
+            return "+" + value + "% Cooldown Reduction";
         }
 
         @Nullable

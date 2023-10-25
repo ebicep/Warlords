@@ -41,7 +41,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                 "Shadow Dash",
                 "Shadow Step - Master Upgrade",
                 """
-                        -10% Cooldown Reduction
+                        +10% Cooldown Reduction
                          
                         Instead of leaping forward, instantly dash forward +8 blocks, dealing damage to enemies passed through.
                         """,

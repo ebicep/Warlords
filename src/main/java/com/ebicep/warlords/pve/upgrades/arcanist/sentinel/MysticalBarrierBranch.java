@@ -29,7 +29,7 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
                 "Transcendent Barrier",
                 "Mystical Barrier - Master Upgrade",
                 """
-                        -20% Additional Cooldown Reduction
+                        +20% Additional Cooldown Reduction
                                                 
                         Increase max shield health by 2000 and increase amount of shield granted for each damage instance by 120.
                         """,

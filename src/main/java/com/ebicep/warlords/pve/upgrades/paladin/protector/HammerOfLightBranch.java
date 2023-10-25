@@ -61,7 +61,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                 "Hammer of Disillusion",
                 "Hammer of Light - Master Upgrade",
                 """
-                        -20% Cooldown Reduction
+                        +20% Cooldown Reduction
                                                 
                         Hammer of Light/Crown of Light now grants debuff immunity. Additionally, enemies within the radius will take 10% more damage.
                         """,

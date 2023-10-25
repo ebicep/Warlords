@@ -42,7 +42,7 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
                 "Collective Vaticinator",
                 "Energy Seer - Master Upgrade",
                 """
-                        -20% Additional Cooldown Reduction
+                        +20% Additional Cooldown Reduction
                                                 
                         When Energy Seer expires, apply the benefits to all nearby allies within a 10 block radius.
                         """,

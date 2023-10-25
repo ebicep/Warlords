@@ -36,7 +36,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 "Transcendent Presence",
                 "Inspiring Presence - Master Upgrade",
                 """
-                        -20% Cooldown Reduction
+                        +20% Cooldown Reduction
 
                         Reduce the cooldown on all caster's and nearby allies' abilities by 15 seconds (excluding Inspiring Presence.) Additionally, allies gain 20% cooldown reduction for the duration of Inspiring Presence
                         """,
@@ -49,7 +49,7 @@ public class InspiringPresenceBranch extends AbstractUpgradeBranch<InspiringPres
                 "Resilient Presence",
                 "Inspiring Presence - Master Upgrade",
                 """
-                        -20% Cooldown Reduction
+                        +20% Cooldown Reduction
                         +25% Speed
                                                 
                         For the duration of Inspiring Presence, every hit you take restores 15 energy to you and any other ally affected by Inspiring Presence.
