@@ -115,19 +115,6 @@ public class OldTestCommand implements CommandExecutor {
             //Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
 
 
-//
-//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.ZOMBIE, "TEST");
-//            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-//            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//            hologramTrait.setUseDisplayEntities(true);
-//            hologramTrait.addLine("HELLO");
-//            hologramTrait.addLine("WORLD");
-//            hologramTrait.addLine("123");
-//            npc.spawn(player.getLocation());
-//            npc.getNavigator().setTarget(player, true);
-//            npc.getNavigator().getLocalParameters().speedModifier(2);
-
-
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {
 //                for (Currencies value : Currencies.VALUES) {
 //                    System.out.println(value.name + ": " + databasePlayer.getPveStats().getCurrencyValue(value));

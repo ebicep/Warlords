@@ -7,7 +7,9 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.GameType;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +42,7 @@ public class GoalUtils {
                     warlordsEntity.isDead() ||
                     warlordsEntity.isTeammate(thisWarlordsEntity) ||
                     warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) ||
-                    (e instanceof ServerPlayer p && p.gameMode.getGameModeForPlayer() == GameType.CREATIVE);
+                    (e instanceof Player p && p.getGameMode() == GameMode.CREATIVE);
         });
         return new ArrayList<>(list);
     }
