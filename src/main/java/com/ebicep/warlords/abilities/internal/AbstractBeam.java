@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -44,6 +45,11 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
     @Override
     protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
         return true;
+    }
+
+    @Override
+    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+        return new LocationBuilder(startingLocation).backward(.5f);
     }
 
     @Override

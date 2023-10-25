@@ -175,6 +175,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             } else {
                 nameDisplay.customName(getNameComponent());
                 nameDisplay.teleport(entity.getLocation().add(0, entity.getHeight() + 0.275, 0));
+//                entity.addPassenger(nameDisplay);
             }
             entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         }
