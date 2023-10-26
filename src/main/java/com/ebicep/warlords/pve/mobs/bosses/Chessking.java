@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.customentities.npc.CitizensUtil;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -19,8 +20,6 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -119,9 +118,8 @@ public class Chessking extends AbstractMob implements BossMob {
         int newSize = (int) (21 * healthPercent);
         if (size != newSize && 0 < newSize && newSize < 21) {
             slimeSize.setSize(newSize);
-            int zeroJumpAmplifier = -33;
             float newJumpPower = 1 + ((20 - newSize) * .02f);
-            warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 99999, (int) (newJumpPower * 100 + zeroJumpAmplifier), true, false));
+            CitizensUtil.setSlimeJumpPower(warlordsNPC, newJumpPower);
             warlordsNPC.getAbilitiesMatching(Belch.class)
                        .forEach(belch -> belch.setRange(9 - ((20 - newSize) * .2f)));
             warlordsNPC.getAbilitiesMatching(SpawnMobAbility.class)

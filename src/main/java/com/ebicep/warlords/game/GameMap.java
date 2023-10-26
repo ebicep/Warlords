@@ -3833,8 +3833,10 @@ public enum GameMap {
                     float maxHealth = warlordsNPC.getMaxHealth();
                     float minMeleeDamage = warlordsNPC.getMinMeleeDamage();
                     float maxMeleeDamage = warlordsNPC.getMaxMeleeDamage();
-                    warlordsNPC.setMaxBaseHealth(maxHealth * healthMultiplier);
-                    warlordsNPC.setHealth(maxHealth * healthMultiplier);
+                    float newHealth = maxHealth * healthMultiplier;
+                    warlordsNPC.setMaxBaseHealth(newHealth);
+                    warlordsNPC.setMaxHealth(newHealth);
+                    warlordsNPC.setHealth(newHealth);
                     warlordsNPC.setMinMeleeDamage((int) (minMeleeDamage * meleeDamageMultiplier));
                     warlordsNPC.setMaxMeleeDamage((int) (maxMeleeDamage * meleeDamageMultiplier));
                 }
@@ -4066,6 +4068,7 @@ public enum GameMap {
 
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
                     warlordsNPC.setMaxBaseHealth(newBaseHealth);
+                    warlordsNPC.setMaxHealth(newBaseHealth);
                     warlordsNPC.setHealth(newBaseHealth);
                     warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "Scaling",
@@ -4277,6 +4280,7 @@ public enum GameMap {
 
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
                     warlordsNPC.setMaxBaseHealth(newBaseHealth);
+                    warlordsNPC.setMaxHealth(newBaseHealth);
                     warlordsNPC.setHealth(newBaseHealth);
                     warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "Scaling",

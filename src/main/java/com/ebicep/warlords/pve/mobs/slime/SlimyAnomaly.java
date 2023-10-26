@@ -6,7 +6,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -16,6 +15,7 @@ import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.trait.SlimeSize;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
@@ -34,7 +34,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                 spawnLocation,
                 "Slimy Anomaly",
                 3000,
-                0.5f,
+                0.2f,
                 20,
                 0,
                 0,
@@ -69,8 +69,15 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
     }
 
     @Override
+    public void onNPCCreate() {
+        npc.getOrAddTrait(SlimeSize.class).setSize(5);
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+
+//        CitizensUtil.setSlimeJumpPower(warlordsNPC, .5f);
     }
 
     @Override
@@ -85,16 +92,6 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                     new DoubleLineEffect(Particle.SPELL)
             ).playEffects();
         }
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override

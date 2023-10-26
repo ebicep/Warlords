@@ -79,7 +79,7 @@ public class DatabaseManager {
     public static GameEventsService gameEventsService;
     public static WeeklyBlessingsService weeklyBlessingsService;
     public static IllusionVendorService illusionVendorService;
-    public static boolean enabled = true;
+    public static boolean enabled = false;
     private static DatabasePlayer CACHED_MOB_DATABASEPLAYER = new DatabasePlayer();
 
     public static void init() {

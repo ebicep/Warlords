@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsEntityGoal;
-import com.ebicep.customentities.nms.pve.pathfindergoals.TargetAggroWarlordsEntityGoal;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -41,15 +40,11 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -113,18 +108,7 @@ public abstract class AbstractMob implements Mob {
 
     public WarlordsNPC toNPC(Game game, Team team, Consumer<WarlordsNPC> modifyStats) {
         this.npc = NPCManager.NPC_REGISTRY.createNPC(getMobRegistry().entityType, name);
-        if (getDescription() != null) {
-            BossBarTrait bossBarTrait = this.npc.getOrAddTrait(BossBarTrait.class);
-            bossBarTrait.setTitle(LegacyComponentSerializer.legacySection().serialize(Component.text(name, getColor())));
-            bossBarTrait.setColor(BarColor.RED);
-            bossBarTrait.setStyle(BarStyle.SOLID);
-            bossBarTrait.setProgressProvider(() -> {
-                if (warlordsNPC == null) {
-                    return 0.0;
-                }
-                return Math.max(0.0, Math.min(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth(), 1));
-            });
-        }
+
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
         defaultParameters.attackRange(1)
@@ -132,6 +116,31 @@ public abstract class AbstractMob implements Mob {
                          .updatePathRate(5)
                          .distanceMargin(.5)
                          .speedModifier(.9f);
+        if (getMobRegistry().entityType == EntityType.SPIDER) {
+            defaultParameters.useNewPathfinder(true);
+        }
+//        defaultParameters.clearExaminers();
+//        defaultParameters.examiner(new BlockExaminer() {
+//            @Override
+//            public float getCost(BlockSource blockSource, PathPoint pathPoint) {
+//                Location location = pathPoint.getVector().toLocation(blockSource.getWorld());
+//                if (location.getY() > npc.getStoredLocation().getY()) {
+//                    return 10;
+//                }
+//                //EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, location, 1, 0, 0, 0, 0);
+//                return 0;
+//            }
+//
+//            @Override
+//            public PassableState isPassable(BlockSource blockSource, PathPoint pathPoint) {
+//                Location location = pathPoint.getVector().toLocation(blockSource.getWorld());
+//                if (location.getY() > npc.getStoredLocation().getY()) {
+//                    return PassableState.UNPASSABLE;
+//                }
+//                return PassableState.PASSABLE;
+//            }
+//        });
+        // }
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
 
@@ -140,20 +149,20 @@ public abstract class AbstractMob implements Mob {
         updateEquipment();
 
         this.npc.spawn(spawnLocation);
-
-        if (getMobRegistry().entityType == EntityType.SLIME) {
-            this.npc.setUseMinecraftAI(true); //TODO
-            Entity entity = this.npc.getEntity();
-            if (((CraftEntity) entity).getHandle() instanceof net.minecraft.world.entity.Mob mob) {
-                mob.goalSelector.removeAllGoals(goal -> true);
-                mob.targetSelector.removeAllGoals(goal -> true);
-                mob.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(70);
-                if (mob instanceof PathfinderMob) {
-                    mob.goalSelector.addGoal(1, new MeleeAttackGoal((PathfinderMob) mob, 1, true));
-                }
-                mob.targetSelector.addGoal(2, new TargetAggroWarlordsEntityGoal(mob));
-            }
-        }
+//
+//        if (getMobRegistry().entityType == EntityType.SLIME) {
+//            this.npc.setUseMinecraftAI(true); //TODO
+//            Entity entity = this.npc.getEntity();
+//            if (((CraftEntity) entity).getHandle() instanceof net.minecraft.world.entity.Mob mob) {
+//                mob.goalSelector.removeAllGoals(goal -> true);
+//                mob.targetSelector.removeAllGoals(goal -> true);
+//                mob.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(70);
+//                if (mob instanceof PathfinderMob) {
+//                    mob.goalSelector.addGoal(1, new MeleeAttackGoal((PathfinderMob) mob, 1, true));
+//                }
+//                mob.targetSelector.addGoal(2, new TargetAggroWarlordsEntityGoal(mob));
+//            }
+//        }
 
         this.warlordsNPC = new WarlordsNPC(
                 name,
@@ -175,6 +184,19 @@ public abstract class AbstractMob implements Mob {
         }
 
         modifyStats.accept(warlordsNPC);
+
+        if (getDescription() != null) {
+            BossBarTrait bossBarTrait = this.npc.getOrAddTrait(BossBarTrait.class);
+            bossBarTrait.setTitle(LegacyComponentSerializer.legacySection().serialize(Component.text(name, getColor())));
+            bossBarTrait.setColor(BarColor.RED);
+            bossBarTrait.setStyle(BarStyle.SOLID);
+            bossBarTrait.setProgressProvider(() -> {
+                if (warlordsNPC == null) {
+                    return 0.0;
+                }
+                return Math.max(0.0, Math.min(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth(), 1));
+            });
+        }
 
         return warlordsNPC;
     }
@@ -408,6 +430,25 @@ public abstract class AbstractMob implements Mob {
                            });
     }
 
+    private void dropWeapon(WarlordsEntity killer, int bound) {
+        AtomicDouble dropRate = new AtomicDouble(.01 * weaponDropRate() * killer.getGame().getGameMode().getDropModifier());
+        AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropWeaponEvent(killer, this, dropRate);
+        Bukkit.getPluginManager().callEvent(dropRewardEvent);
+        if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get() * dropRewardEvent.getModifier()) {
+            AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
+            Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
+            killer.getGame().forEachOnlinePlayer((player, team) -> {
+                player.sendMessage(Component.text().color(NamedTextColor.GRAY)
+                                            .append(Permissions.getPrefixWithColor((Player) killer.getEntity(), true))
+                                            .append(Component.text(" got lucky and found "))
+                                            .append(weapon.getHoverComponent(false))
+                                            .append(Component.text("!"))
+                );
+            });
+            killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
+        }
+    }
+
     private void dropBlessing(WarlordsEntity killer) {
         Game game = killer.getGame();
         PlayerFilterGeneric.playingGameWarlordsPlayers(game)
@@ -429,25 +470,6 @@ public abstract class AbstractMob implements Mob {
                                });
                                warlordsPlayer.playSound(warlordsPlayer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
                            });
-    }
-
-    private void dropWeapon(WarlordsEntity killer, int bound) {
-        AtomicDouble dropRate = new AtomicDouble(.01 * weaponDropRate() * killer.getGame().getGameMode().getDropModifier());
-        AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropWeaponEvent(killer, this, dropRate);
-        Bukkit.getPluginManager().callEvent(dropRewardEvent);
-        if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get() * dropRewardEvent.getModifier()) {
-            AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
-            Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
-            killer.getGame().forEachOnlinePlayer((player, team) -> {
-                player.sendMessage(Component.text().color(NamedTextColor.GRAY)
-                                            .append(Permissions.getPrefixWithColor((Player) killer.getEntity(), true))
-                                            .append(Component.text(" got lucky and found "))
-                                            .append(weapon.getHoverComponent(false))
-                                            .append(Component.text("!"))
-                );
-            });
-            killer.playSound(killer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
-        }
     }
 
     public Entity getTarget() {
