@@ -69,6 +69,9 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
                 if (event.getAttacker() != player || event.getWarlordsEntity() == player) {
                     return;
                 }
+                if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                    return;
+                }
 
                 String ability = event.getAbility();
                 CooldownManager cooldownManager = player.getCooldownManager();
