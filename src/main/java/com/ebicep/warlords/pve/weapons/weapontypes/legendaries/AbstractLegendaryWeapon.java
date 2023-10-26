@@ -214,28 +214,28 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         switch (tier) {
             case 1 -> {
                 cost.put(Currencies.COIN, 100_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 10_000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 5000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 7_500L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 3_000L);
             }
             case 2 -> {
                 cost.put(Currencies.COIN, 250_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 15_000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 7_500L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 10_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 6_000L);
             }
             case 3 -> {
                 cost.put(Currencies.COIN, 500_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 20_000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 10_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 12_500L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 9_000L);
             }
             case 4 -> {
                 cost.put(Currencies.COIN, 1_000_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 25_000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 15_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 15_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 12_000L);
             }
             case 5 -> {
                 cost.put(Currencies.COIN, 2_000_000L);
-                cost.put(Currencies.SYNTHETIC_SHARD, 30_000L);
-                cost.put(Currencies.LEGEND_FRAGMENTS, 20_000L);
+                cost.put(Currencies.SYNTHETIC_SHARD, 20_000L);
+                cost.put(Currencies.LEGEND_FRAGMENTS, 15_000L);
                 cost.put(Currencies.ASCENDANT_SHARD, 3L);
             }
         }
