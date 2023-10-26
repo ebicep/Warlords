@@ -236,7 +236,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 cost.put(Currencies.COIN, 2_000_000L);
                 cost.put(Currencies.SYNTHETIC_SHARD, 30_000L);
                 cost.put(Currencies.LEGEND_FRAGMENTS, 20_000L);
-                cost.put(Currencies.ASCENDANT_SHARD, 1L);
+                cost.put(Currencies.ASCENDANT_SHARD, 3L);
             }
         }
         return cost;
