@@ -137,9 +137,9 @@ public class ItemMenuUtil {
     }
 
     public static List<Component> getStatBonusLore(List<AbstractItem> equippedItems) {
-        Map<BasicStatPool, Integer> statPool = new HashMap<>();
+        Map<BasicStatPool, Float> statPool = new HashMap<>();
         for (AbstractItem equippedItem : equippedItems) {
-            equippedItem.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
+            equippedItem.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Float::sum));
         }
         List<Component> bonusLore = BasicStatPool.getStatPoolLore(statPool, Component.text("➤ ", NamedTextColor.AQUA), true, null);
         List<Component> lore = new ArrayList<>();
@@ -292,13 +292,13 @@ public class ItemMenuUtil {
 
     @Deprecated
     public static List<Component> getTotalBonusLoreLegacy(List<AbstractItem> equippedItems, boolean skipFirstLine) {
-        HashMap<BasicStatPool, Integer> statPool = new HashMap<>();
+        HashMap<BasicStatPool, Float> statPool = new HashMap<>();
         float gauntletModifier = 0;
         float tomeModifier = 0;
         float bucklerModifier = 0;
         for (AbstractItem equippedItem : equippedItems) {
             ItemType type = equippedItem.getType();
-            equippedItem.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Integer::sum));
+            equippedItem.getStatPool().forEach((stat, tier) -> statPool.merge(stat, tier, Float::sum));
             switch (type) {
                 case GAUNTLET -> gauntletModifier += equippedItem.getModifierCalculated();
                 case TOME -> tomeModifier += equippedItem.getModifierCalculated();

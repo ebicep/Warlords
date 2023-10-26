@@ -126,27 +126,27 @@ public enum BasicStatPool implements StatPool {
 
     public static final BasicStatPool[] VALUES = values();
     public static final HashMap<BasicStatPool, StatRange> STAT_RANGES = new HashMap<>() {{
-        put(HP, new StatRange(75, 450));
-        put(MAX_ENERGY, new StatRange(5, 20));
-        put(EPH, new StatRange(1, 3));
-        put(SPEED, new StatRange(2, 8));
+        put(HP, new StatRange(25, 150));
+        put(MAX_ENERGY, new StatRange(2, 7));
+        put(EPH, new StatRange(.25f, 1));
+        put(SPEED, new StatRange(1, 3));
 
-        put(DAMAGE, new StatRange(2, 8));
-        put(HEALING, new StatRange(2, 8));
-        put(CRIT_CHANCE, new StatRange(2, 8));
-        put(CRIT_MULTI, new StatRange(3, 15));
+        put(DAMAGE, new StatRange(.5f, 3));
+        put(HEALING, new StatRange(.5f, 3));
+        put(CRIT_CHANCE, new StatRange(.5f, 3));
+        put(CRIT_MULTI, new StatRange(2, 6));
 
-        put(AGGRO_PRIO, new StatRange(3, 15));
-        put(THORNS, new StatRange(3, 15));
-        put(KB_RES, new StatRange(3, 15));
-        put(REGEN_TIMER, new StatRange(5, 30));
+        put(AGGRO_PRIO, new StatRange(2, 8));
+        put(THORNS, new StatRange(1, 5));
+        put(KB_RES, new StatRange(1, 5));
+        put(REGEN_TIMER, new StatRange(2, 10));
     }};
 
-    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, boolean inverted, BasicStatPool obfuscatedStat) {
+    public static List<Component> getStatPoolLore(Map<BasicStatPool, Float> statPool, boolean inverted, BasicStatPool obfuscatedStat) {
         return getStatPoolLore(statPool, Component.empty(), inverted, obfuscatedStat);
     }
 
-    public static List<Component> getStatPoolLore(Map<BasicStatPool, Integer> statPool, Component prefix, boolean inverted, BasicStatPool obfuscatedStat) {
+    public static List<Component> getStatPoolLore(Map<BasicStatPool, Float> statPool, Component prefix, boolean inverted, BasicStatPool obfuscatedStat) {
         List<Component> lore = new ArrayList<>();
         // separate because need to shuffle because people can determine stat based on position
         if (obfuscatedStat != null) {
@@ -222,7 +222,7 @@ public enum BasicStatPool implements StatPool {
         this.name = name;
     }
 
-    public record StatRange(int min, int max) {
+    public record StatRange(float min, float max) {
 
     }
 }

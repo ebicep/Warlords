@@ -23,11 +23,11 @@ import java.util.Objects;
 
 public class SpiderGauntlet extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
-    public static final HashMap<BasicStatPool, Integer> STAT_POOL = new HashMap<>() {{
-        put(BasicStatPool.DAMAGE, 50);
-        put(BasicStatPool.HEALING, 50);
-        put(BasicStatPool.CRIT_CHANCE, 20);
-        put(BasicStatPool.CRIT_MULTI, 40);
+    public static final HashMap<BasicStatPool, Float> STAT_POOL = new HashMap<>() {{
+        put(BasicStatPool.DAMAGE, 3.50f);
+        put(BasicStatPool.HEALING, 3.50f);
+        put(BasicStatPool.CRIT_CHANCE, 20f);
+        put(BasicStatPool.CRIT_MULTI, 30f);
 
     }};
 
@@ -70,7 +70,7 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
     }
 
     @Override
-    public HashMap<BasicStatPool, Integer> getStatPool() {
+    public HashMap<BasicStatPool, Float> getStatPool() {
         return STAT_POOL;
     }
 

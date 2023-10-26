@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface BonusStats {
 
-    default Map<StatPool, Integer> getBonusStats() {
+    default Map<StatPool, Float> getBonusStats() {
         return Collections.emptyMap();
     }
 

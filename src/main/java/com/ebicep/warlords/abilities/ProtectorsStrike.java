@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.ebicep.warlords.util.bukkit.LocationUtils.lerp;
+import static com.ebicep.warlords.util.java.MathUtils.lerp;
 
 public class ProtectorsStrike extends AbstractStrike {
 

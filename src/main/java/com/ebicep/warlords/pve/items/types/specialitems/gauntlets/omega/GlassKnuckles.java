@@ -10,9 +10,9 @@ import java.util.Set;
 
 public class GlassKnuckles extends SpecialOmegaGauntlet {
 
-    private static final HashMap<StatPool, Integer> BONUS_STATS = new HashMap<>() {{
-        put(SpecialStatPool.DAMAGE_RESISTANCE, -20);
-        put(BasicStatPool.DAMAGE, 100);
+    private static final HashMap<StatPool, Float> BONUS_STATS = new HashMap<>() {{
+        put(SpecialStatPool.DAMAGE_RESISTANCE, -20f);
+        put(BasicStatPool.DAMAGE, 100f);
     }};
 
     public GlassKnuckles() {
@@ -39,7 +39,7 @@ public class GlassKnuckles extends SpecialOmegaGauntlet {
     }
 
     @Override
-    public Map<StatPool, Integer> getBonusStats() {
+    public Map<StatPool, Float> getBonusStats() {
         return BONUS_STATS;
     }
 

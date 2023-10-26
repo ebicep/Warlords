@@ -61,7 +61,7 @@ public abstract class AbstractFixedItem extends AbstractItem implements BonusLor
     }
 
     @Override
-    public abstract HashMap<BasicStatPool, Integer> getStatPool();
+    public abstract HashMap<BasicStatPool, Float> getStatPool();
 
     @Override
     public float getItemScore() {

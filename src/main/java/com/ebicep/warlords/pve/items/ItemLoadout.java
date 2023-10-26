@@ -71,7 +71,7 @@ public class ItemLoadout {
     }
 
     public void applyToWarlordsPlayer(ItemsManager itemsManager, WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        Map<StatPool, Integer> statPoolValues = new HashMap<>();
+        Map<StatPool, Float> statPoolValues = new HashMap<>();
         Map<StatPool, ItemTier> statPoolHighestTier = new HashMap<>();
         HashSet<Class<?>> appliedClasses = new HashSet<>();
         getActualItems(itemsManager).forEach(item -> {
@@ -104,13 +104,13 @@ public class ItemLoadout {
     }
 
     private static <T extends StatPool> void addStatPool(
-            Map<StatPool, Integer> statPoolValues,
+            Map<StatPool, Float> statPoolValues,
             Map<StatPool, ItemTier> statPoolHighestTier,
-            Map<T, Integer> statPool,
+            Map<T, Float> statPool,
             ItemTier itemTier
     ) {
         statPool.forEach((stat, tier) -> {
-            statPoolValues.merge(stat, tier, Integer::sum);
+            statPoolValues.merge(stat, tier, Float::sum);
             if (statPoolHighestTier.get(stat) == null || statPoolHighestTier.get(stat).ordinal() < itemTier.ordinal()) {
                 statPoolHighestTier.put(stat, itemTier);
             }

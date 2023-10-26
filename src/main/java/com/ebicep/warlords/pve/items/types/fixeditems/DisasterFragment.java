@@ -33,11 +33,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class DisasterFragment extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
-    public static final HashMap<BasicStatPool, Integer> STAT_POOL = new HashMap<>() {{
-        put(BasicStatPool.MAX_ENERGY, 25);
-        put(BasicStatPool.EPH, 2);
-        put(BasicStatPool.SPEED, 70);
-        put(BasicStatPool.CRIT_MULTI, 150);
+    public static final HashMap<BasicStatPool, Float> STAT_POOL = new HashMap<>() {{
+        put(BasicStatPool.MAX_ENERGY, 20f);
+        put(BasicStatPool.EPH, 1.5f);
+        put(BasicStatPool.SPEED, 60f);
+        put(BasicStatPool.CRIT_MULTI, 100f);
     }};
     private static final RandomCollection<String> DEBUFFS = new RandomCollection<String>()
             .add(25, "Wound")
@@ -281,7 +281,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
     }
 
     @Override
-    public HashMap<BasicStatPool, Integer> getStatPool() {
+    public HashMap<BasicStatPool, Float> getStatPool() {
         return STAT_POOL;
     }
 

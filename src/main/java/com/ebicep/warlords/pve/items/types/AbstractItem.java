@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.RandomCollection;
 import net.kyori.adventure.text.Component;
@@ -55,7 +56,7 @@ public abstract class AbstractItem {
     @Field("stat_pool")
     protected Map<BasicStatPool, Float> statPoolDistribution = new HashMap<>();
     @Transient
-    protected HashMap<BasicStatPool, Integer> statPoolValues;
+    protected HashMap<BasicStatPool, Float> statPoolValues;
     @Deprecated
     protected int modifier;
     @Field("aspect_modifier_1")
@@ -241,17 +242,17 @@ public abstract class AbstractItem {
                         .append(Component.text("100"));
     }
 
-    public HashMap<BasicStatPool, Integer> getStatPool() {
+    public HashMap<BasicStatPool, Float> getStatPool() {
         if (statPoolValues == null) {
             statPoolValues = new HashMap<>();
             statPoolDistribution.forEach((stat, distribution) -> {
                 BasicStatPool.StatRange statRange = BasicStatPool.STAT_RANGES.get(stat);
-                double tieredDistribution = distribution + tier.statDistributionModifier;
+                float tieredDistribution = distribution + tier.statDistributionModifier;
                 // clamp to [0, 1]
                 tieredDistribution = Math.max(0, Math.min(1, tieredDistribution));
-                int max = statRange.max() * stat.getDecimalPlace().value;
-                int min = statRange.min() * stat.getDecimalPlace().value;
-                int value = (int) ((max - min) * tieredDistribution + min);
+                float max = statRange.max() * stat.getDecimalPlace().value;
+                float min = statRange.min() * stat.getDecimalPlace().value;
+                float value = MathUtils.lerp(min, max, tieredDistribution);
                 // floor value
                 value = value / stat.getDecimalPlace().value * stat.getDecimalPlace().value;
                 statPoolValues.put(stat, value);

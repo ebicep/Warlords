@@ -13,8 +13,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.HeartToHeartBranch;
-import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -171,9 +171,9 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 Location targetLoc = heartTarget.getLocation();
                 Location newLocation = new Location(
                         playerLoc.getWorld(),
-                        LocationUtils.lerp(playerLoc.getX(), targetLoc.getX(), target),
-                        LocationUtils.lerp(playerLoc.getY(), targetLoc.getY(), target),
-                        LocationUtils.lerp(playerLoc.getZ(), targetLoc.getZ(), target),
+                        MathUtils.lerp(playerLoc.getX(), targetLoc.getX(), target),
+                        MathUtils.lerp(playerLoc.getY(), targetLoc.getY(), target),
+                        MathUtils.lerp(playerLoc.getZ(), targetLoc.getZ(), target),
                         targetLoc.getYaw(),
                         targetLoc.getPitch()
                 );

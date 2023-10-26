@@ -200,17 +200,6 @@ public class LocationUtils {
         }
     }
 
-    // Linear Interpolation
-    // https://en.wikipedia.org/wiki/Linear_interpolation
-
-    public static double lerp(double a, double b, double target) {
-        return a + target * (b - a);
-    }
-
-    public static float lerp(float point1, float point2, float alpha) {
-        return point1 + alpha * (point2 - point1);
-    }
-
     public static Comparator<Entity> sortClosestBy(Location loc) {
         return sortClosestBy(Entity::getLocation, loc);
     }

@@ -19,11 +19,11 @@ import java.util.HashMap;
 
 public class ShawlOfMithra extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
-    public static final HashMap<BasicStatPool, Integer> STAT_POOL = new HashMap<>() {{
-        put(BasicStatPool.DAMAGE, 100);
-        put(BasicStatPool.HEALING, 100);
-        put(BasicStatPool.MAX_ENERGY, 20);
-        put(BasicStatPool.REGEN_TIMER, 250);
+    public static final HashMap<BasicStatPool, Float> STAT_POOL = new HashMap<>() {{
+        put(BasicStatPool.DAMAGE, 70f);
+        put(BasicStatPool.HEALING, 70f);
+        put(BasicStatPool.MAX_ENERGY, 15f);
+        put(BasicStatPool.REGEN_TIMER, 200f);
 
     }};
 
@@ -64,7 +64,7 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
     }
 
     @Override
-    public HashMap<BasicStatPool, Integer> getStatPool() {
+    public HashMap<BasicStatPool, Float> getStatPool() {
         return STAT_POOL;
     }
 
