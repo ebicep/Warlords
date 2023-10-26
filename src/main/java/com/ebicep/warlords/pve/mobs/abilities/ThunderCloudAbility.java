@@ -130,8 +130,8 @@ public class ThunderCloudAbility extends AbstractPveAbility {
                                 if (teammate && !canHitAllies) {
                                     return;
                                 }
-                                float minDamage = teammate ? 150 : 800;
-                                float maxDamage = teammate ? 300 : 1000;
+                                float minDamage = teammate ? 100 : 800;
+                                float maxDamage = teammate ? 200 : 1000;
                                 entity.addDamageInstance(
                                         warlordsEntity,
                                         "Thunder Strike",
