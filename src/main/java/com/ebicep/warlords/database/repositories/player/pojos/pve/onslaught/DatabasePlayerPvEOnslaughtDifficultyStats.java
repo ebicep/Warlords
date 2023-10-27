@@ -122,6 +122,11 @@ public class DatabasePlayerPvEOnslaughtDifficultyStats extends OnslaughtDatabase
         return rogue;
     }
 
+    @Override
+    public OnslaughtDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public DatabaseMagePvEOnslaught getMage() {
         return mage;
     }

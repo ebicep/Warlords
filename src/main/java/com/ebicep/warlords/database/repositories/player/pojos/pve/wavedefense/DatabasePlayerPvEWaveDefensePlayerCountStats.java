@@ -112,6 +112,11 @@ public class DatabasePlayerPvEWaveDefensePlayerCountStats extends WaveDefenseDat
         return rogue;
     }
 
+    @Override
+    public WaveDefenseDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public void merge(DatabasePlayerPvEWaveDefensePlayerCountStats other) {
         super.merge(other);
         mage.merge(other.mage);

@@ -81,5 +81,4 @@ public class DatabasePlayerPubStats extends DatabasePlayerGeneral {
         this.duelStats = duelStats;
     }
 
-
 }

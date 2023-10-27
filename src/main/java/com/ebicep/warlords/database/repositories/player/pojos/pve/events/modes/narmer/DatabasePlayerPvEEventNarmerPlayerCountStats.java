@@ -113,6 +113,11 @@ public class DatabasePlayerPvEEventNarmerPlayerCountStats extends PvEEventNarmer
         return rogue;
     }
 
+    @Override
+    public PvEEventNarmerDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public void merge(DatabasePlayerPvEEventNarmerPlayerCountStats other) {
         super.merge(other);
         mage.merge(other.mage);

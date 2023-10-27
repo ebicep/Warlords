@@ -174,6 +174,11 @@ public class DatabasePlayerPvEEventMithraDifficultyStats extends PvEEventMithraD
         return rogue;
     }
 
+    @Override
+    public PvEEventMithraDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public DatabasePlayerPvEEventMithraPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;

@@ -113,6 +113,11 @@ public class DatabasePlayerPvEEventTheBorderLineOfIllusionPlayerCountStats exten
         return rogue;
     }
 
+    @Override
+    public PvEEventTheBorderLineOfIllusionDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public void merge(DatabasePlayerPvEEventTheBorderLineOfIllusionPlayerCountStats other) {
         super.merge(other);
         mage.merge(other.mage);
@@ -120,6 +125,7 @@ public class DatabasePlayerPvEEventTheBorderLineOfIllusionPlayerCountStats exten
         paladin.merge(other.paladin);
         shaman.merge(other.shaman);
         rogue.merge(other.rogue);
+        arcanist.merge(other.arcanist);
         for (Classes value : Classes.VALUES) {
             this.getClass(value).merge(other.getClass(value));
         }

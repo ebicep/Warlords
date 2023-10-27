@@ -505,4 +505,5 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     public Map<Specializations, Map<Integer, Instant>> getAlternativeMasteriesUnlocked() {
         return alternativeMasteriesUnlocked;
     }
+
 }

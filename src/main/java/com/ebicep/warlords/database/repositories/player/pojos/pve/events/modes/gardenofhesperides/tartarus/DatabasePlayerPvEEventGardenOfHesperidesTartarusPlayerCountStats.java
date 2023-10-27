@@ -114,6 +114,11 @@ public class DatabasePlayerPvEEventGardenOfHesperidesTartarusPlayerCountStats ex
         return rogue;
     }
 
+    @Override
+    public PvEEventGardenOfHesperidesTartarusDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public void merge(DatabasePlayerPvEEventGardenOfHesperidesTartarusPlayerCountStats other) {
         super.merge(other);
         mage.merge(other.mage);

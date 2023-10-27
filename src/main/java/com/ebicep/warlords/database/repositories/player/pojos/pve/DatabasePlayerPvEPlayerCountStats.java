@@ -110,6 +110,11 @@ public class DatabasePlayerPvEPlayerCountStats extends PvEDatabaseStatInformatio
         return rogue;
     }
 
+    @Override
+    public PvEDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public void merge(DatabasePlayerPvEPlayerCountStats other) {
         super.merge(other);
         mage.merge(other.mage);

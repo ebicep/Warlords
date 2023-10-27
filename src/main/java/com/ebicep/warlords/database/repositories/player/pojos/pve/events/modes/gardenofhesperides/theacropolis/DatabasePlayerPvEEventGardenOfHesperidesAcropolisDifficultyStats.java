@@ -134,6 +134,11 @@ public class DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats ex
         return rogue;
     }
 
+    @Override
+    public PvEEventGardenOfHesperidesAcropolisDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public DatabasePlayerPvEEventGardenOfHesperidesAcropolisPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;

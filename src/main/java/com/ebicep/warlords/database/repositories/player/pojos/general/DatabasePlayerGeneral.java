@@ -92,6 +92,11 @@ public abstract class DatabasePlayerGeneral extends AbstractDatabaseStatInformat
         return rogue;
     }
 
+    @Override
+    public DatabaseArcanist getArcanist() {
+        return arcanist;
+    }
+
     public void setRogue(DatabaseRogue rogue) {
         this.rogue = rogue;
     }

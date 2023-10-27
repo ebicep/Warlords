@@ -112,6 +112,11 @@ public class DatabasePlayerPvEOnslaughtPlayerCountStats extends OnslaughtDatabas
         return rogue;
     }
 
+    @Override
+    public OnslaughtDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public void merge(DatabasePlayerPvEOnslaughtPlayerCountStats other) {
         super.merge(other);
         mage.merge(other.mage);

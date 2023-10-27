@@ -104,4 +104,9 @@ public class DatabasePlayerInterception extends InterceptionDatabaseStatInformat
     public InterceptionDatabaseStatInformation getRogue() {
         return rogue;
     }
+
+    @Override
+    public InterceptionDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
 }

@@ -38,4 +38,5 @@ public class DatabasePlayerPvEEventIlluminaStats extends DatabasePlayerPvEEventI
     public DatabasePlayerPvEEventIlluminaDifficultyStats getEvent(long epochSecond) {
         return eventStats.computeIfAbsent(epochSecond, k -> new DatabasePlayerPvEEventIlluminaDifficultyStats());
     }
+
 }

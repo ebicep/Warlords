@@ -13,7 +13,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.SPAWN_POINT;
+import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.MAIN_LOBBY_SPAWN;
 
 public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEDifficultyStats> implements PvELeaderboard {
 
@@ -34,7 +34,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
     public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats> statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
 
-        statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair Wins", SPAWN_POINT,
+        statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair Wins", MAIN_LOBBY_SPAWN,
                 databasePlayer -> ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer)).getMasterworksFairEntries().stream()
                                                                                                                         .filter(masterworksFairEntry -> masterworksFairEntry.getPlacement() == 1)
                                                                                                                         .count(),
@@ -46,7 +46,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                 databasePlayer -> !(statsLeaderboardCategory.getStatFunction().apply(databasePlayer) instanceof DatabasePlayerPvE),
                 true
         ));
-        statsLeaderboards.add(new StatsLeaderboard("Average Masterworks Fair Placement", SPAWN_POINT,
+        statsLeaderboards.add(new StatsLeaderboard("Average Masterworks Fair Placement", MAIN_LOBBY_SPAWN,
                 databasePlayer -> {
                     List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer))
                             .getMasterworksFairEntries();
@@ -54,8 +54,8 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                         return 0;
                     }
                     return (double) masterworksFairEntries.stream()
-                            .mapToInt(MasterworksFairEntry::getPlacement)
-                            .sum() / masterworksFairEntries.size();
+                                                          .mapToInt(MasterworksFairEntry::getPlacement)
+                                                          .sum() / masterworksFairEntries.size();
                 },
                 databasePlayer -> {
                     List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer))
@@ -75,11 +75,11 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
             if (value.getPlayerEntries == null) {
                 continue;
             }
-            statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair " + value.name + " Wins", SPAWN_POINT,
+            statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair " + value.name + " Wins", MAIN_LOBBY_SPAWN,
                     databasePlayer -> ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer)).getMasterworksFairEntries()
-                            .stream()
-                            .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value && masterworksFairEntry.getPlacement() == 1)
-                            .count(),
+                                                                                                                            .stream()
+                                                                                                                            .filter(masterworksFairEntry -> masterworksFairEntry.getRarity() == value && masterworksFairEntry.getPlacement() == 1)
+                                                                                                                            .count(),
                     databasePlayer -> NumberFormat.addCommaAndRound(((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction().apply(databasePlayer))
                             .getMasterworksFairEntries()
                             .stream()
@@ -88,7 +88,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
                     databasePlayer -> !(statsLeaderboardCategory.getStatFunction().apply(databasePlayer) instanceof DatabasePlayerPvE),
                     true
             ));
-            statsLeaderboards.add(new StatsLeaderboard("Average Masterworks Fair " + value.name + " Placement", SPAWN_POINT,
+            statsLeaderboards.add(new StatsLeaderboard("Average Masterworks Fair " + value.name + " Placement", MAIN_LOBBY_SPAWN,
                     databasePlayer -> {
                         List<MasterworksFairEntry> masterworksFairEntries = ((DatabasePlayerPvE) statsLeaderboardCategory.getStatFunction()
                                                                                                                          .apply(databasePlayer))

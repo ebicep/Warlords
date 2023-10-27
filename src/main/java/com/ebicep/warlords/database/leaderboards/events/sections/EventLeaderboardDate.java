@@ -42,14 +42,14 @@
 //        eventLeaderboards.add(new EventLeaderboard(
 //                time,
 //                "Highest Game Event Points",
-//                StatsLeaderboardLocations.CENTER,
+//                StatsLeaderboardLocations.MAIN_LOBBY,
 //                (databasePlayer, time) -> eventLeaderboardCategory.getStatFunction().apply(databasePlayer, time).getHighestEventPointsGame(),
 //                (databasePlayer, time) -> NumberFormat.addCommaAndRound(eventLeaderboardCategory.getStatFunction().apply(databasePlayer).getHighestEventPointsGame())
 //        ));
 //        eventLeaderboards.add(new EventLeaderboard(
 //                time,
 //                "Event Points",
-//                new LocationBuilder(StatsLeaderboardLocations.CENTER).forward(10),
+//                new LocationBuilder(StatsLeaderboardLocations.MAIN_LOBBY).forward(10),
 //                (databasePlayer, time) -> eventLeaderboardCategory.getStatFunction().apply(databasePlayer, time).getHighestEventPointsGame(),
 //                (databasePlayer, time) -> NumberFormat.addCommaAndRound(eventLeaderboardCategory.getStatFunction().apply(databasePlayer).getHighestEventPointsGame())
 //        ));

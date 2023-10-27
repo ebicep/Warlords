@@ -38,4 +38,5 @@ public class DatabasePlayerPvEEventGardenOfHesperidesStats extends DatabasePlaye
     public DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats getEvent(long epochSecond) {
         return eventStats.computeIfAbsent(epochSecond, k -> new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats());
     }
+
 }

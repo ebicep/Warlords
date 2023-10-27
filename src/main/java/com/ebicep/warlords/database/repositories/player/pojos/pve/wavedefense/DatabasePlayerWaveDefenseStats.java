@@ -97,4 +97,5 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
     public void setEasyStats(DatabasePlayerPvEWaveDefenseDifficultyStats easyStats) {
         this.easyStats = easyStats;
     }
+
 }

@@ -11,6 +11,7 @@ import com.ebicep.warlords.commands.CommandManager;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.LobbyGameOption;
@@ -28,7 +29,6 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -187,7 +187,7 @@ public class Warlords extends JavaPlugin {
 
     @Nonnull
     public static Location getRejoinPoint(@Nonnull UUID key) {
-        return SPAWN_POINTS.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90));
+        return SPAWN_POINTS.getOrDefault(key, StatsLeaderboardManager.MAIN_LOBBY_SPAWN);
     }
 
     /**
@@ -417,12 +417,6 @@ public class Warlords extends JavaPlugin {
         }
 
         PacketUtils.init(this);
-
-        if (citizensEnabled) {
-            Warlords.newChain()
-                    .sync(NPCManager::createSupplyDropFairNPC)
-                    .execute();
-        }
 
         startWarlordsEntitiesLoop();
         startRestartReminderLoop();

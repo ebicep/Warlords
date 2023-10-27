@@ -104,4 +104,9 @@ public class DatabasePlayerDuel extends DuelDatabaseStatInformation implements D
     public DuelDatabaseStatInformation getRogue() {
         return rogue;
     }
+
+    @Override
+    public DuelDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
 }

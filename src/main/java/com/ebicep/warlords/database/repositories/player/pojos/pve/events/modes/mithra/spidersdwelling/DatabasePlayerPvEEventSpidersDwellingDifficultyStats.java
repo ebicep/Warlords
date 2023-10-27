@@ -133,6 +133,11 @@ public class DatabasePlayerPvEEventSpidersDwellingDifficultyStats extends PvEEve
         return rogue;
     }
 
+    @Override
+    public PvEEventSpidersDwellingDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public DatabasePlayerPvEEventSpidersDwellingPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;

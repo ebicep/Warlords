@@ -164,6 +164,11 @@ public class DatabasePlayerPvEEventDifficultyStats extends PvEEventDatabaseStatI
         return rogue;
     }
 
+    @Override
+    public PvEEventDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public DatabasePlayerPvEEventPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;

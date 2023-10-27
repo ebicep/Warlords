@@ -192,7 +192,7 @@ public class WarlordsEvents implements Listener {
         }
         UUID uuid = player.getUniqueId();
         Location rejoinPoint = Warlords.getRejoinPoint(uuid);
-        boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
+        boolean isSpawnWorld = Objects.requireNonNull(StatsLeaderboardManager.MAIN_LOBBY).equals(rejoinPoint.getWorld());
         boolean playerIsInWrongWorld = !player.getWorld().getName().equals(rejoinPoint.getWorld().getName());
         if ((!fromGame && isSpawnWorld) || playerIsInWrongWorld) {
             player.teleport(rejoinPoint);

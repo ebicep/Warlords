@@ -133,6 +133,11 @@ public class DatabasePlayerPvEEventTheBorderLineOfIllusionDifficultyStats extend
         return rogue;
     }
 
+    @Override
+    public PvEEventTheBorderLineOfIllusionDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public DatabasePlayerPvEEventTheBorderLineOfIllusionPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;

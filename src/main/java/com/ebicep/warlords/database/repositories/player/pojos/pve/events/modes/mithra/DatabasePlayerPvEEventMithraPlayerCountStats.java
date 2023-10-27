@@ -113,6 +113,11 @@ public class DatabasePlayerPvEEventMithraPlayerCountStats extends PvEEventMithra
         return rogue;
     }
 
+    @Override
+    public PvEEventMithraDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public void merge(DatabasePlayerPvEEventMithraPlayerCountStats other) {
         super.merge(other);
         mage.merge(other.mage);

@@ -99,4 +99,9 @@ public class DatabasePlayerCTF extends CTFDatabaseStatInformation implements Dat
     public DatabaseRogueCTF getRogue() {
         return rogue;
     }
+
+    @Override
+    public CTFDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
 }

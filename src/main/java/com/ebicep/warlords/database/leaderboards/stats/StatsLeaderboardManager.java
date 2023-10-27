@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 public class StatsLeaderboardManager {
 
     public static final World MAIN_LOBBY = Bukkit.getWorld("MainLobby");
-    public static final Location SPAWN_POINT = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
+    public static final Location MAIN_LOBBY_SPAWN = new Location(MAIN_LOBBY, 11.5, 81, 149.5, 0, 0);
     public static final HashMap<UUID, PlayerLeaderboardInfo> PLAYER_LEADERBOARD_INFOS = new HashMap<>();
     public static final HashMap<GameType, AbstractStatsLeaderboardGameType<?>> STATS_LEADERBOARDS = new HashMap<>() {{
         for (GameType value : GameType.values()) {

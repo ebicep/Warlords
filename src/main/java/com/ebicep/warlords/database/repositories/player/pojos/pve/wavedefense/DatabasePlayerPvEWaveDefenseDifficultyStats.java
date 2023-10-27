@@ -137,6 +137,11 @@ public class DatabasePlayerPvEWaveDefenseDifficultyStats extends WaveDefenseData
         return rogue;
     }
 
+    @Override
+    public WaveDefenseDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public Map<Integer, DatabasePlayerPvEWaveDefensePlayerCountStats> getPlayerCountStats() {
         return playerCountStats;
     }

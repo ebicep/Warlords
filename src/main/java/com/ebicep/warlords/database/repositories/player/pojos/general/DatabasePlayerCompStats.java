@@ -69,5 +69,6 @@ public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
     public void setInterceptionStats(DatabasePlayerInterception interceptionStats) {
         this.interceptionStats = interceptionStats;
     }
+
 }
 

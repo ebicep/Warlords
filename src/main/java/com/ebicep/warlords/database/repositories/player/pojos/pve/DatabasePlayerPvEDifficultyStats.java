@@ -126,6 +126,11 @@ public class DatabasePlayerPvEDifficultyStats extends PvEDatabaseStatInformation
         return rogue;
     }
 
+    @Override
+    public PvEDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public Map<Integer, DatabasePlayerPvEPlayerCountStats> getPlayerCountStats() {
         return playerCountStats;
     }

@@ -21,4 +21,6 @@ public interface DatabaseWarlordsClasses<T extends AbstractDatabaseStatInformati
 
     T getRogue();
 
+    T getArcanist();
+
 }

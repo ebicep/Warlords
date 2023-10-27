@@ -38,4 +38,5 @@ public class DatabasePlayerPvEEventNarmerStats extends DatabasePlayerPvEEventNar
     public DatabasePlayerPvEEventNarmerDifficultyStats getEvent(long epochSecond) {
         return eventStats.computeIfAbsent(epochSecond, k -> new DatabasePlayerPvEEventNarmerDifficultyStats());
     }
+
 }

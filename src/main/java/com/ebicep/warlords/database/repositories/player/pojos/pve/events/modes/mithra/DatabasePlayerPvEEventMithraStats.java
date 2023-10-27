@@ -38,4 +38,5 @@ public class DatabasePlayerPvEEventMithraStats extends DatabasePlayerPvEEventMit
     public DatabasePlayerPvEEventMithraDifficultyStats getEvent(long epochSecond) {
         return eventStats.computeIfAbsent(epochSecond, k -> new DatabasePlayerPvEEventMithraDifficultyStats());
     }
+
 }

@@ -97,11 +97,11 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
 //                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHP(),
 //                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHP())
 //        ));
-//        statsLeaderboards.add(new StatsLeaderboard("DHP Per Game",
-//                LEAD_4,
-//                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHPPerGame(),
-//                databasePlayer -> NumberFormat.addCommaAndRound(Math.round((double) (statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHPPerGame()) * 10) / 10d)
-//        ));
+        statsLeaderboards.add(new StatsLeaderboard("DHP Per Game",
+                LEAD_4,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHPPerGame(),
+                databasePlayer -> NumberFormat.addCommaAndRound(Math.round((double) (statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDHPPerGame()) * 10) / 10d)
+        ));
 //        statsLeaderboards.add(new StatsLeaderboard("Kills Per Game",
 //                CIRCULAR_2_OUTER_2,
 //                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsPerGame(),
@@ -147,6 +147,11 @@ public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabas
                 CENTER_BOARD_5,
                 databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getRogue().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getRogue().getExperience())
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Arcanist Experience",
+                CENTER_BOARD_6,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getArcanist().getExperience(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getArcanist().getExperience())
         ));
 
         this.addExtraLeaderboards(statsLeaderboardCategory);

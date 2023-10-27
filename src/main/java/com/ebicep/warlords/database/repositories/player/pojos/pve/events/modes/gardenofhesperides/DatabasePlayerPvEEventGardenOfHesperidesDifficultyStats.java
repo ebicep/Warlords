@@ -183,6 +183,11 @@ public class DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats extends PvE
         return rogue;
     }
 
+    @Override
+    public PvEEventGardenOfHesperidesDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public DatabasePlayerPvEEventGardenOfHesperidesPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;

@@ -104,4 +104,9 @@ public class DatabasePlayerTDM extends TDMDatabaseStatInformation implements Dat
     public TDMDatabaseStatInformation getRogue() {
         return rogue;
     }
+
+    @Override
+    public TDMDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
 }

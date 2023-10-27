@@ -27,6 +27,8 @@ import java.util.UUID;
 
 public class LobbyGameOption implements Option {
 
+    private static final int Y_CHECK = 58;
+
     public static void start() {
         new BukkitRunnable() {
 
@@ -64,8 +66,8 @@ public class LobbyGameOption implements Option {
                 assert mainLobby != null;
                 mainLobby.getPlayers().forEach(player -> {
                     UUID uniqueId = player.getUniqueId();
-                    LocationBuilder locationToCheck = new LocationBuilder(player.getLocation()).y(49);
-                    boolean inPlayingArea = player.getWorld().getBlockAt(locationToCheck).getType() == Material.BEDROCK && player.getLocation().getY() < 60;
+                    LocationBuilder locationToCheck = new LocationBuilder(player.getLocation()).y(Y_CHECK);
+                    boolean inPlayingArea = player.getWorld().getBlockAt(locationToCheck).getType() == Material.BEDROCK && player.getLocation().getY() < 70;
                     Map<UUID, Team> players = game.getPlayers();
                     if (players.containsKey(uniqueId) && !inPlayingArea) {
                         removePlayerFromGame(player, uniqueId, game);

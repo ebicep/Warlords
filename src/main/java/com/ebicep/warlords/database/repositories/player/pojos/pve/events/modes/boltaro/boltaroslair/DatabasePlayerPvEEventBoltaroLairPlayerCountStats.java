@@ -113,6 +113,11 @@ public class DatabasePlayerPvEEventBoltaroLairPlayerCountStats extends PvEEventB
         return rogue;
     }
 
+    @Override
+    public PvEEventBoltaroLairDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public void merge(DatabasePlayerPvEEventBoltaroLairPlayerCountStats other) {
         super.merge(other);
         mage.merge(other.mage);

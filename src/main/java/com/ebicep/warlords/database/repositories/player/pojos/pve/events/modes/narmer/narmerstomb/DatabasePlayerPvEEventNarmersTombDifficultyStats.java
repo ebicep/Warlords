@@ -133,6 +133,11 @@ public class DatabasePlayerPvEEventNarmersTombDifficultyStats extends PvEEventNa
         return rogue;
     }
 
+    @Override
+    public PvEEventNarmersTombDatabaseStatInformation getArcanist() {
+        return arcanist;
+    }
+
     public DatabasePlayerPvEEventNarmersTombPlayerCountStats getPlayerCountStats(int playerCount) {
         if (playerCount < 1) {
             return null;
