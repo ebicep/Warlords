@@ -1,6 +1,7 @@
 package com.ebicep.customentities.nms.pve.pathfindergoals;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
@@ -29,7 +30,8 @@ public class NPCGuardWarlordsEntityGoal implements Behavior {
     public BehaviorStatus run() {
         // outside range = success = go back to following execution
         double distance = npc.getStoredLocation().distanceSquared(warlordsEntity.getLocation());
-        boolean following = npc.getNavigator().getEntityTarget().getTarget() == warlordsEntity.getEntity();
+        EntityTarget entityTarget = npc.getNavigator().getEntityTarget();
+        boolean following = entityTarget != null && entityTarget.getTarget() == warlordsEntity.getEntity();
         if (distance >= maxDistanceSquared && !following) {
             return BehaviorStatus.FAILURE;
         }
@@ -42,7 +44,7 @@ public class NPCGuardWarlordsEntityGoal implements Behavior {
         }
 
         // inside range = target enemy
-        if (warlordsEntityTarget == null || npc.getNavigator().getEntityTarget() == null) {
+        if (warlordsEntityTarget == null || entityTarget == null) {
             return BehaviorStatus.FAILURE;
         }
         if (warlordsEntityTarget.isDead() || !warlordsEntityTarget.getEntity().isValid()) {
