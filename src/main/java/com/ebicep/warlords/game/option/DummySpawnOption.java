@@ -16,16 +16,23 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class DummySpawnOption implements Option {
 
     private final Location loc;
     private final Team team;
+    private final Consumer<WarlordsNPC> onTestDummyCreate;
     private WarlordsNPC testDummy;
 
     public DummySpawnOption(Location loc, Team team) {
+        this(loc, team, warlordsNPC -> {});
+    }
+
+    public DummySpawnOption(Location loc, Team team, Consumer<WarlordsNPC> onTestDummyCreate) {
         this.loc = loc;
         this.team = team;
+        this.onTestDummyCreate = onTestDummyCreate;
     }
 
     @Override
@@ -58,7 +65,10 @@ public class DummySpawnOption implements Option {
                     return;
                 }
 
-                testDummy = game.addNPC(Mob.TEST_DUMMY.createMob(loc).toNPC(game, team, warlordsNPC -> warlordsNPC.getMob().onSpawn(null)));
+                WarlordsNPC dummyNPC = Mob.TEST_DUMMY.createMob(loc).toNPC(game, team, warlordsNPC -> warlordsNPC.getMob().onSpawn(null));
+                dummyNPC.setNameColor(team.teamColor);
+                onTestDummyCreate.accept(dummyNPC);
+                testDummy = game.addNPC(dummyNPC);
                 if (testDummy.getEntity() instanceof LivingEntity livingEntity) {
                     livingEntity.setRemoveWhenFarAway(false);
                 }

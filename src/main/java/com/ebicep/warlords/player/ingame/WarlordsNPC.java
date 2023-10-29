@@ -36,6 +36,8 @@ public final class WarlordsNPC extends WarlordsEntity {
     private AbstractMob mob;
     private Component mobNamePrefix = Component.empty();
     private ArmorStand nameDisplay;
+    @Nonnull
+    private TextColor nameColor = NamedTextColor.GRAY;
 //    private HologramTrait hologramTrait;
 
     private int stunTicks;
@@ -77,7 +79,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Nonnull
     private TextComponent getNameComponent() {
         if (mob == null) {
-            return Component.text(name, NamedTextColor.GRAY);
+            return Component.text(name, nameColor);
         }
         TextComponent.Builder builder = Component.text();
         if (!mobNamePrefix.equals(Component.empty())) {
@@ -85,7 +87,6 @@ public final class WarlordsNPC extends WarlordsEntity {
                    .append(Component.text("- "));
         }
 
-        TextColor nameColor = NamedTextColor.GRAY;
         Aspect aspect = mob.getAspect();
         if (aspect != null) {
             nameColor = aspect.textColor;
@@ -104,6 +105,10 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public Component getMobNamePrefix() {
         return mobNamePrefix;
+    }
+
+    public void setNameColor(TextColor nameColor) {
+        this.nameColor = nameColor;
     }
 
     @Override

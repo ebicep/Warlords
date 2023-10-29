@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve.mobs.zombie;
+package com.ebicep.warlords.pve.mobs.player;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -17,7 +17,7 @@ public class TestDummy extends AbstractMob implements PlayerMob {
                 spawnLocation,
                 "TestDummy",
                 1_000_000,
-                0,
+                .2f,
                 0,
                 0,
                 0

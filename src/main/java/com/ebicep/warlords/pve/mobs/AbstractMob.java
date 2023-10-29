@@ -198,14 +198,6 @@ public abstract class AbstractMob implements Mob {
         return warlordsNPC;
     }
 
-    public Component getDescription() {
-        return null;
-    }
-
-    public TextColor getColor() {
-        return NamedTextColor.WHITE;
-    }
-
     public void giveGoals() {
         //TODO wander? - waypoints trait
 //        npc.getNavigator().getLocalParameters()
@@ -227,6 +219,14 @@ public abstract class AbstractMob implements Mob {
         equipmentTrait.set(Equipment.EquipmentSlot.CHESTPLATE, this.equipment.getChestplate());
         equipmentTrait.set(Equipment.EquipmentSlot.LEGGINGS, this.equipment.getLeggings());
         equipmentTrait.set(Equipment.EquipmentSlot.BOOTS, this.equipment.getBoots());
+    }
+
+    public Component getDescription() {
+        return null;
+    }
+
+    public TextColor getColor() {
+        return NamedTextColor.WHITE;
     }
 
     public void onSpawn(PveOption option) {
@@ -328,6 +328,9 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void dropMobDrop(WarlordsEntity killer) {
+        if (pveOption == null) {
+            return;
+        }
         HashMap<MobDrop, HashMap<DifficultyIndex, Double>> mobDrops = mobDrops();
         if (mobDrops.isEmpty()) {
             return;

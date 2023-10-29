@@ -26,6 +26,7 @@ import com.ebicep.warlords.pve.mobs.pigzombie.PigParticle;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigShaman;
 import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.mobs.player.Decoy;
+import com.ebicep.warlords.pve.mobs.player.TestDummy;
 import com.ebicep.warlords.pve.mobs.skeleton.*;
 import com.ebicep.warlords.pve.mobs.slime.SlimyAnomaly;
 import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
