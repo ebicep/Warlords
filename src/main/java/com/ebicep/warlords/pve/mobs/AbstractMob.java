@@ -66,7 +66,6 @@ public abstract class AbstractMob implements Mob {
     protected final String name;
     protected final int maxHealth;
     protected final float walkSpeed;
-    protected final int damageResistance;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
     protected NPC npc;
@@ -98,7 +97,6 @@ public abstract class AbstractMob implements Mob {
         }
         this.maxHealth = maxHealth;
         this.walkSpeed = walkSpeed;
-        this.damageResistance = damageResistance;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
         this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
@@ -171,7 +169,6 @@ public abstract class AbstractMob implements Mob {
                 team,
                 maxHealth,
                 walkSpeed,
-                damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
                 this,
@@ -534,8 +531,9 @@ public abstract class AbstractMob implements Mob {
         return walkSpeed;
     }
 
-    public int getDamageResistance() {
-        return damageResistance;
+    @Nonnull
+    public MobPlayerClass getPlayerClass() {
+        return playerClass;
     }
 
     public float getMinMeleeDamage() {

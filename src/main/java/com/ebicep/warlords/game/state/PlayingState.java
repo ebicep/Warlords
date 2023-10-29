@@ -13,10 +13,7 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
-import com.ebicep.warlords.game.option.marker.LocationMarker;
-import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
-import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
+import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
@@ -491,6 +488,9 @@ public class PlayingState implements State, TimerDebugAble {
 
     @Override
     public void resetTimer() throws IllegalStateException {
+        for (TimerResetAbleMarker marker : game.getMarkers(TimerResetAbleMarker.class)) {
+            marker.reset();
+        }
     }
 
 }

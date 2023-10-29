@@ -10,6 +10,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class Payload {
 
@@ -17,9 +18,9 @@ public class Payload {
     private static final int BOSS_BAR_FILL_SPACE = 45;
     private static final int BOSS_BAR_ESCORT_SPACE = 6;
     @Nonnull
-    private final Game game;
-    @Nonnull
     protected final PayloadBrain brain;
+    @Nonnull
+    private final Game game;
     private final PayloadRenderer renderer;
     private final BossBar bossBar;
     @Nonnull
@@ -48,19 +49,6 @@ public class Payload {
         return false;
     }
 
-    public void renderEffects(int ticksElapsed) {
-        if (renderer != null) {
-            Location newLocation = brain.getCurrentLocation();
-            renderer.move(newLocation);
-            renderer.playEffects(ticksElapsed, brain.getCurrentLocation().clone().add(0, .7, 0), MOVE_RADIUS);
-        }
-    }
-
-    public void cleanup() {
-        renderer.cleanup();
-        hideBossBar();
-    }
-
     protected int getNetEscorting(Location oldLocation) {
         int escorting = 0;
         int nonEscorting = 0;
@@ -76,8 +64,20 @@ public class Payload {
         return escorting - nonEscorting;
     }
 
+    public void renderEffects(int ticksElapsed) {
+        if (renderer != null) {
+            Location newLocation = brain.getCurrentLocation().clone();
+            renderer.move(newLocation);
+            renderer.playEffects(ticksElapsed, newLocation.add(0, .7, 0), MOVE_RADIUS);
+        }
+    }
+
     protected void showBossBar(int netEscorting) {
-        float progress = (float) (brain.getCurrentPathIndex() / brain.getPath().size());
+        List<PayloadBrain.PathEntry> brainPath = brain.getPath();
+        if (brainPath.isEmpty()) {
+            return;
+        }
+        float progress = (float) (brain.getMappedPathIndex() / brainPath.get(brainPath.size() - 1).mappedIndex());
         String pushing = "";
         boolean escorting = netEscorting > 0;
         if (escorting) {
@@ -97,6 +97,11 @@ public class Payload {
         game.forEachOnlinePlayer((player, team) -> player.showBossBar(bossBar));
     }
 
+    public void cleanup() {
+        renderer.cleanup();
+        hideBossBar();
+    }
+
     private void hideBossBar() {
         game.forEachOnlinePlayer((player, team) -> player.hideBossBar(bossBar));
     }
@@ -104,5 +109,9 @@ public class Payload {
     @Nonnull
     public PayloadBrain getBrain() {
         return brain;
+    }
+
+    public PayloadRenderer getRenderer() {
+        return renderer;
     }
 }

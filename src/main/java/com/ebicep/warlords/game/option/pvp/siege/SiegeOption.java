@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.pvp.siege;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.marker.TimerResetAbleMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
@@ -63,6 +64,12 @@ public class SiegeOption implements Option {
                 timerSkipAbleMarker.skipTimer(delayInTicks);
             }
         });
+        game.registerGameMarker(TimerResetAbleMarker.class, () -> {
+            if (state == null || !(state instanceof TimerResetAbleMarker timerSkipAbleMarker)) {
+                return;
+            }
+            timerSkipAbleMarker.reset();
+        });
     }
 
     @Override
@@ -93,6 +100,13 @@ public class SiegeOption implements Option {
         return game.getState(EndState.class).isPresent() || game.getState(ClosedState.class).isPresent();
     }
 
+    private void gotoNextState() {
+        state.end();
+        state = state.getNextState();
+        state.start(game);
+        ticksElapsed = 0;
+    }
+
     @Override
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         if (gameEnded()) {
@@ -101,18 +115,19 @@ public class SiegeOption implements Option {
         state.updateInventory(warlordsPlayer, player);
     }
 
-    private void gotoNextState() {
-        state.end();
-        state = state.getNextState();
-        state.start(game);
-        ticksElapsed = 0;
-    }
-
     public Map<Team, Location> getTeamPayloadStart() {
         return teamPayloadStart;
     }
 
     public Location getLocation() {
         return location;
+    }
+
+    public int getTicksElapsed() {
+        return ticksElapsed;
+    }
+
+    public SiegeState getState() {
+        return state;
     }
 }

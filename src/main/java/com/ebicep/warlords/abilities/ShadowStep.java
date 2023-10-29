@@ -113,7 +113,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                                     .getType()
                                     .isAir()
             ) {
-                locationBuilder.centerXZ();
+                locationBuilder.centerXZBlock();
                 boolean isSlab = locationBuilder.clone().addY(-1).getBlock().getBlockData() instanceof Slab;
                 locationBuilder.addY(isSlab ? -0.5 : 0);
                 break;

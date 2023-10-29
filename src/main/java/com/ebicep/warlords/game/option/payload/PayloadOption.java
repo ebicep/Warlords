@@ -119,7 +119,7 @@ public class PayloadOption implements PveOption {
 
                 showBossBar(netEscorting);
 
-                spawns.tick(brain.getCurrentPathIndex() / brain.getPath().size(), newLocation, PayloadOption.this::spawnNewMob);
+                spawns.tick(brain.getMappedPathIndex() / brain.getPath().size(), newLocation, PayloadOption.this::spawnNewMob);
 
                 if (ticksElapsed.get() % 10 == 0) {
                     spawns.renderSpawnLocations();
@@ -145,7 +145,7 @@ public class PayloadOption implements PveOption {
             }
 
             private void showBossBar(int netEscorting) {
-                float progress = (float) (brain.getCurrentPathIndex() / brain.getPath().size());
+                float progress = (float) (brain.getMappedPathIndex() / brain.getPath().size());
                 String pushing = "";
                 boolean escorting = netEscorting > 0;
                 if (escorting) {

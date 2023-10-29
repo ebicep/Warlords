@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.marker.TimerResetAbleMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.payload.Payload;
 import com.ebicep.warlords.game.option.payload.PayloadBrain;
@@ -27,7 +28,7 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
 
-public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMarker {
+public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMarker, TimerResetAbleMarker {
 
     private final SiegeOption siegeOption;
     private final Team escortingTeam;
@@ -94,10 +95,10 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                     if (escortingBatteries == nonEscortingBatteries) {
                         return new Pair<>(netEscorting, 0.0);
                     }
-                    return new Pair<>(netEscorting, netEscortBatteries * PayloadBrain.DEFAULT_FORWARD_MOVE_PER_TICK / 2);
+                    return new Pair<>(netEscorting, netEscortBatteries * brain.getForwardMovePerTick() / 2);
                 }
                 if (escorting > nonEscorting) {
-                    return new Pair<>(netEscorting, PayloadBrain.DEFAULT_FORWARD_MOVE_PER_TICK * (netEscortBatteries > 0 ? 1.5 : 1));
+                    return new Pair<>(netEscorting, brain.getForwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
                 }
                 if (nonEscorting > escorting) {
                     return new Pair<>(netEscorting, -brain.getBackwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
@@ -105,6 +106,8 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                 return new Pair<>(netEscorting, 0.0);
             }
         };
+        this.payload.getRenderer().addRenderPathRunnable(game, payload.getBrain().getStart(), payload.getBrain().getPath());
+
         game.registerEvents(this);
     }
 
@@ -151,7 +154,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
 
     @Override
     public int maxSeconds() {
-        return 20;//3 * 60;
+        return 3 * 60;
     }
 
     private void onPayloadDefended() {
@@ -192,7 +195,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     @EventHandler
     public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
         if (transitionTickDelay > 0) {
-            //event.setCancelled(true);
+            event.setCancelled(true);
         }
     }
 
@@ -206,5 +209,18 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     public void skipTimer(int delayInTicks) {
         PayloadBrain payloadBrain = payload.getBrain();
         payloadBrain.tick(PayloadBrain.DEFAULT_FORWARD_MOVE_PER_TICK * 15);
+    }
+
+    @Override
+    public void reset() {
+        if (payload == null) {
+            return;
+        }
+        payload.getBrain().setMappedPathIndex(0);
+        payload.getBrain().reset();
+    }
+
+    public Payload getPayload() {
+        return payload;
     }
 }

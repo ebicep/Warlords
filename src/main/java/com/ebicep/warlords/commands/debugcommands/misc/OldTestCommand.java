@@ -1,6 +1,11 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.pvp.siege.SiegeOption;
+import com.ebicep.warlords.game.option.pvp.siege.SiegePayloadState;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
@@ -112,7 +117,13 @@ public class OldTestCommand implements CommandExecutor {
 //                ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer);
 //            });
 
-            //Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+            Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+            for (Option option : game.getOptions()) {
+                if (option instanceof SiegeOption siegeOption) {
+                    SiegePayloadState state = (SiegePayloadState) siegeOption.getState();
+                    state.getPayload().getBrain().tick(.05);
+                }
+            }
 
 
 //            DatabaseManager.getPlayer(((Player) commandSender).getUniqueId(), databasePlayer -> {

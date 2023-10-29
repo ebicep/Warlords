@@ -32,7 +32,6 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     private float minMeleeDamage;
     private float maxMeleeDamage;
-    private float damageResistance;
     private NPC npc;
     private AbstractMob mob;
     private Component mobNamePrefix = Component.empty();
@@ -48,7 +47,6 @@ public final class WarlordsNPC extends WarlordsEntity {
             Team team,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
             AbstractMob warlordsMob,
@@ -68,7 +66,6 @@ public final class WarlordsNPC extends WarlordsEntity {
         }
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
-        this.damageResistance = damageResistance;
         this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
         this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
         updateEntity();
@@ -259,11 +256,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         this.maxMeleeDamage = maxMeleeDamage;
     }
 
-    public float getDamageResistancePrefix() {
-        return damageResistance;
-    }
-
-    public void setDamageResistancePrefix(float damageResistance) {
-        this.damageResistance = Math.max(0, damageResistance);
+    public NPC getNpc() {
+        return npc;
     }
 }

@@ -5,7 +5,6 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,7 +12,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -105,45 +103,6 @@ public class PayloadRendererCoalCart implements PayloadRenderer {
     public void cleanup() {
         renderStands.forEach(renderStand -> renderStand.armorStand.remove());
     }
-
-    public void addRenderPathRunnable(Game game, Location start, List<Location> path) {
-        new GameRunnable(game) {
-
-            static final double RENDER_MOVE = .5;
-            Location displayLocation = start.clone();
-            double i = 0;
-
-            @Override
-            public void run() {
-                if (i >= path.size() - 1) {
-                    displayLocation = start.clone();
-                    i = 0;
-                }
-                Location nextPathLocation = path.get((int) (i + 1));
-                Vector direction = nextPathLocation.toVector().subtract(displayLocation.toVector()).normalize();
-                displayLocation.setDirection(direction);
-                displayLocation.add(direction.multiply(RENDER_MOVE));
-                EffectUtils.displayParticle(Particle.WATER_WAKE, displayLocation.clone().add(0, 1, 0), 1);
-                i += RENDER_MOVE;
-            }
-        }.runTaskTimer(0, 0);
-    }
-
-    public void renderPath(List<Location> path) {
-        for (int i = 0; i < path.size() - 1; i++) {
-            LocationBuilder location = new LocationBuilder(path.get(i));
-            Location nextLocation = path.get(i + 1);
-            // set vector facing nextLocation
-            location.setDirection(nextLocation.toVector().subtract(location.toVector()).normalize());
-
-            // render particle line towards nextLocation
-            for (int j = 0; j < 10; j++) {
-                EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, location.clone().add(0, 1, 0), 1);
-                location.forward(.1);
-            }
-        }
-    }
-
 
     private static class RenderStand {
         private final Consumer<ArmorStand> consumer;

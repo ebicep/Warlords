@@ -258,7 +258,7 @@ public class MobCommand extends BaseCommand {
             mobObject.addProperty("name", mob.getName());
             mobObject.addProperty("max_health", mob.getMaxHealth());
             mobObject.addProperty("walk_speed", mob.getWalkSpeed());
-            mobObject.addProperty("damage_resistance", mob.getDamageResistance());
+            mobObject.addProperty("damage_resistance", mob.getPlayerClass().getDamageResistance());
             mobObject.addProperty("min_melee_damage", mob.getMinMeleeDamage());
             mobObject.addProperty("max_melee_damage", mob.getMaxMeleeDamage());
             jsonObject.add(value.name(), mobObject);
