@@ -83,8 +83,11 @@ public enum GameMap {
             List<Option> options = category.initMap(this, loc, addons);
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-2568, 50, 779, 155, 0), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(-2581, 50, 777.5, -120, 0), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-60.5, 60, 83, 113, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-60.5, 60, 83, 113, 0), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-60.5, 60, 83, 113, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-60.5, 60, 83, 113, 0), Team.RED));
 
 //            LocationBuilder dummySpawnLocation = loc.addXYZ(-78, 60, 78); TODO
 //            Collection<Location> dummyWanderLocations = Arrays.asList(
@@ -106,9 +109,9 @@ public enum GameMap {
 //                }));
 //            }
             options.add(new DummySpawnOption(loc.addXYZ(-65.5, 60, 71.5, 42.5f, 0), Team.BLUE));
-            options.add(new DummySpawnOption(loc.addXYZ(-80.5, 60, 73, -32.5f, 0), Team.BLUE));
+            options.add(new DummySpawnOption(loc.addXYZ(-80.5, 60, 73, -32.5f, 0), Team.RED));
             options.add(new DummySpawnOption(loc.addXYZ(-88, 60, 84, -114.5f, 0), Team.BLUE));
-            options.add(new DummySpawnOption(loc.addXYZ(-72, 60, 87, 164.5f, 0), Team.BLUE));
+            options.add(new DummySpawnOption(loc.addXYZ(-72, 60, 87, 164.5f, 0), Team.RED));
 
             options.add(new LobbyGameOption());
 
