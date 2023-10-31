@@ -117,7 +117,7 @@ public abstract class AbstractMob implements Mob {
 //        if (getMobRegistry().entityType == EntityType.SPIDER) {
 //            defaultParameters.useNewPathfinder(true);
 //        }
-        if (getMobRegistry().entityType == EntityType.SLIME) {
+        if (getMobRegistry().entityType == EntityType.SLIME || getMobRegistry().entityType == EntityType.MAGMA_CUBE) {
             npc.getNavigator().getDefaultParameters().straightLineTargetingDistance(100);
         }
 

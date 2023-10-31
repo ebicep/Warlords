@@ -15,9 +15,12 @@ import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.SlimeSize;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
+import java.util.function.Function;
 
 public class Illumination extends AbstractMob implements AdvancedMob {
 
@@ -67,17 +70,10 @@ public class Illumination extends AbstractMob implements AdvancedMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
+    public void onNPCCreate() {
+        super.onNPCCreate();
+        npc.getOrAddTrait(SlimeSize.class).setSize(7);
+        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .1f);
     }
 
     @Override
