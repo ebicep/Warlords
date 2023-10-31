@@ -1073,7 +1073,11 @@ public abstract class WarlordsEntity {
             }
 
             boolean isOverheal = maxHealth > this.maxHealth && healValue + this.health > this.maxHealth;
-            sendHealingMessage(debugMessage, attacker, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
+            if (this == attacker) {
+                sendHealingMessage(debugMessage, attacker, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
+            } else {
+                sendHealingMessage(debugMessage, attacker, this, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
+            }
 
             for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                 abstractCooldown.onHealFromSelf(event, healValue, isCrit);
@@ -1295,42 +1299,6 @@ public abstract class WarlordsEntity {
             }
         }
 
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    @Nonnull
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    public void sendMessage(Component component) {
-        this.entity.sendMessage(component);
-        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
-            game.spectators()
-                .map(Bukkit::getPlayer)
-                .filter(Objects::nonNull)
-                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                .forEach(player -> player.sendMessage(component.hoverEvent(null)));
-        }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
     }
 
     /**
@@ -1911,6 +1879,42 @@ public abstract class WarlordsEntity {
 
     public float getMaxEnergy() {
         return spec.getMaxEnergy();
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    @Nonnull
+    public Entity getEntity() {
+        return this.entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
+    public void sendMessage(Component component) {
+        this.entity.sendMessage(component);
+        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
+            game.spectators()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
+                .forEach(player -> player.sendMessage(component.hoverEvent(null)));
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public float subtractEnergy(String from, FloatModifiable amount, boolean fromAttacker) {

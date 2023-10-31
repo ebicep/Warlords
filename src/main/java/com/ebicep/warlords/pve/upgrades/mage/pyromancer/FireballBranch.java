@@ -60,7 +60,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 """
                         Fires 2 projectiles. Direct-hits apply the IGNITE status.
                                                 
-                        IGNITE: Enemies will explode after 2s dealing 250-450 true damage to nearby enemies. Enemies killed by Ignition damage will refund the caster 5 energy.""",
+                        IGNITE: Enemies will explode after 2s dealing 250-450 true damage to nearby enemies.""",
                 50000,
                 () -> {
                     ability.setShotsFiredAtATime(2);

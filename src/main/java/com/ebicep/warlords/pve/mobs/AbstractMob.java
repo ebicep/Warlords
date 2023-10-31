@@ -114,31 +114,13 @@ public abstract class AbstractMob implements Mob {
                          .updatePathRate(5)
                          .distanceMargin(.5)
                          .speedModifier(.9f);
-        if (getMobRegistry().entityType == EntityType.SPIDER) {
-            defaultParameters.useNewPathfinder(true);
+//        if (getMobRegistry().entityType == EntityType.SPIDER) {
+//            defaultParameters.useNewPathfinder(true);
+//        }
+        if (getMobRegistry().entityType == EntityType.SLIME) {
+            npc.getNavigator().getDefaultParameters().straightLineTargetingDistance(100);
         }
-//        defaultParameters.clearExaminers();
-//        defaultParameters.examiner(new BlockExaminer() {
-//            @Override
-//            public float getCost(BlockSource blockSource, PathPoint pathPoint) {
-//                Location location = pathPoint.getVector().toLocation(blockSource.getWorld());
-//                if (location.getY() > npc.getStoredLocation().getY()) {
-//                    return 10;
-//                }
-//                //EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, location, 1, 0, 0, 0, 0);
-//                return 0;
-//            }
-//
-//            @Override
-//            public PassableState isPassable(BlockSource blockSource, PathPoint pathPoint) {
-//                Location location = pathPoint.getVector().toLocation(blockSource.getWorld());
-//                if (location.getY() > npc.getStoredLocation().getY()) {
-//                    return PassableState.UNPASSABLE;
-//                }
-//                return PassableState.PASSABLE;
-//            }
-//        });
-        // }
+
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
 

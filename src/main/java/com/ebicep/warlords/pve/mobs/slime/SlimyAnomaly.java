@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SlimeSize;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 public class SlimyAnomaly extends AbstractMob implements BasicMob {
 
@@ -71,13 +73,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
     @Override
     public void onNPCCreate() {
         npc.getOrAddTrait(SlimeSize.class).setSize(5);
-    }
-
-    @Override
-    public void onSpawn(PveOption option) {
-        super.onSpawn(option);
-
-//        CitizensUtil.setSlimeJumpPower(warlordsNPC, .5f);
+        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .1f);
     }
 
     @Override

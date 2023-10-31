@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SlimeSize;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Function;
 
 public class SlimyChess extends AbstractMob implements AdvancedMob {
     public SlimyChess(Location spawnLocation) {
@@ -67,6 +69,7 @@ public class SlimyChess extends AbstractMob implements AdvancedMob {
     @Override
     public void onNPCCreate() {
         npc.getOrAddTrait(SlimeSize.class).setSize(10);
+        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .1f);
     }
 
     @Override

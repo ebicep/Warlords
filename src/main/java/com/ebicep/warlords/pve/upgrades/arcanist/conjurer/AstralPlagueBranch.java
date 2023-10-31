@@ -36,7 +36,7 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
                 "Crimson Catastrophe",
                 "Astral Plague - Master Upgrade",
                 """
-                        For the duration of Astral Plague, reduce the cooldown of Soulfire Beam by 33% and increase the damage of Soulfire Beam by 20%.
+                        For the duration of Astral Plague, reduce the cooldown of Soulfire Beam by 40% and increase the damage of Soulfire Beam by 40%.
                         """,
                 50000,
                 () -> {

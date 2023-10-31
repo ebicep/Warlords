@@ -1,9 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
-import com.ebicep.customentities.npc.CitizensUtil;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -13,6 +11,7 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SlimeSize;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -24,10 +23,11 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Function;
 
 public class Chessking extends AbstractMob implements BossMob {
 
-    private static final int MAX_SLIMY_CHESS = 50;
+    private static final int MAX_SLIMY_CHESS = 30;
 
     public Chessking(Location spawnLocation) {
         this(spawnLocation, "Chessking", 75000, 0.3f, 30, 0, 0);
@@ -81,6 +81,12 @@ public class Chessking extends AbstractMob implements BossMob {
     }
 
     @Override
+    public void onNPCCreate() {
+        npc.getOrAddTrait(SlimeSize.class).setSize(20);
+        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .1f);
+    }
+
+    @Override
     public Component getDescription() {
         return Component.text("Goblin from the local basement", NamedTextColor.GRAY);
     }
@@ -88,20 +94,6 @@ public class Chessking extends AbstractMob implements BossMob {
     @Override
     public TextColor getColor() {
         return NamedTextColor.GREEN;
-    }
-
-    @Override
-    public void onNPCCreate() {
-        npc.getOrAddTrait(SlimeSize.class).setSize(20);
-    }
-
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override
@@ -118,8 +110,10 @@ public class Chessking extends AbstractMob implements BossMob {
         int newSize = (int) (21 * healthPercent);
         if (size != newSize && 0 < newSize && newSize < 21) {
             slimeSize.setSize(newSize);
+            warlordsNPC.addSpeedModifier(warlordsNPC, "Size Change", (21 - newSize) * 7, Integer.MAX_VALUE);
+            warlordsNPC.getSpeed().setChanged(true);
             float newJumpPower = 1 + ((20 - newSize) * .02f);
-            CitizensUtil.setSlimeJumpPower(warlordsNPC, newJumpPower);
+            npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> newJumpPower);
             warlordsNPC.getAbilitiesMatching(Belch.class)
                        .forEach(belch -> belch.setRange(9 - ((20 - newSize) * .2f)));
             warlordsNPC.getAbilitiesMatching(SpawnMobAbility.class)
