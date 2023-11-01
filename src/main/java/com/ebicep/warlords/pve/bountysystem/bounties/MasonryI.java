@@ -5,13 +5,16 @@ import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.LifetimeCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.LifetimeRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
-import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
+import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.items.types.AbstractItem;
 
 public class MasonryI extends AbstractBounty implements TracksOutsideGame, LifetimeCost, LifetimeRewardSpendable1 {
 
     @Override
-    public void onLegendaryWeaponCraft(AbstractLegendaryWeapon weapon) {
-        value++;
+    public void onItemCraft(AbstractItem item) {
+        if (item.getTier() == ItemTier.OMEGA) {
+            value++;
+        }
     }
 
     @Override

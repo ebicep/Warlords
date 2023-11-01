@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.TartarusOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
@@ -54,7 +55,7 @@ public class TakeMyTitleI extends AbstractBounty implements TracksPostGame, Even
         }
         BountyUtils.getPvEOptionFromGame(game, RecordTimeElapsedOption.class)
                    .ifPresent(recordTimeElapsedOption -> {
-                       if (gameWinEvent.getCause() instanceof WarlordsGameTriggerWinEvent && recordTimeElapsedOption.getTicksElapsed() < 10 * 60 * 20) {
+                       if (gameWinEvent.getCause() instanceof WinByMaxWaveClearOption && recordTimeElapsedOption.getTicksElapsed() < 10 * 60 * 20) {
                            value++;
                        }
                    });

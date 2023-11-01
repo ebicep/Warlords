@@ -85,7 +85,7 @@ public class BountyCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("forcecomplateevent")
+    @Subcommand("forcecompleteevent")
     public void forceComplete(Player player, Integer index) {
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent == null) {
@@ -150,5 +150,24 @@ public class BountyCommand extends BaseCommand {
         });
     }
 
+    @Subcommand("setevent")
+    public void add(Player player, @Conditions("limits:min=0,max=4") Integer index, Bounty bounty) {
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent == null) {
+            ChatChannels.sendDebugMessage(player, Component.text("No event is currently active"));
+            return;
+        }
+        DatabaseManager.getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, databasePlayer -> {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats()).get(currentGameEvent.getStartDateSecond());
+            if (eventMode == null) {
+                ChatChannels.sendDebugMessage(player, Component.text("No event mode detected"));
+                return;
+            }
+            List<AbstractBounty> activeBounties = eventMode.getActiveBounties();
+            activeBounties.set(index, bounty.create.get());
+            ChatChannels.sendDebugMessage(player, Component.text("Set bounty #" + index + " to " + bounty.name() + " in event bounties"));
+        });
+    }
 
 }

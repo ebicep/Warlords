@@ -31,7 +31,7 @@ public class DedicationI extends AbstractBounty implements TracksPostGame, Lifet
 
     @Override
     public int getTarget() {
-        return 1000;
+        return 2500;
     }
 
     @Override

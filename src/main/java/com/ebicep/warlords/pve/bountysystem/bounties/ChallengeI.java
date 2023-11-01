@@ -37,7 +37,7 @@ public class ChallengeI extends AbstractBounty implements TracksPostGame, DailyC
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
         BountyUtils.getPvEOptionFromGame(game, OnslaughtOption.class).ifPresent(onslaughtOption -> {
             int secondsElapsed = onslaughtOption.getTicksElapsed() / 20;
-            if (secondsElapsed > value) {
+            if (secondsElapsed / 60 > value) {
                 value = secondsElapsed;
             }
         });

@@ -247,6 +247,7 @@ public class PlayingState implements State, TimerDebugAble {
         ChatUtils.MessageType.WARLORDS.sendMessage("GameMode = " + game.getGameMode());
         ChatUtils.MessageType.WARLORDS.sendMessage("Map = " + game.getMap());
         ChatUtils.MessageType.WARLORDS.sendMessage("Game Addons = " + game.getAddons());
+        ChatUtils.MessageType.WARLORDS.sendMessage("Win Event = " + winEvent);
         ChatUtils.MessageType.WARLORDS.sendMessage(" ----- GAME END ----- ");
 
         List<WarlordsPlayer> players = PlayerFilterGeneric.playingGameWarlordsPlayers(game).toList();
@@ -281,6 +282,7 @@ public class PlayingState implements State, TimerDebugAble {
         } else {
             if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && players.size() >= 6 && timer >= 6000) {
                 DatabaseGameBase.addGame(game, null, false);
+                ChatUtils.MessageType.WARLORDS.sendMessage("SOME CASE");
             } else {
                 ChatUtils.MessageType.WARLORDS.sendMessage(
                         "This PUB/COMP game was not added to the database and player information remained the same");

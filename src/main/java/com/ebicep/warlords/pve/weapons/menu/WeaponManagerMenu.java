@@ -255,15 +255,9 @@ public class WeaponManagerMenu {
                                 ),
                                 Component.empty()
                         )
-                        .addLore(selectedSpecFilter ?
-                                 Component.textOfChildren(
-                                         Component.text("None", NamedTextColor.GRAY),
-                                         Component.text("Selected Spec", NamedTextColor.AQUA)
-                                 ) :
-                                 Component.textOfChildren(
-                                         Component.text("None", NamedTextColor.AQUA),
-                                         Component.text("Selected Spec", NamedTextColor.GRAY)
-                                 ),
+                        .addLore(
+                                Component.text("None", selectedSpecFilter ? NamedTextColor.GRAY : NamedTextColor.AQUA),
+                                Component.text("Selected Spec", selectedSpecFilter ? NamedTextColor.AQUA : NamedTextColor.GRAY),
                                 Component.textOfChildren(
                                         Component.text("SHIFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
                                         Component.text("to change spec filter", NamedTextColor.GREEN)
@@ -526,16 +520,16 @@ public class WeaponManagerMenu {
                                 Currencies currency = currenciesLongEntry.getKey();
                                 Long cost = currenciesLongEntry.getValue();
                                 if (pveStats.getCurrencyValue(currency) < cost) {
-                                            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                                                        .append(currency.getCostColoredName(cost))
-                                                                        .append(Component.text(" to apply this star piece!"))
-                                            );
-                                            return;
-                                        }
-                                    }
-                                    WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, legendaryWeapon, selectedStarPiece);
-                                } else if (e.isRightClick()) {
-                                    menuSettings.setSelectedStarPiece(selectedStarPiece.next());
+                                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                .append(currency.getCostColoredName(cost))
+                                                                .append(Component.text(" to apply this star piece!"))
+                                    );
+                                    return;
+                                }
+                            }
+                            WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, legendaryWeapon, selectedStarPiece);
+                        } else if (e.isRightClick()) {
+                            menuSettings.setSelectedStarPiece(selectedStarPiece.next());
                                     openWeaponEditor(player, databasePlayer, weapon);
                                 }
                             }

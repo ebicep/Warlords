@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
@@ -44,15 +43,8 @@ public class SlayerII extends AbstractBounty implements TracksDuringGame, DailyC
     }
 
     @Override
-    public void onFinalDamageHeal(UUID uuid, WarlordsDamageHealingFinalEvent event) {
-        if (!event.getAttacker().getUuid().equals(uuid)) {
-            return;
-        }
-        WarlordsEntity victim = event.getWarlordsEntity();
-        if (!event.isDead() || !(victim instanceof WarlordsNPC warlordsNPC)) {
-            return;
-        }
-        if (warlordsNPC.getMob() instanceof BossMob) {
+    public void onKill(UUID uuid, WarlordsDeathEvent event) {
+        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
             newKills++;
         }
     }

@@ -23,10 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.pve.bountysystem.BountyUtils.BOUNTY_COLLECTION_INFO;
@@ -157,7 +154,7 @@ public abstract class AbstractBounty implements RewardSpendable, BountyCost {
             activeBounties = pveStats.getActiveBounties();
             excludeBounties.addAll(pveStats.getCompletedBounties().keySet());
         }
-        excludeBounties.addAll(activeBounties.stream().map(AbstractBounty::getBounty).collect(Collectors.toSet()));
+        excludeBounties.addAll(activeBounties.stream().filter(Objects::nonNull).map(AbstractBounty::getBounty).collect(Collectors.toSet()));
         pveStats.addBountiesCompleted();
         int replaceIndex = activeBounties.indexOf(this);
         int maxBounties = BOUNTY_COLLECTION_INFO.get(bountyInfoName).maxBounties();

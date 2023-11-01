@@ -31,7 +31,7 @@ public class FlawlessV extends AbstractBounty implements TracksPostGame, WeeklyC
 
     @Override
     public Bounty getBounty() {
-        return Bounty.FLAWLESS_III;
+        return Bounty.FLAWLESS_V;
     }
 
 
