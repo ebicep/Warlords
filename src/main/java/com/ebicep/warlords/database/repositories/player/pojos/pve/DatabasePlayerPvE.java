@@ -50,7 +50,6 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -86,7 +85,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     private List<GameEventReward> gameEventRewards = new ArrayList<>();
     @Field("pouch_rewards")
     private List<PouchReward> pouchRewards = new ArrayList<>();
-    @Transient //temp
     @Field("bounty_rewards")
     private List<BountyReward> bountyRewards = new ArrayList<>();
     //WEAPONS
@@ -112,13 +110,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     @Field("quests_completed")
     private Map<Quests, Long> questsCompleted = new HashMap<>();
     //NEW BOUNTIES
-    @Transient //temp
     @Field("completed_bounties")
     private Map<Bounty, Long> completedBounties = new HashMap<>();
-    @Transient //temp
     @Field("bounties_completed")
     private int bountiesCompleted = 0; // can only get 2 extra for daily/weekly
-    @Transient //temp
     @Field("active_bounties")
     private List<AbstractBounty> activeBounties = new ArrayList<>();
 
