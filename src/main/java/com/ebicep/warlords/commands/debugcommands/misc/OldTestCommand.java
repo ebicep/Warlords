@@ -1,13 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.pve.mobs.bosses.Chessking;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -15,12 +9,9 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
@@ -121,21 +112,21 @@ public class OldTestCommand implements CommandExecutor {
 //                ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer);
 //            });
 
-            Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
-            for (Option option : game.getOptions()) {
-                if (option instanceof PveOption pveOption) {
-                    for (AbstractMob mob : pveOption.getMobs()) {
-                        if (mob instanceof Chessking) {
-                            Entity entity = mob.getWarlordsNPC().getEntity();
-                            if (entity instanceof LivingEntity living) {
-                                living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.1);
-                            }
-                        }
-                    }
-                }
-            }
+//            Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+//            for (Option option : game.getOptions()) {
+//                if (option instanceof PveOption pveOption) {
+//                    for (AbstractMob mob : pveOption.getMobs()) {
+//                        if (mob instanceof Chessking) {
+//                            Entity entity = mob.getWarlordsNPC().getEntity();
+//                            if (entity instanceof LivingEntity living) {
+//                                living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.1);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
 
-//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.SLIME, "test");
+//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.ZOMBIE, "test");
 //            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
 //            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
 //            hologramTrait.setUseDisplayEntities(true);
@@ -143,10 +134,10 @@ public class OldTestCommand implements CommandExecutor {
 //            hologramTrait.addLine("hello");
 //            hologramTrait.addLine("world");
 //            hologramTrait.addLine("123");
-////
-////            npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
-////            npc.data().set(NPC.Metadata.ACTIVATION_RANGE, 100);
-////
+//////
+//////            npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
+//////            npc.data().set(NPC.Metadata.ACTIVATION_RANGE, 100);
+//////
 //            npc.spawn(player.getLocation().add(0, -3, 0));
 //
 //            npc.getNavigator().setTarget(player, true);

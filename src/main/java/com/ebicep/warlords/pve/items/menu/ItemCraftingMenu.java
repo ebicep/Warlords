@@ -46,7 +46,8 @@ public class ItemCraftingMenu {
     private static final HashMap<ItemTier, TierCostInfo> TIER_COST_INFO = new HashMap<>() {{
         put(ItemTier.DELTA, new TierCostInfo(
                 new LinkedHashMap<>() {{
-                    put(Currencies.SYNTHETIC_SHARD, 10_000L);
+                    put(Currencies.SYNTHETIC_SHARD, 7_500L);
+                    put(Currencies.LEGEND_FRAGMENTS, 1_000L);
                     put(Currencies.SCRAP_METAL, 50L);
                     put(MobDrop.ZENITH_STAR, 2L);
                 }},
@@ -59,7 +60,7 @@ public class ItemCraftingMenu {
         ));
         put(ItemTier.OMEGA, new TierCostInfo(
                 new LinkedHashMap<>() {{
-                    put(Currencies.SYNTHETIC_SHARD, 20_000L);
+                    put(Currencies.SYNTHETIC_SHARD, 15_000L);
                     put(Currencies.LEGEND_FRAGMENTS, 5_000L);
                     put(Currencies.SCRAP_METAL, 100L);
                     put(MobDrop.ZENITH_STAR, 8L);
