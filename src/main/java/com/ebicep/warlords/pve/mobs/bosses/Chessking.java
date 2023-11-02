@@ -30,7 +30,7 @@ public class Chessking extends AbstractMob implements BossMob {
     private static final int MAX_SLIMY_CHESS = 30;
 
     public Chessking(Location spawnLocation) {
-        this(spawnLocation, "Chessking", 75000, 0.3f, 30, 0, 0);
+        this(spawnLocation, "Chessking", 50000, 0.3f, 30, 0, 0);
     }
 
     public Chessking(

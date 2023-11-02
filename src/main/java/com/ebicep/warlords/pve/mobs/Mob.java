@@ -378,7 +378,7 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 20, 20, 20),
             Weapons.VOID_EDGE.getItem()
     )),
-    MAGMATIC_OOZE(EntityType.ZOMBIE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
+    MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
 
 
     // Boss minions

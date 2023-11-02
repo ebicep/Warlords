@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -21,6 +20,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SlimeSize;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -47,19 +48,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     }
 
     public MagmaticOoze(Location spawnLocation, float health, int splitNumber, Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-        this(spawnLocation, "Magmatic Ooze", (int) (health / (splitNumber + 1)), 1f, 40, 100, 200, splitNumber, previousBlocks);
-    }
-
-    public MagmaticOoze(
-            Location spawnLocation,
-            String name,
-            int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
-            float maxMeleeDamage
-    ) {
-        this(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, 0, new HashMap<>());
+        this(spawnLocation, "Magmatic Ooze", (int) (health / (splitNumber + 1)), .45f, 30, 100, 200, splitNumber, previousBlocks);
     }
 
     public MagmaticOoze(
@@ -90,6 +79,18 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         this.previousBlocks = previousBlocks;
     }
 
+    public MagmaticOoze(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        this(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, 0, new HashMap<>());
+    }
+
     @Override
     public Mob getMobRegistry() {
         return Mob.MAGMATIC_OOZE;
@@ -103,6 +104,16 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     }
 
     @Override
+    public Component getDescription() {
+        return Component.text("Really REALLY mad", TextColor.color(144, 29, 35));
+    }
+
+    @Override
+    public TextColor getColor() {
+        return TextColor.color(239, 47, 57);
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         if (splitNumber == 0 && option.getMobs().stream().noneMatch(MagmaticOoze.class::isInstance)) {
@@ -113,6 +124,16 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
                 @Override
                 public void run() {
+                    // all dead
+                    // restore blocks
+                    if (option.getMobs().stream().noneMatch(abstractMob -> abstractMob.getMobRegistry() == Mob.MAGMATIC_OOZE && abstractMob.getWarlordsNPC().isAlive())) {
+                        previousBlocks.forEach((location, material) -> {
+                            Block block = location.locationBlockHolder().getBlock();
+                            block.setType(material);
+                        });
+                        this.cancel();
+                        return;
+                    }
                     previousBlocks.entrySet().removeIf(timedLocationBlockHolderMaterialEntry -> {
                         long time = timedLocationBlockHolderMaterialEntry.getKey().time();
                         // remove if 30*5 seconds have passed
@@ -151,35 +172,6 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 }
             }.runTaskTimer(20, 3);
         }
-    }
-
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-        super.onDeath(killer, deathLocation, option);
-        new GameRunnable(option.getGame()) {
-
-            @Override
-            public void run() {
-                if (option.getMobs().stream().noneMatch(abstractMob -> abstractMob instanceof MagmaticOoze)) {
-                    // all dead
-                    // restore blocks
-                    previousBlocks.forEach((location, material) -> {
-                        Block block = location.locationBlockHolder().getBlock();
-                        block.setType(material);
-                    });
-                }
-            }
-        }.runTaskLater(3);
     }
 
     public static class FieryProjectile extends AbstractPveAbility implements ProjectileAbility {
@@ -296,13 +288,16 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
                 @Override
                 public void run() {
+                    if (wp.isDead()) {
+                        cancel();
+                    }
                     // check if y velocity starts going down
                     Vector currentVector = wp.getEntity().getVelocity();
                     // TODO maybe tp look towards random ppl then launch towards them
-                    if (currentVector.getY() <= 0 && !launchedTowardsPlayer) {
+                    if (currentVector.getY() <= 0 && !launchedTowardsPlayer && target != null) {
                         // diagonally towards enemy player
                         Vector vectorTowardsEnemy = new LocationBuilder(wp.getLocation()).getVectorTowards(target.getLocation());
-                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.25 + (wp.getLocation().distance(target.getLocation()) * .025)), true);
+                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.25 + (wp.getLocation().distance(target.getLocation()) * .03)), true);
                         launchedTowardsPlayer = true;
                     } else {
                         if (target == null || target.isDead()) {
@@ -310,9 +305,13 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                                         .aliveEnemiesOf(wp)
                                         .findAny()
                                         .ifPresent(enemy -> target = enemy);
+                            if (target == null) {
+                                this.cancel();
+                                return;
+                            }
                         }
                         // fire line particle to target
-                        EffectUtils.playParticleLinkAnimation(wp.getLocation(), target.getLocation(), Particle.LANDING_LAVA); //TODO particle
+                        EffectUtils.playParticleLinkAnimation(wp.getLocation(), target.getLocation(), Particle.LANDING_LAVA);
                     }
                     if (launchedTowardsPlayer) {
                         // check if hit ground
@@ -414,6 +413,10 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
                 @Override
                 public void run() {
+                    if (wp.isDead()) {
+                        cancel();
+                        return;
+                    }
                     timer++;
                     if (timer < yDiff) {
                         // flame particles going towards ground if ability casted while in air
@@ -491,6 +494,9 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
                         @Override
                         public void run() {
+                            if (wp.isDead()) {
+                                cancel();
+                            }
                             for (int i = 0; i < fissures.size(); i++) {
                                 if (discontinueIndexes[i]) {
                                     continue;

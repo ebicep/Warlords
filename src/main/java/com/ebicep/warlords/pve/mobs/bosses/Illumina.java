@@ -45,7 +45,7 @@ public class Illumina extends AbstractMob implements BossMob {
     public Illumina(Location spawnLocation) {
         super(spawnLocation,
                 "Illumina",
-                110000,
+                90000,
                 0.33f,
                 25,
                 2000,

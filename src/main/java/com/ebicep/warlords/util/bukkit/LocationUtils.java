@@ -396,6 +396,23 @@ public class LocationUtils {
         public TimedLocationBlockHolder(LocationBlockHolder locationBlockHolder) {
             this(locationBlockHolder, System.currentTimeMillis());
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            TimedLocationBlockHolder that = (TimedLocationBlockHolder) o;
+            return locationBlockHolder.equals(that.locationBlockHolder);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(locationBlockHolder);
+        }
     }
 
     public record LocationBlockHolder(World world, int x, int y, int z) {
