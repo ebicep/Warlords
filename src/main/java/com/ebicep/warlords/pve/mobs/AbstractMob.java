@@ -34,6 +34,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -46,7 +47,6 @@ import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -117,8 +117,9 @@ public abstract class AbstractMob implements Mob {
 //        if (getMobRegistry().entityType == EntityType.SPIDER) {
 //            defaultParameters.useNewPathfinder(true);
 //        }
-        if (getMobRegistry().entityType == EntityType.SLIME || getMobRegistry().entityType == EntityType.MAGMA_CUBE) {
-            npc.getNavigator().getDefaultParameters().straightLineTargetingDistance(100);
+        switch (getMobRegistry().entityType) {
+            case SLIME, MAGMA_CUBE -> npc.getNavigator().getDefaultParameters().straightLineTargetingDistance(100);
+            case WOLF -> this.npc.getOrAddTrait(WolfModifiers.class).setAngry(true);
         }
 
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
@@ -129,6 +130,7 @@ public abstract class AbstractMob implements Mob {
         updateEquipment();
 
         this.npc.spawn(spawnLocation);
+
 //
 //        if (getMobRegistry().entityType == EntityType.SLIME) {
 //            this.npc.setUseMinecraftAI(true); //TODO

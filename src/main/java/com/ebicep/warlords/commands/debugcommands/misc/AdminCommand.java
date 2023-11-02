@@ -19,12 +19,14 @@ import org.bukkit.entity.Player;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @CommandAlias("admin")
 @CommandPermission("group.administrator")
 public class AdminCommand extends BaseCommand {
 
     public static final Set<DatabasePlayerPvE> BYPASSED_PLAYER_CURRENCIES = new HashSet<>();
+    public static final Set<UUID> BYPASS_INTERACT_CANCEL = new HashSet<>();
     public static boolean DISABLE_RESTART_CHECK = false;
     public static boolean DISABLE_SPECTATOR_MESSAGES = false;
     public static boolean NEW_SWIMMING = false;
@@ -113,6 +115,21 @@ public class AdminCommand extends BaseCommand {
     public void toggleSwimming(CommandIssuer issuer) {
         NEW_SWIMMING = !NEW_SWIMMING;
         ChatChannels.sendDebugMessage(issuer, Component.text("New Swimming = " + NEW_SWIMMING, NamedTextColor.GREEN));
+    }
+
+    @Subcommand("bypassinteract")
+    @Description("Bypasses interact cancel")
+    public void bypassInteract(CommandIssuer issuer) {
+        if (issuer.isPlayer()) {
+            Player player = (Player) issuer;
+            if (BYPASS_INTERACT_CANCEL.contains(player.getUniqueId())) {
+                BYPASS_INTERACT_CANCEL.remove(player.getUniqueId());
+                ChatChannels.sendDebugMessage(player, Component.text("Disabled Bypassing Interact Cancel", NamedTextColor.GREEN));
+            } else {
+                BYPASS_INTERACT_CANCEL.add(player.getUniqueId());
+                ChatChannels.sendDebugMessage(player, Component.text("Enabled Bypassing Interact Cancel", NamedTextColor.GREEN));
+            }
+        }
     }
 
     @HelpCommand

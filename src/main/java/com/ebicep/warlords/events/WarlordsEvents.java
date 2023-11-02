@@ -8,6 +8,7 @@ import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
+import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.MuteCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
@@ -300,8 +301,8 @@ public class WarlordsEvents implements Listener {
         if (wp != null) {
             wp.updatePlayerReference(null);
             e.quitMessage(Component.textOfChildren(
-                    wp.getColoredNameBold(),
-                    Component.text(" left the game!", NamedTextColor.GOLD)
+                            wp.getColoredNameBold(),
+                            Component.text(" left the game!", NamedTextColor.GOLD)
                     )
             );
         } else {
@@ -472,16 +473,24 @@ public class WarlordsEvents implements Listener {
 
             }
         }
+        if (!AdminCommand.BYPASS_INTERACT_CANCEL.contains(player.getUniqueId())) {
+            e.setCancelled(true);
+        }
     }
 
-//    @EventHandler
-//    public void onPlayerInteractEntity2(PlayerInteractEntityEvent e) {
-//        System.out.println("HELLO");
-//        e.setCancelled(true);
-//    }
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
+        // prevent wolf eating item
+        if (e.getRightClicked() instanceof Wolf) {
+            e.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
+        if (e.getRightClicked() instanceof Wolf) {
+            e.setCancelled(true);
+        }
         if (e.getRightClicked().getType() != EntityType.ARMOR_STAND) {
             return;
         }
