@@ -35,11 +35,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 public class EventHades extends AbstractMob implements BossMob, God, ForceGivesEventPoints {
 
-    private int resurrectionTicksLeft = 2 * 60 * 20;
+    private int resurrectionCooldown = 0;
 
     public EventHades(Location spawnLocation) {
         this(spawnLocation, "Hades", 185000, .33f, 25, 524, 607);
@@ -89,6 +87,16 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
     }
 
     @Override
+    public Component getDescription() {
+        return Component.text("God of the Underworld", NamedTextColor.GRAY);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.DARK_GRAY;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -113,7 +121,10 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
                         }
                         AbstractMob npcMob = npc.getMob();
                         if (npcMob instanceof EventZeus || npcMob instanceof EventPoseidon) {
-                            resurrectionTicksLeft = 2 * 60 * 20; // 2 minutes
+                            if (resurrectionCooldown > 0) {
+                                return;
+                            }
+                            resurrect(npcMob.getMobRegistry());
                         }
                     }
                 };
@@ -123,47 +134,8 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (option.getMobs().size() != 1 || !option.getMobs().contains(this)) {
-            return;
-        }
-        resurrectionTicksLeft--;
-        if (resurrectionTicksLeft == 0) {
-            Mob resurrectedMob = ThreadLocalRandom.current().nextBoolean() ? Mob.EVENT_ZEUS : Mob.EVENT_POSEIDON;
-            Location spawnLocation = LocationUtils.getGroundLocation(warlordsNPC.getLocation());
-            Utils.playGlobalSound(spawnLocation, Sound.ENTITY_WARDEN_DIG, 10, .75f);
-            AbstractMob resurrected = resurrectedMob.createMob(spawnLocation.clone().add(0, -2.99, 0));
-            resurrected.getDynamicFlags().add(DynamicFlags.UNSWAPPABLE);
-            pveOption.spawnNewMob(resurrected);
-            resurrected.getWarlordsNPC().setHealth(resurrected.getWarlordsNPC().getMaxHealth() / 2f);
-            resurrected.getWarlordsNPC().setStunTicks(62);
-            new GameRunnable(warlordsNPC.getGame()) {
-                int ticksElapsed = 0;
-
-                @Override
-                public void run() {
-                    EffectUtils.displayParticle(
-                            Particle.BLOCK_CRACK,
-                            spawnLocation,
-                            6,
-                            .25,
-                            0,
-                            .25,
-                            0,
-                            Material.DIRT.createBlockData()
-                    );
-                    resurrected.getNpc().teleport(resurrected.getNpc().getStoredLocation().add(0, .05, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    if (ticksElapsed++ == 60) {
-                        if (resurrectedMob == Mob.EVENT_ZEUS) {
-                            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_PHANTOM_AMBIENT, 10, .5f);
-                        } else {
-                            Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 10, .5f);
-                        }
-                        resurrected.getDynamicFlags().remove(DynamicFlags.UNSWAPPABLE);
-                        this.cancel();
-                    }
-                }
-            }.runTaskTimer(0, 0);
-            resurrectionTicksLeft = 2 * 60 * 20; // 2 minutes
+        if (resurrectionCooldown > 0) {
+            resurrectionCooldown--;
         }
     }
 
@@ -180,18 +152,46 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
         }
     }
 
+    private void resurrect(Mob resurrectedMob) {
+        resurrectionCooldown = 2 * 60 * 20; // 2 minutes
+        Location spawnLocation = LocationUtils.getGroundLocation(warlordsNPC.getLocation());
+        Utils.playGlobalSound(spawnLocation, Sound.ENTITY_WARDEN_DIG, 10, .75f);
+        AbstractMob resurrected = resurrectedMob.createMob(spawnLocation.clone().add(0, -2.99, 0));
+        resurrected.getDynamicFlags().add(DynamicFlags.UNSWAPPABLE);
+        pveOption.spawnNewMob(resurrected);
+        resurrected.getWarlordsNPC().setHealth(resurrected.getWarlordsNPC().getMaxHealth() / 2f);
+        resurrected.getWarlordsNPC().setStunTicks(62);
+        new GameRunnable(warlordsNPC.getGame()) {
+            int ticksElapsed = 0;
+
+            @Override
+            public void run() {
+                EffectUtils.displayParticle(
+                        Particle.BLOCK_CRACK,
+                        spawnLocation,
+                        6,
+                        .25,
+                        0,
+                        .25,
+                        0,
+                        Material.DIRT.createBlockData()
+                );
+                resurrected.getNpc().teleport(resurrected.getNpc().getStoredLocation().add(0, .05, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                if (ticksElapsed++ == 60) {
+                    if (resurrectedMob == Mob.EVENT_ZEUS) {
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_PHANTOM_AMBIENT, 10, .5f);
+                    } else {
+                        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 10, .5f);
+                    }
+                    resurrected.getDynamicFlags().remove(DynamicFlags.UNSWAPPABLE);
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 0);
+    }
+
     @Override
     public double weaponDropRate() {
         return BossMob.super.weaponDropRate() * 1.5;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("God of the Underworld", NamedTextColor.GRAY);
-    }
-
-    @Override
-    public TextColor getColor() {
-        return NamedTextColor.DARK_GRAY;
     }
 }
