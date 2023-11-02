@@ -2488,7 +2488,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_OPUS)
                     )
                     .add(80, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
-                            .add(Mob.MITHRA)
+                            .add(Mob.MAGMATIC_OOZE)
                     )
                     .add(81, new SimpleWave(50, 5 * SECOND, null)
                             //basic
@@ -2566,8 +2566,8 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
                     )
-                    .add(90, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
-                            .add(Mob.ZENITH)
+                    .add(90, new SimpleWave(2, 10 * SECOND, Component.text("Boss"))
+                            .add(Mob.MITHRA)
                     )
                     .add(91, new SimpleWave(50, 5 * SECOND, null)
                             //basic
@@ -2736,6 +2736,7 @@ public enum GameMap {
                             .add(0.01, Mob.MITHRA)
                             .add(0.01, Mob.ZENITH)
                             .add(0.005, Mob.CHESSKING)
+                            .add(0.005, Mob.MAGMATIC_OOZE)
                             .add(0.005, Mob.ILLUMINA)
                             .add(0.0001, Mob.VOID)
                     )
