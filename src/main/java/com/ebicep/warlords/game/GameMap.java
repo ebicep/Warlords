@@ -454,8 +454,10 @@ public enum GameMap {
 
             options.add(new GateOption(loc, -125.5, 81.5, -213.5, -125.5, 76, -219.5, Material.SPRUCE_FENCE));
             options.add(new GateOption(loc, 34.5, 80, -219.5, 34.5, 76, -213.5, Material.IRON_BARS));
-            options.add(new GateOption(loc, -145.5, 76, -212.5, -143.5, 80, -212.5, Material.IRON_BARS));
+            options.add(new GateOption(loc, -145.5, 76, -212.5, -143.5, 80, -212.5, Material.SPRUCE_FENCE));
             options.add(new GateOption(loc, 54.5, 76, -220.5, 52.5, 80, -220.5, Material.IRON_BARS));
+            options.add(new GateOption(loc, -132.5, 76, -232.5, -132.5, 81, -234.5, Material.SPRUCE_FENCE));
+            options.add(new GateOption(loc, 41.5, 76, -200.5, 41.5, 81, -198.5, Material.IRON_BARS));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 71, -159.5, 135, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-97.5, 71, -274.5, -45, 0), Team.RED));
@@ -468,6 +470,8 @@ public enum GameMap {
 
             options.add(new PowerupOption(loc.addXYZ(-152.5, 75.5, -208.5), PowerUp.SPEED));
             options.add(new PowerupOption(loc.addXYZ(60.5, 75.5, -224.5), PowerUp.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(-152.5, 76.5, -232.5), PowerUp.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(62.5, 76, -200.5), PowerUp.SPEED));
 
             options.add(new PowerupOption(loc.addXYZ(-12.5, 45.5, -194.5), PowerUp.HEALING));
             options.add(new PowerupOption(loc.addXYZ(-78.5, 45.5, -238.5), PowerUp.HEALING));
@@ -4877,13 +4881,15 @@ public enum GameMap {
             options.add(LobbyLocationMarker.create(loc.addXYZ(43.5, 76, -216.5, 90, 0), Team.BLUE).asOption());
             options.add(LobbyLocationMarker.create(loc.addXYZ(-134.5, 76, -216.5, -90, 0), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 71, -159.5, 135, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-97.5, 71, -274.5, -45, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(53.5, 82, -216.5, 90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-144.5, 82, -216.5, -90, 0), Team.RED));
 
             options.add(new GateOption(loc, -125.5, 81.5, -213.5, -125.5, 76, -219.5, Material.SPRUCE_FENCE));
             options.add(new GateOption(loc, 34.5, 80, -219.5, 34.5, 76, -213.5, Material.IRON_BARS));
-            options.add(new GateOption(loc, -145.5, 76, -212.5, -143.5, 80, -212.5, Material.IRON_BARS));
+            options.add(new GateOption(loc, -145.5, 76, -212.5, -143.5, 80, -212.5, Material.SPRUCE_FENCE));
             options.add(new GateOption(loc, 54.5, 76, -220.5, 52.5, 80, -220.5, Material.IRON_BARS));
+            options.add(new GateOption(loc, -132.5, 76, -232.5, -132.5, 81, -234.5, Material.SPRUCE_FENCE));
+            options.add(new GateOption(loc, 41.5, 76, -200.5, 41.5, 81, -198.5, Material.IRON_BARS));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 71, -159.5, 135, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-97.5, 71, -274.5, -45, 0), Team.RED));
@@ -4896,6 +4902,8 @@ public enum GameMap {
 
             options.add(new PowerupOption(loc.addXYZ(-152.5, 75.5, -208.5), PowerUp.SPEED));
             options.add(new PowerupOption(loc.addXYZ(60.5, 75.5, -224.5), PowerUp.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(-152.5, 76.5, -232.5), PowerUp.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(62.5, 76, -200.5), PowerUp.SPEED));
 
             options.add(new PowerupOption(loc.addXYZ(-12.5, 45.5, -194.5), PowerUp.HEALING));
             options.add(new PowerupOption(loc.addXYZ(-78.5, 45.5, -238.5), PowerUp.HEALING));
