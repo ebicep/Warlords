@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class CreepyBomber extends AbstractMob implements EliteMob {
 
     public CreepyBomber(Location spawnLocation) {
-        super(spawnLocation, "Creepy Bomber", 1000, 1, 0, 0, 0);
+        super(spawnLocation, "Creepy Bomber", 1000, .5f, 0, 0, 0);
     }
 
     public CreepyBomber(
