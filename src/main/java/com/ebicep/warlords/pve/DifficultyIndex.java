@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -36,7 +37,14 @@ public enum DifficultyIndex {
             NamedTextColor.YELLOW,
             25,
             1,
-            pveOption -> .05f + pveOption.getWaveCounter() * .002f // 10% at wave 25
+            pveOption -> {
+                if (pveOption instanceof OnslaughtOption) {
+                    int minutesElapsed = pveOption.getTicksElapsed() / 20 / 60;
+                    return .05f + minutesElapsed * .00375f; // 20% at 40 minutes
+                } else {
+                    return .05f + pveOption.getWaveCounter() * .002f;// 10% at wave 25
+                }
+            }
     ),
     HARD("Hard",
             List.of(
