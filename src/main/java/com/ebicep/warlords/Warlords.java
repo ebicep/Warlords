@@ -30,7 +30,6 @@ import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
-import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
@@ -474,7 +473,7 @@ public class Warlords extends JavaPlugin {
                 // Every 20 ticks - 1 second.
                 if (LOOP_TICK_COUNTER.get() % 20 == 0) {
                     // Removes leftover horses if there are any.
-                    RemoveEntities.removeHorsesInGame();
+//                    RemoveEntities.removeHorsesInGame();
 
                     for (WarlordsEntity we : PLAYERS.values()) {
                         // Checks whether the game is paused.

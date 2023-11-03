@@ -180,6 +180,9 @@ public enum SkullID {
     DRYAD("NWY3ODMyZjk5YzFmMmZkYjZjM2JmZGJmNzNkMzdhOGY2ZWQ2NTg5MGIzODg1NDNkNjgzOGE1MWRmODYzZDNiZCJ9fX0="),
     //https://minecraft-heads.com/custom-heads/humanoid/58891-faun
     FAUN("NWFmMzgwYTZlMTkwOTk1NzAyNTFkMWM4ZTk0NDllZjhhNjcxMDhiZTRiM2JmNDIwMzNhOTQyMWM2YjUyODhlMSJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/humanoid/40649-skeleton-archer
+    SKELETON_ARCHER("Y2UwZDNmMjhiOGUwZjBhNDVjYTJiNDJiNmY0OTViYmZkYTczNzMyZDNhM2YxMDhmNjM1MmU3NThlMWNiOWJhOSJ9fX0="),
+
     ;
 
     private final String textureId;

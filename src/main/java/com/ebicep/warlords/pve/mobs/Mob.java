@@ -283,6 +283,13 @@ public enum Mob {
             Weapons.ARMBLADE.getItem()
     )),
     CREEPY_BOMBER(EntityType.CREEPER, CreepyBomber.class, CreepyBomber::new, CreepyBomber::new, null),
+    SKELETAL_ARCHER(EntityType.SKELETON, SkeletalArcher.class, SkeletalArcher::new, SkeletalArcher::new, new Utils.SimpleEntityEquipment(
+            SkullUtils.getSkullFrom(SkullID.SKELETON_ARCHER),
+            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 226, 226, 226),
+            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 226, 226, 226),
+            Utils.applyColorTo(Material.LEATHER_BOOTS, 226, 226, 226),
+            Weapons.FABLED_HEROICS_SCYTHE.getItem()
+    )),
 
     // Champion
     NIGHTMARE_ZOMBIE(EntityType.ZOMBIE, NightmareZombie.class, NightmareZombie::new, NightmareZombie::new, new Utils.SimpleEntityEquipment(

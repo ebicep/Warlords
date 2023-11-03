@@ -12,7 +12,9 @@ import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
 
 import java.awt.*;
 
@@ -126,8 +128,21 @@ public class OldTestCommand implements CommandExecutor {
 //                }
 //            }
 
-//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.ZOMBIE, "test");
-//            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
+//            NPC mount = NPCManager.NPC_REGISTRY.createNPC(EntityType.HORSE, "test");
+//            mount.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.SKELETON, "test");
+//            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+//
+//            mount.spawn(player.getLocation());
+//            npc.spawn(player.getLocation());
+//
+//            mount.getEntity().addPassenger(npc.getEntity());
+
+            Skeleton skeleton = player.getWorld().spawn(player.getLocation(), Skeleton.class);
+            player.getWorld().spawn(player.getLocation(), Horse.class, horse -> {
+                horse.addPassenger(skeleton);
+            });
+
 //            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
 //            hologramTrait.setUseDisplayEntities(true);
 //            hologramTrait.addLine("test");
