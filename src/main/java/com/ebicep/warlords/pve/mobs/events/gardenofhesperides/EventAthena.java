@@ -4,6 +4,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -23,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import javax.annotation.Nonnull;
@@ -133,18 +136,22 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             wp.subtractEnergy(name, energyCost, false);
-//            ItemStack item; TODO
-//            EntityEquipment entityEquipment = wp.getEntity().getEquipment();
-//            if (entityEquipment != null) {
-//                item = entityEquipment.getItemInMainHand();
-//                entityEquipment.setItemInHand(null);
-//            } else {
-//                item = Weapons.NEW_LEAF_AXE.getItem();
-//            }
+            ItemStack item;
+            Equipment equipment;
+            if (wp instanceof WarlordsNPC warlordsNPC) {
+                equipment = warlordsNPC.getNpc().getTraitNullable(Equipment.class);
+            } else {
+                equipment = null;
+            }
+            if (equipment != null) {
+                item = equipment.get(Equipment.EquipmentSlot.HAND);
+            } else {
+                item = Weapons.NEW_LEAF_AXE.getItem();
+            }
             double yOffset = 5;
             int animationTicks = 10;
             ArmorStand stand = Utils.spawnArmorStand(wp.getLocation().add(0, yOffset, 0), armorStand -> {
-//                armorStand.getEquipment().setHelmet(item);
+                armorStand.getEquipment().setHelmet(item);
                 armorStand.setHeadPose(new EulerAngle(Math.toRadians(180), 0, 0));
             });
             Utils.playGlobalSound(wp.getLocation(), "rogue.healingremedy.impact", 500, 1.2f);
@@ -175,9 +182,9 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                                                 critMultiplier
                                         );
                                     });
-//                        if (entityEquipment != null) {
-//                            entityEquipment.setItemInMainHand(item);
-//                        }
+                        if (equipment != null) {
+                            equipment.set(Equipment.EquipmentSlot.HAND, item);
+                        }
                         this.cancel();
                     }
                 }

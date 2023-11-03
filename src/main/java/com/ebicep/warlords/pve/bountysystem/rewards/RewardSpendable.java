@@ -8,6 +8,4 @@ public interface RewardSpendable {
 
     LinkedHashMap<Spendable, Long> getCurrencyReward();
 
-    //TODO items
-
 }

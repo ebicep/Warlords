@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.GroundSlamBerserker;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.CalculateSpeed;
@@ -17,6 +18,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -151,7 +153,15 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             wp.subtractEnergy(name, energyCost, false);
-            //TODO animation
+            EffectUtils.displayParticle(
+                    Particle.END_ROD,
+                    wp.getLocation().add(0, 2.5, 0),
+                    1000,
+                    radius,
+                    2,
+                    radius,
+                    .01
+            );
             PlayerFilter.entitiesAround(wp, radius, radius, radius)
                         .aliveEnemiesOf(wp)
                         .forEach(warlordsEntity -> {

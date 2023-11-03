@@ -33,7 +33,7 @@ public abstract class AbstractBounty implements RewardSpendable, BountyCost {
     protected long value;
     private boolean started = false;
 
-    public ItemBuilder getItemWithProgress() { //TODO maybe center everything
+    public ItemBuilder getItemWithProgress() {
         ItemBuilder itemBuilder = getItem();
 
         List<Component> progress = getProgress();

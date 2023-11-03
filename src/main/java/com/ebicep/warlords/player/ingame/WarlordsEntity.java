@@ -129,7 +129,6 @@ public abstract class WarlordsEntity {
     private double energyModifier = 1;
     private boolean takeDamage = true;
     private boolean canCrit = true;
-    private boolean teamFlagCompass = true;
     @Nullable
     private FlagInfo carriedFlag = null;
     private boolean active = true;

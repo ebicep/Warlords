@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.ai.GoalController;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 
 public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras {
 
@@ -69,7 +70,7 @@ public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        //TODO animation
+        Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10, 2f);
         if (Utils.isProjectile(event.getAbility())) {
             event.setCancelled(true);
         }

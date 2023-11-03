@@ -293,7 +293,6 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     }
                     // check if y velocity starts going down
                     Vector currentVector = wp.getEntity().getVelocity();
-                    // TODO maybe tp look towards random ppl then launch towards them
                     if (currentVector.getY() <= 0 && !launchedTowardsPlayer && target != null) {
                         // diagonally towards enemy player
                         Vector vectorTowardsEnemy = new LocationBuilder(wp.getLocation()).getVectorTowards(target.getLocation());
@@ -578,18 +577,20 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     // randomly go left or right 1 block
                     // go forward start 1 block forward
                     List<LocationBuilder> locations = new ArrayList<>();
-                    //TODO normalize yaw, diagonal wont work?
+                    int yaw = (int) start.getYaw() / 45 * 45;
                     LocationBuilder location = new LocationBuilder(start)
-                            .pitch(0);
+                            .pitch(0)
+                            .yaw(yaw);
+                    float offset = yaw * 90 == 0 ? 1f : 1.415f;
                     while (locations.size() < MAX_FISSURE_LENGTH) {
                         for (int i = 0; i < 2 + ThreadLocalRandom.current().nextInt(3); i++) {
-                            location.forward(1);
+                            location.forward(offset);
                             locations.add(location.clone());
                         }
                         if (ThreadLocalRandom.current().nextBoolean()) {
-                            location.left(1);
+                            location.left(offset);
                         } else {
-                            location.right(1);
+                            location.right(offset);
                         }
                         locations.add(location.clone());
                     }
