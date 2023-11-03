@@ -31,7 +31,7 @@ public class BruisedBook extends SpecialDeltaTome implements CraftsInto {
 
     @Override
     public String getBonus() {
-        return "All your healing has a 40% chance to heal for max health, and a 60% chance to heal for no health.";
+        return "All your healing has a 60% chance to heal for max health, and a 40% chance to heal for min health.";
     }
 
     @Override
@@ -56,11 +56,10 @@ public class BruisedBook extends SpecialDeltaTome implements CraftsInto {
             @Override
             public void healingDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
                 if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
-                    if (ThreadLocalRandom.current().nextDouble() <= .4) {
+                    if (ThreadLocalRandom.current().nextDouble() < .6) {
                         event.setMin(event.getMax());
                     } else {
-                        event.setMin(0);
-                        event.setMax(0);
+                        event.setMax(event.getMin());
                     }
                 }
             }

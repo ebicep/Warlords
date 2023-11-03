@@ -30,7 +30,7 @@ public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto 
 
     @Override
     public String getBonus() {
-        return "All your attacks have a 40% chance to do max damage, and a 60% chance to do no damage.";
+        return "All your attacks have a 60% chance to do max damage, and a 40% chance to do min damage.";
     }
 
     @Override
@@ -56,11 +56,10 @@ public class ScrollOfUncertainty extends SpecialDeltaTome implements CraftsInto 
             @Override
             public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
                 if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
-                    if (ThreadLocalRandom.current().nextDouble() <= .4) {
+                    if (ThreadLocalRandom.current().nextDouble() <= .6) {
                         event.setMin(event.getMax());
                     } else {
-                        event.setMin(0);
-                        event.setMax(0);
+                        event.setMax(event.getMin());
                     }
                 }
             }

@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -26,23 +27,26 @@ public class MonaLisasPalms extends SpecialOmegaGauntlet implements AppliesToWar
     }
 
     @Override
-    public String getName() {
-        return "Mona Lisa's Palms";
-    }
-
-    @Override
-    public String getBonus() {
-        return "Weapon right-clicks have a 1% chance to insta-kill their target (Excluding Bosses).";
-    }
-
-    @Override
     public String getDescription() {
         return "I was only 9 years old...";
     }
 
     @Override
+    public String getBonus() {
+        return "Ranged right-clicks have a 1% chance to insta-kill their target (Excluding Bosses).";
+    }
+
+    @Override
+    public String getName() {
+        return "Mona Lisa's Palms";
+    }
+
+    @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         String weaponRightClick = warlordsPlayer.getSpec().getWeapon().getName();
+        if (!Utils.isProjectile(weaponRightClick)) {
+            return;
+        }
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
             @EventHandler
@@ -70,7 +74,6 @@ public class MonaLisasPalms extends SpecialOmegaGauntlet implements AppliesToWar
                     event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
                 }
             }
-
         });
     }
 }

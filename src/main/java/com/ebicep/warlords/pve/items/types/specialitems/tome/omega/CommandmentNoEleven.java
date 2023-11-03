@@ -28,7 +28,7 @@ public class CommandmentNoEleven extends SpecialOmegaTome implements AppliesToWa
 
     @Override
     public String getBonus() {
-        return "+15% chance for Zenith to drop a Zenith Star.";
+        return "+25% chance for Zenith to drop a Zenith Star.";
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CommandmentNoEleven extends SpecialOmegaTome implements AppliesToWa
                 if (event.getMobDrop() != MobDrop.ZENITH_STAR) {
                     return;
                 }
-                event.addModifier(.15);
+                event.addModifier(.25);
             }
         });
     }

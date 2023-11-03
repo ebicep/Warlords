@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import java.util.LinkedHashMap;
@@ -31,7 +32,7 @@ public class LilithsClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
 
     @Override
     public String getBonus() {
-        return "Double the amount of Legendary Fragments you gain but reduces the amount of coins you gain to 0.";
+        return "Double the amount of Legendary Fragments you gain but halves the amount of coins you gain.";
     }
 
     @Override
@@ -43,16 +44,16 @@ public class LilithsClaws extends SpecialOmegaGauntlet implements AppliesToWarlo
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         warlordsPlayer.getGame().registerEvents(new Listener() {
 
-            @EventHandler
+            @EventHandler(priority = EventPriority.HIGHEST)
             public void onEvent(WarlordsCoinSummaryEvent event) {
                 if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
                     return;
                 }
                 LinkedHashMap<String, Long> currencyToAdd = event.getCurrencyToAdd();
-                currencyToAdd.forEach((s, aLong) -> currencyToAdd.put(s, 0L));
+                currencyToAdd.forEach((s, aLong) -> currencyToAdd.put(s, aLong / 2));
             }
 
-            @EventHandler
+            @EventHandler(priority = EventPriority.HIGHEST)
             public void onEvent(WarlordsLegendFragmentGainEvent event) {
                 if (!Objects.equals(event.getWarlordsEntity(), warlordsPlayer)) {
                     return;

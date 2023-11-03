@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.EggSac;
 import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.flags.Spider;
 import com.ebicep.warlords.util.pve.SkullID;
@@ -24,8 +25,8 @@ import java.util.Objects;
 public class SpiderGauntlet extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
     public static final HashMap<BasicStatPool, Float> STAT_POOL = new HashMap<>() {{
-        put(BasicStatPool.DAMAGE, 3.50f);
-        put(BasicStatPool.HEALING, 3.50f);
+        put(BasicStatPool.DAMAGE, 35f);
+        put(BasicStatPool.HEALING, 35f);
         put(BasicStatPool.CRIT_CHANCE, 20f);
         put(BasicStatPool.CRIT_MULTI, 30f);
 
@@ -54,8 +55,8 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
                 WarlordsEntity attacker = event.getAttacker();
                 if (victim instanceof WarlordsNPC warlordsNPC && Objects.equals(attacker, warlordsPlayer)) {
                     AbstractMob mob = warlordsNPC.getMob();
-                    if (mob instanceof Spider || mob instanceof EventEggSac) {
-                        return currentDamageValue * 1.3f;
+                    if (mob instanceof Spider || mob instanceof EventEggSac || mob instanceof EggSac) {
+                        return currentDamageValue * 1.1f;
                     }
                 }
                 return currentDamageValue;
@@ -96,6 +97,6 @@ public class SpiderGauntlet extends AbstractFixedItem implements FixedItemApplie
 
     @Override
     public String getEffectDescription() {
-        return "Deal 30% more damage to Spiders and Egg Sacs.";
+        return "Deal 10% more damage to Spiders and Egg Sacs.";
     }
 }
