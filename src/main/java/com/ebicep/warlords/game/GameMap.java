@@ -4862,8 +4862,8 @@ public enum GameMap {
     },
     GORGE_REMASTERED_SIEGE(
             "Gorge Remastered",
-            10,
-            6,
+            12,
+            8,
             60 * SECOND,
             "GorgeRemastered2",
             1,
