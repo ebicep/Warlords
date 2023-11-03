@@ -121,7 +121,7 @@ public class AdminCommand extends BaseCommand {
     @Description("Bypasses interact cancel")
     public void bypassInteract(CommandIssuer issuer) {
         if (issuer.isPlayer()) {
-            Player player = (Player) issuer;
+            Player player = issuer.getIssuer();
             if (BYPASS_INTERACT_CANCEL.contains(player.getUniqueId())) {
                 BYPASS_INTERACT_CANCEL.remove(player.getUniqueId());
                 ChatChannels.sendDebugMessage(player, Component.text("Disabled Bypassing Interact Cancel", NamedTextColor.GREEN));

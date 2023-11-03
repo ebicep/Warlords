@@ -27,6 +27,9 @@ public class PayloadBrain {
         // diagonal up and down
         add(locationBuilder -> locationBuilder.forward(1).addY(1));
         add(locationBuilder -> locationBuilder.forward(1).addY(-1));
+        // diagonal up and down and left and right
+        add(locationBuilder -> locationBuilder.forward(1).addY(1).left(1));
+        add(locationBuilder -> locationBuilder.forward(1).addY(1).right(1));
     }};
     private final Location start;
     private final List<PathEntry> path = new ArrayList<>();
