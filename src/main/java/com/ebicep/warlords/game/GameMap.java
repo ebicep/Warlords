@@ -2306,6 +2306,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.001, Mob.CREEPY_BOMBER)
                     )
                     .add(55, new SimpleWave(35, 5 * SECOND, null)
                             //basic
@@ -2342,6 +2343,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.002, Mob.CREEPY_BOMBER)
                     )
                     .add(60, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
                             .add(Mob.CHESSKING)
@@ -2382,6 +2384,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.001, Mob.CREEPY_BOMBER)
                     )
                     .add(65, new SimpleWave(40, 5 * SECOND, null)
                             //basic
@@ -2419,6 +2422,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.001, Mob.CREEPY_BOMBER)
                     )
                     .add(70, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
                             .add(Mob.ILLUMINA)
@@ -2459,6 +2463,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.002, Mob.CREEPY_BOMBER)
                     )
                     .add(75, new SimpleWave(45, 5 * SECOND, null)
                             //basic
@@ -2496,7 +2501,7 @@ public enum GameMap {
                             .add(0.5, Mob.OVERGROWN_ZOMBIE)
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
-                            .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.02, Mob.CELESTIAL_OPUS)
                     )
                     .add(80, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
                             .add(Mob.MAGMATIC_OOZE)
@@ -2538,6 +2543,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.003, Mob.CREEPY_BOMBER)
                     )
                     .add(85, new SimpleWave(50, 5 * SECOND, null)
                             //basic
@@ -2576,6 +2582,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.003, Mob.CREEPY_BOMBER)
                     )
                     .add(90, new SimpleWave(2, 10 * SECOND, Component.text("Boss"))
                             .add(Mob.MITHRA)
@@ -2617,6 +2624,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.004, Mob.CREEPY_BOMBER)
                     )
                     .add(95, new SimpleWave(50, 5 * SECOND, null)
                             //basic
@@ -2655,6 +2663,7 @@ public enum GameMap {
                             .add(0.01, Mob.CELESTIAL_BOW_WIELDER)
                             .add(0.01, Mob.CELESTIAL_SWORD_WIELDER)
                             .add(0.01, Mob.CELESTIAL_OPUS)
+                            .add(0.004, Mob.CREEPY_BOMBER)
                     )
                     .add(100, new SimpleWave(1, 10 * SECOND, Component.text("Boss"))
                             .add(Mob.VOID)
@@ -2690,6 +2699,7 @@ public enum GameMap {
                                     //.add(0, Mobs.RIFT_WALKER)
                                     // forgotten
                                     .add(0.1, Mob.NIGHTMARE_ZOMBIE)
+                                    .add(0.005, Mob.CREEPY_BOMBER)
                             //.add(0, Mobs.FORGOTTEN_LANCER)
                     )
                     .add(102, new SimpleWave(80, 2 * SECOND, null)

@@ -6,6 +6,7 @@ import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
 import com.ebicep.warlords.pve.mobs.bosses.Void;
 import com.ebicep.warlords.pve.mobs.bosses.*;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.*;
+import com.ebicep.warlords.pve.mobs.creeper.CreepyBomber;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventCalamityCore;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventExiledCore;
 import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventIllumina;
@@ -281,6 +282,7 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 0, 0),
             Weapons.ARMBLADE.getItem()
     )),
+    CREEPY_BOMBER(EntityType.CREEPER, CreepyBomber.class, CreepyBomber::new, CreepyBomber::new, null),
 
     // Champion
     NIGHTMARE_ZOMBIE(EntityType.ZOMBIE, NightmareZombie.class, NightmareZombie::new, NightmareZombie::new, new Utils.SimpleEntityEquipment(
