@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -29,7 +30,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-public class Fireball extends AbstractProjectile implements Splash {
+public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, Splash {
 
     private int maxFullDistance = 50;
     private float directHitMultiplier = 15;
