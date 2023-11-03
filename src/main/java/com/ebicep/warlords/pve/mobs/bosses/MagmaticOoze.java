@@ -577,11 +577,9 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     // randomly go left or right 1 block
                     // go forward start 1 block forward
                     List<LocationBuilder> locations = new ArrayList<>();
-                    int yaw = (int) start.getYaw() / 45 * 45;
                     LocationBuilder location = new LocationBuilder(start)
-                            .pitch(0)
-                            .yaw(yaw);
-                    float offset = yaw * 90 == 0 ? 1f : 1.415f;
+                            .pitch(0);
+                    float offset = 1;
                     while (locations.size() < MAX_FISSURE_LENGTH) {
                         for (int i = 0; i < 2 + ThreadLocalRandom.current().nextInt(3); i++) {
                             location.forward(offset);
