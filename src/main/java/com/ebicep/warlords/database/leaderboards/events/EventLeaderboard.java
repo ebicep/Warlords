@@ -37,7 +37,7 @@ public class EventLeaderboard {
     private final BiFunction<DatabasePlayer, Long, String> stringFunction;
     private final Comparator<DatabasePlayer> comparator;
     private boolean hidden = false;
-    private Predicate<DatabasePlayer> filter = null;
+    private Predicate<DatabasePlayer> filter;
 
 
     public EventLeaderboard(
@@ -59,6 +59,17 @@ public class EventLeaderboard {
             BiFunction<DatabasePlayer, Long, Number> valueFunction,
             BiFunction<DatabasePlayer, Long, String> stringFunction
     ) {
+        this(eventTime, title, location, valueFunction, stringFunction, null);
+    }
+
+    public EventLeaderboard(
+            Long eventTime,
+            String title,
+            Location location,
+            BiFunction<DatabasePlayer, Long, Number> valueFunction,
+            BiFunction<DatabasePlayer, Long, String> stringFunction,
+            Predicate<DatabasePlayer> filter
+    ) {
         this.eventTime = eventTime;
         this.title = title;
         this.location = location;
@@ -70,6 +81,7 @@ public class EventLeaderboard {
             BigDecimal value2 = new BigDecimal(valueFunction.apply(o2, eventTime).toString());
             return value2.compareTo(value1);
         };
+        this.filter = filter;
     }
 
     public void resetHolograms(Predicate<DatabasePlayer> externalFilter, String categoryName, String subTitle) {

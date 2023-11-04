@@ -1063,7 +1063,14 @@ public enum GameEvents {
                             .getGardenOfHesperidesEventStats()
                             .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
                             .getTartarusStats()
-                            .getFastestGameFinished() / 20)
+                            .getFastestGameFinished() / 20),
+                    databasePlayer -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getGardenOfHesperidesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
+                            .getTartarusStats()
+                            .getFastestGameFinished() == 0
             );
             EventLeaderboard totalBoard = new EventLeaderboard(
                     eventStart,
