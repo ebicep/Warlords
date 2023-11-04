@@ -120,7 +120,7 @@ public class BountyMenu {
                                 .get(),
                         (m, e) -> {
                             for (AbstractBounty bounty : activeBounties) {
-                                if (bounty.isStarted() && bounty.getProgress() == null) {
+                                if (bounty != null && bounty.isStarted() && bounty.getProgress() == null) {
                                     claimBounty(player, collection, databasePlayer, bounty, bountyInfoName);
                                 }
                             }
