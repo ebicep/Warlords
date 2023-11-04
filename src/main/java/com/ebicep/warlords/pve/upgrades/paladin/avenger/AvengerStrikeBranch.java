@@ -35,7 +35,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         ability.setMinDamageHeal(minDamage * value);
                         ability.setMaxDamageHeal(maxDamage * value);
                     }
-                }, 7.5f)
+                }, 5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
