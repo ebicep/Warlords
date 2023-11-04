@@ -195,7 +195,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God {
 
     @Override
     public double weaponDropRate() {
-        return BossMob.super.weaponDropRate() * 1.5;
+        return BossMob.super.weaponDropRate() * 3;
     }
 
     @Override

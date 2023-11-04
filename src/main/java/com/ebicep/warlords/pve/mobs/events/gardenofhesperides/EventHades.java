@@ -192,6 +192,6 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
 
     @Override
     public double weaponDropRate() {
-        return BossMob.super.weaponDropRate() * 1.5;
+        return BossMob.super.weaponDropRate() * 3;
     }
 }
