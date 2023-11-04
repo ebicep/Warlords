@@ -230,7 +230,7 @@ public abstract class AbstractItem {
         itemBuilder.addLore(
                 Component.textOfChildren(
                         Component.text("  ", NamedTextColor.AQUA),
-                        type.getModifierDescriptionCalculated(perTier)
+                        getType().getModifierDescriptionCalculated(perTier)
                 )
         );
     }

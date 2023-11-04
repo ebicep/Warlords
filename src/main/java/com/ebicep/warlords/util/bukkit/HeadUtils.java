@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -49,9 +50,16 @@ public class HeadUtils {
             return CraftItemStack.asBukkitCopy(PLAYER_HEADS.get(uuid));
         }
         ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-        skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(uuid));
-        playerSkull.setItemMeta(skullMeta);
+        try {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            if (offlinePlayer.getName() != null) {
+                SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
+                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(uuid));
+                playerSkull.setItemMeta(skullMeta);
+            }
+        } catch (Exception e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+        }
         PLAYER_HEADS.put(uuid, CraftItemStack.asNMSCopy(playerSkull));
         return playerSkull;
     }
