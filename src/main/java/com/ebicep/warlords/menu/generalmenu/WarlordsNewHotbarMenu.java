@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
 import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
@@ -306,6 +307,13 @@ public class WarlordsNewHotbarMenu {
                     openLevelingRewardsMenuForClass(player, databasePlayer, classes);
                 });
             }
+            menu.setItem(8, 3,
+                    new ItemBuilder(Material.NETHERITE_SCRAP)
+                            .name(Component.text("Level Rewards"))
+                            .lore(Currencies.ASCENDANT_SHARD.getCostColoredName(Currencies.ASCENDANT_SHARD.getFromPlayer(databasePlayer)))
+                            .get(),
+                    (m, e) -> {}
+            );
             menu.openForPlayer(player);
         }
 
@@ -481,6 +489,13 @@ public class WarlordsNewHotbarMenu {
                     openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
                 });
             }
+            menu.setItem(8, 6,
+                    new ItemBuilder(Material.NETHERITE_SCRAP)
+                            .name(Component.text("Level Rewards"))
+                            .lore(Currencies.ASCENDANT_SHARD.getCostColoredName(Currencies.ASCENDANT_SHARD.getFromPlayer(databasePlayer)))
+                            .get(),
+                    (m, e) -> {}
+            );
             menu.openForPlayer(player);
         }
     }
