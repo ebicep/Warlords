@@ -379,7 +379,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public void subtractCurrentCooldown(float cooldown) {
-        if (this instanceof CanReduceCooldowns canReduceCooldowns && canReduceCooldowns.canReduceCooldowns()) {
+        if (inPve && this instanceof CanReduceCooldowns canReduceCooldowns && canReduceCooldowns.canReduceCooldowns()) {
             return;
         }
         subtractCurrentCooldown0(cooldown);
