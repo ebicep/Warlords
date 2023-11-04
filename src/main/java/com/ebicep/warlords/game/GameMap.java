@@ -4174,12 +4174,11 @@ public enum GameMap {
                     .onPerMobKill(Mob.EVENT_TERAS_CYCLOPS, 150)
                     .onPerMobKill(Mob.EVENT_TERAS_SIREN, 150)
                     .onPerMobKill(Mob.EVENT_TERAS_DRYAD, 150)
-                    .onPerMobKill(Mob.EVENT_APOLLO, 500)
-                    .onPerMobKill(Mob.EVENT_ARES, 500)
-                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 500)
-                    .onPerMobKill(Mob.EVENT_ATHENA, 500)
-                    .onPerMobKill(Mob.EVENT_CRONUS, 500)
-
+                    .onPerMobKill(Mob.EVENT_APOLLO, 1500)
+                    .onPerMobKill(Mob.EVENT_ARES, 1500)
+                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 1500)
+                    .onPerMobKill(Mob.EVENT_ATHENA, 1500)
+                    .onPerMobKill(Mob.EVENT_CRONUS, 1500)
             );
             options.add(new CurrencyOnEventOption()
                     .startWith(120000)
