@@ -8,6 +8,10 @@ public class MathUtils {
         return value < min ? min : Math.min(value, max);
     }
 
+    public static double clamp(double value, double min, double max) {
+        return value < min ? min : Math.min(value, max);
+    }
+
     public static int generateRandomValueBetweenInclusive(int min, int max) {
         return ThreadLocalRandom.current().nextInt(min, max + 1);
     }

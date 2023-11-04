@@ -29,6 +29,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -2955,7 +2956,7 @@ public abstract class WarlordsEntity {
      */
     public void giveAbsorption(double amount) {
         if (entity instanceof Player player) {
-            player.setAbsorptionAmount(amount);
+            player.setAbsorptionAmount(MathUtils.clamp(amount, 0, Double.MAX_VALUE));
         }
     }
 
