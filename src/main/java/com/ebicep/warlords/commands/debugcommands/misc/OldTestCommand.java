@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
@@ -12,9 +13,7 @@ import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Skeleton;
 
 import java.awt.*;
 
@@ -138,10 +137,12 @@ public class OldTestCommand implements CommandExecutor {
 //
 //            mount.getEntity().addPassenger(npc.getEntity());
 
-            Skeleton skeleton = player.getWorld().spawn(player.getLocation(), Skeleton.class);
-            player.getWorld().spawn(player.getLocation(), Horse.class, horse -> {
-                horse.addPassenger(skeleton);
-            });
+            DatabaseGameEvent.startGameEvent();
+
+//            Skeleton skeleton = player.getWorld().spawn(player.getLocation(), Skeleton.class);
+//            player.getWorld().spawn(player.getLocation(), Horse.class, horse -> {
+//                horse.addPassenger(skeleton);
+//            });
 
 //            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
 //            hologramTrait.setUseDisplayEntities(true);

@@ -166,6 +166,10 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
 
             @Override
             public void run() {
+                if (resurrected.getWarlordsNPC().isDead() || resurrected.getNpc().getStoredLocation() == null) {
+                    this.cancel();
+                    return;
+                }
                 EffectUtils.displayParticle(
                         Particle.BLOCK_CRACK,
                         spawnLocation,

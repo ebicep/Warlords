@@ -164,11 +164,11 @@ public class ExperienceManager {
                 Pair<String, Long> perBonus = null;
                 Pair<String, Long> winBonus = null;
                 if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
-                    int maxWaves = difficulty.getMaxWaves();
+                    int maxWaves = waveDefenseOption.getMaxWave();
                     int wavesCleared = Math.min(waveDefenseOption.getWavesCleared(), maxWaves);
                     perBonus = new Pair<>("Waves Cleared", (long) wavesCleared * experienceGainOption.getPlayerExpPer());
                     if (wavesCleared == maxWaves) {
-                        winBonus = new Pair<>("Wave " + maxWaves + " Clear Bonus",
+                        winBonus = new Pair<>("Win Bonus",
                                 (long) (experienceGainOption.getPlayerExpGameWinBonus() * difficulty.getRewardsMultiplier())
                         );
                     }
