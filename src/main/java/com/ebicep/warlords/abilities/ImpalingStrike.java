@@ -154,7 +154,7 @@ public class ImpalingStrike extends AbstractStrike {
                 }
                 float healValue = currentDamageValue * healingMultiplier;
                 if (inPve) {
-                    healValue = Math.min(1000, healValue);
+                    healValue = Math.min(500, healValue);
                 }
                 event.getAttacker().addHealingInstance(
                         wp,
