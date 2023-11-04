@@ -4327,8 +4327,13 @@ public enum GameMap {
                     warlordsNPC.getMob().onSpawn(this);
 
                     int playerCount = playerCount();
+                    boolean fourManPlus = playerCount >= 4;
                     float healthMultiplier = .5f * playerCount; // 1 / 1.5 / 2
-                    float damageMultiplier = playerCount >= 4 ? 1.15f : 1;
+                    float damageMultiplier = fourManPlus ? 1.25f : 1;
+
+                    if (fourManPlus) {
+                        healthMultiplier += .5f;
+                    }
 
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
                     warlordsNPC.setMaxBaseHealth(newBaseHealth);
