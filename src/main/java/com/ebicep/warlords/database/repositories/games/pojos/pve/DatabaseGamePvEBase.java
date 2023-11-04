@@ -106,11 +106,10 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
             playerPvE.getMobDeaths().forEach((s, aLong) -> mobDeathsMap.merge(s, aLong, Long::sum));
         }
 
-        //TODO
-//        mobKillsMap.forEach((mob, aLong) -> mobKills.getLines()
-//                                                    .appendText(Component.text(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
-//        mobDeathsMap.forEach((mob, aLong) -> mobDeaths.getLines()
-//                                                      .appendText(Component.text(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+        mobKillsMap.forEach((mob, aLong) -> mobKills.getLines()
+                                                    .appendText(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+        mobDeathsMap.forEach((mob, aLong) -> mobDeaths.getLines()
+                                                      .appendText(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
     }
 
     @Override
