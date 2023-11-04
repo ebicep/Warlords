@@ -36,6 +36,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
@@ -362,7 +363,7 @@ public class WarlordsEvents implements Listener {
         wpAttacker.getMinuteStats().addMeleeHits();
 
         if (wpAttacker instanceof WarlordsNPC warlordsNPC) {
-            if (!warlordsNPC.getCooldownManager().hasCooldown(SoulShackle.class)) {
+            if (!warlordsNPC.getCooldownManager().hasCooldown(SoulShackle.class) && !(warlordsNPC.getMob() instanceof Unsilencable)) {
                 if (!(warlordsNPC.getMinMeleeDamage() == 0)) {
                     wpVictim.addDamageInstance(
                             wpAttacker,

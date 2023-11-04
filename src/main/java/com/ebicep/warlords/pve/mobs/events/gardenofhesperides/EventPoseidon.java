@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class EventPoseidon extends AbstractMob implements BossMob, God {
+public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilencable {
 
     public EventPoseidon(Location spawnLocation) {
         this(spawnLocation, "Poseidon", 225000, .33f, 25, 725, 846);

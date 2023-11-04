@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -31,7 +32,7 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class EventZeus extends AbstractMob implements BossMob, God {
+public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable {
 
     public EventZeus(Location spawnLocation) {
         this(spawnLocation, "Zeus", 250000, .33f, 30, 825, 946);
