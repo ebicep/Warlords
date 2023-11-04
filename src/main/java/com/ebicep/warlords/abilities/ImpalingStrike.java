@@ -142,7 +142,7 @@ public class ImpalingStrike extends AbstractStrike {
         ) {
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (inPve && totalHealingDone.get() > 1000) {
+                if (inPve && totalHealingDone.get() >= 1000) {
                     setTicksLeft(0);
                     return;
                 }
@@ -152,11 +152,15 @@ public class ImpalingStrike extends AbstractStrike {
                 } else {
                     healingMultiplier = allyHealMultiplier;
                 }
+                float healValue = currentDamageValue * healingMultiplier;
+                if (inPve) {
+                    healValue = Math.min(1000, healValue);
+                }
                 event.getAttacker().addHealingInstance(
                         wp,
                         "Leech",
-                        currentDamageValue * healingMultiplier,
-                        currentDamageValue * healingMultiplier,
+                        healValue,
+                        healValue,
                         -1,
                         100
                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
