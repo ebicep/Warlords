@@ -4315,11 +4315,7 @@ public enum GameMap {
 
                 @Override
                 public float getSpawnCountMultiplier(int playerCount) {
-                    return switch (playerCount) {
-                        case 3 -> 1.2f;
-                        case 4 -> 1.5f;
-                        default -> 1;
-                    };
+                    return 1;
                 }
 
                 @Override
