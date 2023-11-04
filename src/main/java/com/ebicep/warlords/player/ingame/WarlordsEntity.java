@@ -424,7 +424,7 @@ public abstract class WarlordsEntity {
             debugMessage.append(Component.newline())
                         .append(Component.text("Spec Damage Reduction: ", NamedTextColor.AQUA))
                         .append(Component.text(spec.getDamageResistance(), NamedTextColor.BLUE));
-            addAbsorbed(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f));
+            addAbsorbed(Math.max(0, damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
             appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
         }
 
