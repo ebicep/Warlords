@@ -4328,7 +4328,7 @@ public enum GameMap {
                     float damageMultiplier = fourManPlus ? 1.25f : 1;
 
                     if (fourManPlus) {
-                        healthMultiplier += .5f;
+                        healthMultiplier += .1f;
                     }
 
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
