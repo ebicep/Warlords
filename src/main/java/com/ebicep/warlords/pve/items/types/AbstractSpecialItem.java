@@ -63,6 +63,9 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(getBonusLore());
         addItemScore(itemBuilder, false);
+        if (isFavorite()) {
+            itemBuilder.addLore(Component.empty(), Component.text("FAVORITE", NamedTextColor.LIGHT_PURPLE));
+        }
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(WordWrap.wrap(Component.text(getDescription(), NamedTextColor.DARK_GRAY, TextDecoration.ITALIC), 160));
         return itemBuilder;
