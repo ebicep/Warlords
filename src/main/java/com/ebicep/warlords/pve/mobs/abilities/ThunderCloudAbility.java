@@ -90,25 +90,20 @@ public class ThunderCloudAbility extends AbstractPveAbility {
             this.size = size;
             ThreadLocalRandom random = ThreadLocalRandom.current();
             int startingYOffset = random.nextInt(5, 8);
-            for (int i = 0; i < 3; i++) {
-                double yOffset = startingYOffset + i * .35;
-                int cloudColor = CLOUD_COLORS[i];
-                AreaEffect areaEffect = new AreaEffect(
-                        yOffset,
-                        Particle.REDSTONE,
-                        new Particle.DustOptions(Color.fromRGB(cloudColor, cloudColor, cloudColor), 1)
-                ).particlesPerSurface(1.15 - (i * 0.05));
-                effects.add(new CircleEffect(
-                        game,
-                        null,
-                        floorLocation.clone(),
-                        this.size - i,
-                        areaEffect
-                ));
-                if (i == 0) {
-                    floorLocation.clone().add(random.nextDouble(1) - .5, 0, random.nextDouble(1) - .5);
-                }
-            }
+            double yOffset = startingYOffset + .35;
+            int cloudColor = CLOUD_COLORS[random.nextInt(3)];
+            AreaEffect areaEffect = new AreaEffect(
+                    yOffset,
+                    Particle.REDSTONE,
+                    new Particle.DustOptions(Color.fromRGB(cloudColor, cloudColor, cloudColor), 5)
+            ).particlesPerSurface(.4);
+            effects.add(new CircleEffect(
+                    game,
+                    null,
+                    floorLocation.clone(),
+                    this.size,
+                    areaEffect
+            ));
         }
 
         public boolean tick(@Nonnull WarlordsEntity warlordsEntity) {
