@@ -249,7 +249,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                     wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
 
                     for (AbstractAbility ability : wp.getAbilities()) {
-                        ability.subtractCurrentCooldown(pveMasterUpgrade ? 1.75f : 1.5f);
+                        ability.subtractCurrentCooldownForce(pveMasterUpgrade ? 1.75f : 1.5f);
                     }
                     wp.updateItems();
 

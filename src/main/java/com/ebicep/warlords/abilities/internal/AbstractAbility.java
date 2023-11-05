@@ -359,12 +359,12 @@ public abstract class AbstractAbility implements AbilityIcon {
         cooldown.tick();
         energyCost.tick();
         if (getCooldownValue() > 0) {
-            subtractCurrentCooldown0(.05f);
+            subtractCurrentCooldownForce(.05f);
         }
         checkSecondaryAbilities();
     }
 
-    public void subtractCurrentCooldown0(float cooldown) {
+    public void subtractCurrentCooldownForce(float cooldown) {
         if (currentCooldown != 0) {
             if (currentCooldown - cooldown < 0) {
                 currentCooldown = 0;
@@ -382,7 +382,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         if (inPve && this instanceof CanReduceCooldowns canReduceCooldowns && canReduceCooldowns.canReduceCooldowns()) {
             return;
         }
-        subtractCurrentCooldown0(cooldown);
+        subtractCurrentCooldownForce(cooldown);
     }
 
     public boolean isInPve() {
