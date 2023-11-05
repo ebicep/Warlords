@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.configuration;
 
 import com.ebicep.warlords.guilds.GuildSpendable;
 import com.ebicep.warlords.pve.Currencies;
+import com.ebicep.warlords.pve.ExpSpendable;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import org.springframework.core.convert.converter.Converter;
@@ -23,6 +24,11 @@ public class StringToSpendableConverter implements Converter<String, Spendable> 
             }
         }
         for (GuildSpendable value : GuildSpendable.VALUES) {
+            if (value.name().equalsIgnoreCase(s)) {
+                return value;
+            }
+        }
+        for (ExpSpendable value : ExpSpendable.VALUES) {
             if (value.name().equalsIgnoreCase(s)) {
                 return value;
             }

@@ -41,6 +41,7 @@ public enum ExpSpendable implements Spendable {
         }
     };
 
+    public static final ExpSpendable[] VALUES = values();
     public final String name;
     public final TextColor textColor;
 

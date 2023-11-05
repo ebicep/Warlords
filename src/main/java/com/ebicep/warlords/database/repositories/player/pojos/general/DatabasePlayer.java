@@ -23,6 +23,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemsManager;
 import com.ebicep.warlords.pve.items.menu.ItemMichaelMenu;
 import com.ebicep.warlords.pve.rewards.types.CompensationReward;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
@@ -460,11 +461,17 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
                     return true;
                 }
                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                int totalPrestige = Arrays.stream(Specializations.VALUES)
-                                          .mapToInt(spec -> databasePlayer.getSpec(spec).getPrestige())
-                                          .sum();
-                if (totalPrestige > 0) {
-                    pveStats.getCompensationRewards().add(new CompensationReward.AscendantShardPrestigePatch(totalPrestige * 2L));
+                for (CompensationReward compensationReward : pveStats.getCompensationRewards()) {
+                    if (compensationReward instanceof CompensationReward.AscendantShardPrestigePatch prestigePatch) {
+                        Long previousValue = prestigePatch.getRewards().get(Currencies.ASCENDANT_SHARD);
+                        if (previousValue == null) {
+                            ChatUtils.MessageType.WARLORDS.sendErrorMessage("EOD_ASCENDANT_SHARD_2: previousValue is null");
+                            ChatUtils.MessageType.WARLORDS.sendErrorMessage(String.valueOf(prestigePatch));
+                            return true;
+                        }
+                        pveStats.getCompensationRewards().add(new CompensationReward.AscendantShardPrestigePatch(previousValue * 2L));
+                        return true;
+                    }
                 }
                 return true;
             }

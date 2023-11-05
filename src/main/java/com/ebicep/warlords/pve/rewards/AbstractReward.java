@@ -81,4 +81,12 @@ public abstract class AbstractReward {
         this.timeClaimed = Instant.now();
     }
 
+    @Override
+    public String toString() {
+        return "AbstractReward{" +
+                "rewards=" + rewards +
+                ", from='" + from + '\'' +
+                ", timeClaimed=" + timeClaimed +
+                '}';
+    }
 }
