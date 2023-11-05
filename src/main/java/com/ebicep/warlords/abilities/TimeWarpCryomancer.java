@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.state.EndState;
@@ -16,6 +17,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.TimeWarpBranchCryomancer;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -43,19 +45,23 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
         List<Location> warpTrail = new ArrayList<>();
 
 
-        PveOption pveOption = wp.getGame()
-                                .getOptions()
-                                .stream()
-                                .filter(PveOption.class::isInstance)
-                                .map(PveOption.class::cast)
-                                .findFirst()
-                                .orElse(null);
+        Game game = wp.getGame();
+        PveOption pveOption = game
+                .getOptions()
+                .stream()
+                .filter(PveOption.class::isInstance)
+                .map(PveOption.class::cast)
+                .findFirst()
+                .orElse(null);
         CryoPod cryoPod;
         if (pveMasterUpgrade && pveOption != null) {
             cryoPod = new CryoPod(warpLocation, wp.getName()) {
 
                 @Override
                 public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+                    if (wp.isDead()) {
+                        return;
+                    }
                     PlayerFilter.entitiesAround(warpLocation, 5, 5, 5)
                                 .aliveEnemiesOf(wp)
                                 .forEach(warlordsEntity -> {
@@ -64,16 +70,18 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
 
                                     }
                                 });
-                    new GameRunnable(wp.getGame()) {
+                    new GameRunnable(game) {
                         @Override
                         public void run() {
-                            PlayerFilter.playingGame(wp.getGame())
-                                        .aliveEnemiesOf(wp)
-                                        .forEach(warlordsEntity -> {
-                                            if (warlordsEntity instanceof WarlordsNPC) {
-                                                ((WarlordsNPC) warlordsEntity).getMob().setTarget(wp);
-                                            }
-                                        });
+                            if (wp.isDead()) {
+                                this.cancel();
+                                return;
+                            }
+                            PlayerFilterGeneric.playingGameWarlordsNPCs(game)
+                                               .filter(n -> n.getMob().getTarget().equals(npc.getEntity()))
+                                               .forEach(n -> {
+                                                   n.getMob().setTarget(wp);
+                                               });
                         }
                     }.runTaskLater(5);
                 }
@@ -125,7 +133,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
+                    if (wp.isDead() || game.getState() instanceof EndState) {
                         return;
                     }
 

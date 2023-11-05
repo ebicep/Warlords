@@ -3,11 +3,14 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.RandomCollection;
+import net.citizensnpcs.api.ai.EntityTarget;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -49,12 +52,22 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
         if (warlordsEntityTarget.isDead()) {
             return BehaviorStatus.SUCCESS;
         }
-        if (npc.getNavigator().getEntityTarget() == null) {
-            return BehaviorStatus.FAILURE;
-        }
         if (!warlordsEntityTarget.getEntity().isValid()) {
             return BehaviorStatus.SUCCESS;
         }
+        EntityTarget entityTarget = npc.getNavigator().getEntityTarget();
+        if (entityTarget == null) {
+            return BehaviorStatus.FAILURE;
+        }
+        // safe guard
+        if (entityTarget.getTarget() instanceof Player player && player.getGameMode() == GameMode.SPECTATOR) {
+            return BehaviorStatus.FAILURE;
+
+        }
+//        WarlordsEntity currentTarget = Warlords.getPlayer(entityTarget.getTarget());
+//        if (!Objects.equals(currentTarget, warlordsEntityTarget)) {
+//            return BehaviorStatus.FAILURE;
+//        }
         return BehaviorStatus.RUNNING;
     }
 
