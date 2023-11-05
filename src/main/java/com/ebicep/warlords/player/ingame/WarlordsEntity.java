@@ -350,6 +350,7 @@ public abstract class WarlordsEntity {
         boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
         boolean pierceDamage = flags.contains(InstanceFlags.PIERCE);
         boolean ignoreDamageReduction = pierceDamage || flags.contains(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY);
+        boolean noDamageBoost = flags.contains(InstanceFlags.IGNORE_DAMAGE_BOOST);
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
@@ -505,7 +506,11 @@ public abstract class WarlordsEntity {
 
             appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
+                float newDamageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
+                if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
+                    continue;
+                }
+                damageValue = newDamageValue;
                 if (previousDamageValue != damageValue) {
                     appendDebugMessage(debugMessage, 2, "Damage Value", previousDamageValue, damageValue, abstractCooldown);
                 }
@@ -620,7 +625,11 @@ public abstract class WarlordsEntity {
 
                 appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attackers Cooldowns");
                 for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-                    damageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
+                    float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
+                    if (newDamageValue > damageValue && noDamageBoost) { // no damage boost ignores attacker dmg increase
+                        continue;
+                    }
+                    damageValue = newDamageValue;
                     if (previousDamageValue != damageValue) {
                         appendDebugMessage(debugMessage, 2, "Damage Value", previousDamageValue, damageValue, abstractCooldown);
                     }

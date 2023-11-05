@@ -141,7 +141,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
         if (thornsDamage > maxThornsDamage) {
             thornsDamage = maxThornsDamage;
         }
-        attacker.addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, EnumSet.of(InstanceFlags.RECURSIVE));
+        attacker.addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, EnumSet.of(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST));
     }
 
     @Override
