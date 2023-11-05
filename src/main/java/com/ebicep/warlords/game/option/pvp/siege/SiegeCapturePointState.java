@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -70,6 +71,15 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
         if (teamCaptured) {
             game.addPoints(capturingTeam, 1);
             hideBossBars();
+            Map<UUID, SiegeStats> playerSiegeStats = siegeOption.getPlayerSiegeStats();
+            game.warlordsPlayers()
+                .forEach(warlordsPlayer -> {
+                    if (warlordsPlayer.getTeam() == capturingTeam) {
+                        playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new SiegeStats()).addPointsCaptured();
+                    } else {
+                        playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new SiegeStats()).addPointsCapturedFail();
+                    }
+                });
             return true;
         }
         return false;
@@ -110,6 +120,10 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
         }
         // check if multiple teams on point
         perTeam.entrySet().removeIf(teamListEntry -> teamListEntry.getValue().isEmpty());
+        perTeam.forEach((team, warlordsEntities) -> {
+            Map<UUID, SiegeStats> playerSiegeStats = siegeOption.getPlayerSiegeStats();
+            warlordsEntities.forEach(warlordsEntity -> playerSiegeStats.computeIfAbsent(warlordsEntity.getUuid(), uuid -> new SiegeStats()).addTimeOnPointTicks());
+        });
         if (perTeam.size() > 1) {
             return null;
         }
@@ -182,14 +196,14 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
             updateBossBar();
         }
 
-        public void addPercentage(float percentage) {
-            this.percentage += percentage;
-            updateBossBar();
-        }
-
         public void updateBossBar() {
             bossBar.progress(MathUtils.clamp(percentage / 100, 0, 1))
                    .name(Component.text(Math.round(percentage) + "%", NamedTextColor.WHITE));
+        }
+
+        public void addPercentage(float percentage) {
+            this.percentage += percentage;
+            updateBossBar();
         }
 
     }

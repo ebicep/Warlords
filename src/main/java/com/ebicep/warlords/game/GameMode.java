@@ -10,6 +10,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDu
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePvEOnslaught;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
+import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
@@ -580,10 +581,10 @@ public enum GameMode {
     SIEGE(
             "Siege",
             "Siege",
-            null,//new ItemStack(Material.ZOMBIE_HEAD),
-            null,
-            null,
-            1,
+            new ItemStack(Material.SCULK),
+            DatabaseGameSiege::new,
+            GamesCollections.SIEGE,
+            6,
             true
     ) {
         @Override
@@ -594,7 +595,9 @@ public enum GameMode {
             options.add(TextOption.Type.CHAT_CENTERED.create(
                     Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
                     Component.empty(),
-                    base.append(Component.text("Something about siege here!")),
+                    base.append(Component.text("Gain a point by either")),
+                    base.append(Component.text("capturing the point, escorting the payload,")),
+                    base.append(Component.text("or defending the payload!")),
                     Component.empty()
             ));
             options.add(TextOption.Type.TITLE.create(

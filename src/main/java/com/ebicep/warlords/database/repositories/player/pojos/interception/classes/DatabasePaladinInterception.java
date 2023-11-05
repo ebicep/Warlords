@@ -19,6 +19,7 @@ public class DatabasePaladinInterception extends DatabaseBaseInterception implem
         return new DatabaseBaseInterception[]{avenger, crusader, protector};
     }
 
+
     public DatabaseBaseInterception getAvenger() {
         return avenger;
     }
@@ -30,5 +31,4 @@ public class DatabasePaladinInterception extends DatabaseBaseInterception implem
     public DatabaseBaseInterception getProtector() {
         return protector;
     }
-
 }

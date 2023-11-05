@@ -17,16 +17,15 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SiegeOption implements Option {
 
     private final Map<Team, Location> teamPayloadStart = new HashMap<>();
     private final Location location;
-    private int ticksElapsed = 0;
+    private final Map<UUID, SiegeStats> playerSiegeStats = new HashMap<>();
+    private int totalTicksElapsed = 0;
+    private int stateTicksElapsed = 0;
     private Game game;
     private SiegeState state;
 
@@ -47,7 +46,7 @@ public class SiegeOption implements Option {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(state.getSidebarComponent(ticksElapsed));
+                return Collections.singletonList(state.getSidebarComponent(stateTicksElapsed));
             }
         });
         game.registerGameMarker(TimerSkipAbleMarker.class, new TimerSkipAbleMarker() {
@@ -82,8 +81,9 @@ public class SiegeOption implements Option {
                     this.cancel();
                     return;
                 }
-                boolean advanceStateFromTick = state.tick(ticksElapsed);
-                ticksElapsed++;
+                boolean advanceStateFromTick = state.tick(stateTicksElapsed);
+                totalTicksElapsed++;
+                stateTicksElapsed++;
                 if (!advanceStateFromTick) {
                     return;
                 }
@@ -104,7 +104,7 @@ public class SiegeOption implements Option {
         state.end();
         state = state.getNextState();
         state.start(game);
-        ticksElapsed = 0;
+        stateTicksElapsed = 0;
     }
 
     @Override
@@ -123,11 +123,19 @@ public class SiegeOption implements Option {
         return location;
     }
 
-    public int getTicksElapsed() {
-        return ticksElapsed;
+    public int getStateTicksElapsed() {
+        return stateTicksElapsed;
     }
 
     public SiegeState getState() {
         return state;
+    }
+
+    public Map<UUID, SiegeStats> getPlayerSiegeStats() {
+        return playerSiegeStats;
+    }
+
+    public int getTotalTicksElapsed() {
+        return totalTicksElapsed;
     }
 }
