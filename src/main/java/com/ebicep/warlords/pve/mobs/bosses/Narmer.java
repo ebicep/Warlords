@@ -197,7 +197,7 @@ public class Narmer extends AbstractMob implements BossMob {
                 Location location = warlordsNPC.getLocation();
 
                 if (dead.isTeammate(warlordsNPC)) {
-                    warlordsNPC.setHealth(warlordsNPC.getHealth() * 1.15f);
+                    warlordsNPC.setHealth(warlordsNPC.getHealth() * 1.05f);
                 }
 
                 if (acolytes.contains(dead)) {
