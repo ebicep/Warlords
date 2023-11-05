@@ -461,6 +461,29 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
         private InternalProjectile(WarlordsEntity shooter, Location startingLocation) {
             this.currentLocation = modifyProjectileStartingLocation(shooter, startingLocation);
+            boolean nanX = Double.isNaN(currentLocation.getX());
+            boolean nanYaw = Double.isNaN(currentLocation.getYaw());
+            boolean nanPitch = Double.isNaN(currentLocation.getPitch());
+            boolean nanY = Double.isNaN(currentLocation.getY());
+            boolean nanZ = Double.isNaN(currentLocation.getZ());
+            if (nanX || nanYaw || nanPitch || nanY || nanZ) {
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage("NaN: " + this);
+            }
+            if (nanX) {
+                currentLocation.setX(startingLocation.getX());
+            }
+            if (nanY) {
+                currentLocation.setY(startingLocation.getY());
+            }
+            if (nanZ) {
+                currentLocation.setZ(startingLocation.getZ());
+            }
+            if (nanPitch) {
+                currentLocation.setPitch(startingLocation.getPitch());
+            }
+            if (nanYaw) {
+                currentLocation.setYaw(startingLocation.getYaw());
+            }
             this.speed = getProjectileStartingSpeed(shooter, startingLocation);
             this.shooter = shooter;
             this.startingLocation = currentLocation.clone();
