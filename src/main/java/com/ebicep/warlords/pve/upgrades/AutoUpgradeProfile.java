@@ -48,7 +48,7 @@ public class AutoUpgradeProfile {
             Upgrade upgrade = entry.getUpgradeType().getUpgradeFunction.apply(upgradeBranch).get(entry.getUpgradeIndex());
             NamedTextColor textColor = upgrade.isUnlocked() ? NamedTextColor.GOLD : NamedTextColor.GRAY;
             Component position = Component.text((i + 1) + ". ", NamedTextColor.AQUA);
-            if (entry.getUpgradeType() == AutoUpgradeEntry.UpgradeType.MASTER) {
+            if (entry.getUpgradeType() == AutoUpgradeEntry.UpgradeType.MASTER || entry.getUpgradeType() == AutoUpgradeEntry.UpgradeType.MASTER2) {
                 lore.add(position.append(Component.text(upgradeBranch.getAbility().getName() + " - ", textColor))
                                  .append(Component.text(upgrade.getName(), NamedTextColor.RED, TextDecoration.BOLD)));
             } else {
