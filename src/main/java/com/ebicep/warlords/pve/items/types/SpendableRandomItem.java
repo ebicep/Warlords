@@ -19,6 +19,7 @@ public enum SpendableRandomItem implements Spendable {
 
     ;
 
+    public static final SpendableRandomItem[] VALUES = values();
     public final String name;
     public final TextColor textColor;
     public final Function<ItemType, AbstractItem> createItem;

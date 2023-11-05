@@ -4,6 +4,7 @@ import com.ebicep.warlords.guilds.GuildSpendable;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.ExpSpendable;
 import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.pve.items.types.SpendableRandomItem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import org.springframework.core.convert.converter.Converter;
 
@@ -29,6 +30,11 @@ public class StringToSpendableConverter implements Converter<String, Spendable> 
             }
         }
         for (ExpSpendable value : ExpSpendable.VALUES) {
+            if (value.name().equalsIgnoreCase(s)) {
+                return value;
+            }
+        }
+        for (SpendableRandomItem value : SpendableRandomItem.VALUES) {
             if (value.name().equalsIgnoreCase(s)) {
                 return value;
             }
