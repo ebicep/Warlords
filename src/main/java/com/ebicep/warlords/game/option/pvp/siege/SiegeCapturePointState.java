@@ -171,7 +171,7 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
                     Component.text("0%", NamedTextColor.WHITE),
                     0,
                     team.bossBarColor,
-                    BossBar.Overlay.NOTCHED_10
+                    BossBar.Overlay.PROGRESS
             );
             this.percentage = percentage;
             this.standingTimer = standingTimer;
