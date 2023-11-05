@@ -52,7 +52,8 @@ public class Chessking extends AbstractMob implements BossMob {
                 new Belch(),
                 new SpawnMobAbility(
                         20,
-                        Mob.SLIME_GUARD
+                        Mob.SLIME_GUARD,
+                        5
                 ) {
                     @Override
                     public int getSpawnAmount() {
@@ -61,7 +62,8 @@ public class Chessking extends AbstractMob implements BossMob {
                 },
                 new SpawnMobAbility(
                         60,
-                        Mob.SLIMY_CHESS
+                        Mob.SLIMY_CHESS,
+                        15
                 ) {
                     @Override
                     public int getSpawnAmount() {
