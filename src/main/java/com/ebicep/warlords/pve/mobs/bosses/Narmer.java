@@ -76,7 +76,7 @@ public class Narmer extends AbstractMob implements BossMob {
 
                     @Override
                     public int getSpawnAmount() {
-                        return (int) pveOption.getGame().warlordsPlayers().count();
+                        return pveOption.playerCount();
                     }
                 }
         );
@@ -172,6 +172,8 @@ public class Narmer extends AbstractMob implements BossMob {
             option.spawnNewMob(new ZombieLancer(warlordsNPC.getLocation()));
         }
 
+        int playerCount = pveOption.playerCount();
+
         listener = new Listener() {
 
             @EventHandler
@@ -197,7 +199,15 @@ public class Narmer extends AbstractMob implements BossMob {
                 Location location = warlordsNPC.getLocation();
 
                 if (dead.isTeammate(warlordsNPC)) {
-                    warlordsNPC.setHealth(warlordsNPC.getHealth() * 1.05f);
+                    float healthMultiplier = switch (playerCount) {
+                        case 1 -> 1.1f;
+                        case 2 -> 1.09f;
+                        case 3 -> 1.08f;
+                        case 4 -> 1.05f;
+                        case 5 -> 1.04f;
+                        default -> 1.03f;
+                    };
+                    warlordsNPC.setHealth(warlordsNPC.getHealth() * healthMultiplier);
                 }
 
                 if (acolytes.contains(dead)) {
