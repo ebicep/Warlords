@@ -87,10 +87,14 @@ public class Mithra extends AbstractMob implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-
-        for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-            option.spawnNewMob(new ArachnoVeneratus(spawnLocation));
-        }
+        new GameRunnable(option.getGame()) {
+            @Override
+            public void run() {
+                for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
+                    option.spawnNewMob(new ArachnoVeneratus(spawnLocation));
+                }
+            }
+        }.runTaskLater(10);
     }
 
     @Override

@@ -118,9 +118,14 @@ public class Illumina extends AbstractMob implements BossMob {
             warlordsNPC.setMaxHealth(newHealth);
         }
 
-        for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
-            option.spawnNewMob(new GolemApprentice(spawnLocation));
-        }
+        new GameRunnable(option.getGame()) {
+            @Override
+            public void run() {
+                for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
+                    option.spawnNewMob(new GolemApprentice(spawnLocation));
+                }
+            }
+        }.runTaskLater(10);
 
         warlordsNPC.getCooldownManager().removeCooldown(DamageCheck.class, false);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(

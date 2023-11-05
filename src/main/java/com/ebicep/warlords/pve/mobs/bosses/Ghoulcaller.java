@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnSouls;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -81,7 +82,12 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        spawnRandomSouls(option, option.getDifficulty() == DifficultyIndex.EASY ? 5 : 10);
+        new GameRunnable(option.getGame()) {
+            @Override
+            public void run() {
+                spawnRandomSouls(option, option.getDifficulty() == DifficultyIndex.EASY ? 5 : 10);
+            }
+        }.runTaskLater(10);
     }
 
     @Override

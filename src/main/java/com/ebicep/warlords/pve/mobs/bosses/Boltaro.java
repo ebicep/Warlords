@@ -74,9 +74,14 @@ public class Boltaro extends AbstractMob implements BossMob {
             }
         });
 
-        for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
-            option.spawnNewMob(new BoltaroExiled(spawnLocation));
-        }
+        new GameRunnable(option.getGame()) {
+            @Override
+            public void run() {
+                for (int i = 0; i < option.getGame().warlordsPlayers().count(); i++) {
+                    option.spawnNewMob(new BoltaroExiled(spawnLocation));
+                }
+            }
+        }.runTaskLater(10);
     }
 
     @Override

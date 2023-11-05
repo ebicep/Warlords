@@ -20,6 +20,7 @@ import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -164,13 +165,18 @@ public class Narmer extends AbstractMob implements BossMob {
 
         float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
 
-        for (int i = 0; i < (multiplier * option.playerCount()); i++) {
-            spawnNarmerAcolyteAbility.spawnMob(warlordsNPC);
-        }
+        new GameRunnable(option.getGame()) {
+            @Override
+            public void run() {
+                for (int i = 0; i < (multiplier * option.playerCount()); i++) {
+                    spawnNarmerAcolyteAbility.spawnMob(warlordsNPC);
+                }
 
-        for (int i = 0; i < 8; i++) {
-            option.spawnNewMob(new ZombieLancer(warlordsNPC.getLocation()));
-        }
+                for (int i = 0; i < 8; i++) {
+                    option.spawnNewMob(new ZombieLancer(warlordsNPC.getLocation()));
+                }
+            }
+        }.runTaskLater(10);
 
         int playerCount = pveOption.playerCount();
 
