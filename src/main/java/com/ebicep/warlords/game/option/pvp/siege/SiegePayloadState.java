@@ -12,9 +12,10 @@ import com.ebicep.warlords.game.option.payload.Payload;
 import com.ebicep.warlords.game.option.payload.PayloadBrain;
 import com.ebicep.warlords.game.option.payload.PayloadRendererCoalCart;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -30,12 +31,16 @@ import java.util.EnumSet;
 
 public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMarker, TimerResetAbleMarker {
 
+    private static final int OVERTIME_TICKS = 20 * 10;
     private final SiegeOption siegeOption;
     private final Team escortingTeam;
     private Game game;
     private Payload payload;
     private int transitionTickDelay = 0; // for animations/title screens
     private int ticksElapsedAtTransition = -1;
+    private int netEscorting = 0;
+    private int overtimeTicksLeft = -1;
+    private BossBar overtimeBossBar;
 
     public SiegePayloadState(SiegeOption siegeOption, Team escortingTeam) {
         this.siegeOption = siegeOption;
@@ -53,9 +58,21 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
         ) {
             @Override
             public boolean tick(int ticksElapsed) {
-                Pair<Integer, Double> payloadInfo = getPayloadMove(brain.getCurrentLocation());
-                int netEscorting = payloadInfo.getA();
-                double payloadMove = payloadInfo.getB();
+                PayloadMoveInfo payloadInfo = getPayloadMove(brain.getCurrentLocation());
+                netEscorting = payloadInfo.netEscorting();
+                if (overtimeTicksLeft > 0) {
+                    if (payloadInfo.pushers() <= 0) {
+                        overtimeTicksLeft--;
+                        if (overtimeTicksLeft == 0) {
+                            ticksElapsedAtTransition = ticksElapsed;
+                            onPayloadDefended();
+                            return false;
+                        }
+                    } else {
+                        overtimeTicksLeft = OVERTIME_TICKS;
+                    }
+                }
+                double payloadMove = payloadInfo.payloadMove();
                 if (payloadMove != 0) {
                     boolean reachedEnd = brain.tick(payloadMove);
                     if (reachedEnd) {
@@ -68,7 +85,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
             }
 
             // returns net escorting + to move per tick
-            private Pair<Integer, Double> getPayloadMove(Location oldLocation) {
+            private PayloadMoveInfo getPayloadMove(Location oldLocation) {
                 int escorting = 0;
                 int escortingBatteries = 0;
                 int nonEscorting = 0;
@@ -96,18 +113,18 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                         contested = true;
                     }
                     if (escortingBatteries == nonEscortingBatteries) {
-                        return new Pair<>(netEscorting, 0.0);
+                        return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, 0.0);
                     }
-                    return new Pair<>(netEscorting, netEscortBatteries * brain.getForwardMovePerTick() / 2);
+                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, netEscortBatteries * brain.getForwardMovePerTick() / 2);
                 }
                 contested = false;
                 if (escorting > nonEscorting) {
-                    return new Pair<>(netEscorting, brain.getForwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
+                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, brain.getForwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
                 }
                 if (nonEscorting > escorting) {
-                    return new Pair<>(netEscorting, -brain.getBackwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
+                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, -brain.getBackwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
                 }
-                return new Pair<>(netEscorting, 0.0);
+                return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, 0.0);
             }
         };
         this.payload.getRenderer().addRenderPathRunnable(game, payload.getBrain().getStart(), payload.getBrain().getPath());
@@ -125,10 +142,24 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
             payload.renderEffects(ticksElapsed);
             return false;
         }
-        if (ticksElapsed / 20 >= maxSeconds()) {
+        if (overtimeTicksLeft == -1 && ticksElapsed / 20 >= maxSeconds()) {
+            if (netEscorting > 0) {
+                overtimeBossBar = BossBar.bossBar(
+                        Component.text("OVERTIME!", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD),
+                        1,
+                        BossBar.Color.PURPLE,
+                        BossBar.Overlay.PROGRESS
+                );
+                overtimeTicksLeft = OVERTIME_TICKS;
+                return false;
+            }
             ticksElapsedAtTransition = ticksElapsed;
             onPayloadDefended();
             return false;
+        }
+        if (overtimeTicksLeft > 0) {
+            overtimeBossBar.progress(MathUtils.lerp(0, 1, (float) overtimeTicksLeft / OVERTIME_TICKS));
+            game.forEachOnlinePlayer((player, team) -> player.showBossBar(overtimeBossBar));
         }
         boolean captured = payload.tick(ticksElapsed);
         if (captured) {
@@ -142,6 +173,9 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     public void end() {
         payload.cleanup();
         HandlerList.unregisterAll(this);
+        if (overtimeBossBar != null) {
+            game.forEachOnlinePlayer((player, team) -> player.hideBossBar(overtimeBossBar));
+        }
     }
 
     @Override
@@ -158,7 +192,20 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
 
     @Override
     public int maxSeconds() {
-        return 3 * 60;
+        return 5 * 60;
+    }
+
+    private void onPayloadCapture() {
+        transitionTickDelay = 80;
+        game.addPoints(escortingTeam, 1);
+        game.forEachOnlinePlayer((player, team) -> {
+            boolean isCapturedTeam = team == escortingTeam;
+            player.showTitle(Title.title(
+                    Component.text(isCapturedTeam ? "OBJECTIVE CAPTURED" : "OBJECTIVE LOST", isCapturedTeam ? NamedTextColor.GREEN : NamedTextColor.RED, TextDecoration.BOLD),
+                    Component.text("Payload Captured!", NamedTextColor.GRAY),
+                    Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(20))
+            ));
+        });
     }
 
     private void onPayloadDefended() {
@@ -171,19 +218,6 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
             player.showTitle(Title.title(
                     Component.text(isNotEscortingTeam ? "OBJECTIVE DEFENDED" : "PUSH FAILED", isNotEscortingTeam ? NamedTextColor.GREEN : NamedTextColor.RED, TextDecoration.BOLD),
                     Component.text("Times Up!", NamedTextColor.GRAY),
-                    Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(20))
-            ));
-        });
-    }
-
-    private void onPayloadCapture() {
-        transitionTickDelay = 80;
-        game.addPoints(escortingTeam, 1);
-        game.forEachOnlinePlayer((player, team) -> {
-            boolean isCapturedTeam = team == escortingTeam;
-            player.showTitle(Title.title(
-                    Component.text(isCapturedTeam ? "OBJECTIVE CAPTURED" : "OBJECTIVE LOST", isCapturedTeam ? NamedTextColor.GREEN : NamedTextColor.RED, TextDecoration.BOLD),
-                    Component.text("Payload Captured!", NamedTextColor.GRAY),
                     Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(20))
             ));
         });
@@ -226,5 +260,8 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
 
     public Payload getPayload() {
         return payload;
+    }
+
+    private record PayloadMoveInfo(int pushers, int defenders, int netEscorting, double payloadMove) {
     }
 }

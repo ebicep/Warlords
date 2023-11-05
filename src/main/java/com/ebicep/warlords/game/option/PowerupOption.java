@@ -461,6 +461,7 @@ public class PowerupOption implements Option {
                                         .append(Component.newline().append(Component.text("   +10% ", NamedTextColor.DARK_RED)).append(Component.text("Damage taken")))
                                         .append(Component.newline().append(Component.text("   -15% ", NamedTextColor.YELLOW)).append(Component.text("Speed")))
                 );
+                Utils.playGlobalSound(option.getLocation(), "ctf.powerup.speed", 2, 2);
             }
 
             @Override

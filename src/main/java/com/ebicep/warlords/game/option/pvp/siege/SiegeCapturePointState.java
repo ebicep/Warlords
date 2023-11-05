@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAbleMarker {
 
     public static final double RADIUS = 5;
-    public static final float CAPTURE_RATE = 33.5f;
+    public static final float CAPTURE_RATE = 3.5f;
 
     private final SiegeOption siegeOption;
     private final Map<Team, TeamCaptureData> teamCapturePercentage = new HashMap<>();
