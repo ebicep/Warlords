@@ -156,8 +156,8 @@ public class Narmer extends AbstractMob implements BossMob {
                 }
 
                 @Override
-                public void onMobCreate(AbstractMob mobSpawned) {
-                    mobSpawned.setTarget(customTarget);
+                public void onMobSpawn(WarlordsNPC warlordsNPC) {
+                    warlordsNPC.getMob().setTarget(customTarget);
                 }
             });
         }
