@@ -61,7 +61,7 @@ public class Chessking extends AbstractMob implements BossMob {
                     }
                 },
                 new SpawnMobAbility(
-                        60,
+                        40,
                         Mob.SLIMY_CHESS,
                         15
                 ) {
