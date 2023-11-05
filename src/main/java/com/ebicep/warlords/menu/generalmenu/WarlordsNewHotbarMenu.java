@@ -489,7 +489,7 @@ public class WarlordsNewHotbarMenu {
                     openLevelingRewardsMenuForSpec(player, databasePlayer, spec, page, selectedPrestige);
                 });
             }
-            menu.setItem(8, 6,
+            menu.setItem(8, 5,
                     new ItemBuilder(Material.NETHERITE_SCRAP)
                             .name(Component.text("Level Rewards"))
                             .lore(Currencies.ASCENDANT_SHARD.getCostColoredName(Currencies.ASCENDANT_SHARD.getFromPlayer(databasePlayer)))
