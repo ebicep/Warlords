@@ -460,7 +460,24 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
                                           .mapToInt(spec -> databasePlayer.getSpec(spec).getPrestige())
                                           .sum();
                 if (totalPrestige > 0) {
-                    pveStats.getCompensationRewards().add(new CompensationReward.AscendantShardPrestigePatch(totalPrestige));
+                    pveStats.getCompensationRewards().add(new CompensationReward.AscendantShardPrestigePatch(totalPrestige * 3L));
+                }
+                return true;
+            }
+        },
+        EOD_ASCENDANT_SHARD_2 {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                // fixes incorrect amount from EOD_ASCENDANT_SHARD that gave 1 per pres instead of 3.
+                if (!databasePlayer.getPatchesApplied().contains(EOD_ASCENDANT_SHARD)) {
+                    return true;
+                }
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                int totalPrestige = Arrays.stream(Specializations.VALUES)
+                                          .mapToInt(spec -> databasePlayer.getSpec(spec).getPrestige())
+                                          .sum();
+                if (totalPrestige > 0) {
+                    pveStats.getCompensationRewards().add(new CompensationReward.AscendantShardPrestigePatch(totalPrestige * 2L));
                 }
                 return true;
             }
