@@ -27,21 +27,13 @@ import java.util.HashMap;
 public class Zenith extends AbstractMob implements BossMob {
 
     public Zenith(Location spawnLocation) {
-        super(spawnLocation,
+        this(spawnLocation,
                 "Zenith",
                 26000,
                 0.36f,
                 25,
                 1800,
-                2500,
-                new Armageddon(),
-                new Cleanse(),
-                new SpawnMobAbility(20, Mob.ZENITH_LEGIONNAIRE) {
-                    @Override
-                    public int getSpawnAmount() {
-                        return (int) pveOption.getGame().warlordsPlayers().count();
-                    }
-                }
+                2500
         );
     }
 
@@ -63,7 +55,7 @@ public class Zenith extends AbstractMob implements BossMob {
                 maxMeleeDamage,
                 new Armageddon(),
                 new Cleanse(),
-                new SpawnMobAbility(30, Mob.ZENITH_LEGIONNAIRE) {
+                new SpawnMobAbility(15, Mob.ZENITH_LEGIONNAIRE) {
                     @Override
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();
