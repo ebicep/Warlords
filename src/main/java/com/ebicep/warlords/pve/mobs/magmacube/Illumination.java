@@ -29,7 +29,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
                 spawnLocation,
                 "Illumination",
                 4000,
-                0.5f,
+                0.3f,
                 20,
                 0,
                 0,
@@ -73,7 +73,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
     public void onNPCCreate() {
         super.onNPCCreate();
         npc.getOrAddTrait(SlimeSize.class).setSize(7);
-        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .1f);
+        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .05f);
     }
 
     @Override
