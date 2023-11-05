@@ -29,7 +29,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
                 spawnLocation,
                 "Illumination",
                 4000,
-                0.3f,
+                0.15f,
                 20,
                 0,
                 0,
