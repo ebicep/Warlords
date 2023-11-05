@@ -309,7 +309,7 @@ public class WarlordsNewHotbarMenu {
             }
             menu.setItem(8, 3,
                     new ItemBuilder(Material.NETHERITE_SCRAP)
-                            .name(Component.text("Level Rewards"))
+                            .name(Component.text("Level Rewards", NamedTextColor.GREEN))
                             .lore(Currencies.ASCENDANT_SHARD.getCostColoredName(Currencies.ASCENDANT_SHARD.getFromPlayer(databasePlayer)))
                             .get(),
                     (m, e) -> {}
@@ -491,7 +491,7 @@ public class WarlordsNewHotbarMenu {
             }
             menu.setItem(8, 5,
                     new ItemBuilder(Material.NETHERITE_SCRAP)
-                            .name(Component.text("Level Rewards"))
+                            .name(Component.text("Level Rewards", NamedTextColor.GREEN))
                             .lore(Currencies.ASCENDANT_SHARD.getCostColoredName(Currencies.ASCENDANT_SHARD.getFromPlayer(databasePlayer)))
                             .get(),
                     (m, e) -> {}
