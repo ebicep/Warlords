@@ -138,6 +138,15 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             );
 
             Runnable cancelAllySpeed = presenceTarget.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
+            List<FloatModifiable.FloatModifier> modifiers;
+            if (pveMasterUpgrade) {
+                modifiers = presenceTarget.getAbilities()
+                                          .stream()
+                                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.8f))
+                                          .toList();
+            } else {
+                modifiers = Collections.emptyList();
+            }
             presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "PRES",
@@ -149,6 +158,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                     },
                     cooldownManager -> {
                         cancelAllySpeed.run();
+                        modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                     },
                     tickDuration,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -158,14 +168,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                 public float addEnergyGainPerTick(float energyGainPerTick) {
                     tempPresence.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
                     return energyGainPerTick + energyPerSecond / 20f;
-                }
-
-                @Override
-                public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
-                    if (pveMasterUpgrade) {
-                        return 0.80f;
-                    }
-                    return 1;
                 }
             });
         }

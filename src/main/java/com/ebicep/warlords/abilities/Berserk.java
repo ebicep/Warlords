@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BerserkBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
@@ -71,6 +72,16 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
 
         Berserk tempBerserk = new Berserk();
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
+        List<FloatModifiable.FloatModifier> modifiers;
+        if (pveMasterUpgrade2) {
+            modifiers = wp.getAbilities()
+                          .stream()
+                          .filter(ability -> !(ability instanceof Berserk))
+                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.8f))
+                          .toList();
+        } else {
+            modifiers = Collections.emptyList();
+        }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "BERS",
@@ -82,6 +93,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 },
                 cooldownManager -> {
                     cancelSpeed.run();
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -148,14 +160,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                     }
                 }
                 return currentDamageValue * convertToMultiplicationDecimal(increase);
-            }
-
-            @Override
-            public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
-                if (pveMasterUpgrade2 && !(ability instanceof Berserk)) {
-                    return 0.80f;
-                }
-                return 1;
             }
         });
 

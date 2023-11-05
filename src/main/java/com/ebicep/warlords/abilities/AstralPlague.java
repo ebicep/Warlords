@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.AstralPlagueBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
@@ -30,6 +31,7 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,6 +72,15 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.SOUL, 8, 3, 1);
         EffectUtils.playCircularEffectAround(wp.getGame(), wp.getLocation(), Particle.FLAME, 1, 1, 0.25, 1, 1, 2);
 
+        List<FloatModifiable.FloatModifier> modifiers;
+        if (pveMasterUpgrade2) {
+            modifiers = wp.getAbilitiesMatching(SoulfireBeam.class)
+                          .stream()
+                          .map(soulfireBeam -> soulfireBeam.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.6f))
+                          .toList();
+        } else {
+            modifiers = Collections.emptyList();
+        }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "ASTRAL",
@@ -78,6 +89,9 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 tickDuration
         ) {
@@ -96,14 +110,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                     return currentDamageValue * 1.4f;
                 }
                 return currentDamageValue;
-            }
-
-            @Override
-            public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
-                if (pveMasterUpgrade2 && ability instanceof SoulfireBeam) {
-                    return 1 - .4f;
-                }
-                return super.getAbilityMultiplicativeCooldownMult(ability);
             }
 
             @Override

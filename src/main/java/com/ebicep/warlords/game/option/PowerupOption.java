@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -27,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -353,6 +355,10 @@ public class PowerupOption implements Option {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(CooldownPowerup.class, false);
+                List<FloatModifiable.FloatModifier> modifiers = we.getAbilities()
+                                                                  .stream()
+                                                                  .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Powerup", 0.75f))
+                                                                  .toList();
                 we.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Cooldown",
                         "CDR",
@@ -365,14 +371,10 @@ public class PowerupOption implements Option {
                         },
                         cooldownManager -> {
                             we.sendMessage(getWornOffMessage());
+                            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                         },
                         getTickDuration()
-                ) {
-                    @Override
-                    public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
-                        return 0.75f;
-                    }
-                });
+                ));
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text("COOLDOWN", NamedTextColor.AQUA, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))

@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.SanctuaryBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -30,10 +31,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -75,6 +73,15 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         EffectUtils.playCircularShieldAnimation(loc, Particle.END_ROD, 5, 0.8, 2);
         EffectUtils.playCircularShieldAnimation(loc, Particle.DRIP_WATER, 3, 0.6, 1.2);
 
+        List<FloatModifiable.FloatModifier> modifiers;
+        if (pveMasterUpgrade2) {
+            modifiers = wp.getAbilitiesMatching(GuardianBeam.class)
+                          .stream()
+                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.67f))
+                          .toList();
+        } else {
+            modifiers = Collections.emptyList();
+        }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "SANCTUARY",
@@ -84,16 +91,11 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
+                cooldownManager -> {
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                },
                 tickDuration
         ) {
-            @Override
-            public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
-                if (pveMasterUpgrade2 && ability instanceof GuardianBeam) {
-                    return 1 - .33f;
-                }
-                return super.getAbilityMultiplicativeCooldownMult(ability);
-            }
-
             @Override
             protected Listener getListener() {
                 return new Listener() {

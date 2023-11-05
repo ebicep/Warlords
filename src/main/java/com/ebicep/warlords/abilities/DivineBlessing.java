@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
@@ -100,6 +101,15 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         DivineBlessing tempDivineBlessing = new DivineBlessing();
         int maxStacks = MercifulHex.getFromHex(wp).getMaxStacks();
         Set<WarlordsEntity> healedLethal = new HashSet<>();
+        List<FloatModifiable.FloatModifier> modifiers;
+        if (pveMasterUpgrade2) {
+            modifiers = wp.getAbilitiesMatching(RayOfLight.class)
+                          .stream()
+                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.67f))
+                          .toList();
+        } else {
+            modifiers = Collections.emptyList();
+        }
         wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessing>(
                 name,
                 "BLESS",
@@ -113,6 +123,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     if (pveMasterUpgrade) {
                         healAllies(wp);
                     }
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -212,15 +223,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 }
                 return currentDamageValue;
             }
-
-            @Override
-            public float getAbilityMultiplicativeCooldownMult(AbstractAbility ability) {
-                if (pveMasterUpgrade2 && ability instanceof RayOfLight) {
-                    return 1 - .33f;
-                }
-                return super.getAbilityMultiplicativeCooldownMult(ability);
-            }
-
 
             @Override
             protected Listener getListener() {

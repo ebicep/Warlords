@@ -2,9 +2,12 @@ package com.ebicep.warlords.player.ingame.cooldowns.instances;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 
+
 /**
+ * <p>NOT CURRENTLY USED</p>
  * Modifies the new cooldown of an ability, cooldown = (CD + additive) * multiplicative
  */
+@Deprecated
 public interface AbilityCooldownInstance {
 
     /**
