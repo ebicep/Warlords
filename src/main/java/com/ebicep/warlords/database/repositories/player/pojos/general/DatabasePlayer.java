@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayer
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlayerSiege;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
@@ -59,6 +60,9 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private DatabasePlayerInterception interceptionStats = new DatabasePlayerInterception();
     @Field("duel_stats")
     private DatabasePlayerDuel duelStats = new DatabasePlayerDuel();
+    @Field("siege_stats")
+    private DatabasePlayerSiege siegeStats = new DatabasePlayerSiege();
+
     @Field("comp_stats")
     private DatabasePlayerCompStats compStats = new DatabasePlayerCompStats();
     @Field("public_queue_stats")
@@ -167,6 +171,7 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
             case TEAM_DEATHMATCH -> this.tdmStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
             case INTERCEPTION -> this.interceptionStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
             case DUEL -> this.duelStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            case SIEGE -> this.siegeStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();

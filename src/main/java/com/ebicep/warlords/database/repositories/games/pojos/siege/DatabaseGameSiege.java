@@ -42,7 +42,7 @@ public class DatabaseGameSiege extends DatabaseGameBase {
         for (Option option : game.getOptions()) {
             if (option instanceof SiegeOption siegeOption) {
                 this.timeElapsed = siegeOption.getTotalTicksElapsed() / 20;
-                return;
+                break;
             }
         }
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
@@ -94,7 +94,50 @@ public class DatabaseGameSiege extends DatabaseGameBase {
 
     @Override
     public void addCustomHolograms(List<Hologram> holograms) {
-
+//        Hologram topDHPPerMinute = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
+//        holograms.add(topDHPPerMinute);
+//        topDHPPerMinute.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
+//
+//        List<String> topDHPPerGamePlayers = new ArrayList<>();
+//
+//        int minutes = (15 - (int) Math.round(timeLeft / 60.0)) == 0 ? 1 : 15 - (int) Math.round(timeLeft / 60.0);
+//        List<DatabaseGamePlayerCTF> allPlayers = players
+//                .values()
+//                .stream()
+//                .flatMap(Collection::stream)
+//                .toList();
+//        HashMap<DatabaseGamePlayerCTF, ChatColor> playerColor = new HashMap<>();
+//        for (Map.Entry<Team, List<DatabaseGamePlayerCTF>> teamListEntry : players.entrySet()) {
+//            for (DatabaseGamePlayerCTF gamePlayerCTF : teamListEntry.getValue()) {
+//                playerColor.put(gamePlayerCTF, teamListEntry.getKey().oldTeamColor);
+//            }
+//        }
+//
+//        allPlayers.stream()
+//                  .sorted((o1, o2) -> {
+//                      Long p1DHPPerGame = o1.getTotalDHP() / minutes;
+//                      Long p2DHPPerGame = o2.getTotalDHP() / minutes;
+//                      return p2DHPPerGame.compareTo(p1DHPPerGame);
+//                  }).forEach(databaseGamePlayer -> {
+//                      topDHPPerGamePlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+//                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
+//                  });
+//
+//        allPlayers.stream()
+//                  .sorted(Comparator.comparingLong(DatabaseGamePlayerCTF::getTotalDamageOnCarrier).reversed())
+//                  .forEach(databaseGamePlayer -> {
+//                      topDamageOnCarrierPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+//                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDamageOnCarrier()));
+//                  });
+//
+//        allPlayers.stream()
+//                  .sorted(Comparator.comparingLong(DatabaseGamePlayerCTF::getTotalHealingOnCarrier).reversed())
+//                  .forEach(databaseGamePlayer -> {
+//                      topHealingOnCarrierPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+//                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()));
+//                  });
+//
+//        topDHPPerGamePlayers.forEach(s -> topDHPPerMinute.getLines().appendText(s));
     }
 
 

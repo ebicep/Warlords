@@ -13,7 +13,7 @@ import java.util.function.UnaryOperator;
 
 public class PayloadBrain {
 
-    public static final double DEFAULT_FORWARD_MOVE_PER_TICK = 0.025; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
+    public static final double DEFAULT_FORWARD_MOVE_PER_TICK = 0.04; // 1 block per 2 seconds = .5 blocks per second = .025 blocks per tick
     private static final double DIAGONAL_DISTANCE = 1.41421356237;
     private static final Material TARGET_MATERIAL = Material.BEDROCK;
     private static final Material END_MATERIAL = Material.SCULK;

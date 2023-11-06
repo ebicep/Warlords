@@ -148,6 +148,7 @@ public class EndState implements State, TimerDebugAble {
             case SIMULATION_TRIAL:
             case TEAM_DEATHMATCH:
             case PAYLOAD:
+            case SIEGE:
                 showTopDamage(players);
                 showTopHealing(players);
                 break;

@@ -1832,7 +1832,7 @@ public abstract class WarlordsEntity {
 
     public void setRespawnTimerSeconds(int respawnTickTimer) {
         //convert respawntimer to ticks
-        this.respawnTickTimer = respawnTickTimer * 20;
+        this.respawnTickTimer = respawnTickTimer == -1 ? -1 : respawnTickTimer * 20;
     }
 
     public float getEnergy() {

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Payload {
 
-    protected static final double MOVE_RADIUS = 3;
+    protected static final double MOVE_RADIUS = 4;
     private static final int BOSS_BAR_FILL_SPACE = 45;
     private static final int BOSS_BAR_ESCORT_SPACE = 6;
     private static final int BOSS_BAR_CONTEST_SPACE = 24;

@@ -7,6 +7,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
+import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlayerSiege;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Specializations;
@@ -20,6 +21,8 @@ public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
     private DatabasePlayerTDM tdmStats = new DatabasePlayerTDM();
     @Field("interception_stats")
     private DatabasePlayerInterception interceptionStats = new DatabasePlayerInterception();
+    @Field("siege_stats")
+    private DatabasePlayerSiege siegeStats = new DatabasePlayerSiege();
 
     public DatabasePlayerCompStats() {
     }
@@ -42,6 +45,7 @@ public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
             case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             case TEAM_DEATHMATCH -> this.tdmStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             case INTERCEPTION -> this.interceptionStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+            case SIEGE -> this.siegeStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         }
     }
 

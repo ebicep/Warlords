@@ -589,7 +589,7 @@ public enum GameMode {
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = new ArrayList<>();
+            List<Option> options = super.initMap(map, loc, addons);
 
             Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
             options.add(TextOption.Type.CHAT_CENTERED.create(

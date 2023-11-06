@@ -4908,8 +4908,8 @@ public enum GameMap {
             options.add(new GateOption(loc, -132.5, 76, -232.5, -132.5, 81, -234.5, Material.SPRUCE_FENCE));
             options.add(new GateOption(loc, 41.5, 76, -200.5, 41.5, 81, -198.5, Material.IRON_BARS));
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 71, -159.5, 135, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-97.5, 71, -274.5, -45, 0), Team.RED));
+//            options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 71, -159.5, 135, 0), Team.BLUE));
+//            options.add(SpawnpointOption.forTeam(loc.addXYZ(-97.5, 71, -274.5, -45, 0), Team.RED));
 
             options.add(new GateOption(loc, -125.5, 82.5, -213.5, -125.5, 76, -219.5, Material.SPRUCE_FENCE));
             options.add(new GateOption(loc, 34.5, 81, -219.5, 34.5, 76, -213.5, Material.IRON_BARS));
