@@ -60,8 +60,7 @@ public class Zenith extends AbstractMob implements BossMob {
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();
                     }
-                },
-                new ThunderCloudAbility(2)
+                }
         );
     }
 
@@ -97,6 +96,25 @@ public class Zenith extends AbstractMob implements BossMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), false, 6);
+        DifficultyIndex difficulty = option.getDifficulty();
+        int cooldown = 2;
+        int secondsMin = 7;
+        int secondsMax = 12;
+        int sizeMin = 5;
+        int sizeMax = 10;
+        if (difficulty == DifficultyIndex.EASY || difficulty == DifficultyIndex.NORMAL) {
+            cooldown = 3;
+            secondsMin = 6;
+            secondsMax = 10;
+            sizeMin = 3;
+            sizeMax = 6;
+        }
+        this.playerClass.addAbility(new ThunderCloudAbility(
+                cooldown,
+                true,
+                secondsMin, secondsMax,
+                sizeMin, sizeMax
+        ));
     }
 
     @Override
