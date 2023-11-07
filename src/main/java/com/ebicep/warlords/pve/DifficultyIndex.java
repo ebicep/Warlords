@@ -60,8 +60,7 @@ public enum DifficultyIndex {
                     Component.text("Void monsters appear much sooner and", NamedTextColor.RED),
                     Component.text("at a higher rate.", NamedTextColor.RED),
                     Component.empty(),
-                    Component.text("No respawns, only way to respawn", NamedTextColor.RED),
-                    Component.text("is by clearing the wave.", NamedTextColor.RED)
+                    Component.text("Respawns are longer.", NamedTextColor.RED)
             ),
             NamedTextColor.GOLD,
             25,
@@ -82,8 +81,7 @@ public enum DifficultyIndex {
                     Component.text("Void monsters appear much sooner and", NamedTextColor.RED),
                     Component.text("at a higher rate.", NamedTextColor.RED),
                     Component.empty(),
-                    Component.text("No respawns, only way to respawn", NamedTextColor.RED),
-                    Component.text("is by clearing the wave.", NamedTextColor.RED)
+                    Component.text("Respawns are extremely long.", NamedTextColor.RED)
             ),
             NamedTextColor.DARK_RED,
             25,
