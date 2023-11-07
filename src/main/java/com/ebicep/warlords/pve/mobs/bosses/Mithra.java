@@ -237,7 +237,7 @@ public class Mithra extends AbstractMob implements BossMob {
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -0.2, 0.07f);
+                    Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -0.25, 0.07f);
                     flameTarget.addDamageInstance(
                             warlordsNPC,
                             "Immolation",
