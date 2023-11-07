@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pvp.siege;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -9,7 +10,10 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.EndState;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -113,6 +117,26 @@ public class SiegeOption implements Option {
             return;
         }
         state.updateInventory(warlordsPlayer, player);
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Siege",
+                null,
+                SiegeOption.class,
+                null,
+                player,
+                CooldownTypes.INTERNAL,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 1.1f;
+            }
+        });
     }
 
     public Map<Team, Location> getTeamPayloadStart() {
