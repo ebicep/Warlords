@@ -301,7 +301,7 @@ public class WeaponTitleMenu {
             weapon.upgradeTitleLevel();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
 
-            player.sendMessage(Component.text("Upgraded Weapon Title: ")
+            player.sendMessage(Component.text("Upgraded Weapon Title: ", NamedTextColor.GRAY)
                                         .append(weapon.getHoverComponent(false))
             );
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);

@@ -173,8 +173,8 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(new Pair<>(
-                        formatTitleUpgrade(HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                        formatTitleUpgrade(HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()),
+                        formatTitleUpgrade(HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevelUpgraded())
                 ),
                 new Pair<>(
                         formatTitleUpgrade(DAMAGE_BOOST_MAX + DAMAGE_BOOST_MAX_PER_UPGRADE * getTitleLevel(), "%"),

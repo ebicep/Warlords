@@ -159,12 +159,12 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(new Pair<>(
-                        formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                        formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel()),
+                        formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevelUpgraded())
                 ),
                 new Pair<>(
-                        formatTitleUpgrade(EPS_BOOST + EPS_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(EPS_BOOST + EPS_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                        formatTitleUpgrade(EPS_BOOST + EPS_BOOST_PER_UPGRADE * getTitleLevel()),
+                        formatTitleUpgrade(EPS_BOOST + EPS_BOOST_PER_UPGRADE * getTitleLevelUpgraded())
                 )
         );
     }
