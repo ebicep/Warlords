@@ -462,10 +462,16 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void setTarget(WarlordsEntity target) {
+        if (!npc.isSpawned()) {
+            return;
+        }
         npc.getNavigator().setTarget(target.getEntity(), true);
     }
 
     public void setTarget(LivingEntity target) {
+        if (!npc.isSpawned()) {
+            return;
+        }
         npc.getNavigator().setTarget(target, true);
     }
 

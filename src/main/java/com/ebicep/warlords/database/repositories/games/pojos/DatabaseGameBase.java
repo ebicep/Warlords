@@ -282,7 +282,7 @@ public abstract class DatabaseGameBase {
         this.counted = counted;
     }
 
-    protected static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, int multiplier) {
+    public static void updatePlayerStatsFromTeam(DatabaseGameBase databaseGame, DatabaseGamePlayerBase gamePlayer, int multiplier) {
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team");
         for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
             if (!activeCollection.shouldUpdate(databaseGame.getExactDate())) {

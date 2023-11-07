@@ -59,7 +59,7 @@ public class UndeadAcolyte extends AbstractMob implements BossMinionMob {
         super.giveGoals();
         npc.getDefaultGoalController().addGoal(
                 new NPCTargetNarmerAcolyteGoal(npc, 40),
-                0
+                1
         );
     }
 

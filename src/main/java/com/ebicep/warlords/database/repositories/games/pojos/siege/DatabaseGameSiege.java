@@ -148,7 +148,14 @@ public class DatabaseGameSiege extends DatabaseGameBase {
 
     @Override
     public Team getTeam(DatabaseGamePlayerBase player) {
-        return null;
+        return players.entrySet()
+                      .stream()
+                      .filter(teamListEntry -> teamListEntry.getValue()
+                                                            .stream()
+                                                            .anyMatch(databaseGamePlayerSiege -> databaseGamePlayerSiege.getUuid().equals(player.getUuid())))
+                      .map(Map.Entry::getKey)
+                      .findFirst()
+                      .orElse(null);
     }
 
     @Override

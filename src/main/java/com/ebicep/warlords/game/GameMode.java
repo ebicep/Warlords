@@ -745,7 +745,6 @@ public enum GameMode {
                                                     .filter(c -> c == classes)
                                                     .count();
                       lore.add(Component.text(classes.name + " : ").append(Component.text(playersOnSpec, NamedTextColor.YELLOW)));
-                      lore.add(Component.empty());
                   });
             itemBuilder.lore(lore);
             menu.setItem(
