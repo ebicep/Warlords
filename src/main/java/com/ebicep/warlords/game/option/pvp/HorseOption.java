@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerHorseEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -23,6 +25,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -109,7 +112,7 @@ public class HorseOption implements Option, Listener {
             } else {
                 player.playSound(player.getLocation(), "mountup", 1, 1);
                 CustomHorse customHorse = activateHorseForPlayer(wp);
-                if (!wp.isDisableCooldowns()) {
+                if (!wp.isDisableCooldowns() && customHorse != null) {
                     float cooldown = customHorse.getCooldown();
                     wp.setHorseCooldown(cooldown);
                 }
@@ -117,6 +120,7 @@ public class HorseOption implements Option, Listener {
         }
     }
 
+    @Nullable
     public static CustomHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
         if (!(warlordsEntity instanceof WarlordsPlayer)) {
             return null;
@@ -128,6 +132,11 @@ public class HorseOption implements Option, Listener {
             if (option instanceof HorseOption) {
                 HashMap<UUID, CustomHorse> horses = ((HorseOption) option).getPlayerHorses();
                 CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new CustomHorse());
+                WarlordsPlayerHorseEvent horseEvent = new WarlordsPlayerHorseEvent(warlordsEntity);
+                Bukkit.getPluginManager().callEvent(horseEvent);
+                if (horseEvent.isCancelled()) {
+                    return null;
+                }
                 customHorse.spawn(player);
                 return customHorse;
             }
