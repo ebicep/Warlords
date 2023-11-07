@@ -114,21 +114,16 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                 int netEscorting = escorting - nonEscorting;
                 int netEscortBatteries = escortingBatteries - nonEscortingBatteries;
                 // contested
-                if (netEscorting == 0) {
-                    if (escorting != 0) {
-                        contested = true;
-                    }
-                    if (escortingBatteries == nonEscortingBatteries) {
-                        return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, 0.0);
-                    }
-                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, netEscortBatteries * brain.getForwardMovePerTick() / 2);
+                if (escorting != 0 && nonEscorting != 0) {
+                    contested = true;
+                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, 0.0);
                 }
                 contested = false;
-                if (escorting > nonEscorting) {
+                if (escorting > 0) {
                     return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, brain.getForwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
                 }
-                if (nonEscorting > escorting) {
-                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, -brain.getBackwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
+                if (nonEscorting > 0) {
+                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, -brain.getBackwardMovePerTick());
                 }
                 return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, 0.0);
             }

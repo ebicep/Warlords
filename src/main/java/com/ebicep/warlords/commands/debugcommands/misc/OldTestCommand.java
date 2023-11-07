@@ -1,14 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.tartarus.DatabaseGamePvEEventTartarus;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePvEEventTheAcropolis;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
@@ -23,7 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -163,48 +155,48 @@ public class OldTestCommand implements CommandExecutor {
 ////                }
 //            }
 
-            GAMES.clear();
-            Warlords.newChain()
-                    .async(() -> {
-                        List<DatabaseGameBase> games = DatabaseManager.gameService
-                                .findAll(GamesCollections.EVENT_PVE)
-                                .stream()
-                                .filter(databaseGameBase -> {
-                                    if (!databaseGameBase.isCounted()) {
-                                        return false;
-                                    }
-                                    Instant date = databaseGameBase.getExactDate();
-                                    return true || date.isAfter(Instant.parse("2023-11-05T05:00:00Z")) && date.isBefore(Instant.parse("2023-11-05T17:00:00Z"));
-                                })
-                                .filter(databaseGameBase -> databaseGameBase instanceof DatabaseGamePvEEventTheAcropolis || databaseGameBase instanceof DatabaseGamePvEEventTartarus)
-                                .toList();
-                        games.forEach(game -> {
-                            for (DatabaseGamePlayerBase basePlayer : game.getBasePlayers()) {
-                                if (basePlayer.getUuid().equals(uuid)) {
-//                                    System.out.println(game.getDate());
-                                    GAMES.add(game);
-//                                DatabaseGameBase.updatePlayerStatsFromTeam(game,
-//                                        basePlayer,
-//                                        1
-//                                );
-                                    return;
-                                }
-                            }
-                        });
-                    }).sync(() -> {
-                        System.out.println("GAMES: " + GAMES.size());
-                        long points = 0;
-                        for (DatabaseGameBase game : GAMES) {
-                            if (game instanceof DatabaseGamePvEEvent) {
-                                for (DatabaseGamePlayerPvEEvent p : ((DatabaseGamePvEEvent) game).getPlayers()) {
-                                    if (p.getUuid().equals(uuid)) {
-                                        points += p.getPoints();
-                                    }
-                                }
-                            }
-                        }
-                        System.out.println("POINTS: " + points);
-                    }).execute();
+//            GAMES.clear();
+//            Warlords.newChain()
+//                    .async(() -> {
+//                        List<DatabaseGameBase> games = DatabaseManager.gameService
+//                                .findAll(GamesCollections.EVENT_PVE)
+//                                .stream()
+//                                .filter(databaseGameBase -> {
+//                                    if (!databaseGameBase.isCounted()) {
+//                                        return false;
+//                                    }
+//                                    Instant date = databaseGameBase.getExactDate();
+//                                    return true || date.isAfter(Instant.parse("2023-11-05T05:00:00Z")) && date.isBefore(Instant.parse("2023-11-05T17:00:00Z"));
+//                                })
+//                                .filter(databaseGameBase -> databaseGameBase instanceof DatabaseGamePvEEventTheAcropolis || databaseGameBase instanceof DatabaseGamePvEEventTartarus)
+//                                .toList();
+//                        games.forEach(game -> {
+//                            for (DatabaseGamePlayerBase basePlayer : game.getBasePlayers()) {
+//                                if (basePlayer.getUuid().equals(uuid)) {
+////                                    System.out.println(game.getDate());
+//                                    GAMES.add(game);
+////                                DatabaseGameBase.updatePlayerStatsFromTeam(game,
+////                                        basePlayer,
+////                                        1
+////                                );
+//                                    return;
+//                                }
+//                            }
+//                        });
+//                    }).sync(() -> {
+//                        System.out.println("GAMES: " + GAMES.size());
+//                        long points = 0;
+//                        for (DatabaseGameBase game : GAMES) {
+//                            if (game instanceof DatabaseGamePvEEvent) {
+//                                for (DatabaseGamePlayerPvEEvent p : ((DatabaseGamePvEEvent) game).getPlayers()) {
+//                                    if (p.getUuid().equals(uuid)) {
+//                                        points += p.getPoints();
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        System.out.println("POINTS: " + points);
+//                    }).execute();
 
 
 //            Skeleton skeleton = player.getWorld().spawn(player.getLocation(), Skeleton.class);
