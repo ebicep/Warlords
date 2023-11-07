@@ -198,7 +198,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
 
     @Override
     public int maxSeconds() {
-        return 5 * 60;
+        return 4 * 60;
     }
 
     private void onPayloadCapture() {
