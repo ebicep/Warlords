@@ -40,11 +40,12 @@ import java.util.function.Function;
 public class MagmaticOoze extends AbstractMob implements BossMob {
 
     private static final Material DAMAGE_BLOCK = Material.MAGMA_BLOCK;
+    private static final int BASE_HEALTH = 70_000;
     private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
     private int splitNumber;
 
     public MagmaticOoze(Location spawnLocation) {
-        this(spawnLocation, 75_000f, 0, new HashMap<>());
+        this(spawnLocation, BASE_HEALTH, 0, new HashMap<>());
     }
 
     public MagmaticOoze(Location spawnLocation, float health, int splitNumber, Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
@@ -73,7 +74,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 new FlamingSlam(900 - (splitNumber * 100), 1400 - (splitNumber * 100)),
                 new HeatAura(100 - (splitNumber * 10), 10 - splitNumber),
                 new MoltenFissure(previousBlocks),
-                new Split(splitNumber, (loc, we) -> new MagmaticOoze(loc, we.getHealth(), splitNumber + 1, previousBlocks))
+                new Split(splitNumber, (loc, we) -> new MagmaticOoze(loc, MathUtils.lerp(0, BASE_HEALTH, we.getHealth() / we.getMaxBaseHealth()), splitNumber + 1, previousBlocks))
         );
         this.splitNumber = splitNumber;
         this.previousBlocks = previousBlocks;
