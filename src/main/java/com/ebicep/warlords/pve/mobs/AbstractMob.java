@@ -456,6 +456,7 @@ public abstract class AbstractMob implements Mob {
                            });
     }
 
+    @Nullable
     public Entity getTarget() {
         EntityTarget entityTarget = npc.getNavigator().getEntityTarget();
         return entityTarget == null ? null : entityTarget.getTarget();
