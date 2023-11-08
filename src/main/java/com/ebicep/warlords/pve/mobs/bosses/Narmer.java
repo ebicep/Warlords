@@ -65,21 +65,7 @@ public class Narmer extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new FlameBurst(15),
-                new GroundShred(),
-                new SpawnMobAbility(6, Mob.ZOMBIE_LANCER, true) {
-
-                    @Override
-                    public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
-                        AbstractMob spawnedMob = super.createMob(wp);
-                        spawnedMob.getDynamicFlags().add(DynamicFlags.NO_INSIGNIA);
-                        return spawnedMob;
-                    }
-
-                    @Override
-                    public int getSpawnAmount() {
-                        return pveOption.playerCount();
-                    }
-                }
+                new GroundShred()
         );
     }
 
@@ -103,6 +89,7 @@ public class Narmer extends AbstractMob implements BossMob {
         super.onSpawn(option);
 
         DifficultyIndex difficulty = option.getDifficulty();
+        int playerCount = option.playerCount();
 
         if (difficulty == DifficultyIndex.ENDLESS) {
             for (AbstractAbility ability : warlordsNPC.getAbilities()) {
@@ -112,9 +99,30 @@ public class Narmer extends AbstractMob implements BossMob {
             }
         }
 
+        int startingCooldown = switch (difficulty) {
+            case EASY -> 14;
+            case NORMAL -> 12;
+            case EXTREME -> 8;
+            default -> 10;
+        };
+        this.playerClass.addAbility(new SpawnMobAbility(Math.min(6, startingCooldown - playerCount + 1), Mob.ZOMBIE_LANCER, true) {
+
+            @Override
+            public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
+                AbstractMob spawnedMob = super.createMob(wp);
+                spawnedMob.getDynamicFlags().add(DynamicFlags.NO_INSIGNIA);
+                return spawnedMob;
+            }
+
+            @Override
+            public int getSpawnAmount() {
+                return pveOption.playerCount();
+            }
+        });
+
         SpawnNarmerAcolyteAbility spawnNarmerAcolyteAbility = new SpawnNarmerAcolyteAbility(this);
         this.playerClass.addAbility(spawnNarmerAcolyteAbility);
-        if (option.playerCount() >= 3) {
+        if (playerCount >= 3) {
             this.playerClass.addAbility(new SpawnMobAbility(7, Mob.UNDEAD_ACOLYTE, 10) {
 
                 private WarlordsEntity customTarget;
@@ -168,7 +176,7 @@ public class Narmer extends AbstractMob implements BossMob {
         new GameRunnable(option.getGame()) {
             @Override
             public void run() {
-                for (int i = 0; i < (multiplier * option.playerCount()); i++) {
+                for (int i = 0; i < (multiplier * i); i++) {
                     spawnNarmerAcolyteAbility.spawnMob(warlordsNPC);
                 }
 
@@ -177,8 +185,6 @@ public class Narmer extends AbstractMob implements BossMob {
                 }
             }
         }.runTaskLater(10);
-
-        int playerCount = pveOption.playerCount();
 
         listener = new Listener() {
 
@@ -205,15 +211,16 @@ public class Narmer extends AbstractMob implements BossMob {
                 Location location = warlordsNPC.getLocation();
 
                 if (dead.isTeammate(warlordsNPC)) {
-                    float healthMultiplier = switch (playerCount) {
-                        case 1 -> 1.1f;
-                        case 2 -> 1.09f;
-                        case 3 -> 1.08f;
-                        case 4 -> 1.05f;
-                        case 5 -> 1.04f;
-                        default -> 1.03f;
-                    };
-                    warlordsNPC.setHealth(warlordsNPC.getHealth() * healthMultiplier);
+                    float healthMultiplier = playerCount <= 5 ? 1.09f - playerCount * .01f : 1.03f;
+                    float healing = warlordsNPC.getHealth() * healthMultiplier;
+                    warlordsNPC.addHealingInstance(
+                            warlordsNPC,
+                            "Undead Healing",
+                            healing,
+                            healing,
+                            0,
+                            100
+                    );
                 }
 
                 if (acolytes.contains(dead)) {
@@ -368,16 +375,16 @@ public class Narmer extends AbstractMob implements BossMob {
         }
 
         @Override
-        public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
-            return new NarmerAcolyte(wp.getLocation());
-        }
-
-        @Override
         public int getSpawnAmount() {
             long playerCount = pveOption.getGame().warlordsPlayers().count();
             DifficultyIndex difficulty = pveOption.getDifficulty();
             float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
             return narmer.getAcolytes().size() < multiplier * playerCount ? 1 : 0;
+        }
+
+        @Override
+        public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
+            return new NarmerAcolyte(wp.getLocation());
         }
 
         @Override
