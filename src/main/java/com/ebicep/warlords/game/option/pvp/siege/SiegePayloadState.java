@@ -96,6 +96,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                 int nonEscortingBatteries = 0;
                 for (WarlordsEntity warlordsEntity : PlayerFilterGeneric
                         .entitiesAround(oldLocation, MOVE_RADIUS, MOVE_RADIUS, MOVE_RADIUS)
+                        .isAlive()
                 ) {
                     if (warlordsEntity.getTeam() == escortingTeam) {
                         escorting++;
