@@ -272,7 +272,7 @@ public class Mithra extends AbstractMob implements BossMob {
     private static class HibernatingEggSac extends AbstractPveAbility {
 
         public HibernatingEggSac() {
-            super("Hibernating Egg Sac", 20, 50, 7);
+            super("Hibernating Egg Sac", 15, 50, 7);
         }
 
         @Override
