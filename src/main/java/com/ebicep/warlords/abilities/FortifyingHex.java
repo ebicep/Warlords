@@ -44,7 +44,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     private int maxAlliesHit = 1;
     private int maxFullDistance = 40;
     private int tickDuration = 120;
-    private int damageReduction = 5;
+    private float damageReduction = 5;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
 
@@ -68,7 +68,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex.\n\nEach stack of Fortifying Hex lasts  "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds and grants"))
-                               .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(format(damageReduction) + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage reduction. Stacks up to"))
                                .append(Component.text(maxStacks, NamedTextColor.BLUE))
                                .append(Component.text(" times.\n\nHas a maximum range of "))
@@ -251,7 +251,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     public static void giveFortifyingHex(WarlordsEntity from, WarlordsEntity to) {
         FortifyingHex fromHex = getFromHex(from);
         String hexName = fromHex.getName();
-        int damageReduction = fromHex.getDamageReduction();
+        float damageReduction = fromHex.getDamageReduction();
         int maxStacks = fromHex.getMaxStacks();
         int duration = fromHex.getTickDuration();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHex.class, maxStacks);
@@ -327,7 +327,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                    .orElse(new FortifyingHex());
     }
 
-    public int getDamageReduction() {
+    public float getDamageReduction() {
         return damageReduction;
     }
 
@@ -345,7 +345,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         this.tickDuration = tickDuration;
     }
 
-    public void setDamageReduction(int damageReduction) {
+    public void setDamageReduction(float damageReduction) {
         this.damageReduction = damageReduction;
     }
 

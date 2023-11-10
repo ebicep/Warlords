@@ -1,5 +1,8 @@
 package com.ebicep.warlords.game.option.pvp.siege;
 
+import com.ebicep.warlords.abilities.FortifyingHex;
+import com.ebicep.warlords.abilities.GuardianBeam;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -112,14 +115,6 @@ public class SiegeOption implements Option {
     }
 
     @Override
-    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        if (gameEnded()) {
-            return;
-        }
-        state.updateInventory(warlordsPlayer, player);
-    }
-
-    @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Siege",
@@ -134,9 +129,25 @@ public class SiegeOption implements Option {
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.1f;
+                return currentDamageValue * 1.2f;
             }
         });
+        for (AbstractAbility ability : player.getAbilities()) {
+            if (ability instanceof FortifyingHex fortifyingHex) {
+                fortifyingHex.setDamageReduction(3.33f);
+            } else if (ability instanceof GuardianBeam guardianBeam) {
+                guardianBeam.setShieldPercentSelf(guardianBeam.getShieldPercentSelf() - 5);
+                guardianBeam.setShieldPercentAlly(guardianBeam.getShieldPercentAlly() - 5);
+            }
+        }
+    }
+
+    @Override
+    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        if (gameEnded()) {
+            return;
+        }
+        state.updateInventory(warlordsPlayer, player);
     }
 
     public Map<Team, Location> getTeamPayloadStart() {
