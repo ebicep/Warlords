@@ -220,6 +220,9 @@ public class BountyMenu {
                     bounty.getCurrencyReward()
                           .forEach((currencies, aLong) -> add(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
                     addAll(PvEUtils.getCostLore(bountyCost, true));
+                    addAll(WordWrap.wrap(Component.text("You can only have " + bountyInfo.maxBountiesStarted() + " " + bountyInfoName + " bounties active at a time. You can cancel a bounty at any time.",
+                            NamedTextColor.GRAY
+                    ), 160));
                 }},
                 Component.text("Cancel", NamedTextColor.RED),
                 Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
