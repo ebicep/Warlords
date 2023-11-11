@@ -159,12 +159,12 @@ public class BountyMenu {
                             bounty.getCurrencyReward()
                                   .forEach((currencies, aLong) -> add(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
                             add(Component.empty());
-                            add(Component.text("Click to CANCEL this bounty. This will also reset its progress.", NamedTextColor.RED));
+                            addAll(WordWrap.wrap(Component.text("Click to CANCEL this bounty. This will also reset its progress.", NamedTextColor.RED), 140));
                         }},
                         Component.text("Cancel", NamedTextColor.RED),
                         Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
                         (m2, e2) -> {
-                            player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, .5f);
+                            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
                             bounty.setValue(0);
                             bounty.setStarted(false);
                             BountyUtils.sendBountyMessage(
