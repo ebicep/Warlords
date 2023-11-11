@@ -105,7 +105,7 @@ public class Narmer extends AbstractMob implements BossMob {
             case EXTREME -> 8;
             default -> 10;
         };
-        this.playerClass.addAbility(new SpawnMobAbility(Math.min(6, startingCooldown - playerCount + 1), Mob.ZOMBIE_LANCER, true) {
+        this.playerClass.addAbility(new SpawnMobAbility(Math.max(6, startingCooldown - playerCount + 1), Mob.ZOMBIE_LANCER, true) {
 
             @Override
             public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
