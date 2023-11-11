@@ -32,13 +32,13 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Narmer extends AbstractMob implements BossMob {
 
     private final int executeRadius = 80;
     private final List<WarlordsEntity> acolytes = new ArrayList<>();
+    private final Set<UUID> minionsCanHeal = new HashSet<>();
     private int timesMegaEarthQuakeActivated = 0;
     private Listener listener;
     private int acolyteDeathTickWindow = 0;
@@ -181,7 +181,9 @@ public class Narmer extends AbstractMob implements BossMob {
                 }
 
                 for (int i = 0; i < 8; i++) {
-                    option.spawnNewMob(new ZombieLancer(warlordsNPC.getLocation()));
+                    ZombieLancer zombieLancer = new ZombieLancer(warlordsNPC.getLocation());
+                    option.spawnNewMob(zombieLancer);
+                    minionsCanHeal.add(zombieLancer.getWarlordsNPC().getUuid());
                 }
             }
         }.runTaskLater(10);
@@ -210,9 +212,9 @@ public class Narmer extends AbstractMob implements BossMob {
                 WarlordsEntity dead = event.getWarlordsEntity();
                 Location location = warlordsNPC.getLocation();
 
-                if (dead.isTeammate(warlordsNPC)) {
-                    float healthMultiplier = playerCount <= 5 ? 1.09f - playerCount * .01f : 1.03f;
-                    float healing = warlordsNPC.getHealth() * healthMultiplier;
+                if (dead.isTeammate(warlordsNPC) && minionsCanHeal.contains(dead.getUuid())) {
+                    EffectUtils.playParticleLinkAnimation(dead.getLocation(), location, Particle.VILLAGER_HAPPY, 1, 2);
+                    float healing = warlordsNPC.getHealth() * 1.1f;
                     warlordsNPC.addHealingInstance(
                             warlordsNPC,
                             "Undead Healing",
@@ -322,7 +324,6 @@ public class Narmer extends AbstractMob implements BossMob {
                 EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), Particle.DRIP_LAVA);
             }
         }
-
     }
 
     @Override
@@ -357,6 +358,7 @@ public class Narmer extends AbstractMob implements BossMob {
     public void addAcolyte(WarlordsEntity acolyte) {
         acolytes.add(acolyte);
         acolyteSpawnTickWindow = 20 * 8;
+        minionsCanHeal.add(acolyte.getUuid());
     }
 
     public List<WarlordsEntity> getAcolytes() {
