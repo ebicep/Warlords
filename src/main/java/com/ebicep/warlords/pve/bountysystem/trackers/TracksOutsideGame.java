@@ -11,6 +11,7 @@ import com.ebicep.warlords.events.WeaponTitlePurchaseEvent;
 import com.ebicep.warlords.events.player.*;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
+import com.ebicep.warlords.pve.bountysystem.events.BountyCancelEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyStartEvent;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -112,6 +113,11 @@ public interface TracksOutsideGame {
 
             @EventHandler
             public void onBountyStart(BountyStartEvent event) {
+                refreshTracker(event.getDatabasePlayer().getUuid());
+            }
+
+            @EventHandler
+            public void onBountyCancel(BountyCancelEvent event) {
                 refreshTracker(event.getDatabasePlayer().getUuid());
             }
 

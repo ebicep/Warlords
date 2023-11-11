@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMo
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
+import com.ebicep.warlords.pve.bountysystem.events.BountyCancelEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyClaimEvent;
 import com.ebicep.warlords.pve.bountysystem.events.BountyStartEvent;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
@@ -145,6 +146,43 @@ public class BountyMenu {
             if (bounty.getProgress() == null) {
                 claimBounty(player, collection, databasePlayer, bounty, bountyInfoName);
                 player.closeInventory();
+            } else {
+                Menu.openConfirmationMenu(
+                        player,
+                        "Cancel Bounty",
+                        3,
+                        Component.text("Cancel Bounty: ", NamedTextColor.RED).append(Component.text(bounty.getName(), NamedTextColor.GREEN)),
+                        new ArrayList<>() {{
+                            addAll(WordWrap.wrap(Component.text(bounty.getDescription(), NamedTextColor.GRAY), 160));
+                            add(Component.empty());
+                            add(Component.text("Rewards:", NamedTextColor.GRAY));
+                            bounty.getCurrencyReward()
+                                  .forEach((currencies, aLong) -> add(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
+                            add(Component.empty());
+                            add(Component.text("Click to CANCEL this bounty. This will also reset its progress.", NamedTextColor.RED));
+                        }},
+                        Component.text("Cancel", NamedTextColor.RED),
+                        Collections.singletonList(Component.text("Go back", NamedTextColor.GRAY)),
+                        (m2, e2) -> {
+                            player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, .5f);
+                            bounty.setValue(0);
+                            bounty.setStarted(false);
+                            BountyUtils.sendBountyMessage(
+                                    player,
+                                    Component.text("You cancelled the " + bountyInfoName + " bounty ", NamedTextColor.GRAY)
+                                             .append(Component.text(bounty.getName(), NamedTextColor.GREEN)
+                                                              .hoverEvent(bounty.getItem().get().asHoverEvent()))
+                                             .append(Component.text("!"))
+                            );
+                            Bukkit.getPluginManager().callEvent(new BountyCancelEvent(databasePlayer, bounty));
+                            player.closeInventory();
+                            DatabaseManager.queueUpdatePlayerAsync(lifetimeDatabasePlayer);
+                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer, collection);
+                        },
+                        (m2, e2) -> openBountyMenu(player),
+                        (m2) -> {
+                        }
+                );
             }
             return;
         }
