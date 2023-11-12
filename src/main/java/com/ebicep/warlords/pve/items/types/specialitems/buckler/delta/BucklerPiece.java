@@ -5,12 +5,14 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.buckler.omega.ElementalShield;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
@@ -63,7 +65,8 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
                                         damageAmount,
                                         damageAmount,
                                         isCrit ? 100 : 0,
-                                        100
+                                        100,
+                                        EnumSet.of(InstanceFlags.RECURSIVE)
                                 );
                             });
             }
