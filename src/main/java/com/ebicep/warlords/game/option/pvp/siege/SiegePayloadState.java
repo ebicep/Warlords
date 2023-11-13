@@ -41,6 +41,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     private Payload payload;
     private int transitionTickDelay = 0; // for animations/title screens
     private int ticksElapsedAtTransition = -1;
+    private PayloadMoveInfo payloadInfo;
     private int netEscorting = 0;
     private int overtimeTicksLeft = -1;
     private BossBar overtimeBossBar;
@@ -62,8 +63,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
         ) {
             @Override
             public boolean tick(int ticksElapsed) {
-                PayloadMoveInfo payloadInfo = getPayloadMove(brain.getCurrentLocation());
-                netEscorting = payloadInfo.netEscorting();
+                payloadInfo = getPayloadMove(brain.getCurrentLocation());
                 if (overtimeTicksLeft > 0) {
                     if (payloadInfo.pushers() <= 0) {
                         overtimeTicksLeft--;
@@ -84,7 +84,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                     }
                 }
                 renderEffects(ticksElapsed);
-                showBossBar(netEscorting);
+                showBossBar(payloadInfo.netEscorting());
                 return false;
             }
 
@@ -145,7 +145,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
             return false;
         }
         if (overtimeTicksLeft == -1 && ticksElapsed / 20 >= maxSeconds()) {
-            if (netEscorting > 0) {
+            if (payloadInfo.pushers() > 0) {
                 overtimeBossBar = BossBar.bossBar(
                         Component.text("OVERTIME!", NamedTextColor.LIGHT_PURPLE, TextDecoration.BOLD),
                         1,
