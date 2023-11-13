@@ -37,7 +37,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof FlameBurst) {
                     abstractAbility.multiplyMinMax(1.25f);
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 40);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -40);
                 }
             }
     ),
