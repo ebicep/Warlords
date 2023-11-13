@@ -40,7 +40,7 @@ import java.util.function.Function;
 public class MagmaticOoze extends AbstractMob implements BossMob {
 
     private static final Material DAMAGE_BLOCK = Material.MAGMA_BLOCK;
-    private static final int BASE_HEALTH = 75_000;
+    private static final int BASE_HEALTH = 80_000;
     private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
     private int splitNumber;
 
@@ -70,11 +70,17 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FieryProjectile(600 - (splitNumber * 10), 700 - (splitNumber * 10)),
-                new FlamingSlam(900 - (splitNumber * 100), 1400 - (splitNumber * 100)),
-                new HeatAura(100 - (splitNumber * 10), 10 - splitNumber),
+                new FieryProjectile(750 - (splitNumber * 10), 900 - (splitNumber * 10)),
+                new FlamingSlam(1200 - (splitNumber * 100), 1600 - (splitNumber * 100)),
+                new HeatAura(150 - (splitNumber * 10), 13 - splitNumber),
                 new MoltenFissure(previousBlocks),
-                new Split(splitNumber, (loc, we) -> new MagmaticOoze(loc, MathUtils.lerp(0, BASE_HEALTH, we.getHealth() / we.getMaxBaseHealth()), splitNumber + 1, previousBlocks))
+                new Split(splitNumber,
+                        (loc, we) -> new MagmaticOoze(loc,
+                                Math.max(15_000, MathUtils.lerp(0, BASE_HEALTH, we.getHealth() / we.getMaxBaseHealth())),
+                                splitNumber + 1,
+                                previousBlocks
+                        )
+                )
         );
         this.splitNumber = splitNumber;
         this.previousBlocks = previousBlocks;
@@ -160,8 +166,8 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                                         warlordsEntity.addDamageInstance(
                                                 warlordsNPC,
                                                 "Magma",
-                                                100,
-                                                150,
+                                                125,
+                                                175,
                                                 0,
                                                 100,
                                                 EnumSet.of(InstanceFlags.TRUE_DAMAGE)
@@ -639,7 +645,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private boolean init = false;
 
         public Split(int split, BiFunction<Location, WarlordsEntity, AbstractMob> splitSpawnFunction) {
-            super("Split", 20, 50, true);
+            super("Split", 15, 50, 10);
             this.split = split;
             this.splitSpawnFunction = splitSpawnFunction;
         }
