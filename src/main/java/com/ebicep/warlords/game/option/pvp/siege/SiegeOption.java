@@ -48,7 +48,7 @@ public class SiegeOption implements Option {
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
-        state = new SiegeCapturePointState(this);
+        state = new SiegeWaitState(this);
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(10, "state-time") {
             @Nonnull
             @Override
