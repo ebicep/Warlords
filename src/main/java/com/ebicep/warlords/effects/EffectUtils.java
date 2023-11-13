@@ -356,9 +356,7 @@ public class EffectUtils {
     }
 
     public static void strikeLightning(Location location, boolean isSilent) {
-        location.getWorld().spawn(location, LightningStrike.class, lightningStrike -> {
-            //lightningStrike.setSilent(isSilent);
-        });
+        location.getWorld().strikeLightningEffect(location);
         new BukkitRunnable() {
 
             @Override
