@@ -3951,7 +3951,7 @@ public enum GameMap {
             1,
             120 * SECOND,
             "Acropolis",
-            1,
+            3,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
@@ -4219,7 +4219,7 @@ public enum GameMap {
             2,
             120 * SECOND,
             "Tartarus",
-            2,
+            3,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
         @Override
