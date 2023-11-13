@@ -10,6 +10,7 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.events.player.ingame.pve.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -22,6 +23,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
@@ -265,6 +267,13 @@ public interface PveOption extends Option {
             public void onItemDrop(WarlordsGiveBlessingFoundEvent event) {
                 getRewards().getPlayerRewards(event.getWarlordsEntity().getUuid())
                             .addBlessingsFound();
+            }
+
+            @EventHandler
+            public void onEnergySubtract(WarlordsEnergyUseEvent.Pre event) {
+                if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
+                    event.setCancelled(true);
+                }
             }
         };
     }
