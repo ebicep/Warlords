@@ -40,7 +40,7 @@ import java.util.function.Function;
 public class MagmaticOoze extends AbstractMob implements BossMob {
 
     private static final Material DAMAGE_BLOCK = Material.MAGMA_BLOCK;
-    private static final int BASE_HEALTH = 70_000;
+    private static final int BASE_HEALTH = 75_000;
     private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
     private int splitNumber;
 
