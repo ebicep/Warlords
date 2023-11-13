@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pvp.siege;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerHorseEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.cuboid.GateOption;
@@ -68,7 +69,7 @@ public class SiegeWaitState implements SiegeState, Listener, TimerSkipAbleMarker
 
     @Override
     public int maxSeconds() {
-        return 20;
+        return 10;
     }
 
     @Override
@@ -79,6 +80,11 @@ public class SiegeWaitState implements SiegeState, Listener, TimerSkipAbleMarker
     @EventHandler
     public void onHorse(WarlordsPlayerHorseEvent e) {
         e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
+        event.setCancelled(true);
     }
 
 }
