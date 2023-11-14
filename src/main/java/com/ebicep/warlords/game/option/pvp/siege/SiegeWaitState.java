@@ -69,7 +69,7 @@ public class SiegeWaitState implements SiegeState, Listener, TimerSkipAbleMarker
 
     @Override
     public int maxSeconds() {
-        return 10;
+        return 9;
     }
 
     @Override

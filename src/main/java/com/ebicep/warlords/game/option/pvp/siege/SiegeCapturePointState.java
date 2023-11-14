@@ -182,7 +182,7 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
 
         TeamCaptureData(Team team, float percentage, int standingTimer) {
             this.bossBar = BossBar.bossBar(
-                    Component.text("0%", NamedTextColor.WHITE),
+                    Component.text("0%", team.teamColor),
                     0,
                     team.bossBarColor,
                     BossBar.Overlay.PROGRESS
@@ -198,7 +198,7 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
 
         public void updateBossBar() {
             bossBar.progress(MathUtils.clamp(percentage / 100, 0, 1))
-                   .name(Component.text(Math.round(percentage) + "%", NamedTextColor.WHITE));
+                   .name(Component.text(Math.round(percentage) + "%", bossBar.name().color()));
         }
 
         public void addPercentage(float percentage) {
