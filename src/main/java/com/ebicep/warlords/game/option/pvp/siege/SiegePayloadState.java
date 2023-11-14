@@ -34,7 +34,7 @@ import java.util.UUID;
 
 public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMarker, TimerResetAbleMarker {
 
-    private static final int OVERTIME_TICKS = 20 * 10;
+    private static final int OVERTIME_TICKS = 20 * 5;
     private final SiegeOption siegeOption;
     private final Team escortingTeam;
     private final Map<UUID, SiegeStats> playerSiegeStats;
@@ -43,7 +43,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     private int transitionTickDelay = 0; // for animations/title screens
     private int ticksElapsedAtTransition = -1;
     private PayloadMoveInfo payloadInfo;
-    private int netEscorting = 0;
+    private int noEscortTicks = 0; // if no one is escorting for 5 seconds, payload moves backwards
     private int overtimeTicksLeft = -1;
     private BossBar overtimeBossBar;
 
@@ -58,7 +58,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
         this.game = game;
         payload = new Payload(
                 game,
-                new PayloadBrain(siegeOption.getTeamPayloadStart().get(escortingTeam), PayloadBrain.DEFAULT_FORWARD_MOVE_PER_TICK, .05),
+                new PayloadBrain(siegeOption.getTeamPayloadStart().get(escortingTeam), PayloadBrain.DEFAULT_FORWARD_MOVE_PER_TICK, .0375),
                 new PayloadRendererCoalCart(),
                 escortingTeam
         ) {
@@ -117,17 +117,24 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                 int netEscortBatteries = escortingBatteries - nonEscortingBatteries;
                 // contested
                 if (escorting != 0 && nonEscorting != 0) {
+                    noEscortTicks = 0;
                     contested = true;
                     return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, 0.0);
                 }
                 contested = false;
                 if (escorting > 0) {
-                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, brain.getForwardMovePerTick() * (netEscortBatteries > 0 ? 1.5 : 1));
+                    noEscortTicks = 0;
+                    double moveMultiplier = netEscortBatteries > 0 ? 1.5 : 1;
+                    moveMultiplier += overtimeTicksLeft > 0 ? .2 : 0;
+                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, brain.getForwardMovePerTick() * moveMultiplier);
                 }
-                if (nonEscorting > 0) {
-                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, -brain.getBackwardMovePerTick());
+                noEscortTicks++;
+                if (noEscortTicks < 5 * 20) {
+                    return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, 0.0);
                 }
-                return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, 0.0);
+                // move backwards, every defender adds 10% to the speed
+                double backwardMovePerTick = brain.getBackwardMovePerTick() * (1 + nonEscorting * .1);
+                return new PayloadMoveInfo(escorting, nonEscorting, netEscorting, -backwardMovePerTick);
             }
         };
         this.payload.getRenderer().addRenderPathRunnable(game, payload.getBrain().getStart(), payload.getBrain().getPath());
@@ -159,7 +166,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                             Component.empty(),
                             Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
                     ));
-                    player.sendMessage(Component.text("Overtime is now active!", NamedTextColor.LIGHT_PURPLE));
+                    player.sendMessage(Component.text("Overtime is now active! The payload will now move 20% faster!", NamedTextColor.LIGHT_PURPLE));
                     player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, 1);
                 });
                 overtimeTicksLeft = OVERTIME_TICKS;
@@ -220,7 +227,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
             if (isCapturedTeam) {
                 playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsEscorted();
             } else {
-                playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsEscortedFail();
+                playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsDefendedFail();
             }
         });
     }
@@ -240,7 +247,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
             if (isNotEscortingTeam) {
                 playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsDefended();
             } else {
-                playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsDefendedFail();
+                playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsEscortedFail();
             }
         });
     }
