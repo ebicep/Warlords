@@ -7,8 +7,6 @@ import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmerAcolyte;
 import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.GameType;
 import org.bukkit.entity.Entity;
 
 import java.util.List;
@@ -17,7 +15,7 @@ public class NPCTargetNarmerAcolyteGoal extends BehaviorGoalAdapter {
 
     private final double range;
     private NPC npc;
-    private Entity target;
+    private WarlordsEntity warlordsEntityTarget;
 
     public NPCTargetNarmerAcolyteGoal(NPC npc, double range) {
         this.npc = npc;
@@ -27,12 +25,12 @@ public class NPCTargetNarmerAcolyteGoal extends BehaviorGoalAdapter {
     @Override
     public void reset() {
         this.npc.getNavigator().cancelNavigation();
-        this.target = null;
+        this.warlordsEntityTarget = null;
     }
 
     @Override
     public BehaviorStatus run() {
-        if (!target.isValid()) {
+        if (warlordsEntityTarget.isDead()) {
             return BehaviorStatus.SUCCESS;
         } else {
             return BehaviorStatus.RUNNING;
@@ -49,13 +47,10 @@ public class NPCTargetNarmerAcolyteGoal extends BehaviorGoalAdapter {
         if (thisWarlordsEntity == null) {
             return false;
         }
-        List<Entity> list = GoalUtils.getNearbyWarlordEntities(npcEntity, thisWarlordsEntity, range);
+        List<Entity> list = GoalUtils.getNearbyMatchingTeam(npcEntity, thisWarlordsEntity.getTeam(), range);
         list.removeIf(entity -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity);
-            return warlordsEntity == null ||
-                    warlordsEntity.isDead() ||
-                    !(warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof NarmerAcolyte) ||
-                    (entity instanceof ServerPlayer p && p.gameMode.getGameModeForPlayer() == GameType.CREATIVE);
+            return warlordsEntity == null || !(warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof NarmerAcolyte);
         });
         if (list.isEmpty()) {
             return false;
@@ -68,7 +63,8 @@ public class NPCTargetNarmerAcolyteGoal extends BehaviorGoalAdapter {
                     warlordsEntity2 != null ? warlordsEntity2.getHealth() : Double.MAX_VALUE
             );
         });
-        this.target = list.get(0);
+        this.warlordsEntityTarget = Warlords.getPlayer(list.get(0));
+        npc.getNavigator().setTarget(warlordsEntityTarget.getEntity(), true);
         return true;
     }
 }

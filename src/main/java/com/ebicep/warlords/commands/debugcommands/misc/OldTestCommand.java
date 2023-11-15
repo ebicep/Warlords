@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.pve.items.ItemTier;
@@ -8,11 +9,17 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.HologramTrait;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
@@ -132,12 +139,16 @@ public class OldTestCommand implements CommandExecutor {
 //                }
 //            }
 
-//            NPC mount = NPCManager.NPC_REGISTRY.createNPC(EntityType.HORSE, "test");
-//            mount.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+            NPC mount = NPCManager.NPC_REGISTRY.createNPC(EntityType.ZOMBIE, "test");
+            mount.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+            HologramTrait hologramTrait = mount.getOrAddTrait(HologramTrait.class);
+            hologramTrait.setUseDisplayEntities(true);
+            hologramTrait.setLine(0, "TEST");
+            hologramTrait.setLine(1, LegacyComponentSerializer.legacyAmpersand().serialize(Component.text("HELLO", TextColor.color(123, 123, 123))));
 //            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.SKELETON, "test");
 //            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-//
-//            mount.spawn(player.getLocation());
+
+            mount.spawn(player.getLocation());
 //            npc.spawn(player.getLocation());
 //
 //            mount.getEntity().addPassenger(npc.getEntity());

@@ -447,7 +447,7 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 15),
             Weapons.DEMONBLADE.getItem()
     )),
-    UNDEAD_ACOLYTE(EntityType.ZOMBIE, UndeadAcolyte.class, UndeadAcolyte::new, UndeadAcolyte::new, new Utils.SimpleEntityEquipment(
+    NARMERS_DEATH_CHARGE(EntityType.PRIMED_TNT, NarmersDeathCharge.class, NarmersDeathCharge::new, NarmersDeathCharge::new, new Utils.SimpleEntityEquipment(
             new ItemStack(Material.TNT),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 15),

@@ -62,7 +62,6 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
         // safe guard
         if (entityTarget.getTarget() instanceof Player player && player.getGameMode() == GameMode.SPECTATOR) {
             return BehaviorStatus.FAILURE;
-
         }
 //        WarlordsEntity currentTarget = Warlords.getPlayer(entityTarget.getTarget());
 //        if (!Objects.equals(currentTarget, warlordsEntityTarget)) {
@@ -93,7 +92,7 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
             return null;
         }
         Location location = npcEntity.getLocation();
-        List<Entity> list = GoalUtils.getNearbyWarlordEntities(npcEntity, thisWarlordsEntity, range);
+        List<Entity> list = GoalUtils.getNearbyEnemies(npcEntity, thisWarlordsEntity, range);
         list.sort(Comparator.comparingDouble(o -> o.getLocation().distanceSquared(location)));
         if (list.isEmpty()) {
             return null;

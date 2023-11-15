@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractSpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmerAcolyte;
+import com.ebicep.warlords.pve.mobs.bosses.bossminions.NarmersDeathCharge;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
@@ -42,7 +43,6 @@ public class Narmer extends AbstractMob implements BossMob {
     private int timesMegaEarthQuakeActivated = 0;
     private Listener listener;
     private int acolyteDeathTickWindow = 0;
-    private int acolyteSpawnTickWindow = 0;
 
     public Narmer(Location spawnLocation) {
         this(spawnLocation, "Narmer", 16000, 0.16f, 20, 1600, 2000);
@@ -122,61 +122,13 @@ public class Narmer extends AbstractMob implements BossMob {
 
         SpawnNarmerAcolyteAbility spawnNarmerAcolyteAbility = new SpawnNarmerAcolyteAbility(this);
         this.playerClass.addAbility(spawnNarmerAcolyteAbility);
-        if (playerCount >= 3) {
-            this.playerClass.addAbility(new SpawnMobAbility(7, Mob.UNDEAD_ACOLYTE, 10) {
-
-                private WarlordsEntity customTarget;
-
-                @Override
-                public int getSpawnAmount() {
-                    if (acolyteSpawnTickWindow > 0) {
-                        return 0;
-                    }
-                    if (acolyteDeathTickWindow > 0) {
-                        return 1;
-                    }
-//                List<Float> sortedHealths = acolytes.stream().map(WarlordsEntity::getHealth)
-//                                                    .sorted(Float::compareTo)
-//                                                    .toList();
-                    if (acolytes.size() > 1) {
-                        for (WarlordsEntity firstAcolyte : acolytes) {
-                            float firstHealth = firstAcolyte.getHealth();
-                            if (firstHealth > 5000) {
-                                continue;
-                            }
-                            Location firstLocation = firstAcolyte.getLocation();
-                            for (WarlordsEntity secondAcolyte : acolytes) {
-                                if (firstAcolyte.equals(secondAcolyte)) {
-                                    continue;
-                                }
-                                float secondHealth = secondAcolyte.getHealth();
-                                if (secondHealth > 5000) {
-                                    continue;
-                                }
-                                Location secondLocation = secondAcolyte.getLocation();
-                                if (firstLocation.distanceSquared(secondLocation) < 4) {
-                                    customTarget = firstAcolyte;
-                                    return 1;
-                                }
-                            }
-                        }
-                    }
-                    return 0;
-                }
-
-                @Override
-                public void onMobSpawn(WarlordsNPC warlordsNPC) {
-                    warlordsNPC.getMob().setTarget(customTarget);
-                }
-            });
-        }
 
         float multiplier = difficulty == DifficultyIndex.EXTREME ? 3 : difficulty == DifficultyIndex.HARD ? 2 : 1;
 
         new GameRunnable(option.getGame()) {
             @Override
             public void run() {
-                for (int i = 0; i < (multiplier * i); i++) {
+                for (int i = 0; i < (multiplier * playerCount); i++) {
                     spawnNarmerAcolyteAbility.spawnMob(warlordsNPC);
                 }
 
@@ -225,76 +177,80 @@ public class Narmer extends AbstractMob implements BossMob {
                     );
                 }
 
-                if (acolytes.contains(dead)) {
-                    acolytes.remove(dead);
-                    Utils.playGlobalSound(location, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
-                    EffectUtils.playHelixAnimation(
-                            location.add(0, 0.15, 0),
-                            12,
-                            Particle.SPELL,
-                            3,
-                            60
-                    );
+                if (!acolytes.contains(dead)) {
+                    return;
+                }
+                acolytes.remove(dead);
+                Utils.playGlobalSound(location, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
+                EffectUtils.playHelixAnimation(
+                        location.add(0, 0.15, 0),
+                        12,
+                        Particle.SPELL,
+                        3,
+                        60
+                );
 
-                    float multiplier = switch (difficulty) {
-                        case EASY -> 2;
-                        case HARD -> 16;
-                        case EXTREME -> 32;
-                        default -> 8;
-                    };
-                    if (acolyteDeathTickWindow > 0) {
-                        Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
-                        Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
-                        EffectUtils.strikeLightning(location, false, 12);
-                        List<WarlordsEntity> warlordsEntities = PlayerFilter
-                                .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
-                                .aliveEnemiesOf(warlordsNPC)
-                                .toList();
-                        for (WarlordsEntity enemy : warlordsEntities) {
-                            enemy.addDamageInstance(
-                                    warlordsNPC,
-                                    "Death Wish",
-                                    965 * multiplier,
-                                    1138 * multiplier,
-                                    0,
-                                    100
-                            );
-                            enemy.sendMessage(Component.text("HINT: Killing Acolytes too quickly might result in an unfavourable outcome.",
-                                    NamedTextColor.RED
-                            ));
-                        }
-                        for (WarlordsEntity warlordsEntity : warlordsEntities) {
-                            ChallengeAchievements.checkForAchievement(warlordsEntity, ChallengeAchievements.FISSURED_END);
-                            break;
-                        }
-                        timesMegaEarthQuakeActivated++;
-                    } else {
-                        for (WarlordsEntity enemy : PlayerFilter
-                                .entitiesAround(warlordsNPC, 15, 15, 15)
-                                .aliveEnemiesOf(warlordsNPC)
-                        ) {
-                            Utils.addKnockback(name, warlordsNPC.getLocation(), enemy, -2.5, 0.25);
-                            enemy.addDamageInstance(
-                                    warlordsNPC,
-                                    "Acolyte Revenge",
-                                    965,
-                                    1138,
-                                    0,
-                                    100
-                            );
-                        }
+                float multiplier = switch (difficulty) {
+                    case EASY -> 2;
+                    case HARD -> 16;
+                    case EXTREME -> 32;
+                    default -> 8;
+                };
+                if (acolyteDeathTickWindow > 0) {
+                    Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
+                    Utils.playGlobalSound(location, Sound.ENTITY_WITHER_DEATH, 500, 0.2f);
+                    EffectUtils.strikeLightning(location, false, 12);
+                    List<WarlordsEntity> warlordsEntities = PlayerFilter
+                            .entitiesAround(warlordsNPC, executeRadius, executeRadius, executeRadius)
+                            .aliveEnemiesOf(warlordsNPC)
+                            .toList();
+                    for (WarlordsEntity enemy : warlordsEntities) {
+                        enemy.addDamageInstance(
+                                warlordsNPC,
+                                "Death Wish",
+                                965 * multiplier,
+                                1138 * multiplier,
+                                0,
+                                100
+                        );
+                        enemy.sendMessage(Component.text("HINT: Killing Acolytes too quickly might result in an unfavourable outcome.",
+                                NamedTextColor.RED
+                        ));
                     }
-
-                    if (acolyteDeathTickWindow <= 0) {
-                        acolyteDeathTickWindow = difficulty == DifficultyIndex.EXTREME ? 100 : difficulty == DifficultyIndex.HARD ? 60 : 20;
+                    for (WarlordsEntity warlordsEntity : warlordsEntities) {
+                        ChallengeAchievements.checkForAchievement(warlordsEntity, ChallengeAchievements.FISSURED_END);
+                        break;
                     }
-
-                    List<WarlordsEntity> selfAcolytes = spawnNarmerAcolyteAbility.getSelfAcolytes();
-                    if (selfAcolytes.contains(dead)) {
-                        spawnNarmerAcolyteAbility.setCurrentCooldown(spawnNarmerAcolyteAbility.getCooldownValue());
-                        selfAcolytes.remove(dead);
+                    timesMegaEarthQuakeActivated++;
+                } else {
+                    for (WarlordsEntity enemy : PlayerFilter
+                            .entitiesAround(warlordsNPC, 15, 15, 15)
+                            .aliveEnemiesOf(warlordsNPC)
+                    ) {
+                        Utils.addKnockback(name, warlordsNPC.getLocation(), enemy, -2.5, 0.25);
+                        enemy.addDamageInstance(
+                                warlordsNPC,
+                                "Acolyte Revenge",
+                                965,
+                                1138,
+                                0,
+                                100
+                        );
                     }
+                }
 
+                if (acolyteDeathTickWindow <= 0) {
+                    acolyteDeathTickWindow = difficulty == DifficultyIndex.EXTREME ? 100 : difficulty == DifficultyIndex.HARD ? 60 : 20;
+                }
+
+                List<WarlordsEntity> selfAcolytes = spawnNarmerAcolyteAbility.getSelfAcolytes();
+                if (selfAcolytes.contains(dead)) {
+                    spawnNarmerAcolyteAbility.setCurrentCooldown(spawnNarmerAcolyteAbility.getCooldownValue());
+                    selfAcolytes.remove(dead);
+                }
+
+                if (playerCount >= 3) {
+                    pveOption.spawnNewMob(new NarmersDeathCharge(dead.getLocation()));
                 }
             }
         };
@@ -314,9 +270,6 @@ public class Narmer extends AbstractMob implements BossMob {
                     Component.text(acolyteDeathTickWindow / 10f, NamedTextColor.YELLOW),
                     0, acolyteDeathTickWindow, 0
             );
-        }
-        if (acolyteSpawnTickWindow > 0) {
-            acolyteSpawnTickWindow--;
         }
 
         if (ticksElapsed % 15 == 0) {
@@ -357,7 +310,6 @@ public class Narmer extends AbstractMob implements BossMob {
 
     public void addAcolyte(WarlordsEntity acolyte) {
         acolytes.add(acolyte);
-        acolyteSpawnTickWindow = 20 * 8;
         minionsCanHeal.add(acolyte.getUuid());
     }
 

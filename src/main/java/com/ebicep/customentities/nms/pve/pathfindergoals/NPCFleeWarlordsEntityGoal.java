@@ -39,7 +39,7 @@ public class NPCFleeWarlordsEntityGoal implements Behavior {
     @Override
     public boolean shouldExecute() {
         Entity selfEntity = npc.getEntity();
-        List<Entity> nearbyEnemies = GoalUtils.getNearbyWarlordEntities(selfEntity, selfTeam, 10);
+        List<Entity> nearbyEnemies = GoalUtils.getNearbyMatchingTeam(selfEntity, selfTeam, 10);
         if (nearbyEnemies.isEmpty()) {
             return false;
         }

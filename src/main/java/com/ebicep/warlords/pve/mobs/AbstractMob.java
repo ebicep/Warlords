@@ -463,6 +463,10 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void setTarget(WarlordsEntity target) {
+        if (target == null) {
+            npc.getNavigator().cancelNavigation();
+            return;
+        }
         if (!npc.isSpawned()) {
             return;
         }
@@ -470,6 +474,10 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void setTarget(LivingEntity target) {
+        if (target == null) {
+            npc.getNavigator().cancelNavigation();
+            return;
+        }
         if (!npc.isSpawned()) {
             return;
         }

@@ -45,7 +45,7 @@ public class TargetAggroWarlordsEntityGoal extends TargetGoal {
             return false;
         }
         double followRange = this.getFollowDistance();
-        List<LivingEntity> list = GoalUtils.getNearbyWarlordEntities(this.mob, thisWarlordsEntity, followRange); // getEntitiesWithinAABB
+        List<LivingEntity> list = GoalUtils.getNearbyMatchingTeam(this.mob, thisWarlordsEntity, followRange); // getEntitiesWithinAABB
         list.sort((o1, o2) -> Double.compare(o1.distanceToSqr(this.mob), o2.distanceToSqr(this.mob)));
         if (list.isEmpty()) {
             return false;

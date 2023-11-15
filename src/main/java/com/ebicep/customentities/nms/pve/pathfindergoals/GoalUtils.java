@@ -3,6 +3,7 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffects;
@@ -13,19 +14,17 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GoalUtils {
 
     public static final RandomSource RANDOM = RandomSource.createNewThreadLocalInstance();
 
     @Nonnull
-    public static List<LivingEntity> getNearbyWarlordEntities(Mob mob, WarlordsEntity thisWarlordsEntity, double distance) {
+    public static List<LivingEntity> getNearbyMatchingTeam(Mob mob, WarlordsEntity thisWarlordsEntity, double distance) {
         List<LivingEntity> list = mob.level().getEntitiesOfClass(LivingEntity.class, mob.getBoundingBox().inflate(distance, 4.0D, distance)); // getEntitiesWithinAABB
         list.removeIf(entity -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(entity.getBukkitEntity());
@@ -39,31 +38,42 @@ public class GoalUtils {
     }
 
     @Nonnull
-    public static List<Entity> getNearbyWarlordEntities(Entity entity, WarlordsEntity thisWarlordsEntity, double distance) {
-        @NotNull Collection<Entity> list = entity.getNearbyEntities(distance, distance, distance);
-        list.removeIf(e -> {
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(e);
-            return warlordsEntity == null ||
-                    warlordsEntity.isDead() ||
-                    warlordsEntity.isTeammate(thisWarlordsEntity) ||
-                    warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) ||
-                    (e instanceof Player p && p.getGameMode() == GameMode.CREATIVE);
-        });
-        return new ArrayList<>(list);
+    public static List<Entity> getNearby(Entity entity, WarlordsEntity thisWarlordsEntity, double distance) {
+        return PlayerFilter.entitiesAround(entity, distance, distance, distance)
+                           .filter(warlordsEntity ->
+                                   !warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
+                                           !(warlordsEntity.getEntity() instanceof Player) || ((Player) warlordsEntity.getEntity()).getGameMode() != GameMode.CREATIVE
+                           )
+                           .stream()
+                           .map(WarlordsEntity::getEntity)
+                           .collect(Collectors.toList());
+    }
+
+
+    @Nonnull
+    public static List<Entity> getNearbyEnemies(Entity entity, WarlordsEntity thisWarlordsEntity, double distance) {
+        return PlayerFilter.entitiesAround(entity, distance, distance, distance)
+                           .aliveEnemiesOf(thisWarlordsEntity)
+                           .filter(warlordsEntity ->
+                                   !warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
+                                           !(warlordsEntity.getEntity() instanceof Player) || ((Player) warlordsEntity.getEntity()).getGameMode() != GameMode.CREATIVE
+                           )
+                           .stream()
+                           .map(WarlordsEntity::getEntity)
+                           .collect(Collectors.toList());
     }
 
     @Nonnull
-    public static List<Entity> getNearbyWarlordEntities(Entity entity, Team team, double distance) {
-        @NotNull Collection<Entity> list = entity.getNearbyEntities(distance, distance, distance);
-        list.removeIf(e -> {
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(e);
-            return warlordsEntity == null ||
-                    warlordsEntity.isDead() ||
-                    warlordsEntity.getTeam() == team ||
-                    warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) ||
-                    (e instanceof Player p && p.getGameMode() == GameMode.CREATIVE);
-        });
-        return new ArrayList<>(list);
+    public static List<Entity> getNearbyMatchingTeam(Entity entity, Team team, double distance) {
+        return PlayerFilter.entitiesAround(entity, distance, distance, distance)
+                           .aliveMatchingTeam(team)
+                           .filter(warlordsEntity ->
+                                   !warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
+                                           !(warlordsEntity.getEntity() instanceof Player) || ((Player) warlordsEntity.getEntity()).getGameMode() != GameMode.CREATIVE
+                           )
+                           .stream()
+                           .map(WarlordsEntity::getEntity)
+                           .collect(Collectors.toList());
     }
 
 //    @Nullable

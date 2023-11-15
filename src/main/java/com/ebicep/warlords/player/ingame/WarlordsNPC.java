@@ -25,11 +25,15 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class WarlordsNPC extends WarlordsEntity {
 
+    //    private final HologramTrait hologramTrait;
+    private final List<CustomHologramLine> customHologramLines = new ArrayList<>(); // lines to add on top of default health and name
     private float minMeleeDamage;
     private float maxMeleeDamage;
     private NPC npc;
@@ -38,8 +42,6 @@ public final class WarlordsNPC extends WarlordsEntity {
     private ArmorStand nameDisplay;
     @Nonnull
     private TextColor nameColor = NamedTextColor.GRAY;
-//    private HologramTrait hologramTrait;
-
     private int stunTicks;
 
     public WarlordsNPC(
@@ -116,6 +118,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         super.die(attacker);
         npc.destroy();
         nameDisplay.remove();
+        customHologramLines.forEach(customHologramLine -> customHologramLine.getEntity().remove());
     }
 
     @Override
@@ -167,17 +170,43 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateHealth() {
         if (!isDead()) {
-//            hologramTrait.setLine(0, LegacyComponentSerializer.legacySection().serialize(getNameComponent()));
+//            hologramTrait.setLine(0, LegacyComponentSerializer.legacySection().serialize(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED)));
+//            hologramTrait.setLine(1, LegacyComponentSerializer.legacySection().serialize(getNameComponent()));
+//            customHologramLines.removeIf(CustomHologramLine::isDelete);
+//            for (int i = 0; i < customHologramLines.size(); i++) {
+//                hologramTrait.setLine(i + 2, LegacyComponentSerializer.legacySection().serialize(customHologramLines.get(i).getText()));
+//            }
+            double y = entity.getHeight() + 0.275;
             if (nameDisplay == null) {
-                nameDisplay = Utils.spawnArmorStand(getLocation().add(0, entity.getHeight() + 0.275, 0), armorStand -> {
+                nameDisplay = Utils.spawnArmorStand(getLocation().add(0, y, 0), armorStand -> {
                     armorStand.setMarker(true);
                     armorStand.customName(getNameComponent());
                     armorStand.setCustomNameVisible(true);
                 });
             } else {
                 nameDisplay.customName(getNameComponent());
-                nameDisplay.teleport(entity.getLocation().add(0, entity.getHeight() + 0.275, 0));
+                nameDisplay.teleport(entity.getLocation().add(0, y, 0));
 //                entity.addPassenger(nameDisplay);
+            }
+            customHologramLines.removeIf(customHologramLine -> {
+                if (customHologramLine.isDelete()) {
+                    customHologramLine.getEntity().remove();
+                    return true;
+                }
+                return false;
+            });
+            for (int i = 0; i < customHologramLines.size(); i++) {
+                CustomHologramLine customHologramLine = customHologramLines.get(i);
+                if (customHologramLine.getEntity() == null) {
+                    customHologramLine.setEntity(Utils.spawnArmorStand(getLocation().add(0, y + (i + 1) * 0.275, 0), armorStand -> {
+                        armorStand.setMarker(true);
+                        armorStand.customName(customHologramLine.getText());
+                        armorStand.setCustomNameVisible(true);
+                    }));
+                } else {
+                    customHologramLine.getEntity().customName(customHologramLine.getText());
+                    customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));
+                }
             }
             entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
         }
@@ -194,7 +223,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     public void setDamageResistance(int damageResistance) {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
         updateHealth();
-        nameDisplay.customName(getNameComponent());
+//        nameDisplay.customName(getNameComponent());
     }
 
     @Override
@@ -263,5 +292,47 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public NPC getNpc() {
         return npc;
+    }
+
+//    public HologramTrait getHologramTrait() {
+//        return hologramTrait;
+//    }
+
+    public List<CustomHologramLine> getCustomHologramLines() {
+        return customHologramLines;
+    }
+
+    public static class CustomHologramLine {
+        private Component text;
+        private boolean delete;
+        private Entity entity;
+
+        public CustomHologramLine(Component text) {
+            this.text = text;
+        }
+
+        public Component getText() {
+            return text;
+        }
+
+        public void setText(Component text) {
+            this.text = text;
+        }
+
+        public boolean isDelete() {
+            return delete;
+        }
+
+        public void setDelete(boolean delete) {
+            this.delete = delete;
+        }
+
+        public Entity getEntity() {
+            return entity;
+        }
+
+        public void setEntity(Entity entity) {
+            this.entity = entity;
+        }
     }
 }
