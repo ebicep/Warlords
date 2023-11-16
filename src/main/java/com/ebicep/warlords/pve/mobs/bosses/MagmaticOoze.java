@@ -189,7 +189,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private final double kbVelocity = 1.2;
 
         public FieryProjectile(float minDamageHeal, float maxDamageHeal) {
-            super("Fiery Projectile", minDamageHeal, maxDamageHeal, 5, 50, 10, 200);
+            super("Fiery Projectile", minDamageHeal, maxDamageHeal, 6, 50, 10, 200);
         }
 
         @Override
@@ -271,7 +271,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private final int hitbox = 10;
 
         public FlamingSlam(float minDamageHeal, float maxDamageHeal) {
-            super("Flaming Slam", minDamageHeal, maxDamageHeal, 12, 50, 15, 200);
+            super("Flaming Slam", minDamageHeal, maxDamageHeal, 13, 50, 15, 175);
         }
 
         @Override
@@ -364,7 +364,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private final int hitbox;
 
         public HeatAura(float startDamage, int hitbox) {
-            super("Heat Aura", startDamage, startDamage, 2, 50, 25, 200);
+            super("Heat Aura", startDamage, startDamage, 2, 50, 25, 175);
             this.hitbox = hitbox;
         }
 
@@ -402,7 +402,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
 
         public MoltenFissure(Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-            super("Molten Fissure", 30, 50);
+            super("Molten Fissure", 20, 50);
             this.previousBlocks = previousBlocks;
         }
 
