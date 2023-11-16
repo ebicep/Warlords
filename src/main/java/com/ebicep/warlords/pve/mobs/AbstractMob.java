@@ -21,6 +21,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
+import com.ebicep.warlords.pve.mobs.flags.NoTarget;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
@@ -463,6 +464,9 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void setTarget(WarlordsEntity target) {
+        if (this instanceof NoTarget) {
+            return;
+        }
         if (target == null) {
             npc.getNavigator().cancelNavigation();
             return;
@@ -474,6 +478,9 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void setTarget(LivingEntity target) {
+        if (this instanceof NoTarget) {
+            return;
+        }
         if (target == null) {
             npc.getNavigator().cancelNavigation();
             return;

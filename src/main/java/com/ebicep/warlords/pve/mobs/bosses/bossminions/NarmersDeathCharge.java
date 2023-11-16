@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.flags.NoTarget;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -21,7 +22,7 @@ import org.bukkit.entity.TNTPrimed;
 
 import java.util.List;
 
-public class NarmersDeathCharge extends AbstractMob implements BossMinionMob {
+public class NarmersDeathCharge extends AbstractMob implements BossMinionMob, NoTarget {
 
     private WarlordsNPC.CustomHologramLine customHologramLine;
 
