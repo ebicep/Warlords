@@ -4427,6 +4427,544 @@ public enum GameMap {
         }
 
     },
+    GRIMOIRES_GRAVEYARD(
+            "Grimoire’s Graveyard",
+            4,
+            2,
+            120 * SECOND,
+            "GrimoiresGraveyard",
+            3,
+            GameMode.EVENT_WAVE_DEFENSE
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    Component.text(getMapName(), NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    Component.text("Kill mobs to gain event points!", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                    Component.empty()
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Kill as many mobs as possible!", NamedTextColor.YELLOW)
+            ));
+
+            /* TODO
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -2.50), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, 5.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, 13.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, 5.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, -10.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -18.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, -10.5), Team.RED));
+
+//            options.add(new PowerupOption(loc.addXYZ(14.5, 24.5, 16.5), PowerUp.COOLDOWN, 180, 30)); TODO
+//            options.add(new PowerupOption(loc.addXYZ(-13.5, 24.5, -23.5), PowerUp.HEALING, 90, 30));
+
+            options.add(new RespawnWaveOption(2, 1, 20));
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList() //TODO
+                    .add(1, new SimpleWave(8, 5 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.5, Mob.PIG_DISCIPLE)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                    )
+                    .add(2, new SimpleWave(8, 5 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.4, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ZOMBIE_LAMENT)
+                    )
+                    .add(4, new SimpleWave(8, 5 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.3, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.05, Mob.SKELETAL_WARLOCK)
+                            .add(0.05, Mob.PIG_SHAMAN)
+                    )
+                    .add(5, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_APOLLO)
+                    )
+                    .add(6, new SimpleWave(12, 5 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.2, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.05, Mob.SKELETAL_WARLOCK)
+                            .add(0.05, Mob.PIG_ALLEVIATOR)
+                    )
+                    .add(8, new SimpleWave(12, 5 * SECOND, null)
+                            .add(0.2, Mob.ZOMBIE_LANCER)
+                            .add(0.2, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.2, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
+                            .add(0.05, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                    )
+                    .add(10, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_ARES)
+                    )
+                    .add(11, new SimpleWave(16, 5 * SECOND, null)
+                            .add(0.1, Mob.ZOMBIE_LANCER)
+                            .add(0.1, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ZOMBIE_LAMENT)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.PIG_SHAMAN)
+                            .add(0.2, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                            .add(0.05, Mob.SLIME_GUARD)
+                    )
+                    .add(13, new SimpleWave(16, 5 * SECOND, null)
+                            .add(0.1, Mob.ZOMBIE_LANCER)
+                            .add(0.1, Mob.PIG_DISCIPLE)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.1, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.PIG_SHAMAN)
+                            .add(0.2, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                            .add(0.05, Mob.SLIME_GUARD)
+                            .add(0.2, Mob.ZOMBIE_SWORDSMAN)
+                    )
+                    .add(15, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_PROMETHEUS)
+                    )
+                    .add(16, new SimpleWave(20, 5 * SECOND, null)
+                            .add(0.2, Mob.PIG_DISCIPLE)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.1, Mob.ARACHNO_VENARI)
+                            .add(0.2, Mob.PIG_SHAMAN)
+                            .add(0.05, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                            .add(0.05, Mob.SLIME_GUARD)
+                            .add(0.05, Mob.ZOMBIE_SWORDSMAN)
+                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
+                            .add(0.1, Mob.RIFT_WALKER)
+                    )
+                    .add(20, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_ATHENA)
+                    )
+                    .add(21, new SimpleWave(24, 5 * SECOND, null)
+                            .add(0.2, Mob.ZOMBIE_LAMENT)
+                            .add(0.2, Mob.PIG_ALLEVIATOR)
+                            .add(0.1, Mob.ZOMBIE_VANGUARD)
+                            .add(0.1, Mob.SLIME_GUARD)
+                            .add(0.1, Mob.ZOMBIE_SWORDSMAN)
+                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
+                            .add(0.1, Mob.RIFT_WALKER)
+                            .add(0.05, Mob.SKELETAL_SORCERER)
+                            .add(0.05, Mob.ZOMBIE_KNIGHT)
+                    )
+                    .add(25, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_CRONUS)
+                    )
+                    .loop(6, 21, 5)
+                    .loop(6, 25, 5)
+                    ,
+                    DifficultyIndex.EVENT
+            ) {
+                @Override
+                public void register(@Nonnull Game game) {
+                    super.register(game);
+                    game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 2, "wave") {
+                        @Nonnull
+                        @Override
+                        public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                            return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                        }
+                    });
+                }
+
+                @Override
+                public float getSpawnCountMultiplier(int playerCount) {
+                    return switch (playerCount) {
+                        case 3 -> 1.2f;
+                        case 4 -> 1.5f;
+                        default -> 1;
+                    };
+                }
+
+                @Override
+                protected void modifyStats(WarlordsNPC warlordsNPC) {
+                    warlordsNPC.getMob().onSpawn(this);
+
+                    int playerCount = playerCount();
+                    float healthMultiplier = .5f + .5f * playerCount; // 1 / 1.5 / 2 / 2.5
+                    float damageMultiplier = playerCount >= 4 ? 1.15f : 1;
+
+                    float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
+                    warlordsNPC.setMaxBaseHealth(newBaseHealth);
+                    warlordsNPC.setMaxHealth(newBaseHealth);
+                    warlordsNPC.setHealth(newBaseHealth);
+                    warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Scaling",
+                            null,
+                            GameMap.class,
+                            null,
+                            warlordsNPC,
+                            CooldownTypes.INTERNAL,
+                            cooldownManager -> {
+
+                            },
+                            false
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * damageMultiplier;
+                        }
+                    });
+                }
+            });
+            options.add(new ItemOption());
+            options.add(new WinAfterTimeoutOption(600, 50, "spec"));
+            options.add(new TheAcropolisOption());
+//            options.add(new SafeZoneOption(1));
+            options.add(new EventPointsOption()
+                    .reduceScoreOnAllDeath(30, Team.BLUE)
+                    .onPerWaveClear(1, 500)
+                    .onPerWaveClear(5, 2000)
+                    .onPerMobKill(Mob.ZOMBIE_LANCER, 5)
+                    .onPerMobKill(Mob.SKELETAL_ENTROPY, 5)
+                    .onPerMobKill(Mob.PIG_DISCIPLE, 10)
+                    .onPerMobKill(Mob.ZOMBIE_LAMENT, 10)
+                    .onPerMobKill(Mob.ARACHNO_VENARI, 10)
+                    .onPerMobKill(Mob.PIG_SHAMAN, 15)
+                    .onPerMobKill(Mob.PIG_ALLEVIATOR, 15)
+                    .onPerMobKill(Mob.ZOMBIE_VANGUARD, 20)
+                    .onPerMobKill(Mob.SLIME_GUARD, 25)
+                    .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 25)
+                    .onPerMobKill(Mob.ILLUMINATION, 25)
+                    .onPerMobKill(Mob.INTERMEDIATE_WARRIOR_BERSERKER, 25)
+                    .onPerMobKill(Mob.SKELETAL_MESMER, 35)
+                    .onPerMobKill(Mob.OVERGROWN_ZOMBIE, 40)
+                    .onPerMobKill(Mob.ADVANCED_WARRIOR_BERSERKER, 40)
+                    .onPerMobKill(Mob.RIFT_WALKER, 45)
+                    .onPerMobKill(Mob.SKELETAL_SORCERER, 45)
+                    .onPerMobKill(Mob.FIRE_SPLITTER, 45)
+                    .onPerMobKill(Mob.ZOMBIE_KNIGHT, 50)
+                    .onPerMobKill(Mob.SCRUPULOUS_ZOMBIE, 50)
+                    .onPerMobKill(Mob.EVENT_TERAS_MINOTAUR, 150)
+                    .onPerMobKill(Mob.EVENT_TERAS_CYCLOPS, 150)
+                    .onPerMobKill(Mob.EVENT_TERAS_SIREN, 150)
+                    .onPerMobKill(Mob.EVENT_TERAS_DRYAD, 150)
+                    .onPerMobKill(Mob.EVENT_APOLLO, 1500)
+                    .onPerMobKill(Mob.EVENT_ARES, 1500)
+                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 1500)
+                    .onPerMobKill(Mob.EVENT_ATHENA, 1500)
+                    .onPerMobKill(Mob.EVENT_CRONUS, 1500)
+            );
+            options.add(new CurrencyOnEventOption()
+                    .startWith(120000)
+                    .onKill(500)
+                    .setPerWaveClear(5, 25000)
+                    .onPerMobKill(Mob.EVENT_APOLLO, 10000)
+                    .onPerMobKill(Mob.EVENT_ARES, 10000)
+                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 10000)
+                    .onPerMobKill(Mob.EVENT_ATHENA, 10000)
+                    .onPerMobKill(Mob.EVENT_CRONUS, 10000)
+            );
+            options.add(new CoinGainOption()
+                    .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{
+                        put("Apollo", 100L);
+                        put("Ares", 100L);
+                        put("Prometheus", 100L);
+                        put("Athena", 100L);
+                        put("Cronus", 100L);
+                    }})
+                    .playerCoinPerXSec(150, 10)
+                    .guildCoinInsigniaConvertBonus(1000)
+                    .guildCoinPerXSec(1, 1)
+                    .disableCoinConversionUpgrade()
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerXSec(15, 10)
+                    .guildExpPerXSec(4, 10)
+            );
+            options.add(new FieldEffect(options, FieldEffect.FieldEffects.TYCHE_PROSPERITY));
+
+             */
+            return options;
+        }
+    },
+    FORGOTTEN_CODEX(
+            "Forgotten Codex",
+            4,
+            2,
+            120 * SECOND,
+            "ForgottenCodex",
+            3,
+            GameMode.EVENT_WAVE_DEFENSE
+    ) {
+        @Override
+        public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    Component.text(getMapName(), NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    Component.text("Kill mobs to gain event points!", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                    Component.empty()
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("Kill as many mobs as possible!", NamedTextColor.YELLOW)
+            ));
+
+            /* TODO
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -2.50), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, 5.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, 13.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, 5.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, -10.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -18.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, -10.5), Team.RED));
+
+//            options.add(new PowerupOption(loc.addXYZ(14.5, 24.5, 16.5), PowerUp.COOLDOWN, 180, 30)); TODO
+//            options.add(new PowerupOption(loc.addXYZ(-13.5, 24.5, -23.5), PowerUp.HEALING, 90, 30));
+
+            options.add(new RespawnWaveOption(2, 1, 20));
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
+
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList() //TODO
+                    .add(1, new SimpleWave(8, 5 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.5, Mob.PIG_DISCIPLE)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                    )
+                    .add(2, new SimpleWave(8, 5 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.4, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ZOMBIE_LAMENT)
+                    )
+                    .add(4, new SimpleWave(8, 5 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.3, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.05, Mob.SKELETAL_WARLOCK)
+                            .add(0.05, Mob.PIG_SHAMAN)
+                    )
+                    .add(5, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_APOLLO)
+                    )
+                    .add(6, new SimpleWave(12, 5 * SECOND, null)
+                            .add(0.4, Mob.ZOMBIE_LANCER)
+                            .add(0.2, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.05, Mob.SKELETAL_WARLOCK)
+                            .add(0.05, Mob.PIG_ALLEVIATOR)
+                    )
+                    .add(8, new SimpleWave(12, 5 * SECOND, null)
+                            .add(0.2, Mob.ZOMBIE_LANCER)
+                            .add(0.2, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.2, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
+                            .add(0.05, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                    )
+                    .add(10, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_ARES)
+                    )
+                    .add(11, new SimpleWave(16, 5 * SECOND, null)
+                            .add(0.1, Mob.ZOMBIE_LANCER)
+                            .add(0.1, Mob.PIG_DISCIPLE)
+                            .add(0.2, Mob.ZOMBIE_LAMENT)
+                            .add(0.2, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.PIG_SHAMAN)
+                            .add(0.2, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                            .add(0.05, Mob.SLIME_GUARD)
+                    )
+                    .add(13, new SimpleWave(16, 5 * SECOND, null)
+                            .add(0.1, Mob.ZOMBIE_LANCER)
+                            .add(0.1, Mob.PIG_DISCIPLE)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.1, Mob.ARACHNO_VENARI)
+                            .add(0.1, Mob.PIG_SHAMAN)
+                            .add(0.2, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                            .add(0.05, Mob.SLIME_GUARD)
+                            .add(0.2, Mob.ZOMBIE_SWORDSMAN)
+                    )
+                    .add(15, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_PROMETHEUS)
+                    )
+                    .add(16, new SimpleWave(20, 5 * SECOND, null)
+                            .add(0.2, Mob.PIG_DISCIPLE)
+                            .add(0.1, Mob.ZOMBIE_LAMENT)
+                            .add(0.1, Mob.ARACHNO_VENARI)
+                            .add(0.2, Mob.PIG_SHAMAN)
+                            .add(0.05, Mob.PIG_ALLEVIATOR)
+                            .add(0.05, Mob.ZOMBIE_VANGUARD)
+                            .add(0.05, Mob.SLIME_GUARD)
+                            .add(0.05, Mob.ZOMBIE_SWORDSMAN)
+                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
+                            .add(0.1, Mob.RIFT_WALKER)
+                    )
+                    .add(20, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_ATHENA)
+                    )
+                    .add(21, new SimpleWave(24, 5 * SECOND, null)
+                            .add(0.2, Mob.ZOMBIE_LAMENT)
+                            .add(0.2, Mob.PIG_ALLEVIATOR)
+                            .add(0.1, Mob.ZOMBIE_VANGUARD)
+                            .add(0.1, Mob.SLIME_GUARD)
+                            .add(0.1, Mob.ZOMBIE_SWORDSMAN)
+                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
+                            .add(0.1, Mob.RIFT_WALKER)
+                            .add(0.05, Mob.SKELETAL_SORCERER)
+                            .add(0.05, Mob.ZOMBIE_KNIGHT)
+                    )
+                    .add(25, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_CRONUS)
+                    )
+                    .loop(6, 21, 5)
+                    .loop(6, 25, 5)
+                    ,
+                    DifficultyIndex.EVENT
+            ) {
+                @Override
+                public void register(@Nonnull Game game) {
+                    super.register(game);
+                    game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 2, "wave") {
+                        @Nonnull
+                        @Override
+                        public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                            return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                        }
+                    });
+                }
+
+                @Override
+                public float getSpawnCountMultiplier(int playerCount) {
+                    return switch (playerCount) {
+                        case 3 -> 1.2f;
+                        case 4 -> 1.5f;
+                        default -> 1;
+                    };
+                }
+
+                @Override
+                protected void modifyStats(WarlordsNPC warlordsNPC) {
+                    warlordsNPC.getMob().onSpawn(this);
+
+                    int playerCount = playerCount();
+                    float healthMultiplier = .5f + .5f * playerCount; // 1 / 1.5 / 2 / 2.5
+                    float damageMultiplier = playerCount >= 4 ? 1.15f : 1;
+
+                    float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
+                    warlordsNPC.setMaxBaseHealth(newBaseHealth);
+                    warlordsNPC.setMaxHealth(newBaseHealth);
+                    warlordsNPC.setHealth(newBaseHealth);
+                    warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                            "Scaling",
+                            null,
+                            GameMap.class,
+                            null,
+                            warlordsNPC,
+                            CooldownTypes.INTERNAL,
+                            cooldownManager -> {
+
+                            },
+                            false
+                    ) {
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * damageMultiplier;
+                        }
+                    });
+                }
+            });
+            options.add(new ItemOption());
+            options.add(new WinAfterTimeoutOption(600, 50, "spec"));
+            options.add(new TheAcropolisOption());
+//            options.add(new SafeZoneOption(1));
+            options.add(new EventPointsOption()
+                    .reduceScoreOnAllDeath(30, Team.BLUE)
+                    .onPerWaveClear(1, 500)
+                    .onPerWaveClear(5, 2000)
+                    .onPerMobKill(Mob.ZOMBIE_LANCER, 5)
+                    .onPerMobKill(Mob.SKELETAL_ENTROPY, 5)
+                    .onPerMobKill(Mob.PIG_DISCIPLE, 10)
+                    .onPerMobKill(Mob.ZOMBIE_LAMENT, 10)
+                    .onPerMobKill(Mob.ARACHNO_VENARI, 10)
+                    .onPerMobKill(Mob.PIG_SHAMAN, 15)
+                    .onPerMobKill(Mob.PIG_ALLEVIATOR, 15)
+                    .onPerMobKill(Mob.ZOMBIE_VANGUARD, 20)
+                    .onPerMobKill(Mob.SLIME_GUARD, 25)
+                    .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 25)
+                    .onPerMobKill(Mob.ILLUMINATION, 25)
+                    .onPerMobKill(Mob.INTERMEDIATE_WARRIOR_BERSERKER, 25)
+                    .onPerMobKill(Mob.SKELETAL_MESMER, 35)
+                    .onPerMobKill(Mob.OVERGROWN_ZOMBIE, 40)
+                    .onPerMobKill(Mob.ADVANCED_WARRIOR_BERSERKER, 40)
+                    .onPerMobKill(Mob.RIFT_WALKER, 45)
+                    .onPerMobKill(Mob.SKELETAL_SORCERER, 45)
+                    .onPerMobKill(Mob.FIRE_SPLITTER, 45)
+                    .onPerMobKill(Mob.ZOMBIE_KNIGHT, 50)
+                    .onPerMobKill(Mob.SCRUPULOUS_ZOMBIE, 50)
+                    .onPerMobKill(Mob.EVENT_TERAS_MINOTAUR, 150)
+                    .onPerMobKill(Mob.EVENT_TERAS_CYCLOPS, 150)
+                    .onPerMobKill(Mob.EVENT_TERAS_SIREN, 150)
+                    .onPerMobKill(Mob.EVENT_TERAS_DRYAD, 150)
+                    .onPerMobKill(Mob.EVENT_APOLLO, 1500)
+                    .onPerMobKill(Mob.EVENT_ARES, 1500)
+                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 1500)
+                    .onPerMobKill(Mob.EVENT_ATHENA, 1500)
+                    .onPerMobKill(Mob.EVENT_CRONUS, 1500)
+            );
+            options.add(new CurrencyOnEventOption()
+                    .startWith(120000)
+                    .onKill(500)
+                    .setPerWaveClear(5, 25000)
+                    .onPerMobKill(Mob.EVENT_APOLLO, 10000)
+                    .onPerMobKill(Mob.EVENT_ARES, 10000)
+                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 10000)
+                    .onPerMobKill(Mob.EVENT_ATHENA, 10000)
+                    .onPerMobKill(Mob.EVENT_CRONUS, 10000)
+            );
+            options.add(new CoinGainOption()
+                    .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{
+                        put("Apollo", 100L);
+                        put("Ares", 100L);
+                        put("Prometheus", 100L);
+                        put("Athena", 100L);
+                        put("Cronus", 100L);
+                    }})
+                    .playerCoinPerXSec(150, 10)
+                    .guildCoinInsigniaConvertBonus(1000)
+                    .guildCoinPerXSec(1, 1)
+                    .disableCoinConversionUpgrade()
+            );
+            options.add(new ExperienceGainOption()
+                    .playerExpPerXSec(15, 10)
+                    .guildExpPerXSec(4, 10)
+            );
+            options.add(new FieldEffect(options, FieldEffect.FieldEffects.TYCHE_PROSPERITY));
+
+             */
+            return options;
+        }
+    },
     ILLUSION_PHANTOM(
             "Illusion Phantom",
             6,

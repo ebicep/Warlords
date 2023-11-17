@@ -106,6 +106,11 @@ public enum Currencies implements Spendable {
             NamedTextColor.YELLOW,
             new ItemStack(Material.SUNFLOWER)
     ),
+    EVENT_POINTS_LIBRARY_ARCHIVES(
+            "Library Archives Event Point",
+            NamedTextColor.YELLOW,
+            new ItemStack(Material.SUNFLOWER)
+    ),
     TITLE_TOKEN_JUGGERNAUT(
             "Juggernaut Title Token",
             NamedTextColor.YELLOW,

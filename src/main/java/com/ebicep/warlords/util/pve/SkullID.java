@@ -182,8 +182,8 @@ public enum SkullID {
     FAUN("NWFmMzgwYTZlMTkwOTk1NzAyNTFkMWM4ZTk0NDllZjhhNjcxMDhiZTRiM2JmNDIwMzNhOTQyMWM2YjUyODhlMSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/humanoid/40649-skeleton-archer
     SKELETON_ARCHER("Y2UwZDNmMjhiOGUwZjBhNDVjYTJiNDJiNmY0OTViYmZkYTczNzMyZDNhM2YxMDhmNjM1MmU3NThlMWNiOWJhOSJ9fX0="),
-
-    ;
+    //https://minecraft-heads.com/custom-heads/decoration/65739-books,
+    BOOKS("OGFhMGQ3YmNhNThlM2YyZGY0MjA2YjE5ZDg0NWVhYmY4MWIxMWZhZDIxYzAwN2U5ZWE3YzJjNjM5Yzc1MjAxZCJ9fX0==");
 
     private final String textureId;
 
