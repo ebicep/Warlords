@@ -89,9 +89,9 @@ public enum Ability {
     SOUL_SHACKLE(SoulShackle.class, SoulShackle::new),
     SOUL_SWITCH(SoulSwitch.class, SoulSwitch::new),
     SPIRIT_LINK(SpiritLink.class, SpiritLink::new),
-    TME_WARP_AQUAMANCER(TimeWarpAquamancer.class, TimeWarpAquamancer::new),
-    TME_WARP_CRYOMANCER(TimeWarpCryomancer.class, TimeWarpCryomancer::new),
-    TME_WARP_PYROMANCER(TimeWarpPyromancer.class, TimeWarpPyromancer::new),
+    TIME_WARP_AQUAMANCER(TimeWarpAquamancer.class, TimeWarpAquamancer::new),
+    TIME_WARP_CRYOMANCER(TimeWarpCryomancer.class, TimeWarpCryomancer::new),
+    TIME_WARP_PYROMANCER(TimeWarpPyromancer.class, TimeWarpPyromancer::new),
     UNDYING_ARMY(UndyingArmy.class, UndyingArmy::new),
     VINDICATE(Vindicate.class, Vindicate::new),
     VITALITY_LIQUOR(VitalityLiquor.class, VitalityLiquor::new),
@@ -99,7 +99,7 @@ public enum Ability {
     WATER_BREATH(WaterBreath.class, WaterBreath::new),
     WINDFURY_WEAPON(WindfuryWeapon.class, WindfuryWeapon::new),
     WONDER_TRAP(WonderTrap.class, WonderTrap::new),
-    WOUNDING_STRIKE_VERSERKER(WoundingStrikeBerserker.class, WoundingStrikeBerserker::new),
+    WOUNDING_STRIKE_BERSERKER(WoundingStrikeBerserker.class, WoundingStrikeBerserker::new),
     WOUNDING_STRIKE_DEFENDER(WoundingStrikeDefender.class, WoundingStrikeDefender::new),
 
     ;
