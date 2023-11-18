@@ -107,9 +107,9 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
         }
 
         mobKillsMap.forEach((mob, aLong) -> mobKills.getLines()
-                                                    .appendText(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+                                                    .appendText(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
         mobDeathsMap.forEach((mob, aLong) -> mobDeaths.getLines()
-                                                      .appendText(mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+                                                      .appendText(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
     }
 
     @Override
