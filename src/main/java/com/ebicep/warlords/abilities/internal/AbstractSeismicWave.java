@@ -1,8 +1,6 @@
-package com.ebicep.warlords.abilities;
+package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.customentities.nms.CustomFallingBlock;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
@@ -29,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SeismicWave extends AbstractAbility implements RedAbilityIcon {
+public abstract class AbstractSeismicWave extends AbstractAbility implements RedAbilityIcon {
 
     public int playersHit = 0;
     public int carrierHit = 0;
@@ -39,8 +37,8 @@ public class SeismicWave extends AbstractAbility implements RedAbilityIcon {
     private int waveLength = 8; // foward amount
     private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
 
-    public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    public AbstractSeismicWave(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
+        super("Seismic Wave", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
     @Override
@@ -125,7 +123,7 @@ public class SeismicWave extends AbstractAbility implements RedAbilityIcon {
                     for (Location location : fallingBlockLocation) {
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                             FallingBlock fallingBlock = addFallingBlock(location);
-                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, SeismicWave.this));
+                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, AbstractSeismicWave.this));
                             WarlordsEvents.addEntityUUID(fallingBlock);
                         }
                     }

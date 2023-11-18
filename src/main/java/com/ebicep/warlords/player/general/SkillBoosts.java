@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
 import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
+import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -239,9 +240,9 @@ public enum SkillBoosts {
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            SeismicWave.class,
+            AbstractSeismicWave.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SeismicWave) {
+                if (abstractAbility instanceof AbstractSeismicWave) {
                     abstractAbility.multiplyMinMax(1.15f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
@@ -315,9 +316,9 @@ public enum SkillBoosts {
                      .append(Component.text("", NamedTextColor.GREEN))
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            SeismicWave.class,
+            AbstractSeismicWave.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SeismicWave seismicWave) {
+                if (abstractAbility instanceof AbstractSeismicWave seismicWave) {
                     seismicWave.setVelocity(1.8f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }

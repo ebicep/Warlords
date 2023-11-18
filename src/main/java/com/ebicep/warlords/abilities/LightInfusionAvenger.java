@@ -26,6 +26,10 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
         super(cooldown);
     }
 
+    public LightInfusionAvenger() {
+        super(15.66f);
+    }
+
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         // pveMasterUpgrade

@@ -35,6 +35,10 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
     }
 
+    public HolyRadianceAvenger() {
+        super("Holy Radiance", 582, 760, 19.57f, 20, 15, 175, 6);
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
