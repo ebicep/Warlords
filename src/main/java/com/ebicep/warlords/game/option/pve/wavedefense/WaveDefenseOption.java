@@ -286,11 +286,12 @@ public class WaveDefenseOption implements PveOption {
 
     public float getSpawnCountMultiplier(int playerCount) {
         return switch (playerCount) {
+            case 1 -> 1;
             case 2 -> 1.25f;
             case 3, 4 -> 1.5f;
             case 5, 6 -> 2;
             case 7, 8 -> 2.5f;
-            default -> 1;
+            default -> 2.5f + (playerCount - 8) * 0.5f;
         };
     }
 
