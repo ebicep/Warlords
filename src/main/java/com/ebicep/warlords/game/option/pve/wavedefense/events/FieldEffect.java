@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.TextOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -35,6 +36,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FieldEffect implements Option {
 
@@ -253,10 +255,10 @@ public class FieldEffect implements Option {
                     player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "Dumb Debuffs",
                             null,
-                            null,
+                            FieldEffect.class,
                             null,
                             player,
-                            CooldownTypes.ABILITY,
+                            CooldownTypes.FIELD_EFFECT,
                             cooldownManager -> {
                             },
                             false
@@ -419,7 +421,58 @@ public class FieldEffect implements Option {
                 });
             }
         },
-        ;
+
+        LA1("TODO",
+                "For every 10,000 DHP a player accumulates, they will permanently earn the following:",
+                new ArrayList<>() {{
+                    add(Component.empty());
+                    add(Component.text("+1% Damage", NamedTextColor.DARK_RED).append(Component.text("(Max 25%)")));
+                    add(Component.text("+1% Damage Reduction", NamedTextColor.GOLD).append(Component.text("(Max 15%)")));
+                    add(Component.text("+1% Max HP", NamedTextColor.RED).append(Component.text("(Max 25%)")));
+                }}
+        ) {
+            @Override
+            public void onWarlordsEntityCreated(WarlordsEntity player) {
+                AtomicInteger multiplier = new AtomicInteger(1);
+                player.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                        "TODO",
+                        null,
+                        FieldEffect.class,
+                        null,
+                        player,
+                        CooldownTypes.FIELD_EFFECT,
+                        cooldownManager -> {
+                        },
+                        false,
+                        (cooldown, ticksElapsed) -> {
+                            if (ticksElapsed % 20 != 0) {
+                                return;
+                            }
+                            PlayerStatisticsMinute.Entry total = player.getMinuteStats().total();
+                            int oldMultiplier = multiplier.get();
+                            int newMultiplier = (int) ((total.getDamage() + total.getHealing() + total.getAbsorbed()) / 10_000);
+                            if (oldMultiplier == newMultiplier) {
+                                return;
+                            }
+                            multiplier.set(newMultiplier);
+                            //TODO health with flaotmodifierable
+                        }
+                ) {
+
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        int buff = Math.min(multiplier.get(), 25);
+                        return currentDamageValue * (1 + buff / 100f);
+                    }
+
+                    @Override
+                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        int buff = Math.min(multiplier.get(), 15);
+                        return currentDamageValue * (1 - buff / 100f);
+                    }
+                });
+            }
+        };
 
         public final String name;
         public final String description;
