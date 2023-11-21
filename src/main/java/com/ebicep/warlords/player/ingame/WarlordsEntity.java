@@ -2785,6 +2785,10 @@ public abstract class WarlordsEntity {
             return;
         }
 
+        onRespawn(respawnPoint);
+    }
+
+    public void onRespawn(Location respawnPoint) {
         if (entity instanceof Player) {
             entity.clearTitle();
         }
@@ -2793,7 +2797,7 @@ public abstract class WarlordsEntity {
         dead = false;
         teleport(respawnPoint);
 
-        this.health = this.maxBaseHealth;
+        heal();
         updateEntity();
     }
 
