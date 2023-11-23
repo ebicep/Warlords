@@ -1,6 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
@@ -44,7 +44,13 @@ public class HuntIntermediateI extends AbstractBounty implements TracksDuringGam
     }
 
     @Override
-    public void onKill(UUID uuid, WarlordsDeathEvent event) {
+    public void onFinalDamageHeal(UUID uuid, WarlordsDamageHealingFinalEvent event) {
+        if (!event.getAttacker().getUuid().equals(uuid)) {
+            return;
+        }
+        if (!event.isDead()) {
+            return;
+        }
         if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof IntermediateMob) {
             newKills++;
         }
