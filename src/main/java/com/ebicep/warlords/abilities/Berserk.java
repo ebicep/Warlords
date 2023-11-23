@@ -156,7 +156,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 if (pveMasterUpgrade2) {
                     CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
                     if (cooldownManager.hasCooldownFromName("Bleed") || cooldownManager.hasCooldownFromName("Wounding Strike")) {
-                        increase += 40;
+                        increase += 30;
                     }
                 }
                 return currentDamageValue * convertToMultiplicationDecimal(increase);
