@@ -486,7 +486,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         List<Component> loreAddons = new ArrayList<>();
         loreAddons.add(Component.text("Upgrade Level [" + getUpgradeLevel() + "/" + getMaxUpgradeLevel() + "]", NamedTextColor.LIGHT_PURPLE));
         if (getPassiveEffect() != null) {
-            loreAddons.add(Component.text("Title Level [" + getTitleLevel() + "/4]", NamedTextColor.LIGHT_PURPLE));
+            loreAddons.add(Component.text("Title Level [" + getTitleLevel() + "/" + getMaxUpgradeLevel() + "]", NamedTextColor.LIGHT_PURPLE));
         }
         return loreAddons;
     }
@@ -666,9 +666,9 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         upgradeLore.add(Component.text("Passive Effect (" + getTitleName() + "):", NamedTextColor.GREEN));
         upgradeLore.addAll(WordWrap.wrap(passiveEffectUpgraded.build(), 175));
         upgradeLore.add(Component.empty());
-        upgradeLore.add(Component.text("Title Level [" + getTitleLevel() + "/4]", NamedTextColor.LIGHT_PURPLE)
+        upgradeLore.add(Component.text("Title Level [" + getTitleLevel() + "/" + getMaxUpgradeLevel() + "]", NamedTextColor.LIGHT_PURPLE)
                                  .append(Component.text(" > ", NamedTextColor.GREEN))
-                                 .append(Component.text("[" + getTitleLevelUpgraded() + "/4]"))
+                                 .append(Component.text("[" + getTitleLevelUpgraded() + "/" + getMaxUpgradeLevel() + "]"))
         );
         upgradeLore.addAll(getTitleUpgradeCostLore());
         return new ItemBuilder(Material.GREEN_CONCRETE)
