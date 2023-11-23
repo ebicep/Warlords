@@ -89,8 +89,7 @@ public class ThunderCloudAbility extends AbstractPveAbility {
             this.ticksToLive = ticksToLive;
             this.size = size;
             ThreadLocalRandom random = ThreadLocalRandom.current();
-            int startingYOffset = random.nextInt(5, 8);
-            double yOffset = startingYOffset + .35;
+            double yOffset = random.nextInt(4, 7) + .35;
             int cloudColor = CLOUD_COLORS[random.nextInt(3)];
             effects.add(new CircleEffect(
                     game,
