@@ -227,12 +227,12 @@ public class WeaponTitleMenu {
     public static AbstractLegendaryWeapon titleWeapon(Player player, DatabasePlayer databasePlayer, AbstractLegendaryWeapon weapon, LegendaryTitles title) {
         List<AbstractWeapon> weaponInventory = databasePlayer.getPveStats().getWeaponInventory();
         boolean notPurchased = !weapon.getTitles().containsKey(title);
+        AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
         if (notPurchased) {
             DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-            weapon.getCost().forEach(pveStats::subtractCurrency);
+            titledWeapon.getCost().forEach(pveStats::subtractCurrency);
             weapon.getTitles().put(title, new LegendaryWeaponTitleInfo());
         }
-        AbstractLegendaryWeapon titledWeapon = title.titleWeapon.apply(weapon);
         weaponInventory.remove(weapon);
         weaponInventory.add(titledWeapon);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
