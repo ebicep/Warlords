@@ -836,6 +836,14 @@ public abstract class WarlordsEntity {
                 resetRegenTimer();
                 updateHealth();
 
+                float cappedDamage = Math.min(damageValue, health);
+                attacker.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(this));
+                this.addDamageTaken(cappedDamage);
+                playHurtAnimation(this.entity, attacker);
+                if (attacker.isNoEnergyConsumption()) {
+                    attacker.getRecordDamage().add(cappedDamage);
+                }
+
                 // debt and healing
                 if (!debt && takeDamage) {
                     if (this.health - damageValue > maxHealth) {
@@ -843,13 +851,6 @@ public abstract class WarlordsEntity {
                     } else {
                         this.health -= damageValue;
                     }
-                }
-
-                attacker.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(this));
-                this.addDamageTaken(damageValue);
-                playHurtAnimation(this.entity, attacker);
-                if (attacker.isNoEnergyConsumption()) {
-                    attacker.getRecordDamage().add(damageValue);
                 }
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
@@ -1095,8 +1096,9 @@ public abstract class WarlordsEntity {
                 abstractCooldown.onHealFromAttacker(event, healValue, isCrit);
             }
 
+            float cappedHealValue = Math.min(healValue, maxHealth - health);
+            attacker.addHealing(cappedHealValue, FlagHolder.isPlayerHolderFlag(this));
             health += healValue;
-            attacker.addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
 
             if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
                 playHitSound(attacker);
