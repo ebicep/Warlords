@@ -53,7 +53,7 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 20);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                 }
         );
     }

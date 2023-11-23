@@ -54,7 +54,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                 "-20 Additional energy cost\n\nYour Impaling Strikes deals triple the damage to enemies afflicted by LEECH",
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 20);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -67,7 +67,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 20);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                 }
         );
     }

@@ -85,7 +85,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                         """,
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 15);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -15);
                     ability.setTicksBetweenDot(10);
                 }
         );

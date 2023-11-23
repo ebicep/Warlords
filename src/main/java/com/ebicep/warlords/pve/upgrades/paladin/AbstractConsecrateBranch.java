@@ -36,7 +36,7 @@ public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> ext
                 "-30 Energy cost\n+2 Additional blocks hit radius\n+20% Cooldown reduction",
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 30);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -30);
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 2);
                     ability.getCooldown().addMultiplicativeModifierMult("Sanctify", 0.8f);
                 }
