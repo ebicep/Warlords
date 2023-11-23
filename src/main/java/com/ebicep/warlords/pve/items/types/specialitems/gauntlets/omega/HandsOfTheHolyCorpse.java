@@ -25,7 +25,7 @@ public class HandsOfTheHolyCorpse extends SpecialOmegaGauntlet implements Applie
 
     @Override
     public String getBonus() {
-        return "+15 Energy per hit.";
+        return "+12 Energy per hit.";
     }
 
     @Override
@@ -36,6 +36,6 @@ public class HandsOfTheHolyCorpse extends SpecialOmegaGauntlet implements Applie
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
         AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-        playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() + 15);
+        playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() + 12);
     }
 }
