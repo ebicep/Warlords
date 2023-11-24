@@ -38,6 +38,10 @@ public class CoinGainOption implements Option {
             put("Physira", 400L);
             put("Mithra", 400L);
             put("Zenith", 1500L);
+            put("Chessking", 2000L);
+            put("Illumina", 2500L);
+            put("Magmatic Ooze", 3000L);
+            put("Void", 3000L);
         }});
     }};
     private long playerCoinPerKill = 0;
