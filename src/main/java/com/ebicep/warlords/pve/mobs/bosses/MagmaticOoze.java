@@ -40,7 +40,7 @@ import java.util.function.Function;
 public class MagmaticOoze extends AbstractMob implements BossMob {
 
     private static final Material DAMAGE_BLOCK = Material.MAGMA_BLOCK;
-    private static final int BASE_HEALTH = 80_000;
+    private static final int BASE_HEALTH = 75_000;
     private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
     private int splitNumber;
 
@@ -70,9 +70,9 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FieryProjectile(750 - (splitNumber * 10), 900 - (splitNumber * 10)),
-                new FlamingSlam(1200 - (splitNumber * 100), 1600 - (splitNumber * 100)),
-                new HeatAura(150 - (splitNumber * 10), 13 - splitNumber),
+                new FieryProjectile(375 - (splitNumber * 10), 450 - (splitNumber * 10)),
+                new FlamingSlam(600 - (splitNumber * 100), 800 - (splitNumber * 100)),
+                new HeatAura(75 - (splitNumber * 10), 14 - splitNumber),
                 new MoltenFissure(previousBlocks),
                 new Split(splitNumber,
                         (loc, we) -> new MagmaticOoze(loc,
@@ -638,14 +638,14 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     }
 
     private static class Split extends AbstractPveAbility {
-        private final int maxSplit = 4;
+        private final int maxSplit = 3;
         private final int split;
         private final BiFunction<Location, WarlordsEntity, AbstractMob> splitSpawnFunction;
         private double splitChance = .2;
         private boolean init = false;
 
         public Split(int split, BiFunction<Location, WarlordsEntity, AbstractMob> splitSpawnFunction) {
-            super("Split", 15, 50, 10);
+            super("Split", 7.5f, 50, 5);
             this.split = split;
             this.splitSpawnFunction = splitSpawnFunction;
         }
