@@ -498,7 +498,7 @@ public final class Game implements Runnable, AutoCloseable {
                 Warlords.removePlayer(player);
             }
             Player p = op.getPlayer();
-            if (p != null) {
+            if (p != null && p.isValid()) {
                 WarlordsEvents.joinInteraction(p, true);
             }
             return true;
