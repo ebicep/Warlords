@@ -165,7 +165,7 @@ public class ItemSearchMenu extends Menu {
             filterLore.add(grayDash.append(Component.text(filterSettings.getAspectFilter().name, NamedTextColor.GRAY)));
         }
         if (filterSettings.getAddonFilter()) {
-            filterLore.add(grayDash.append(Component.text("Selected Class Bonus", NamedTextColor.GRAY)));
+            filterLore.add(grayDash.append(Component.text("Selected Spec Bonus", NamedTextColor.GRAY)));
         }
         if (filterSettings.getFavoriteFilter()) {
             filterLore.add(grayDash.append(Component.text("Only Favorites", NamedTextColor.GRAY)));
