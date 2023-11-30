@@ -564,6 +564,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
     public void setFreeUpgrades(int freeUpgrades) {
         this.freeUpgrades = freeUpgrades;
+        this.freeUpgrades = Math.min(2, this.freeUpgrades);
     }
 
     public List<Upgrade> getTreeA() {

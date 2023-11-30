@@ -25,9 +25,6 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.AutoUpgradeProfile;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -182,35 +179,7 @@ public interface PveOption extends Option {
             @EventHandler
             public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
                 WarlordsEntity player = event.getWarlordsEntity();
-                if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
-                    return;
-                }
-                AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
-                if (abilityTree == null) {
-                    return;
-                }
-                AutoUpgradeProfile autoUpgradeProfile = abilityTree.getAutoUpgradeProfile();
-                if (autoUpgradeProfile == null) {
-                    return;
-                }
-                List<AutoUpgradeProfile.AutoUpgradeEntry> autoUpgradeEntries = autoUpgradeProfile.getAutoUpgradeEntries();
-                for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
-                    AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
-                    AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType upgradeType = entry.getUpgradeType();
-                    List<Upgrade> upgradeList = upgradeType.getUpgradeFunction.apply(upgradeBranch);
-                    Upgrade upgrade = upgradeList.get(entry.getUpgradeIndex());
-                    if (upgrade.isUnlocked()) {
-                        continue;
-                    }
-                    if (player.getCurrency() < upgrade.getCurrencyCost() && upgradeBranch.getFreeUpgrades() <= 0) {
-                        return;
-                    }
-                    switch (upgradeType) {
-                        case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, entry.getUpgradeIndex(), true);
-                        case MASTER -> upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, upgradeBranch.getMasterUpgrade(), true);
-                        case MASTER2 -> upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, upgradeBranch.getMasterUpgrade2(), true);
-                    }
-                }
+                AbilityTree.handleAutoUpgrade(player);
             }
 
             @EventHandler
@@ -319,6 +288,7 @@ public interface PveOption extends Option {
                     player.getSpec().updateCustomStats();
                 });
             });
+            AbilityTree.handleAutoUpgrade(player);
         }
     }
 

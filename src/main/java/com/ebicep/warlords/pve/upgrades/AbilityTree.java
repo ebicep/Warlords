@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyMode;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -32,11 +33,105 @@ import static com.ebicep.warlords.menu.Menu.*;
 
 public class AbilityTree {
 
+    public static void handleAutoUpgrade(WarlordsEntity player) {
+        if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
+            return;
+        }
+        AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
+        if (abilityTree == null) {
+            return;
+        }
+        AutoUpgradeProfile autoUpgradeProfile = abilityTree.getAutoUpgradeProfile();
+        if (autoUpgradeProfile == null) {
+            return;
+        }
+        List<AutoUpgradeProfile.AutoUpgradeEntry> autoUpgradeEntries = autoUpgradeProfile.getAutoUpgradeEntries();
+        // handle free upgrades first
+        for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
+            AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
+            AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType upgradeType = entry.getUpgradeType();
+            List<Upgrade> upgradeList = upgradeType.getUpgradeFunction.apply(upgradeBranch);
+            int upgradeIndex = entry.getUpgradeIndex();
+            Upgrade upgrade = upgradeList.get(upgradeIndex);
+            if (upgrade.isUnlocked()) {
+                continue;
+            }
+            if (upgradeBranch.getFreeUpgrades() > 0 && upgradeIndex == 0) {
+                switch (upgradeType) {
+                    case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, upgradeIndex, true);
+                }
+            }
+        }
+        for (AutoUpgradeProfile.AutoUpgradeEntry entry : autoUpgradeEntries) {
+            AbstractUpgradeBranch<?> upgradeBranch = abilityTree.getUpgradeBranches().get(entry.getBranchIndex());
+            AutoUpgradeProfile.AutoUpgradeEntry.UpgradeType upgradeType = entry.getUpgradeType();
+            List<Upgrade> upgradeList = upgradeType.getUpgradeFunction.apply(upgradeBranch);
+            Upgrade upgrade = upgradeList.get(entry.getUpgradeIndex());
+            if (upgrade.isUnlocked()) {
+                continue;
+            }
+            if (player.getCurrency() < upgrade.getCurrencyCost()) {
+                return;
+            }
+            switch (upgradeType) {
+                case A, B -> upgradeBranch.purchaseUpgrade(upgradeList, warlordsPlayer, upgrade, entry.getUpgradeIndex(), true);
+                case MASTER -> upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, upgradeBranch.getMasterUpgrade(), true);
+                case MASTER2 -> upgradeBranch.purchaseMasterUpgrade(warlordsPlayer, upgradeBranch.getMasterUpgrade2(), true);
+            }
+        }
+    }
+
+    public AutoUpgradeProfile getAutoUpgradeProfile() {
+        if (autoUpgradeProfile == null) {
+            DatabaseManager.getPlayer(warlordsPlayer.getUuid(), this::resetAutoUpgradeProfile);
+        }
+        return autoUpgradeProfile;
+    }
+
+    public List<AbstractUpgradeBranch<?>> getUpgradeBranches() {
+        return upgradeBranches;
+    }
+
+    public void resetAutoUpgradeProfile(DatabasePlayer databasePlayer) {
+        List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer
+                .getPveStats()
+                .getAutoUpgradeProfiles()
+                .computeIfAbsent(warlordsPlayer.getSpecClass(), k -> new ArrayList<>());
+        if (autoUpgradeProfiles.isEmpty()) {
+            autoUpgradeProfile = new AutoUpgradeProfile();
+            autoUpgradeProfiles.add(autoUpgradeProfile);
+        } else if (autoUpgradeProfile == null || !autoUpgradeProfiles.contains(autoUpgradeProfile)) {
+            Game game = warlordsPlayer.getGame();
+            if (game == null) {
+                autoUpgradeProfile = autoUpgradeProfiles.get(0);
+            } else {
+                PveOption pveOption = game.getOptions()
+                                          .stream()
+                                          .filter(PveOption.class::isInstance)
+                                          .map(PveOption.class::cast)
+                                          .findFirst()
+                                          .orElse(null);
+                if (pveOption == null) {
+                    autoUpgradeProfile = autoUpgradeProfiles.get(0);
+                } else {
+                    autoUpgradeProfile = autoUpgradeProfiles
+                            .stream()
+                            .filter(profile -> {
+                                DifficultyMode difficultyMode = profile.getDifficultyMode();
+                                return difficultyMode == null || (difficultyMode.validGameMode(game.getGameMode()) &&
+                                        difficultyMode.validDifficulty(pveOption.getDifficulty()));
+                            })
+                            .findFirst()
+                            .orElse(autoUpgradeProfiles.get(0));
+                }
+            }
+        }
+    }
+
     private final WarlordsPlayer warlordsPlayer;
     private final List<AbstractUpgradeBranch<?>> upgradeBranches = new ArrayList<>();
     private final List<UpgradeLog> upgradeLog = new ArrayList<>();
     private AutoUpgradeProfile autoUpgradeProfile = null;
-
     private int maxMasterUpgrades = 3;
 
     public AbilityTree(WarlordsPlayer warlordsPlayer) {
@@ -430,10 +525,6 @@ public class AbilityTree {
         output.append(nextUpgradeLore);
     }
 
-    public List<AbstractUpgradeBranch<?>> getUpgradeBranches() {
-        return upgradeBranches;
-    }
-
     public List<UpgradeLog> getUpgradeLog() {
         return upgradeLog;
     }
@@ -444,49 +535,6 @@ public class AbilityTree {
 
     public void setMaxMasterUpgrades(int maxMasterUpgrades) {
         this.maxMasterUpgrades = maxMasterUpgrades;
-    }
-
-    public AutoUpgradeProfile getAutoUpgradeProfile() {
-        if (autoUpgradeProfile == null) {
-            DatabaseManager.getPlayer(warlordsPlayer.getUuid(), this::resetAutoUpgradeProfile);
-        }
-        return autoUpgradeProfile;
-    }
-
-    public void resetAutoUpgradeProfile(DatabasePlayer databasePlayer) {
-        List<AutoUpgradeProfile> autoUpgradeProfiles = databasePlayer
-                .getPveStats()
-                .getAutoUpgradeProfiles()
-                .computeIfAbsent(warlordsPlayer.getSpecClass(), k -> new ArrayList<>());
-        if (autoUpgradeProfiles.isEmpty()) {
-            autoUpgradeProfile = new AutoUpgradeProfile();
-            autoUpgradeProfiles.add(autoUpgradeProfile);
-        } else if (autoUpgradeProfile == null || !autoUpgradeProfiles.contains(autoUpgradeProfile)) {
-            Game game = warlordsPlayer.getGame();
-            if (game == null) {
-                autoUpgradeProfile = autoUpgradeProfiles.get(0);
-            } else {
-                PveOption pveOption = game.getOptions()
-                                          .stream()
-                                          .filter(PveOption.class::isInstance)
-                                          .map(PveOption.class::cast)
-                                          .findFirst()
-                                          .orElse(null);
-                if (pveOption == null) {
-                    autoUpgradeProfile = autoUpgradeProfiles.get(0);
-                } else {
-                    autoUpgradeProfile = autoUpgradeProfiles
-                            .stream()
-                            .filter(profile -> {
-                                DifficultyMode difficultyMode = profile.getDifficultyMode();
-                                return difficultyMode == null || (difficultyMode.validGameMode(game.getGameMode()) &&
-                                        difficultyMode.validDifficulty(pveOption.getDifficulty()));
-                            })
-                            .findFirst()
-                            .orElse(autoUpgradeProfiles.get(0));
-                }
-            }
-        }
     }
 
     public static class UpgradeLog {
