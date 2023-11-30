@@ -3,13 +3,12 @@ package com.ebicep.warlords.pve.items.menu.util;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
-import com.ebicep.warlords.pve.items.addons.ItemAddonClassBonus;
+import com.ebicep.warlords.pve.items.addons.ItemAddonSpecBonus;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
@@ -313,7 +312,7 @@ public class ItemSearchMenu extends Menu {
     }
 
     public static class PlayerItemMenuSettings {
-        private final Classes selectedClass;
+        private final Specializations selectedSpec;
         private int page = 1;
         private List<AbstractItem> itemInventory = new ArrayList<>();
         private List<AbstractItem> sortedItemInventory = new ArrayList<>();
@@ -322,11 +321,11 @@ public class ItemSearchMenu extends Menu {
         private boolean ascending = true; //ascending = smallest -> largest/recent
 
         public PlayerItemMenuSettings(DatabasePlayer databasePlayer) {
-            this(databasePlayer, Specializations.getClass(databasePlayer.getLastSpec()));
+            this(databasePlayer, databasePlayer.getLastSpec());
         }
 
-        public PlayerItemMenuSettings(DatabasePlayer databasePlayer, Classes classes) {
-            this.selectedClass = classes;
+        public PlayerItemMenuSettings(DatabasePlayer databasePlayer, Specializations classes) {
+            this.selectedSpec = classes;
             ItemsManager itemsManager = databasePlayer.getPveStats().getItemsManager();
             PlayerItemMenuFilterSettings playerItemMenuFilterSettings = itemsManager.getMenuFilterSettings();
             if (playerItemMenuFilterSettings == null) {
@@ -379,7 +378,7 @@ public class ItemSearchMenu extends Menu {
                 sortedItemInventory.removeIf(item -> item.getAspectModifier1() != aspectFilter && item.getAspectModifier2() != aspectFilter);
             }
             if (filterSettings.addonFilter) {
-                sortedItemInventory.removeIf(item -> !(item instanceof ItemAddonClassBonus && ((ItemAddonClassBonus) item).getClasses() == selectedClass));
+                sortedItemInventory.removeIf(item -> !(item instanceof ItemAddonSpecBonus itemAddonSpecBonus && itemAddonSpecBonus.getSpec() == selectedSpec));
             }
             if (filterSettings.favoriteFilter) {
                 sortedItemInventory.removeIf(item -> !item.isFavorite());
