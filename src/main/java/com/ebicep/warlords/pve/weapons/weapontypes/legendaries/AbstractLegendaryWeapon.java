@@ -172,7 +172,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         upgradeLore.addAll(Arrays.asList(
                 Component.empty(),
                 Component.text("Skill Boost (" + selectedSkillBoost.name + "):", NamedTextColor.GREEN),
-                Component.text("1 Free Ability Upgrade", NamedTextColor.GRAY)
+                Component.text((isAscendant() ? 2 : 1) + " Free Ability Upgrade" + (isAscendant() ? "s" : ""), NamedTextColor.GRAY)
         ));
         if (getSkillCritChanceBonus() != 0) {
             upgradeLore.add(Component.text("Skill Crit Chance: ", NamedTextColor.GRAY)
@@ -459,7 +459,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 Component.empty(),
                 Component.text("Skill Boost (" + selectedSkillBoost.name + "):", NamedTextColor.GREEN)
         ));
-        lore.addAll(WordWrap.wrap(Component.text("1 Free Ability Upgrade", NamedTextColor.GRAY), 175));
+        lore.addAll(WordWrap.wrap(Component.text((isAscendant() ? 2 : 1) + " Free Ability Upgrade" + (isAscendant() ? "s" : ""), NamedTextColor.GRAY), 175));
         if (getSkillCritChanceBonus() != 0) {
             lore.add(Component.text("Skill Crit Chance: ", NamedTextColor.GRAY)
                               .append(Component.text(format(getSkillCritChanceBonus()) + "%", NamedTextColor.GREEN))
