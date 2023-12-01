@@ -105,7 +105,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         if (pveMasterUpgrade2) {
             modifiers = wp.getAbilitiesMatching(RayOfLight.class)
                           .stream()
-                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.67f))
+                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.55f))
                           .toList();
         } else {
             modifiers = Collections.emptyList();
