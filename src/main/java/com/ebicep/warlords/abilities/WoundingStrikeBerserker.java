@@ -82,7 +82,8 @@ public class WoundingStrikeBerserker extends AbstractStrike {
 
         if (pveMasterUpgrade2) {
             additionalHit(
-                    2, wp,
+                    1,
+                    wp,
                     nearPlayer,
                     lustDamageBoost,
                     null,
