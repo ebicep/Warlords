@@ -81,7 +81,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         float cooldownReduction = 0;
                         for (WarlordsEntity linkedPlayer : linkedPlayers) {
                             if (linkedPlayer.isDead()) {
-                                cooldownReduction += .25;
+                                cooldownReduction += .75;
                                 continue;
                             }
                             float healthDamage = linkedPlayer.getMaxBaseHealth() * .05f;
