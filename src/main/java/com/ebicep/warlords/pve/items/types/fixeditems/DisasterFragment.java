@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DisasterFragment extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
@@ -175,6 +176,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                         });
                     }
                     case "Leech" -> {
+                        AtomicReference<Float> totalHealingDone = new AtomicReference<>((float) 0);
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Leech");
                         victim.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Disaster Fragment - Leech",
@@ -189,20 +191,27 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                         ) {
                             @Override
                             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                                if (totalHealingDone.get() >= 1000) {
+                                    setTicksLeft(0);
+                                    return;
+                                }
                                 float healingMultiplier;
                                 if (event.getAttacker() == attacker) {
                                     healingMultiplier = 15;
                                 } else {
                                     healingMultiplier = 25;
                                 }
+                                float healValue = Math.min(500, currentDamageValue * healingMultiplier);
                                 event.getAttacker().addHealingInstance(
                                         attacker,
                                         "Leech",
-                                        currentDamageValue * healingMultiplier,
-                                        currentDamageValue * healingMultiplier,
+                                        healValue,
+                                        healValue,
                                         -1,
                                         100
-                                );
+                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                    totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
+                                });
                             }
                         });
                     }
