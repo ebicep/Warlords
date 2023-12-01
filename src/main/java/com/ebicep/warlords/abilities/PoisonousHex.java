@@ -42,7 +42,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     private float dotMaxDamage = 40;
     private int maxStacks = 3;
     private int tickDuration = 40;
-    private int dotTickFrequency = 40;
+    private int ticksBetweenDot = 40;
     private int maxEnemiesHit = 2;
 
     public PoisonousHex() {
@@ -65,7 +65,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex.\n\nEach stack of Poisonous Hex deals "))
                                .append(formatRangeDamage(dotMinDamage, dotMaxDamage))
                                .append(Component.text(" damage every "))
-                               .append(Component.text("2", NamedTextColor.GOLD))
+                               .append(Component.text(format(ticksBetweenDot / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds for "))
                                .append(Component.text(format(tickDuration / 10f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. Stacks up to "))
@@ -244,7 +244,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         PoisonousHex fromHex = getFromHex(from);
         String hexName = fromHex.getName();
         int tickDuration = fromHex.getTickDuration();
-        int dotTickFrequency = fromHex.getDotTickFrequency();
+        int dotTickFrequency = fromHex.getTicksBetweenDot();
         float dotMinDamage = fromHex.getDotMinDamage();
         float dotMaxDamage = fromHex.getDotMaxDamage();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
@@ -307,8 +307,8 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         this.tickDuration = tickDuration;
     }
 
-    public int getDotTickFrequency() {
-        return dotTickFrequency;
+    public int getTicksBetweenDot() {
+        return ticksBetweenDot;
     }
 
     public float getDotMinDamage() {
@@ -327,8 +327,8 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         this.dotMaxDamage = dotMaxDamage;
     }
 
-    public void setDotTickFrequency(int dotTickFrequency) {
-        this.dotTickFrequency = dotTickFrequency;
+    public void setTicksBetweenDot(int ticksBetweenDot) {
+        this.ticksBetweenDot = ticksBetweenDot;
     }
 
     public int getMaxStacks() {

@@ -61,14 +61,14 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 "Baneful Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
-                        +20% Damage
+                        +35% Damage
                                                 
-                        Poisonous Hex now pierces through 4 enemies.
+                        Poisonous Hex damage occurs every 1s instead of 2s.
                         """,
                 50000,
                 () -> {
-                    ability.multiplyMinMax(1.2f);
-                    ability.setMaxEnemiesHit(4);
+                    ability.multiplyMinMax(1.35f);
+                    ability.setTicksBetweenDot(20);
                 }
         );
     }
