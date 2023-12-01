@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.WindfuryBranch;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -129,12 +130,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                     public void run() {
                         Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                         float healthDamage = victim.getMaxHealth() * 0.01f;
-                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                        }
-                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                        }
+                        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                         victim.addDamageInstance(
                                 attacker,
                                 name,

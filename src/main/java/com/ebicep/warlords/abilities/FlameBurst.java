@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Splash;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FlameburstBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -156,15 +158,17 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
                     critMultiplier + damageIncrease
             );
         } else {
+            float damageBoost = 0;
             float blocksTravelled = (float) projectile.getBlocksTravelled();
             if (pveMasterUpgrade2) {
                 blocksTravelled = Math.min(30, blocksTravelled);
+                damageBoost = MathUtils.clamp(nearEntity.getMaxBaseHealth() * .01f, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MAXIMUM_DAMAGE);
             }
             nearEntity.addDamageInstance(
                     shooter,
                     name,
-                    minDamageHeal,
-                    maxDamageHeal,
+                    minDamageHeal + damageBoost,
+                    maxDamageHeal + damageBoost,
                     critChance + blocksTravelled,
                     critMultiplier
             );

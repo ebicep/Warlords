@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.HealingRainBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -246,12 +247,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         ) {
             strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
             float healthDamage = strikeTarget.getMaxHealth() * 0.01f;
-            if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                healthDamage = DamageCheck.MINIMUM_DAMAGE;
-            }
-            if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-            }
+            healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
             strikeTarget.addDamageInstance(giver, name, 224 + healthDamage, 377 + healthDamage, -1, 100);
         }
 

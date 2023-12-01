@@ -17,6 +17,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.DrainingMiasmaBranch;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -156,12 +157,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                     }
 
                                     float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
-                                    if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                        healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                    }
-                                    if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                        healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                    }
+                                    healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                                     // 4% current health damage.
                                     miasmaTarget.addDamageInstance(
                                             wp,
@@ -196,12 +192,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                         .aliveEnemiesOf(wp)
                                 ) {
                                     float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
-                                    if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                        healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                    }
-                                    if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                        healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                    }
+                                    healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                                     target.addDamageInstance(
                                             wp,
                                             name,

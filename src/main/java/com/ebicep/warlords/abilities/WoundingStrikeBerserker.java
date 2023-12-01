@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.WoundingStrikeBranchBerserker;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -159,12 +160,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.005f;
-                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                        }
-                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                        }
+                        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                         hit.addDamageInstance(
                                 giver,
                                 "Bleed",
