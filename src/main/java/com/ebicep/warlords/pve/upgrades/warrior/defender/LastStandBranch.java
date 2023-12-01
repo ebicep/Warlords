@@ -60,6 +60,7 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                         +20% Cooldown Reduction
                                                 
                         Double the radius of Last Stand and shred 15% of all enemies damage resistance when activated (excluding bosses).
+                        For the duration of Last Stand, Seismic Wave and Ground Slam cooldowns' are reduced by 50% and Seismic Wave's energy cost is reduced to 30.
                         """,
                 50000,
                 () -> {

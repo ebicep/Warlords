@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
@@ -93,6 +94,16 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1);
 
         LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
+        if (pveMasterUpgrade2) {
+            for (SeismicWaveDefender ability : wp.getAbilitiesMatching(SeismicWaveDefender.class)) {
+                modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Enduring Defense", .5f));
+                modifiers.add(ability.getEnergyCost().addOverridingModifier("Enduring Defense", 30f));
+            }
+            for (GroundSlamDefender ability : wp.getAbilitiesMatching(GroundSlamDefender.class)) {
+                modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Enduring Defense", .5f));
+            }
+        }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LAST",
@@ -104,6 +115,9 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 },
                 cooldownManager -> {
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
+                    if (pveMasterUpgrade2) {
+                        modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                    }
                 },
                 selfTickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
