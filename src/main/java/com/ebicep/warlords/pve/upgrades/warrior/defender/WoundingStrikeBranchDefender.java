@@ -49,7 +49,7 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                 """
                         -20 Energy cost
                                                 
-                        Wounding Strike now hits up to 3 enemies. Strikes will ignore 100% of enemies resistance while Intervene is in use (except for bosses).
+                        Wounding Strike now hits up to 2 enemies. Strikes will ignore 100% of enemies resistance (except for bosses).
                         """,
                 50000,
                 () -> {

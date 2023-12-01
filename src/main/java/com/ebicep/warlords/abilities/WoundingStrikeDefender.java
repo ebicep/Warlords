@@ -83,13 +83,11 @@ public class WoundingStrikeDefender extends AbstractStrike {
 
         if (pveMasterUpgrade2) {
             additionalHit(
-                    2, wp,
+                    1,
+                    wp,
                     nearPlayer,
                     1,
                     warlordsEntity -> {
-                        if (!wp.getCooldownManager().hasCooldown(Intervene.class)) {
-                            return EnumSet.noneOf(InstanceFlags.class);
-                        }
                         if (warlordsEntity instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)) {
                             return EnumSet.of(InstanceFlags.PIERCE);
                         }
