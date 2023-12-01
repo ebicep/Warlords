@@ -204,15 +204,15 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
                                     warlordsEntity.addDamageInstance(
                                             shooter,
                                             "Ignite",
-                                            250,
                                             450,
+                                            650,
                                             0,
                                             100,
                                             EnumSet.of(InstanceFlags.TRUE_DAMAGE)
                                     );
                                 });
                 },
-                40
+                20
         ));
     }
 
