@@ -23,13 +23,10 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> implements BlueAbilityIcon {
 
-    protected Map<WarlordsEntity, Integer> alliesGotCooldown = new HashMap<>(); // not static
     private final int maxAllies = 2;
     private int critMultiplierReducedTo = 100;
     private ArmorStand crystal;
@@ -90,63 +87,64 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
         SanctifiedBeacon beacon = cooldown.getCooldownObject();
         float rad = beacon.getHitBoxRadius().getCalculatedValue();
         if (ticksElapsed % 5 == 0) {
-            for (WarlordsEntity enemy : PlayerFilter
+            for (WarlordsEntity nearBy : PlayerFilter
                     .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
                     .aliveEnemiesOf(wp)
             ) {
-                enemy.getCooldownManager().removeCooldownByObject(this);
-                enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        name,
-                        null,
-                        SanctifiedBeacon.class,
-                        beacon,
-                        wp,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {
-                        },
-                        6 // a little longer to make sure there's no gaps in the effect
-                ) {
-                    @Override
-                    public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                        return critMultiplierReducedTo;
+                if (nearBy.isTeammate(wp)) {
+                    if (!pveMasterUpgrade2) {
+                        continue;
                     }
-
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        if (wp.isInPve()) {
-                            return currentDamageValue * convertToDivisionDecimal(damageReductionPve);
+                    nearBy.getCooldownManager().removeCooldownByObject(this);
+                    nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            name,
+                            null,
+                            SanctifiedBeacon.class,
+                            beacon,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            6 // a little longer to make sure there's no gaps in the effect
+                    ) {
+                        @Override
+                        public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                            return currentCritMultiplier + 15;
                         }
-                        return currentDamageValue;
+                    });
+                } else {
+                    nearBy.getCooldownManager().removeCooldownByObject(this);
+                    nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
+                            name,
+                            null,
+                            SanctifiedBeacon.class,
+                            beacon,
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            6 // a little longer to make sure there's no gaps in the effect
+                    ) {
+                        @Override
+                        public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                            return critMultiplierReducedTo;
+                        }
+
+                        @Override
+                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            if (wp.isInPve()) {
+                                return currentDamageValue * convertToDivisionDecimal(damageReductionPve);
+                            }
+                            return currentDamageValue;
+                        }
+                    });
+                    if (pveMasterUpgrade) {
+                        nearBy.getSpeed().removeModifier(name);
+                        nearBy.addSpeedModifier(wp, name, -30, 6, "BASE");
                     }
-                });
-                if (pveMasterUpgrade) {
-                    enemy.getSpeed().removeModifier(name);
-                    enemy.addSpeedModifier(wp, name, -30, 6, "BASE");
                 }
             }
         }
-        if (pveMasterUpgrade2 && ticksElapsed % 20 == 0) {
-            Map<WarlordsEntity, Integer> gotCooldown = beacon.getAlliesGotCooldown();
-            PlayerFilter.entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
-                        .aliveTeammatesOf(wp)
-                        .excluding(gotCooldown.keySet())
-                        .forEach(warlordsEntity -> gotCooldown.put(warlordsEntity, ticksElapsed));
-            gotCooldown.forEach((warlordsEntity, integer) -> {
-                if (ticksElapsed - integer > 10 * 20) {
-                    return;
-                }
-                float healing = warlordsEntity.getMaxHealth() * .025f;
-                warlordsEntity.addHealingInstance(
-                        wp,
-                        "Shadow Garden",
-                        healing,
-                        healing,
-                        0,
-                        100
-                );
-            });
-        }
-
 
         int yawIncrease = ticksElapsed % hexIntervalTicks == 0 ? 120 : 10;
         if (ticksElapsed % 2 == 0) {
@@ -200,10 +198,6 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     @Override
     public ArmorStand getCrystal() {
         return crystal;
-    }
-
-    public Map<WarlordsEntity, Integer> getAlliesGotCooldown() {
-        return alliesGotCooldown;
     }
 
     @Override

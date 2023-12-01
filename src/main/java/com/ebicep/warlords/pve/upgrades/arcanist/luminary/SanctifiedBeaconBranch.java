@@ -36,7 +36,7 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                 "Shadow Garden",
                 "Sanctified Beacon - Master Upgrade",
                 """
-                        Sanctified Beacon's radius is doubled. Additionally, allies within range will be healed 2.5% of their max hp every second for 10s.
+                        Sanctified Beacon's radius is doubled. Additionally, allies will have their crit multiplier increased by 15%.
                         """,
                 50000,
                 () -> {
