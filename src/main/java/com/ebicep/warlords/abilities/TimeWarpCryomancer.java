@@ -15,7 +15,6 @@ import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.TimeWarpBranchCryomancer;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -71,20 +70,14 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
 
                                     }
                                 });
-                    new GameRunnable(game) {
-                        @Override
-                        public void run() {
-                            if (wp.isDead()) {
-                                this.cancel();
-                                return;
-                            }
-                            PlayerFilterGeneric.playingGameWarlordsNPCs(game)
-                                               .filter(n -> Objects.equals(n.getMob().getTarget(), npc.getEntity()))
-                                               .forEach(n -> {
-                                                   n.getMob().setTarget(wp);
-                                               });
-                        }
-                    }.runTaskLater(5);
+                    if (wp.isDead()) {
+                        return;
+                    }
+                    PlayerFilterGeneric.playingGameWarlordsNPCs(game)
+                                       .filter(n -> Objects.equals(n.getMob().getTarget(), npc.getEntity()))
+                                       .forEach(n -> {
+                                           n.getMob().setTarget(wp);
+                                       });
                 }
             };
             pveOption.spawnNewMob(cryoPod, Team.BLUE);
