@@ -64,9 +64,7 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                 """
                         +15% Proc chance
                          
-                        Enemies damaged by Windfury are now SHOCKED for 3s.
-                                                
-                        SHOCKED: Enemies that are shocked have their movement speed slowed by 25% and their incoming healing reduced by 50%.
+                        For every Windfury proc, increase movement speed by 2.5% and reduce damage taken by 2.5% for the duration of Windfury, max 25% and 15% respectively.
                         """,
                 50000,
                 () -> {

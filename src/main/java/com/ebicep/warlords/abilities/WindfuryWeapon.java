@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration {
 
@@ -72,6 +74,9 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
 
         WindfuryWeapon tempWindfuryWeapon = new WindfuryWeapon();
         wp.getCooldownManager().removeCooldown(WindfuryWeapon.class, false);
+        CalculateSpeed.Modifier shreddingFurySpeed = new CalculateSpeed.Modifier(wp, "Shredding Fury", 0, Integer.MAX_VALUE, Collections.emptyList(), false);
+        wp.addSpeedModifier(shreddingFurySpeed);
+        AtomicInteger procs = new AtomicInteger(0);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "FURY",
@@ -80,6 +85,9 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
+                    shreddingFurySpeed.duration = 0;
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -103,6 +111,14 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
             private boolean firstProc = true;
 
             @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade2) {
+                    return currentDamageValue * (100 - Math.min(15, procs.get() * 2.5f)) / 100;
+                }
+                return currentDamageValue;
+            }
+
+            @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (!event.getAbility().isEmpty() || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                     return;
@@ -118,6 +134,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 if (!(windfuryActivate < procChance)) {
                     return;
                 }
+                procs.incrementAndGet();
                 timesProcd++;
                 new GameRunnable(victim.getGame()) {
                     final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
@@ -154,13 +171,9 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                     }
                 }.runTaskTimer(3, 3);
 
-                if (pveMasterUpgrade2) {
-                    ChainLightning.giveShockedEffect(
-                            attacker,
-                            victim,
-                            WindfuryWeapon.class,
-                            new WindfuryWeapon()
-                    );
+                if (pveMasterUpgrade2 && procs.get() <= 10) {
+                    shreddingFurySpeed.setModifier(shreddingFurySpeed.modifier + 2.5f);
+                    wp.getSpeed().setChanged(true);
                 }
             }
         });
