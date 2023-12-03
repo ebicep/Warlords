@@ -9,10 +9,12 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBreathBranch;
@@ -184,6 +186,9 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     }
 
     private static void giveMaliciousMist(@Nonnull WarlordsEntity wp, WarlordsEntity breathTarget) {
+        if (breathTarget instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMob) {
+            return;
+        }
         CooldownManager breathTargetCooldownManager = breathTarget.getCooldownManager();
         breathTargetCooldownManager.removeBuffCooldowns();
         breathTargetCooldownManager.removeCooldownByName("Malicious Mist");
