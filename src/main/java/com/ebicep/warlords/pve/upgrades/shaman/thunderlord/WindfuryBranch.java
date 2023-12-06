@@ -15,15 +15,37 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
                     @Override
                     public String getDescription0(String value) {
-                        return "+" + value + "% Weapon Damage";
+                        return "+" + value + "% Windfury Damage";
                     }
 
                     @Override
                     public void run(float value) {
                         ability.setWeaponDamage(weaponDamage + value);
                     }
-                }, 25f)
-                .addUpgradeCooldown(ability)
+                }, 25f, 1, 2)
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Windfury Damage";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setWeaponDamage(weaponDamage + value);
+                    }
+                }, 100f, 3)
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Windfury Damage";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setWeaponDamage(weaponDamage + value);
+                    }
+                }, 150f, 4)
+                .addUpgradeCooldown(ability, .2f, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -43,7 +65,39 @@ public class WindfuryBranch extends AbstractUpgradeBranch<WindfuryWeapon> {
                     public boolean autoScaleEffect() {
                         return false;
                     }
-                }, 4f)
+                }, 2f, 1, 2, 3)
+                .addUpgrade(new UpgradeTypes.LuckUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Proc Chance";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setProcChance(ability.getProcChance() + value);
+                    }
+
+                    @Override
+                    public boolean autoScaleEffect() {
+                        return false;
+                    }
+                }, 10f, 4)
+                .addUpgrade(new UpgradeTypes.LuckUpgradeType() {
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + " Windfury Hit";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setMaxHits(ability.getMaxHits() + (int) value);
+                    }
+
+                    @Override
+                    public boolean autoScaleEffect() {
+                        return false;
+                    }
+                }, 1f, 4)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
