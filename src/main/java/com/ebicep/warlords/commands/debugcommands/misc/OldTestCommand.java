@@ -10,16 +10,13 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.trait.Equipment;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -138,21 +135,24 @@ public class OldTestCommand implements CommandExecutor {
 //                }
 //            }
 
-            NPC mount = NPCManager.NPC_REGISTRY.createNPC(EntityType.ARMOR_STAND, "test");
+            NPC mount = NPCManager.NPC_REGISTRY.createNPC(EntityType.MAGMA_CUBE, "test");
             mount.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 //            HologramTrait hologramTrait = mount.getOrAddTrait(HologramTrait.class);
 //            hologramTrait.setUseDisplayEntities(true);
 //            hologramTrait.setLine(0, "TEST");
 //            hologramTrait.setLine(1, LegacyComponentSerializer.legacyAmpersand().serialize(Component.text("HELLO", TextColor.color(123, 123, 123))));
-//            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.SKELETON, "test");
-//            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
-            Equipment equipment = mount.getOrAddTrait(Equipment.class);
-            equipment.set(Equipment.EquipmentSlot.HELMET, new ItemStack(Material.BLACK_BANNER));
+            NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.MAGMA_CUBE, "test");
+            npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+//            Equipment equipment = mount.getOrAddTrait(Equipment.class);
+//            equipment.set(Equipment.EquipmentSlot.HELMET, new ItemStack(Material.BLACK_BANNER));
 
             mount.spawn(player.getLocation());
-//            npc.spawn(player.getLocation());
-//
-//            mount.getEntity().addPassenger(npc.getEntity());
+            npc.spawn(player.getLocation());
+
+            mount.getEntity().addPassenger(npc.getEntity());
+
+            mount.getNavigator().setTarget(player, true);
+            npc.getNavigator().setTarget(player, true);
 
             UUID uuid = UUID.fromString("9f2b2230-3b2c-4b0f-a141-d7b598e236c7");
 //            for (DatabaseGameBase game : GAMES) {

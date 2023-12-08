@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -19,6 +20,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.SlimeSize;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -41,15 +43,16 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
     private static final Material DAMAGE_BLOCK = Material.MAGMA_BLOCK;
     private static final int BASE_HEALTH = 75_000;
+    private static final int INITIAL_SPLIT_NUMBER = 0;
     private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
     private int splitNumber;
 
     public MagmaticOoze(Location spawnLocation) {
-        this(spawnLocation, BASE_HEALTH, 0, new HashMap<>());
+        this(spawnLocation, BASE_HEALTH, INITIAL_SPLIT_NUMBER, new HashMap<>());
     }
 
     public MagmaticOoze(Location spawnLocation, float health, int splitNumber, Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-        this(spawnLocation, "Magmatic Ooze", (int) (health / (splitNumber + 1)), .45f, 30, 100, 200, splitNumber, previousBlocks);
+        this(spawnLocation, "Magmatic Ooze", (int) (health / ((Math.log(splitNumber + 1) / 2) + 1)), .25f, 30, 100, 200, splitNumber, previousBlocks);
     }
 
     public MagmaticOoze(
@@ -70,17 +73,10 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FieryProjectile(375 - (splitNumber * 10), 450 - (splitNumber * 10)),
-                new FlamingSlam(600 - (splitNumber * 100), 800 - (splitNumber * 100)),
-                new HeatAura(75 - (splitNumber * 10), 14 - splitNumber),
-                new MoltenFissure(previousBlocks),
-                new Split(splitNumber,
-                        (loc, we) -> new MagmaticOoze(loc,
-                                Math.max(15_000, MathUtils.lerp(0, BASE_HEALTH, we.getHealth() / we.getMaxBaseHealth())),
-                                splitNumber + 1,
-                                previousBlocks
-                        )
-                )
+                new FieryProjectile(575 - (splitNumber * 10), 950 - (splitNumber * 10)),
+                new FlamingSlam(1100 - (splitNumber * 100), 1300 - (splitNumber * 100)),
+                new HeatAura(150 - (splitNumber * 10), 11 - splitNumber),
+                new MoltenFissure(previousBlocks)
         );
         this.splitNumber = splitNumber;
         this.previousBlocks = previousBlocks;
@@ -95,7 +91,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
-        this(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, 0, new HashMap<>());
+        this(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, INITIAL_SPLIT_NUMBER, new HashMap<>());
     }
 
     @Override
@@ -106,8 +102,8 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     @Override
     public void onNPCCreate() {
         super.onNPCCreate();
-        npc.getOrAddTrait(SlimeSize.class).setSize(10 - (splitNumber * 2));
-        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .1f);
+        npc.getOrAddTrait(SlimeSize.class).setSize(6 - splitNumber);
+        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> 0f);
     }
 
     @Override
@@ -123,7 +119,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        if (splitNumber == 0 && option.getMobs().stream().noneMatch(MagmaticOoze.class::isInstance)) {
+        if (splitNumber == INITIAL_SPLIT_NUMBER && option.getMobs().stream().noneMatch(MagmaticOoze.class::isInstance)) {
             Game game = option.getGame();
             new GameRunnable(game) {
 
@@ -178,6 +174,27 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                                 });
                 }
             }.runTaskTimer(20, 3);
+
+            MagmaticOoze previousOoze = this;
+            for (int i = 0; i < 5; i++) {
+                MagmaticOoze magmaticOoze = new MagmaticOoze(spawnLocation, BASE_HEALTH, i + 1, previousBlocks);
+                pveOption.spawnNewMob(magmaticOoze);
+                magmaticOoze.getWarlordsNPC().getEntity().addPassenger(previousOoze.getWarlordsNPC().getEntity());
+                previousOoze = magmaticOoze;
+            }
+        }
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        Entity top = warlordsNPC.getEntity();
+        while (!top.getPassengers().isEmpty()) {
+            Entity passenger = top.getPassengers().get(0);
+            WarlordsNPC wNPC = (WarlordsNPC) Warlords.getPlayer(passenger);
+            if (wNPC != null) {
+                wNPC.getNpc().getOrAddTrait(MountTrait.class).unmount();
+            }
+            top = passenger;
         }
     }
 
@@ -194,9 +211,6 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            if (!wp.getEntity().isOnGround()) {
-                return false;
-            }
             wp.subtractEnergy(name, energyCost, false);
 
             Location location = wp.getLocation();
@@ -232,7 +246,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     ),
                     newLoc -> PlayerFilter
                             .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                            .aliveTeammatesOfExcludingSelf(wp)
+                            .aliveEnemiesOf(wp)
                             .findFirstOrNull(),
                     (newLoc, directHit) -> {
                         new GameRunnable(wp.getGame()) {
@@ -276,6 +290,9 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            if (wp.getEntity().isInsideVehicle()) {
+                return false;
+            }
             if (!wp.getEntity().isOnGround()) {
                 return false;
             }
@@ -287,7 +304,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             Game game = wp.getGame();
 
             //launch straight into air then down diagonally towards enemy player
-            wp.setVelocity(name, new Vector(0, 1.75, 0), true);
+            wp.setVelocity(name, new Vector(0, 1.7, 0), true);
             new GameRunnable(game) {
 
                 boolean launchedTowardsPlayer = false;
@@ -295,8 +312,12 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
                 @Override
                 public void run() {
+                    if (wp.getEntity().isInsideVehicle()) {
+                        this.cancel();
+                        return;
+                    }
                     if (wp.isDead()) {
-                        cancel();
+                        this.cancel();
                     }
                     // check if y velocity starts going down
                     Vector currentVector = wp.getEntity().getVelocity();
