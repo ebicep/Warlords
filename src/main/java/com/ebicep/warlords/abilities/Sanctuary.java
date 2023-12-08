@@ -136,6 +136,9 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 100,
                                 flags
                         );
+                        if (event.getFlags().contains(InstanceFlags.TRUE_DAMAGE)) {
+                            return;
+                        }
                         float damageToReduce = 1 - damageToReflect;
                         event.setMin(event.getMin() * damageToReduce);
                         event.setMax(event.getMax() * damageToReduce);
