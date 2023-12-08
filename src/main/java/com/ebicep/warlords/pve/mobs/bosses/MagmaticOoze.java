@@ -73,9 +73,9 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FieryProjectile(575 - (splitNumber * 10), 950 - (splitNumber * 10)),
-                new FlamingSlam(1100 - (splitNumber * 100), 1300 - (splitNumber * 100)),
-                new HeatAura(150 - (splitNumber * 10), 11 - splitNumber),
+                new FieryProjectile(800 - (splitNumber * 5), 1000 - (splitNumber * 5)),
+                new FlamingSlam(1250 - (splitNumber * 50), 1500 - (splitNumber * 50)),
+                new HeatAura(200 - (splitNumber * 5), 14 - splitNumber),
                 new MoltenFissure(previousBlocks)
         );
         this.splitNumber = splitNumber;
@@ -162,8 +162,8 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                                         warlordsEntity.addDamageInstance(
                                                 warlordsNPC,
                                                 "Magma",
-                                                125,
-                                                175,
+                                                150,
+                                                200,
                                                 0,
                                                 100,
                                                 EnumSet.of(InstanceFlags.TRUE_DAMAGE)
