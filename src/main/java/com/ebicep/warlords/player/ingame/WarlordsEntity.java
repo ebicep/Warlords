@@ -21,6 +21,7 @@ import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -1177,23 +1178,11 @@ public abstract class WarlordsEntity {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUuid(), player.getEntity() instanceof Player);
         switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
-                if (player.showDebugMessage) {
-                    player.sendMessage(ownFeed.build()
-                                              .hoverEvent(HoverEvent.showText(debugMessage))
-                    );
-                } else {
-                    player.sendMessage(ownFeed.build());
-                }
+                player.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage)));
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (player.showDebugMessage) {
-                        player.sendMessage(ownFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(debugMessage))
-                        );
-                    } else {
-                        player.sendMessage(ownFeed.build());
-                    }
+                    player.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage)));
                 }
             }
         }
@@ -1249,23 +1238,11 @@ public abstract class WarlordsEntity {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(sender.getUuid(), sender.getEntity() instanceof Player);
         switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
-                if (sender.showDebugMessage) {
-                    sender.sendMessage(ownFeed.build()
-                                              .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                    );
-                } else {
-                    sender.sendMessage(ownFeed.build());
-                }
+                sender.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (sender.showDebugMessage) {
-                        sender.sendMessage(ownFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                        );
-                    } else {
-                        sender.sendMessage(ownFeed.build());
-                    }
+                    sender.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
                 }
             }
         }
@@ -1289,23 +1266,11 @@ public abstract class WarlordsEntity {
         databasePlayer = DatabaseManager.getPlayer(receiver.getUuid(), receiver.getEntity() instanceof Player);
         switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
-                if (receiver.showDebugMessage) {
-                    receiver.sendMessage(allyFeed.build()
-                                                 .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                    );
-                } else {
-                    receiver.sendMessage(allyFeed.build());
-                }
+                receiver.sendMessage(allyFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (receiver.showDebugMessage) {
-                        receiver.sendMessage(allyFeed.build()
-                                                     .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                        );
-                    } else {
-                        receiver.sendMessage(allyFeed.build());
-                    }
+                    receiver.sendMessage(allyFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
                 }
             }
         }
@@ -1366,23 +1331,11 @@ public abstract class WarlordsEntity {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(getUuid(), receiver.getEntity() instanceof Player);
         switch (databasePlayer.getChatDamageMode()) {
             case ALL -> {
-                if (receiver.showDebugMessage) {
-                    receiver.sendMessage(enemyFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                    );
-                } else {
-                    receiver.sendMessage(enemyFeed.build());
-                }
+                receiver.sendMessage(enemyFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (receiver.showDebugMessage) {
-                        receiver.sendMessage(enemyFeed.build()
-                                                      .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                        );
-                    } else {
-                        receiver.sendMessage(enemyFeed.build());
-                    }
+                    receiver.sendMessage(enemyFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
                 }
             }
         }
@@ -1402,23 +1355,11 @@ public abstract class WarlordsEntity {
         databasePlayer = DatabaseManager.getPlayer(sender.getUuid(), sender.getEntity() instanceof Player);
         switch (databasePlayer.getChatDamageMode()) {
             case ALL -> {
-                if (sender.showDebugMessage) {
-                    sender.sendMessage(ownFeed.build()
-                                              .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                    );
-                } else {
-                    sender.sendMessage(ownFeed.build());
-                }
+                sender.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (sender.showDebugMessage) {
-                        sender.sendMessage(ownFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                        );
-                    } else {
-                        sender.sendMessage(ownFeed.build());
-                    }
+                    sender.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
                 }
             }
         }
@@ -1906,18 +1847,32 @@ public abstract class WarlordsEntity {
     }
 
     public void sendMessage(Component component) {
-        this.entity.sendMessage(component);
+        sendMessage(component, false);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void sendMessage(Component component, boolean isDamageHealMessage) {
+        if (isDamageHealMessage && !showDebugMessage) {
+            this.entity.sendMessage(component.hoverEvent(null));
+        } else {
+            this.entity.sendMessage(component);
+        }
         if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
             game.spectators()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                .forEach(player -> player.sendMessage(component.hoverEvent(null)));
+                .forEach(player -> {
+                    if (Permissions.isAdmin(player)) {
+                        player.sendMessage(component);
+                    } else {
+                        player.sendMessage(component.hoverEvent(null));
+                    }
+                });
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(String name) {
