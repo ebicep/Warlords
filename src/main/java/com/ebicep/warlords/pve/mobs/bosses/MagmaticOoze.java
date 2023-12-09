@@ -4,10 +4,13 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -75,7 +78,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 maxMeleeDamage,
                 new FieryProjectile(800 - (splitNumber * 5), 1000 - (splitNumber * 5)),
                 new FlamingSlam(1250 - (splitNumber * 50), 1500 - (splitNumber * 50)),
-                new HeatAura(200 - (splitNumber * 5), 14 - splitNumber),
+                new HeatAura(200 - (splitNumber * 5), 12 - splitNumber),
                 new MoltenFissure(previousBlocks)
         );
         this.splitNumber = splitNumber;
@@ -183,6 +186,25 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 previousOoze = magmaticOoze;
             }
         }
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Mount Damage Reduction",
+                null,
+                MagmaticOoze.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.INTERNAL,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (warlordsNPC.getEntity().isInsideVehicle()) {
+                    return currentDamageValue * .5f;
+                }
+                return currentDamageValue;
+            }
+        });
     }
 
     @Override
