@@ -49,7 +49,7 @@ import java.util.function.Function;
 public class MagmaticOoze extends AbstractMob implements BossMob {
 
     private static final Material DAMAGE_BLOCK = Material.MAGMA_BLOCK;
-    private static final int BASE_HEALTH = 75_000;
+    private static final int BASE_HEALTH = 70_000;
     private static final int INITIAL_SPLIT_NUMBER = 0;
     private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
     private int splitNumber;
@@ -59,7 +59,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     }
 
     public MagmaticOoze(Location spawnLocation, float health, int splitNumber, Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-        this(spawnLocation, "Magmatic Ooze", (int) (health / ((Math.log(splitNumber + 1) / 2) + 1)), .25f, 30, 100, 200, splitNumber, previousBlocks);
+        this(spawnLocation, "Magmatic Ooze", (int) (health / ((Math.log(splitNumber + 1) / 2.5) + 1)), .25f, 30, 100, 200, splitNumber, previousBlocks);
     }
 
     public MagmaticOoze(
@@ -139,7 +139,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (warlordsNPC.getEntity().isInsideVehicle()) {
-                    return currentDamageValue * .5f;
+                    return currentDamageValue * .6f;
                 }
                 return currentDamageValue;
             }
