@@ -165,16 +165,16 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     this.cancel();
                     return;
                 }
-                previousBlocks.entrySet().removeIf(timedLocationBlockHolderMaterialEntry -> {
-                    long time = timedLocationBlockHolderMaterialEntry.getKey().time();
-                    // remove if 30*5 seconds have passed
-                    if (time < System.currentTimeMillis() - 150_000) {
-                        Block block = timedLocationBlockHolderMaterialEntry.getKey().locationBlockHolder().getBlock();
-                        block.setType(timedLocationBlockHolderMaterialEntry.getValue());
-                        return true;
-                    }
-                    return false;
-                });
+//                previousBlocks.entrySet().removeIf(timedLocationBlockHolderMaterialEntry -> {
+//                    long time = timedLocationBlockHolderMaterialEntry.getKey().time();
+//                    // remove if 300 seconds have passed
+//                    if (time < System.currentTimeMillis() - 300_000) {
+//                        Block block = timedLocationBlockHolderMaterialEntry.getKey().locationBlockHolder().getBlock();
+//                        block.setType(timedLocationBlockHolderMaterialEntry.getValue());
+//                        return true;
+//                    }
+//                    return false;
+//                });
                 PlayerFilter.playingGame(getGame())
                             .aliveEnemiesOf(warlordsNPC)
                             .forEach(warlordsEntity -> {
@@ -232,7 +232,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             WarlordsNPC wNPC = (WarlordsNPC) Warlords.getPlayer(passenger);
             if (wNPC != null) {
                 wNPC.getNpc().getOrAddTrait(MountTrait.class).unmount();
-                wNPC.addSpeedModifier(wNPC, "Unmounted", 25, Integer.MAX_VALUE, "BASE");
+                wNPC.addSpeedModifier(wNPC, "Unmounted", 35, Integer.MAX_VALUE, "BASE");
             }
             top = passenger;
         }
@@ -325,7 +325,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
     public static class FlamingSlam extends AbstractPveAbility {
 
-        private final int hitbox = 10;
+        private final int hitbox = 11;
         private boolean launched = false;
 
         public FlamingSlam(float minDamageHeal, float maxDamageHeal) {
@@ -365,8 +365,11 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     Vector currentVector = wp.getEntity().getVelocity();
                     if (currentVector.getY() <= 0 && !launchedTowardsPlayer && target != null) {
                         // diagonally towards enemy player
-                        Vector vectorTowardsEnemy = new LocationBuilder(wp.getLocation()).getVectorTowards(target.getLocation());
-                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.25 + (wp.getLocation().distance(target.getLocation()) * .035)), true);
+                        Vector vectorTowardsEnemy = new LocationBuilder(wp.getLocation()).getVectorTowards(target.getLocation().add(0, 3.5, 0)).normalize();
+                        if (vectorTowardsEnemy.getY() > 0) { // help prevent going outside of map
+                            vectorTowardsEnemy.setY(0);
+                        }
+                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.5 + (wp.getLocation().distance(target.getLocation()) * .06)), true);
                         launchedTowardsPlayer = true;
                     } else {
                         if (target == null || target.isDead()) {
@@ -395,7 +398,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     }
                 }
 
-            }.runTaskTimer(10, 2);
+            }.runTaskTimer(5, 2);
             return true;
         }
 
@@ -482,23 +485,26 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
     public static class MoltenFissure extends AbstractPveAbility implements RedAbilityIcon {
 
-        private static final int MAX_FISSURE_LENGTH = 17;
+        private static final int MAX_FISSURE_LENGTH = 19;
         private static final int MIN_BREAK_SIZE = 4;
         private static final int MAX_BREAK_SIZE = 6;
         private static final int VALID_CHECK = 1;
         private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
+        private int failedAttempts = 0;
 
         public MoltenFissure(Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-            super("Molten Fissure", 15, 50);
+            super("Molten Fissure", 12, 50);
             this.previousBlocks = previousBlocks;
         }
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             Location groundLocation = LocationUtils.getGroundLocation(wp.getLocation());
-//            if (groundLocation.getBlock().getType() == DAMAGE_BLOCK) {
-//                return false;
-//            }
+            if (groundLocation.getBlock().getType() == DAMAGE_BLOCK && failedAttempts < 20 * 4) { // 4 seconds since this is ran every tick if available
+                failedAttempts++;
+                return false;
+            }
+            failedAttempts = 0;
             wp.subtractEnergy(name, energyCost, false);
 
             double yDiff = wp.getLocation().getY() - groundLocation.getY();
@@ -585,7 +591,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     // --- fissures
                     new GameRunnable(game) {
                         final List<List<LocationBuilder>> fissures = getAllFissureLocations(randomFacingStartLocation);
-                        final boolean[] discontinueIndexes = new boolean[4];
+                        final boolean[] discontinueIndexes = new boolean[fissures.size()];
                         int spread = 0;
 
                         @Override
@@ -662,10 +668,11 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 @Nonnull
                 private List<List<LocationBuilder>> getAllFissureLocations(LocationBuilder randomFacingStartLocation) {
                     List<List<LocationBuilder>> fissures = new ArrayList<>();
-                    fissures.add(getFissureLocations(randomFacingStartLocation.clone().forward(1)));
-                    fissures.add(getFissureLocations(randomFacingStartLocation.clone().backward(1).lookBackwards()));
-                    fissures.add(getFissureLocations(randomFacingStartLocation.clone().left(1).lookLeft()));
-                    fissures.add(getFissureLocations(randomFacingStartLocation.clone().right(1).lookRight()));
+                    int numberOfPaths = ThreadLocalRandom.current().nextBoolean() ? 4 : 5;
+                    int degreeBetweenPaths = 360 / numberOfPaths;
+                    for (int i = 0; i < numberOfPaths; i++) {
+                        fissures.add(getFissureLocations(randomFacingStartLocation.clone().yaw(i * degreeBetweenPaths)));
+                    }
                     return fissures;
                 }
 
