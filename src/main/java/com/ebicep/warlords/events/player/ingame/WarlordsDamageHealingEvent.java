@@ -95,6 +95,10 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.min = min;
     }
 
+    public void setMinForce(float min) {
+        this.min = min;
+    }
+
     public float getMax() {
         return max;
     }
@@ -103,6 +107,10 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         if (flags.contains(InstanceFlags.TRUE_DAMAGE)) {
             return;
         }
+        this.max = max;
+    }
+
+    public void setMaxForce(float max) {
         this.max = max;
     }
 

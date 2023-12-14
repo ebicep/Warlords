@@ -95,8 +95,8 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
             @Override
             public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
                 if (pveMasterUpgrade2 && event.getAbility().equals("Ignite")) {
-                    event.setMin(event.getMin() * 2);
-                    event.setMax(event.getMax() * 2);
+                    event.setMinForce(event.getMin() * 2);
+                    event.setMaxForce(event.getMax() * 2);
                 }
             }
 
