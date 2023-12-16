@@ -2925,4 +2925,21 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public abstract ItemStack getHead();
+
+    @Nullable
+    public abstract ItemStack getHelmet();
+
+    @Nullable
+    public abstract ItemStack getChestplate();
+
+    @Nullable
+    public abstract ItemStack getLeggings();
+
+    @Nullable
+    public abstract ItemStack getBoots();
+
+    @Nullable
+    public abstract ItemStack getMainHand();
+
 }

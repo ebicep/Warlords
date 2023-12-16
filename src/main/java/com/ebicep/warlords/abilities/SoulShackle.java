@@ -74,7 +74,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         boolean hasShackled = false;
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             Location playerLoc = new LocationBuilder(wp.getLocation())

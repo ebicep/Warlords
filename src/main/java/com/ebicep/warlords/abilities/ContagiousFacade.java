@@ -76,7 +76,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.contagiousfacade.activation", 2, 1.4f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, 2, 0.7f);

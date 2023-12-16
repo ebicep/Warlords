@@ -73,7 +73,7 @@ public class ImpalingStrike extends AbstractStrike {
     }
 
     @Override
-    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         int multiplier = pveMasterUpgrade && nearPlayer.getCooldownManager().hasCooldownFromName("Leech Debuff") ? 3 : 1;
         nearPlayer.addDamageInstance(
                 wp,

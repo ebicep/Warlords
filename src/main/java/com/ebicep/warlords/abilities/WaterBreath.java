@@ -32,7 +32,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -77,12 +76,12 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.waterbreath.activation", 2, 1);
-        player.getWorld().spawnParticle(
+        wp.getWorld().spawnParticle(
                 Particle.HEART,
-                player.getLocation().add(0, 0.7, 0),
+                wp.getLocation().add(0, 0.7, 0),
                 2,
                 0.6,
                 0.6,
@@ -92,7 +91,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 true
         );
 
-        Location playerLoc = new LocationBuilder(player.getLocation())
+        Location playerLoc = new LocationBuilder(wp.getLocation())
                 .pitch(0)
                 .add(0, 1.7, 0);
 
@@ -110,7 +109,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         wp.getSpeed().removeSlownessModifiers();
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
-        Location playerEyeLoc = new LocationBuilder(player.getLocation())
+        Location playerEyeLoc = new LocationBuilder(wp.getLocation())
                 .pitch(0)
                 .backward(1);
         Vector viewDirection = playerLoc.getDirection();
@@ -135,7 +134,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 }
             } else {
                 final Location loc = breathTarget.getLocation();
-                final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
+                final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
                 breathTarget.setVelocity(name, v, false);
 
                 if (pveMasterUpgrade2) {

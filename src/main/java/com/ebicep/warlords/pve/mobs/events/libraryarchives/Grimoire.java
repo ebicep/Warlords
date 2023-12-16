@@ -47,7 +47,7 @@ public abstract class Grimoire extends AbstractMob implements BossMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 20 * getAbilityActivationPeriod() == 0) {
             AbstractAbility ability = abilities.get(ThreadLocalRandom.current().nextInt(abilities.size()));
-            ability.onActivate(warlordsNPC, null);
+            ability.onActivate(warlordsNPC);
         }
     }
 

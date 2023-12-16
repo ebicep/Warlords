@@ -17,7 +17,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -37,7 +36,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         AtomicBoolean hitPlayer = new AtomicBoolean(false);
         float radius = hitbox.getCalculatedValue();
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
@@ -48,10 +47,10 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                     .first((nearPlayer) -> {
                         if (LocationUtils.isLookingAt(wp, nearPlayer) && LocationUtils.hasLineOfSight(wp, nearPlayer)) {
                             addTimesUsed();
-                            AbstractPlayerClass.sendRightClickPacket(player);
+                            AbstractPlayerClass.sendRightClickPacket(wp);
                             playSoundAndEffect(nearPlayer.getLocation());
 
-                            boolean successfulStrike = onHit(wp, player, nearPlayer);
+                            boolean successfulStrike = onHit(wp, nearPlayer);
                             Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, nearPlayer));
                             if (this instanceof ProtectorsStrike) {
                                 Optional<HammerOfLight> optionalHammerOfLight = new CooldownFilter<>(wp, RegularCooldown.class)
@@ -74,7 +73,7 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
 
     protected abstract void playSoundAndEffect(Location location);
 
-    protected abstract boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer);
+    protected abstract boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer);
 
     public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
         final Location loc = kbTarget.getLocation();

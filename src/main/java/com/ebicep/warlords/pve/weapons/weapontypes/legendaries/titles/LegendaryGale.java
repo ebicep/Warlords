@@ -16,7 +16,6 @@ import org.bukkit.util.Vector;
 import org.springframework.data.annotation.Transient;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -142,7 +141,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
             List<FloatModifiable.FloatModifier> modifiers = wp
                     .getAbilities()
                     .stream()

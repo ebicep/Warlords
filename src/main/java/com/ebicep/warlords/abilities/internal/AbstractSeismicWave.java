@@ -22,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -60,14 +59,14 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
 
-        Location location = player.getLocation();
+        Location location = wp.getLocation();
         for (int i = 0; i < waveLength; i++) {
             fallingBlockLocations.add(getWave(location, i));
         }
@@ -92,7 +91,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                     }
 
                     playersHit.add(waveTarget);
-                    final Vector v = player.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
+                    final Vector v = wp.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
                     waveTarget.setVelocity(name, v, false, false);
                     float multiplier = 1;
                     if (pveMasterUpgrade) {

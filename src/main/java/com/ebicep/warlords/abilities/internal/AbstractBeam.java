@@ -6,7 +6,6 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,13 +52,13 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull @javax.annotation.Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
         List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
         for (Location locationsToFireShot : locationsToFireShots) {
             Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, .85, .5).clone();
             AbstractChain.spawnChain(shooter.getLocation(), location, getBeamItem());
         }
-        return super.onActivate(shooter, player);
+        return super.onActivate(shooter);
     }
 
     public abstract ItemStack getBeamItem();

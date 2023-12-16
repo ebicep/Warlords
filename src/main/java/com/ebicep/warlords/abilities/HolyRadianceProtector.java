@@ -72,7 +72,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
     }
 
     @Override
-    public boolean chain(WarlordsEntity wp, Player player) {
+    public boolean chain(WarlordsEntity wp) {
         if (pveMasterUpgrade) {
             for (WarlordsEntity circleTarget : PlayerFilter
                     .entitiesAround(wp, 15, 15, 15)
@@ -85,18 +85,18 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
         }
 
         for (WarlordsEntity markTarget : PlayerFilter
-                .entitiesAround(player, markRadius, markRadius, markRadius)
+                .entitiesAround(wp, markRadius, markRadius, markRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
             if (!LocationUtils.isLookingAtMark(wp, markTarget) || !LocationUtils.hasLineOfSight(wp, markTarget)) {
-                player.sendMessage(Component.text("Your mark was out of range or you did not target a player!", NamedTextColor.RED));
+                wp.sendMessage(Component.text("Your mark was out of range or you did not target a player!", NamedTextColor.RED));
                 continue;
             }
             Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
             // chain particles
-            EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 0, 255, 70, 1);
+            EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 0, 255, 70, 1);
             EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), new ItemStack(Material.POPPY), 8);
             emitMarkRadiance(wp, markTarget);
 

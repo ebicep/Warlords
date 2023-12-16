@@ -20,6 +20,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -394,6 +395,41 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public int getBaseHitCooldownValue() {
         return 12;
+    }
+
+    @Override
+    public ItemStack getHead() {
+        return HeadUtils.getHead(uuid);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getHelmet() {
+        return entity instanceof Player player ? player.getInventory().getHelmet() : null;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getChestplate() {
+        return entity instanceof Player player ? player.getInventory().getChestplate() : null;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getLeggings() {
+        return entity instanceof Player player ? player.getInventory().getLeggings() : null;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getBoots() {
+        return entity instanceof Player player ? player.getInventory().getBoots() : null;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getMainHand() {
+        return entity instanceof Player player ? player.getInventory().getItemInMainHand() : null;
     }
 
     public void applySkillBoost(Player player) {

@@ -22,7 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "shaman.boulder.activation", 2, 1);
 

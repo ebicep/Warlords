@@ -335,7 +335,7 @@ public class Void extends AbstractMob implements BossMob {
                                                                                       .withColor(Color.WHITE)
                                                                                       .with(FireworkEffect.Type.BALL_LARGE)
                                                                                       .build());
-                    prismGuard.onActivate(warlordsNPC, null);
+                    prismGuard.onActivate(warlordsNPC);
                     preventArmageddon = false;
                     this.cancel();
                     return;

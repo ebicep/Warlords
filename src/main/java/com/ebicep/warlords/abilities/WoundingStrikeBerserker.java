@@ -70,7 +70,7 @@ public class WoundingStrikeBerserker extends AbstractStrike {
     }
 
     @Override
-    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         float lustDamageBoost = wp.getCooldownManager().hasCooldown(BloodLust.class) ? pveMasterUpgrade ? 2 : pveMasterUpgrade2 ? 1.3f : 1 : 1;
         nearPlayer.addDamageInstance(
                 wp,

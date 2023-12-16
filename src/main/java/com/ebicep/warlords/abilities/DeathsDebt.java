@@ -110,7 +110,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     }
 
     @Override
-    protected void playSound(Player player, Location location) {
+    protected void playSound(WarlordsEntity warlordsEntity, Location location) {
         //TODO find the right sound - this aint right chief
         Utils.playGlobalSound(location, "shaman.chainlightning.impact", 2, 2);
     }
@@ -121,7 +121,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     }
 
     @Override
-    protected void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand) {
+    protected void onActivation(WarlordsEntity wp, ArmorStand totemStand) {
         final int duration = tickDuration + (2 * Math.round(wp.getHealth() / wp.getMaxHealth())) * 20;
 
         CircleEffect circle = new CircleEffect(

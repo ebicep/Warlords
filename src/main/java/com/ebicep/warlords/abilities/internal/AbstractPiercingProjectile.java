@@ -19,7 +19,6 @@ import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
@@ -308,7 +307,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
         shooter.subtractEnergy(name, energyCost, false);
 
         fire(shooter, shooter.getEyeLocation());

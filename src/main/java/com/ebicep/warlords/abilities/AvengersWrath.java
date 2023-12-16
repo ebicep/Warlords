@@ -23,7 +23,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -67,7 +66,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 
         AvengersWrath tempAvengersWrath = new AvengersWrath();

@@ -8,13 +8,11 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -62,13 +60,13 @@ public abstract class AbstractChain extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer) {
         Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer);
         int hitCounter = entitiesHit.size();
         if (hitCounter != 0) {
             playersHit += hitCounter;
 
-            AbstractPlayerClass.sendRightClickPacket(player);
+            AbstractPlayerClass.sendRightClickPacket(warlordsPlayer);
             warlordsPlayer.subtractEnergy(name, energyCost, false);
 
             onHit(warlordsPlayer, hitCounter);

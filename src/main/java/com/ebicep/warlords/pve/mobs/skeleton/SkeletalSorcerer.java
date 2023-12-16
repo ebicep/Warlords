@@ -26,7 +26,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -163,7 +162,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
             wp.subtractEnergy(name, energyCost, false);
 
             EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.FLAME, 1);

@@ -11,6 +11,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Equipment;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -19,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -229,6 +231,41 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public int getBaseHitCooldownValue() {
         return 20;
+    }
+
+    @Override
+    public ItemStack getHead() {
+        return mob.getMobRegistry().getHead();
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getHelmet() {
+        return npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.HELMET);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getChestplate() {
+        return npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.CHESTPLATE);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getLeggings() {
+        return npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.LEGGINGS);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getBoots() {
+        return npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.BOOTS);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public ItemStack getMainHand() {
+        return npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.HAND);
     }
 
     public int getStunTicks() {

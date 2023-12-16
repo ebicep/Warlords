@@ -261,7 +261,7 @@ public abstract class AbstractMob implements Mob {
             if (event.isCancelled()) {
                 return;
             }
-            boolean shouldApplyCooldown = ability.onActivate(warlordsNPC, null);
+            boolean shouldApplyCooldown = ability.onActivate(warlordsNPC);
             if (shouldApplyCooldown) {
                 WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(warlordsNPC, null, ability);
                 Bukkit.getPluginManager().callEvent(post);

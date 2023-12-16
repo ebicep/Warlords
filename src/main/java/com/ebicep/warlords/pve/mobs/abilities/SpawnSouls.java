@@ -10,10 +10,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,8 +49,8 @@ public class SpawnSouls extends AbstractSpawnMobAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
-        boolean activate = super.onActivate(wp, player);
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        boolean activate = super.onActivate(wp);
         if (activate) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
         }

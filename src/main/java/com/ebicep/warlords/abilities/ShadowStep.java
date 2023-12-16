@@ -23,7 +23,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -59,7 +58,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Location playerLoc = wp.getLocation();
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(playerLoc, "rogue.drainingmiasma.activation", 1, 2);
@@ -83,11 +82,11 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
             doShadowDash(wp);
         } else {
             if (wp.getCarriedFlag() != null) {
-                player.setVelocity(playerLoc.getDirection().multiply(1).setY(0.35));
-                player.setFallDistance(-fallDamageNegation);
+                wp.setVelocity(name, playerLoc.getDirection().multiply(1).setY(0.35), true);
+                wp.setFallDistance(-fallDamageNegation);
             } else {
-                player.setVelocity(playerLoc.getDirection().multiply(1.5).setY(0.7));
-                player.setFallDistance(-fallDamageNegation);
+                wp.setVelocity(name, playerLoc.getDirection().multiply(1.5).setY(0.7), true);
+                wp.setFallDistance(-fallDamageNegation);
             }
 
             doShadowStep(wp, playerLoc);

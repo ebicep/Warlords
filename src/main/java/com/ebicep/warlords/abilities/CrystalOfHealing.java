@@ -8,6 +8,7 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -21,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -57,8 +57,8 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
-        Block targetBlock = Utils.getTargetBlock(player, 15);
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        Block targetBlock = !(wp.getEntity() instanceof Player) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 15);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
@@ -82,10 +82,10 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
         EffectUtils.playFirework(
                 groundLocation,
                 FireworkEffect.builder()
-                    .withColor(Color.LIME)
-                    .with(FireworkEffect.Type.BALL)
-                    .trail(true)
-                    .build()
+                              .withColor(Color.LIME)
+                              .with(FireworkEffect.Type.BALL)
+                              .trail(true)
+                              .build()
         );
 
         ArmorStand crystal = Utils.spawnArmorStand(groundLocation, armorStand -> {
@@ -173,9 +173,9 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                     EffectUtils.playFirework(
                                             groundLocation,
                                             FireworkEffect.builder()
-                                                .withColor(Color.WHITE)
-                                                .with(FireworkEffect.Type.STAR)
-                                                .build(),
+                                                          .withColor(Color.WHITE)
+                                                          .with(FireworkEffect.Type.STAR)
+                                                          .build(),
                                             1
                                     );
                                     cooldown.setTicksLeft(0);

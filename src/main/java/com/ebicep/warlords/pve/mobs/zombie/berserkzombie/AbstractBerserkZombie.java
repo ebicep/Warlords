@@ -9,11 +9,9 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Map;
 
 public abstract class AbstractBerserkZombie extends AbstractMob {
@@ -74,8 +72,8 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
-            boolean onActivate = super.onActivate(wp, player);
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+            boolean onActivate = super.onActivate(wp);
             if (onActivate) {
                 PacketUtils.playRightClickAnimationForPlayer(((CraftEntity) wp.getEntity()).getHandle(),
                         wp.getGame()

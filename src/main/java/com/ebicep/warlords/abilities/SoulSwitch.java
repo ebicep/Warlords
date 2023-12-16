@@ -17,7 +17,6 @@ import com.ebicep.warlords.pve.mobs.player.Decoy;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.SoulSwitchBranch;
-import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -29,7 +28,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -79,7 +77,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         if (wp.getCarriedFlag() != null) {
             wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
             return false;
@@ -150,14 +148,13 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 Decoy decoy;
                 if (pveOption != null) {
                     wp.addSpeedModifier(wp, "Tricky Switch", 30, decoyMaxTicksLived);
-                    PlayerInventory inventory = player.getInventory();
                     decoy = new Decoy(ownLocation,
                             wp.getName(),
-                            HeadUtils.getHead(player.getUniqueId()),
-                            inventory.getChestplate(),
-                            inventory.getLeggings(),
-                            inventory.getBoots(),
-                            inventory.getItem(0)
+                            wp.getHead(),
+                            wp.getChestplate(),
+                            wp.getLeggings(),
+                            wp.getBoots(),
+                            wp.getMainHand()
                     ) {
 
                         @Override

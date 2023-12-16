@@ -15,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,30 +64,30 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
 
-        Location standLocation = LocationUtils.getGroundLocation(player);
+        Location standLocation = LocationUtils.getGroundLocation(wp.getLocation());
         standLocation.setYaw(0);
         standLocation.setY(standLocation.getY() - 0.46);
 
-        playSound(player, standLocation);
+        playSound(wp, standLocation);
 
         ArmorStand totemStand = Utils.spawnArmorStand(standLocation, armorStand -> {
             armorStand.getEquipment().setHelmet(getTotemItemStack());
             armorStand.setSmall(true);
         });
 
-        onActivation(wp, player, totemStand);
+        onActivation(wp, totemStand);
 
         return true;
     }
 
-    protected abstract void playSound(Player player, Location location);
+    protected abstract void playSound(WarlordsEntity warlordsEntity, Location location);
 
     protected abstract ItemStack getTotemItemStack();
 
-    protected abstract void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand);
+    protected abstract void onActivation(WarlordsEntity wp, ArmorStand totemStand);
 
     public boolean isPlayerLookingAtTotem(WarlordsEntity warlordsPlayer) {
         if (!(warlordsPlayer.getEntity() instanceof Player player)) {

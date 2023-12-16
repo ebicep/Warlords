@@ -63,10 +63,10 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
     public abstract Component getBonusDescription();
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, 1);
-        Location groundLocation = LocationUtils.getGroundLocation(player);
+        Location groundLocation = LocationUtils.getGroundLocation(wp.getLocation());
 
         Utils.playGlobalSound(groundLocation, "arcanist.beacon.impact", 0.3f, 1);
         Utils.playGlobalSound(groundLocation, "arcanist.beaconshadow.activation", 2, 1);

@@ -80,7 +80,7 @@ public class ProtectorsStrike extends AbstractStrike {
     }
 
     @Override
-    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         nearPlayer.addDamageInstance(
                 wp,
                 name,

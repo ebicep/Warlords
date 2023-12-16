@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.HammerOfLightBranch;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -36,7 +37,6 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -101,8 +101,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
-        Block targetBlock = Utils.getTargetBlock(player, 25);
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        Block targetBlock = !(wp.getEntity() instanceof Player) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }

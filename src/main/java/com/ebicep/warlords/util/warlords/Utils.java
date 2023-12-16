@@ -9,10 +9,7 @@ import com.google.common.collect.Sets;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -97,27 +94,24 @@ public class Utils {
         return getTargetBlock(player, maxDistance).getLocation();
     }
 
-    public static Location getTargetLocation(Location location, int maxDistance) {
-        return getTargetBlock(location, maxDistance).getLocation();
-    }
-
     /**
      * see org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity#getLineOfSight(Set, int, int)}
      * this accounts for banners
      *
-     * @param player
+     * @param livingEntity
      * @param maxDistance
      * @return
      */
-    public static Block getTargetBlock(Player player, int maxDistance) {
-        CraftPlayer craftPlayer = (CraftPlayer) player;
-        Preconditions.checkState(!craftPlayer.getHandle().generation, "Cannot get line of sight during world generation");
-
+    public static Block getTargetBlock(LivingEntity livingEntity, int maxDistance) {
+        if (livingEntity instanceof Player player) {
+            CraftPlayer craftPlayer = (CraftPlayer) player;
+            Preconditions.checkState(!craftPlayer.getHandle().generation, "Cannot get line of sight during world generation");
+        }
         if (maxDistance > 120) {
             maxDistance = 120;
         }
         ArrayList<Block> blocks = new ArrayList<>();
-        Iterator<Block> itr = new BlockIterator(craftPlayer, maxDistance);
+        Iterator<Block> itr = new BlockIterator(livingEntity, maxDistance);
         while (itr.hasNext()) {
             Block block = itr.next();
             blocks.add(block);
@@ -130,6 +124,17 @@ public class Utils {
             }
         }
         return blocks.get(0);
+    }
+
+    public static Block getTargetBlock(WarlordsEntity warlordsEntity, int maxDistance) {
+        return warlordsEntity.getEntity() instanceof LivingEntity livingEntity ? Utils.getTargetBlock(livingEntity,
+                maxDistance
+        ) : Utils.getTargetBlock(warlordsEntity.getLocation(), maxDistance);
+    }
+
+
+    public static Location getTargetLocation(Location location, int maxDistance) {
+        return getTargetBlock(location, maxDistance).getLocation();
     }
 
     public static Block getTargetBlock(Location location, int maxDistance) {

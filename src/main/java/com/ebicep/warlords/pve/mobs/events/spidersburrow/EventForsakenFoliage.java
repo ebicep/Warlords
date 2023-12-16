@@ -67,7 +67,7 @@ public class EventForsakenFoliage extends AbstractMob implements BossMinionMob, 
             warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
             warlordsNPC.heal();
         }
-        warlordsNPC.getAbilities().get(0).onActivate(warlordsNPC, null);
+        warlordsNPC.getAbilities().get(0).onActivate(warlordsNPC);
     }
 
     @Override

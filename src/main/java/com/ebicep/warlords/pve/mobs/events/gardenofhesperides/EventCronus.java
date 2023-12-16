@@ -110,7 +110,7 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
                         this.cancel();
                         return;
                     }
-                    groundSlamBerserker.onActivate(self, null);
+                    groundSlamBerserker.onActivate(self);
 
                     warlordsNPC.addHealingInstance(
                             warlordsNPC,

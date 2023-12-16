@@ -15,7 +15,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
@@ -45,17 +44,17 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         wp.subtractEnergy(name, energyCost, false);
 
-        if (chain(wp, player)) {
+        if (chain(wp)) {
             playersMarked++;
         }
 
         float rad = radius.getCalculatedValue();
         Set<WarlordsEntity> warlordsEntities = PlayerFilter
-                .entitiesAround(player, rad, rad, rad)
+                .entitiesAround(wp, rad, rad, rad)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .stream()
                 .collect(Collectors.toSet());
@@ -73,10 +72,10 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         }
         Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, warlordsEntities));
 
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+        wp.playSound(wp.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1);
 
-        Location particleLoc = player.getLocation().add(0, 1.2, 0);
+        Location particleLoc = wp.getLocation().add(0, 1.2, 0);
 
         particleLoc.getWorld().spawnParticle(
                 Particle.VILLAGER_HAPPY,
@@ -104,7 +103,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         return true;
     }
 
-    public abstract boolean chain(WarlordsEntity wp, Player player);
+    public abstract boolean chain(WarlordsEntity wp);
 
     @Override
     public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {

@@ -75,7 +75,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
     }
 
     @Override
-    protected void playSound(Player player, Location location) {
+    protected void playSound(WarlordsEntity warlordsEntity, Location location) {
         Utils.playGlobalSound(location, "shaman.totem.activation", 2, 1);
     }
 
@@ -85,7 +85,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
     }
 
     @Override
-    protected void onActivation(WarlordsEntity wp, Player player, ArmorStand totemStand) {
+    protected void onActivation(WarlordsEntity wp, ArmorStand totemStand) {
         Location totemLocation = wp.getLocation().clone();
 
         CapacitorTotem tempCapacitorTotem = new CapacitorTotem(totemStand, wp);

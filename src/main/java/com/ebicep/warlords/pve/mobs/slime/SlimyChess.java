@@ -17,7 +17,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Function;
 
@@ -104,7 +103,7 @@ public class SlimyChess extends AbstractMob implements AdvancedMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
             wp.subtractEnergy(name, energyCost, false);
 
             for (WarlordsEntity we : PlayerFilter

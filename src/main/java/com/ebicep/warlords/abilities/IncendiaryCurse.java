@@ -24,7 +24,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +65,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 

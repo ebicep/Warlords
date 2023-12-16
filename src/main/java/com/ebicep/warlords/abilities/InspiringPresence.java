@@ -70,7 +70,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");

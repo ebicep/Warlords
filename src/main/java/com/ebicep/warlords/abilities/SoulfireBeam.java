@@ -101,9 +101,9 @@ public class SoulfireBeam extends AbstractBeam {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull @javax.annotation.Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
         shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
-        return super.onActivate(shooter, player);
+        return super.onActivate(shooter);
     }
 
     @Override

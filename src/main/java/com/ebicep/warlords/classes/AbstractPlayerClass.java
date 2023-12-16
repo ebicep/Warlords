@@ -26,13 +26,6 @@ import java.util.Objects;
 
 public abstract class AbstractPlayerClass {
 
-    public static void sendRightClickPacket(Player player) {
-        if (player == null) {
-            return;
-        }
-        PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
-    }
-
     protected int maxHealth;
     protected int maxEnergy;
     protected float energyPerSec;
@@ -45,7 +38,6 @@ public abstract class AbstractPlayerClass {
     protected String name;
     protected String className;
     protected String classNameShort;
-
     public AbstractPlayerClass(
             String name,
             int maxHealth,
@@ -167,17 +159,6 @@ public abstract class AbstractPlayerClass {
         }
     }
 
-    private void resetAbilityCD(WarlordsEntity we) {
-        abilityCD = false;
-        new GameRunnable(we.getGame()) {
-
-            @Override
-            public void run() {
-                abilityCD = true;
-            }
-        }.runTaskLater(1);
-    }
-
     public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player) {
         if (ability.getCurrentCooldown() != 0) {
             if (secondaryAbilityCD) {
@@ -192,7 +173,7 @@ public abstract class AbstractPlayerClass {
             if (pre.isCancelled()) {
                 return;
             }
-            boolean shouldApplyCooldown = ability.onActivate(wp, player);
+            boolean shouldApplyCooldown = ability.onActivate(wp);
             if (shouldApplyCooldown) {
                 WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability);
                 Bukkit.getPluginManager().callEvent(post);
@@ -219,6 +200,31 @@ public abstract class AbstractPlayerClass {
                 secondaryAbilityCD = true;
             }
         }.runTaskLater(5);
+    }
+
+    public static void sendRightClickPacket(WarlordsEntity warlordsEntity) {
+        if (!(warlordsEntity.getEntity() instanceof Player player)) {
+            return;
+        }
+        PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
+    }
+
+    public static void sendRightClickPacket(Player player) {
+        if (player == null) {
+            return;
+        }
+        PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
+    }
+
+    private void resetAbilityCD(WarlordsEntity we) {
+        abilityCD = false;
+        new GameRunnable(we.getGame()) {
+
+            @Override
+            public void run() {
+                abilityCD = true;
+            }
+        }.runTaskLater(1);
     }
 
     /**

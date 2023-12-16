@@ -177,9 +177,9 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nonnull @javax.annotation.Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         if (pveMasterUpgrade2) {
-            return super.onActivate(wp, player);
+            return super.onActivate(wp);
         }
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.freezingbreath.activation", 2, 1);

@@ -24,7 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration {
@@ -69,7 +68,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
         Utils.playGlobalSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
@@ -77,7 +76,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         new CircleEffect(
                 wp.getGame(),
                 wp.getTeam(),
-                player.getLocation(),
+                wp.getLocation(),
                 radius,
                 new CircumferenceEffect(Particle.SPELL, Particle.REDSTONE).particlesPerCircumference(2)
         ).playEffects();

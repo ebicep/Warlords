@@ -12,10 +12,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,7 +29,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         // pveMasterUpgrade
         AtomicInteger strikesUsed = new AtomicInteger();
 

@@ -24,7 +24,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +67,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
@@ -85,7 +84,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         );
 
         for (WarlordsEntity teammate : PlayerFilter
-                .entitiesAround(player, vitalityRange, vitalityRange, vitalityRange)
+                .entitiesAround(wp, vitalityRange, vitalityRange, vitalityRange)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             teammate.addHealingInstance(
@@ -102,7 +101,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         }
 
         for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(player, vitalityRange, vitalityRange, vitalityRange)
+                .entitiesAround(wp, vitalityRange, vitalityRange, vitalityRange)
                 .aliveEnemiesOf(wp)
         ) {
             if (pveMasterUpgrade) {

@@ -27,7 +27,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -69,7 +68,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.icebarrier.activation", 2, 1);
 
         IceBarrier tempIceBarrier = new IceBarrier(damageReductionPercent);

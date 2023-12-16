@@ -21,7 +21,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Function;
 
@@ -142,7 +141,7 @@ public class Chessking extends AbstractMob implements BossMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
             wp.subtractEnergy(name, energyCost, false);
 
             for (WarlordsEntity we : PlayerFilter

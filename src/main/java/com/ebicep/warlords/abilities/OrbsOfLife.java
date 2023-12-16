@@ -31,7 +31,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -90,7 +89,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 

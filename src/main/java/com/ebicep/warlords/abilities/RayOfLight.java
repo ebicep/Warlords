@@ -127,7 +127,7 @@ public class RayOfLight extends AbstractBeam {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull @javax.annotation.Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
         int hexStacks = (int) new CooldownFilter<>(shooter, RegularCooldown.class)
                 .filterCooldownClass(MercifulHex.class)
                 .stream()
@@ -138,7 +138,7 @@ public class RayOfLight extends AbstractBeam {
         }
         shooter.addHealingInstance(shooter, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
-        return super.onActivate(shooter, player);
+        return super.onActivate(shooter);
     }
 
     @Override

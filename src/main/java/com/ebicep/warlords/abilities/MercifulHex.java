@@ -247,8 +247,8 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter, @Nonnull @javax.annotation.Nullable Player player) {
-        boolean activate = super.onActivate(shooter, player);
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+        boolean activate = super.onActivate(shooter);
         shooter.addHealingInstance(
                 shooter,
                 name,

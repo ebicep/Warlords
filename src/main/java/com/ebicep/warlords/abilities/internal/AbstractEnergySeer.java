@@ -17,7 +17,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -63,7 +62,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.energyseer.activation", 2, 0.9f);
         for (int i = 0; i < 20; i++) {

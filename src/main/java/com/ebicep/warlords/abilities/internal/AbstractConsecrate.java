@@ -81,10 +81,10 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
 
-        Location location = player.getLocation().clone();
+        Location location = wp.getLocation().clone();
 
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
         float radius = hitBox.getCalculatedValue();

@@ -76,7 +76,7 @@ public class AvengersStrike extends AbstractStrike {
     }
 
     @Override
-    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         float multiplier = 1;
         float healthDamage = 0;
         if (nearPlayer instanceof WarlordsNPC warlordsNPC) {

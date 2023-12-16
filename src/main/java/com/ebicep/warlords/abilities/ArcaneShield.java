@@ -24,7 +24,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -91,7 +90,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
 

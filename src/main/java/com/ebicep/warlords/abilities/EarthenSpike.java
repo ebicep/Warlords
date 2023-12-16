@@ -83,7 +83,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         List<WarlordsEntity> spiked = new ArrayList<>();
         float rad = radius.getCalculatedValue();
         for (WarlordsEntity spikeTarget : PlayerFilter

@@ -66,7 +66,7 @@ public class JudgementStrike extends AbstractStrike {
     }
 
     @Override
-    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull Player player, @Nonnull WarlordsEntity nearPlayer) {
+    protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         for (int i = 0; i < (pveMasterUpgrade2 ? 2 : 1); i++) {
             attacksDone++;
             float critChance = this.critChance;

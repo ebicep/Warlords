@@ -18,7 +18,6 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class VoidZombie extends AbstractMob implements AdvancedMob {
@@ -128,7 +127,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
             wp.subtractEnergy(name, energyCost, false);
 
             float healthDamage = wp.getMaxHealth() * 0.01f;

@@ -17,10 +17,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -44,13 +42,13 @@ public class ConsecrateAvenger extends AbstractConsecrate {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         if (!pveMasterUpgrade2) {
-            return super.onActivate(wp, player);
+            return super.onActivate(wp);
         }
         wp.subtractEnergy(name, energyCost, false);
 
-        Location location = player.getLocation().clone();
+        Location location = wp.getLocation().clone();
 
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
         float radius = hitBox.getCalculatedValue();

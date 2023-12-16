@@ -69,10 +69,10 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
                 //temp scuffed account for energy cost
                 float energyCost = ability.getEnergyCostValue(); //TODO
                 ability.setEnergyCost(0);
-                ability.onActivate(warlordsPlayer, player);
+                ability.onActivate(warlordsPlayer);
                 ability.setEnergyCost(energyCost);
                 ability.addTimesUsed();
-                AbstractPlayerClass.sendRightClickPacket(player);
+                AbstractPlayerClass.sendRightClickPacket(warlordsPlayer);
                 AbstractItem.sendItemMessage(
                         player,
                         getHoverComponent().append(Component.text(" randomly activated " + ability.getName() + "!", NamedTextColor.GRAY))

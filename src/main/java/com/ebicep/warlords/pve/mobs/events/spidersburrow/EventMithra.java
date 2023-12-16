@@ -255,7 +255,7 @@ public class EventMithra extends AbstractMob implements BossMob {
             setTrueDamage(true);
             getHitBoxRadius().setCurrentValue(9);
         }};
-        groundSlam.onActivate(warlordsNPC, null);
+        groundSlam.onActivate(warlordsNPC);
     }
 
     private void enrage() {

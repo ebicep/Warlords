@@ -22,7 +22,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,7 +83,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         setDamagePrevented(0);
 
         for (WarlordsEntity veneTarget : PlayerFilter

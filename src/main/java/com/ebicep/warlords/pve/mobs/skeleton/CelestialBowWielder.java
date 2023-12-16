@@ -82,7 +82,7 @@ public class CelestialBowWielder extends AbstractMob implements AdvancedMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 160 == 0) {
-            warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC, null);
+            warlordsNPC.getSpec().getWeapon().onActivate(warlordsNPC);
         }
     }
 

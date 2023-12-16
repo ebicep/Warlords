@@ -23,14 +23,12 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -60,7 +58,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                 maxMeleeDamage,
                 new EarthenSpike(600, 700, 6, 6) {
                     @Override
-                    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+                    public boolean onActivate(@Nonnull WarlordsEntity wp) {
                         List<WarlordsEntity> spiked = new ArrayList<>();
                         float rad = 10;
                         for (WarlordsEntity spikeTarget : PlayerFilter

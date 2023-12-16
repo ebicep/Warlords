@@ -30,7 +30,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,11 +66,11 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.subtractEnergy(name, energyCost, false);
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
-        Location location = player.getLocation();
+        Location location = wp.getLocation();
         location.setPitch(0);
         Location chargeLocation = location.clone();
         double chargeDistance;
@@ -85,7 +84,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
             chargeDistance = 5;
         } else {
             //travels 7 at peak jump
-            chargeDistance = Math.max(Math.min(LocationUtils.getDistance(player, .1) * 5, 6.9), 6);
+            chargeDistance = Math.max(Math.min(LocationUtils.getDistance(wp, .1) * 5, 6.9), 6);
         }
 
         boolean finalInAir = inAir;

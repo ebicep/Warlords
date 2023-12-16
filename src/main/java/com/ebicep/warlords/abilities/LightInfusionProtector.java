@@ -11,11 +11,9 @@ import com.ebicep.warlords.pve.upgrades.paladin.protector.LightInfusionBranchPro
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 
 public class LightInfusionProtector extends AbstractLightInfusion {
@@ -29,7 +27,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 1);
 

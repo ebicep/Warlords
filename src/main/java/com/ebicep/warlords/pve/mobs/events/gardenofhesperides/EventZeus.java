@@ -24,13 +24,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable {
 
@@ -160,7 +158,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "ROD DMG",
@@ -180,7 +178,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                     return currentDamageValue * damageBuff;
                 }
             });
-            return super.onActivate(wp, player);
+            return super.onActivate(wp);
         }
 
         public float getDamageBuff() {
