@@ -94,7 +94,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
 
         activeSoulbinding(wp);
 

@@ -128,7 +128,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             float healthDamage = wp.getMaxHealth() * 0.01f;
             wp.addDamageInstance(wp, "Void Shred", healthDamage, healthDamage, critChance, critMultiplier);

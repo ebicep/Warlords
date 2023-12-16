@@ -164,7 +164,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
             EffectUtils.playSphereAnimation(
                     wp.getLocation(),
                     radius,

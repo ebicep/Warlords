@@ -62,7 +62,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
-        wp.subtractEnergy(name, energyCost, false);
+
         Location groundLocation = targetBlock.getLocation().clone();
         groundLocation.add(.5, 1, .5);
         double baseY = groundLocation.getY();

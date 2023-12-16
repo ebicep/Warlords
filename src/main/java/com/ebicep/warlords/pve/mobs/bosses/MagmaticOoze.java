@@ -251,7 +251,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             Location location = wp.getLocation();
             Vector speed = wp.getLocation().getDirection().normalize().multiply(this.speed).setY(.01);
@@ -340,7 +340,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             if (!wp.getEntity().isOnGround()) {
                 return false;
             }
-            wp.subtractEnergy(name, energyCost, false);
+
 
             // launch entity in air towards enemy player
             // on impact, fiery shockwave + lava?
@@ -460,7 +460,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             // increase heat / damage on every use
             if (this.timesUsed <= 40) { // ~700 max at split 0
@@ -505,7 +505,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 return false;
             }
             failedAttempts = 0;
-            wp.subtractEnergy(name, energyCost, false);
+
 
             double yDiff = wp.getLocation().getY() - groundLocation.getY();
             Game game = wp.getGame();

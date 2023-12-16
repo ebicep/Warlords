@@ -65,7 +65,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "warrior.bloodlust.activation", 2, 1);
 
         BloodLust tempBloodLust = new BloodLust();

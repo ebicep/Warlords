@@ -115,7 +115,7 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             DifficultyIndex difficulty = pveOption.getDifficulty();
             boolean removeDebuffs = difficulty == DifficultyIndex.HARD || difficulty == DifficultyIndex.EXTREME || difficulty == DifficultyIndex.ENDLESS;

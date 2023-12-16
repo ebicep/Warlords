@@ -70,7 +70,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
 
         EarthlivingWeapon tempEarthlivingWeapon = new EarthlivingWeapon();

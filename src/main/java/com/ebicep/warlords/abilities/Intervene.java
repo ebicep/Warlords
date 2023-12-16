@@ -97,7 +97,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             if (veneTarget.hasFlag()) {
                 carriersIntervened++;
             }
-            wp.subtractEnergy(name, energyCost, false);
+
             // Green line / Sound
             Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1, 1);
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), Particle.VILLAGER_HAPPY);

@@ -152,7 +152,7 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
             EffectUtils.displayParticle(
                     Particle.END_ROD,
                     wp.getLocation().add(0, 2.5, 0),

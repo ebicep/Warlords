@@ -163,7 +163,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.FLAME, 1);
             for (WarlordsEntity enemy : PlayerFilter

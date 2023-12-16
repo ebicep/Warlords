@@ -180,7 +180,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(wp, hitRadius, hitRadius, hitRadius)

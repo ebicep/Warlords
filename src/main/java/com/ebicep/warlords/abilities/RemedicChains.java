@@ -84,7 +84,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
             return false;
         }
 
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
         HashMap<WarlordsEntity, Float> healthBoosts = new HashMap<>();

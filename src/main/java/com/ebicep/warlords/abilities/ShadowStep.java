@@ -60,7 +60,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Location playerLoc = wp.getLocation();
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(playerLoc, "rogue.drainingmiasma.activation", 1, 2);
         Utils.playGlobalSound(playerLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 2);
 

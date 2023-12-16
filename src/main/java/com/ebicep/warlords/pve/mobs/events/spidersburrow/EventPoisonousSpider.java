@@ -87,7 +87,7 @@ public class EventPoisonousSpider extends AbstractMob implements BossMinionMob, 
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             PlayerFilterGeneric.playingGame(pveOption.getGame())
                                .enemiesOf(wp)

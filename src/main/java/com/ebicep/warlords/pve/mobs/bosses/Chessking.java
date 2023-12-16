@@ -142,7 +142,7 @@ public class Chessking extends AbstractMob implements BossMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, range, range, range)

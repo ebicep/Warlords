@@ -1,16 +1,11 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.abilities.HammerOfLight;
-import com.ebicep.warlords.abilities.ProtectorsStrike;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Bukkit;
@@ -44,28 +39,14 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                     .closestFirst(wp)
                     .requireLineOfSight(wp)
                     .lookingAtFirst(wp)
-                    .first((nearPlayer) -> {
-                        if (LocationUtils.isLookingAt(wp, nearPlayer) && LocationUtils.hasLineOfSight(wp, nearPlayer)) {
-                            addTimesUsed();
-                            AbstractPlayerClass.sendRightClickPacket(wp);
-                            playSoundAndEffect(nearPlayer.getLocation());
+                    .first(nearPlayer -> {
+                        addTimesUsed();
+                        AbstractPlayerClass.sendRightClickPacket(wp);
+                        playSoundAndEffect(nearPlayer.getLocation());
 
-                            boolean successfulStrike = onHit(wp, nearPlayer);
-                            Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, nearPlayer));
-                            if (this instanceof ProtectorsStrike) {
-                                Optional<HammerOfLight> optionalHammerOfLight = new CooldownFilter<>(wp, RegularCooldown.class)
-                                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                        .findAny();
-                                if (optionalHammerOfLight.isPresent()) {
-                                    wp.subtractEnergy(name, energyCost.getCurrentValue() - (optionalHammerOfLight.get().isCrownOfLight() ? 10 : 0), false);
-                                } else {
-                                    wp.subtractEnergy(name, energyCost, false);
-                                }
-                            } else {
-                                wp.subtractEnergy(name, energyCost, false);
-                            }
-                            hitPlayer.set(successfulStrike);
-                        }
+                        boolean successfulStrike = onHit(wp, nearPlayer);
+                        Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, nearPlayer));
+                        hitPlayer.set(successfulStrike);
                     });
 
         return hitPlayer.get();
@@ -74,6 +55,12 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
     protected abstract void playSoundAndEffect(Location location);
 
     protected abstract boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer);
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        hitbox.tick();
+        super.runEveryTick(warlordsEntity);
+    }
 
     public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
         final Location loc = kbTarget.getLocation();
@@ -123,12 +110,6 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                     true
             );
         }
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        hitbox.tick();
-        super.runEveryTick(warlordsEntity);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class AdvancedVoidShred extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         EffectUtils.playHelixAnimation(wp.getLocation(), voidRadius, Particle.SMOKE_NORMAL, 1, helixDots);
         for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(wp, voidRadius, voidRadius, voidRadius)

@@ -67,7 +67,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         Location location = wp.getLocation();

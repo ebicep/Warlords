@@ -61,6 +61,14 @@ public class FloatModifiable {
         });
     }
 
+    public void removeModifier(String log) {
+        overridingModifier.removeIf(floatModifier -> floatModifier.getLog().equals(log));
+        additiveModifier.removeIf(floatModifier -> floatModifier.getLog().equals(log));
+        multiplicativeModifierAdditive.removeIf(floatModifier -> floatModifier.getLog().equals(log));
+        multiplicativeModifierMultiplicative.removeIf(floatModifier -> floatModifier.getLog().equals(log));
+        refresh();
+    }
+
     public float getCalculatedValue() {
         return cachedCalculatedValue;
     }
@@ -81,16 +89,16 @@ public class FloatModifiable {
         return modifier;
     }
 
+    private void addModifier(List<FloatModifier> list, FloatModifier modifier) {
+        list.removeIf(m -> m.getLog().equals(modifier.getLog()));
+        list.add(modifier);
+    }
+
     public FloatModifier addOverridingModifier(String log, float overridingModifier) {
         FloatModifier modifier = new FloatModifier(log, overridingModifier);
         addModifier(this.overridingModifier, modifier);
         refresh();
         return modifier;
-    }
-
-    private void addModifier(List<FloatModifier> list, FloatModifier modifier) {
-        list.removeIf(m -> m.getLog().equals(modifier.getLog()));
-        list.add(modifier);
     }
 
     public FloatModifier addAdditiveModifier(String log, float additiveModifier, int ticksLeft) {

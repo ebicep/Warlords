@@ -45,7 +45,7 @@ public class ConsecrateProtector extends AbstractConsecrate {
         if (!pveMasterUpgrade2) {
             return super.onActivate(wp);
         }
-        wp.subtractEnergy(name, energyCost, false);
+
 
         Location location = wp.getLocation().clone();
 

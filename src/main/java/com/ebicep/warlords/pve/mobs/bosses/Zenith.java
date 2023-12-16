@@ -194,7 +194,7 @@ public class Zenith extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             long playerCount = pveOption.getGame().warlordsPlayers().count();
             Location loc = wp.getLocation();
@@ -281,7 +281,7 @@ public class Zenith extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             long playerCount = pveOption.getGame().warlordsPlayers().count();
             Location loc = wp.getLocation();

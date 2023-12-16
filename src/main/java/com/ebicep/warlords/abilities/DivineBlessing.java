@@ -72,7 +72,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "arcanist.divineblessing.activation", 2, 1.2f);
         Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.6f);
         EffectUtils.strikeLightning(wp.getLocation(), true);

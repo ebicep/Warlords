@@ -122,7 +122,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
         }
 
         if (hasShackled) {
-            wp.subtractEnergy(name, energyCost, false);
+
         }
 
         return hasShackled;

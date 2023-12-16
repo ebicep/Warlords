@@ -106,7 +106,6 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
-        wp.subtractEnergy(name, energyCost, false);
 
         Utils.playGlobalSound(wp.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
@@ -147,6 +146,10 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 cooldownManager -> {
                     hammer.remove();
                     particleTask.cancel();
+
+                    for (ProtectorsStrike protectorsStrike : wp.getAbilitiesMatching(ProtectorsStrike.class)) {
+                        protectorsStrike.getEnergyCost().removeModifier("Hammer of Light");
+                    }
                 },
                 false,
                 tickDuration,
@@ -305,9 +308,13 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         }
                     });
 
-
                     tempHammerOfLight.setCrownOfLight(true);
                     hammerOfLightCooldown.setNameAbbreviation("CROWN");
+
+                    // prot strike energy reduction
+                    for (ProtectorsStrike protectorsStrike : wp.getAbilitiesMatching(ProtectorsStrike.class)) {
+                        protectorsStrike.getEnergyCost().addAdditiveModifier("Hammer of Light", -10);
+                    }
 
                     if (pveMasterUpgrade) {
                         pulseHeal(wp, 20, 1.5, tempHammerOfLight);

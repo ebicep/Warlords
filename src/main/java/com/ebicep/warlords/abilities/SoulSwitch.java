@@ -99,7 +99,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     continue;
                 }
             }
-            wp.subtractEnergy(name, energyCost, false);
+
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
 
             Location swapLocation = swapTarget.getLocation();

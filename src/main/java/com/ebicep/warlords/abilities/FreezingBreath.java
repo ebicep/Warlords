@@ -181,7 +181,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
         if (pveMasterUpgrade2) {
             return super.onActivate(wp);
         }
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "mage.freezingbreath.activation", 2, 1);
 
         Location playerLoc = new LocationBuilder(wp.getLocation())

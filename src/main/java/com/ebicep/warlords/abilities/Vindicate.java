@@ -69,7 +69,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
         Utils.playGlobalSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
 

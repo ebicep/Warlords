@@ -135,7 +135,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
             ItemStack item;
             Equipment equipment;
             if (wp instanceof WarlordsNPC warlordsNPC) {

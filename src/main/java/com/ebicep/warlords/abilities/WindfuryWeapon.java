@@ -68,7 +68,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
 
         WindfuryWeapon tempWindfuryWeapon = new WindfuryWeapon();

@@ -72,7 +72,7 @@ public class EventTerasDryad extends AbstractMob implements BossMinionMob, Teras
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
             Utils.playGlobalSound(wp.getLocation(), "mage.waterbolt.impact", 2, 1.5f);
             EffectUtils.displayParticle(
                     Particle.HEART,

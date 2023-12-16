@@ -35,7 +35,7 @@ public class PigZombieHealing extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
 
         Location location = wp.getLocation();
         Utils.playGlobalSound(location, Sound.ENTITY_ZOMBIFIED_PIGLIN_ANGRY, 1, 0.5f);

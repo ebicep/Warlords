@@ -34,7 +34,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
 
         Location warpLocation = wp.getLocation();

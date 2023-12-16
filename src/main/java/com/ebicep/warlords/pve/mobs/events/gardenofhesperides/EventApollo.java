@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.ImpalingStrike;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -89,7 +88,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
+
             PlayerFilter.playingGame(wp.getGame())
                         .aliveEnemiesOf(wp)
                         .first(warlordsEntity -> {

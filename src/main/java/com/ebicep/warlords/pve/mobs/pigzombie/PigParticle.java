@@ -99,7 +99,7 @@ public class PigParticle extends AbstractMob implements ChampionMob {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
-            wp.subtractEnergy(name, energyCost, false);
+
 
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 6, 6, 6)

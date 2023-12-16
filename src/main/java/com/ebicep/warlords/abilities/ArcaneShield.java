@@ -91,7 +91,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
 
         Shield shield = new Shield(name, maxShieldHealth);

@@ -64,7 +64,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.subtractEnergy(name, energyCost, false);
+
         Utils.playGlobalSound(wp.getLocation(), "warrior.berserk.activation", 2, 1);
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, name, speedBuff, tickDuration, "BASE");
