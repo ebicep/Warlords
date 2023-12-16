@@ -24,8 +24,8 @@ import com.ebicep.warlords.game.option.pve.treasurehunt.TreasureHuntOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.FieldEffect;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.SafeZoneOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffectOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.*;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.FixedWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.SimpleWave;
@@ -3079,7 +3079,7 @@ public enum GameMap {
                     .playerExpPer(80)
                     .guildExpPer(10)
             );
-            options.add(new FieldEffect(options));
+            options.add(new FieldEffectOption(options));
 
             return options;
         }
@@ -3171,7 +3171,7 @@ public enum GameMap {
                     .playerExpPerXSec(15, 10)
                     .guildExpPerXSec(4, 10)
             );
-            options.add(new FieldEffect(options));
+            options.add(new FieldEffectOption(options));
 
             return options;
         }
@@ -3404,7 +3404,7 @@ public enum GameMap {
                     .playerExpPerXSec(15, 10)
                     .guildExpPerXSec(1, 60)
             );
-            options.add(new FieldEffect(options, FieldEffect.FieldEffects.CONQUERING_ENERGY));
+            options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffects.CONQUERING_ENERGY));
 
             return options;
         }
@@ -3643,7 +3643,7 @@ public enum GameMap {
                     .playerExpPerXSec(15, 10)
                     .guildExpPerXSec(1, 60)
             );
-            options.add(new FieldEffect(options, FieldEffect.FieldEffects.ARACHNOPHOBIA));
+            options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffects.ARACHNOPHOBIA));
 
             return options;
         }
@@ -3939,7 +3939,7 @@ public enum GameMap {
                     .playerExpPerXSec(10, 10)
                     .guildExpPerXSec(20, 30)
             );
-            options.add(new FieldEffect(options, FieldEffect.FieldEffects.LOST_BUFF, FieldEffect.FieldEffects.DUMB_DEBUFFS));
+            options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffects.LOST_BUFF, FieldEffectOption.FieldEffects.DUMB_DEBUFFS));
 
             return options;
         }
@@ -4207,7 +4207,7 @@ public enum GameMap {
                     .playerExpPerXSec(15, 10)
                     .guildExpPerXSec(4, 10)
             );
-            options.add(new FieldEffect(options, FieldEffect.FieldEffects.TYCHE_PROSPERITY));
+            options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffects.TYCHE_PROSPERITY));
 
             return options;
         }
@@ -4421,7 +4421,7 @@ public enum GameMap {
                     .playerExpPerXSec(15, 10)
                     .guildExpPerXSec(4, 10)
             );
-            options.add(new FieldEffect(options, FieldEffect.FieldEffects.TYCHE_PROSPERITY));
+            options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffects.TYCHE_PROSPERITY));
 
             return options;
         }
