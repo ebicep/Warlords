@@ -1185,9 +1185,9 @@ public enum GameEvents {
     },
     LIBRARY_ARCHIVES("Library Archives",
             Currencies.EVENT_POINTS_GARDEN_OF_HESPERIDES,
-            null,//TODO
-            null,//TODO
-            null,//TODO
+            DatabasePlayerPvEEventStats::getLibraryArchivesStats,
+            DatabasePlayerPvEEventStats::getLibraryArchivesEventStats,
+            DatabasePlayerPvEEventStats::getLibraryArchivesStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
 //                for (Option option : game.getOptions()) {
 //                    if (option instanceof TheAcropolisOption) {

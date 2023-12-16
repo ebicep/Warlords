@@ -15,6 +15,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.g
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabasePlayerPvEEventGardenOfHesperidesStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabasePlayerPvEEventIlluminaDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabasePlayerPvEEventIlluminaStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.DatabasePlayerPvEEventLibraryArchivesDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.DatabasePlayerPvEEventLibraryArchivesStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
@@ -40,6 +42,8 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
     private DatabasePlayerPvEEventIlluminaStats illuminaStats = new DatabasePlayerPvEEventIlluminaStats();
     @Field("garden_of_hesperides")
     private DatabasePlayerPvEEventGardenOfHesperidesStats gardenOfHesperidesStats = new DatabasePlayerPvEEventGardenOfHesperidesStats();
+    @Field("library_archives")
+    private DatabasePlayerPvEEventLibraryArchivesStats libraryArchivesStats = new DatabasePlayerPvEEventLibraryArchivesStats();
 
     @Override
     public void updateCustomStats(
@@ -115,5 +119,12 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
         return gardenOfHesperidesStats.getEventStats();
     }
 
+    public DatabasePlayerPvEEventLibraryArchivesStats getLibraryArchivesStats() {
+        return libraryArchivesStats;
+    }
+
+    public Map<Long, DatabasePlayerPvEEventLibraryArchivesDifficultyStats> getLibraryArchivesEventStats() {
+        return libraryArchivesStats.getEventStats();
+    }
 
 }
