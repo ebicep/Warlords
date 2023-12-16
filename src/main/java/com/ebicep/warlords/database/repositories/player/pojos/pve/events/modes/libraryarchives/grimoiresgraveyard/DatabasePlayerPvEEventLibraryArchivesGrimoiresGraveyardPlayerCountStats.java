@@ -15,7 +15,7 @@ import com.ebicep.warlords.player.general.Specializations;
 public class DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardPlayerCountStats extends PvEEventLibraryArchivesGrimoiresGraveyardDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventLibraryArchivesGrimoiresGraveyardDatabaseStatInformation> {
 
     private DatabaseMagePvEEventLibraryArchivesGrimoiresGraveyard mage = new DatabaseMagePvEEventLibraryArchivesGrimoiresGraveyard();
-    private DatabaseWarriorPvEEventGardenOfHesperidesTartarus warrior = new DatabaseWarriorPvEEventGardenOfHesperidesTartarus();
+    private DatabaseWarriorPvEEventLibraryArchivesGrimoiresGraveyard warrior = new DatabaseWarriorPvEEventLibraryArchivesGrimoiresGraveyard();
     private DatabasePaladinPvEEventLibraryArchivesGrimoiresGraveyard paladin = new DatabasePaladinPvEEventLibraryArchivesGrimoiresGraveyard();
     private DatabaseShamanPvEEventLibraryArchivesGrimoiresGraveyard shaman = new DatabaseShamanPvEEventLibraryArchivesGrimoiresGraveyard();
     private DatabaseRoguePvEEventLibraryArchivesGrimoiresGraveyard rogue = new DatabaseRoguePvEEventLibraryArchivesGrimoiresGraveyard();
