@@ -12,11 +12,11 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class Grimoire extends AbstractMob implements BossMob {
+public abstract class EventGrimoire extends AbstractMob implements BossMob {
 
-    private List<AbstractAbility> abilities = new ArrayList<>();
+    private final List<AbstractAbility> abilities = new ArrayList<>();
 
-    public Grimoire(
+    public EventGrimoire(
             Location spawnLocation,
             String name,
             int maxHealth,

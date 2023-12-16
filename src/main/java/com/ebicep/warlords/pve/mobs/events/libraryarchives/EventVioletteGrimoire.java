@@ -7,9 +7,21 @@ import org.bukkit.Location;
 
 import java.util.EnumSet;
 
-public class BleueGrimoire extends Grimoire {
+public class EventVioletteGrimoire extends EventGrimoire {
 
-    public BleueGrimoire(
+    public EventVioletteGrimoire(Location spawnLocation) {
+        this(
+                spawnLocation,
+                "Violette Grimoire",
+                12000,
+                0,
+                5,
+                350,
+                700
+        );
+    }
+
+    public EventVioletteGrimoire(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -24,42 +36,37 @@ public class BleueGrimoire extends Grimoire {
 
     @Override
     public int getAbilityActivationPeriod() {
-        return 12;
+        return 9;
     }
 
     @Override
     public EnumSet<Ability> getAbilities() {
-        return EnumSet.of(
-                Ability.REPENTANCE
-        );
+        return EnumSet.noneOf(Ability.class);
     }
 
     @Override
     public Mob getMobRegistry() {
-        return null;
+        return Mob.EVENT_VIOLETTE_GRIMOIRE;
     }
 
     @Override
     public EnumSet<Ability> getAbilitiesM1() {
         return EnumSet.of(
-                Ability.ARCANE_SHIELD,
-                Ability.BLOOD_LUST,
-                Ability.LIGHTNING_ROD,
-                Ability.CHAIN_HEAL,
-                Ability.CONTAGIOUS_FACADE
+                Ability.LIGHT_INFUSION_CRUSADER,
+                Ability.GROUND_SLAM_BERSERKER,
+                Ability.EARTHLIVING_WEAPON,
+                Ability.SHADOW_STEP,
+                Ability.VITALITY_LIQUOR
         );
     }
 
     @Override
     public EnumSet<Ability> getAbilitiesM2() {
         return EnumSet.of(
-                Ability.HOLY_RADIANCE_PROTECTOR,
-                Ability.INTERVENE,
-                Ability.ORBS_OF_LIFE,
-                Ability.PRISM_GUARD,
-                Ability.REMEDIC_CHAINS,
-                Ability.MYSTICAL_BARRIER,
-                Ability.SANCTIFIED_BEACON
+                Ability.TIME_WARP_CRYOMANCER,
+                Ability.WINDFURY_WEAPON,
+                Ability.HEART_TO_HEART,
+                Ability.ENERGY_SEER_LUMINARY
         );
     }
 

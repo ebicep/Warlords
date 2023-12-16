@@ -7,9 +7,21 @@ import org.bukkit.Location;
 
 import java.util.EnumSet;
 
-public class VioletteGrimoire extends Grimoire {
+public class EventRougeGrimoire extends EventGrimoire {
 
-    public VioletteGrimoire(
+    public EventRougeGrimoire(Location spawnLocation) {
+        this(
+                spawnLocation,
+                "Rouge Grimoire",
+                12000,
+                0,
+                5,
+                350,
+                700
+        );
+    }
+
+    public EventRougeGrimoire(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -24,7 +36,7 @@ public class VioletteGrimoire extends Grimoire {
 
     @Override
     public int getAbilityActivationPeriod() {
-        return 9;
+        return 5;
     }
 
     @Override
@@ -33,29 +45,35 @@ public class VioletteGrimoire extends Grimoire {
     }
 
     @Override
-    public Mob getMobRegistry() {
-        return null;
-    }
-
-    @Override
     public EnumSet<Ability> getAbilitiesM1() {
         return EnumSet.of(
-                Ability.LIGHT_INFUSION_CRUSADER,
-                Ability.GROUND_SLAM_BERSERKER,
-                Ability.EARTHLIVING_WEAPON,
-                Ability.SHADOW_STEP,
-                Ability.VITALITY_LIQUOR
+                Ability.FLAME_BURST,
+                Ability.CONSECRATE_AVENGER,
+                Ability.SEISMIC_WAVE_BERSERKER,
+                Ability.RECKLESS_CHARGE,
+                Ability.SPIRIT_LINK,
+                Ability.INCENDIARY_CURSE
         );
     }
 
     @Override
     public EnumSet<Ability> getAbilitiesM2() {
         return EnumSet.of(
-                Ability.TIME_WARP_CRYOMANCER,
-                Ability.WINDFURY_WEAPON,
-                Ability.HEART_TO_HEART,
-                Ability.ENERGY_SEER_LUMINARY
+                Ability.FREEZING_BREATH,
+                Ability.WATER_BREATH,
+                Ability.CHAIN_LIGHTNING,
+                Ability.BOULDER,
+                Ability.SOUL_SHACKLE,
+                Ability.SOOTHING_ELIXIR,
+                Ability.SOULFIRE_BEAM,
+                Ability.GUARDIAN_BEAM,
+                Ability.RAY_OF_LIGHT
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_ROUGE_GRIMOIRE;
     }
 
 }

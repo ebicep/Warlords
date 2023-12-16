@@ -14,6 +14,10 @@ import com.ebicep.warlords.pve.mobs.events.baneofimpurities.EventIllusionCore;
 import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaro;
 import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaroShadow;
 import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.*;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventBleueGrimoire;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventOrangeGrimoire;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventRougeGrimoire;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventVioletteGrimoire;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjer;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventDjet;
 import com.ebicep.warlords.pve.mobs.events.pharaohsrevenge.EventNarmer;
@@ -704,13 +708,23 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 102, 0, 51),
             Weapons.FABLED_HEROICS_SWORD.getItem()
     )),
-    EVENT_TERAS_DRYAD(EntityType.ZOMBIE, EventTerasDryad.class, EventTerasDryad::new, EventTerasDryad::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.DRYAD),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 0, 255, 128),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 0, 255, 128),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 0, 255, 128),
-            Weapons.NEW_LEAF_SCYTHE.getItem()
-    )),
+    EVENT_TERAS_DRYAD(EntityType.ZOMBIE, EventTerasDryad.class, EventTerasDryad::new, EventTerasDryad::new, null),
+    //TODO
+    EVENT_UNPUBLISHED_GRIMOIRE(EntityType.ZOMBIE, EventRougeGrimoire.class, EventRougeGrimoire::new, EventRougeGrimoire::new, null),
+    EVENT_EMBELLISHED_GRIMOIRE(EntityType.ZOMBIE, EventRougeGrimoire.class, EventRougeGrimoire::new, EventRougeGrimoire::new, null),
+    EVENT_SCRIPTED_GRIMOIRE(EntityType.ZOMBIE, EventRougeGrimoire.class, EventRougeGrimoire::new, EventRougeGrimoire::new, null),
+
+    EVENT_ROUGE_GRIMOIRE(EntityType.ZOMBIE, EventRougeGrimoire.class, EventRougeGrimoire::new, EventRougeGrimoire::new, null),
+    EVENT_VIOLETTE_GRIMOIRE(EntityType.ZOMBIE, EventVioletteGrimoire.class, EventVioletteGrimoire::new, EventVioletteGrimoire::new, null),
+    EVENT_BLEUE_GRIMOIRE(EntityType.ZOMBIE, EventBleueGrimoire.class, EventBleueGrimoire::new, EventBleueGrimoire::new, null),
+    EVENT_ORANGE_GRIMOIRE(EntityType.ZOMBIE, EventOrangeGrimoire.class, EventOrangeGrimoire::new, EventOrangeGrimoire::new, null),
+
+    //TODO,
+    EVENT_NECRONOMICON_GRIMOIRE(EntityType.SKELETON, EventOrangeGrimoire.class, EventOrangeGrimoire::new, EventOrangeGrimoire::new, null),
+    EVENT_THE_ARCHIVIST(EntityType.VINDICATOR, EventOrangeGrimoire.class, EventOrangeGrimoire::new, EventOrangeGrimoire::new, null),
+    EVENT_INQUISITEUR_EWA(EntityType.IRON_GOLEM, EventOrangeGrimoire.class, EventOrangeGrimoire::new, EventOrangeGrimoire::new, null),
+    EVENT_INQUISITEUR_EGA(EntityType.IRON_GOLEM, EventOrangeGrimoire.class, EventOrangeGrimoire::new, EventOrangeGrimoire::new, null),
+    EVENT_INQUISITEUR_VPA(EntityType.IRON_GOLEM, EventOrangeGrimoire.class, EventOrangeGrimoire::new, EventOrangeGrimoire::new, null),
 
     //misc
     TEST_DUMMY(EntityType.ZOMBIE, TestDummy.class, TestDummy::new, TestDummy::new, null),

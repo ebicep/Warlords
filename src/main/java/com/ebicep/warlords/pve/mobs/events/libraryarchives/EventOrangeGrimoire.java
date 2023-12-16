@@ -7,9 +7,21 @@ import org.bukkit.Location;
 
 import java.util.EnumSet;
 
-public class OrangeGrimoire extends Grimoire {
+public class EventOrangeGrimoire extends EventGrimoire {
 
-    public OrangeGrimoire(
+    public EventOrangeGrimoire(Location spawnLocation) {
+        this(
+                spawnLocation,
+                "Orange Grimoire",
+                12000,
+                0,
+                5,
+                350,
+                700
+        );
+    }
+
+    public EventOrangeGrimoire(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -34,7 +46,7 @@ public class OrangeGrimoire extends Grimoire {
 
     @Override
     public Mob getMobRegistry() {
-        return null;
+        return Mob.EVENT_ORANGE_GRIMOIRE;
     }
 
     @Override

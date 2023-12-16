@@ -7,9 +7,21 @@ import org.bukkit.Location;
 
 import java.util.EnumSet;
 
-public class RougeGrimoire extends Grimoire {
+public class EventBleueGrimoire extends EventGrimoire {
 
-    public RougeGrimoire(
+    public EventBleueGrimoire(Location spawnLocation) {
+        this(
+                spawnLocation,
+                "Rouge Grimoire",
+                12000,
+                0,
+                5,
+                350,
+                700
+        );
+    }
+
+    public EventBleueGrimoire(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -24,44 +36,43 @@ public class RougeGrimoire extends Grimoire {
 
     @Override
     public int getAbilityActivationPeriod() {
-        return 5;
+        return 12;
     }
 
     @Override
     public EnumSet<Ability> getAbilities() {
-        return EnumSet.noneOf(Ability.class);
+        return EnumSet.of(
+                Ability.REPENTANCE
+        );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_BLEUE_GRIMOIRE;
     }
 
     @Override
     public EnumSet<Ability> getAbilitiesM1() {
         return EnumSet.of(
-                Ability.FLAME_BURST,
-                Ability.CONSECRATE_AVENGER,
-                Ability.SEISMIC_WAVE_BERSERKER,
-                Ability.RECKLESS_CHARGE,
-                Ability.SPIRIT_LINK,
-                Ability.INCENDIARY_CURSE
+                Ability.ARCANE_SHIELD,
+                Ability.BLOOD_LUST,
+                Ability.LIGHTNING_ROD,
+                Ability.CHAIN_HEAL,
+                Ability.CONTAGIOUS_FACADE
         );
     }
 
     @Override
     public EnumSet<Ability> getAbilitiesM2() {
         return EnumSet.of(
-                Ability.FREEZING_BREATH,
-                Ability.WATER_BREATH,
-                Ability.CHAIN_LIGHTNING,
-                Ability.BOULDER,
-                Ability.SOUL_SHACKLE,
-                Ability.SOOTHING_ELIXIR,
-                Ability.SOULFIRE_BEAM,
-                Ability.GUARDIAN_BEAM,
-                Ability.RAY_OF_LIGHT
+                Ability.HOLY_RADIANCE_PROTECTOR,
+                Ability.INTERVENE,
+                Ability.ORBS_OF_LIFE,
+                Ability.PRISM_GUARD,
+                Ability.REMEDIC_CHAINS,
+                Ability.MYSTICAL_BARRIER,
+                Ability.SANCTIFIED_BEACON
         );
-    }
-
-    @Override
-    public Mob getMobRegistry() {
-        return null;
     }
 
 }

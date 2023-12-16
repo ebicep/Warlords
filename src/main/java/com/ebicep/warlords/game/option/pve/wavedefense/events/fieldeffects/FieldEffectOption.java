@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 
 public class FieldEffectOption implements Option {
 
-    private final List<FieldEffect> fieldEffects;
+    private final List<com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect> fieldEffects;
 
-    public FieldEffectOption(List<Option> options, FieldEffects... fieldEffects) {
+    public FieldEffectOption(List<Option> options, FieldEffect... fieldEffects) {
         this.fieldEffects = Arrays.stream(fieldEffects).map(effect -> effect.create.get()).collect(Collectors.toList());
         addOptions(options);
     }
@@ -70,7 +70,7 @@ public class FieldEffectOption implements Option {
         fieldEffects.forEach(fieldEffect -> fieldEffect.afterAllWarlordsEntitiesCreated(players));
     }
 
-    public enum FieldEffects {
+    public enum FieldEffect {
 
         WARRIORS_TRIUMPH(WarriorsTriumph::new),
         CONQUERING_ENERGY(ConqueringEnergy::new),
@@ -81,9 +81,9 @@ public class FieldEffectOption implements Option {
         ACCUMULATING_KNOWLEDGE(AccumulatingKnowledge::new),
         CODEX_COLLECTOR(CodexCollector::new);
 
-        public final Supplier<? extends FieldEffect> create;
+        public final Supplier<? extends com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect> create;
 
-        FieldEffects(Supplier<? extends FieldEffect> create) {
+        FieldEffect(Supplier<? extends com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect> create) {
             this.create = create;
         }
 

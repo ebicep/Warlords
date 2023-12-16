@@ -315,6 +315,13 @@ public class MobCommand extends BaseCommand {
         }
     }
 
+    @Subcommand("getcodenames")
+    public void getCodeNames(CommandIssuer issuer) {
+        for (Mob value : Mob.VALUES) {
+            ChatChannels.sendDebugMessage(issuer, Component.text(value.name() + "\t" + value.name, NamedTextColor.GREEN));
+        }
+    }
+
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));
