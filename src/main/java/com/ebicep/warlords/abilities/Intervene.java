@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
@@ -197,7 +198,15 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                         }
                     }),
                     veneTarget
-            );
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    if (pveMasterUpgrade2) {
+                        return currentDamageValue * 1.1f;
+                    }
+                    return currentDamageValue;
+                }
+            };
 
             wp.getCooldownManager().addCooldown(interveneCooldown);
             veneTarget.getCooldownManager().addCooldown(interveneCooldown);

@@ -1,8 +1,10 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -31,7 +33,6 @@ import java.util.*;
 public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration {
 
     public static <T> void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver, Class<T> clazz, T object) {
-        receiver.addSpeedModifier(giver, "SHOCKED", -30, 3 * 20);
         receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Aftershock",
                 "SHOCKED",
@@ -57,8 +58,19 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 })
         ) {
             @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .5f;
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return event.getAttacker().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
+            }
+
+            @Override
+            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+                if (event.getAttacker().equals(giver) && isKiller) {
+                    for (AbstractAbility ability : giver.getAbilities()) {
+                        if (ability instanceof OrangeAbilityIcon) {
+                            ability.subtractCurrentCooldown(.5f);
+                        }
+                    }
+                }
             }
         });
     }

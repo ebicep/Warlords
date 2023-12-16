@@ -203,6 +203,16 @@ public class DebugCommand extends BaseCommand {
         DebugMenuPlayerOptions.setSpec(player, target, spec, spec.skillBoosts.get(0));
     }
 
+    @Subcommand("clearcooldowns")
+    @CommandCompletion("@warlordsplayers")
+    @Description("Clears cooldown of player")
+    public void clearCooldowns(CommandIssuer issuer, @Optional WarlordsPlayer target) {
+        target.getCooldownManager().clearCooldowns();
+        sendDebugMessage(issuer, Component.empty()
+                                          .append(target.getColoredName())
+                                          .append(Component.text("'s cooldowns have been cleared!", NamedTextColor.GREEN)));
+    }
+
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));

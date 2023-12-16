@@ -22,6 +22,10 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
         super(cooldown);
     }
 
+    public LightInfusionCrusader() {
+        super(15.66f);
+    }
+
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.addEnergy(wp, name, energyGiven);

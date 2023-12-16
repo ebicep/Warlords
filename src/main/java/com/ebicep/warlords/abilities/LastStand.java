@@ -11,7 +11,6 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.LastStandBranch;
@@ -19,6 +18,7 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
@@ -93,6 +93,16 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1);
 
         LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
+        if (pveMasterUpgrade2) {
+            for (SeismicWaveDefender ability : wp.getAbilitiesMatching(SeismicWaveDefender.class)) {
+                modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Enduring Defense", -.5f));
+                modifiers.add(ability.getEnergyCost().addOverridingModifier("Enduring Defense", 30f));
+            }
+            for (GroundSlamDefender ability : wp.getAbilitiesMatching(GroundSlamDefender.class)) {
+                modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Enduring Defense", -.5f));
+            }
+        }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LAST",
@@ -104,6 +114,9 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 },
                 cooldownManager -> {
                     ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
+                    if (pveMasterUpgrade2) {
+                        modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                    }
                 },
                 selfTickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -137,78 +150,71 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
         for (WarlordsEntity standTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
+                .aliveTeammatesOf(wp)
                 .excluding(wp)
         ) {
-            if (pveMasterUpgrade2 && standTarget.isEnemyAlive(wp)) {
-                if (standTarget instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                    continue;
+            playersLastStanded++;
+
+            EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.VILLAGER_HAPPY);
+            standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "LAST",
+                    LastStand.class,
+                    tempLastStand,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    allyTickDuration
+            ) {
+                @Override
+                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * convertToDivisionDecimal(teammateDamageReductionPercent);
                 }
-                EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.FALLING_HONEY, .75, 1);
-                standTarget.setDamageResistance(standTarget.getSpec().getDamageResistance() - 15);
-            } else if (standTarget.isTeammateAlive(wp)) {
-                playersLastStanded++;
 
-                EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.VILLAGER_HAPPY);
-                standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        name,
-                        "LAST",
-                        LastStand.class,
-                        tempLastStand,
-                        wp,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {
-                        },
-                        allyTickDuration
-                ) {
-                    @Override
-                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * convertToDivisionDecimal(teammateDamageReductionPercent);
-                    }
+                @Override
+                public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    tempLastStand.addAmountPrevented(currentDamageValue);
+                    wp.addAbsorbed(currentDamageValue);
+                    wp.addHealingInstance(
+                            wp,
+                            name,
+                            currentDamageValue,
+                            currentDamageValue,
+                            isCrit ? 100 : 0,
+                            100,
+                            EnumSet.of(InstanceFlags.LAST_STAND_FROM_SHIELD)
+                    );
+                }
 
-                    @Override
-                    public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                        tempLastStand.addAmountPrevented(currentDamageValue);
-                        wp.addAbsorbed(currentDamageValue);
-                        wp.addHealingInstance(
-                                wp,
-                                name,
-                                currentDamageValue,
-                                currentDamageValue,
-                                isCrit ? 100 : 0,
-                                100,
-                                EnumSet.of(InstanceFlags.LAST_STAND_FROM_SHIELD)
-                        );
-                    }
+                @Override
+                public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    tempLastStand.addAmountPrevented(currentDamageValue);
+                    wp.addAbsorbed(currentDamageValue);
+                    wp.addHealingInstance(
+                            wp,
+                            name,
+                            currentDamageValue,
+                            currentDamageValue,
+                            isCrit ? 100 : 0,
+                            100
+                    );
+                }
+            });
 
-                    @Override
-                    public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                        tempLastStand.addAmountPrevented(currentDamageValue);
-                        wp.addAbsorbed(currentDamageValue);
-                        wp.addHealingInstance(
-                                wp,
-                                name,
-                                currentDamageValue,
-                                currentDamageValue,
-                                isCrit ? 100 : 0,
-                                100
-                        );
-                    }
-                });
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your Last Stand is now protecting ", NamedTextColor.GRAY))
+                    .append(Component.text(standTarget.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
 
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                        .append(Component.text(" Your Last Stand is now protecting ", NamedTextColor.GRAY))
-                        .append(Component.text(standTarget.getName(), NamedTextColor.YELLOW))
-                        .append(Component.text("!", NamedTextColor.GRAY))
-                );
-
-                standTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                        .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                        .append(Component.text("Last Stand", NamedTextColor.YELLOW))
-                        .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
-                        .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(" seconds!", NamedTextColor.GRAY))
-                );
-            }
+            standTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                    .append(Component.text("Last Stand", NamedTextColor.YELLOW))
+                    .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
+                    .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
+                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
+            );
         }
 
         Location loc = wp.getEyeLocation();

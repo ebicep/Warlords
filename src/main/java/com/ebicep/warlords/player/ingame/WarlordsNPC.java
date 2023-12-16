@@ -302,6 +302,11 @@ public final class WarlordsNPC extends WarlordsEntity {
         return customHologramLines;
     }
 
+    @Override
+    public void removeHorse() {
+
+    }
+
     public static class CustomHologramLine {
         private Component text;
         private boolean delete;

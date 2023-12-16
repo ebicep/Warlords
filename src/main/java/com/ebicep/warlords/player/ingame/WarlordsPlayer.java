@@ -101,6 +101,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public void resetAbilityTree() {
         this.abilityTree.getUpgradeBranches().clear();
+        this.abilityTree.setMaxMasterUpgrades(3);
         this.spec.setUpgradeBranches(this);
         DatabaseManager.getPlayer(uuid, this.abilityTree::resetAutoUpgradeProfile);
     }

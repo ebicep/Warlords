@@ -517,9 +517,7 @@ public class ItemEquipMenu {
                     openItemLoadoutMenu(player, itemLoadout, databasePlayer);
                 },
                 itemBuilder -> itemBuilder,
-                new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer,
-                        Specializations.getClass(itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec())
-                )
+                new ItemSearchMenu.PlayerItemMenuSettings(databasePlayer, itemLoadout.getSpec() != null ? itemLoadout.getSpec() : databasePlayer.getLastSpec())
                         .setItemInventory(databasePlayer.getPveStats()
                                                         .getItemsManager()
                                                         .getItemInventory()

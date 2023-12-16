@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengerStrikeBranch;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -95,12 +96,7 @@ public class AvengersStrike extends AbstractStrike {
                 }
             }
         }
-        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-            healthDamage = DamageCheck.MINIMUM_DAMAGE;
-        }
-        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-        }
+        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
 
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,

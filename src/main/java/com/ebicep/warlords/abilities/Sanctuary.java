@@ -77,7 +77,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         if (pveMasterUpgrade2) {
             modifiers = wp.getAbilitiesMatching(GuardianBeam.class)
                           .stream()
-                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.67f))
+                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.55f))
                           .toList();
         } else {
             modifiers = Collections.emptyList();

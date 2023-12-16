@@ -6,10 +6,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FloatModifiable {
 
-    private float currentValue;
+    private final List<FloatModifier> overridingModifier = new ArrayList<>(); // these modifiers override the current value
     private final List<FloatModifier> additiveModifier = new ArrayList<>();
     private final List<FloatModifier> multiplicativeModifierAdditive = new ArrayList<>(); // these modifiers are added together
     private final List<FloatModifier> multiplicativeModifierMultiplicative = new ArrayList<>(); // these modifiers are multiplied together
+    private float currentValue;
     private float cachedCalculatedValue = 0;
 
     public FloatModifiable(float currentValue) {
@@ -18,6 +19,10 @@ public class FloatModifiable {
     }
 
     private void refresh() {
+        if (!overridingModifier.isEmpty()) {
+            cachedCalculatedValue = overridingModifier.get(0).getModifier();
+            return;
+        }
         float cachedAdditiveModifer = (float) additiveModifier
                 .stream()
                 .mapToDouble(FloatModifier::getModifier)
@@ -72,6 +77,13 @@ public class FloatModifiable {
     public FloatModifier addAdditiveModifier(String log, float additiveModifier) {
         FloatModifier modifier = new FloatModifier(log, additiveModifier);
         addModifier(this.additiveModifier, modifier);
+        refresh();
+        return modifier;
+    }
+
+    public FloatModifier addOverridingModifier(String log, float overridingModifier) {
+        FloatModifier modifier = new FloatModifier(log, overridingModifier);
+        addModifier(this.overridingModifier, modifier);
         refresh();
         return modifier;
     }

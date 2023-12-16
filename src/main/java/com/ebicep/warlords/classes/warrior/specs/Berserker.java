@@ -12,7 +12,7 @@ public class Berserker extends AbstractWarrior {
                 305,
                 0,
                 new WoundingStrikeBerserker(),
-                new SeismicWave("Seismic Wave", 557, 753, 11.74f, 60, 25, 200),
+                new SeismicWaveBerserker(),
                 new GroundSlamBerserker(),
                 new BloodLust(),
                 new Berserk()

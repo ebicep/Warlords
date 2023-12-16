@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -30,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DisasterFragment extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
@@ -122,12 +124,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksLeft % 20 == 0) {
                                         float healthDamage = victim.getMaxHealth() * 0.005f;
-                                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                        }
-                                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                        }
+                                        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                                         victim.addDamageInstance(
                                                 attacker,
                                                 "Burn",
@@ -160,12 +157,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksLeft % 20 == 0) {
                                         float healthDamage = victim.getMaxHealth() * 0.005f;
-                                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                        }
-                                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                        }
+                                        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                                         victim.addDamageInstance(
                                                 attacker,
                                                 "Bleed",
@@ -184,6 +176,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                         });
                     }
                     case "Leech" -> {
+                        AtomicReference<Float> totalHealingDone = new AtomicReference<>((float) 0);
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Leech");
                         victim.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Disaster Fragment - Leech",
@@ -198,20 +191,27 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                         ) {
                             @Override
                             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                                if (totalHealingDone.get() >= 1000) {
+                                    setTicksLeft(0);
+                                    return;
+                                }
                                 float healingMultiplier;
                                 if (event.getAttacker() == attacker) {
                                     healingMultiplier = 15;
                                 } else {
                                     healingMultiplier = 25;
                                 }
+                                float healValue = Math.min(500, currentDamageValue * healingMultiplier);
                                 event.getAttacker().addHealingInstance(
                                         attacker,
                                         "Leech",
-                                        currentDamageValue * healingMultiplier,
-                                        currentDamageValue * healingMultiplier,
+                                        healValue,
+                                        healValue,
                                         -1,
                                         100
-                                );
+                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                    totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
+                                });
                             }
                         });
                     }

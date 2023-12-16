@@ -47,7 +47,8 @@ public class SeparationI extends AbstractBounty implements TracksDuringGame, Wee
         if (!event.isDead()) {
             return;
         }
-        if (!Utils.isProjectile(event.getAbility())) {
+        String ability = event.getAbility();
+        if (!Utils.isProjectile(ability) && !ability.equals("Boulder")) {
             return;
         }
         newKills++;

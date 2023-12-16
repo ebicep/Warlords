@@ -12,7 +12,7 @@ public class Defender extends AbstractWarrior {
                 305,
                 10,
                 new WoundingStrikeDefender(),
-                new SeismicWave("Seismic Wave", 506, 685, 11.74f, 60, 25, 200),
+                new SeismicWaveDefender(),
                 new GroundSlamDefender(),
                 new Intervene(),
                 new LastStand()

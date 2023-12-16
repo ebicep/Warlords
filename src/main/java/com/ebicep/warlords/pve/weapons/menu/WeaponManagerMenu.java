@@ -216,7 +216,13 @@ public class WeaponManagerMenu {
                         .addLore(
                                 Component.empty(),
                                 Currencies.SKILL_BOOST_MODIFIER.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.SKILL_BOOST_MODIFIER)),
-                                Currencies.LIMIT_BREAKER.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.LIMIT_BREAKER))
+                                Currencies.LIMIT_BREAKER.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.LIMIT_BREAKER)),
+                                Component.empty(),
+                                Currencies.TITLE_TOKEN_JUGGERNAUT.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_JUGGERNAUT)),
+                                Currencies.TITLE_TOKEN_PHARAOHS_REVENGE.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE)),
+                                Currencies.TITLE_TOKEN_SPIDERS_BURROW.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_SPIDERS_BURROW)),
+                                Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES)),
+                                Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES))
                         )
                         .get(),
                 (m, e) -> {
@@ -491,45 +497,45 @@ public class WeaponManagerMenu {
             StarPieces selectedStarPiece = menuSettings.getSelectedStarPiece();
             //star piece
             weaponOptions.add(new Pair<>(
-                    new ItemBuilder(Material.NETHER_STAR)
-                            .name(Component.text("Apply a " + selectedStarPiece.currency.name, NamedTextColor.GREEN))
-                            .lore(WordWrap.wrap(
-                                    Component.text("This star piece provides a ", NamedTextColor.GRAY)
-                                             .append(Component.text(selectedStarPiece.starPieceBonusValue + "% ", selectedStarPiece.currency.textColor))
-                                             .append(Component.text("stat boost to a random stat.")),
-                                    180
-                            ))
-                            .addLore(legendaryWeapon.getStarPieceCostLore(selectedStarPiece))
-                            .addLore(Component.empty(),
-                                    Component.textOfChildren(
-                                            Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                            Component.text("to apply star piece.", NamedTextColor.GRAY)
-                                    ),
-                                    Component.textOfChildren(
-                                            Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
-                                            Component.text("to change star piece selection.", NamedTextColor.GRAY)
+                            new ItemBuilder(Material.NETHER_STAR)
+                                    .name(Component.text("Apply a " + selectedStarPiece.currency.name, NamedTextColor.GREEN))
+                                    .lore(WordWrap.wrap(
+                                            Component.text("This star piece provides a ", NamedTextColor.GRAY)
+                                                     .append(Component.text(selectedStarPiece.starPieceBonusValue + "% ", selectedStarPiece.currency.textColor))
+                                                     .append(Component.text("stat boost to a random stat.")),
+                                            180
+                                    ))
+                                    .addLore(legendaryWeapon.getStarPieceCostLore(selectedStarPiece))
+                                    .addLore(Component.empty(),
+                                            Component.textOfChildren(
+                                                    Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                                    Component.text("to apply star piece.", NamedTextColor.GRAY)
+                                            ),
+                                            Component.textOfChildren(
+                                                    Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                                    Component.text("to change star piece selection.", NamedTextColor.GRAY)
+                                            )
                                     )
-                            )
 
-                            .get(),
-                    (m, e) -> {
-                        if (e.isLeftClick()) {
-                            for (Map.Entry<Currencies, Long> currenciesLongEntry : legendaryWeapon.getStarPieceBonusCost(selectedStarPiece)
-                                                                                                  .entrySet()
-                            ) {
-                                Currencies currency = currenciesLongEntry.getKey();
-                                Long cost = currenciesLongEntry.getValue();
-                                if (pveStats.getCurrencyValue(currency) < cost) {
-                                    player.sendMessage(Component.text("You need ", NamedTextColor.RED)
-                                                                .append(currency.getCostColoredName(cost))
-                                                                .append(Component.text(" to apply this star piece!"))
-                                    );
-                                    return;
-                                }
-                            }
-                            WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, legendaryWeapon, selectedStarPiece);
-                        } else if (e.isRightClick()) {
-                            menuSettings.setSelectedStarPiece(selectedStarPiece.next());
+                                    .get(),
+                            (m, e) -> {
+                                if (e.isLeftClick()) {
+                                    for (Map.Entry<Currencies, Long> currenciesLongEntry : legendaryWeapon.getStarPieceBonusCost(selectedStarPiece)
+                                                                                                          .entrySet()
+                                    ) {
+                                        Currencies currency = currenciesLongEntry.getKey();
+                                        Long cost = currenciesLongEntry.getValue();
+                                        if (pveStats.getCurrencyValue(currency) < cost) {
+                                            player.sendMessage(Component.text("You need ", NamedTextColor.RED)
+                                                                        .append(currency.getCostColoredName(cost))
+                                                                        .append(Component.text(" to apply this star piece!"))
+                                            );
+                                            return;
+                                        }
+                                    }
+                                    WeaponStarPieceMenu.openWeaponStarPieceMenu(player, databasePlayer, legendaryWeapon, selectedStarPiece);
+                                } else if (e.isRightClick()) {
+                                    menuSettings.setSelectedStarPiece(selectedStarPiece.next());
                                     openWeaponEditor(player, databasePlayer, weapon);
                                 }
                             }

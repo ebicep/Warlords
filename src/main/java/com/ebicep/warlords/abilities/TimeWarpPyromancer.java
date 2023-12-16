@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.TimeWarpBranchPyromancer;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.minecraft.sounds.SoundSource;
@@ -80,17 +81,12 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         float cooldownReduction = 0;
                         for (WarlordsEntity linkedPlayer : linkedPlayers) {
                             if (linkedPlayer.isDead()) {
-                                cooldownReduction += .25;
+                                cooldownReduction += .75;
                                 continue;
                             }
                             float healthDamage = linkedPlayer.getMaxBaseHealth() * .05f;
                             if (linkedPlayer instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                    healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                }
-                                if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                    healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                }
+                                healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                             }
                             linkedPlayer.addDamageInstance(
                                     wp,

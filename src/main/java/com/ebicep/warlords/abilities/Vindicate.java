@@ -25,10 +25,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -127,16 +124,18 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade) {
-                    Utils.addKnockback(name, wp.getLocation(), event.getAttacker(), -1, 0.15);
-                    event.getAttacker().addDamageInstance(
-                            event.getWarlordsEntity(),
+                WarlordsEntity hit = event.getWarlordsEntity();
+                WarlordsEntity attacker = event.getAttacker();
+                if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
+                    Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
+                    attacker.addDamageInstance(
+                            hit,
                             name,
                             currentDamageValue * .75f,
                             currentDamageValue * .75f,
                             0,
                             100,
-                            EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
+                            EnumSet.of(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE)
                     );
                     return currentDamageValue * .1f;
                 } else {

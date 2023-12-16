@@ -1,12 +1,17 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.game.pve.WarlordsMagmaticOozeSplitEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -19,37 +24,42 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.SlimeSize;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class MagmaticOoze extends AbstractMob implements BossMob {
 
     private static final Material DAMAGE_BLOCK = Material.MAGMA_BLOCK;
-    private static final int BASE_HEALTH = 80_000;
+    private static final int BASE_HEALTH = 70_000;
+    private static final int INITIAL_SPLIT_NUMBER = 0;
     private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
     private int splitNumber;
 
     public MagmaticOoze(Location spawnLocation) {
-        this(spawnLocation, BASE_HEALTH, 0, new HashMap<>());
+        this(spawnLocation, BASE_HEALTH, INITIAL_SPLIT_NUMBER, new HashMap<>());
     }
 
     public MagmaticOoze(Location spawnLocation, float health, int splitNumber, Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-        this(spawnLocation, "Magmatic Ooze", (int) (health / (splitNumber + 1)), .45f, 30, 100, 200, splitNumber, previousBlocks);
+        this(spawnLocation, "Magmatic Ooze", (int) (health / ((Math.log(splitNumber + 1) / 2.5) + 1)), .25f, 30, 100, 200, splitNumber, previousBlocks);
     }
 
     public MagmaticOoze(
@@ -70,17 +80,9 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FieryProjectile(750 - (splitNumber * 10), 900 - (splitNumber * 10)),
-                new FlamingSlam(1200 - (splitNumber * 100), 1600 - (splitNumber * 100)),
-                new HeatAura(150 - (splitNumber * 10), 13 - splitNumber),
-                new MoltenFissure(previousBlocks),
-                new Split(splitNumber,
-                        (loc, we) -> new MagmaticOoze(loc,
-                                Math.max(15_000, MathUtils.lerp(0, BASE_HEALTH, we.getHealth() / we.getMaxBaseHealth())),
-                                splitNumber + 1,
-                                previousBlocks
-                        )
-                )
+                new FieryProjectile(900 - (splitNumber * 5), 1100 - (splitNumber * 5)),
+                new FlamingSlam(1300 - (splitNumber * 50), 1500 - (splitNumber * 50)),
+                new HeatAura(200 - (splitNumber * 5), 13 - splitNumber)
         );
         this.splitNumber = splitNumber;
         this.previousBlocks = previousBlocks;
@@ -95,7 +97,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
-        this(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, 0, new HashMap<>());
+        this(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, INITIAL_SPLIT_NUMBER, new HashMap<>());
     }
 
     @Override
@@ -106,8 +108,8 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     @Override
     public void onNPCCreate() {
         super.onNPCCreate();
-        npc.getOrAddTrait(SlimeSize.class).setSize(10 - (splitNumber * 2));
-        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> .1f);
+        npc.getOrAddTrait(SlimeSize.class).setSize(6 - splitNumber);
+        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> 0f);
     }
 
     @Override
@@ -123,61 +125,116 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        if (splitNumber == 0 && option.getMobs().stream().noneMatch(MagmaticOoze.class::isInstance)) {
-            Game game = option.getGame();
-            new GameRunnable(game) {
-
-                final Map<WarlordsEntity, Instant> damageCooldown = new HashMap<>();
-
-                @Override
-                public void run() {
-                    // all dead
-                    // restore blocks
-                    if (option.getMobs().stream().noneMatch(abstractMob -> abstractMob.getMobRegistry() == Mob.MAGMATIC_OOZE && abstractMob.getWarlordsNPC().isAlive())) {
-                        previousBlocks.forEach((location, material) -> {
-                            Block block = location.locationBlockHolder().getBlock();
-                            block.setType(material);
-                        });
-                        this.cancel();
-                        return;
-                    }
-                    previousBlocks.entrySet().removeIf(timedLocationBlockHolderMaterialEntry -> {
-                        long time = timedLocationBlockHolderMaterialEntry.getKey().time();
-                        // remove if 30*5 seconds have passed
-                        if (time < System.currentTimeMillis() - 150_000) {
-                            Block block = timedLocationBlockHolderMaterialEntry.getKey().locationBlockHolder().getBlock();
-                            block.setType(timedLocationBlockHolderMaterialEntry.getValue());
-                            return true;
-                        }
-                        return false;
-                    });
-                    PlayerFilter.playingGame(getGame())
-                                .aliveEnemiesOf(warlordsNPC)
-                                .forEach(warlordsEntity -> {
-                                    Block block = warlordsEntity.getLocation().add(0, -1, 0).getBlock();
-                                    if (block.getType() == DAMAGE_BLOCK) {
-                                        if (damageCooldown.containsKey(warlordsEntity)) {
-                                            Instant lastDamage = damageCooldown.get(warlordsEntity);
-                                            if (lastDamage.isAfter(Instant.now().minusMillis(500))) {
-                                                return;
-                                            }
-                                        }
-                                        damageCooldown.put(warlordsEntity, Instant.now());
-                                        warlordsEntity.addDamageInstance(
-                                                warlordsNPC,
-                                                "Magma",
-                                                125,
-                                                175,
-                                                0,
-                                                100,
-                                                EnumSet.of(InstanceFlags.TRUE_DAMAGE)
-                                        );
-                                    } else {
-                                        damageCooldown.remove(warlordsEntity); // remove if not on magma
-                                    }
-                                });
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Mount Damage Reduction",
+                null,
+                MagmaticOoze.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.INTERNAL,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (warlordsNPC.getEntity().isInsideVehicle()) {
+                    return currentDamageValue * .6f;
                 }
-            }.runTaskTimer(20, 3);
+                return currentDamageValue;
+            }
+        });
+        if (splitNumber != INITIAL_SPLIT_NUMBER) {
+            return;
+        }
+        playerClass.addAbility(new MoltenFissure(previousBlocks));
+        Game game = option.getGame();
+        new GameRunnable(game) {
+
+            final Map<WarlordsEntity, Instant> damageCooldown = new HashMap<>();
+
+            @Override
+            public void run() {
+                // all dead
+                // restore blocks
+                if (option.getMobs().stream().noneMatch(abstractMob -> abstractMob.getMobRegistry() == Mob.MAGMATIC_OOZE && abstractMob.getWarlordsNPC().isAlive())) {
+                    previousBlocks.forEach((location, material) -> {
+                        Block block = location.locationBlockHolder().getBlock();
+                        block.setType(material);
+                    });
+                    this.cancel();
+                    return;
+                }
+//                previousBlocks.entrySet().removeIf(timedLocationBlockHolderMaterialEntry -> {
+//                    long time = timedLocationBlockHolderMaterialEntry.getKey().time();
+//                    // remove if 300 seconds have passed
+//                    if (time < System.currentTimeMillis() - 300_000) {
+//                        Block block = timedLocationBlockHolderMaterialEntry.getKey().locationBlockHolder().getBlock();
+//                        block.setType(timedLocationBlockHolderMaterialEntry.getValue());
+//                        return true;
+//                    }
+//                    return false;
+//                });
+                PlayerFilter.playingGame(getGame())
+                            .aliveEnemiesOf(warlordsNPC)
+                            .forEach(warlordsEntity -> {
+                                Block block = warlordsEntity.getLocation().add(0, -1, 0).getBlock();
+                                if (block.getType() == DAMAGE_BLOCK) {
+                                    if (damageCooldown.containsKey(warlordsEntity)) {
+                                        Instant lastDamage = damageCooldown.get(warlordsEntity);
+                                        if (lastDamage.isAfter(Instant.now().minusMillis(500))) {
+                                            return;
+                                        }
+                                    }
+                                    damageCooldown.put(warlordsEntity, Instant.now());
+                                    warlordsEntity.addDamageInstance(
+                                            warlordsNPC,
+                                            "Magma",
+                                            150,
+                                            200,
+                                            0,
+                                            100,
+                                            EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                                    );
+                                } else {
+                                    damageCooldown.remove(warlordsEntity); // remove if not on magma
+                                }
+                            });
+            }
+        }.runTaskTimer(20, 3);
+
+        List<MagmaticOoze> spawnedOozes = new ArrayList<>();
+        spawnedOozes.add(this);
+        MagmaticOoze previousOoze = this;
+        for (int i = 0; i < 5; i++) {
+            MagmaticOoze magmaticOoze = new MagmaticOoze(spawnLocation, BASE_HEALTH, i + 1, previousBlocks);
+            spawnedOozes.add(magmaticOoze);
+            pveOption.spawnNewMob(magmaticOoze);
+            magmaticOoze.getWarlordsNPC().getEntity().addPassenger(previousOoze.getWarlordsNPC().getEntity());
+            previousOoze = magmaticOoze;
+        }
+        game.registerEvents(new Listener() {
+            @EventHandler
+            public void onSplit(WarlordsMagmaticOozeSplitEvent event) {
+                if (spawnedOozes.contains(event.getMagmaticOoze())) {
+                    playerClass.getAbilities().removeIf(ability -> ability instanceof MoltenFissure);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        Bukkit.getPluginManager().callEvent(new WarlordsMagmaticOozeSplitEvent(option.getGame(), this));
+        Entity top = warlordsNPC.getEntity();
+        while (!top.getPassengers().isEmpty()) {
+            Entity passenger = top.getPassengers().get(0);
+            WarlordsNPC wNPC = (WarlordsNPC) Warlords.getPlayer(passenger);
+            if (wNPC != null) {
+                wNPC.getNpc().getOrAddTrait(MountTrait.class).unmount();
+                wNPC.addSpeedModifier(wNPC, "Unmounted", 35, Integer.MAX_VALUE, "BASE");
+            }
+            top = passenger;
         }
     }
 
@@ -189,20 +246,20 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private final double kbVelocity = 1.2;
 
         public FieryProjectile(float minDamageHeal, float maxDamageHeal) {
-            super("Fiery Projectile", minDamageHeal, maxDamageHeal, 6, 50, 10, 200);
+            super("Fiery Projectile", minDamageHeal, maxDamageHeal, 5, 50, 10, 200);
         }
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            if (!wp.getEntity().isOnGround()) {
-                return false;
-            }
             wp.subtractEnergy(name, energyCost, false);
 
             Location location = wp.getLocation();
             Vector speed = wp.getLocation().getDirection().normalize().multiply(this.speed).setY(.01);
 
             if (wp instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() != null) {
+                if (warlordsNPC.getEntity().isInsideVehicle()) {
+                    speed.multiply(.8);
+                }
                 AbstractMob npcMob = warlordsNPC.getMob();
                 Entity target = npcMob.getTarget();
                 if (target != null) {
@@ -232,7 +289,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     ),
                     newLoc -> PlayerFilter
                             .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                            .aliveTeammatesOfExcludingSelf(wp)
+                            .aliveEnemiesOf(wp)
                             .findFirstOrNull(),
                     (newLoc, directHit) -> {
                         new GameRunnable(wp.getGame()) {
@@ -268,14 +325,18 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
     public static class FlamingSlam extends AbstractPveAbility {
 
-        private final int hitbox = 10;
+        private final int hitbox = 11;
+        private boolean launched = false;
 
         public FlamingSlam(float minDamageHeal, float maxDamageHeal) {
-            super("Flaming Slam", minDamageHeal, maxDamageHeal, 13, 50, 15, 175);
+            super("Flaming Slam", minDamageHeal, maxDamageHeal, 12, 50, 15, 175);
         }
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            if (wp.getEntity().isInsideVehicle()) {
+                return false;
+            }
             if (!wp.getEntity().isOnGround()) {
                 return false;
             }
@@ -287,7 +348,8 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             Game game = wp.getGame();
 
             //launch straight into air then down diagonally towards enemy player
-            wp.setVelocity(name, new Vector(0, 1.75, 0), true);
+            launched = true;
+            wp.setVelocity(name, new Vector(0, 1.7, 0), true);
             new GameRunnable(game) {
 
                 boolean launchedTowardsPlayer = false;
@@ -296,14 +358,18 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 @Override
                 public void run() {
                     if (wp.isDead()) {
-                        cancel();
+                        launched = false;
+                        this.cancel();
                     }
                     // check if y velocity starts going down
                     Vector currentVector = wp.getEntity().getVelocity();
                     if (currentVector.getY() <= 0 && !launchedTowardsPlayer && target != null) {
                         // diagonally towards enemy player
-                        Vector vectorTowardsEnemy = new LocationBuilder(wp.getLocation()).getVectorTowards(target.getLocation());
-                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.25 + (wp.getLocation().distance(target.getLocation()) * .03)), true);
+                        Vector vectorTowardsEnemy = new LocationBuilder(wp.getLocation()).getVectorTowards(target.getLocation().add(0, 3.5, 0)).normalize();
+                        if (vectorTowardsEnemy.getY() > 0) { // help prevent going outside of map
+                            vectorTowardsEnemy.setY(0);
+                        }
+                        wp.setVelocity(name, vectorTowardsEnemy.multiply(2.5 + (wp.getLocation().distance(target.getLocation()) * .06)), true);
                         launchedTowardsPlayer = true;
                     } else {
                         if (target == null || target.isDead()) {
@@ -312,6 +378,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                                         .findAny()
                                         .ifPresent(enemy -> target = enemy);
                             if (target == null) {
+                                launched = false;
                                 this.cancel();
                                 return;
                             }
@@ -323,14 +390,15 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                         // check if hit ground
                         boolean onGround = wp.getEntity().isOnGround();
                         if (onGround) {
+                            launched = false;
                             // shockwave
                             shockwave(wp);
-                            cancel();
+                            this.cancel();
                         }
                     }
                 }
 
-            }.runTaskTimer(20, 2);
+            }.runTaskTimer(5, 2);
             return true;
         }
 
@@ -355,6 +423,28 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                             );
                         });
             // lava?
+        }
+
+        @Override
+        public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
+            super.runEverySecond(warlordsEntity);
+            if (launched) { // dont check if launched
+                return;
+            }
+            if (!(warlordsEntity instanceof WarlordsNPC warlordsNPC)) {
+                return;
+            }
+            AbstractMob mob = warlordsNPC.getMob();
+            if (mob == null) {
+                return;
+            }
+            boolean noEnemiesClose = PlayerFilter.playingGame(warlordsNPC.getGame())
+                                                 .aliveEnemiesOf(warlordsNPC)
+                                                 .stream()
+                                                 .noneMatch(enemy -> enemy.getLocation().distanceSquared(warlordsNPC.getLocation()) < 25 * 25);
+            if (noEnemiesClose) {
+                subtractCurrentCooldownForce(1);
+            }
         }
 
     }
@@ -395,22 +485,28 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
     public static class MoltenFissure extends AbstractPveAbility implements RedAbilityIcon {
 
-        private static final int MAX_FISSURE_LENGTH = 15;
-        private static final int MIN_BREAK_SIZE = 3;
-        private static final int MAX_BREAK_SIZE = 5;
+        private static final int MAX_FISSURE_LENGTH = 19;
+        private static final int MIN_BREAK_SIZE = 4;
+        private static final int MAX_BREAK_SIZE = 6;
         private static final int VALID_CHECK = 1;
         private final Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks;
+        private int failedAttempts = 0;
 
         public MoltenFissure(Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-            super("Molten Fissure", 20, 50);
+            super("Molten Fissure", 12, 50);
             this.previousBlocks = previousBlocks;
         }
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            Location groundLocation = LocationUtils.getGroundLocation(wp.getLocation());
+            if (groundLocation.getBlock().getType() == DAMAGE_BLOCK && failedAttempts < 20 * 4) { // 4 seconds since this is ran every tick if available
+                failedAttempts++;
+                return false;
+            }
+            failedAttempts = 0;
             wp.subtractEnergy(name, energyCost, false);
 
-            Location groundLocation = LocationUtils.getGroundLocation(wp.getLocation());
             double yDiff = wp.getLocation().getY() - groundLocation.getY();
             Game game = wp.getGame();
             new GameRunnable(game) {
@@ -495,7 +591,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                     // --- fissures
                     new GameRunnable(game) {
                         final List<List<LocationBuilder>> fissures = getAllFissureLocations(randomFacingStartLocation);
-                        final boolean[] discontinueIndexes = new boolean[4];
+                        final boolean[] discontinueIndexes = new boolean[fissures.size()];
                         int spread = 0;
 
                         @Override
@@ -572,10 +668,11 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                 @Nonnull
                 private List<List<LocationBuilder>> getAllFissureLocations(LocationBuilder randomFacingStartLocation) {
                     List<List<LocationBuilder>> fissures = new ArrayList<>();
-                    fissures.add(getFissureLocations(randomFacingStartLocation.clone().forward(1)));
-                    fissures.add(getFissureLocations(randomFacingStartLocation.clone().backward(1).lookBackwards()));
-                    fissures.add(getFissureLocations(randomFacingStartLocation.clone().left(1).lookLeft()));
-                    fissures.add(getFissureLocations(randomFacingStartLocation.clone().right(1).lookRight()));
+                    int numberOfPaths = ThreadLocalRandom.current().nextBoolean() ? 4 : 5;
+                    int degreeBetweenPaths = 360 / numberOfPaths;
+                    for (int i = 0; i < numberOfPaths; i++) {
+                        fissures.add(getFissureLocations(randomFacingStartLocation.clone().yaw(i * degreeBetweenPaths)));
+                    }
                     return fissures;
                 }
 
@@ -634,46 +731,6 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             }
             return false;
         }
-
-    }
-
-    private static class Split extends AbstractPveAbility {
-        private final int maxSplit = 4;
-        private final int split;
-        private final BiFunction<Location, WarlordsEntity, AbstractMob> splitSpawnFunction;
-        private double splitChance = .2;
-        private boolean init = false;
-
-        public Split(int split, BiFunction<Location, WarlordsEntity, AbstractMob> splitSpawnFunction) {
-            super("Split", 15, 50, 10);
-            this.split = split;
-            this.splitSpawnFunction = splitSpawnFunction;
-        }
-
-        @Override
-        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            wp.subtractEnergy(name, energyCost, false);
-            if (!init) {
-                init = true;
-                resetSplitChance(pveOption);
-            }
-            if (split >= maxSplit) {
-                return true;
-            }
-            // 25% chance to split
-            if (ThreadLocalRandom.current().nextDouble() < splitChance) {
-                pveOption.spawnNewMob(splitSpawnFunction.apply(wp.getLocation(), wp));
-                resetSplitChance(pveOption);
-            } else {
-                splitChance += .05 * pveOption.playerCount();
-            }
-            return true;
-        }
-
-        public void resetSplitChance(PveOption pveOption) {
-            splitChance = .05 * pveOption.playerCount() - .05;
-        }
-
 
     }
 }

@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
@@ -40,7 +41,8 @@ public class DevelopIII extends AbstractBounty implements TracksPostGame, Weekly
             return;
         }
         if (weapon instanceof AbstractLegendaryWeapon legendaryWeapon && legendaryWeapon.getStarPieceStat() != null) {
-            value += warlordsPlayer.getMinuteStats().total().getKills();
+            PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
+            value += total.getKills() + total.getAssists();
         }
     }
 

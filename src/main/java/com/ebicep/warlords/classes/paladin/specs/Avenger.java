@@ -13,8 +13,8 @@ public class Avenger extends AbstractPaladin {
                 0,
                 new AvengersStrike(),
                 new ConsecrateAvenger(),
-                new LightInfusionAvenger(15.66f),
-                new HolyRadianceAvenger(582, 760, 19.57f, 20, 15, 175),
+                new LightInfusionAvenger(),
+                new HolyRadianceAvenger(),
                 new AvengersWrath()
         );
     }

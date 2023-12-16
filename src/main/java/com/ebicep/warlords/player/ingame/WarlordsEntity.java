@@ -21,6 +21,7 @@ import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -836,6 +837,14 @@ public abstract class WarlordsEntity {
                 resetRegenTimer();
                 updateHealth();
 
+                float cappedDamage = Math.min(damageValue, health);
+                attacker.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(this));
+                this.addDamageTaken(cappedDamage);
+                playHurtAnimation(this.entity, attacker);
+                if (attacker.isNoEnergyConsumption()) {
+                    attacker.getRecordDamage().add(cappedDamage);
+                }
+
                 // debt and healing
                 if (!debt && takeDamage) {
                     if (this.health - damageValue > maxHealth) {
@@ -843,13 +852,6 @@ public abstract class WarlordsEntity {
                     } else {
                         this.health -= damageValue;
                     }
-                }
-
-                attacker.addDamage(damageValue, FlagHolder.isPlayerHolderFlag(this));
-                this.addDamageTaken(damageValue);
-                playHurtAnimation(this.entity, attacker);
-                if (attacker.isNoEnergyConsumption()) {
-                    attacker.getRecordDamage().add(damageValue);
                 }
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
@@ -1095,8 +1097,9 @@ public abstract class WarlordsEntity {
                 abstractCooldown.onHealFromAttacker(event, healValue, isCrit);
             }
 
+            float cappedHealValue = Math.min(healValue, maxHealth - health);
+            attacker.addHealing(cappedHealValue, FlagHolder.isPlayerHolderFlag(this));
             health += healValue;
-            attacker.addHealing(healValue, FlagHolder.isPlayerHolderFlag(this));
 
             if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
                 playHitSound(attacker);
@@ -1175,23 +1178,11 @@ public abstract class WarlordsEntity {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(player.getUuid(), player.getEntity() instanceof Player);
         switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
-                if (player.showDebugMessage) {
-                    player.sendMessage(ownFeed.build()
-                                              .hoverEvent(HoverEvent.showText(debugMessage))
-                    );
-                } else {
-                    player.sendMessage(ownFeed.build());
-                }
+                player.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage)));
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (player.showDebugMessage) {
-                        player.sendMessage(ownFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(debugMessage))
-                        );
-                    } else {
-                        player.sendMessage(ownFeed.build());
-                    }
+                    player.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage)));
                 }
             }
         }
@@ -1247,23 +1238,11 @@ public abstract class WarlordsEntity {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(sender.getUuid(), sender.getEntity() instanceof Player);
         switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
-                if (sender.showDebugMessage) {
-                    sender.sendMessage(ownFeed.build()
-                                              .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                    );
-                } else {
-                    sender.sendMessage(ownFeed.build());
-                }
+                sender.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (sender.showDebugMessage) {
-                        sender.sendMessage(ownFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                        );
-                    } else {
-                        sender.sendMessage(ownFeed.build());
-                    }
+                    sender.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
                 }
             }
         }
@@ -1287,23 +1266,11 @@ public abstract class WarlordsEntity {
         databasePlayer = DatabaseManager.getPlayer(receiver.getUuid(), receiver.getEntity() instanceof Player);
         switch (databasePlayer.getChatHealingMode()) {
             case ALL -> {
-                if (receiver.showDebugMessage) {
-                    receiver.sendMessage(allyFeed.build()
-                                                 .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                    );
-                } else {
-                    receiver.sendMessage(allyFeed.build());
-                }
+                receiver.sendMessage(allyFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (receiver.showDebugMessage) {
-                        receiver.sendMessage(allyFeed.build()
-                                                     .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                        );
-                    } else {
-                        receiver.sendMessage(allyFeed.build());
-                    }
+                    receiver.sendMessage(allyFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
                 }
             }
         }
@@ -1364,23 +1331,11 @@ public abstract class WarlordsEntity {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(getUuid(), receiver.getEntity() instanceof Player);
         switch (databasePlayer.getChatDamageMode()) {
             case ALL -> {
-                if (receiver.showDebugMessage) {
-                    receiver.sendMessage(enemyFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                    );
-                } else {
-                    receiver.sendMessage(enemyFeed.build());
-                }
+                receiver.sendMessage(enemyFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (receiver.showDebugMessage) {
-                        receiver.sendMessage(enemyFeed.build()
-                                                      .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                        );
-                    } else {
-                        receiver.sendMessage(enemyFeed.build());
-                    }
+                    receiver.sendMessage(enemyFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
                 }
             }
         }
@@ -1400,23 +1355,11 @@ public abstract class WarlordsEntity {
         databasePlayer = DatabaseManager.getPlayer(sender.getUuid(), sender.getEntity() instanceof Player);
         switch (databasePlayer.getChatDamageMode()) {
             case ALL -> {
-                if (sender.showDebugMessage) {
-                    sender.sendMessage(ownFeed.build()
-                                              .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                    );
-                } else {
-                    sender.sendMessage(ownFeed.build());
-                }
+                sender.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
             }
             case CRITS_ONLY -> {
                 if (isCrit) {
-                    if (sender.showDebugMessage) {
-                        sender.sendMessage(ownFeed.build()
-                                                  .hoverEvent(HoverEvent.showText(debugMessage.build()))
-                        );
-                    } else {
-                        sender.sendMessage(ownFeed.build());
-                    }
+                    sender.sendMessage(ownFeed.build().hoverEvent(HoverEvent.showText(debugMessage.build())), true);
                 }
             }
         }
@@ -1904,18 +1847,32 @@ public abstract class WarlordsEntity {
     }
 
     public void sendMessage(Component component) {
-        this.entity.sendMessage(component);
+        sendMessage(component, false);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void sendMessage(Component component, boolean isDamageHealMessage) {
+        if (isDamageHealMessage && !showDebugMessage) {
+            this.entity.sendMessage(component.hoverEvent(null));
+        } else {
+            this.entity.sendMessage(component);
+        }
         if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
             game.spectators()
                 .map(Bukkit::getPlayer)
                 .filter(Objects::nonNull)
                 .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                .forEach(player -> player.sendMessage(component.hoverEvent(null)));
+                .forEach(player -> {
+                    if (Permissions.isAdmin(player)) {
+                        player.sendMessage(component);
+                    } else {
+                        player.sendMessage(component.hoverEvent(null));
+                    }
+                });
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(String name) {
@@ -2647,12 +2604,7 @@ public abstract class WarlordsEntity {
                                     .aliveEnemiesOf(this)
                                     .forEach(enemy -> {
                                         float healthDamage = enemy.getMaxHealth() * .02f;
-                                        if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                            healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                        }
-                                        if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                            healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                        }
+                                        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                                         enemy.addDamageInstance(
                                                 this,
                                                 "Undying Army",
@@ -2785,6 +2737,10 @@ public abstract class WarlordsEntity {
             return;
         }
 
+        onRespawn(respawnPoint);
+    }
+
+    public void onRespawn(Location respawnPoint) {
         if (entity instanceof Player) {
             entity.clearTitle();
         }
@@ -2793,7 +2749,7 @@ public abstract class WarlordsEntity {
         dead = false;
         teleport(respawnPoint);
 
-        this.health = this.maxBaseHealth;
+        heal();
         updateEntity();
     }
 

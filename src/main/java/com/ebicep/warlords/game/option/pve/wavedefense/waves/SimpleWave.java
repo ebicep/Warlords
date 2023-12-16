@@ -52,7 +52,7 @@ public class SimpleWave implements Wave {
         SpawnSettings spawnSettings = randomCollection.next();
         AbstractMob mob = spawnSettings.mob().createMob(spawnSettings.location() == null ? loc : spawnSettings.location());
         if (mob instanceof BossMob) {
-            loc.getWorld().spigot().strikeLightningEffect(loc, false);
+            loc.getWorld().strikeLightningEffect(loc);
         }
         return mob;
     }

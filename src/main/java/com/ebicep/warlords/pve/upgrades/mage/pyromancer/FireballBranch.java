@@ -20,7 +20,15 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                         ability.setMinDamageHeal(minDamage * v);
                         ability.setMaxDamageHeal(maxDamage * v);
                     }
-                }, 7.5f)
+                }, 7.5f, 1, 2, 3)
+                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
+                    @Override
+                    public void run(float value) {
+                        float v = 1 + value / 100;
+                        ability.setMinDamageHeal(minDamage * v);
+                        ability.setMaxDamageHeal(maxDamage * v);
+                    }
+                }, 40f, 4)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -38,7 +46,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeSplash(ability, 0.5f)
-                .addUpgradeEnergy(ability, 2.5f)
+                .addUpgradeEnergy(ability, 3.75f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
@@ -60,7 +68,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 """
                         Fires 2 projectiles. Direct-hits apply the IGNITE status.
                                                 
-                        IGNITE: Enemies will explode after 2s dealing 250-450 true damage to nearby enemies.""",
+                        IGNITE: Enemies will explode after 1s dealing 450-650 true damage to nearby enemies.""",
                 50000,
                 () -> {
                     ability.setShotsFiredAtATime(2);

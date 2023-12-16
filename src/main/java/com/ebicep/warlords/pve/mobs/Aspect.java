@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -167,12 +168,7 @@ public enum Aspect {
                                         return;
                                     }
                                     float healthDamage = receiver.getMaxHealth() * 0.005f;
-                                    if (healthDamage < DamageCheck.MINIMUM_DAMAGE) {
-                                        healthDamage = DamageCheck.MINIMUM_DAMAGE;
-                                    }
-                                    if (healthDamage > DamageCheck.MAXIMUM_DAMAGE) {
-                                        healthDamage = DamageCheck.MAXIMUM_DAMAGE;
-                                    }
+                                    healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                                     receiver.addDamageInstance(
                                             warlordsEntity,
                                             "Burn",

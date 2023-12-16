@@ -68,7 +68,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 50000,
                 () -> {
                     ability.setCritMultiplier(ability.getCritMultiplier() + 45);
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 5);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
                     ability.multiplyMinMax(0.65f);
                 }
         );

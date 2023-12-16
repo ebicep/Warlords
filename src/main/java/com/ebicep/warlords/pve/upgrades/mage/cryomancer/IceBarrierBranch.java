@@ -23,7 +23,7 @@ public class IceBarrierBranch extends AbstractUpgradeBranch<IceBarrier> {
                         ability.setDamageReductionPercent(damageReductionPercent + value);
                     }
                 }, 7.5f)
-                .addUpgradeCooldown(ability, 0.025f, 4)
+                .addUpgradeCooldown(ability, 0.1f, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

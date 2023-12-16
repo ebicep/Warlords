@@ -26,6 +26,10 @@ public class GameTeamContainer {
         return team;
     }
 
+    public Stream<Player> getSpectators() {
+        return game.onlinePlayers().filter(e -> e.getValue() == null).map(Map.Entry::getKey);
+    }
+
     public Stream<Player> getAllyPlayers() {
         return getAllyPlayers(game, team);
     }

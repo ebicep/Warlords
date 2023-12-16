@@ -93,23 +93,27 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
             }
 
             @Override
+            public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
+                if (pveMasterUpgrade2 && event.getAbility().equals("Ignite")) {
+                    event.setMinForce(event.getMin() * 2);
+                    event.setMaxForce(event.getMax() * 2);
+                }
+            }
+
+            @Override
+            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+                if (pveMasterUpgrade2 && isKiller) {
+                    wp.addEnergy(wp, "Inferno", 30);
+                }
+            }
+
+            @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
                 if (event.getAbility().isEmpty()) {
                     return currentCritChance;
                 }
                 hitsAmplified++;
                 return currentCritChance + critChanceIncrease;
-            }
-
-            @Override
-            public float setCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (pveMasterUpgrade2) {
-                    WarlordsEntity victim = event.getWarlordsEntity();
-                    if (victim.getHealth() <= victim.getMaxHealth() * .3) {
-                        return 100;
-                    }
-                }
-                return currentCritChance;
             }
 
             @Override
@@ -123,7 +127,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade2) {
-                    return currentDamageValue * 1.1f;
+                    return currentDamageValue * 1.2f;
                 }
                 return currentDamageValue;
             }

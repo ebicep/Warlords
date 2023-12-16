@@ -66,7 +66,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         Deal 40% more damage against level 3 enemies or below and deal 0.5% max health damage against level 4 and 5 enemies.""",
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", 5);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
                 }
         );
         masterUpgrade2 = new Upgrade(

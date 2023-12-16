@@ -24,6 +24,10 @@ public class LightInfusionProtector extends AbstractLightInfusion {
         super(cooldown);
     }
 
+    public LightInfusionProtector() {
+        super(15.66f);
+    }
+
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp, @Nullable Player player) {
         wp.addEnergy(wp, name, energyGiven);

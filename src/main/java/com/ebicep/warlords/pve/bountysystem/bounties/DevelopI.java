@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
@@ -41,7 +42,8 @@ public class DevelopI extends AbstractBounty implements TracksPostGame, WeeklyCo
         }
         WeaponsPvE rarity = weapon.getRarity();
         if (rarity == WeaponsPvE.COMMON || rarity == WeaponsPvE.RARE) {
-            value += warlordsPlayer.getMinuteStats().total().getKills();
+            PlayerStatisticsMinute.Entry total = warlordsPlayer.getMinuteStats().total();
+            value += total.getKills() + total.getAssists();
         }
     }
 

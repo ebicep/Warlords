@@ -35,7 +35,7 @@ public class ChallengeIV extends AbstractBounty implements TracksPostGame, Weekl
 
     @Override
     public String getDescription() {
-        return "Complete Easy, Normal, Hard, and Extreme Mode with guildmates.";
+        return "Complete Easy, Normal, and Hard Mode with guildmates or Extreme Mode with guildmates.";
     }
 
     @Override
@@ -72,7 +72,11 @@ public class ChallengeIV extends AbstractBounty implements TracksPostGame, Weekl
                 return;
             }
             difficultiesBeat.merge(difficulty, 1, Integer::sum);
-            if (difficultiesBeat.values().stream().allMatch(integer -> integer >= 1)) {
+            if (difficultiesBeat.getOrDefault(DifficultyIndex.EASY, 0) >= 1 &&
+                    difficultiesBeat.getOrDefault(DifficultyIndex.NORMAL, 0) >= 1 &&
+                    difficultiesBeat.getOrDefault(DifficultyIndex.HARD, 0) >= 1 ||
+                    difficultiesBeat.getOrDefault(DifficultyIndex.EXTREME, 0) >= 1
+            ) {
                 value++;
             }
         });

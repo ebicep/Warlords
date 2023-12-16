@@ -43,7 +43,7 @@ public class SanctuaryBranch extends AbstractUpgradeBranch<Sanctuary> {
                 "Asylum",
                 "Sanctuary - Master Upgrade",
                 """
-                        For the duration of Sanctuary, reduce the cooldown of Guardian Beam by 33% while Sanctuary is active and increase the shield provided to allies by 15%.
+                        For the duration of Sanctuary, reduce the cooldown of Guardian Beam by 45% while Sanctuary is active and increase the shield provided to allies by 15%.
                         """,
                 50000,
                 () -> {
