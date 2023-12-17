@@ -116,6 +116,11 @@ public interface PveOption extends Option {
 
     void spawnNewMob(AbstractMob mob, Team team);
 
+    default void despawnMob(AbstractMob mob) {
+        mob.getWarlordsNPC().cleanup();
+        getMobsMap().remove(mob);
+    }
+
     default boolean isPauseMobSpawn() {
         return false;
     }

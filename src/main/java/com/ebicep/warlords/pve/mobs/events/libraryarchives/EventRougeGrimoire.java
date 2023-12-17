@@ -14,7 +14,7 @@ public class EventRougeGrimoire extends EventGrimoire {
                 spawnLocation,
                 "Rouge Grimoire",
                 12000,
-                0,
+                0.21f,
                 5,
                 350,
                 700

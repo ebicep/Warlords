@@ -118,6 +118,10 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void die(@Nullable WarlordsEntity attacker) {
         super.die(attacker);
+        cleanup();
+    }
+
+    public void cleanup() {
         npc.destroy();
         nameDisplay.remove();
         customHologramLines.forEach(customHologramLine -> customHologramLine.getEntity().remove());
