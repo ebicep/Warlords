@@ -8,6 +8,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class SimpleWave implements Wave {
 
@@ -42,6 +44,11 @@ public class SimpleWave implements Wave {
         return this;
     }
 
+    public SimpleWave add(double baseWeight, int maxSpawnTimes, Mob factory) {
+        randomCollection.add(baseWeight, new SpawnSettings(baseWeight, maxSpawnTimes, factory, null));
+        return this;
+    }
+
     public SimpleWave add(double baseWeight, Mob factory, Location customSpawnLocation) {
         randomCollection.add(baseWeight, new SpawnSettings(baseWeight, factory, customSpawnLocation));
         return this;
@@ -50,7 +57,7 @@ public class SimpleWave implements Wave {
     @Override
     public AbstractMob spawnMonster(Location loc) {
         SpawnSettings spawnSettings = randomCollection.next();
-        AbstractMob mob = spawnSettings.mob().createMob(spawnSettings.location() == null ? loc : spawnSettings.location());
+        AbstractMob mob = spawnSettings.mob().createMob(spawnSettings.spawnLocations() == null ? loc : spawnSettings.getRandomSpawnLocation());
         if (mob instanceof BossMob) {
             loc.getWorld().strikeLightningEffect(loc);
         }
@@ -77,6 +84,13 @@ public class SimpleWave implements Wave {
         return message;
     }
 
-    record SpawnSettings(double weight, Mob mob, Location location) {
+    record SpawnSettings(double weight, int maxSpawnTimes, Mob mob, List<Location> spawnLocations) {
+        public SpawnSettings(double weight, Mob mob, Location location) {
+            this(weight, Integer.MAX_VALUE, mob, location == null ? null : List.of(location));
+        }
+
+        public Location getRandomSpawnLocation() {
+            return spawnLocations.get(ThreadLocalRandom.current().nextInt(spawnLocations.size()));
+        }
     }
 }
