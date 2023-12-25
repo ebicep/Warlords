@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.pvp;
+package com.ebicep.warlords.game.option.pvp.interception;
 
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;

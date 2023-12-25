@@ -30,7 +30,11 @@ import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.*;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.FixedWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.SimpleWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.StaticWaveList;
-import com.ebicep.warlords.game.option.pvp.*;
+import com.ebicep.warlords.game.option.pvp.DuelsTeleportOption;
+import com.ebicep.warlords.game.option.pvp.FlagCapturePointOption;
+import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
+import com.ebicep.warlords.game.option.pvp.GameOvertimeOption;
+import com.ebicep.warlords.game.option.pvp.interception.InterceptionPointOption;
 import com.ebicep.warlords.game.option.pvp.siege.SiegeOption;
 import com.ebicep.warlords.game.option.raid.RaidOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
@@ -856,8 +860,8 @@ public enum GameMap {
             options.add(mines);
             options.add(stables);
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-114.5, 89.5, 0.5, -90, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(173.5, 67, 426.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(736.5, 67, 450.5).yaw(-180), Team.RED));
             options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(621.5, 56, 448.5, 0, 0), farm));
             options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(452.5, 96, 625.5, -180, 0), lumbermill));
             options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(463.5, 63, 387, 0, 0), blacksmith));
@@ -904,8 +908,8 @@ public enum GameMap {
             options.add(house);
             options.add(lumbermill);
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-114.5, 89.5, 0.5, -90, 0), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-24.5, 64, -110.5, 0, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(25.5, 64, 111.5, -180, 0), Team.RED));
             options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-111, 52, 13.5, -90, 0), watchTower));
             options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-81.5, 83, 119.5, 90, 0), workshop));
             options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(0.5, 83, -32.5, 0, 0), ruins));
@@ -950,7 +954,7 @@ public enum GameMap {
             options.add(aviary);
             options.add(throne);
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(115.5, 89.5, 0.5, 90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 43, -141.5, 0, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 43, 144.5, 180, 0), Team.RED));
             options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(-0.5, 33, 72.5, 0, 0), towers));
             options.add(SpawnpointOption.interceptionPoint(loc.addXYZ(101.5, 54, 25.5, 135, 0), gate));

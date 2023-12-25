@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
-import com.ebicep.warlords.game.option.pvp.InterceptionPointOption;
+import com.ebicep.warlords.game.option.pvp.interception.InterceptionPointOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -29,8 +29,8 @@ public class SpawnpointOption extends MarkerOption {
         );
     }
 
-    public static SpawnpointOption interceptionPoint(Location location, InterceptionPointOption interceptionPointOption) {
-        return new SpawnpointOption(
+    public static InterceptionSpawnPoint interceptionPoint(Location location, InterceptionPointOption interceptionPointOption) {
+        return new InterceptionSpawnPoint(
                 location,
                 (p) -> {
                     if (p.getTeam() == null) {
@@ -50,7 +50,8 @@ public class SpawnpointOption extends MarkerOption {
                     }
                     return -10; // enemy point or uncaptured
                 },
-                Arrays.asList(Component.text("Type: interception-point"), Component.text("Interception point: " + interceptionPointOption))
+                Arrays.asList(Component.text("Type: interception-point"), Component.text("Interception point: " + interceptionPointOption)),
+                interceptionPointOption
         );
     }
 
@@ -105,4 +106,25 @@ public class SpawnpointOption extends MarkerOption {
                 DebugLocationMarker.create(Material.BLACK_BED, 0, SpawnpointOption.class, Component.text("Spawnpoint"), location, () -> debugExtra)
         );
     }
+
+    public static class InterceptionSpawnPoint extends SpawnpointOption {
+
+        private final Location location;
+        private final InterceptionPointOption interceptionPoint;
+
+        public InterceptionSpawnPoint(Location location, ToDoubleFunction<WarlordsEntity> teamCheck, List<TextComponent> debugExtra, InterceptionPointOption interceptionPoint) {
+            super(location, teamCheck, debugExtra);
+            this.location = location;
+            this.interceptionPoint = interceptionPoint;
+        }
+
+        public Location getLocation() {
+            return location;
+        }
+
+        public InterceptionPointOption getInterceptionPoint() {
+            return interceptionPoint;
+        }
+    }
+
 }

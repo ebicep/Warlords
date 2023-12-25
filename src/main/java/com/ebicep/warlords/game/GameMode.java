@@ -21,7 +21,8 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
 import com.ebicep.warlords.game.option.pvp.GameOvertimeOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
-import com.ebicep.warlords.game.option.pvp.InterceptionOption;
+import com.ebicep.warlords.game.option.pvp.interception.InterceptionOption;
+import com.ebicep.warlords.game.option.pvp.interception.InterceptionRespawnOption;
 import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
@@ -174,6 +175,7 @@ public enum GameMode {
             options.add(new GameOvertimeOption(100, 90));
             options.add(new RespawnWaveOption(0, 17, 8));
             options.add(new RespawnProtectionOption());
+            options.add(new InterceptionRespawnOption());
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());

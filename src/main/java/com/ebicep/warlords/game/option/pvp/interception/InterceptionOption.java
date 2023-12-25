@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.pvp;
+package com.ebicep.warlords.game.option.pvp.interception;
 
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
