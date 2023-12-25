@@ -78,8 +78,8 @@ public class CripplingStrike extends AbstractStrike {
         super("Crippling Strike", 362.25f, 498, 0, 100, 15, 200);
     }
 
-    public CripplingStrike(int consecutiveStrikeCounter) {
-        super("Crippling Strike", 362.25f, 498, 0, 100, 15, 200);
+    public CripplingStrike(float minDamageHeal, float maxDamageHeal, int consecutiveStrikeCounter) {
+        super("Crippling Strike", minDamageHeal, maxDamageHeal, 0, 100, 15, 200);
         this.consecutiveStrikeCounter = consecutiveStrikeCounter;
     }
 
@@ -162,7 +162,7 @@ public class CripplingStrike extends AbstractStrike {
             cripple(wp,
                     nearPlayer,
                     name,
-                    new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
+                    new CripplingStrike(minDamageHeal, maxDamageHeal, Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
                     crippleDuration * 20,
                     convertToDivisionDecimal(cripple) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(cripplePerStrike)
             );
