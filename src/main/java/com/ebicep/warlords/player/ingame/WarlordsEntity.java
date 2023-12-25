@@ -2731,6 +2731,7 @@ public abstract class WarlordsEntity {
                 !candidates.isEmpty() ? candidates.get((int) (Math.random() * candidates.size())) :
                 deathLocation != null ? deathLocation :
                 getLocation();
+        respawnPoint = respawnPoint.clone();
         WarlordsRespawnEvent event = new WarlordsRespawnEvent(this, respawnPoint);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {

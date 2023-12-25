@@ -1,6 +1,6 @@
 package com.ebicep.warlords.events.game;
 
-import com.ebicep.warlords.game.option.pvp.InterceptionPointOption;
+import com.ebicep.warlords.game.option.pvp.interception.InterceptionPointOption;
 import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;

@@ -2,8 +2,11 @@ package com.ebicep.warlords.util.bukkit;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.flattener.ComponentFlattener;
+import net.kyori.adventure.text.flattener.FlattenerListener;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -12,6 +15,27 @@ import java.util.List;
 public class ComponentUtils {
 
     public static final Component CLICK_TO_VIEW = Component.text("Click to view!", NamedTextColor.YELLOW);
+
+    public static String getFlattenedText(Component component) {
+        OnlyTextFlattener flattener = new OnlyTextFlattener();
+        ComponentFlattener.textOnly().flatten(component, flattener);
+        return flattener.toString();
+    }
+
+    private static class OnlyTextFlattener implements FlattenerListener {
+
+        private final StringBuilder stringBuilder = new StringBuilder();
+
+        @Override
+        public void component(@NotNull String text) {
+            stringBuilder.append(text);
+        }
+
+        @Override
+        public String toString() {
+            return stringBuilder.toString();
+        }
+    }
 
     @Nonnull
     public static TextComponent componentBase() {
