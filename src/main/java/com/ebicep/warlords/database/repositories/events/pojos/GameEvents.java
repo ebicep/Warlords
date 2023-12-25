@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.events.pojos;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.customentities.npc.traits.GameEventTrait;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
@@ -22,6 +23,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMo
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabasePlayerPvEEventIlluminaDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.DatabasePlayerPvEEventLibraryArchivesDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabasePlayerPvEEventMithraDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabasePlayerPvEEventNarmerDifficultyStats;
 import com.ebicep.warlords.events.EventShopPurchaseEvent;
@@ -37,10 +39,12 @@ import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.player.general.ArmorManager;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
+import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
 import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -57,6 +61,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -67,6 +72,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -239,7 +245,7 @@ public enum GameEvents {
         }
 
         @Override
-        public void setMenu(Menu menu) {
+        public void setMenu(Menu menu, Player player) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
                             .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
@@ -469,7 +475,7 @@ public enum GameEvents {
         }
 
         @Override
-        public void setMenu(Menu menu) {
+        public void setMenu(Menu menu, Player player) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
                             .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
@@ -680,7 +686,7 @@ public enum GameEvents {
         }
 
         @Override
-        public void setMenu(Menu menu) {
+        public void setMenu(Menu menu, Player player) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
                             .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
@@ -879,7 +885,7 @@ public enum GameEvents {
         }
 
         @Override
-        public void setMenu(Menu menu) {
+        public void setMenu(Menu menu, Player player) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
                             .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
@@ -1105,7 +1111,7 @@ public enum GameEvents {
         }
 
         @Override
-        public void setMenu(Menu menu) {
+        public void setMenu(Menu menu, Player player) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
                             .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
@@ -1364,7 +1370,7 @@ public enum GameEvents {
         }
 
         @Override
-        public void setMenu(Menu menu) {
+        public void setMenu(Menu menu, Player player) {
             menu.setItem(2, 1,
                     new ItemBuilder(Material.BLAZE_POWDER)
                             .name(Component.text("Start a Private Game", NamedTextColor.GREEN))
@@ -1377,6 +1383,69 @@ public enum GameEvents {
                             .get(),
                     (m, e) -> openLibraryArchivesModeMenu((Player) e.getWhoClicked(), false)
             );
+            if (!DatabaseGameEvent.eventIsActive()) {
+                return;
+            }
+            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+                DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+                EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
+                                                                                     .get(currentGameEvent.getStartDateSecond());
+                if (eventMode != null && !(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats)) {
+                    return;
+                }
+                menu.setItem(8, 5,
+                        new ItemBuilder(Material.BOOKSHELF)
+                                .name(Component.text("Codexes Aquired", NamedTextColor.GREEN))
+                                .lore(
+                                        Component.text("SOMETHIN SOMETHING CODEXES HERE"),
+                                        Component.empty(),
+                                        ComponentUtils.CLICK_TO_VIEW
+                                )
+                                .get(),
+                        (m, e) -> {
+                            openCodexMenu(player, (DatabasePlayerPvEEventLibraryArchivesDifficultyStats) eventMode);
+                        }
+                );
+            });
+        }
+
+        private void openCodexMenu(Player player, @Nullable DatabasePlayerPvEEventLibraryArchivesDifficultyStats stats) {
+            Menu menu = new Menu("Codexes", 9 * 6);
+
+            int x = 1;
+            int y = 1;
+            for (Specializations spec : Specializations.VALUES) {
+                boolean unlocked = stats != null && stats.getCodexesEarned().keySet().stream().anyMatch(playerCodex -> playerCodex.getSpec() == spec);
+                PlayerCodex codexForSpec = PlayerCodex.getCodexForSpec(spec);
+                if (codexForSpec == null) {
+                    continue;
+                }
+                ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
+                        .name(Component.textOfChildren(
+                                Component.text(spec.name, NamedTextColor.GRAY),
+                                Component.text(" - ", NamedTextColor.DARK_GRAY),
+                                Component.text(unlocked ? codexForSpec.name : "???????????", NamedTextColor.GRAY)
+                                         .decoration(TextDecoration.OBFUSCATED, !unlocked)
+                        ));
+                for (Ability ability : codexForSpec.abilities) {
+                    itemBuilder.addLore(Component.textOfChildren(
+                            Component.text(" - ", NamedTextColor.DARK_GRAY),
+                            Component.text(unlocked ? ability.create.get().getName() : "??????????", NamedTextColor.GOLD)
+                                     .decoration(TextDecoration.OBFUSCATED, !unlocked)
+                    ));
+                }
+                menu.setItem(x, y, itemBuilder.get(), (m, e) -> {});
+                x++;
+                if (x == 4) {
+                    x++;
+                } else if (x == 8) {
+                    x = 1;
+                    y++;
+                }
+            }
+
+            menu.setItem(4, 5, MENU_BACK, (m, e) -> openMenu(player));
+            menu.openForPlayer(player);
         }
 
         private void openLibraryArchivesModeMenu(Player player, boolean privateGame) {
@@ -1530,7 +1599,7 @@ public enum GameEvents {
     public void openMenu(Player player) {
         Menu menu = new Menu(name + " Event", 9 * 6);
 
-        setMenu(menu);
+        setMenu(menu, player);
 
         menu.setItem(4, 0,
                 new ItemBuilder(Material.TOTEM_OF_UNDYING)
@@ -1617,7 +1686,7 @@ public enum GameEvents {
         menu.openForPlayer(player);
     }
 
-    public abstract void setMenu(Menu menu);
+    public abstract void setMenu(Menu menu, Player player);
 
     public void openShopMenu(Player player) {
         boolean currentEvent = true;

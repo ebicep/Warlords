@@ -3,8 +3,9 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.tartarus.DatabaseGamePvEEventTartarus;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePvEEventTheAcropolis;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.tartarus.DatabaseGamePvEEventForgottenCodex;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.theacropolis.DatabaseGamePlayerPvEEventGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.theacropolis.DatabaseGamePvEEventGrimoiresGraveyard;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
@@ -17,6 +18,7 @@ import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
+import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -45,6 +47,8 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
     private DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats forgottenCodexStats = new DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats();
     @Field("grimoires_graveyard_stats")
     private DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultyStats grimoiresGraveyardStats = new DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultyStats();
+    @Field("codexes_earned")
+    private Map<PlayerCodex, Integer> codexesEarned = new HashMap<>();
 
     @Field("completed_bounties")
     private Map<Bounty, Long> completedBounties = new HashMap<>();
@@ -78,7 +82,8 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
 
     @Override
     public void updateCustomStats(
-            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer,
+            DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -107,9 +112,11 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
         }
 
         //MODES
-        if (databaseGame instanceof DatabaseGamePvEEventTheAcropolis) {
+        if (databaseGame instanceof DatabaseGamePvEEventForgottenCodex) {
             this.forgottenCodexStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-        } else if (databaseGame instanceof DatabaseGamePvEEventTartarus) {
+        } else if (databaseGame instanceof DatabaseGamePvEEventGrimoiresGraveyard) {
+            DatabaseGamePlayerPvEEventGrimoiresGraveyard gamePlayerGrimoiresGraveyard = (DatabaseGamePlayerPvEEventGrimoiresGraveyard) gamePlayer;
+            this.codexesEarned.merge(gamePlayerGrimoiresGraveyard.getCodexEarned(), multiplier, Integer::sum);
             this.grimoiresGraveyardStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         }
 
@@ -224,4 +231,7 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
         this.grimoiresGraveyardStats = grimoiresGraveyardStats;
     }
 
+    public Map<PlayerCodex, Integer> getCodexesEarned() {
+        return codexesEarned;
+    }
 }
