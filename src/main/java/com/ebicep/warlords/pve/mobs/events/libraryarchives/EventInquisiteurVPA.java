@@ -37,4 +37,10 @@ public class EventInquisiteurVPA extends AbstractMob implements BossMob {
     public Mob getMobRegistry() {
         return Mob.EVENT_INQUISITEUR_VPA;
     }
+
+    @Override
+    public double weaponDropRate() {
+        return BossMob.super.weaponDropRate() * 1.5;
+    }
+
 }

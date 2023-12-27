@@ -37,4 +37,10 @@ public class EventInquisiteurEGA extends AbstractMob implements BossMob {
     public Mob getMobRegistry() {
         return Mob.EVENT_INQUISITEUR_EGA;
     }
+
+    @Override
+    public double weaponDropRate() {
+        return BossMob.super.weaponDropRate() * 1.5;
+    }
+
 }

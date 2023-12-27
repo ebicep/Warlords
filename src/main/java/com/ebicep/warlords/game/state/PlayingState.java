@@ -247,7 +247,7 @@ public class PlayingState implements State, TimerDebugAble {
         ChatUtils.MessageType.WARLORDS.sendMessage("GameMode = " + game.getGameMode());
         ChatUtils.MessageType.WARLORDS.sendMessage("Map = " + game.getMap());
         ChatUtils.MessageType.WARLORDS.sendMessage("Game Addons = " + game.getAddons());
-        ChatUtils.MessageType.WARLORDS.sendMessage("Win Event = " + winEvent);
+        ChatUtils.MessageType.WARLORDS.sendMessage("Win Event = " + winEvent.getCause());
         ChatUtils.MessageType.WARLORDS.sendMessage(" ----- GAME END ----- ");
 
         List<WarlordsPlayer> players = PlayerFilterGeneric.playingGameWarlordsPlayers(game).toList();

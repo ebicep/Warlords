@@ -46,7 +46,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new CripplingStrike(960, 1075, 0) {{
+                new CripplingStrike() {{
                     this.pveMasterUpgrade = true;
                 }},
                 new ChainLightning(7, 7) {{
@@ -86,4 +86,10 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
             }
         });
     }
+
+    @Override
+    public double weaponDropRate() {
+        return BossMob.super.weaponDropRate() * 1.5;
+    }
+
 }
