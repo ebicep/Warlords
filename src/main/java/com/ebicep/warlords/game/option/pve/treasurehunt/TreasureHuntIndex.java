@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve;
+package com.ebicep.warlords.game.option.pve.treasurehunt;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

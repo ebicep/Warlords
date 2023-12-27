@@ -1,4 +1,4 @@
-package com.ebicep.warlords.pve;
+package com.ebicep.warlords.game.option.pve.treasurehunt;
 
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.GameAddon;
