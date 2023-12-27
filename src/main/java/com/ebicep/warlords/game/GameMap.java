@@ -4703,11 +4703,10 @@ public enum GameMap {
 //                    .startWith(120000) //TODO
 //                    .onKill(500)
 //                    .setPerWaveClear(5, 25000)
-//                    .onPerMobKill(Mob.EVENT_APOLLO, 10000)
-//                    .onPerMobKill(Mob.EVENT_ARES, 10000)
-//                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 10000)
-//                    .onPerMobKill(Mob.EVENT_ATHENA, 10000)
-//                    .onPerMobKill(Mob.EVENT_CRONUS, 10000)
+.onPerMobKill(Mob.EVENT_ROUGE_GRIMOIRE, 5000)
+.onPerMobKill(Mob.EVENT_VIOLETTE_GRIMOIRE, 5000)
+.onPerMobKill(Mob.EVENT_BLEUE_GRIMOIRE, 5000)
+.onPerMobKill(Mob.EVENT_ORANGE_GRIMOIRE, 5000)
             );
             options.add(new CoinGainOption()
 //                    .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{ //TODO

@@ -86,4 +86,10 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
             }
         });
     }
+
+    @Override
+    public double weaponDropRate() {
+        return BossMob.super.weaponDropRate() * 1.5;
+    }
+
 }
