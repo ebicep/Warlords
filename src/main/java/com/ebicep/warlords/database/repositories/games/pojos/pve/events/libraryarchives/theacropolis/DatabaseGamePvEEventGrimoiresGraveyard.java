@@ -122,4 +122,7 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
         return new HashSet<>(players);
     }
 
+    public int getWavesCleared() {
+        return wavesCleared;
+    }
 }

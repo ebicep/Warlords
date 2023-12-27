@@ -4434,9 +4434,9 @@ public enum GameMap {
     GRIMOIRES_GRAVEYARD(
             "Grimoire’s Graveyard",
             4,
-            2,
+            1,
             120 * SECOND,
-            "GrimoiresGraveyard",
+            "Grimoires",
             3,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
@@ -4457,19 +4457,21 @@ public enum GameMap {
             ));
 
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-//            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.BLUE).asOption()); //TODO
-//            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.RED).asOption());
-//
-//            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -2.50), Team.BLUE));
-//            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, 5.5), Team.RED));
+            options.add(LobbyLocationMarker.create(loc.addXYZ(16, 27, 1.5), Team.BLUE).asOption()); //TODO
+            options.add(LobbyLocationMarker.create(loc.addXYZ(16, 27, 1.5), Team.RED).asOption());
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(16, 27, 1.5), Team.BLUE)); //TODO
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(16, 27, 1.5), Team.RED));
 //            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, 13.5), Team.RED));
 //            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, 5.5), Team.RED));
 //            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, -10.5), Team.RED));
 //            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -18.5), Team.RED));
 //            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, -10.5), Team.RED));
 
-//            options.add(new PowerupOption(loc.addXYZ(14.5, 24.5, 16.5), PowerUp.COOLDOWN, 180, 30)); TODO
-//            options.add(new PowerupOption(loc.addXYZ(-13.5, 24.5, -23.5), PowerUp.HEALING, 90, 30));
+            options.add(new PowerupOption(loc.addXYZ(16, 25, 1.5), PowerUp.DAMAGE, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(-23.5, 25, 1.5), PowerUp.DAMAGE, 180, 30));
+            options.add(new PowerupOption(loc.addXYZ(-3.5, 25, 21.5), PowerUp.HEALING, 90, 30));
+            options.add(new PowerupOption(loc.addXYZ(-3.5, 25, -18.5), PowerUp.HEALING, 90, 30));
 
             options.add(new RespawnWaveOption(2, 1, 20));
             options.add(new GraveOption());
@@ -4598,7 +4600,7 @@ public enum GameMap {
                             .add(1, Mob.EVENT_THE_ARCHIVIST)
                     )
                     ,
-                    DifficultyIndex.EVENT
+                    DifficultyIndex.EVENT, 25
             ) {
                 @Override
                 public void register(@Nonnull Game game) {
@@ -4661,6 +4663,7 @@ public enum GameMap {
             });
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
+            options.add(new WinByMaxWaveClearOption());
             options.add(new GrimoiresGraveyardOption());
 //            options.add(new SafeZoneOption(1));
             options.add(new EventPointsOption()

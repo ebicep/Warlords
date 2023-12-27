@@ -3,16 +3,20 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePlayerPvEEventTheAcropolis;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePvEEventTheAcropolis;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.tartarus.DatabaseGamePlayerPvEEventForgottenCodex;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.tartarus.DatabaseGamePvEEventForgottenCodex;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.PvEEventLibraryArchivesDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Map;
 
 public class PvEEventLibraryForgottenCodexDatabaseStatInformation extends PvEEventLibraryArchivesDatabaseStatInformation {
+
+    @Field("fastest_game_finished")
+    protected long fastestGameFinished = 0;
 
     @Override
     public void updateCustomStats(
@@ -23,10 +27,20 @@ public class PvEEventLibraryForgottenCodexDatabaseStatInformation extends PvEEve
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvEEventTheAcropolis;
-        assert gamePlayer instanceof DatabaseGamePlayerPvEEventTheAcropolis;
+        assert databaseGame instanceof DatabaseGamePvEEventForgottenCodex;
+        assert gamePlayer instanceof DatabaseGamePlayerPvEEventForgottenCodex;
         super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
+        DatabaseGamePvEEventForgottenCodex eventForgottenCodex = (DatabaseGamePvEEventForgottenCodex) databaseGame;
+        boolean won = eventForgottenCodex.getWavesCleared() == 1;
+        int timeElapsed = eventForgottenCodex.getTimeElapsed();
+        if (multiplier > 0) {
+            if (won && (this.fastestGameFinished == 0 || timeElapsed < fastestGameFinished)) {
+                this.fastestGameFinished = timeElapsed;
+            }
+        } else if (this.fastestGameFinished == timeElapsed) {
+            this.fastestGameFinished = 0;
+        }
     }
 
     public long getExperiencePvE() {

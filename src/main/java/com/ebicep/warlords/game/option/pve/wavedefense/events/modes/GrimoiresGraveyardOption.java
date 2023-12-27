@@ -19,9 +19,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class GrimoiresGraveyardOption implements Option {
 
@@ -43,11 +41,14 @@ public class GrimoiresGraveyardOption implements Option {
                 game.warlordsPlayers().forEach(warlordsPlayer -> {
                     DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
                         EventMode eventMode = gameEvent.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
-                        if (!(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats stats)) {
-                            ChatUtils.MessageType.GAME_EVENTS.sendErrorMessage("Error: stats is not a DatabasePlayerPvEEventLibraryArchivesDifficultyStats");
+                        if (eventMode != null && !(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats)) {
+                            ChatUtils.MessageType.GAME_EVENTS.sendErrorMessage("Error: stats is not a DatabasePlayerPvEEventLibraryArchivesDifficultyStats - " + eventMode.getClass()
+                                                                                                                                                                          .getSimpleName());
                             return;
                         }
-                        codexRewards.put(warlordsPlayer.getUuid(), PlayerCodex.getRandomCodex(stats.getCodexesEarned().keySet()));
+                        Set<PlayerCodex> toExclude = eventMode == null ? Collections.emptySet() : ((DatabasePlayerPvEEventLibraryArchivesDifficultyStats) eventMode).getCodexesEarned()
+                                                                                                                                                                    .keySet();
+                        codexRewards.put(warlordsPlayer.getUuid(), PlayerCodex.getRandomCodex(toExclude));
                     });
                 });
             }

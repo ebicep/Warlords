@@ -29,9 +29,9 @@ public class AccumulatingKnowledge implements FieldEffect {
     public List<Component> getSubDescription() {
         return new ArrayList<>() {{
             add(Component.empty());
-            add(Component.text("+1% Damage", NamedTextColor.DARK_RED).append(Component.text("(Max 25%)")));
-            add(Component.text("+1% Damage Reduction", NamedTextColor.GOLD).append(Component.text("(Max 15%)")));
-            add(Component.text("+1% Max HP", NamedTextColor.RED).append(Component.text("(Max 25%)")));
+            add(Component.text("+1% Damage ", NamedTextColor.DARK_RED).append(Component.text("(Max 25%)")));
+            add(Component.text("+1% Damage Reduction ", NamedTextColor.GOLD).append(Component.text("(Max 15%)")));
+            add(Component.text("+1% Max HP ", NamedTextColor.RED).append(Component.text("(Max 25%)")));
         }};
     }
 

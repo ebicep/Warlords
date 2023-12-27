@@ -14,6 +14,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.tartarus.DatabaseGamePvEEventTartarus;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePvEEventTheAcropolis;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.theborderlineofillusion.DatabaseGamePvEEventTheBorderlineOfIllusion;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.tartarus.DatabaseGamePvEEventForgottenCodex;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.theacropolis.DatabaseGamePvEEventGrimoiresGraveyard;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
@@ -39,6 +41,7 @@ import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.player.general.ArmorManager;
+import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.Currencies;
@@ -46,6 +49,7 @@ import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.SpendableBuyShop;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
 import com.ebicep.warlords.pve.items.types.fixeditems.FixedItems;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -66,6 +70,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -1190,18 +1195,18 @@ public enum GameEvents {
         }
     },
     LIBRARY_ARCHIVES("Library Archives",
-            Currencies.EVENT_POINTS_GARDEN_OF_HESPERIDES,
+            Currencies.EVENT_POINTS_LIBRARY_ARCHIVES,
             DatabasePlayerPvEEventStats::getLibraryArchivesStats,
             DatabasePlayerPvEEventStats::getLibraryArchivesEventStats,
             DatabasePlayerPvEEventStats::getLibraryArchivesStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
-//                for (Option option : game.getOptions()) {
-//                    if (option instanceof TheAcropolisOption) {
-//                        return new DatabaseGamePvEEventTheAcropolis(game, warlordsGameTriggerWinEvent, aBoolean);
-//                    } else if (option instanceof TartarusOption) {
-//                        return new DatabaseGamePvEEventTartarus(game, warlordsGameTriggerWinEvent, aBoolean);
-//                    }
-//                }TODO
+                for (Option option : game.getOptions()) {
+                    if (option instanceof GrimoiresGraveyardOption) {
+                        return new DatabaseGamePvEEventGrimoiresGraveyard(game, warlordsGameTriggerWinEvent, aBoolean);
+                    } else if (option instanceof ForgottenCodexOption) {
+                        return new DatabaseGamePvEEventForgottenCodex(game, warlordsGameTriggerWinEvent, aBoolean);
+                    }
+                }
                 return null;
             },
             new ArrayList<>() {{
@@ -1396,8 +1401,19 @@ public enum GameEvents {
                 menu.setItem(8, 5,
                         new ItemBuilder(Material.BOOKSHELF)
                                 .name(Component.text("Codexes Aquired", NamedTextColor.GREEN))
-                                .lore(
-                                        Component.text("SOMETHIN SOMETHING CODEXES HERE"),
+                                .lore(WordWrap.wrap(ComponentBuilder
+                                                .create("Every spec has a Codex which has ")
+                                                .text("5 unique abilities", NamedTextColor.GOLD)
+                                                .text(" and overrides the spec's normal abilities.")
+                                                .text("\n\nComplete ")
+                                                .text("Grimoire's Graveyard", NamedTextColor.GREEN)
+                                                .text(" to unlock a new codex. Codexes are automatically applied in ")
+                                                .text("Forgotten Codex", NamedTextColor.GREEN)
+                                                .text(".")
+                                                .build(),
+                                        150
+                                ))
+                                .addLore(
                                         Component.empty(),
                                         ComponentUtils.CLICK_TO_VIEW
                                 )
@@ -1413,8 +1429,17 @@ public enum GameEvents {
             Menu menu = new Menu("Codexes", 9 * 6);
 
             int x = 1;
-            int y = 1;
+            int y = 2;
             for (Specializations spec : Specializations.VALUES) {
+                if (y == 2) {
+                    Classes specClass = Specializations.getClass(spec);
+                    menu.setItem(x, 1,
+                            new ItemBuilder(specClass.item)
+                                    .name(Component.text(specClass.name + " Codexes", NamedTextColor.GREEN))
+                                    .get(),
+                            (m, e) -> {}
+                    );
+                }
                 boolean unlocked = stats != null && stats.getCodexesEarned().keySet().stream().anyMatch(playerCodex -> playerCodex.getSpec() == spec);
                 PlayerCodex codexForSpec = PlayerCodex.getCodexForSpec(spec);
                 if (codexForSpec == null) {
@@ -1434,17 +1459,22 @@ public enum GameEvents {
                                      .decoration(TextDecoration.OBFUSCATED, !unlocked)
                     ));
                 }
+                if (unlocked) {
+                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                }
                 menu.setItem(x, y, itemBuilder.get(), (m, e) -> {});
-                x++;
-                if (x == 4) {
+                y++;
+                if (y == 5) {
                     x++;
-                } else if (x == 8) {
-                    x = 1;
-                    y++;
+                    if (x == 4) {
+                        x++;
+                    }
+                    y = 2;
                 }
             }
 
-            menu.setItem(4, 5, MENU_BACK, (m, e) -> openMenu(player));
+            menu.setItem(3, 5, MENU_BACK, (m, e) -> openMenu(player));
+            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);
         }
 
