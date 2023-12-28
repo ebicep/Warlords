@@ -55,6 +55,16 @@ public class SimpleWave implements Wave {
         return this;
     }
 
+    public SimpleWave add(double baseWeight, int maxSpawnTimes, Mob factory, Location... customSpawnLocation) {
+        randomCollection.add(baseWeight, new SpawnSettings(baseWeight, maxSpawnTimes, factory, List.of(customSpawnLocation)));
+        return this;
+    }
+
+    public SimpleWave add(double baseWeight, int maxSpawnTimes, Mob factory, List<Location> customSpawnLocation) {
+        randomCollection.add(baseWeight, new SpawnSettings(baseWeight, maxSpawnTimes, factory, customSpawnLocation));
+        return this;
+    }
+
     @Override
     public AbstractMob spawnMonster(Location loc) {
         SpawnSettings spawnSettings = randomCollection.next();
@@ -107,7 +117,7 @@ public class SimpleWave implements Wave {
             this(weight, Integer.MAX_VALUE, mob, location == null ? null : List.of(location));
         }
 
-        SpawnSettings(double weight, int maxSpawnTimes, Mob mob, List<Location> spawnLocations) {
+        public SpawnSettings(double weight, int maxSpawnTimes, Mob mob, List<Location> spawnLocations) {
             this.weight = weight;
             this.maxSpawnTimes = maxSpawnTimes;
             this.mob = mob;

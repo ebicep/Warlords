@@ -1,12 +1,11 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
+import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import org.bukkit.Location;
 
-public class EventInquisiteurEWA extends AbstractMob implements BossMob {
+public class EventInquisiteurEWA extends EventInquisiteur {
 
     public EventInquisiteurEWA(Location spawnLocation) {
         this(
@@ -16,7 +15,20 @@ public class EventInquisiteurEWA extends AbstractMob implements BossMob {
                 0.38f,
                 20,
                 0,
-                0
+                0,
+                new AvengersStrike() {{
+                    this.setPveMasterUpgrade2(true);
+                }},
+                new IncendiaryCurse() {{
+                    this.setPveMasterUpgrade(true);
+                }},
+                new WindfuryWeapon() {{
+                    this.setPveMasterUpgrade2(true);
+                }},
+                new BloodLust(),
+                new Inferno() {{
+                    this.setPveMasterUpgrade2(true);
+                }}
         );
     }
 
@@ -36,11 +48,6 @@ public class EventInquisiteurEWA extends AbstractMob implements BossMob {
     @Override
     public Mob getMobRegistry() {
         return Mob.EVENT_INQUISITEUR_EWA;
-    }
-
-    @Override
-    public double weaponDropRate() {
-        return BossMob.super.weaponDropRate() * 1.5;
     }
 
 }

@@ -1,12 +1,11 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
+import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
-import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import org.bukkit.Location;
 
-public class EventInquisiteurVPA extends AbstractMob implements BossMob {
+public class EventInquisiteurVPA extends EventInquisiteur {
 
     public EventInquisiteurVPA(Location spawnLocation) {
         this(
@@ -16,7 +15,23 @@ public class EventInquisiteurVPA extends AbstractMob implements BossMob {
                 0.38f,
                 25,
                 0,
-                0
+                0,
+                new ImpalingStrike() {{
+                    this.setLeechDuration(3);
+                    this.setLeechAllyAmount(20);
+                    this.setLeechSelfAmount(15);
+                    this.setPveMasterUpgrade(true);
+                }},
+                new WaterBreath() {{
+                    this.setPveMasterUpgrade2(true);
+                }},
+                new GroundSlamRevenant(),
+                new SanctifiedBeacon() {{
+                    this.setPveMasterUpgrade2(true);
+                }},
+                new HealingTotem() {{
+                    this.setPveMasterUpgrade(true);
+                }}
         );
     }
 
@@ -36,11 +51,6 @@ public class EventInquisiteurVPA extends AbstractMob implements BossMob {
     @Override
     public Mob getMobRegistry() {
         return Mob.EVENT_INQUISITEUR_VPA;
-    }
-
-    @Override
-    public double weaponDropRate() {
-        return BossMob.super.weaponDropRate() * 1.5;
     }
 
 }

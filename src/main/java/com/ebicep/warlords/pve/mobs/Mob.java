@@ -707,49 +707,49 @@ public enum Mob {
     )),
     EVENT_TERAS_DRYAD(EntityType.ZOMBIE, EventTerasDryad.class, EventTerasDryad::new, EventTerasDryad::new, null),
 
-    EVENT_UNPUBLISHED_GRIMOIRE(EntityType.ZOMBIE, EventUnpublishedGrimoire.class, EventUnpublishedGrimoire::new, EventUnpublishedGrimoire::new, new Utils.SimpleEntityEquipment(
+    EVENT_UNPUBLISHED_GRIMOIRE(EntityType.PLAYER, EventUnpublishedGrimoire.class, EventUnpublishedGrimoire::new, EventUnpublishedGrimoire::new, new Utils.SimpleEntityEquipment(
             null,
             null,
             null,
             null,
             Weapons.TENDERIZER.getItem()
     )),
-    EVENT_EMBELLISHED_GRIMOIRE(EntityType.ZOMBIE, EventEmbellishedGrimoire.class, EventEmbellishedGrimoire::new, EventEmbellishedGrimoire::new, new Utils.SimpleEntityEquipment(
+    EVENT_EMBELLISHED_GRIMOIRE(EntityType.PLAYER, EventEmbellishedGrimoire.class, EventEmbellishedGrimoire::new, EventEmbellishedGrimoire::new, new Utils.SimpleEntityEquipment(
             null,
             null,
             null,
             null,
             Weapons.ZWEIREAPER.getItem()
     )),
-    EVENT_SCRIPTED_GRIMOIRE(EntityType.ZOMBIE, EventScriptedGrimoire.class, EventScriptedGrimoire::new, EventScriptedGrimoire::new, new Utils.SimpleEntityEquipment(
+    EVENT_SCRIPTED_GRIMOIRE(EntityType.PLAYER, EventScriptedGrimoire.class, EventScriptedGrimoire::new, EventScriptedGrimoire::new, new Utils.SimpleEntityEquipment(
             null,
             null,
             null,
             null,
             Weapons.GEMCRUSHER.getItem()
     )),
-    EVENT_ROUGE_GRIMOIRE(EntityType.ZOMBIE, EventRougeGrimoire.class, EventRougeGrimoire::new, EventRougeGrimoire::new, new Utils.SimpleEntityEquipment(
+    EVENT_ROUGE_GRIMOIRE(EntityType.PLAYER, EventRougeGrimoire.class, EventRougeGrimoire::new, EventRougeGrimoire::new, new Utils.SimpleEntityEquipment(
             null,
             null,
             null,
             null,
             Weapons.RUBY_THORN.getItem()
     )),
-    EVENT_VIOLETTE_GRIMOIRE(EntityType.ZOMBIE, EventVioletteGrimoire.class, EventVioletteGrimoire::new, EventVioletteGrimoire::new, new Utils.SimpleEntityEquipment(
+    EVENT_VIOLETTE_GRIMOIRE(EntityType.PLAYER, EventVioletteGrimoire.class, EventVioletteGrimoire::new, EventVioletteGrimoire::new, new Utils.SimpleEntityEquipment(
             null,
             null,
             null,
             null,
             Weapons.FROSTBITE.getItem()
     )),
-    EVENT_BLEUE_GRIMOIRE(EntityType.ZOMBIE, EventBleueGrimoire.class, EventBleueGrimoire::new, EventBleueGrimoire::new, new Utils.SimpleEntityEquipment(
+    EVENT_BLEUE_GRIMOIRE(EntityType.PLAYER, EventBleueGrimoire.class, EventBleueGrimoire::new, EventBleueGrimoire::new, new Utils.SimpleEntityEquipment(
             null,
             null,
             null,
             null,
             Weapons.LUNAR_JUSTICE.getItem()
     )),
-    EVENT_ORANGE_GRIMOIRE(EntityType.ZOMBIE, EventOrangeGrimoire.class, EventOrangeGrimoire::new, EventOrangeGrimoire::new, new Utils.SimpleEntityEquipment(
+    EVENT_ORANGE_GRIMOIRE(EntityType.PLAYER, EventOrangeGrimoire.class, EventOrangeGrimoire::new, EventOrangeGrimoire::new, new Utils.SimpleEntityEquipment(
             null,
             null,
             null,
@@ -757,19 +757,14 @@ public enum Mob {
             Weapons.FABLED_HEROICS_SWORD_2.getItem()
     )),
 
-    EVENT_NECRONOMICON_GRIMOIRE(EntityType.SKELETON,
-            EventNecronomiconGrimoire.class,
-            EventNecronomiconGrimoire::new,
-            EventNecronomiconGrimoire::new,
-            new Utils.SimpleEntityEquipment(
-                    null,
-                    null,
-                    null,
-                    null,
-                    Weapons.SILVER_PHANTASM_SWORD_2.getItem()
-            )
-    ),
-    EVENT_THE_ARCHIVIST(EntityType.VINDICATOR, EventTheArchivist.class, EventTheArchivist::new, EventTheArchivist::new, new Utils.SimpleEntityEquipment(
+    EVENT_NECRONOMICON_GRIMOIRE(EntityType.PLAYER, EventNecronomiconGrimoire.class, EventNecronomiconGrimoire::new, EventNecronomiconGrimoire::new, new Utils.SimpleEntityEquipment(
+            null,
+            null,
+            null,
+            null,
+            Weapons.SILVER_PHANTASM_SWORD_2.getItem()
+    )),
+    EVENT_THE_ARCHIVIST(EntityType.PLAYER, EventTheArchivist.class, EventTheArchivist::new, EventTheArchivist::new, new Utils.SimpleEntityEquipment(
             null,
             null,
             null,
