@@ -4607,7 +4607,7 @@ public enum GameMap {
                             .add(1, 4, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
                             .add(1, 3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
                             .add(1, 2, Mob.EVENT_SCRIPTED_GRIMOIRE)
-                            .add(1, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
+                            .add(1, 4, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
                             .add(10, 1, Mob.EVENT_THE_ARCHIVIST, loc.addXYZ(-3.5, 25, 1.5))
                     )
                     ,
