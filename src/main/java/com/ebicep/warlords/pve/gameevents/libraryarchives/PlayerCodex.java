@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.gameevents.libraryarchives;
 import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.player.general.Specializations;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -47,13 +48,14 @@ public enum PlayerCodex implements Codex {
         return list.get(ThreadLocalRandom.current().nextInt(list.size()));
     }
 
+    @Nonnull
     public static PlayerCodex getCodexForSpec(Specializations spec) {
         for (PlayerCodex codex : VALUES) {
             if (codex.spec == spec) {
                 return codex;
             }
         }
-        return null;
+        throw new IllegalArgumentException("No codex for spec " + spec);
     }
 
     PlayerCodex(String name, Specializations spec, Ability... abilities) {
