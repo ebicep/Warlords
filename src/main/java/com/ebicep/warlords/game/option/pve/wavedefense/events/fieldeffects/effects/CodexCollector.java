@@ -60,6 +60,9 @@ public class CodexCollector implements FieldEffect {
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         AtomicInteger codexesEquipped = new AtomicInteger();
         for (WarlordsEntity player : players) {
+            if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
+                return;
+            }
             DatabaseManager.getPlayer(player.getUuid(), databasePlayer -> {
                 EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
                                                                                      .get(currentGameEvent.getStartDateSecond());
@@ -74,6 +77,7 @@ public class CodexCollector implements FieldEffect {
                     for (Ability ability : codexForSpec.abilities) {
                         player.getSpec().getAbilities().add(ability.create.get());
                     }
+                    warlordsPlayer.resetAbilityTree();
                 }
             });
         }
