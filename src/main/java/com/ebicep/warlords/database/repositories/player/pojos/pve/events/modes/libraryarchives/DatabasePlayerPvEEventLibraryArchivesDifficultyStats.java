@@ -57,26 +57,6 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
     @Field("active_bounties")
     private List<AbstractBounty> activeBounties = new ArrayList<>();
 
-    @Override
-    public Map<Bounty, Long> getCompletedBounties() {
-        return completedBounties;
-    }
-
-    @Override
-    public int getBountiesCompleted() {
-        return bountiesCompleted;
-    }
-
-    @Override
-    public void addBountiesCompleted() {
-        this.bountiesCompleted++;
-    }
-
-    @Override
-    public List<AbstractBounty> getActiveBounties() {
-        return activeBounties;
-    }
-
     public DatabasePlayerPvEEventLibraryArchivesDifficultyStats() {
     }
 
@@ -116,7 +96,10 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
             this.forgottenCodexStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         } else if (databaseGame instanceof DatabaseGamePvEEventGrimoiresGraveyard) {
             DatabaseGamePlayerPvEEventGrimoiresGraveyard gamePlayerGrimoiresGraveyard = (DatabaseGamePlayerPvEEventGrimoiresGraveyard) gamePlayer;
-            this.codexesEarned.merge(gamePlayerGrimoiresGraveyard.getCodexEarned(), multiplier, Integer::sum);
+            PlayerCodex codexEarned = gamePlayerGrimoiresGraveyard.getCodexEarned();
+            if (codexEarned != null) {
+                this.codexesEarned.merge(codexEarned, multiplier, Integer::sum);
+            }
             this.grimoiresGraveyardStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         }
 
@@ -215,16 +198,36 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
         return rewardsPurchased;
     }
 
+    @Override
+    public Map<Bounty, Long> getCompletedBounties() {
+        return completedBounties;
+    }
+
+    @Override
+    public int getBountiesCompleted() {
+        return bountiesCompleted;
+    }
+
+    @Override
+    public void addBountiesCompleted() {
+        this.bountiesCompleted++;
+    }
+
+    @Override
+    public List<AbstractBounty> getActiveBounties() {
+        return activeBounties;
+    }
+
     public DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats getForgottenCodexStats() {
         return forgottenCodexStats;
     }
 
-    public DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultyStats getGrimoiresGraveyardStats() {
-        return grimoiresGraveyardStats;
-    }
-
     public void setForgottenCodexStats(DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats forgottenCodexStats) {
         this.forgottenCodexStats = forgottenCodexStats;
+    }
+
+    public DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultyStats getGrimoiresGraveyardStats() {
+        return grimoiresGraveyardStats;
     }
 
     public void setGrimoiresGraveyardStats(DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultyStats grimoiresGraveyardStats) {
