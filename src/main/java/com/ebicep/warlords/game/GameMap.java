@@ -4739,7 +4739,7 @@ public enum GameMap {
                     .onPerMobKill(Mob.EVENT_THE_ARCHIVIST, 5000)
             );
             options.add(new CoinGainOption()
-                    .clearMobCoinValueAndSet("Bosses Killed", new LinkedHashMap<>() {{ //TODO
+                    .clearMobCoinValueAndSet("Bosses Killed", new LinkedHashMap<>() {{
                         put("Rouge Grimoire", 1000L);
                         put("Violette Grimoire", 1000L);
                         put("Bleue Grimoire", 1000L);
