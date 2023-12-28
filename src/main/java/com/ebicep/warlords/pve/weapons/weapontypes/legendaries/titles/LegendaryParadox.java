@@ -31,7 +31,7 @@ import java.util.*;
 public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenOfHesperidesTitle, PassiveCounter {
 
     public static final int HP_INTERVAL = 100;
-    public static final int HP_INTERVAL_PER_UPGRADE = 10;
+    public static final int HP_INTERVAL_PER_UPGRADE = -10;
     public static final int DAMAGE_BOOST_MAX = 25;
     public static final float DAMAGE_BOOST_MAX_PER_UPGRADE = 2.5f;
 
