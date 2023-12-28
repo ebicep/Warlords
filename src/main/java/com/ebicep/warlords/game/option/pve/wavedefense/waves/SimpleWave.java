@@ -78,6 +78,7 @@ public class SimpleWave implements Wave {
             }
             randomCollection.getMap().clear();
             randomCollection.getMap().putAll(newRandomCollection.getMap());
+            randomCollection.setTotal(newRandomCollection.getTotal());
         }
         AbstractMob mob = spawnSettings.mob().createMob(spawnSettings.spawnLocations() == null ? loc : spawnSettings.getRandomSpawnLocation());
         if (mob instanceof BossMob) {
