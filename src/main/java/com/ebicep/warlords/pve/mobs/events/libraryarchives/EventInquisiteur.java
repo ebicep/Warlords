@@ -73,6 +73,10 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
 
             @Override
             public void run() {
+                if (warlordsNPC.isDead()) {
+                    this.cancel();
+                    return;
+                }
                 // spawn 1 Necronomicon, 1 random Boss Minion Grimoire, and 1 Scripted Grimoire
                 option.spawnNewMob(new EventNecronomiconGrimoire(necronomiconSpawnLocations.get(ThreadLocalRandom.current().nextInt(necronomiconSpawnLocations.size()))));
                 Mob minionGrimoire = switch (ThreadLocalRandom.current().nextInt(4)) {

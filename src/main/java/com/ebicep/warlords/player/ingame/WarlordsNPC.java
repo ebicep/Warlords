@@ -20,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -42,6 +43,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     private AbstractMob mob;
     private Component mobNamePrefix = Component.empty();
     private ArmorStand nameDisplay;
+    private ArmorStand playerHealthDisplay; // used for player entity type npcs
     @Nonnull
     private TextColor nameColor = NamedTextColor.GRAY;
     private int stunTicks;
@@ -115,6 +117,35 @@ public final class WarlordsNPC extends WarlordsEntity {
         this.nameColor = nameColor;
     }
 
+    public float getMinMeleeDamage() {
+        return minMeleeDamage;
+    }
+
+    public void setMinMeleeDamage(int minMeleeDamage) {
+        this.minMeleeDamage = minMeleeDamage;
+    }
+
+    public float getMaxMeleeDamage() {
+        return maxMeleeDamage;
+    }
+
+    public void setMaxMeleeDamage(int maxMeleeDamage) {
+        this.maxMeleeDamage = maxMeleeDamage;
+    }
+
+    public NPC getNpc() {
+        return npc;
+    }
+
+    public List<CustomHologramLine> getCustomHologramLines() {
+        return customHologramLines;
+    }
+
+    @Override
+    public void removeHorse() {
+
+    }
+
     @Override
     public void die(@Nullable WarlordsEntity attacker) {
         super.die(attacker);
@@ -123,6 +154,9 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public void cleanup() {
         npc.destroy();
+        if (playerHealthDisplay != null) {
+            playerHealthDisplay.remove();
+        }
         nameDisplay.remove();
         customHologramLines.forEach(customHologramLine -> customHologramLine.getEntity().remove());
     }
@@ -214,7 +248,21 @@ public final class WarlordsNPC extends WarlordsEntity {
                     customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));
                 }
             }
-            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+            if (entity instanceof Player player) {
+                double healthDisplayY = player.getEyeHeight() + 0.15;
+                if (playerHealthDisplay == null) {
+                    playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
+                        armorStand.setMarker(true);
+                        armorStand.customName(getNameComponent());
+                        armorStand.setCustomNameVisible(true);
+                    });
+                } else {
+                    playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+                    playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
+                }
+            } else {
+                entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+            }
         }
     }
 
@@ -280,6 +328,10 @@ public final class WarlordsNPC extends WarlordsEntity {
         setStunTicks(stunTicks, false);
     }
 
+//    public HologramTrait getHologramTrait() {
+//        return hologramTrait;
+//    }
+
     public void setStunTicks(int stunTicks, boolean decrement) {
         AtomicReference<Boolean> noAI = new AtomicReference<>();
         if (mob == null) {
@@ -313,39 +365,6 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public AbstractMob getMob() {
         return mob;
-    }
-
-    public float getMinMeleeDamage() {
-        return minMeleeDamage;
-    }
-
-    public void setMinMeleeDamage(int minMeleeDamage) {
-        this.minMeleeDamage = minMeleeDamage;
-    }
-
-    public float getMaxMeleeDamage() {
-        return maxMeleeDamage;
-    }
-
-    public void setMaxMeleeDamage(int maxMeleeDamage) {
-        this.maxMeleeDamage = maxMeleeDamage;
-    }
-
-    public NPC getNpc() {
-        return npc;
-    }
-
-//    public HologramTrait getHologramTrait() {
-//        return hologramTrait;
-//    }
-
-    public List<CustomHologramLine> getCustomHologramLines() {
-        return customHologramLines;
-    }
-
-    @Override
-    public void removeHorse() {
-
     }
 
     public static class CustomHologramLine {

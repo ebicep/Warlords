@@ -4766,7 +4766,7 @@ public enum GameMap {
             "Forgotten Codex",
             6,
             1, //TODO
-            120 * SECOND,
+            30 * SECOND,
             "Forgotten",
             3,
             GameMode.EVENT_WAVE_DEFENSE

@@ -161,7 +161,9 @@ public enum Specializations {
     LUMINARY("Luminary",
             List.of("lum"),
             Luminary::new,
-            Component.text("A healing-oriented Arcanist specialization who can bend the space between light and darkness to aid their allies and weaken foes.", NamedTextColor.GRAY),
+            Component.text("A healing-oriented Arcanist specialization who can bend the space between light and darkness to aid their allies and weaken foes.",
+                    NamedTextColor.GRAY
+            ),
             SpecType.HEALER,
             MERCIFUL_HEX, RAY_OF_LIGHT, ENERGY_SEER_LUMINARY, SANCTIFIED_BEACON, DIVINE_BLESSING
     ),
@@ -205,6 +207,9 @@ public enum Specializations {
     }
 
     public static Classes getClass(Specializations selected) {
+        if (selected == null) {
+            return Classes.MAGE;
+        }
         return switch (selected) {
             case PYROMANCER, CRYOMANCER, AQUAMANCER -> Classes.MAGE;
             case BERSERKER, DEFENDER, REVENANT -> Classes.WARRIOR;
@@ -228,9 +233,9 @@ public enum Specializations {
     public final String name;
     public final List<String> aliases;
     public final Supplier<AbstractPlayerClass> create;
-    private final TextComponent description;
     public final SpecType specType;
     public final List<SkillBoosts> skillBoosts;
+    private final TextComponent description;
     private boolean banned = false;
 
     Specializations(

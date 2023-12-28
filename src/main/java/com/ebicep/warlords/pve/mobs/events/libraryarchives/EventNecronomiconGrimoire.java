@@ -17,7 +17,7 @@ import java.util.EnumSet;
 
 public class EventNecronomiconGrimoire extends AbstractMob implements BossMinionMob {
 
-    private int smiteTickCooldown = 0;
+    private int smiteTickCooldown = 10 * 20;
     private int timesSmited = 0;
 
     public EventNecronomiconGrimoire(Location spawnLocation) {

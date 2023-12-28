@@ -18,7 +18,7 @@ public class EventBleueGrimoire extends EventGrimoire {
                 0.38f,
                 5,
                 350,
-                700
+                500
         );
     }
 

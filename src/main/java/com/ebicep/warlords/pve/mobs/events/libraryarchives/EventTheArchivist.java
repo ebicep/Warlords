@@ -48,6 +48,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 minMeleeDamage,
                 maxMeleeDamage,
                 new CripplingStrike() {{
+                    this.getCooldown().setCurrentValue(5);
                     this.pveMasterUpgrade = true;
                 }},
                 new ChainLightning(7, 7) {{
