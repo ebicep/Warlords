@@ -22,8 +22,8 @@ public class EventInquisiteurEWA extends EventInquisiteur {
                 new IncendiaryCurse() {{
                     this.setPveMasterUpgrade(true);
                 }},
-                new WindfuryWeapon() {{
-                    this.setPveMasterUpgrade2(true);
+                new EnergySeerConjurer() {{
+                    this.setPveMasterUpgrade(true);
                 }},
                 new BloodLust(),
                 new Inferno() {{
