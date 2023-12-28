@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class EventInquisiteur extends AbstractMob implements BossMob {
 
+    private int killingBlowTickCooldown = 0;
+
     public EventInquisiteur(
             Location spawnLocation,
             String name,
@@ -89,12 +91,15 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                 option.spawnNewMob(new EventScriptedGrimoire(warlordsNPC.getLocation()));
             }
 
-        }.runTaskTimer(10 * 20, 10 * 20);
+        }.runTaskTimer(15 * 20, 10 * 20);
 
         AtomicInteger damageResistance = new AtomicInteger(0);
         option.getGame().registerEvents(new Listener() {
             @EventHandler
             public void onMobSpawn(WarlordsMobSpawnEvent event) {
+                if (killingBlowTickCooldown > 0) {
+                    return;
+                }
                 int mobCount = option.mobCount();
                 // 10 other mobs excluding inquisiteur
                 if (mobCount < 11) {
@@ -120,6 +125,7 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                 if (damageResistance.get() >= 50) {
                     return;
                 }
+                killingBlowTickCooldown = 5 * 20;
                 damageResistance.addAndGet(25);
             }
         });
@@ -139,7 +145,14 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                 return currentDamageValue * (1 - damageResistance.get() / 100f);
             }
         });
+    }
 
+    @Override
+    public void whileAlive(int ticksElapsed, PveOption option) {
+        super.whileAlive(ticksElapsed, option);
+        if (killingBlowTickCooldown > 0) {
+            killingBlowTickCooldown--;
+        }
     }
 
     @Override

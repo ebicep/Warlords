@@ -39,7 +39,7 @@ public class AccumulatingKnowledge implements FieldEffect {
     public void onWarlordsEntityCreated(WarlordsEntity player) {
         AtomicInteger multiplier = new AtomicInteger(1);
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "TODO",
+                "Accumulating Knowledge",
                 null,
                 FieldEffectOption.class,
                 null,
