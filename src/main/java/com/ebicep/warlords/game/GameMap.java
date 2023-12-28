@@ -4588,7 +4588,7 @@ public enum GameMap {
                             .add(1, 3, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
                             .add(1, 3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
                             .add(1, 2, Mob.EVENT_SCRIPTED_GRIMOIRE)
-                            .add(1, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
+                            .add(1, 2, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
                     )
                     .add(21, new SimpleWave(18, 5 * SECOND, null)
                             .add(0.2, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
