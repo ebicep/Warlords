@@ -136,11 +136,21 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
         return 5;
     }
 
+     @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 3;
+    }
+    
     @Override
     protected float getSkillCritChanceBonusValue() {
         return 5;
     }
 
+    @Override
+    protected float getSkillCritMultiplierBonusValue() {
+        return 5;
+    }
+    
     @Override
     protected float getMeleeDamageMaxValue() {
         return 185;
