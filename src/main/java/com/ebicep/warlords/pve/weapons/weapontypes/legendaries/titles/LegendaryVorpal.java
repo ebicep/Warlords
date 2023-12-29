@@ -110,7 +110,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
     @Override
     public TextComponent getPassiveEffect() {
         return Component.text(
-                                "Every 5th melee hit deals 7x damage, bypassing damage reduction. When any of Windfury, Earthliving, and Soulbinding Weapon are active, increase the player’s melee damage by ",
+                                "Every 5th melee hit deals 7x damage, bypassing damage reduction. When any of Windfury, Earthliving, or Soulbinding Weapon are active, increase the player’s melee damage by ",
                                 NamedTextColor.GRAY
                         )
                         .append(formatTitleUpgrade(MELEE_DAMAGE_BOOST + MELEE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
