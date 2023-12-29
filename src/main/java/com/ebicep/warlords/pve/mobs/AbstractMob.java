@@ -48,6 +48,7 @@ import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -106,7 +107,8 @@ public abstract class AbstractMob implements Mob {
     public abstract com.ebicep.warlords.pve.mobs.Mob getMobRegistry();
 
     public WarlordsNPC toNPC(Game game, Team team, Consumer<WarlordsNPC> modifyStats) {
-        this.npc = NPCManager.NPC_REGISTRY.createNPC(getMobRegistry().entityType, name);
+        EntityType entityType = getMobRegistry().entityType;
+        this.npc = NPCManager.NPC_REGISTRY.createNPC(entityType, name);
 
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
@@ -114,17 +116,30 @@ public abstract class AbstractMob implements Mob {
                          .stuckAction(null) // disable tping to player if too far away
                          .updatePathRate(5)
                          .distanceMargin(.5)
-                         .speedModifier(.9f);
-//        if (getMobRegistry().entityType == EntityType.SPIDER) {
+                         .speedModifier(.9f)
+                         .range(100);
+        if (entityType == EntityType.PLAYER) {
+//            defaultParameters.lookAtFunction(navigator -> {
+//                EntityTarget entityTarget = navigator.getEntityTarget();
+//                if (entityTarget != null) {
+//                    Entity target = entityTarget.getTarget();
+//                    return target instanceof LivingEntity livingEntity ? livingEntity.getEyeLocation() : target.getLocation().add(0, 1.75, 0);
+//                }
+//                return navigator.getNPC().getStoredLocation();
+//            });
 //            defaultParameters.useNewPathfinder(true);
-//        }
-        switch (getMobRegistry().entityType) {
+        }
+        switch (entityType) {
             case SLIME, MAGMA_CUBE -> npc.getNavigator().getDefaultParameters().straightLineTargetingDistance(100);
             case WOLF -> this.npc.getOrAddTrait(WolfModifiers.class).setAngry(true);
+            case PLAYER -> {
+                npc.getNavigator().getDefaultParameters().straightLineTargetingDistance(100);
+                npc.data().set(NPC.Metadata.RESET_PITCH_ON_TICK, true);
+            }
         }
 
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
-        this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
+        this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, entityType != EntityType.PLAYER);
 
         giveGoals();
         onNPCCreate();

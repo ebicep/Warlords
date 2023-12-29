@@ -46,7 +46,7 @@ public abstract class EventGrimoire extends AbstractMob implements BossMinionMob
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 20 * getAbilityActivationPeriod() == 0) {
+        if (ticksElapsed % (20 * getAbilityActivationPeriod()) == 0) {
             AbstractAbility ability = new ArrayList<>(abilities.keySet()).get(ThreadLocalRandom.current().nextInt(abilities.size()));
             boolean scriptedAlive = pveOption.getMobs().stream().anyMatch(mob -> mob.getMobRegistry() == Mob.EVENT_SCRIPTED_GRIMOIRE);
             switch (abilities.get(ability)) {

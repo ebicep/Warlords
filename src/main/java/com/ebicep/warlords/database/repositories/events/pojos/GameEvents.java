@@ -1442,9 +1442,6 @@ public enum GameEvents {
                 }
                 boolean unlocked = stats != null && stats.getCodexesEarned().keySet().stream().anyMatch(playerCodex -> playerCodex.getSpec() == spec);
                 PlayerCodex codexForSpec = PlayerCodex.getCodexForSpec(spec);
-                if (codexForSpec == null) {
-                    continue;
-                }
                 ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
                         .name(Component.textOfChildren(
                                 Component.text(spec.name, NamedTextColor.GRAY),

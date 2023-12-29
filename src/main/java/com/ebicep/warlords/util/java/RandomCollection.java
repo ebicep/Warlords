@@ -27,6 +27,10 @@ public class RandomCollection<E> {
         return total;
     }
 
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
     public int getSize() {
         return map.size();
     }

@@ -126,7 +126,7 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
 
     @Override
     protected float getSpeedBonusValue() {
-        return 5;
+        return 7;
     }
 
     @Override
@@ -136,7 +136,7 @@ public class LegendaryVibrant extends AbstractLegendaryWeapon implements GardenO
 
     @Override
     protected float getSkillCritMultiplierBonusValue() {
-        return 10;
+        return 15;
     }
 
     @Override

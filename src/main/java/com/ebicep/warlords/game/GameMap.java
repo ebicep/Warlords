@@ -4403,11 +4403,8 @@ public enum GameMap {
 
             );
             options.add(new CurrencyOnEventOption()
-                            .startWith(750000)
-                            .onKill(500)
-//                    .onPerMobKill(Mob.EVENT_ZEUS, 5000)
-//                    .onPerMobKill(Mob.EVENT_POSEIDON, 5000)
-//                    .onPerMobKill(Mob.EVENT_HADES, 5000)
+                    .startWith(750000)
+                    .onKill(500)
             );
             options.add(new CoinGainOption()
                     .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{
@@ -4433,8 +4430,8 @@ public enum GameMap {
     },
     GRIMOIRES_GRAVEYARD(
             "Grimoire’s Graveyard",
-            4,
-            1,
+            6,
+            1, //TODO
             120 * SECOND,
             "Grimoires",
             3,
@@ -4461,12 +4458,26 @@ public enum GameMap {
             options.add(LobbyLocationMarker.create(loc.addXYZ(16, 27, 1.5), Team.RED).asOption());
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(16, 27, 1.5), Team.BLUE)); //TODO
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(16, 27, 1.5), Team.RED));
-//            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, 13.5), Team.RED));
-//            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, 5.5), Team.RED));
-//            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, -10.5), Team.RED));
-//            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -18.5), Team.RED));
-//            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, -10.5), Team.RED));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(2.5, 27, 17.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-10.5, 27, 16.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-18.5, 27, 8.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-18.5, 27, -5.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-10.5, 27, -13.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(3.5, 27, -13.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(11.5, 27, -5.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(11.5, 27, 8.5), Team.RED));
+
+            List<Location> necronomiconSpawnLocations = List.of(
+                    loc.addXYZ(-16.5, 24, 16.5),
+                    loc.addXYZ(9.5, 24, 16.5),
+                    loc.addXYZ(11.5, 24, 14.5),
+                    loc.addXYZ(11.5, 24, -11.5),
+                    loc.addXYZ(9.5, 24, -13.5),
+                    loc.addXYZ(-16.5, 24, -13.5),
+                    loc.addXYZ(-18.5, 24, -11.5),
+                    loc.addXYZ(-18.5, 24, 14.5)
+            );
 
             options.add(new PowerupOption(loc.addXYZ(16, 25, 1.5), PowerUp.DAMAGE, 180, 30));
             options.add(new PowerupOption(loc.addXYZ(-23.5, 25, 1.5), PowerUp.DAMAGE, 180, 30));
@@ -4497,13 +4508,13 @@ public enum GameMap {
                             .add(0.2, Mob.ZOMBIE_SWORDSMAN)
                             .add(0.1, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
                     )
-                    .add(5, new SimpleWave(6, 5 * SECOND, null)
-                            .add(1, Mob.EVENT_ROUGE_GRIMOIRE)
-                            .add(1, Mob.EVENT_VIOLETTE_GRIMOIRE)
-                            .add(1, Mob.EVENT_BLEUE_GRIMOIRE)
-                            .add(1, Mob.EVENT_ORANGE_GRIMOIRE)
-                            .add(1, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
-                            .add(1, Mob.EVENT_EMBELLISHED_GRIMOIRE)
+                    .add(5, new SimpleWave(6, 5 * SECOND, Component.text("Boss"))
+                            .add(1, 1, Mob.EVENT_ROUGE_GRIMOIRE)
+                            .add(1, 1, Mob.EVENT_VIOLETTE_GRIMOIRE)
+                            .add(1, 1, Mob.EVENT_BLEUE_GRIMOIRE)
+                            .add(1, 1, Mob.EVENT_ORANGE_GRIMOIRE)
+                            .add(1, 1, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
+                            .add(1, 1, Mob.EVENT_EMBELLISHED_GRIMOIRE, necronomiconSpawnLocations)
                     )
                     .add(6, new SimpleWave(12, 5 * SECOND, null)
                             .add(0.3, Mob.PIG_DISCIPLE)
@@ -4519,16 +4530,16 @@ public enum GameMap {
                             .add(0.1, Mob.SKELETAL_WARLOCK)
                             .add(0.2, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
                             .add(0.2, Mob.EVENT_EMBELLISHED_GRIMOIRE)
-                            .add(0.1, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE)
+                            .add(0.1, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
                     )
-                    .add(10, new SimpleWave(13, 5 * SECOND, null)
-                            .add(2, Mob.EVENT_ROUGE_GRIMOIRE)
-                            .add(2, Mob.EVENT_VIOLETTE_GRIMOIRE)
-                            .add(2, Mob.EVENT_BLEUE_GRIMOIRE)
-                            .add(2, Mob.EVENT_ORANGE_GRIMOIRE)
-                            .add(2, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
-                            .add(2, Mob.EVENT_EMBELLISHED_GRIMOIRE)
-                            .add(1, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE)
+                    .add(10, new SimpleWave(13, 5 * SECOND, Component.text("Boss"))
+                            .add(1, 2, Mob.EVENT_ROUGE_GRIMOIRE)
+                            .add(1, 2, Mob.EVENT_VIOLETTE_GRIMOIRE)
+                            .add(1, 2, Mob.EVENT_BLEUE_GRIMOIRE)
+                            .add(1, 2, Mob.EVENT_ORANGE_GRIMOIRE)
+                            .add(1, 2, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
+                            .add(1, 2, Mob.EVENT_EMBELLISHED_GRIMOIRE)
+                            .add(1, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
                     )
                     .add(11, new SimpleWave(14, 5 * SECOND, null)
                             .add(0.05, Mob.ZOMBIE_LAMENT)
@@ -4549,14 +4560,14 @@ public enum GameMap {
                             .add(0.1, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
                             .add(0.1, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
                     )
-                    .add(15, new SimpleWave(19, 5 * SECOND, null)
-                            .add(3, Mob.EVENT_ROUGE_GRIMOIRE)
-                            .add(3, Mob.EVENT_VIOLETTE_GRIMOIRE)
-                            .add(3, Mob.EVENT_BLEUE_GRIMOIRE)
-                            .add(3, Mob.EVENT_ORANGE_GRIMOIRE)
-                            .add(3, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
-                            .add(3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
-                            .add(1, Mob.EVENT_SCRIPTED_GRIMOIRE)
+                    .add(15, new SimpleWave(19, 5 * SECOND, Component.text("Boss"))
+                            .add(1, 3, Mob.EVENT_ROUGE_GRIMOIRE)
+                            .add(1, 3, Mob.EVENT_VIOLETTE_GRIMOIRE)
+                            .add(1, 3, Mob.EVENT_BLEUE_GRIMOIRE)
+                            .add(1, 3, Mob.EVENT_ORANGE_GRIMOIRE)
+                            .add(1, 3, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
+                            .add(1, 3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
+                            .add(1, 1, Mob.EVENT_SCRIPTED_GRIMOIRE)
                     )
                     .add(16, new SimpleWave(16, 5 * SECOND, null)
                             .add(0.1, Mob.ZOMBIE_LAMENT)
@@ -4567,17 +4578,17 @@ public enum GameMap {
                             .add(0.1, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
                             .add(0.05, Mob.ZOMBIE_VANGUARD)
                             .add(0.05, Mob.SLIME_GUARD)
-                            .add(0.2, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE)
+                            .add(0.2, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
                     )
-                    .add(20, new SimpleWave(26, 5 * SECOND, null)
-                            .add(4, Mob.EVENT_ROUGE_GRIMOIRE)
-                            .add(4, Mob.EVENT_VIOLETTE_GRIMOIRE)
-                            .add(4, Mob.EVENT_BLEUE_GRIMOIRE)
-                            .add(4, Mob.EVENT_ORANGE_GRIMOIRE)
-                            .add(3, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
-                            .add(3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
-                            .add(2, Mob.EVENT_SCRIPTED_GRIMOIRE)
-                            .add(2, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE)
+                    .add(20, new SimpleWave(26, 5 * SECOND, Component.text("Boss"))
+                            .add(1, 4, Mob.EVENT_ROUGE_GRIMOIRE)
+                            .add(1, 4, Mob.EVENT_VIOLETTE_GRIMOIRE)
+                            .add(1, 4, Mob.EVENT_BLEUE_GRIMOIRE)
+                            .add(1, 4, Mob.EVENT_ORANGE_GRIMOIRE)
+                            .add(1, 3, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
+                            .add(1, 3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
+                            .add(1, 2, Mob.EVENT_SCRIPTED_GRIMOIRE)
+                            .add(1, 2, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
                     )
                     .add(21, new SimpleWave(18, 5 * SECOND, null)
                             .add(0.2, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
@@ -4588,16 +4599,16 @@ public enum GameMap {
                             .add(0.2, Mob.ILLUMINATION)
                             .add(0.1, Mob.FIRE_SPLITTER)
                     )
-                    .add(25, new SimpleWave(30, 5 * SECOND, null)
-                            .add(4, Mob.EVENT_ROUGE_GRIMOIRE)
-                            .add(4, Mob.EVENT_VIOLETTE_GRIMOIRE)
-                            .add(4, Mob.EVENT_BLEUE_GRIMOIRE)
-                            .add(4, Mob.EVENT_ORANGE_GRIMOIRE)
-                            .add(4, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
-                            .add(5, Mob.EVENT_EMBELLISHED_GRIMOIRE)
-                            .add(2, Mob.EVENT_SCRIPTED_GRIMOIRE)
-                            .add(4, 1, Mob.EVENT_NECRONOMICON_GRIMOIRE)
-                            .add(1, Mob.EVENT_THE_ARCHIVIST)
+                    .add(25, new SimpleWave(30, 5 * SECOND, Component.text("Boss"))
+                            .add(1, 4, Mob.EVENT_ROUGE_GRIMOIRE)
+                            .add(1, 4, Mob.EVENT_VIOLETTE_GRIMOIRE)
+                            .add(1, 4, Mob.EVENT_BLEUE_GRIMOIRE)
+                            .add(1, 4, Mob.EVENT_ORANGE_GRIMOIRE)
+                            .add(1, 4, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
+                            .add(1, 3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
+                            .add(1, 2, Mob.EVENT_SCRIPTED_GRIMOIRE)
+                            .add(1, 4, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
+                            .add(10, 1, Mob.EVENT_THE_ARCHIVIST, loc.addXYZ(-3.5, 25, 1.5))
                     )
                     ,
                     DifficultyIndex.EVENT, 25
@@ -4637,7 +4648,7 @@ public enum GameMap {
                         case 6 -> 2.5f;
                         default -> 1;
                     };
-                    float damageMultiplier = playerCount >= 4 ? 1.15f : 1; //TODO
+                    float damageMultiplier = playerCount >= 4 ? playerCount >= 6 ? 1.2f : 1.1f : 1f;
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
                     warlordsNPC.setMaxBaseHealth(newBaseHealth);
                     warlordsNPC.setMaxHealth(newBaseHealth);
@@ -4695,31 +4706,51 @@ public enum GameMap {
                     .onPerMobKill(Mob.EVENT_BLEUE_GRIMOIRE, 500)
                     .onPerMobKill(Mob.EVENT_ORANGE_GRIMOIRE, 500)
                     .onPerMobKill(Mob.EVENT_THE_ARCHIVIST, 2500)
-                    .onPerMobKill(Mob.EVENT_INQUISITEUR_EWA, 10_000)
-                    .onPerMobKill(Mob.EVENT_INQUISITEUR_EGA, 10_000) //TODO
-                    .onPerMobKill(Mob.EVENT_INQUISITEUR_VPA, 10_000)
             );
             options.add(new CurrencyOnEventOption()
-//                    .startWith(120000) //TODO
-//                    .onKill(500)
-//                    .setPerWaveClear(5, 25000)
-.onPerMobKill(Mob.EVENT_ROUGE_GRIMOIRE, 5000)
-.onPerMobKill(Mob.EVENT_VIOLETTE_GRIMOIRE, 5000)
-.onPerMobKill(Mob.EVENT_BLEUE_GRIMOIRE, 5000)
-.onPerMobKill(Mob.EVENT_ORANGE_GRIMOIRE, 5000)
+                    .startWith(120000)
+                    .onKill(500)
+                    .setPerWaveClear(5, 25000)
+                    .onPerWaveClear(1, 500)
+                    .onPerMobKill(Mob.ZOMBIE_LANCER, 5)
+                    .onPerMobKill(Mob.SKELETAL_ENTROPY, 5)
+                    .onPerMobKill(Mob.SLIMY_ANOMALY, 5)
+                    .onPerMobKill(Mob.PIG_DISCIPLE, 10)
+                    .onPerMobKill(Mob.EVENT_UNPUBLISHED_GRIMOIRE, 10)
+                    .onPerMobKill(Mob.ZOMBIE_LAMENT, 10)
+                    .onPerMobKill(Mob.ARACHNO_VENARI, 10)
+                    .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 15)
+                    .onPerMobKill(Mob.PIG_SHAMAN, 15)
+                    .onPerMobKill(Mob.SKELETAL_ENTROPY, 15)
+                    .onPerMobKill(Mob.SKELETAL_WARLOCK, 15)
+                    .onPerMobKill(Mob.INTERMEDIATE_WARRIOR_BERSERKER, 15)
+                    .onPerMobKill(Mob.ZOMBIE_VANGUARD, 20)
+                    .onPerMobKill(Mob.EVENT_EMBELLISHED_GRIMOIRE, 20)
+                    .onPerMobKill(Mob.SLIME_GUARD, 25)
+                    .onPerMobKill(Mob.ILLUMINATION, 25)
+                    .onPerMobKill(Mob.INTERMEDIATE_WARRIOR_BERSERKER, 25)
+                    .onPerMobKill(Mob.FIRE_SPLITTER, 40)
+                    .onPerMobKill(Mob.EVENT_SCRIPTED_GRIMOIRE, 150)
+                    .onPerMobKill(Mob.EVENT_NECRONOMICON_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_ROUGE_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_VIOLETTE_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_BLEUE_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_ORANGE_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_THE_ARCHIVIST, 5000)
             );
             options.add(new CoinGainOption()
-//                    .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{ //TODO
-//                        put("Apollo", 100L);
-//                        put("Ares", 100L);
-//                        put("Prometheus", 100L);
-//                        put("Athena", 100L);
-//                        put("Cronus", 100L);
-//                    }})
-.playerCoinPerXSec(150, 10)
-.guildCoinInsigniaConvertBonus(1000)
-.guildCoinPerXSec(1, 3)
-.disableCoinConversionUpgrade()
+                    .clearMobCoinValueAndSet("Bosses Killed", new LinkedHashMap<>() {{
+                        put("Rouge Grimoire", 1000L);
+                        put("Violette Grimoire", 1000L);
+                        put("Bleue Grimoire", 1000L);
+                        put("Orange Grimoire", 1000L);
+                        put("Necronomicon Grimoire", 1000L);
+                        put("The Archivist", 1000L);
+                    }})
+                    .playerCoinPerXSec(150, 10)
+                    .guildCoinInsigniaConvertBonus(1000)
+                    .guildCoinPerXSec(1, 3)
+                    .disableCoinConversionUpgrade()
             );
             options.add(new ExperienceGainOption()
                     .playerExpPerXSec(10, 10)
@@ -4733,10 +4764,10 @@ public enum GameMap {
     },
     FORGOTTEN_CODEX(
             "Forgotten Codex",
-            4,
-            2,
-            120 * SECOND,
-            "ForgottenCodex",
+            6,
+            1, //TODO
+            30 * SECOND,
+            "Forgotten",
             3,
             GameMode.EVENT_WAVE_DEFENSE
     ) {
@@ -4756,21 +4787,15 @@ public enum GameMap {
                     Component.text("Kill as many mobs as possible!", NamedTextColor.YELLOW)
             ));
 
-            /* TODO
+
             options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.BLUE).asOption());
-            options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 23, -2.50), Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-4.5, 35, 7.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-4.5, 35, 7.5), Team.RED).asOption());
 
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -2.50), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, 5.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, 13.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, 5.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(8.5, 23, -10.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(0.5, 23, -18.5), Team.RED));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-7.5, 23, -10.5), Team.RED));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-4.5, 35, 7.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-4.5, 35, 7.5), Team.RED));
 
-//            options.add(new PowerupOption(loc.addXYZ(14.5, 24.5, 16.5), PowerUp.COOLDOWN, 180, 30)); TODO
-//            options.add(new PowerupOption(loc.addXYZ(-13.5, 24.5, -23.5), PowerUp.HEALING, 90, 30));
+            options.add(new PowerupOption(loc.addXYZ(-4.5, 35, 7.5), PowerUp.HEALING, 90, 30));
 
             options.add(new RespawnWaveOption(2, 1, 20));
             options.add(new GraveOption());
@@ -4778,104 +4803,13 @@ public enum GameMap {
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld(), AbstractCuboidOption.MAX_WORLD_SIZE_MINI));
 
-            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList() //TODO
-                    .add(1, new SimpleWave(8, 5 * SECOND, null)
-                            .add(0.4, Mob.ZOMBIE_LANCER)
-                            .add(0.5, Mob.PIG_DISCIPLE)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                    )
-                    .add(2, new SimpleWave(8, 5 * SECOND, null)
-                            .add(0.4, Mob.ZOMBIE_LANCER)
-                            .add(0.4, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ZOMBIE_LAMENT)
-                    )
-                    .add(4, new SimpleWave(8, 5 * SECOND, null)
-                            .add(0.4, Mob.ZOMBIE_LANCER)
-                            .add(0.3, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ARACHNO_VENARI)
-                            .add(0.05, Mob.SKELETAL_WARLOCK)
-                            .add(0.05, Mob.PIG_SHAMAN)
-                    )
-                    .add(5, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_APOLLO)
-                    )
-                    .add(6, new SimpleWave(12, 5 * SECOND, null)
-                            .add(0.4, Mob.ZOMBIE_LANCER)
-                            .add(0.2, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ARACHNO_VENARI)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                            .add(0.05, Mob.SKELETAL_WARLOCK)
-                            .add(0.05, Mob.PIG_ALLEVIATOR)
-                    )
-                    .add(8, new SimpleWave(12, 5 * SECOND, null)
-                            .add(0.2, Mob.ZOMBIE_LANCER)
-                            .add(0.2, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ARACHNO_VENARI)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                            .add(0.2, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
-                            .add(0.05, Mob.PIG_ALLEVIATOR)
-                            .add(0.05, Mob.ZOMBIE_VANGUARD)
-                    )
-                    .add(10, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_ARES)
-                    )
-                    .add(11, new SimpleWave(16, 5 * SECOND, null)
-                            .add(0.1, Mob.ZOMBIE_LANCER)
-                            .add(0.1, Mob.PIG_DISCIPLE)
-                            .add(0.2, Mob.ZOMBIE_LAMENT)
-                            .add(0.2, Mob.ARACHNO_VENARI)
-                            .add(0.1, Mob.PIG_SHAMAN)
-                            .add(0.2, Mob.PIG_ALLEVIATOR)
-                            .add(0.05, Mob.ZOMBIE_VANGUARD)
-                            .add(0.05, Mob.SLIME_GUARD)
-                    )
-                    .add(13, new SimpleWave(16, 5 * SECOND, null)
-                            .add(0.1, Mob.ZOMBIE_LANCER)
-                            .add(0.1, Mob.PIG_DISCIPLE)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                            .add(0.1, Mob.ARACHNO_VENARI)
-                            .add(0.1, Mob.PIG_SHAMAN)
-                            .add(0.2, Mob.PIG_ALLEVIATOR)
-                            .add(0.05, Mob.ZOMBIE_VANGUARD)
-                            .add(0.05, Mob.SLIME_GUARD)
-                            .add(0.2, Mob.ZOMBIE_SWORDSMAN)
-                    )
-                    .add(15, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_PROMETHEUS)
-                    )
-                    .add(16, new SimpleWave(20, 5 * SECOND, null)
-                            .add(0.2, Mob.PIG_DISCIPLE)
-                            .add(0.1, Mob.ZOMBIE_LAMENT)
-                            .add(0.1, Mob.ARACHNO_VENARI)
-                            .add(0.2, Mob.PIG_SHAMAN)
-                            .add(0.05, Mob.PIG_ALLEVIATOR)
-                            .add(0.05, Mob.ZOMBIE_VANGUARD)
-                            .add(0.05, Mob.SLIME_GUARD)
-                            .add(0.05, Mob.ZOMBIE_SWORDSMAN)
-                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
-                            .add(0.1, Mob.RIFT_WALKER)
-                    )
-                    .add(20, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_ATHENA)
-                    )
-                    .add(21, new SimpleWave(24, 5 * SECOND, null)
-                            .add(0.2, Mob.ZOMBIE_LAMENT)
-                            .add(0.2, Mob.PIG_ALLEVIATOR)
-                            .add(0.1, Mob.ZOMBIE_VANGUARD)
-                            .add(0.1, Mob.SLIME_GUARD)
-                            .add(0.1, Mob.ZOMBIE_SWORDSMAN)
-                            .add(0.1, Mob.OVERGROWN_ZOMBIE)
-                            .add(0.1, Mob.RIFT_WALKER)
-                            .add(0.05, Mob.SKELETAL_SORCERER)
-                            .add(0.05, Mob.ZOMBIE_KNIGHT)
-                    )
-                    .add(25, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
-                            .add(1, Mob.EVENT_CRONUS)
-                    )
-                    .loop(6, 21, 5)
-                    .loop(6, 25, 5)
-                    ,
-                    DifficultyIndex.EVENT
+            options.add(new WaveDefenseOption(Team.RED, new StaticWaveList()
+                    .add(1, new SimpleWave(1, 5 * SECOND, Component.text("Boss"))
+                            .add(1, Mob.EVENT_INQUISITEUR_EWA)
+                            .add(1, Mob.EVENT_INQUISITEUR_EGA)
+                            .add(1, Mob.EVENT_INQUISITEUR_VPA)
+                    ),
+                    DifficultyIndex.EVENT, 1
             ) {
                 @Override
                 public void register(@Nonnull Game game) {
@@ -4894,6 +4828,8 @@ public enum GameMap {
                     return switch (playerCount) {
                         case 3 -> 1.2f;
                         case 4 -> 1.5f;
+                        case 5 -> 1.9f;
+                        case 6 -> 2.4f;
                         default -> 1;
                     };
                 }
@@ -4903,9 +4839,14 @@ public enum GameMap {
                     warlordsNPC.getMob().onSpawn(this);
 
                     int playerCount = playerCount();
-                    float healthMultiplier = .5f + .5f * playerCount; // 1 / 1.5 / 2 / 2.5
-                    float damageMultiplier = playerCount >= 4 ? 1.15f : 1;
-
+                    float healthMultiplier = switch (playerCount) {
+                        case 3 -> 1.5f;
+                        case 4 -> 2f;
+                        case 5 -> 2.25f;
+                        case 6 -> 2.5f;
+                        default -> 1;
+                    };
+                    float damageMultiplier = playerCount >= 4 ? playerCount >= 6 ? 1.2f : 1.1f : 1f;
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
                     warlordsNPC.setMaxBaseHealth(newBaseHealth);
                     warlordsNPC.setMaxHealth(newBaseHealth);
@@ -4931,72 +4872,66 @@ public enum GameMap {
             });
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
-            options.add(new TheAcropolisOption());
-//            options.add(new SafeZoneOption(1));
+            options.add(new WinByMaxWaveClearOption());
+            options.add(new ForgottenCodexOption());
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(30, Team.BLUE)
                     .onPerWaveClear(1, 500)
                     .onPerWaveClear(5, 2000)
-                    .onPerMobKill(Mob.ZOMBIE_LANCER, 5)
-                    .onPerMobKill(Mob.SKELETAL_ENTROPY, 5)
-                    .onPerMobKill(Mob.PIG_DISCIPLE, 10)
-                    .onPerMobKill(Mob.ZOMBIE_LAMENT, 10)
-                    .onPerMobKill(Mob.ARACHNO_VENARI, 10)
+                    .onPerMobKill(Mob.EVENT_UNPUBLISHED_GRIMOIRE, 10)
+                    .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 15)
                     .onPerMobKill(Mob.PIG_SHAMAN, 15)
-                    .onPerMobKill(Mob.PIG_ALLEVIATOR, 15)
-                    .onPerMobKill(Mob.ZOMBIE_VANGUARD, 20)
-                    .onPerMobKill(Mob.SLIME_GUARD, 25)
-                    .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 25)
-                    .onPerMobKill(Mob.ILLUMINATION, 25)
-                    .onPerMobKill(Mob.INTERMEDIATE_WARRIOR_BERSERKER, 25)
-                    .onPerMobKill(Mob.SKELETAL_MESMER, 35)
-                    .onPerMobKill(Mob.OVERGROWN_ZOMBIE, 40)
-                    .onPerMobKill(Mob.ADVANCED_WARRIOR_BERSERKER, 40)
-                    .onPerMobKill(Mob.RIFT_WALKER, 45)
-                    .onPerMobKill(Mob.SKELETAL_SORCERER, 45)
-                    .onPerMobKill(Mob.FIRE_SPLITTER, 45)
-                    .onPerMobKill(Mob.ZOMBIE_KNIGHT, 50)
-                    .onPerMobKill(Mob.SCRUPULOUS_ZOMBIE, 50)
-                    .onPerMobKill(Mob.EVENT_TERAS_MINOTAUR, 150)
-                    .onPerMobKill(Mob.EVENT_TERAS_CYCLOPS, 150)
-                    .onPerMobKill(Mob.EVENT_TERAS_SIREN, 150)
-                    .onPerMobKill(Mob.EVENT_TERAS_DRYAD, 150)
-                    .onPerMobKill(Mob.EVENT_APOLLO, 1500)
-                    .onPerMobKill(Mob.EVENT_ARES, 1500)
-                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 1500)
-                    .onPerMobKill(Mob.EVENT_ATHENA, 1500)
-                    .onPerMobKill(Mob.EVENT_CRONUS, 1500)
+                    .onPerMobKill(Mob.GOLEM_APPRENTICE, 15)
+                    .onPerMobKill(Mob.EVENT_EMBELLISHED_GRIMOIRE, 20)
+                    .onPerMobKill(Mob.EVENT_SCRIPTED_GRIMOIRE, 150)
+                    .onPerMobKill(Mob.EVENT_NECRONOMICON_GRIMOIRE, 150)
+                    .onPerMobKill(Mob.EVENT_ROUGE_GRIMOIRE, 500)
+                    .onPerMobKill(Mob.EVENT_VIOLETTE_GRIMOIRE, 500)
+                    .onPerMobKill(Mob.EVENT_BLEUE_GRIMOIRE, 500)
+                    .onPerMobKill(Mob.EVENT_ORANGE_GRIMOIRE, 500)
+                    .onPerMobKill(Mob.EVENT_INQUISITEUR_EWA, 10_000)
+                    .onPerMobKill(Mob.EVENT_INQUISITEUR_EGA, 10_000)
+                    .onPerMobKill(Mob.EVENT_INQUISITEUR_VPA, 10_000)
             );
             options.add(new CurrencyOnEventOption()
-                    .startWith(120000)
+                    .startWith(750000)
                     .onKill(500)
-                    .setPerWaveClear(5, 25000)
-                    .onPerMobKill(Mob.EVENT_APOLLO, 10000)
-                    .onPerMobKill(Mob.EVENT_ARES, 10000)
-                    .onPerMobKill(Mob.EVENT_PROMETHEUS, 10000)
-                    .onPerMobKill(Mob.EVENT_ATHENA, 10000)
-                    .onPerMobKill(Mob.EVENT_CRONUS, 10000)
+                    .onPerMobKill(Mob.EVENT_UNPUBLISHED_GRIMOIRE, 10)
+                    .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 15)
+                    .onPerMobKill(Mob.PIG_SHAMAN, 15)
+                    .onPerMobKill(Mob.GOLEM_APPRENTICE, 15)
+                    .onPerMobKill(Mob.EVENT_SCRIPTED_GRIMOIRE, 150)
+                    .onPerMobKill(Mob.EVENT_NECRONOMICON_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_ROUGE_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_VIOLETTE_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_BLEUE_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_ORANGE_GRIMOIRE, 5000)
+                    .onPerMobKill(Mob.EVENT_INQUISITEUR_EWA, 20_000)
+                    .onPerMobKill(Mob.EVENT_INQUISITEUR_EGA, 20_000)
+                    .onPerMobKill(Mob.EVENT_INQUISITEUR_VPA, 20_000)
             );
             options.add(new CoinGainOption()
                     .clearMobCoinValueAndSet("Greek Gods Killed", new LinkedHashMap<>() {{
-                        put("Apollo", 100L);
-                        put("Ares", 100L);
-                        put("Prometheus", 100L);
-                        put("Athena", 100L);
-                        put("Cronus", 100L);
+                        put("Rouge Grimoire", 1000L);
+                        put("Violette Grimoire", 1000L);
+                        put("Bleue Grimoire", 1000L);
+                        put("Orange Grimoire", 1000L);
+                        put("Necronomicon Grimoire", 1000L);
+                        put("Inquisiteur-EWA", 15000L);
+                        put("Inquisiteur-EGA", 15000L);
+                        put("Inquisiteur-VPA", 15000L);
                     }})
-                    .playerCoinPerXSec(150, 10)
+                    .playerCoinPerXSec(150, 5)
                     .guildCoinInsigniaConvertBonus(1000)
                     .guildCoinPerXSec(1, 1)
                     .disableCoinConversionUpgrade()
             );
             options.add(new ExperienceGainOption()
-                    .playerExpPerXSec(15, 10)
-                    .guildExpPerXSec(4, 10)
+                    .playerExpPerXSec(10, 5)
+                    .guildExpPerXSec(30, 30)
             );
-            options.add(new FieldEffect(options, FieldEffect.FieldEffects.TYCHE_PROSPERITY));
+            options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffect.CODEX_COLLECTOR));
 
-             */
             return options;
         }
     },

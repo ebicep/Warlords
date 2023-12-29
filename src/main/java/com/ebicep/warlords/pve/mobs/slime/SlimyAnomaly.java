@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
-import com.ebicep.customentities.nms.pve.CustomSlime;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -99,8 +98,8 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
             enemy.getCooldownManager().addRegularCooldown(
                     "Shimmer",
                     "SHM",
-                    CustomSlime.class,
-                    new CustomSlime(spawnLocation.getWorld()),
+                    SlimyAnomaly.class,
+                    null,
                     warlordsNPC,
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {

@@ -1,7 +1,9 @@
 package com.ebicep.warlords.pve.bountysystem;
 
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -70,6 +72,10 @@ public class BountyUtils {
 
     public static boolean waveDefenseMatchesDifficulty(Game game, DifficultyIndex difficulty) {
         return game.getOptions().stream().anyMatch(option -> option instanceof WaveDefenseOption waveDefenseOption && waveDefenseOption.getDifficulty() == difficulty);
+    }
+
+    public static boolean wonGame(WarlordsGameTriggerWinEvent event) {
+        return event.getDeclaredWinner() == Team.BLUE;
     }
 
     public static <T> Optional<T> getPvEOptionFromGame(Game game, Class<T> optionClass) {

@@ -320,13 +320,17 @@ public class EffectUtils {
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue, int amount) {
+        playParticleLinkAnimation(to, from, red, green, blue, amount, 1);
+    }
+
+    public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue, int amount, int size) {
         to = to.clone();
         from = from.clone();
         Location lineLocation = to.add(0, 1, 0).clone();
         lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));
         for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
             for (int i1 = 0; i1 < amount; i1++) {
-                Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
+                Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), size);
                 displayParticle(Particle.REDSTONE, lineLocation, amount, dustOptions);
             }
             lineLocation.add(lineLocation.getDirection().multiply(.5));

@@ -1,8 +1,11 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.bukkit.Laser;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -100,6 +103,7 @@ public class OldTestCommand implements CommandExecutor {
         return Color.getHSBColor(hue, saturation, brightness);
     }
 
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
@@ -112,6 +116,32 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
+
+            try {
+                Laser laser = new Laser.GuardianLaser(new LocationBuilder(player.getLocation()).forward(10), player.getLocation(), 15, -1);
+                laser.start(Warlords.getInstance());
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+
+
+//            Guardian guard = player.getWorld().spawn(new LocationBuilder(player.getLocation()).forward(10), Guardian.class, guardian -> {
+//                guardian.setInvisible(true);
+//                guardian.setTarget(player);
+//                guardian.setLaser(true);
+//                guardian.setLaserTicks(500);
+//            });
+//            World world = player.getWorld();
+//            CustomGuardian guardian = new CustomGuardian(world);
+//            guardian.setInvisible(true);
+//            guardian.setTarget((LivingEntity) ((CraftEntity) player).getHandle());
+//            guardian.setLaser(true);
+//            guardian.setLaserTicks(500);
+//            guardian.setPos(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ());
+//            ((CraftWorld) world).getHandle().addFreshEntity(guardian, CreatureSpawnEvent.SpawnReason.CUSTOM);
+
+//            craftGuardian.move
+
 
 //            DatabaseManager.getPlayer(UUID.fromString("931d683f-b7cb-4770-a1b6-d39d89cd2d3a"), databasePlayer -> {
 //                ItemEquipMenu.openItemLoadoutMenu(player, null, databasePlayer);
