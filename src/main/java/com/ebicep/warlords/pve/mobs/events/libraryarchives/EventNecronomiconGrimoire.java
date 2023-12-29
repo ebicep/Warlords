@@ -87,8 +87,8 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         targetWarlordsEntity.addDamageInstance(
                 warlordsNPC,
                 "Smite",
-                5000,
-                5000,
+                3250,
+                3250,
                 0,
                 100,
                 EnumSet.of(InstanceFlags.TRUE_DAMAGE)
