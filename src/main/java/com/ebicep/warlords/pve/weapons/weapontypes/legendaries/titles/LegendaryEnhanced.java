@@ -152,7 +152,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
 
     @Override
     protected float getSpeedBonusValue() {
-        return 5;
+        return 8;
     }
 
     @Override
