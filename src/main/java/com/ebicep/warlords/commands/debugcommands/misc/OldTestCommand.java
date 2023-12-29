@@ -118,7 +118,7 @@ public class OldTestCommand implements CommandExecutor {
         if (commandSender instanceof Player player) {
 
             try {
-                Laser laser = new Laser.GuardianLaser(new LocationBuilder(player.getLocation()).forward(10), player, 15, -1);
+                Laser laser = new Laser.GuardianLaser(new LocationBuilder(player.getLocation()).forward(10), player.getLocation(), 15, -1);
                 laser.start(Warlords.getInstance());
             } catch (ReflectiveOperationException e) {
                 throw new RuntimeException(e);
