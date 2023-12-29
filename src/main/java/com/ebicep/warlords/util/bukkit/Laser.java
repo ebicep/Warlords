@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.bukkit;
 
+import com.ebicep.customentities.npc.NPCManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -111,6 +112,9 @@ public abstract class Laser {
                     }
                     if (!durationInTicks || time % 20 == 0) {
                         for (Player p : start.getWorld().getPlayers()) {
+                            if (NPCManager.NPC_REGISTRY.isNPC(p)) {
+                                continue;
+                            }
                             if (isCloseEnough(p)) {
                                 if (show.add(p)) {
                                     sendStartPackets(p, !seen.add(p));
