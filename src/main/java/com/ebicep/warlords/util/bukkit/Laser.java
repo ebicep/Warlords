@@ -1,6 +1,7 @@
 package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.customentities.npc.NPCManager;
+import com.ebicep.warlords.Warlords;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -146,6 +147,10 @@ public abstract class Laser {
             }
         };
         main.runTaskTimerAsynchronously(plugin, 0L, durationInTicks ? 1L : 20L);
+    }
+
+    public void start() {
+        start(Warlords.getInstance());
     }
 
     protected boolean isCloseEnough(Player player) {
