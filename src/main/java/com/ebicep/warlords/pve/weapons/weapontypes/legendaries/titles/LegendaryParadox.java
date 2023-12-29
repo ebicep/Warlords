@@ -142,7 +142,7 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
 
     @Override
     protected float getSpeedBonusValue() {
-        return 5;
+        return 7;
     }
 
     @Override
