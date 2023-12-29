@@ -136,7 +136,7 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
         return 5;
     }
 
-     @Override
+    @Override
     protected float getEnergyPerHitBonusValue() {
         return 3;
     }
