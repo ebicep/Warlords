@@ -126,7 +126,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
     public TextComponent getPassiveEffect() {
         return Component.text("Play an among us sound and gain ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(ENERGY_GAIN + ENERGY_GAIN_PER_UPGRADE * getTitleLevel()))
-                        .append(Component.text(" energy whenever you land a melee crit."));
+                        .append(Component.text(" energy when you land a melee crit."));
     }
 
     @Override
