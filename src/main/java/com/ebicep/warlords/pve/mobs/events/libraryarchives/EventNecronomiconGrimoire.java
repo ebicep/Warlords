@@ -26,6 +26,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
     private int timesSmited = 0;
     @Nullable
     private WarlordsEntity targetWarlordsEntity = null;
+    @Nullable
     private Laser.GuardianLaser laser;
 
     public EventNecronomiconGrimoire(Location spawnLocation) {
@@ -123,7 +124,9 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        laser.stop();
+        if (laser != null) {
+            laser.stop();
+        }
     }
 
     private void smite() {
