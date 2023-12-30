@@ -1449,7 +1449,7 @@ public enum GameEvents {
                 }
                 boolean unlocked = stats != null && stats.getCodexesEarned().keySet().stream().anyMatch(playerCodex -> playerCodex.getSpec() == spec);
                 PlayerCodex codexForSpec = PlayerCodex.getCodexForSpec(spec);
-                ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
+                ItemBuilder itemBuilder = new ItemBuilder(unlocked ? SkullUtils.getSkullFrom(SkullID.CHECK_MARk) : SkullUtils.getSkullFrom(SkullID.QUESTION_MARK_BLACK_WHITE))
                         .name(Component.textOfChildren(
                                 Component.text(spec.name, NamedTextColor.GRAY),
                                 Component.text(" - ", NamedTextColor.DARK_GRAY),
