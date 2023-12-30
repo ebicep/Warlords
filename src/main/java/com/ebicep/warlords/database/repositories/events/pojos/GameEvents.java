@@ -1497,6 +1497,11 @@ public enum GameEvents {
                                                       .get(),
                     (m, e) -> {
                         if (privateGame) {
+                            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+                            if (partyPlayerPair == null || partyPlayerPair.getA().getPartyPlayers().size() < 2) {
+                                player.sendMessage(Component.text("At least 2 players is required to play this gamemode!", NamedTextColor.RED));
+                                return;
+                            }
                             GameStartCommand.startGamePvEEvent(player,
                                     queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.GRIMOIRES_GRAVEYARD)
                                                                           .setRequestedGameAddons(GameAddon.PRIVATE_GAME)

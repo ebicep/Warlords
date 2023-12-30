@@ -4431,7 +4431,7 @@ public enum GameMap {
     GRIMOIRES_GRAVEYARD(
             "Grimoire’s Graveyard",
             6,
-            1, //TODO
+            2,
             120 * SECOND,
             "Grimoires",
             3,
@@ -4765,8 +4765,8 @@ public enum GameMap {
     FORGOTTEN_CODEX(
             "Forgotten Codex",
             6,
-            1, //TODO
-            30 * SECOND,
+            2,
+            120 * SECOND,
             "Forgotten",
             3,
             GameMode.EVENT_WAVE_DEFENSE
