@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
@@ -21,6 +22,9 @@ public class BountyOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
+        if (game.getAddons().contains(GameAddon.CUSTOM_GAME)) {
+            return;
+        }
         game.forEachOfflinePlayer((offlinePlayer, team) -> {
             if (team == null) {
                 return;
