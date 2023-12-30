@@ -11,9 +11,9 @@ import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.God;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
-
-import java.util.UUID;
 
 public class TartarusSlayerI extends AbstractBounty implements TracksDuringGame, EventCost, GardenOfHesperides2 {
 
@@ -40,8 +40,8 @@ public class TartarusSlayerI extends AbstractBounty implements TracksDuringGame,
         return Bounty.TARTARUS_SLAYER_I;
     }
 
-    @Override
-    public void onKill(UUID uuid, WarlordsDeathEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onKill(WarlordsDeathEvent event) {
         if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof God) {
             newKills++;
         }

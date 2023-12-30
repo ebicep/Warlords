@@ -9,9 +9,11 @@ import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
 
-import java.util.UUID;
+import java.util.Objects;
 
 public class HuntBasicI extends AbstractBounty implements TracksDuringGame, WeeklyCost, WeeklyRewardSpendable1 {
 
@@ -43,9 +45,9 @@ public class HuntBasicI extends AbstractBounty implements TracksDuringGame, Week
         newKills = 0;
     }
 
-    @Override
-    public void onFinalDamageHeal(UUID uuid, WarlordsDamageHealingFinalEvent event) {
-        if (!event.getAttacker().getUuid().equals(uuid)) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+        if (!Objects.equals(event.getAttacker().getUuid(), uuid)) {
             return;
         }
         if (!event.isDead()) {

@@ -1,16 +1,21 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
-import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
-import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
-import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives1;
-import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
+import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventTheArchivist;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.springframework.data.annotation.Transient;
 
-public class ArchivistHunterI extends AbstractBounty implements TracksPostGame, EventCost, LibraryArchives1 {
+public class ArchivistHunterI extends AbstractBounty implements TracksDuringGame, EventCost, LibraryArchives1 {
+
+    @Transient
+    private int newKills = 0;
 
     @Override
     public String getName() {
@@ -32,16 +37,21 @@ public class ArchivistHunterI extends AbstractBounty implements TracksPostGame, 
         return Bounty.ACROPOLIS_FLAWLESS_I;
     }
 
-    @Override
-    public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        if (!DatabaseGameEvent.eventIsActive()) {
-            return;
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onKill(WarlordsDeathEvent event) {
+        if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventTheArchivist) {
+            newKills++;
         }
-//        BountyUtils.getPvEOptionFromGame(game, GrimoiresGraveyardOption.class).ifPresent(acropolisOption -> {
-//            int deaths = warlordsPlayer.getMinuteStats().total().getDeaths();
-//            if (deaths == 0) {
-//                value++;
-//            }
-//        });
+    }
+
+    @Override
+    public void reset() {
+        newKills = 0;
+    }
+
+    @Override
+    public long getNewValue() {
+        return newKills;
     }
 }

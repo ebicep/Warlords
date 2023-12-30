@@ -9,16 +9,18 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
-import com.ebicep.warlords.util.chat.ChatUtils;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class BountyOption implements Option {
 
+    private final List<AbstractBounty> trackedBounties = new ArrayList<>();
+
     @Override
     public void start(@Nonnull Game game) {
-        Map<UUID, Set<TracksDuringGame>> tracksDuringGames = new HashMap<>();
         game.forEachOfflinePlayer((offlinePlayer, team) -> {
             if (team == null) {
                 return;
@@ -31,11 +33,7 @@ public class BountyOption implements Option {
                 }
                 DatabaseManager.getPlayer(uniqueId, activeCollection, databasePlayer -> {
                     List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
-                    for (AbstractBounty bounty : trackableBounties) {
-                        if (bounty instanceof TracksDuringGame tracksDuringGame && tracksDuringGame.trackGame(game)) {
-                            tracksDuringGames.computeIfAbsent(uniqueId, k -> new HashSet<>()).add(tracksDuringGame);
-                        }
-                    }
+                    addTracksDuringGameBounties(game, trackableBounties);
                     if (activeCollection == PlayersCollections.LIFETIME && DatabaseGameEvent.eventIsActive()) {
                         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
                         EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction
@@ -44,17 +42,24 @@ public class BountyOption implements Option {
                         if (eventMode == null) {
                             return;
                         }
-                        for (AbstractBounty bounty : eventMode.getTrackableBounties()) {
-                            if (bounty instanceof TracksDuringGame tracksDuringGame && tracksDuringGame.trackGame(game)) {
-                                tracksDuringGames.computeIfAbsent(uniqueId, k -> new HashSet<>()).add(tracksDuringGame);
-                            }
-                        }
+                        addTracksDuringGameBounties(game, eventMode.getTrackableBounties());
                     }
+                    trackedBounties.forEach(bounty -> bounty.init(databasePlayer));
                 });
             }
         });
-        game.registerEvents(TracksDuringGame.getListener(tracksDuringGames));
-        ChatUtils.MessageType.BOUNTIES.sendMessage("Started tracking bounties for " + tracksDuringGames.size() + " players - " + tracksDuringGames);
     }
 
+    private void addTracksDuringGameBounties(@Nonnull Game game, List<AbstractBounty> trackableBounties) {
+        for (AbstractBounty bounty : trackableBounties) {
+            if (bounty instanceof TracksDuringGame tracksDuringGame && tracksDuringGame.trackGame(game)) {
+                trackedBounties.add(bounty);
+            }
+        }
+    }
+
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        trackedBounties.forEach(AbstractBounty::unregister);
+    }
 }

@@ -13,10 +13,11 @@ import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventHades;
 import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventPoseidon;
 import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventZeus;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
 
 import java.util.List;
-import java.util.UUID;
 
 public class OrderOfThingsI extends AbstractBounty implements TracksDuringGame, EventCost, GardenOfHesperides2 {
 
@@ -49,8 +50,8 @@ public class OrderOfThingsI extends AbstractBounty implements TracksDuringGame, 
         newKills = 0;
     }
 
-    @Override
-    public void onKill(UUID uuid, WarlordsDeathEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onKill(WarlordsDeathEvent event) {
         if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
             if (ORDER.indexOf(warlordsNPC.getMob().getClass()) == newKills) {
                 newKills++;

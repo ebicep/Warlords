@@ -11,9 +11,9 @@ import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.events.gardenofhesperides.EventCronus;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
-
-import java.util.UUID;
 
 public class StateOfMindI extends AbstractBounty implements TracksDuringGame, EventCost, GardenOfHesperides1 {
 
@@ -45,8 +45,8 @@ public class StateOfMindI extends AbstractBounty implements TracksDuringGame, Ev
         newKills = 0;
     }
 
-    @Override
-    public void onKill(UUID uuid, WarlordsDeathEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onKill(WarlordsDeathEvent event) {
         if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC &&
                 warlordsNPC.getMob() instanceof EventCronus cronus &&
                 cronus.diedDuringRejuvenate()

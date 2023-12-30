@@ -20,6 +20,7 @@ import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -100,12 +101,16 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
             }
             DatabaseManager.getPlayer(uuid, activeCollection, databasePlayer -> {
                 List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
-                for (AbstractBounty bounty : trackableBounties) {
-                    if (bounty instanceof TracksPostGame tracksPostGame) {
-                        tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer, gameWinEvent);
-                    } else if (bounty instanceof TracksDuringGame tracksDuringGame) {
-                        tracksDuringGame.apply(bounty);
+                try {
+                    for (AbstractBounty bounty : trackableBounties) {
+                        if (bounty instanceof TracksPostGame tracksPostGame) {
+                            tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer, gameWinEvent);
+                        } else if (bounty instanceof TracksDuringGame tracksDuringGame) {
+                            tracksDuringGame.apply(bounty);
+                        }
                     }
+                } catch (Exception e) {
+                    ChatUtils.MessageType.BOUNTIES.sendErrorMessage(e);
                 }
             });
         }

@@ -11,9 +11,9 @@ import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.bosses.Zenith;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
-
-import java.util.UUID;
 
 public class HuntZenithI extends AbstractBounty implements TracksDuringGame, DailyCost, DailyRewardSpendable2 {
 
@@ -45,8 +45,8 @@ public class HuntZenithI extends AbstractBounty implements TracksDuringGame, Dai
         newKills = 0;
     }
 
-    @Override
-    public void onKill(UUID uuid, WarlordsDeathEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onKill(WarlordsDeathEvent event) {
         if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof Zenith) {
             newKills++;
         }
