@@ -1234,7 +1234,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 1_000L);
                     put(Currencies.EPIC_STAR_PIECE, 3L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 5L);
+                    put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 5L);
                 }};
             }
             if (position == 2) {
@@ -1245,7 +1245,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 1000L);
                     put(Currencies.EPIC_STAR_PIECE, 2L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 3L);
+                    put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 3L);
                 }};
             }
             if (position == 3) {
@@ -1256,7 +1256,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 1000L);
                     put(Currencies.EPIC_STAR_PIECE, 1L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 2L);
+                    put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 2L);
                 }};
             }
             if (4 <= position && position <= 10) {
@@ -1266,7 +1266,7 @@ public enum GameEvents {
                     put(Currencies.LEGEND_FRAGMENTS, 1_000L);
                     put(Currencies.FAIRY_ESSENCE, 500L);
                     put(Currencies.RARE_STAR_PIECE, 5L);
-                    put(Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 1L);
+                    put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
                 }};
             }
             if (11 <= position && position <= 20) {
@@ -1297,71 +1297,78 @@ public enum GameEvents {
         @Override
         public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
             long eventStart = currentGameEvent.getStartDateSecond();
-//            EventLeaderboard acropolisBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Highest Game Event Points",
-//                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 86, 172.5),
-//                    (databasePlayer, time) -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getAcropolisStats()
-//                            .getHighestEventPointsGame(),
-//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getAcropolisStats()
-//                            .getHighestEventPointsGame())
-//            );
-//            EventLeaderboard tartarusBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Fastest Win",
-//                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 86, 167.5),
-//                    (databasePlayer, time) -> -databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getTartarusStats()
-//                            .getFastestGameFinished(),
-//                    (databasePlayer, time) -> StringUtils.formatTimeLeft(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getTartarusStats()
-//                            .getFastestGameFinished() / 20),
-//                    databasePlayer -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getTartarusStats()
-//                            .getFastestGameFinished() == 0
-//            );
-//            EventLeaderboard totalBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Event Points",
-//                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
-//                    (databasePlayer, time) -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getEventPointsCumulative(),
-//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getEventPointsCumulative())
-//            );
-//            leaderboards.put(acropolisBoard, "The Acropolis");
-//            leaderboards.put(tartarusBoard, "Tartarus");
-//            leaderboards.put(totalBoard, "Total Event Points");
+            EventLeaderboard grimoiresGraveyardBoard = new EventLeaderboard(
+                    eventStart,
+                    "Fastest Win",
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 86, 172.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getGrimoiresGraveyardStats()
+                            .getFastestGameFinished(),
+                    (databasePlayer, time) -> StringUtils.formatTimeLeft(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getGrimoiresGraveyardStats()
+                            .getFastestGameFinished() / 20),
+                    databasePlayer -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getGrimoiresGraveyardStats()
+                            .getFastestGameFinished() == 0
+            );
+            EventLeaderboard forgottenCodexBoard = new EventLeaderboard(
+                    eventStart,
+                    "Fastest Win",
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 86, 167.5),
+                    (databasePlayer, time) -> -databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getForgottenCodexStats()
+                            .getFastestGameFinished(),
+                    (databasePlayer, time) -> StringUtils.formatTimeLeft(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getForgottenCodexStats()
+                            .getFastestGameFinished() / 20),
+                    databasePlayer -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getForgottenCodexStats()
+                            .getFastestGameFinished() == 0
+            );
+            EventLeaderboard totalBoard = new EventLeaderboard(
+                    eventStart,
+                    "Event Points",
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getEventPointsCumulative(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getEventPointsCumulative())
+            );
+            leaderboards.put(grimoiresGraveyardBoard, "Grimoire's Graveyard");
+            leaderboards.put(forgottenCodexBoard, "Forgotten Codex");
+            leaderboards.put(totalBoard, "Total Event Points");
         }
 
         @Override

@@ -136,6 +136,11 @@ public enum Currencies implements Spendable {
             NamedTextColor.YELLOW,
             new ItemStack(Material.SNOWBALL)
     ),
+    TITLE_TOKEN_LIBRARY_ARCHIVES(
+            "Library Archives Title Token",
+            NamedTextColor.YELLOW,
+            new ItemStack(Material.SNOWBALL)
+    ),
     LIMIT_BREAKER(
             "Limit Breaker",
             NamedTextColor.DARK_GRAY,
