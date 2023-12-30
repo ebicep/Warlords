@@ -33,7 +33,7 @@ public class DatabaseGamePvEOnslaught extends DatabaseGamePvEBase {
         super(game, gameWinEvent, counted);
         for (Option option : game.getOptions()) {
             if (option instanceof OnslaughtOption pveonslaughtOption) {
-                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEOnslaught(warlordsPlayer, gameWinEvent, pveonslaughtOption)));
+                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEOnslaught(warlordsPlayer, gameWinEvent, pveonslaughtOption, counted)));
             }
         }
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();

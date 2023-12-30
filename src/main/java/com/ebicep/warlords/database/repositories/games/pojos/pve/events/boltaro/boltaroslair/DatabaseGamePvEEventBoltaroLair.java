@@ -58,7 +58,8 @@ public class DatabaseGamePvEEventBoltaroLair extends DatabaseGamePvEEvent implem
         game.warlordsPlayers()
             .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventBoltarosLair(warlordsPlayer,
                     gameWinEvent, waveDefenseOption.get(),
-                    eventPointsOption.get()
+                    eventPointsOption.get(),
+                    counted
             )));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
         this.wavesCleared = waveDefenseOption.get().getWavesCleared();

@@ -57,7 +57,8 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
         game.warlordsPlayers()
             .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventBoltaroBonanza(warlordsPlayer,
                     gameWinEvent, waveDefenseOption.get(),
-                    eventPointsOption.get()
+                    eventPointsOption.get(),
+                    counted
             )));
         this.highestSplit = boltaroBonanzaOption.get().getHighestSplitValue();
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();

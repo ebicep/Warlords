@@ -36,7 +36,7 @@ public class AdvanceIV extends AbstractBounty implements TracksPostGame, WeeklyC
 
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        BountyUtils.getPvEOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
+        BountyUtils.getOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
             if (waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS) {
                 int wavesCleared = waveDefenseOption.getWavesCleared();
                 if (wavesCleared > value) {

@@ -24,9 +24,10 @@ public abstract class DatabaseGamePlayerPvEEvent extends DatabaseGamePlayerPvEWa
             WarlordsPlayer warlordsPlayer,
             WarlordsGameTriggerWinEvent gameWinEvent,
             WaveDefenseOption waveDefenseOption,
-            EventPointsOption eventPointsOption
+            EventPointsOption eventPointsOption,
+            boolean counted
     ) {
-        super(warlordsPlayer, gameWinEvent, waveDefenseOption);
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption, counted);
         this.points = eventPointsOption.getPoints().getOrDefault(warlordsPlayer.getUuid(), 0);
         if (DatabaseGameEvent.eventIsActive()) {
             DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {

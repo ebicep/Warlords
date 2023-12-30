@@ -24,7 +24,7 @@ public class DatabaseGamePlayerPvEEventGrimoiresGraveyard extends DatabaseGamePl
             EventPointsOption eventPointsOption,
             GrimoiresGraveyardOption grimoiresGraveyardOption
     ) {
-        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption);
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption, counted);
         this.codexEarned = grimoiresGraveyardOption.getCodexRewards().get(warlordsPlayer.getUuid());
     }
 

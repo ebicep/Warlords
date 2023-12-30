@@ -37,7 +37,7 @@ public class AdvanceIII extends AbstractBounty implements TracksPostGame, Weekly
 
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        BountyUtils.getPvEOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
+        BountyUtils.getOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
             if (waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS) {
                 int wavesCleared = waveDefenseOption.getWavesCleared();
                 int totalTeamDeaths = PlayerFilter.playingGame(game)

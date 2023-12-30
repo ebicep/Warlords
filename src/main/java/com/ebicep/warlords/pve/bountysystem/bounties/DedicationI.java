@@ -41,7 +41,7 @@ public class DedicationI extends AbstractBounty implements TracksPostGame, Lifet
 
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        BountyUtils.getPvEOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
+        BountyUtils.getOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
             if (DIFFICULTIES.contains(waveDefenseOption.getDifficulty())) {
                 value += waveDefenseOption.getWavesCleared();
             }

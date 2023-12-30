@@ -37,8 +37,8 @@ public class DatabaseGamePlayerSiege extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerSiege() {
     }
 
-    public DatabaseGamePlayerSiege(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        super(warlordsPlayer, gameWinEvent);
+    public DatabaseGamePlayerSiege(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        super(warlordsPlayer, gameWinEvent, counted);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
         this.secondsInRespawn = warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent() / 20;
         for (Option option : warlordsPlayer.getGame().getOptions()) {

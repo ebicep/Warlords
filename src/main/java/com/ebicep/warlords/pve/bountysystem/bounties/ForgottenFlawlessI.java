@@ -3,37 +3,35 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.TartarusOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.ForgottenCodexOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
-import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides2;
+import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
 
-public class WithinTheTimeI extends AbstractBounty implements TracksPostGame, EventCost, GardenOfHesperides2 {
+public class ForgottenFlawlessI extends AbstractBounty implements TracksPostGame, EventCost, LibraryArchives2 {
 
     @Override
     public String getName() {
-        return "Within the Time";
+        return "Forgotten Flawless";
     }
 
     @Override
     public String getDescription() {
-        return "Complete Tartarus within 10 minutes.";
+        return "Complete Forgotten Codex " + getTarget() + " times without dying.";
     }
 
     @Override
     public int getTarget() {
-        return 1;
+        return 3;
     }
 
     @Override
     public Bounty getBounty() {
-        return Bounty.WITHIN_THE_TIME_I;
+        return Bounty.FORGOTTEN_FLAWLESS_I;
     }
 
     @Override
@@ -41,15 +39,14 @@ public class WithinTheTimeI extends AbstractBounty implements TracksPostGame, Ev
         if (!DatabaseGameEvent.eventIsActive()) {
             return;
         }
-        if (BountyUtils.getOptionFromGame(game, TartarusOption.class).isEmpty()) {
+        if (BountyUtils.lostGame(gameWinEvent)) {
             return;
         }
-        BountyUtils.getOptionFromGame(game, RecordTimeElapsedOption.class)
-                   .ifPresent(recordTimeElapsedOption -> {
-                       if (gameWinEvent.getCause() instanceof WinByMaxWaveClearOption && recordTimeElapsedOption.getTicksElapsed() < 10 * 60 * 20) {
-                           value++;
-                       }
-                   });
+        BountyUtils.getOptionFromGame(game, ForgottenCodexOption.class).ifPresent(option -> {
+            if (warlordsPlayer.getMinuteStats().total().getDeaths() == 0) {
+                value++;
+            }
+        });
     }
 
 }

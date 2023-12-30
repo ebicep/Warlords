@@ -36,7 +36,7 @@ public class DatabaseGameDuel extends DatabaseGameBase {
         this.timeLeft = WinAfterTimeoutOption.getTimeRemaining(game).orElse(-1);
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
         game.warlordsPlayers().forEach(warlordsPlayer -> {
-            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerDuel(warlordsPlayer, gameWinEvent));
+            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerDuel(warlordsPlayer, gameWinEvent, counted));
         });
     }
 

@@ -24,6 +24,7 @@ public class BountyUtils {
         put(PlayersCollections.WEEKLY.name, new BountyInfo(Bounty.BountyGroup.WEEKLY_ALL.bounties, 2, 5));
         put(PlayersCollections.LIFETIME.name, new BountyInfo(Bounty.BountyGroup.LIFETIME_ALL.bounties, Integer.MAX_VALUE, 1));
         put("Garden of Hesperides", new BountyInfo(Bounty.BountyGroup.EVENT_GARDEN_OF_HESPERIDES_ALL.bounties, 5, 5));
+        put("Library Archives", new BountyInfo(Bounty.BountyGroup.EVENT_LIBRARY_ARCHIVES_ALL.bounties, 5, 5));
     }};
 
     public static List<AbstractBounty> getNewBounties(String bountyInfoName) {
@@ -74,11 +75,11 @@ public class BountyUtils {
         return game.getOptions().stream().anyMatch(option -> option instanceof WaveDefenseOption waveDefenseOption && waveDefenseOption.getDifficulty() == difficulty);
     }
 
-    public static boolean wonGame(WarlordsGameTriggerWinEvent event) {
-        return event.getDeclaredWinner() == Team.BLUE;
+    public static boolean lostGame(WarlordsGameTriggerWinEvent event) {
+        return event.getDeclaredWinner() != Team.BLUE;
     }
 
-    public static <T> Optional<T> getPvEOptionFromGame(Game game, Class<T> optionClass) {
+    public static <T> Optional<T> getOptionFromGame(Game game, Class<T> optionClass) {
         return game.getOptions()
                    .stream()
                    .filter(option -> optionClass.isAssignableFrom(option.getClass()))

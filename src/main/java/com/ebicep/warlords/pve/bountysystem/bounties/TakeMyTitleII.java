@@ -3,37 +3,37 @@ package com.ebicep.warlords.pve.bountysystem.bounties;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.TartarusOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.ForgottenCodexOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.BountyUtils;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
-import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides2;
+import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksPostGame;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles.LibraryArchivesTitle;
 
-public class WithinTheTimeI extends AbstractBounty implements TracksPostGame, EventCost, GardenOfHesperides2 {
+public class TakeMyTitleII extends AbstractBounty implements TracksPostGame, EventCost, LibraryArchives2 {
 
     @Override
     public String getName() {
-        return "Within the Time";
+        return "Take My Title";
     }
 
     @Override
     public String getDescription() {
-        return "Complete Tartarus within 10 minutes.";
+        return "Complete Forgotten Codex with a legendary weapon equipped with a Library Archives title " + getTarget() + " times.";
     }
 
     @Override
     public int getTarget() {
-        return 1;
+        return 3;
     }
 
     @Override
     public Bounty getBounty() {
-        return Bounty.WITHIN_THE_TIME_I;
+        return Bounty.TAKE_MY_TITLE_II;
     }
 
     @Override
@@ -41,15 +41,20 @@ public class WithinTheTimeI extends AbstractBounty implements TracksPostGame, Ev
         if (!DatabaseGameEvent.eventIsActive()) {
             return;
         }
-        if (BountyUtils.getOptionFromGame(game, TartarusOption.class).isEmpty()) {
+        if (BountyUtils.lostGame(gameWinEvent)) {
             return;
         }
-        BountyUtils.getOptionFromGame(game, RecordTimeElapsedOption.class)
-                   .ifPresent(recordTimeElapsedOption -> {
-                       if (gameWinEvent.getCause() instanceof WinByMaxWaveClearOption && recordTimeElapsedOption.getTicksElapsed() < 10 * 60 * 20) {
-                           value++;
-                       }
-                   });
+        if (BountyUtils.getOptionFromGame(game, ForgottenCodexOption.class).isEmpty()) {
+            return;
+        }
+        AbstractWeapon weapon = warlordsPlayer.getWeapon();
+        if (weapon == null) {
+            return;
+        }
+        if (!(weapon instanceof LibraryArchivesTitle)) {
+            return;
+        }
+        value++;
     }
 
 }

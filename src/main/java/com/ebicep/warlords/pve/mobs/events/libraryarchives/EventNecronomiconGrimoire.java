@@ -164,4 +164,5 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
             Utils.playGlobalSound(targetWarlordsEntity.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_1, 500, .6f);
         }
     }
+
 }

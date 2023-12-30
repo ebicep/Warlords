@@ -37,7 +37,7 @@ public class BoundlessI extends AbstractBounty implements TracksPostGame, Lifeti
 
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        BountyUtils.getPvEOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
+        BountyUtils.getOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
             if (waveDefenseOption.getDifficulty() == DifficultyIndex.ENDLESS) {
                 value += waveDefenseOption.getWavesCleared();
             }

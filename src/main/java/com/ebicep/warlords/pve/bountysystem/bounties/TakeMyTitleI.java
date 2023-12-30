@@ -43,7 +43,7 @@ public class TakeMyTitleI extends AbstractBounty implements TracksPostGame, Even
         if (!DatabaseGameEvent.eventIsActive()) {
             return;
         }
-        if (BountyUtils.getPvEOptionFromGame(game, TartarusOption.class).isEmpty()) {
+        if (BountyUtils.getOptionFromGame(game, TartarusOption.class).isEmpty()) {
             return;
         }
         AbstractWeapon weapon = warlordsPlayer.getWeapon();
@@ -53,7 +53,7 @@ public class TakeMyTitleI extends AbstractBounty implements TracksPostGame, Even
         if (!(weapon instanceof GardenOfHesperidesTitle)) {
             return;
         }
-        BountyUtils.getPvEOptionFromGame(game, RecordTimeElapsedOption.class)
+        BountyUtils.getOptionFromGame(game, RecordTimeElapsedOption.class)
                    .ifPresent(recordTimeElapsedOption -> {
                        if (gameWinEvent.getCause() instanceof WinByMaxWaveClearOption && recordTimeElapsedOption.getTicksElapsed() < 10 * 60 * 20) {
                            value++;

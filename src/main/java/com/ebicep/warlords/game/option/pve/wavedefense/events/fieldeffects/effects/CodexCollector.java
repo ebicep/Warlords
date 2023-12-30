@@ -29,6 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CodexCollector implements FieldEffect {
 
+    private final Map<WarlordsEntity, PlayerCodex> playerCodexEquipped = new HashMap<>();
+
     @Override
     public String getName() {
         return "Codex Collector";
@@ -78,6 +80,7 @@ public class CodexCollector implements FieldEffect {
                         player.getSpec().getAbilities().add(ability.create.get());
                     }
                     warlordsPlayer.resetAbilityTree();
+                    playerCodexEquipped.put(player, codexForSpec);
                 }
             });
         }
@@ -142,7 +145,9 @@ public class CodexCollector implements FieldEffect {
                 }
             }
         }
-
     }
 
+    public Map<WarlordsEntity, PlayerCodex> getPlayerCodexEquipped() {
+        return playerCodexEquipped;
+    }
 }

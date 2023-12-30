@@ -22,8 +22,8 @@ public class DatabaseGamePlayerPvEOnslaught extends DatabaseGamePlayerPvEBase {
     public DatabaseGamePlayerPvEOnslaught() {
     }
 
-    public DatabaseGamePlayerPvEOnslaught(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, PveOption pveOption) {
-        super(warlordsPlayer, gameWinEvent, pveOption);
+    public DatabaseGamePlayerPvEOnslaught(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, PveOption pveOption, boolean counted) {
+        super(warlordsPlayer, gameWinEvent, pveOption, counted);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName());
         UUID uuid = warlordsPlayer.getUuid();
         PlayerPveRewards playerPveRewards = pveOption.getRewards()

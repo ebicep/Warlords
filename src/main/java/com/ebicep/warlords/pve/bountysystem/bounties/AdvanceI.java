@@ -35,7 +35,7 @@ public class AdvanceI extends AbstractBounty implements TracksPostGame, DailyCos
 
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        BountyUtils.getPvEOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
+        BountyUtils.getOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
             value += waveDefenseOption.getWavesCleared();
         });
     }
