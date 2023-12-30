@@ -45,9 +45,9 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
     protected UUID uuid;
 
     public void init(DatabasePlayer databasePlayer) {
-        log("initializing bounty");
         this.databasePlayer = databasePlayer;
         this.uuid = databasePlayer.getUuid();
+        log("initializing bounty");
         this.register();
     }
 
@@ -68,7 +68,8 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
     }
 
     private String getDebugInfo() {
-        return this.getClass().getSimpleName() + " for " + databasePlayer.getName() + "(" + databasePlayer.getUuid() + ")";
+        String name = databasePlayer == null ? "null" : databasePlayer.getName();
+        return this.getClass().getSimpleName() + " for " + name + "(" + uuid + ")";
     }
 
     public ItemBuilder getItemWithProgress() {
