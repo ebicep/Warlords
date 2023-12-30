@@ -30,7 +30,7 @@ public class ThatWasCloseI extends AbstractBounty implements TracksDuringGame, W
 
     @Override
     public String getDescription() {
-        return "Survive the smite of a Necronomicon " + value + " times.";
+        return "Survive the smite of a Necronomicon " + getTarget() + " times.";
     }
 
     @Override

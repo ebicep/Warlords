@@ -132,7 +132,9 @@ public class BountyCommand extends BaseCommand {
             for (AbstractBounty activeBounty : activeBounties) {
                 ChatChannels.sendDebugMessage(player, Component.text("Cleared " + activeBounty.getName() + " event bounty"));
             }
-            activeBounties.clear();
+            for (int i = 0; i < 5; i++) {
+                activeBounties.set(i, null);
+            }
         });
     }
 

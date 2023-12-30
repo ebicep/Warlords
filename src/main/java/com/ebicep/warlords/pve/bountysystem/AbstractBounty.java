@@ -51,7 +51,7 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
         this.register();
     }
 
-    public void register() {
+    protected void register() {
         log("registering bounty");
         this.unregister(); // precaution
         Bukkit.getPluginManager().registerEvents(this, Warlords.getInstance());

@@ -14,9 +14,26 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 
 import java.util.Objects;
-import java.util.Set;
 
 public class CodexCollectorI extends AbstractBounty implements TracksOutsideGame, EventCost, LibraryArchives1 {
+
+    @Override
+    protected void register() {
+        super.register();
+        updateBountiesCollected();
+    }
+
+    private void updateBountiesCollected() {
+        if (!DatabaseGameEvent.eventIsActive()) {
+            return;
+        }
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
+        if (!(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats stats)) {
+            return;
+        }
+        value = stats.getCodexesEarned().keySet().size();
+    }
 
     @Override
     public String getName() {
@@ -30,7 +47,7 @@ public class CodexCollectorI extends AbstractBounty implements TracksOutsideGame
 
     @Override
     public int getTarget() {
-        return 1;
+        return PlayerCodex.values().length;
     }
 
     @Override
@@ -40,21 +57,10 @@ public class CodexCollectorI extends AbstractBounty implements TracksOutsideGame
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCodexCollected(PlayerCodexEarnEvent event) {
-        if (!DatabaseGameEvent.eventIsActive()) {
-            return;
-        }
         if (!Objects.equals(event.getUUID(), uuid)) {
             return;
         }
-        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-        EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
-        if (!(eventMode instanceof DatabasePlayerPvEEventLibraryArchivesDifficultyStats stats)) {
-            return;
-        }
-        Set<PlayerCodex> codexes = stats.getCodexesEarned().keySet();
-        if (codexes.size() == PlayerCodex.values().length) {
-            value++;
-        }
+        updateBountiesCollected();
     }
 
 }
