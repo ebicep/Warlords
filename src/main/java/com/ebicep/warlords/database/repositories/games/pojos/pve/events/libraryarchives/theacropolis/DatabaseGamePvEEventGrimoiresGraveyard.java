@@ -58,7 +58,8 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
             .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventGrimoiresGraveyard(warlordsPlayer,
                     gameWinEvent, waveDefenseOption.get(),
                     eventPointsOption.get(),
-                    grimoiresGraveyardOption.get()
+                    grimoiresGraveyardOption.get(),
+                    counted
             )));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
         this.wavesCleared = waveDefenseOption.get().getWavesCleared();
