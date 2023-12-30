@@ -136,7 +136,7 @@ public enum Bounty {
                                              .toArray(Bounty[]::new)),
         EVENT_LIBRARY_ARCHIVES_1(getBountyFrom(LibraryArchives1.class)),
         EVENT_LIBRARY_ARCHIVES_2(getBountyFrom(LibraryArchives2.class)),
-        EVENT_LIBRARY_ARCHIVES_ALL(Stream.of(EVENT_GARDEN_OF_HESPERIDES_1, EVENT_GARDEN_OF_HESPERIDES_2)
+        EVENT_LIBRARY_ARCHIVES_ALL(Stream.of(EVENT_LIBRARY_ARCHIVES_1, EVENT_LIBRARY_ARCHIVES_2)
                                          .flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties))
                                          .toArray(Bounty[]::new)),
 
