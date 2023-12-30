@@ -1301,7 +1301,7 @@ public enum GameEvents {
                     eventStart,
                     "Fastest Win",
                     new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 86, 172.5),
-                    (databasePlayer, time) -> databasePlayer
+                    (databasePlayer, time) -> -databasePlayer
                             .getPveStats()
                             .getEventStats()
                             .getLibraryArchivesEventStats()
