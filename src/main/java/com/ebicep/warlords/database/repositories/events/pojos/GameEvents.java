@@ -1491,8 +1491,8 @@ public enum GameEvents {
                             .lore(
                                     Component.text("You are about to enter a library.", NamedTextColor.YELLOW),
                                     Component.empty(),
-                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
-                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("900 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-6 Players", NamedTextColor.GREEN))
                             )
                             .get(),
                     (m, e) -> {
