@@ -1486,15 +1486,15 @@ public enum GameEvents {
             Menu menu = new Menu("Library Archives Modes", 9 * 4);
 
             menu.setItem(2, 1,
-                    new ItemBuilder(Material.BARRIER) //TODO
-                                                      .name(Component.text("Grimoire’s Graveyard", NamedTextColor.GREEN))
-                                                      .lore(
-                                                              Component.text("You are about to enter a library.", NamedTextColor.YELLOW),
-                                                              Component.empty(),
-                                                              Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
-                                                              Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
-                                                      )
-                                                      .get(),
+                    new ItemBuilder(Material.BLACK_CANDLE)
+                            .name(Component.text("Grimoire’s Graveyard", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("You are about to enter a library.", NamedTextColor.YELLOW),
+                                    Component.empty(),
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
+                            )
+                            .get(),
                     (m, e) -> {
                         if (privateGame) {
                             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
@@ -1515,7 +1515,7 @@ public enum GameEvents {
                     }
             );
             menu.setItem(6, 1,
-                    new ItemBuilder(Material.BARRIER)
+                    new ItemBuilder(Material.LIGHTNING_ROD)
                             .name(Component.text("Forgotten Codex", NamedTextColor.GREEN))
                             .lore(WordWrap.wrap(
                                     Component.text("Have you come to check out a book? Let me help you..", NamedTextColor.YELLOW),
