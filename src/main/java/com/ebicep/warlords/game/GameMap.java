@@ -4470,14 +4470,14 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(11.5, 27, 8.5), Team.RED));
 
             List<Location> necronomiconSpawnLocations = List.of(
-                    loc.addXYZ(-16.5, 24, 16.5),
-                    loc.addXYZ(9.5, 24, 16.5),
-                    loc.addXYZ(11.5, 24, 14.5),
-                    loc.addXYZ(11.5, 24, -11.5),
-                    loc.addXYZ(9.5, 24, -13.5),
-                    loc.addXYZ(-16.5, 24, -13.5),
-                    loc.addXYZ(-18.5, 24, -11.5),
-                    loc.addXYZ(-18.5, 24, 14.5)
+                    loc.addXYZ(-14.5, 24, 16.5, -90, 0),
+                    loc.addXYZ(7.5, 24, 16.5, 90, 0),
+                    loc.addXYZ(11.5, 24, 12.5, 180, 0),
+                    loc.addXYZ(11.5, 24, -9.5, 0, 0),
+                    loc.addXYZ(7.5, 24, -13.5, 90, 0),
+                    loc.addXYZ(-14.5, 24, -13.5, -90, 0),
+                    loc.addXYZ(-18.5, 24, -9.5, 0, 0),
+                    loc.addXYZ(-18.5, 24, 12.5, 180, 0)
             );
 
             options.add(new PowerupOption(loc.addXYZ(16, 25, 1.5), PowerUp.DAMAGE, 180, 30));
