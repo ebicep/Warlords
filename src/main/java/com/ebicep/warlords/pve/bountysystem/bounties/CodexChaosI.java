@@ -21,20 +21,16 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
 public class CodexChaosI extends AbstractBounty implements TracksDuringGame, EventCost, LibraryArchives2 {
 
     @Field("killing_blows_experienced")
-    private List<Integer> killingBlowsExperienced = new ArrayList<>() {{ // index > 0 = EGA, 1 = EWA, 2 = VPA | element value > # of blows
-        add(0);
-        add(0);
-        add(0);
-    }};
+    private int[] killingBlowsExperienced = {0, 0, 0};  // index > 0 = EGA, 1 = EWA, 2 = VPA | element value > # of blows
     @Transient
-    private List<Integer> newKillingBlowsExperienced = new ArrayList<>();
+    private int[] newKillingBlowsExperienced = {0, 0, 0};
 
     @Override
     public String getName() {
@@ -55,17 +51,17 @@ public class CodexChaosI extends AbstractBounty implements TracksDuringGame, Eve
         return List.of(
                 ComponentBuilder.create("Progress: ", NamedTextColor.GRAY).build(),
                 ComponentBuilder.create("  EGA: ", NamedTextColor.GRAY)
-                                .text(NumberFormat.addCommaAndRound(killingBlowsExperienced.get(0)), NamedTextColor.GOLD)
+                                .text(NumberFormat.addCommaAndRound(killingBlowsExperienced[0]), NamedTextColor.GOLD)
                                 .text("/", NamedTextColor.AQUA)
                                 .text("3", NamedTextColor.GOLD)
                                 .build(),
                 ComponentBuilder.create("  EWA: ", NamedTextColor.GRAY)
-                                .text(NumberFormat.addCommaAndRound(killingBlowsExperienced.get(1)), NamedTextColor.GOLD)
+                                .text(NumberFormat.addCommaAndRound(killingBlowsExperienced[1]), NamedTextColor.GOLD)
                                 .text("/", NamedTextColor.AQUA)
                                 .text("3", NamedTextColor.GOLD)
                                 .build(),
                 ComponentBuilder.create("  VPA: ", NamedTextColor.GRAY)
-                                .text(NumberFormat.addCommaAndRound(killingBlowsExperienced.get(2)), NamedTextColor.GOLD)
+                                .text(NumberFormat.addCommaAndRound(killingBlowsExperienced[2]), NamedTextColor.GOLD)
                                 .text("/", NamedTextColor.AQUA)
                                 .text("3", NamedTextColor.GOLD)
                                 .build()
@@ -84,7 +80,9 @@ public class CodexChaosI extends AbstractBounty implements TracksDuringGame, Eve
 
     @Override
     public void reset() {
-        newKillingBlowsExperienced.clear();
+        for (int i = 0; i < 3; i++) {
+            killingBlowsExperienced[i] = 0;
+        }
     }
 
     @Override
@@ -97,23 +95,23 @@ public class CodexChaosI extends AbstractBounty implements TracksDuringGame, Eve
     @Override
     public void apply(AbstractBounty bounty) {
         for (int i = 0; i < 3; i++) {
-            killingBlowsExperienced.set(i, killingBlowsExperienced.get(i) + newKillingBlowsExperienced.get(i));
+            killingBlowsExperienced[i] += newKillingBlowsExperienced[i];
         }
         TracksDuringGame.super.apply(bounty);
     }
 
     @Override
     public long getNewValue() {
-        return killingBlowsExperienced.stream().allMatch(integer -> integer >= 3) ? 1 : 0;
+        return Arrays.stream(killingBlowsExperienced).allMatch(integer -> integer >= 3) ? 1 : 0;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKillingBlow(EventInquisiteur.EventInquisteurKillingBlowEvent event) {
         if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
             switch (warlordsNPC.getMob().getMobRegistry()) {
-                case EVENT_INQUISITEUR_EGA -> newKillingBlowsExperienced.set(0, newKillingBlowsExperienced.get(0) + 1);
-                case EVENT_INQUISITEUR_EWA -> newKillingBlowsExperienced.set(1, newKillingBlowsExperienced.get(1) + 1);
-                case EVENT_INQUISITEUR_VPA -> newKillingBlowsExperienced.set(2, newKillingBlowsExperienced.get(2) + 1);
+                case EVENT_INQUISITEUR_EGA -> newKillingBlowsExperienced[0]++;
+                case EVENT_INQUISITEUR_EWA -> newKillingBlowsExperienced[1]++;
+                case EVENT_INQUISITEUR_VPA -> newKillingBlowsExperienced[2]++;
             }
         }
     }
