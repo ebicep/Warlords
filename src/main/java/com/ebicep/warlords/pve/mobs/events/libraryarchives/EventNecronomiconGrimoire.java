@@ -22,7 +22,7 @@ import java.util.EnumSet;
 
 public class EventNecronomiconGrimoire extends AbstractMob implements BossMinionMob {
 
-    private int smiteTickCooldown = 5 * 20;
+    private int smiteTickCooldown = 10 * 20;
     private int timesSmited = 0;
     @Nullable
     private WarlordsEntity targetWarlordsEntity = null;
