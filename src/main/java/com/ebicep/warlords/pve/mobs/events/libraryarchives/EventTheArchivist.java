@@ -22,9 +22,9 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
         this(
                 spawnLocation,
                 "The Archivist",
-                125000,
+                150000,
                 0.21f,
-                15,
+                25,
                 0,
                 0
         );
@@ -51,12 +51,12 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                     this.getCooldown().setCurrentValue(5);
                     this.pveMasterUpgrade = true;
                 }},
-                new ChainLightning(7, 7) {{
+                new ChainLightning(5, 5) {{
                     this.pveMasterUpgrade2 = true;
                 }},
-                new GroundSlamBerserker(10, 10),
-                new PrismGuard(20),
-                new LastStand(50, 50)
+                new GroundSlamBerserker(8, 8),
+                new PrismGuard(18, 18),
+                new LastStand(25, 25)
         );
     }
 
