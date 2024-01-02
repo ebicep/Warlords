@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.player.general.Specializations;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,15 +37,15 @@ public enum PlayerCodex implements Codex {
 
     ;
 
-    public final String name;
-    public final Specializations spec;
-    public final Ability[] abilities;
-
     public static final PlayerCodex[] VALUES = values();
 
+    @Nullable
     public static PlayerCodex getRandomCodex(Set<PlayerCodex> exclude) {
         List<PlayerCodex> list = new ArrayList<>(List.of(VALUES));
         list.removeAll(exclude);
+        if (list.isEmpty()) {
+            return null;
+        }
         return list.get(ThreadLocalRandom.current().nextInt(list.size()));
     }
 
@@ -57,6 +58,10 @@ public enum PlayerCodex implements Codex {
         }
         throw new IllegalArgumentException("No codex for spec " + spec);
     }
+
+    public final String name;
+    public final Specializations spec;
+    public final Ability[] abilities;
 
     PlayerCodex(String name, Specializations spec, Ability... abilities) {
         this.name = name;
