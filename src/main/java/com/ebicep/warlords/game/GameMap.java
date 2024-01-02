@@ -41,7 +41,6 @@ import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.win.MercyWinOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
-import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
@@ -4676,7 +4675,6 @@ public enum GameMap {
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(900, 50, "spec"));
             options.add(new WinByMaxWaveClearOption());
-            options.add(new WinByAllDeathOption());
             options.add(new GrimoiresGraveyardOption());
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(30, Team.BLUE)
@@ -4874,7 +4872,6 @@ public enum GameMap {
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
             options.add(new WinByMaxWaveClearOption());
-            options.add(new WinByAllDeathOption());
             options.add(new ForgottenCodexOption());
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(30, Team.BLUE)
