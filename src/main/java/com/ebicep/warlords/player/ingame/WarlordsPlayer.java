@@ -186,7 +186,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                                   .append(getSpec().getClassNameShortWithBrackets())
                                   .append(Component.text(" "))
                                   .append(this.getColoredName())
-                                  .append(Component.text(" " + Math.round(this.getHealth()) + "❤", NamedTextColor.RED))); // TODO add level and class into the name of this jimmy
+                                  .append(Component.text(" " + Math.round(this.getCurrentHealth()) + "❤",
+                                          NamedTextColor.RED
+                                  ))); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         AttributeInstance attribute = jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
         if (attribute != null) {
@@ -336,7 +338,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         //negative regen tick timer means the player is regenning, cant check per second because not fine enough
         if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
             int healthToAdd = (int) (getMaxHealth() / 55.3);
-            setHealth(Math.max(getHealth(), Math.min(getHealth() + healthToAdd, getMaxHealth())));
+            setCurrentHealth(Math.max(getCurrentHealth(), Math.min(getCurrentHealth() + healthToAdd, getMaxHealth())));
         }
     }
 
@@ -351,7 +353,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                                  .append(Component.text(getSpec().getClassNameShort(), NamedTextColor.GOLD))
                                  .append(Component.text("] ")),
                         getColoredName(),
-                        Component.text(" " + Math.round(getHealth()) + "❤", NamedTextColor.RED)
+                        Component.text(" " + Math.round(getCurrentHealth()) + "❤", NamedTextColor.RED)
                 ));
             }
         }

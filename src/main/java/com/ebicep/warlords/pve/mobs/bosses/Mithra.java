@@ -141,13 +141,13 @@ public class Mithra extends AbstractMob implements BossMob {
             }.runTaskLater(40);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.7f) && !flamePhaseTrigger) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * 0.7f) && !flamePhaseTrigger) {
             flamePhaseTrigger = true;
             preventBarrage = true;
             immolation(option, loc);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.35f) && !flamePhaseTriggerTwo) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * 0.35f) && !flamePhaseTriggerTwo) {
             flamePhaseTriggerTwo = true;
             preventBarrage = true;
             immolation(option, loc);

@@ -14,7 +14,6 @@ import com.ebicep.warlords.events.player.ingame.*;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.FlagInfo;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
@@ -36,6 +35,7 @@ import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -99,9 +99,9 @@ public abstract class WarlordsEntity {
     @Nullable
     protected CompassTargetMarker compassTarget;
     protected CooldownManager cooldownManager = new CooldownManager(this);
-    protected float health;
-    protected float maxHealth;
-    protected float maxBaseHealth;
+    protected float currentHealth;
+    protected FloatModifiable health;
+    protected FloatModifiableFilter maxBaseHealthFilter = new FloatModifiableFilter.BaseFilter();
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();
@@ -186,9 +186,11 @@ public abstract class WarlordsEntity {
         this.game = game;
         this.team = team;
         this.spec = playerClass;
-        this.maxHealth = this.spec.getMaxHealth();
-        this.health = this.maxHealth;
-        this.maxBaseHealth = this.maxHealth;
+//        this.maxHealth = this.spec.getMaxHealth();
+        this.currentHealth = this.spec.getMaxHealth();
+        this.health = new FloatModifiable(this.currentHealth) {{
+            addFilter(maxBaseHealthFilter);
+        }};
         this.speed = isInPve() ?
                      new CalculateSpeed(this, this::setWalkSpeed, 13, true) :
                      new CalculateSpeed(this, this::setWalkSpeed, 13);
@@ -361,7 +363,7 @@ public abstract class WarlordsEntity {
         debugMessage.append(Component.newline()).append(Component.text("Post Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
 
-        float initialHealth = health;
+        float initialHealth = currentHealth;
 
         List<AbstractCooldown<?>> selfCooldownsDistinct = getCooldownManager().getCooldownsDistinct();
         List<AbstractCooldown<?>> attackersCooldownsDistinct = attacker.getCooldownManager().getCooldownsDistinct();
@@ -434,7 +436,7 @@ public abstract class WarlordsEntity {
                 // True damage
                 sendTookDamageMessage(debugMessage, min, "melee damage");
                 resetRegenTimer();
-                if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
+                if (currentHealth - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     entity.showTitle(Title.title(
                             Component.text("YOU DIED!", NamedTextColor.RED),
                             Component.text("You took ", NamedTextColor.GRAY)
@@ -442,17 +444,17 @@ public abstract class WarlordsEntity {
                                      .append(Component.text(" melee damage and died.")),
                             Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
                     ));
-                    health = 0;
+                    currentHealth = 0;
                     die(attacker);
                 } else {
-                    health -= min;
+                    currentHealth -= min;
                     playHurtAnimation(this.entity, attacker);
                 }
             } else {
                 // Fall Damage
                 sendTookDamageMessage(debugMessage, damageValue, "fall damage");
                 resetRegenTimer();
-                if (health - damageValue <= 0 && !cooldownManager.checkUndyingArmy(false)) {
+                if (currentHealth - damageValue <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     entity.showTitle(Title.title(
                             Component.text("YOU DIED!", NamedTextColor.RED),
                             Component.text("You took ", NamedTextColor.GRAY)
@@ -460,10 +462,10 @@ public abstract class WarlordsEntity {
                                      .append(Component.text(" fall damage and died.")),
                             Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
                     ));
-                    health = 0;
+                    currentHealth = 0;
                     die(attacker);
                 } else {
-                    health -= damageValue;
+                    currentHealth -= damageValue;
                     playHurtAnimation(entity, attacker);
                 }
 
@@ -836,7 +838,7 @@ public abstract class WarlordsEntity {
                 resetRegenTimer();
                 updateHealth();
 
-                float cappedDamage = Math.min(damageValue, health);
+                float cappedDamage = Math.min(damageValue, currentHealth);
                 attacker.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(this));
                 this.addDamageTaken(cappedDamage);
                 playHurtAnimation(this.entity, attacker);
@@ -846,10 +848,10 @@ public abstract class WarlordsEntity {
 
                 // debt and healing
                 if (!debt && takeDamage) {
-                    if (this.health - damageValue > maxHealth) {
-                        this.health = maxHealth;
+                    if (this.currentHealth - damageValue > getMaxHealth()) {
+                        this.currentHealth = getMaxHealth();
                     } else {
-                        this.health -= damageValue;
+                        this.currentHealth -= damageValue;
                     }
                 }
 
@@ -878,7 +880,7 @@ public abstract class WarlordsEntity {
                     checkForAchievementsDamageAttacker(attacker);
                 }
                 // The player died.
-                if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
+                if (this.currentHealth <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 1);
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 0.5f);
@@ -1028,7 +1030,7 @@ public abstract class WarlordsEntity {
         debugMessage.append(Component.newline()).append(Component.text("Post Event:", NamedTextColor.AQUA));
         appendDebugMessageEvent(debugMessage, event);
 
-        float initialHealth = health;
+        float initialHealth = currentHealth;
         // Critical Hits
         float healValue = (int) ((Math.random() * (max - min)) + min);
         double crit = ThreadLocalRandom.current().nextDouble(100);
@@ -1068,21 +1070,21 @@ public abstract class WarlordsEntity {
             previousHealValue = healValue;
         }
         if (this == attacker || isTeammate(attacker)) {
-            float maxHealth = this.maxHealth;
+            float maxHealth = this.health.getCalculatedValue();
             boolean overhealSelf = this == attacker && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF);
             boolean overhealOthers = this != attacker && isTeammate(attacker) && flags.contains(InstanceFlags.CAN_OVERHEAL_OTHERS);
             if (overhealSelf || overhealOthers) {
                 maxHealth *= 1.1;
             }
-            if (this.health + healValue > maxHealth) {
-                healValue = maxHealth - this.health;
+            if (this.currentHealth + healValue > maxHealth) {
+                healValue = maxHealth - this.currentHealth;
             }
 
             if (healValue <= 0) {
                 return Optional.empty();
             }
 
-            boolean isOverheal = maxHealth > this.maxHealth && healValue + this.health > this.maxHealth;
+            boolean isOverheal = maxHealth > getMaxHealth() && healValue + this.currentHealth > this.getMaxBaseHealth();
             if (this == attacker) {
                 sendHealingMessage(debugMessage, attacker, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
             } else {
@@ -1096,9 +1098,9 @@ public abstract class WarlordsEntity {
                 abstractCooldown.onHealFromAttacker(event, healValue, isCrit);
             }
 
-            float cappedHealValue = Math.min(healValue, maxHealth - health);
+            float cappedHealValue = Math.min(healValue, maxHealth - currentHealth);
             attacker.addHealing(cappedHealValue, FlagHolder.isPlayerHolderFlag(this));
-            health += healValue;
+            currentHealth += healValue;
 
             if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
                 playHitSound(attacker);
@@ -1699,42 +1701,35 @@ public abstract class WarlordsEntity {
 
     public void setSpec(Specializations spec, SkillBoosts skillBoost) {
         this.spec = spec.create.get();
-        this.maxHealth = (this.spec.getMaxHealth() * (game.getAddons().contains(GameAddon.TRIPLE_HEALTH) ? 3 : 1));
-        this.maxBaseHealth = this.maxHealth;
-        this.health = this.maxHealth;
+        this.health.setBaseValue(this.spec.getMaxHealth());
+        this.currentHealth = getMaxHealth();
+        heal();
         this.energy = this.spec.getMaxEnergy();
     }
 
-    public float getHealth() {
+    public float getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public void setCurrentHealth(float currentHealth) {
+        this.currentHealth = currentHealth;
+    }
+
+    public FloatModifiable getHealth() {
         return health;
     }
 
-    public void setHealth(float health) {
-        this.health = health;
-    }
-
     public float getMaxHealth() {
-        return maxHealth;
-    }
-
-    public void setMaxHealth(float maxHealth) {
-        if (maxHealth < maxBaseHealth) {
-            maxHealth = maxBaseHealth;
-        }
-        this.maxHealth = maxHealth;
+        return health.getCalculatedValue();
     }
 
     public float getMaxBaseHealth() {
-        return maxBaseHealth;
+        return maxBaseHealthFilter.getCachedValue();
     }
 
-    public void setMaxBaseHealth(float maxBaseHealth) {
-        this.maxBaseHealth = maxBaseHealth;
-        if (maxHealth < maxBaseHealth) {
-            maxHealth = maxBaseHealth;
-        }
-        //TODO change this
-        spec.setMaxHealth((int) maxBaseHealth);
+    public void setMaxHealthAndHeal(float newBaseValue) {
+        health.setBaseValue(newBaseValue);
+        heal();
     }
 
     public void showDeathAnimation() {
@@ -1757,7 +1752,7 @@ public abstract class WarlordsEntity {
     }
 
     public void heal() {
-        this.health = this.maxBaseHealth;
+        this.currentHealth = getMaxBaseHealth();
     }
 
     public void resetRegenTimer() {
@@ -2451,18 +2446,18 @@ public abstract class WarlordsEntity {
 
         // Checks whether the player has overheal active and is full health or not.
         boolean hasOverhealCooldown = getCooldownManager().hasCooldown(Overheal.OVERHEAL_MARKER);
-        boolean hasTooMuchHealth = getHealth() > getMaxHealth();
+        boolean hasTooMuchHealth = getCurrentHealth() > getMaxHealth();
 
         if (hasOverhealCooldown && !hasTooMuchHealth) {
             getCooldownManager().removeCooldownByObject(Overheal.OVERHEAL_MARKER);
         }
 
         if (!hasOverhealCooldown && hasTooMuchHealth) {
-            setHealth(getMaxHealth());
+            setCurrentHealth(getMaxHealth());
         }
 
         // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
-        float newHealth = getHealth() / getMaxHealth() * 40;
+        float newHealth = getCurrentHealth() / getMaxHealth() * 40;
         if (newHealth < 0) {
             newHealth = 0;
         } else if (newHealth > 40) {
@@ -2497,7 +2492,7 @@ public abstract class WarlordsEntity {
             //precaution
             player.setHealth(newHealth);
             // Respawn fix for when a player is stuck or leaves the game.
-            if (getHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
+            if (getCurrentHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
                 heal();
             }
             // Checks whether the player has under 0 energy to avoid infinite energy bugs.
@@ -2654,7 +2649,7 @@ public abstract class WarlordsEntity {
         TextComponent.Builder actionBarMessage = Component.text()
                                                           .append(Component.text("HP: ", NamedTextColor.GOLD, TextDecoration.BOLD));
         TextComponent.Builder healthBuilder = Component.text().decorate(TextDecoration.BOLD);
-        float healthRatio = health / maxHealth;
+        float healthRatio = currentHealth / getMaxHealth();
         if (healthRatio > 1) {
             healthBuilder.color(NamedTextColor.GREEN);
         } else if (healthRatio >= .75) {
@@ -2664,9 +2659,10 @@ public abstract class WarlordsEntity {
         } else {
             healthBuilder.color(NamedTextColor.RED);
         }
-        int maxHealthRounded = Math.round(maxHealth);
-        int maxBaseHealthRounded = Math.round(maxBaseHealth);
-        healthBuilder.append(Component.text(Math.round(health)))
+        int currentHealthRounded = Math.round(currentHealth);
+        int maxHealthRounded = Math.round(getMaxHealth());
+        int maxBaseHealthRounded = Math.round(getMaxBaseHealth());
+        healthBuilder.append(Component.text(currentHealthRounded))
                      .append(Component.text("/", NamedTextColor.GOLD))
                      .append(Component.text(maxHealthRounded + "    ", maxHealthRounded > maxBaseHealthRounded ? NamedTextColor.YELLOW : NamedTextColor.GOLD));
         actionBarMessage.append(healthBuilder);

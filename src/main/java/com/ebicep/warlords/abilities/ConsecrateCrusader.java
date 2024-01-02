@@ -119,11 +119,11 @@ public class ConsecrateCrusader extends AbstractConsecrate {
     public AbstractConsecrate createConsecrate() {
         return new ConsecrateCrusader(minDamageHeal,
                 maxDamageHeal,
-                energyCost.getCurrentValue(),
+                energyCost.getBaseValue(),
                 critChance,
                 critMultiplier,
                 strikeDamageBoost,
-                hitBox.getCurrentValue(),
+                hitBox.getBaseValue(),
                 location
         );
     }

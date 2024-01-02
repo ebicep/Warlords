@@ -3853,9 +3853,7 @@ public enum GameMap {
                     warlordsNPC.getMob().onSpawn(this);
                     if (warlordsNPC.getMob() instanceof BossLike) {
                         float scaledHealth = (float) (warlordsNPC.getMaxHealth() * (.0625 * Math.pow(Math.E, 0.69314718056 * playerCount()))); // ln4/2 = 0.69314718056
-                        warlordsNPC.setMaxBaseHealth(scaledHealth);
-                        warlordsNPC.setMaxHealth(scaledHealth);
-                        warlordsNPC.setHealth(scaledHealth);
+                        warlordsNPC.setMaxHealthAndHeal(scaledHealth);
                         return;
                     }
                     int playerCount = playerCount();
@@ -3891,9 +3889,7 @@ public enum GameMap {
                     float minMeleeDamage = warlordsNPC.getMinMeleeDamage();
                     float maxMeleeDamage = warlordsNPC.getMaxMeleeDamage();
                     float newHealth = maxHealth * healthMultiplier;
-                    warlordsNPC.setMaxBaseHealth(newHealth);
-                    warlordsNPC.setMaxHealth(newHealth);
-                    warlordsNPC.setHealth(newHealth);
+                    warlordsNPC.setMaxHealthAndHeal(newHealth);
                     warlordsNPC.setMinMeleeDamage((int) (minMeleeDamage * meleeDamageMultiplier));
                     warlordsNPC.setMaxMeleeDamage((int) (maxMeleeDamage * meleeDamageMultiplier));
                 }
@@ -4124,9 +4120,7 @@ public enum GameMap {
                     float damageMultiplier = playerCount >= 4 ? 1.15f : 1;
 
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
-                    warlordsNPC.setMaxBaseHealth(newBaseHealth);
-                    warlordsNPC.setMaxHealth(newBaseHealth);
-                    warlordsNPC.setHealth(newBaseHealth);
+                    warlordsNPC.setMaxHealthAndHeal(newBaseHealth);
                     warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "Scaling",
                             null,
@@ -4336,9 +4330,7 @@ public enum GameMap {
                     }
 
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
-                    warlordsNPC.setMaxBaseHealth(newBaseHealth);
-                    warlordsNPC.setMaxHealth(newBaseHealth);
-                    warlordsNPC.setHealth(newBaseHealth);
+                    warlordsNPC.setMaxHealthAndHeal(newBaseHealth);
                     warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "Scaling",
                             null,
@@ -4650,9 +4642,7 @@ public enum GameMap {
                     };
                     float damageMultiplier = playerCount >= 4 ? playerCount >= 6 ? 1.2f : 1.1f : 1f;
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
-                    warlordsNPC.setMaxBaseHealth(newBaseHealth);
-                    warlordsNPC.setMaxHealth(newBaseHealth);
-                    warlordsNPC.setHealth(newBaseHealth);
+                    warlordsNPC.setMaxHealthAndHeal(newBaseHealth);
                     warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "Scaling",
                             null,
@@ -4847,9 +4837,7 @@ public enum GameMap {
                     };
                     float damageMultiplier = playerCount >= 4 ? playerCount >= 6 ? 1.2f : 1.1f : 1f;
                     float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
-                    warlordsNPC.setMaxBaseHealth(newBaseHealth);
-                    warlordsNPC.setMaxHealth(newBaseHealth);
-                    warlordsNPC.setHealth(newBaseHealth);
+                    warlordsNPC.setMaxHealthAndHeal(newBaseHealth);
                     warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "Scaling",
                             null,

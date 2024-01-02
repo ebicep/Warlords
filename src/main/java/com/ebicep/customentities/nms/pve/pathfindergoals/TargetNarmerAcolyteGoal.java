@@ -49,8 +49,8 @@ public class TargetNarmerAcolyteGoal extends TargetGoal {
         list.sort((o1, o2) -> {
             WarlordsEntity warlordsEntity1 = Warlords.getPlayer(o1.getBukkitEntity());
             WarlordsEntity warlordsEntity2 = Warlords.getPlayer(o2.getBukkitEntity());
-            return Double.compare(warlordsEntity1 != null ? warlordsEntity1.getHealth() : Double.MAX_VALUE,
-                    warlordsEntity2 != null ? warlordsEntity2.getHealth() : Double.MAX_VALUE
+            return Double.compare(warlordsEntity1 != null ? warlordsEntity1.getCurrentHealth() : Double.MAX_VALUE,
+                    warlordsEntity2 != null ? warlordsEntity2.getCurrentHealth() : Double.MAX_VALUE
             );
         });
         this.targetEntity = list.get(0);

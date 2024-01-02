@@ -75,8 +75,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
         int currentWave = option.getWaveCounter();
         if (currentWave % 5 == 0 && currentWave > 5) {
             hpDamageIncrease = 1 + .25f * (currentWave / 5f - 1);
-            warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * hpDamageIncrease);
-            warlordsNPC.heal();
+            warlordsNPC.setMaxHealthAndHeal(warlordsNPC.getMaxBaseHealth() * hpDamageIncrease);
         }
 
         Location location = warlordsNPC.getLocation();
@@ -151,8 +150,8 @@ public class EventNarmer extends AbstractMob implements BossMob {
                         event.setCancelled(true);
                     }
                     float executeHealth = warlordsNPC.getMaxHealth() * 0.4f;
-                    if (warlordsNPC.getHealth() < executeHealth && !acolytes.isEmpty()) {
-                        warlordsNPC.setHealth(warlordsNPC.getHealth());
+                    if (warlordsNPC.getCurrentHealth() < executeHealth && !acolytes.isEmpty()) {
+                        warlordsNPC.setCurrentHealth(warlordsNPC.getCurrentHealth());
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
                             Utils.playGlobalSound(loc, Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
                             Utils.playGlobalSound(loc, "mage.arcaneshield.activation", 0.4f, 0.5f);
@@ -169,7 +168,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
                 Location location = warlordsNPC.getLocation();
 
                 if (eventPlayer.isTeammate(warlordsNPC)) {
-                    warlordsNPC.setHealth(warlordsNPC.getHealth() * 1.15f);
+                    warlordsNPC.setCurrentHealth(warlordsNPC.getCurrentHealth() * 1.15f);
                 }
 
                 if (ancestors.contains(eventPlayer)) {

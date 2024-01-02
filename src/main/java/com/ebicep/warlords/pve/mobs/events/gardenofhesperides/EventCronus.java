@@ -95,11 +95,11 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (!healthCheck && self.getHealth() / self.getMaxHealth() < 0.30) {
+        if (!healthCheck && self.getCurrentHealth() / self.getMaxHealth() < 0.30) {
             healthCheck = true;
             GroundSlamBerserker groundSlamBerserker = new GroundSlamBerserker();
-            groundSlamBerserker.getHitBoxRadius().setCurrentValue(10);
-            groundSlamBerserker.getEnergyCost().setCurrentValue(0);
+            groundSlamBerserker.getHitBoxRadius().setBaseValue(10);
+            groundSlamBerserker.getEnergyCost().setBaseValue(0);
             new GameRunnable(self.getGame()) {
                 final float healing = self.getMaxHealth() * .0333f;
                 int counter = 0;

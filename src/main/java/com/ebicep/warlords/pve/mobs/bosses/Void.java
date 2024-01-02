@@ -107,9 +107,7 @@ public class Void extends AbstractMob implements BossMob {
 
         if (option.getDifficulty() == DifficultyIndex.EXTREME) {
             float newHealth = 55000;
-            warlordsNPC.setMaxBaseHealth(newHealth);
-            warlordsNPC.setHealth(newHealth);
-            warlordsNPC.setMaxHealth(newHealth);
+            warlordsNPC.setMaxHealthAndHeal(newHealth);
         }
 
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -141,7 +139,7 @@ public class Void extends AbstractMob implements BossMob {
     public void whileAlive(int ticksElapsed, PveOption option) {
         Location loc = warlordsNPC.getLocation();
         long playerCount = option.getGame().warlordsPlayers().count();
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.8f) && !flamePhaseTrigger) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * 0.8f) && !flamePhaseTrigger) {
             flamePhaseTrigger = true;
             preventArmageddon = true;
             immolation(option, loc);
@@ -152,7 +150,7 @@ public class Void extends AbstractMob implements BossMob {
         if (difficulty == DifficultyIndex.EXTREME) {
             spawnAmount--;
         }
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .5f) && !timedDamageTrigger) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * .5f) && !timedDamageTrigger) {
             timedDamageTrigger = true;
             preventArmageddon = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 13000 : 15000, 11);
@@ -161,13 +159,13 @@ public class Void extends AbstractMob implements BossMob {
             }
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.35f) && !flamePhaseTriggerTwo) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * 0.35f) && !flamePhaseTriggerTwo) {
             flamePhaseTriggerTwo = true;
             preventArmageddon = true;
             immolation(option, loc);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .25f) && !timedDamageTriggerTwo) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * .25f) && !timedDamageTriggerTwo) {
             timedDamageTriggerTwo = true;
             preventArmageddon = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 21000 : 25000, 16);
@@ -176,7 +174,7 @@ public class Void extends AbstractMob implements BossMob {
             }
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * 0.1f) && !boltaroPhaseTrigger) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * 0.1f) && !boltaroPhaseTrigger) {
             boltaroPhaseTrigger = true;
             for (int i = 0; i < playerCount; i++) {
                 option.spawnNewMob(new Boltaro(loc));

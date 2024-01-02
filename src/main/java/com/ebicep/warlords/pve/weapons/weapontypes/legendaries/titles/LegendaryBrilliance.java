@@ -66,7 +66,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                 if (Instant.now().isBefore(lastActivated.get())) {
                     return;
                 }
-                if (player.getHealth() < player.getMaxHealth() * .3) {
+                if (player.getCurrentHealth() < player.getMaxHealth() * .3) {
                     giveHealingBoostCooldown();
                 }
             }

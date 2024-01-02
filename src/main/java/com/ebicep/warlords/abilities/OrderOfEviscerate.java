@@ -246,7 +246,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                     orderOfEviscerate.setCurrentCooldown(0);
                                     wp.updateItem(orderOfEviscerate);
                                 }
-                                wp.addEnergy(wp, name, energyCost.getCurrentValue());
+                                wp.addEnergy(wp, name, energyCost.getBaseValue());
                             }
                         }
                     }.runTaskLater(2);
@@ -281,7 +281,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                     orderOfEviscerate.setCurrentCooldown(orderOfEviscerate.getCooldownValue() / 2);
                                     wp.updateItem(orderOfEviscerate);
                                 }
-                                wp.addEnergy(wp, name, energyCost.getCurrentValue() / 2f);
+                                wp.addEnergy(wp, name, energyCost.getBaseValue() / 2f);
                             }
                         }
                     }.runTaskLater(2);

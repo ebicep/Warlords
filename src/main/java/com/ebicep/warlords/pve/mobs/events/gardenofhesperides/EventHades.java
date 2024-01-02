@@ -159,7 +159,7 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
         AbstractMob resurrected = resurrectedMob.createMob(spawnLocation.clone().add(0, -2.99, 0));
         resurrected.getDynamicFlags().add(DynamicFlags.UNSWAPPABLE);
         pveOption.spawnNewMob(resurrected);
-        resurrected.getWarlordsNPC().setHealth(resurrected.getWarlordsNPC().getMaxHealth() / 2f);
+        resurrected.getWarlordsNPC().setCurrentHealth(resurrected.getWarlordsNPC().getMaxHealth() / 2f);
         resurrected.getWarlordsNPC().setStunTicks(62);
         new GameRunnable(warlordsNPC.getGame()) {
             int ticksElapsed = 0;

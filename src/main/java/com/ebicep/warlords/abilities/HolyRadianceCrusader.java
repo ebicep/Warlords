@@ -104,8 +104,8 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
             HolyRadianceCrusader tempMark = new HolyRadianceCrusader(
                     minDamageHeal,
                     maxDamageHeal,
-                    cooldown.getCurrentValue(),
-                    energyCost.getCurrentValue(),
+                    cooldown.getBaseValue(),
+                    energyCost.getBaseValue(),
                     critChance,
                     critMultiplier
             );

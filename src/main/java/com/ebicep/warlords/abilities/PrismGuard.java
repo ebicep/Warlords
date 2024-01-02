@@ -143,7 +143,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             .entitiesAround(wp, bubbleRadius + 1, bubbleRadius + 1, bubbleRadius + 1)
                             .aliveTeammatesOf(wp)
                     ) {
-                        float healingValue = bubbleHealing + (entity.getMaxHealth() - entity.getHealth()) * (hits.get() * (convertToPercent(bubbleMissingHealing)));
+                        float healingValue = bubbleHealing + (entity.getMaxHealth() - entity.getCurrentHealth()) * (hits.get() * (convertToPercent(bubbleMissingHealing)));
                         entity.addHealingInstance(
                                 wp,
                                 name,

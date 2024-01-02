@@ -50,9 +50,7 @@ public class BoltaroExiled extends AbstractMob implements BossMinionMob {
 
         if (option.getDifficulty() == DifficultyIndex.EXTREME) {
             float newHealth = 2000;
-            warlordsNPC.setMaxBaseHealth(newHealth);
-            warlordsNPC.setHealth(newHealth);
-            warlordsNPC.setMaxHealth(newHealth);
+            warlordsNPC.setMaxHealthAndHeal(newHealth);
         }
     }
 

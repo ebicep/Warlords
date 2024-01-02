@@ -14,7 +14,7 @@ public class ScrollOfScripts extends SpecialOmegaTome implements AppliesToWarlor
     public static int numberOfPlayersAbove75(WarlordsPlayer warlordsPlayer) {
         return warlordsPlayer.getGame()
                              .warlordsPlayers()
-                             .filter(player -> player.getHealth() > player.getMaxHealth() * .75)
+                             .filter(player -> player.getCurrentHealth() > player.getMaxHealth() * .75)
                              .mapToInt(player -> 1)
                              .sum();
     }

@@ -150,6 +150,11 @@ public class FloatModifiable {
         return modifier;
     }
 
+    public void addFilter(FloatModifiableFilter floatModifiableFilter) {
+        filters.put(floatModifiableFilter.getName(), floatModifiableFilter);
+        refresh();
+    }
+
     public static class FloatModifier {
 
         private final String log;

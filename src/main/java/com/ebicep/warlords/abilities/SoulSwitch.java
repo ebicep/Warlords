@@ -212,7 +212,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     decoy = null;
                 }
                 if (pveMasterUpgrade) {
-                    float healing = (wp.getMaxHealth() - wp.getHealth()) * 0.1f;
+                    float healing = (wp.getMaxHealth() - wp.getCurrentHealth()) * 0.1f;
                     wp.addHealingInstance(
                             wp,
                             name,

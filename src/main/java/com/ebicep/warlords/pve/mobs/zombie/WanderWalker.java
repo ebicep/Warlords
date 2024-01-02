@@ -71,7 +71,7 @@ public class WanderWalker extends AbstractMob implements AdvancedMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (!recovered && self.getHealth() <= self.getMaxHealth() * .1f) {
+        if (!recovered && self.getCurrentHealth() <= self.getMaxHealth() * .1f) {
             recovered = true;
             float healAmount = self.getMaxHealth() * healthRecover;
             self.addHealingInstance(self, "Void Recovery", healAmount, healAmount, 0, 100);

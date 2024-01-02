@@ -78,8 +78,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
         int currentWave = option.getWaveCounter();
         if (currentWave % 5 == 0 && currentWave > 5) {
             float additionalHealthMultiplier = 1 + .15f * (currentWave / 5f - 1);
-            warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
-            warlordsNPC.heal();
+            warlordsNPC.setMaxHealthAndHeal(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
         }
         option.getGame().registerEvents(new Listener() {
 
@@ -130,7 +129,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
     }
 
     private boolean aboveHealthThreshold() {
-        return !(warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75);
+        return !(warlordsNPC.getCurrentHealth() <= warlordsNPC.getMaxBaseHealth() * .75);
     }
 
     private static class GroundShred extends AbstractPveAbility {

@@ -349,10 +349,7 @@ public class OnslaughtOption implements PveOption {
 
         // Final health value after applying all modifiers.
         float finalHealth = health * (bossFlagCheck ? bossMultiplier : 1);
-        warlordsNPC.setMaxBaseHealth(finalHealth);
-        warlordsNPC.setMaxHealth(finalHealth);
-        warlordsNPC.setHealth(finalHealth);
-
+        warlordsNPC.setMaxHealthAndHeal(finalHealth);
         warlordsNPC.setMinMeleeDamage(minMeleeDamage);
         warlordsNPC.setMaxMeleeDamage(maxMeleeDamage);
     }

@@ -55,7 +55,7 @@ public class EventBoltaro extends AbstractMob implements BossMob {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
         }
 
-        if (warlordsNPC.getHealth() < 6000) {
+        if (warlordsNPC.getCurrentHealth() < 6000) {
             split = true;
 
             split(option);

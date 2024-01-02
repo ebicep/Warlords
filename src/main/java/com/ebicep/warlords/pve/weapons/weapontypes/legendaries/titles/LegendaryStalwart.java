@@ -103,10 +103,10 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                 ) {
                     @Override
                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        if (player.getHealth() >= player.getMaxHealth() * upperBoundHP) {
+                        if (player.getCurrentHealth() >= player.getMaxHealth() * upperBoundHP) {
                             return currentDamageValue;
                         }
-                        float currentHpPercent = player.getHealth() / player.getMaxHealth();
+                        float currentHpPercent = player.getCurrentHealth() / player.getMaxHealth();
                         int timesToReduce = (int) ((getUnderHpCheck() - currentHpPercent) / getEveryHpPercent());
                         float reduction = Math.min(timesToReduce * .075f, .8f);
                         return currentDamageValue * (1 - reduction);
@@ -114,17 +114,17 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
 
                     @Override
                     public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                        if (player.getHealth() <= player.getMaxHealth() * .8) {
+                        if (player.getCurrentHealth() <= player.getMaxHealth() * .8) {
                             return currentDamageValue;
                         }
-                        if (player.getHealth() - currentDamageValue > 0) {
+                        if (player.getCurrentHealth() - currentDamageValue > 0) {
                             return currentDamageValue;
                         }
                         if (Instant.now().isBefore(lastActivated.get())) {
                             return currentDamageValue;
                         }
                         lastActivated.set(Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS));
-                        player.setHealth(player.getMaxBaseHealth() * .05f);
+                        player.setCurrentHealth(player.getMaxBaseHealth() * .05f);
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Stalwart",
                                 "STALWART",

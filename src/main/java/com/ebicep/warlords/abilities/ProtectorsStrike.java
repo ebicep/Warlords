@@ -95,7 +95,7 @@ public class ProtectorsStrike extends AbstractStrike {
             float currentDamageValue = warlordsDamageHealingFinalEvent.getValue();
             boolean isCrit = warlordsDamageHealingFinalEvent.isCrit();
 
-            float healthFraction = lerp(0, 1, wp.getHealth() / wp.getMaxHealth());
+            float healthFraction = lerp(0, 1, wp.getCurrentHealth() / wp.getMaxHealth());
 
             if (healthFraction > 1) {
                 healthFraction = 1; // in the case of overheal
@@ -134,7 +134,7 @@ public class ProtectorsStrike extends AbstractStrike {
                         .limit(maxAllies)
                         .leastAliveFirst()
                 ) {
-                    boolean isLeastAlive = ally.getHealth() < ally.getMaxHealth();
+                    boolean isLeastAlive = ally.getCurrentHealth() < ally.getMaxHealth();
                     float healing = (currentDamageValue * allyHealing) * (isLeastAlive ? 1.5f : 1);
                     ally.addHealingInstance(
                             wp,

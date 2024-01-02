@@ -466,9 +466,7 @@ public class WaveDefenseOption implements PveOption {
 
         // Final health value after applying all modifiers.
         float finalHealth = (health * difficultyHealthMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
-        warlordsNPC.setMaxBaseHealth(finalHealth);
-        warlordsNPC.setMaxHealth(finalHealth);
-        warlordsNPC.setHealth(finalHealth);
+        warlordsNPC.setMaxHealthAndHeal(finalHealth);
 
         int endlessFlagCheckMin = isEndless ? minMeleeDamage : (int) (warlordsNPC.getMinMeleeDamage() * difficultyDamageMultiplier);
         int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyDamageMultiplier);

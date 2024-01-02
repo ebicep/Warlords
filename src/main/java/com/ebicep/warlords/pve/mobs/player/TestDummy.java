@@ -68,7 +68,7 @@ public class TestDummy extends AbstractMob implements PlayerMob {
                 currentVector.zero();
             }
         });
-        warlordsNPC.setHealth(warlordsNPC.getMaxBaseHealth() / 2);
+        warlordsNPC.setCurrentHealth(warlordsNPC.getMaxBaseHealth() / 2);
         warlordsNPC.updateHealth();
     }
 

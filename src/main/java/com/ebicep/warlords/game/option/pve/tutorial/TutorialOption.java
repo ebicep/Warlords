@@ -426,8 +426,7 @@ public class TutorialOption implements Option {
         for (Location location : locations) {
             WarlordsNPC testDummy = game.addNPC(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation()).toNPC(game, Team.RED, warlordsNPC -> {}));
             testDummy.setTakeDamage(true);
-            testDummy.setMaxBaseHealth(100);
-            testDummy.setHealth(100);
+            testDummy.setMaxHealthAndHeal(100);
             testDummy.setRegenTickTimer(Integer.MAX_VALUE);
             testDummy.updateHealth();
             testDummies.add(testDummy);

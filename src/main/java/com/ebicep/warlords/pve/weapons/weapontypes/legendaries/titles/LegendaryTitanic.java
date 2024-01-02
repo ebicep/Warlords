@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -57,16 +58,11 @@ public class LegendaryTitanic extends AbstractLegendaryWeapon {
         super.applyToWarlordsPlayer(player, pveOption);
 
         player.getGame().registerEvents(new Listener() {
-            float baseMaxHealth = -1;
-            int upgradeCount = 0;
-
+            final FloatModifiable.FloatModifier modifier = player.getHealth().addMultiplicativeModifierAdd(getTitleName() + " (Base)", 0);
             @EventHandler
             public void onEvent(WarlordsUpgradeUnlockEvent event) {
                 if (event.getWarlordsEntity() == player) {
-                    if (baseMaxHealth == -1) {
-                        baseMaxHealth = player.getMaxBaseHealth();
-                    }
-                    player.setMaxBaseHealth(baseMaxHealth * (1 + (++upgradeCount * (HEALTH_INCREASE + HEALTH_INCREASE_PER_UPGRADE * getTitleLevel()))));
+                    modifier.setModifier(modifier.getModifier() + (HEALTH_INCREASE + HEALTH_INCREASE_PER_UPGRADE * getTitleLevel()));
                 }
             }
         });

@@ -121,8 +121,7 @@ public class TycheProsperity implements FieldEffect {
     }
 
     private void shamanBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.setMaxBaseHealth(warlordsEntity.getMaxBaseHealth() * 1.05f);
-        warlordsEntity.heal();
+        warlordsEntity.getHealth().addMultiplicativeModifierAdd(getName() + " (Base)", .05f);
         warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),
                 null,

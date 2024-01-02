@@ -54,13 +54,13 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
             AbstractAbility ability = abilities.get(i);
             FloatModifiable abilityCooldown = ability.getCooldown();
             switch (i) {
-                case 0 -> abilityCooldown.setCurrentValue(5);
-                case 1 -> abilityCooldown.setCurrentValue(8);
-                case 2 -> abilityCooldown.setCurrentValue(13);
-                case 3 -> abilityCooldown.setCurrentValue(18);
-                case 4 -> abilityCooldown.setCurrentValue(30);
+                case 0 -> abilityCooldown.setBaseValue(5);
+                case 1 -> abilityCooldown.setBaseValue(8);
+                case 2 -> abilityCooldown.setBaseValue(13);
+                case 3 -> abilityCooldown.setBaseValue(18);
+                case 4 -> abilityCooldown.setBaseValue(30);
             }
-            ability.setCurrentCooldown(abilityCooldown.getCurrentValue());
+            ability.setCurrentCooldown(abilityCooldown.getBaseValue());
         }
 
         for (int i = 0; i < 3; i++) {

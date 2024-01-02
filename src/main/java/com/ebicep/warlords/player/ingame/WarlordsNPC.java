@@ -79,7 +79,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
-        setMaxBaseHealth(maxHealth);
+        setMaxHealthAndHeal(maxHealth);
     }
 
     @Nonnull
@@ -257,11 +257,11 @@ public final class WarlordsNPC extends WarlordsEntity {
                         armorStand.setCustomNameVisible(true);
                     });
                 } else {
-                    playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+                    playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
                     playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
                 }
             } else {
-                entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+                entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
             }
         }
     }

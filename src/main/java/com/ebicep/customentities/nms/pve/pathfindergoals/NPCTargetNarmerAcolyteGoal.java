@@ -59,8 +59,8 @@ public class NPCTargetNarmerAcolyteGoal extends BehaviorGoalAdapter {
         list.sort((o1, o2) -> {
             WarlordsEntity warlordsEntity1 = Warlords.getPlayer(o1);
             WarlordsEntity warlordsEntity2 = Warlords.getPlayer(o2);
-            return Double.compare(warlordsEntity1 != null ? warlordsEntity1.getHealth() : Double.MAX_VALUE,
-                    warlordsEntity2 != null ? warlordsEntity2.getHealth() : Double.MAX_VALUE
+            return Double.compare(warlordsEntity1 != null ? warlordsEntity1.getCurrentHealth() : Double.MAX_VALUE,
+                    warlordsEntity2 != null ? warlordsEntity2.getCurrentHealth() : Double.MAX_VALUE
             );
         });
         this.warlordsEntityTarget = Warlords.getPlayer(list.get(0));

@@ -106,7 +106,7 @@ public class Chessking extends AbstractMob implements BossMob {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 0.2f);
         }
         SlimeSize slimeSize = npc.getOrAddTrait(SlimeSize.class);
-        float healthPercent = warlordsNPC.getHealth() / warlordsNPC.getMaxHealth();
+        float healthPercent = warlordsNPC.getCurrentHealth() / warlordsNPC.getMaxHealth();
         int size = slimeSize.getSize();
         int newSize = (int) (21 * healthPercent);
         if (size != newSize && 0 < newSize && newSize < 21) {
