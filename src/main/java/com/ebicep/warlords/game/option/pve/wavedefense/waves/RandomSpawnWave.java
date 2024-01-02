@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.waves;
 
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -19,6 +20,7 @@ public class RandomSpawnWave implements Wave {
     private final Component message;
     private int delay;
     private int spawnTickPeriod = 8;
+
 
     public RandomSpawnWave(@Nullable Component message) {
         this.delay = 0;
@@ -105,6 +107,11 @@ public class RandomSpawnWave implements Wave {
     @Override
     public Component getMessage() {
         return message;
+    }
+
+    @Override
+    public void tick(PveOption pveOption, int ticksElapsed) {
+
     }
 
     static final class SpawnSettings {

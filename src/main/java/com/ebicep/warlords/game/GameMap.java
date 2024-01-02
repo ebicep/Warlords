@@ -15,6 +15,7 @@ import com.ebicep.warlords.game.option.payload.PayloadOption;
 import com.ebicep.warlords.game.option.payload.PayloadSpawns;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.pve.ItemOption;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.ReadyUpOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.rewards.CoinGainOption;
@@ -51,6 +52,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventTheArchivist;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.Pair;
@@ -4143,7 +4145,6 @@ public enum GameMap {
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
             options.add(new TheAcropolisOption());
-//            options.add(new SafeZoneOption(1));
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(30, Team.BLUE)
                     .onPerWaveClear(1, 500)
@@ -4591,16 +4592,21 @@ public enum GameMap {
                             .add(0.2, Mob.ILLUMINATION)
                             .add(0.1, Mob.FIRE_SPLITTER)
                     )
-                    .add(25, new RandomSpawnWave(30, 5 * SECOND, Component.text("Boss"))
-                            .add(1, 4, Mob.EVENT_ROUGE_GRIMOIRE)
-                            .add(1, 4, Mob.EVENT_VIOLETTE_GRIMOIRE)
-                            .add(1, 4, Mob.EVENT_BLEUE_GRIMOIRE)
-                            .add(1, 4, Mob.EVENT_ORANGE_GRIMOIRE)
-                            .add(1, 4, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
-                            .add(1, 3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
-                            .add(1, 2, Mob.EVENT_SCRIPTED_GRIMOIRE)
-                            .add(1, 4, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
-                            .add(10, 1, Mob.EVENT_THE_ARCHIVIST, loc.addXYZ(-3.5, 25, 1.5))
+                    .add(25, new RandomSpawnWave(29, 5 * SECOND, Component.text("Boss")) {
+                                @Override
+                                public void tick(PveOption pveOption, int ticksElapsed) {
+                                    if (ticksElapsed == 10 * 20) {
+                                        pveOption.spawnNewMob(new EventTheArchivist(loc.addXYZ(-3.5, 25, 1.5)));
+                                    }
+                                }
+                            }.add(1, 4, Mob.EVENT_ROUGE_GRIMOIRE)
+                             .add(1, 4, Mob.EVENT_VIOLETTE_GRIMOIRE)
+                             .add(1, 4, Mob.EVENT_BLEUE_GRIMOIRE)
+                             .add(1, 4, Mob.EVENT_ORANGE_GRIMOIRE)
+                             .add(1, 4, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
+                             .add(1, 3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
+                             .add(1, 2, Mob.EVENT_SCRIPTED_GRIMOIRE)
+                             .add(1, 4, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
                     )
                     ,
                     DifficultyIndex.EVENT, 25

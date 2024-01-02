@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.waves;
 
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -72,6 +73,11 @@ public class FixedSpawnWave implements Wave {
     @Override
     public Component getMessage() {
         return message;
+    }
+
+    @Override
+    public void tick(PveOption pveOption, int ticksElapsed) {
+
     }
 
     record SpawnSetting(int amount, Mob mob, Location location) {

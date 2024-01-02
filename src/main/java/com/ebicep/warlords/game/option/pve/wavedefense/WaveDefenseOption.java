@@ -534,6 +534,8 @@ public class WaveDefenseOption implements PveOption {
                     }
                 }
 
+                currentWave.tick(WaveDefenseOption.this, ticksElapsed.get());
+
                 ticksElapsed.getAndIncrement();
             }
         }.runTaskTimer(20, 0);
