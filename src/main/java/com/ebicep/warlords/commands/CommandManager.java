@@ -555,6 +555,7 @@ public class CommandManager {
         manager.registerCommand(new AbilityCommand());
         manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
+        manager.registerCommand(new PrintFloatModifiableCommand());
         manager.registerCommand(new StunClearCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
         manager.registerCommand(new SpawnTestDummyCommand());

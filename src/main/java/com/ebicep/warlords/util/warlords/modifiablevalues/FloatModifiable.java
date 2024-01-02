@@ -1,10 +1,15 @@
 package com.ebicep.warlords.util.warlords.modifiablevalues;
 
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class FloatModifiable {
 
@@ -12,10 +17,10 @@ public class FloatModifiable {
     private final List<FloatModifier> additiveModifiers = new ArrayList<>();
     private final List<FloatModifier> multiplicativeModifiersAdditive = new ArrayList<>(); // these modifiers are added together
     private final List<FloatModifier> multiplicativeModifiersMultiplicative = new ArrayList<>(); // these modifiers are multiplied together
-    private float baseValue;
     private final Map<String, FloatModifiableFilter> filters = new HashMap<>() {{
         put("Base", new FloatModifiableFilter.BaseFilter());
     }};
+    private float baseValue;
 
     public FloatModifiable(float baseValue) {
         this.baseValue = baseValue;
@@ -49,6 +54,9 @@ public class FloatModifiable {
                     .mapToDouble(FloatModifier::getModifier)
                     .reduce(1, (a, b) -> a * b);
             floatModifiableFilter.setCachedValue((baseValue + cachedAdditiveModifier) * cachedMultiplicativeModifierAdditive * cachedMultiplicativeModifierMultiplicative);
+            floatModifiableFilter.setCachedAdditiveModifier(cachedAdditiveModifier);
+            floatModifiableFilter.setCachedMultiplicativeModifierAdditive(cachedMultiplicativeModifierAdditive);
+            floatModifiableFilter.setCachedMultiplicativeModifierMultiplicative(cachedMultiplicativeModifierMultiplicative);
         });
     }
 
@@ -81,10 +89,6 @@ public class FloatModifiable {
         multiplicativeModifiersAdditive.removeIf(floatModifier -> floatModifier.getLog().equals(log));
         multiplicativeModifiersMultiplicative.removeIf(floatModifier -> floatModifier.getLog().equals(log));
         refresh();
-    }
-
-    public float getCalculatedValue() {
-        return filters.get("Base").getCachedValue();
     }
 
     public float getBaseValue() {
@@ -155,6 +159,46 @@ public class FloatModifiable {
         refresh();
     }
 
+    public List<Component> getDebugInfo() {
+        List<Component> components = new ArrayList<>();
+        FloatModifiableFilter base = filters.get("Base");
+        components.add(getDebugInfo("Calculated", getCalculatedValue()));
+        components.add(getDebugInfo("Base", baseValue));
+        if (!overridingModifiers.isEmpty()) {
+            components.add(getDebugInfo("Overriding", overridingModifiers.get(0).getModifier()));
+            components.addAll(getDebugInfo(overridingModifiers));
+        }
+        components.add(getDebugInfo("Additive", base.getCachedAdditiveModifier()));
+        components.addAll(getDebugInfo(additiveModifiers));
+        components.add(getDebugInfo("Multiplicative Additive", base.getCachedMultiplicativeModifierAdditive()));
+        components.addAll(getDebugInfo(multiplicativeModifiersAdditive));
+        components.add(getDebugInfo("Multiplicative Multiplicative", base.getCachedMultiplicativeModifierMultiplicative()));
+        components.addAll(getDebugInfo(multiplicativeModifiersMultiplicative));
+        return components;
+    }
+
+    private Component getDebugInfo(String name, float value) {
+        return ComponentBuilder.create()
+                               .text(name, NamedTextColor.DARK_GREEN)
+                               .text(": ", NamedTextColor.GRAY)
+                               .text(value, NamedTextColor.GOLD)
+                               .build();
+    }
+
+    public float getCalculatedValue() {
+        return filters.get("Base").getCachedValue();
+    }
+
+    private List<Component> getDebugInfo(List<FloatModifier> modifiers) {
+        return modifiers.stream()
+                        .map(floatModifier -> ComponentBuilder
+                                .create()
+                                .text(" - ", NamedTextColor.WHITE)
+                                .append(floatModifier.getDebugInfo())
+                                .build())
+                        .collect(Collectors.toList());
+    }
+
     public static class FloatModifier {
 
         private final String log;
@@ -172,6 +216,15 @@ public class FloatModifiable {
             this.log = log;
             this.modifier = modifier;
             this.ticksLeft = -1;
+        }
+
+        public Component getDebugInfo() {
+            return ComponentBuilder.create()
+                                   .text(log, NamedTextColor.GREEN)
+                                   .text(": ", NamedTextColor.GRAY)
+                                   .text(modifier, NamedTextColor.YELLOW)
+                                   .text(" (" + ticksLeft + ")", NamedTextColor.DARK_GRAY)
+                                   .build();
         }
 
         public boolean tick() {

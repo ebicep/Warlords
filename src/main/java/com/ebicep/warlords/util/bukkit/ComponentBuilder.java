@@ -37,6 +37,11 @@ public class ComponentBuilder {
         this.componentBuilder = Component.text(text, textColor, textDecoration).toBuilder();
     }
 
+    public ComponentBuilder append(Component component) {
+        componentBuilder.append(component);
+        return this;
+    }
+
     public ComponentBuilder text(String text) {
         componentBuilder.append(Component.text(text));
         return this;
@@ -48,6 +53,21 @@ public class ComponentBuilder {
     }
 
     public ComponentBuilder text(String text, TextColor textColor, TextDecoration... textDecoration) {
+        componentBuilder.append(Component.text(text, textColor, textDecoration));
+        return this;
+    }
+
+    public ComponentBuilder text(float text) {
+        componentBuilder.append(Component.text(text));
+        return this;
+    }
+
+    public ComponentBuilder text(float text, TextColor textColor) {
+        componentBuilder.append(Component.text(text, textColor));
+        return this;
+    }
+
+    public ComponentBuilder text(float text, TextColor textColor, TextDecoration... textDecoration) {
         componentBuilder.append(Component.text(text, textColor, textDecoration));
         return this;
     }
