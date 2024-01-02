@@ -8,7 +8,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.GrimoiresGra
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
-import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
+import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventNecronomiconGrimoire;
@@ -18,7 +18,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.util.Objects;
 
-public class ThatWasCloseI extends AbstractBounty implements TracksDuringGame, WeeklyCost, LibraryArchives1 {
+public class ThatWasCloseI extends AbstractBounty implements TracksDuringGame, EventCost, LibraryArchives1 {
 
     @Transient
     private int newValue = 0;
