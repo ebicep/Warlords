@@ -24,7 +24,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 "The Archivist",
                 125000,
                 0.21f,
-                25,
+                15,
                 0,
                 0
         );
