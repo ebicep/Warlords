@@ -1210,7 +1210,7 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new SpendableBuyShop(1, Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 3, 300_000));
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 3, 300_000));
                 add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
                 add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
                 add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
