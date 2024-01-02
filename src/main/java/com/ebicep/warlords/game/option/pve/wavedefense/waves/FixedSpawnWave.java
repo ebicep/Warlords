@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FixedWave implements Wave {
+public class FixedSpawnWave implements Wave {
 
     private final int delay;
     private final List<SpawnSetting> spawnSettings = new ArrayList<>();
@@ -18,25 +18,25 @@ public class FixedWave implements Wave {
     private int spawnCounter = 0;
     private int spawnTickPeriod;
 
-    public FixedWave(@Nullable Component message) {
+    public FixedSpawnWave(@Nullable Component message) {
         this(0, message);
     }
 
-    public FixedWave(int delay, @Nullable Component message) {
+    public FixedSpawnWave(int delay, @Nullable Component message) {
         this(delay, 8, message);
     }
 
-    public FixedWave(int delay, int spawnTickPeriod, @Nullable Component message) {
+    public FixedSpawnWave(int delay, int spawnTickPeriod, @Nullable Component message) {
         this.delay = delay;
         this.message = message;
         this.spawnTickPeriod = spawnTickPeriod;
     }
 
-    public FixedWave add(Mob factory) {
+    public FixedSpawnWave add(Mob factory) {
         return add(factory, null);
     }
 
-    public FixedWave add(Mob factory, Location customSpawnLocation) {
+    public FixedSpawnWave add(Mob factory, Location customSpawnLocation) {
         spawnSettings.add(new SpawnSetting(1, factory, customSpawnLocation));
         return this;
     }

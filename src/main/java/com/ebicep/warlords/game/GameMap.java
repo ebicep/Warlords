@@ -27,7 +27,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.SafeZoneOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffectOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.*;
-import com.ebicep.warlords.game.option.pve.wavedefense.waves.FixedWave;
+import com.ebicep.warlords.game.option.pve.wavedefense.waves.FixedSpawnWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.RandomSpawnWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.StaticWaveList;
 import com.ebicep.warlords.game.option.pvp.DuelsTeleportOption;
@@ -4294,7 +4294,7 @@ public enum GameMap {
             bossSpawnLocations.add(loc.addXYZ(88.5, 33, 76.5, -90, 0));
             Collections.shuffle(bossSpawnLocations);
             WaveDefenseOption waveDefenseOption = new WaveDefenseOption(Team.RED, new StaticWaveList()
-                    .add(1, new FixedWave(60 * SECOND, -1, null)
+                    .add(1, new FixedSpawnWave(60 * SECOND, -1, null)
                             .add(Mob.EVENT_HADES, bossSpawnLocations.get(0))
                             .add(Mob.EVENT_POSEIDON, bossSpawnLocations.get(1))
                             .add(Mob.EVENT_ZEUS, bossSpawnLocations.get(2))
