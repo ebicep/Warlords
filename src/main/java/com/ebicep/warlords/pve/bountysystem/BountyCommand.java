@@ -14,6 +14,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 
 @CommandAlias("bounty")
 @CommandPermission("group.administrator")
@@ -155,6 +156,26 @@ public class BountyCommand extends BaseCommand {
             List<AbstractBounty> activeBounties = eventMode.getActiveBounties();
             activeBounties.set(index, bounty.create.get());
             ChatChannels.sendDebugMessage(player, Component.text("Set bounty #" + index + " to " + bounty.name() + " in event bounties"));
+        });
+    }
+
+    @Subcommand("cleareventcompleted")
+    public void clearEventComplete(Player player) {
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent == null) {
+            ChatChannels.sendDebugMessage(player, Component.text("No event is currently active"));
+            return;
+        }
+        DatabaseManager.getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, databasePlayer -> {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats()).get(currentGameEvent.getStartDateSecond());
+            if (eventMode == null) {
+                ChatChannels.sendDebugMessage(player, Component.text("No event mode detected"));
+                return;
+            }
+            Map<Bounty, Long> completedBounties = eventMode.getCompletedBounties();
+            ChatChannels.sendDebugMessage(player, Component.text("Cleared " + completedBounties.size() + " completed event bounties"));
+            completedBounties.clear();
         });
     }
 
