@@ -4860,7 +4860,6 @@ public enum GameMap {
             options.add(new ItemOption());
             options.add(new WinAfterTimeoutOption(600, 50, "spec"));
             options.add(new WinByMaxWaveClearOption());
-            options.add(new ForgottenCodexOption());
             options.add(new EventPointsOption()
                     .reduceScoreOnAllDeath(30, Team.BLUE)
                     .onPerWaveClear(1, 500)
@@ -4908,16 +4907,17 @@ public enum GameMap {
                         put("Inquisiteur-EGA", 15000L);
                         put("Inquisiteur-VPA", 15000L);
                     }})
-                    .playerCoinPerXSec(150, 5)
+                    .playerCoinPerXSec(150, 10)
                     .guildCoinInsigniaConvertBonus(1000)
-                    .guildCoinPerXSec(1, 1)
+                    .guildCoinPerXSec(1, 3)
                     .disableCoinConversionUpgrade()
             );
             options.add(new ExperienceGainOption()
-                    .playerExpPerXSec(10, 5)
-                    .guildExpPerXSec(30, 30)
+                    .playerExpPerXSec(10, 10)
+                    .guildExpPerXSec(20, 30)
             );
             options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffect.CODEX_COLLECTOR));
+            options.add(new ForgottenCodexOption());
 
             return options;
         }

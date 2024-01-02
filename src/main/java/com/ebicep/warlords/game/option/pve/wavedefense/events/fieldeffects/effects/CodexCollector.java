@@ -25,11 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CodexCollector implements FieldEffect {
 
     private final Map<WarlordsEntity, PlayerCodex> playerCodexEquipped = new HashMap<>();
+    private int codexesEquipped = 0;
 
     @Override
     public String getName() {
@@ -60,7 +60,6 @@ public class CodexCollector implements FieldEffect {
             return;
         }
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
-        AtomicInteger codexesEquipped = new AtomicInteger();
         for (WarlordsEntity player : players) {
             if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
                 return;
@@ -74,7 +73,7 @@ public class CodexCollector implements FieldEffect {
                 Specializations specClass = player.getSpecClass();
                 PlayerCodex codexForSpec = PlayerCodex.getCodexForSpec(specClass);
                 if (stats.getCodexesEarned().getOrDefault(codexForSpec, 0) > 0) {
-                    codexesEquipped.incrementAndGet();
+                    codexesEquipped++;
                     player.getSpec().getAbilities().clear();
                     for (Ability ability : codexForSpec.abilities) {
                         player.getSpec().getAbilities().add(ability.create.get());
@@ -89,7 +88,7 @@ public class CodexCollector implements FieldEffect {
 
             @EventHandler
             public void onKill(WarlordsDeathEvent event) {
-                if (codexesEquipped.get() < 2) {
+                if (codexesEquipped < 2) {
                     return;
                 }
                 if (!(event.getWarlordsEntity() instanceof WarlordsPlayer warlordsPlayer)) {
@@ -101,7 +100,7 @@ public class CodexCollector implements FieldEffect {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (codexesEquipped.get() < 4) {
+                if (codexesEquipped < 4) {
                     return;
                 }
                 if (!(event.getAttacker() instanceof WarlordsPlayer warlordsPlayer)) {
@@ -115,7 +114,7 @@ public class CodexCollector implements FieldEffect {
 
             @EventHandler
             public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
-                if (codexesEquipped.get() < 6) {
+                if (codexesEquipped < 6) {
                     return;
                 }
                 if (!event.isDead()) {
@@ -137,7 +136,7 @@ public class CodexCollector implements FieldEffect {
 
         });
 
-        if (codexesEquipped.get() >= 4) {
+        if (codexesEquipped >= 4) {
             for (WarlordsEntity player : players) {
                 for (AbstractAbility ability : player.getAbilities()) {
                     ability.setCritChance(ability.getCritChance() + 5);
@@ -150,4 +149,9 @@ public class CodexCollector implements FieldEffect {
     public Map<WarlordsEntity, PlayerCodex> getPlayerCodexEquipped() {
         return playerCodexEquipped;
     }
+
+    public int getCodexesEquipped() {
+        return codexesEquipped;
+    }
+
 }
