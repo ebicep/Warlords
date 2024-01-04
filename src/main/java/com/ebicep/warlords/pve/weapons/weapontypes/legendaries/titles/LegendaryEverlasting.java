@@ -27,8 +27,8 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
 
     private static final int DAMAGE_REDUCTION = 5;
     private static final float DAMAGE_REDUCTION_PER_UPGRADE = 1;
-    private static final int MAX_HP_HEAL = 5;
-    private static final float MAX_HP_HEAL_PER_UPGRADE = 1;
+    private static final int DURATION = 5;
+    private static final int DURATION_PER_UPGRADE = 1;
 
     @Transient
     private RegularCooldown<LegendaryEverlasting> cooldown = null;
@@ -55,11 +55,11 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
 
     @Override
     public TextComponent getPassiveEffect() {
-        return ComponentBuilder.create("Upon landing a melee crit, heal for ")
-                               .append(formatTitleUpgrade(MAX_HP_HEAL + MAX_HP_HEAL_PER_UPGRADE * getTitleLevel(), "%"))
-                               .text(" of your max HP and gain ")
+        return ComponentBuilder.create("Upon landing a melee crit, heal for 5% of your max HP and gain ")
                                .append(formatTitleUpgrade(DAMAGE_REDUCTION + DAMAGE_REDUCTION_PER_UPGRADE * getTitleLevel(), "%"))
-                               .text(" damage reduction for 5s. Maximum 5 stacks.")
+                               .text(" damage reduction for ")
+                               .append(formatTitleUpgrade(DURATION + DURATION_PER_UPGRADE * getTitleLevel(), "s"))
+                               .text(". Maximum 5 stacks.")
                                .build();
     }
 
@@ -115,8 +115,8 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
                         formatTitleUpgrade(DAMAGE_REDUCTION + DAMAGE_REDUCTION_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),
                 new Pair<>(
-                        formatTitleUpgrade(MAX_HP_HEAL + MAX_HP_HEAL_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(MAX_HP_HEAL + MAX_HP_HEAL_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                        formatTitleUpgrade(DURATION + DURATION_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(DURATION + DURATION_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 )
         );
     }
@@ -140,7 +140,7 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
         if (event.getInstanceFlags().contains(InstanceFlags.RECURSIVE)) {
             return;
         }
-        float healing = warlordsPlayer.getMaxBaseHealth() * (MAX_HP_HEAL + MAX_HP_HEAL_PER_UPGRADE * getTitleLevel()) / 100f;
+        float healing = warlordsPlayer.getMaxBaseHealth() * .05f;
         warlordsPlayer.addHealingInstance(
                 warlordsPlayer,
                 getTitleName(),
@@ -166,7 +166,7 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
                         cooldown = null;
                         stacks = 0;
                     },
-                    5 * 20
+                    (DURATION + DURATION_PER_UPGRADE * getTitleLevel()) * 20
             ) {
                 final float reduction = (DAMAGE_REDUCTION + DAMAGE_REDUCTION_PER_UPGRADE * getTitleLevel()) / 100;
 
