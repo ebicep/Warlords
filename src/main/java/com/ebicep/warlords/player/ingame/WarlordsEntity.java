@@ -573,6 +573,7 @@ public abstract class WarlordsEntity {
                 );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
+                        flags,
                         this,
                         attacker,
                         ability,
@@ -772,6 +773,7 @@ public abstract class WarlordsEntity {
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
+                        flags,
                         this,
                         attacker,
                         ability,
@@ -857,6 +859,7 @@ public abstract class WarlordsEntity {
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
+                        flags,
                         this,
                         attacker,
                         ability,
@@ -1109,6 +1112,7 @@ public abstract class WarlordsEntity {
 
         finalEvent = new WarlordsDamageHealingFinalEvent(
                 event,
+                flags,
                 this,
                 attacker,
                 ability,

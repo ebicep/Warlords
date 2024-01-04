@@ -3,10 +3,12 @@ package com.ebicep.warlords.events.player.ingame;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent {
@@ -15,6 +17,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
     private final WarlordsDamageHealingEvent warlordsDamageHealingEvent;
     private final List<CooldownRecord> playerCooldowns = new ArrayList<>();
     private final List<CooldownRecord> attackerCooldowns = new ArrayList<>();
+    private final EnumSet<InstanceFlags> instanceFlags;
     private final WarlordsEntity attacker;
     private final String ability;
     private final float initialHealth;
@@ -39,7 +42,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
 
     public WarlordsDamageHealingFinalEvent(
             WarlordsDamageHealingEvent warlordsDamageHealingEvent,
-            WarlordsEntity player,
+            EnumSet<InstanceFlags> instanceFlags, WarlordsEntity player,
             WarlordsEntity attacker,
             String ability,
             float initialHealth,
@@ -55,6 +58,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
     ) {
         super(player);
         this.warlordsDamageHealingEvent = warlordsDamageHealingEvent;
+        this.instanceFlags = instanceFlags;
         this.finalEventFlag = finalEventFlag;
         this.playerCooldowns.addAll(player.getCooldownManager().getCooldowns().stream()
                                           .map(CooldownRecord::new)
@@ -91,6 +95,10 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
 
     public List<CooldownRecord> getAttackerCooldowns() {
         return attackerCooldowns;
+    }
+
+    public EnumSet<InstanceFlags> getInstanceFlags() {
+        return instanceFlags;
     }
 
     public WarlordsEntity getAttacker() {
