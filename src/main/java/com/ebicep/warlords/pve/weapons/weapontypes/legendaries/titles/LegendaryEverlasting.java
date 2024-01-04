@@ -168,9 +168,11 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
                     },
                     5 * 20
             ) {
+                final float reduction = (DAMAGE_REDUCTION + DAMAGE_REDUCTION_PER_UPGRADE * getTitleLevel()) / 100;
+
                 @Override
                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * (1 - stacks * 5 / 100f);
+                    return currentDamageValue * (1 - stacks * reduction);
                 }
             });
         } else {
