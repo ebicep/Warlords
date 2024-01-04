@@ -147,6 +147,10 @@ public abstract class AbstractMob implements Mob {
 
         this.npc.spawn(spawnLocation);
 
+        if (npc.getEntity() instanceof Player player) {
+            player.setNoDamageTicks(0);
+        }
+
 //
 //        if (getMobRegistry().entityType == EntityType.SLIME) {
 //            this.npc.setUseMinecraftAI(true); //TODO
