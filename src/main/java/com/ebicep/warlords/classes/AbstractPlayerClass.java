@@ -30,7 +30,7 @@ public abstract class AbstractPlayerClass {
     protected int maxEnergy;
     protected float energyPerSec;
     protected float energyPerHit;
-    protected int damageResistance;
+    protected float damageResistance;
     protected List<AbstractAbility> abilities;
     protected int abilityGroup = 0; // each group is 4 abilities, excluding weapon
     protected boolean abilityCD = true;
@@ -280,11 +280,11 @@ public abstract class AbstractPlayerClass {
         this.energyPerHit = energyPerHit;
     }
 
-    public int getDamageResistance() {
+    public float getDamageResistance() {
         return damageResistance;
     }
 
-    public void setDamageResistance(int damageResistance) {
+    public void setDamageResistance(float damageResistance) {
         this.damageResistance = damageResistance;
     }
 

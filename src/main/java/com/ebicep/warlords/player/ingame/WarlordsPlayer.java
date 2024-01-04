@@ -394,7 +394,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     @Override
-    public void setDamageResistance(int damageResistance) {
+    public void setDamageResistance(float damageResistance) {
         getSpec().setDamageResistance(damageResistance);
     }
 

@@ -426,7 +426,7 @@ public abstract class WarlordsEntity {
         if (!flags.contains(InstanceFlags.IGNORE_SELF_RES) && !trueDamage) {
             debugMessage.append(Component.newline())
                         .append(Component.text("Spec Damage Reduction: ", NamedTextColor.AQUA))
-                        .append(Component.text(spec.getDamageResistance(), NamedTextColor.BLUE));
+                        .append(Component.text(NumberFormat.formatOptionalHundredths(spec.getDamageResistance()), NamedTextColor.BLUE));
             addAbsorbed(Math.max(0, damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
             appendDebugMessage(debugMessage, 1, "Damage Value", damageValue);
         }
@@ -2908,7 +2908,7 @@ public abstract class WarlordsEntity {
         this.bonusAggroWeight = aggroWeight * aggroWeight; // squared because values in PathfinderGoalTargetAgroWarlordsEntity are squared
     }
 
-    public abstract void setDamageResistance(int damageResistance);
+    public abstract void setDamageResistance(float damageResistance);
 
     public int getBaseHitCooldownValue() {
         return 20;
