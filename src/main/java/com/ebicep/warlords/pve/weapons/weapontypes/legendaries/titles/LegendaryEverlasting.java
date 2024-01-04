@@ -26,7 +26,7 @@ import java.util.UUID;
 public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Listener, LibraryArchivesTitle {
 
     private static final int DAMAGE_REDUCTION = 5;
-    private static final float DAMAGE_REDUCTION_PER_UPGRADE = 1;
+    private static final float DAMAGE_REDUCTION_PER_UPGRADE = .5f;
     private static final int DURATION = 5;
     private static final int DURATION_PER_UPGRADE = 1;
 
