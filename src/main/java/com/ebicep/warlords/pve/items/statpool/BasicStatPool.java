@@ -15,7 +15,7 @@ public enum BasicStatPool implements StatPool {
     HP("Health") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            warlordsPlayer.getHealth().addAdditiveModifier(getName() + " (Base)", value);
+            warlordsPlayer.getHealth().addAdditiveModifier("Item " + getName() + " (Base)", value);
         }
 
         @Override

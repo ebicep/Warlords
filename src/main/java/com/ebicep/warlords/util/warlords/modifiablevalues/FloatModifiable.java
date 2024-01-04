@@ -223,7 +223,7 @@ public class FloatModifiable {
                                    .text(log, NamedTextColor.GREEN)
                                    .text(": ", NamedTextColor.GRAY)
                                    .text(modifier, NamedTextColor.YELLOW)
-                                   .text(" (" + ticksLeft + ")", NamedTextColor.DARK_GRAY)
+                                   .text(" (" + (ticksLeft == -1 ? "INF" : ticksLeft) + ")", NamedTextColor.DARK_GRAY)
                                    .build();
         }
 

@@ -20,18 +20,19 @@ import java.util.List;
 public class PrintFloatModifiableCommand extends BaseCommand {
 
     @Default
-    @CommandCompletion("@warlordsplayers")
+    @CommandCompletion("@floatmodifiabletype @warlordsplayers")
     @Description("Prints FloatModifiable log for given type")
     public void respawn(CommandIssuer issuer, Type type, @Optional WarlordsPlayer target) {
         if (target == null) {
             ChatChannels.sendDebugMessage(issuer, "Cannot print FloatModifiable - No target found");
             return;
         }
+        ChatChannels.sendDebugMessage(issuer, Component.text(type + " FloatModifiable for ", NamedTextColor.GREEN, TextDecoration.BOLD).append(target.getColoredNameBold()));
         type.sendDebugInfo(issuer, target);
     }
 
 
-    enum Type {
+    public enum Type {
         HEALTH { // WarlordEntity health
 
             @Override
@@ -78,6 +79,8 @@ public class PrintFloatModifiableCommand extends BaseCommand {
         },
 
         ;
+
+        public static final Type[] VALUES = values();
 
         Type() {
         }

@@ -376,6 +376,9 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("classesalias", command -> Classes.NAMES);
         commandCompletions.registerAsyncCompletion("specsalias", command -> Specializations.NAMES);
         commandCompletions.registerAsyncCompletion("textcolors", command -> NamedTextColor.NAMES.keys());
+        commandCompletions.registerAsyncCompletion("floatmodifiabletype", command -> Arrays.stream(PrintFloatModifiableCommand.Type.VALUES)
+                                                                                           .map(Enum::name)
+                                                                                           .toList());
 
     }
 
