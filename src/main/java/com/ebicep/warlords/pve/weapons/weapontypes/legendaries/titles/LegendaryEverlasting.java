@@ -140,7 +140,6 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
         if (event.getInstanceFlags().contains(InstanceFlags.RECURSIVE)) {
             return;
         }
-        System.out.println("onFinalDamageHeal - " + event.getValue());
         float healing = warlordsPlayer.getMaxBaseHealth() * (MAX_HP_HEAL + MAX_HP_HEAL_PER_UPGRADE * getTitleLevel()) / 100f;
         warlordsPlayer.addHealingInstance(
                 warlordsPlayer,
