@@ -31,6 +31,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -258,6 +259,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public void setSpec(Specializations spec, SkillBoosts skillBoost) {
         super.setSpec(spec, skillBoost);
+        if (weapon != null && weapon instanceof Listener listener) {
+            HandlerList.unregisterAll(listener);
+        }
         this.specClass = spec;
         this.skillBoost = skillBoost;
 

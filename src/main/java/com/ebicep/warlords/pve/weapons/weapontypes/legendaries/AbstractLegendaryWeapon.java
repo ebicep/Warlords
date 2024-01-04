@@ -28,7 +28,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -48,6 +50,11 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Field("upgrade_level")
     protected int upgradeLevel = 0;
     protected boolean ascendant = false;
+
+    @Transient
+    protected WarlordsPlayer warlordsPlayer;
+    @Transient
+    protected PveOption pveOption;
 
     public AbstractLegendaryWeapon() {
     }
@@ -299,6 +306,13 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
+        this.warlordsPlayer = player;
+        this.pveOption = pveOption;
+
+        if (this instanceof Listener listener) {
+            player.getGame().registerEvents(listener);
+        }
+
         player.getSpeed().addBaseModifier(getSpeedBonus());
 
         for (AbstractUpgradeBranch<?> upgradeBranch : player.getAbilityTree().getUpgradeBranches()) {
