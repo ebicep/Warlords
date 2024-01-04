@@ -33,6 +33,7 @@ public enum LegendaryTitles {
     FULCRUM("Fulcrum", LegendaryFulcrum.class, LegendaryFulcrum::new, LegendaryFulcrum::new, Material.GRAY_STAINED_GLASS_PANE),
     PARADOX("Paradox", LegendaryParadox.class, LegendaryParadox::new, LegendaryParadox::new, Material.LIGHT_BLUE_STAINED_GLASS_PANE),
     VIBRANT("Vibrant", LegendaryVibrant.class, LegendaryVibrant::new, LegendaryVibrant::new, Material.PURPLE_STAINED_GLASS_PANE),
+    EVERLASTING("Everlasting", LegendaryEverlasting.class, LegendaryEverlasting::new, LegendaryEverlasting::new, Material.BLUE_STAINED_GLASS_PANE),
 
     ;
 
