@@ -39,7 +39,7 @@ public class LegendaryRevolt extends AbstractLegendaryWeapon implements LibraryA
         super.applyToWarlordsPlayer(player, pveOption);
 
         int radius = RADIUS + RADIUS_PER_UPGRADE * getTitleLevel();
-        float resistanceShred = RESISTANCE_SHRED - RESISTANCE_SHRED_PER_UPGRADE * getTitleLevel();
+        float resistanceShred = RESISTANCE_SHRED + RESISTANCE_SHRED_PER_UPGRADE * getTitleLevel();
 
         new GameRunnable(pveOption.getGame()) {
             @Override
@@ -60,7 +60,7 @@ public class LegendaryRevolt extends AbstractLegendaryWeapon implements LibraryA
         return ComponentBuilder.create("While protected by a shield, enemies within a ")
                                .append(formatTitleUpgrade(RADIUS + RADIUS_PER_UPGRADE * getTitleLevel()))
                                .text(" block radius around you have ")
-                               .append(formatTitleUpgrade(RESISTANCE_SHRED - RESISTANCE_SHRED_PER_UPGRADE * getTitleLevel(), "%"))
+                               .append(formatTitleUpgrade(RESISTANCE_SHRED + RESISTANCE_SHRED_PER_UPGRADE * getTitleLevel(), "%"))
                                .text(" of their resistance shredded every second.")
                                .build();
     }
