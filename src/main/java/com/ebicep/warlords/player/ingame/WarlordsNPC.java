@@ -99,7 +99,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             builder.append(Component.text(aspect.name + " ", aspect.textColor));
         }
 
-        int resistance = spec.getDamageResistance();
+        float resistance = spec.getDamageResistance();
         builder.append(Component.text(name, nameColor));
         if (resistance > 0) {
             builder.append(Component.text(" - "))
