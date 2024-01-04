@@ -60,7 +60,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
         return ComponentBuilder.create("Upon damaging an enemy, all abilities gain a ")
                                .append(formatTitleUpgrade(CRIT_CHANCE + CRIT_CHANCE_PER_UPGRADE * getTitleLevel(), "%"))
                                .text(" crit chance and 10% crit multiplier. Maximum ")
-                               .append(formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel(), ""))
+                               .append(formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()))
                                .text(" stacks. Once an ability crit occurs, all stacks are removed.")
                                .build();
     }
@@ -117,8 +117,8 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
                         formatTitleUpgrade(CRIT_CHANCE + CRIT_CHANCE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),
                 new Pair<>(
-                        formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                        formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()),
+                        formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevelUpgraded())
                 )
         );
     }
