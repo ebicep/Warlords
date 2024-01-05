@@ -235,7 +235,9 @@ public class OnslaughtOption implements PveOption {
                 } else {
                     lastSpawn = spawn(getSpawnLocation(lastSpawn));
                 }
-                lastSpawn.getLocation(lastLocation);
+                if (lastSpawn != null) {
+                    lastSpawn.getLocation(lastLocation);
+                }
 
                 spawnCount++;
             }
@@ -243,6 +245,9 @@ public class OnslaughtOption implements PveOption {
             public WarlordsEntity spawn(Location loc) {
                 currentMobSet = mobSet.getWave((game.getState().getTicksElapsed() / 20) / 60, new Random());
                 AbstractMob abstractMob = currentMobSet.spawnMonster(loc);
+                if (abstractMob == null) {
+                    return null;
+                }
                 mobs.put(abstractMob, ticksElapsed.get());
                 WarlordsNPC wpc = abstractMob.toNPC(game, team, OnslaughtOption.this::modifyStats);
                 game.addNPC(wpc);

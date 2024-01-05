@@ -5,8 +5,11 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 
+import javax.annotation.Nullable;
+
 public interface Wave {
 
+    @Nullable
     AbstractMob spawnMonster(Location loc);
 
     int getMonsterCount();

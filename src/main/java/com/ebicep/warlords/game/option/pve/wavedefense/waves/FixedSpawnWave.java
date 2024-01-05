@@ -43,7 +43,7 @@ public class FixedSpawnWave implements Wave {
     }
 
     @Override
-    public AbstractMob spawnMonster(Location loc) {
+    public @Nullable AbstractMob spawnMonster(Location loc) {
         if (spawnCounter >= spawnSettings.size()) {
             spawnCounter = 0;
         }

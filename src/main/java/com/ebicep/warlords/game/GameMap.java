@@ -52,8 +52,10 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventScriptedGrimoire;
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventTheArchivist;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.Pair;
 import net.citizensnpcs.api.npc.NPC;
@@ -71,6 +73,7 @@ import org.bukkit.entity.EntityType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
@@ -4592,21 +4595,45 @@ public enum GameMap {
                             .add(0.2, Mob.ILLUMINATION)
                             .add(0.1, Mob.FIRE_SPLITTER)
                     )
-                    .add(25, new RandomSpawnWave(29, 5 * SECOND, Component.text("Boss")) {
+                    .add(25, new RandomSpawnWave(200, 5 * SECOND, Component.text("Boss")) {
+                                final LocationBuilder spawnLocation = loc.addXYZ(-3.5, 25, 1.5);
+
                                 @Override
                                 public void tick(PveOption pveOption, int ticksElapsed) {
                                     if (ticksElapsed == 10 * 20) {
-                                        pveOption.spawnNewMob(new EventTheArchivist(loc.addXYZ(-3.5, 25, 1.5)));
+                                        pveOption.spawnNewMob(new EventTheArchivist(spawnLocation));
+                                    }
+                                    if (ticksElapsed % 140 == 0) {
+                                        Mob minionGrimoire = switch (ThreadLocalRandom.current().nextInt(4)) {
+                                            case 0 -> Mob.EVENT_ROUGE_GRIMOIRE;
+                                            case 1 -> Mob.EVENT_VIOLETTE_GRIMOIRE;
+                                            case 2 -> Mob.EVENT_BLEUE_GRIMOIRE;
+                                            default -> Mob.EVENT_ORANGE_GRIMOIRE;
+                                        };
+                                        pveOption.spawnNewMob(minionGrimoire.createMob(getSpawnLocation()));
+                                    }
+                                    if (ticksElapsed % 100 == 0) {
+                                        pveOption.spawnNewMob(new EventScriptedGrimoire(getSpawnLocation()));
                                     }
                                 }
-                            }.add(1, 4, Mob.EVENT_ROUGE_GRIMOIRE)
-                             .add(1, 4, Mob.EVENT_VIOLETTE_GRIMOIRE)
-                             .add(1, 4, Mob.EVENT_BLEUE_GRIMOIRE)
-                             .add(1, 4, Mob.EVENT_ORANGE_GRIMOIRE)
-                             .add(1, 4, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
-                             .add(1, 3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
-                             .add(1, 2, Mob.EVENT_SCRIPTED_GRIMOIRE)
-                             .add(1, 4, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
+
+                                private Location getSpawnLocation() {
+                                    double randomXOffset = ThreadLocalRandom.current().nextDouble(-2, 2);
+                                    double randomZOffset = ThreadLocalRandom.current().nextDouble(-2, 2);
+                                    if (randomXOffset == 0 && randomZOffset == 0) {
+                                        if (ThreadLocalRandom.current().nextBoolean()) {
+                                            randomXOffset = 1;
+                                        } else {
+                                            randomZOffset = 1;
+                                        }
+                                    }
+                                    return spawnLocation.clone().add(
+                                            randomXOffset,
+                                            -0.9,
+                                            randomZOffset
+                                    );
+                                }
+                            }
                     )
                     ,
                     DifficultyIndex.EVENT, 25

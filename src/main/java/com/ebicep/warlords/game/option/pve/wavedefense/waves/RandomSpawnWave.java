@@ -68,8 +68,11 @@ public class RandomSpawnWave implements Wave {
     }
 
     @Override
-    public AbstractMob spawnMonster(Location loc) {
+    public @Nullable AbstractMob spawnMonster(Location loc) {
         SpawnSettings spawnSettings = randomCollection.next();
+        if (spawnSettings == null) {
+            return null;
+        }
         if (spawnSettings.incrementTimesSpawned()) {
             // recreate the random collection without the spawn settings that have reached their max spawn times
             RandomCollection<SpawnSettings> newRandomCollection = new RandomCollection<>();
