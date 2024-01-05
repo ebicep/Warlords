@@ -46,6 +46,7 @@ import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.pve.bountysystem.BountyCommand;
 import com.ebicep.warlords.pve.commands.*;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
+import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodexCommand;
 import com.ebicep.warlords.pve.items.ItemsCommand;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.quests.QuestCommand;
@@ -617,6 +618,8 @@ public class CommandManager {
         manager.registerCommand(new MobCommand());
         manager.registerCommand(new WaveCommand());
         manager.registerCommand(new OnslaughtCommand());
+
+        manager.registerCommand(new PlayerCodexCommand());
 
         manager.registerCommand(new GuildCommand());
         manager.registerCommand(new GuildDebugCommand());
