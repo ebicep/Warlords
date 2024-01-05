@@ -273,6 +273,6 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
 
     @Override
     public int getCounter() {
-        return 60 - counter;
+        return (COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel()) - counter;
     }
 }
