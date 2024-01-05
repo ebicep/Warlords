@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.rogue.apothecary.RemedicChainsBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -87,7 +88,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
         Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
-        HashMap<WarlordsEntity, Float> healthBoosts = new HashMap<>();
+        Map<WarlordsEntity, FloatModifiable.FloatModifier> healthBoosts = new HashMap<>();
         teammatesNear.forEach(warlordsEntity -> {
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                     .append(Component.text(" Your Remedic Chains is now protecting ", NamedTextColor.GRAY))
@@ -104,17 +105,16 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     .append(Component.text(" seconds!", NamedTextColor.GRAY))
             );
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
-            healthBoosts.put(warlordsEntity, healthIncrease);
             if (pveMasterUpgrade) {
-                warlordsEntity.setMaxHealth(warlordsEntity.getMaxHealth() + healthIncrease);
+                healthBoosts.put(warlordsEntity, warlordsEntity.getHealth().addAdditiveModifier("Remedic Chains", healthIncrease));
+                warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() + healthIncrease);
             }
-
         });
 
         if (pveMasterUpgrade) {
             float healthIncrease = wp.getMaxHealth() * .25f;
-            healthBoosts.put(wp, healthIncrease);
-            wp.setMaxHealth(wp.getMaxHealth() + healthIncrease);
+            healthBoosts.put(wp, wp.getHealth().addAdditiveModifier("Remedic Chains", healthIncrease));
+            wp.setCurrentHealth(wp.getCurrentHealth() + healthIncrease);
         }
 
         RemedicChains tempRemedicChain = new RemedicChains();
@@ -156,7 +156,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                         return;
                     }
                     if (pveMasterUpgrade) {
-                        healthBoosts.forEach((entity, aFloat) -> entity.setMaxHealth(entity.getMaxHealth() - aFloat));
+                        healthBoosts.values().forEach(FloatModifiable.FloatModifier::forceEnd);
                     }
                 },
                 tickDuration,
@@ -199,7 +199,10 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                         if (outOfRange || linked.isDead()) {
                             toRemove.add(linked);
                             if (pveMasterUpgrade) {
-                                linked.setMaxHealth(linked.getMaxHealth() - healthBoosts.get(linked));
+                                FloatModifiable.FloatModifier floatModifier = healthBoosts.get(linked);
+                                if (floatModifier != null) {
+                                    floatModifier.forceEnd();
+                                }
                             }
                         }
                     }

@@ -49,7 +49,7 @@ public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWar
                 if (ThreadLocalRandom.current().nextDouble() > .02) {
                     return;
                 }
-                float healthMissing = warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth();
+                float healthMissing = warlordsPlayer.getMaxHealth() - warlordsPlayer.getCurrentHealth();
                 warlordsPlayer.addHealingInstance(
                         warlordsPlayer,
                         getName(),

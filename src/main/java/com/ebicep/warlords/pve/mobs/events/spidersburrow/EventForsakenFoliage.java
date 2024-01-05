@@ -64,8 +64,7 @@ public class EventForsakenFoliage extends AbstractMob implements BossMinionMob, 
         int currentWave = option.getWaveCounter();
         if (currentWave % 5 == 0 && currentWave > 5) {
             float additionalHealthMultiplier = 1 + .15f * (currentWave / 5f - 1);
-            warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
-            warlordsNPC.heal();
+            warlordsNPC.setMaxHealthAndHeal(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
         }
         warlordsNPC.getAbilities().get(0).onActivate(warlordsNPC);
     }

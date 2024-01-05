@@ -36,9 +36,7 @@ public class WarlordsPlayerDisguised extends WarlordsPlayer {
         this.name = npc.getName();
         this.specClass = npc.specClass;
         this.spec = npc.spec;
-        this.maxHealth = npc.getMaxHealth();
-        this.health = npc.health;
-        this.maxBaseHealth = this.maxHealth;
+        this.health = npc.getHealth();
         this.speed.getModifiers().clear();
         this.speed.getModifiers().addAll(npc.speed.getModifiers());
         this.cooldownManager = npc.cooldownManager;
@@ -92,7 +90,7 @@ public class WarlordsPlayerDisguised extends WarlordsPlayer {
         super.runEveryTick();
         disguise.getWatcher().setCustomName(LegacyComponentSerializer.legacySection().serialize(
                 npc.getMobNamePrefix()
-                   .append(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤",
+                   .append(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤",
                            NamedTextColor.RED,
                            TextDecoration.BOLD
                    ))));

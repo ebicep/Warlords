@@ -123,11 +123,11 @@ public class ConsecrateProtector extends AbstractConsecrate {
     public AbstractConsecrate createConsecrate() {
         return new ConsecrateProtector(minDamageHeal,
                 maxDamageHeal,
-                energyCost.getCurrentValue(),
+                energyCost.getBaseValue(),
                 critChance,
                 critMultiplier,
                 strikeDamageBoost,
-                hitBox.getCurrentValue(),
+                hitBox.getBaseValue(),
                 location
         );
     }

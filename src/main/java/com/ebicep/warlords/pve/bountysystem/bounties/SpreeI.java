@@ -1,11 +1,15 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
-import com.ebicep.warlords.pve.SpendableBuyShop;
+import com.ebicep.warlords.events.EventShopPurchaseEvent;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.EventCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+
+import java.util.Objects;
 
 public class SpreeI extends AbstractBounty implements TracksOutsideGame, EventCost, GardenOfHesperides1 {
 
@@ -29,8 +33,12 @@ public class SpreeI extends AbstractBounty implements TracksOutsideGame, EventCo
         return Bounty.SPREE_I;
     }
 
-    @Override
-    public void onEventShopPurchase(SpendableBuyShop shop) {
-        value += shop.price();
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEventShopPurchase(EventShopPurchaseEvent event) {
+        if (!Objects.equals(event.getUUID(), uuid)) {
+            return;
+        }
+        value += event.getBought().price();
     }
+
 }

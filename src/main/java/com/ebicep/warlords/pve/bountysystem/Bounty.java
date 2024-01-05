@@ -4,6 +4,8 @@ import com.ebicep.warlords.pve.bountysystem.bounties.*;
 import com.ebicep.warlords.pve.bountysystem.rewards.*;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides1;
 import com.ebicep.warlords.pve.bountysystem.rewards.events.GardenOfHesperides2;
+import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives1;
+import com.ebicep.warlords.pve.bountysystem.rewards.events.LibraryArchives2;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -83,6 +85,17 @@ public enum Bounty {
     TARTARUS_FLAWLESS_I(TartarusFlawlessI.class, TartarusFlawlessI::new),
     WITHIN_THE_TIME_I(WithinTheTimeI.class, WithinTheTimeI::new),
     TAKE_MY_TITLE_I(TakeMyTitleI.class, TakeMyTitleI::new),
+    // library archives event
+    ARCHIVIST_HUNTER_I(ArchivistHunterI.class, ArchivistHunterI::new),
+    CODEX_COLLECTOR_I(CodexCollectorI.class, CodexCollectorI::new),
+    GRIMOIRES_GRIEF_I(GrimoiresGriefI.class, GrimoiresGriefI::new),
+    THAT_WAS_CLOSE_I(ThatWasCloseI.class, ThatWasCloseI::new),
+    GRAVEYARD_FLAWLESS_I(GraveyardFlawlessI.class, GraveyardFlawlessI::new),
+    FORGOTTEN_SLAYER_I(ForgottenSlayerI.class, ForgottenSlayerI::new),
+    CODEX_CHAOS_I(CodexChaosI.class, CodexChaosI::new),
+    FORGOTTEN_FLAWLESS_I(ForgottenFlawlessI.class, ForgottenFlawlessI::new),
+    CODEX_CONTINUED_I(CodexContinuedI.class, CodexContinuedI::new),
+    TAKE_MY_TITLE_II(TakeMyTitleII.class, TakeMyTitleII::new),
 
     ;
 
@@ -120,7 +133,14 @@ public enum Bounty {
         EVENT_GARDEN_OF_HESPERIDES_2(getBountyFrom(GardenOfHesperides2.class)),
         EVENT_GARDEN_OF_HESPERIDES_ALL(Stream.of(EVENT_GARDEN_OF_HESPERIDES_1, EVENT_GARDEN_OF_HESPERIDES_2)
                                              .flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties))
-                                             .toArray(Bounty[]::new));
+                                             .toArray(Bounty[]::new)),
+        EVENT_LIBRARY_ARCHIVES_1(getBountyFrom(LibraryArchives1.class)),
+        EVENT_LIBRARY_ARCHIVES_2(getBountyFrom(LibraryArchives2.class)),
+        EVENT_LIBRARY_ARCHIVES_ALL(Stream.of(EVENT_LIBRARY_ARCHIVES_1, EVENT_LIBRARY_ARCHIVES_2)
+                                         .flatMap(bountyGroup -> Arrays.stream(bountyGroup.bounties))
+                                         .toArray(Bounty[]::new)),
+
+        ;
 
         public final Bounty[] bounties;
 

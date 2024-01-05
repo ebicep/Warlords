@@ -49,7 +49,7 @@ public class DatabaseGameSiege extends DatabaseGameBase {
         this.bluePoints = game.getPoints(Team.BLUE);
         this.redPoints = game.getPoints(Team.RED);
         game.warlordsPlayers().forEach(warlordsPlayer -> {
-            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerSiege(warlordsPlayer, gameWinEvent));
+            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerSiege(warlordsPlayer, gameWinEvent, counted));
         });
     }
 

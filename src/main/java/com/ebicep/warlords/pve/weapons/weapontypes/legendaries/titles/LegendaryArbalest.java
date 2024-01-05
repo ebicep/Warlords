@@ -62,7 +62,7 @@ public class LegendaryArbalest extends AbstractLegendaryWeapon implements EventT
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getWarlordsEntity().getHealth() < playerHPCheck) {
+                if (event.getWarlordsEntity().getCurrentHealth() < playerHPCheck) {
                     return currentDamageValue * damageBoost;
                 }
                 return currentDamageValue;

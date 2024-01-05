@@ -11,6 +11,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -53,7 +54,8 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
         super.applyToWarlordsPlayer(player, pveOption);
 
         player.getGame().registerEvents(new Listener() {
-            final float healthBoost = player.getMaxBaseHealth() * getCalculatedBoost();
+            final FloatModifiable.FloatModifier modifier = player.getHealth().addMultiplicativeModifierAdd(getTitleName() + " (Base)", 0);
+
 
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
@@ -61,7 +63,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
 
                 if (killer == player) {
                     if (KILL_MILESTONES.contains(player.getMinuteStats().total().getKills())) {
-                        player.setMaxBaseHealth(player.getMaxBaseHealth() + healthBoost);
+                        modifier.setModifier(modifier.getModifier() + getCalculatedBoost());
                     }
                 }
             }

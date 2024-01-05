@@ -190,7 +190,7 @@ public class LegendaryParadox extends AbstractLegendaryWeapon implements GardenO
         secondCounter = 30;
         float damageBoost = 1 + Math.min(
                 (DAMAGE_BOOST_MAX + DAMAGE_BOOST_MAX_PER_UPGRADE * getTitleLevel()) / 100f,
-                player.getHealth() / (HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()) * .0025f
+                player.getCurrentHealth() / (HP_INTERVAL + HP_INTERVAL_PER_UPGRADE * getTitleLevel()) * .0025f
         );
         player.getCooldownManager().addCooldown(new RegularCooldown<>(
                 getTitleName(),

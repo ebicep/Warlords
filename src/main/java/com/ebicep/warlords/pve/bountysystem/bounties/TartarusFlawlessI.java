@@ -39,7 +39,7 @@ public class TartarusFlawlessI extends AbstractBounty implements TracksPostGame,
         if (!DatabaseGameEvent.eventIsActive()) {
             return;
         }
-        BountyUtils.getPvEOptionFromGame(game, TartarusOption.class).ifPresent(acropolisOption -> {
+        BountyUtils.getOptionFromGame(game, TartarusOption.class).ifPresent(acropolisOption -> {
             int deaths = warlordsPlayer.getMinuteStats().total().getDeaths();
             if (deaths == 0) {
                 value++;

@@ -59,7 +59,7 @@ public class DatabaseGamePlayerBase {
     public DatabaseGamePlayerBase() {
     }
 
-    public DatabaseGamePlayerBase(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
+    public DatabaseGamePlayerBase(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, true);
         long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
         long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);

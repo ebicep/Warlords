@@ -130,12 +130,12 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
 
     @Nonnull
     public PlayerFilter leastAliveFirst() {
-        return sorted(Comparator.comparing(wp -> wp.getHealth() / wp.getMaxHealth()));
+        return sorted(Comparator.comparing(wp -> wp.getCurrentHealth() / wp.getMaxHealth()));
     }
 
     @Nonnull
     public PlayerFilter mostAliveFirst() {
-        return sorted(Comparator.<WarlordsEntity, Float>comparing(wp -> wp.getHealth() / wp.getMaxHealth()).reversed());
+        return sorted(Comparator.<WarlordsEntity, Float>comparing(wp -> wp.getCurrentHealth() / wp.getMaxHealth()).reversed());
     }
 
     @Nonnull

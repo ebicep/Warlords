@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -25,6 +26,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public enum Aspect {
@@ -197,7 +199,7 @@ public enum Aspect {
         @Override
         public void apply(WarlordsEntity warlordsEntity) {
             float additionalHealth = warlordsEntity.getMaxBaseHealth() * .2f;
-            warlordsEntity.setMaxBaseHealth(warlordsEntity.getMaxHealth() + additionalHealth);
+            AtomicReference<FloatModifiable.FloatModifier> modifier = new AtomicReference<>(warlordsEntity.getHealth().addAdditiveModifier(name + " (Base)", additionalHealth));
             warlordsEntity.heal();
             AtomicBoolean hasEffect = new AtomicBoolean(true);
             warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -214,11 +216,11 @@ public enum Aspect {
                         if (Aspect.isNegated(warlordsEntity)) {
                             if (hasEffect.get()) {
                                 hasEffect.set(false);
-                                warlordsEntity.setMaxBaseHealth(warlordsEntity.getMaxBaseHealth() - additionalHealth);
+                                modifier.get().forceEnd();
                             }
                         } else if (!hasEffect.get()) {
                             hasEffect.set(true);
-                            warlordsEntity.setMaxBaseHealth(warlordsEntity.getMaxBaseHealth() + additionalHealth);
+                            modifier.set(warlordsEntity.getHealth().addAdditiveModifier(name + " (Base)", additionalHealth));
                         }
                     }
             ));

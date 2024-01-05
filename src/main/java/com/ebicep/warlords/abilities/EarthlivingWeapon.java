@@ -197,7 +197,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                             .aliveTeammatesOf(giver)
                             .closestFirst(target)
                     ) {
-                        float missingHealth = (ally.getMaxHealth() - ally.getHealth()) * 0.1f;
+                        float missingHealth = (ally.getMaxHealth() - ally.getCurrentHealth()) * 0.1f;
                         if (missingHealth <= 0) {
                             continue;
                         }

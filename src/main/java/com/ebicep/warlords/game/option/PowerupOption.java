@@ -248,11 +248,11 @@ public class PowerupOption implements Option {
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 20 == 0) {
                                 float heal = we.getMaxHealth() * .08f;
-                                if (we.getHealth() + heal > we.getMaxHealth()) {
-                                    heal = we.getMaxHealth() - we.getHealth();
+                                if (we.getCurrentHealth() + heal > we.getMaxHealth()) {
+                                    heal = we.getMaxHealth() - we.getCurrentHealth();
                                 }
                                 if (heal > 0) {
-                                    we.setHealth(we.getHealth() + heal);
+                                    we.setCurrentHealth(we.getCurrentHealth() + heal);
                                     we.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Healed ", NamedTextColor.GRAY))
                                                                                   .append(Component.text(Math.round(heal), NamedTextColor.GREEN))
                                                                                   .append(Component.text(" health.", NamedTextColor.GRAY)));

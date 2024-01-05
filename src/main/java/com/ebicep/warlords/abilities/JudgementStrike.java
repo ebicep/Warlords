@@ -93,8 +93,8 @@ public class JudgementStrike extends AbstractStrike {
                         nearPlayer.addDamageInstance(
                                 wp,
                                 "Execute",
-                                nearPlayer.getHealth() + 1,
-                                nearPlayer.getHealth() + 1,
+                                nearPlayer.getCurrentHealth() + 1,
+                                nearPlayer.getCurrentHealth() + 1,
                                 0,
                                 100,
                                 EnumSet.of(InstanceFlags.IGNORE_SELF_RES)

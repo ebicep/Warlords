@@ -79,8 +79,7 @@ public abstract class AbstractWeapon {
     }
 
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
-        player.setMaxBaseHealth(player.getMaxBaseHealth() + getHealthBonus());
-        player.setHealth(player.getMaxHealth() + getHealthBonus());
+        player.getHealth().addAdditiveModifier("Weapon Health (Base)", getHealthBonus());
     }
 
     public abstract float getHealthBonus();

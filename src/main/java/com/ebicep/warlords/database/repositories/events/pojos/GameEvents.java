@@ -1210,7 +1210,7 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new SpendableBuyShop(1, Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 3, 300_000));
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 3, 300_000));
                 add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
                 add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
                 add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 150_000));
@@ -1234,7 +1234,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 1_000L);
                     put(Currencies.EPIC_STAR_PIECE, 3L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 5L);
+                    put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 5L);
                 }};
             }
             if (position == 2) {
@@ -1245,7 +1245,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 1000L);
                     put(Currencies.EPIC_STAR_PIECE, 2L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 3L);
+                    put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 3L);
                 }};
             }
             if (position == 3) {
@@ -1256,7 +1256,7 @@ public enum GameEvents {
                     put(Currencies.FAIRY_ESSENCE, 1000L);
                     put(Currencies.EPIC_STAR_PIECE, 1L);
                     put(Currencies.LIMIT_BREAKER, 1L);
-                    put(Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 2L);
+                    put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 2L);
                 }};
             }
             if (4 <= position && position <= 10) {
@@ -1266,7 +1266,7 @@ public enum GameEvents {
                     put(Currencies.LEGEND_FRAGMENTS, 1_000L);
                     put(Currencies.FAIRY_ESSENCE, 500L);
                     put(Currencies.RARE_STAR_PIECE, 5L);
-                    put(Currencies.EVENT_POINTS_LIBRARY_ARCHIVES, 1L);
+                    put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
                 }};
             }
             if (11 <= position && position <= 20) {
@@ -1297,71 +1297,78 @@ public enum GameEvents {
         @Override
         public void addLeaderboards(DatabaseGameEvent currentGameEvent, HashMap<EventLeaderboard, String> leaderboards) {
             long eventStart = currentGameEvent.getStartDateSecond();
-//            EventLeaderboard acropolisBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Highest Game Event Points",
-//                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 86, 172.5),
-//                    (databasePlayer, time) -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getAcropolisStats()
-//                            .getHighestEventPointsGame(),
-//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getAcropolisStats()
-//                            .getHighestEventPointsGame())
-//            );
-//            EventLeaderboard tartarusBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Fastest Win",
-//                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 86, 167.5),
-//                    (databasePlayer, time) -> -databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getTartarusStats()
-//                            .getFastestGameFinished(),
-//                    (databasePlayer, time) -> StringUtils.formatTimeLeft(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getTartarusStats()
-//                            .getFastestGameFinished() / 20),
-//                    databasePlayer -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getTartarusStats()
-//                            .getFastestGameFinished() == 0
-//            );
-//            EventLeaderboard totalBoard = new EventLeaderboard(
-//                    eventStart,
-//                    "Event Points",
-//                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
-//                    (databasePlayer, time) -> databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getEventPointsCumulative(),
-//                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
-//                            .getPveStats()
-//                            .getEventStats()
-//                            .getGardenOfHesperidesEventStats()
-//                            .getOrDefault(eventStart, new DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats())
-//                            .getEventPointsCumulative())
-//            );
-//            leaderboards.put(acropolisBoard, "The Acropolis");
-//            leaderboards.put(tartarusBoard, "Tartarus");
-//            leaderboards.put(totalBoard, "Total Event Points");
+            EventLeaderboard grimoiresGraveyardBoard = new EventLeaderboard(
+                    eventStart,
+                    "Fastest Win",
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 7.5, 86, 172.5),
+                    (databasePlayer, time) -> -databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getGrimoiresGraveyardStats()
+                            .getFastestGameFinished(),
+                    (databasePlayer, time) -> StringUtils.formatTimeLeft(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getGrimoiresGraveyardStats()
+                            .getFastestGameFinished() / 20),
+                    databasePlayer -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getGrimoiresGraveyardStats()
+                            .getFastestGameFinished() == 0
+            );
+            EventLeaderboard forgottenCodexBoard = new EventLeaderboard(
+                    eventStart,
+                    "Fastest Win",
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 2.5, 86, 167.5),
+                    (databasePlayer, time) -> -databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getForgottenCodexStats()
+                            .getFastestGameFinished(),
+                    (databasePlayer, time) -> StringUtils.formatTimeLeft(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getForgottenCodexStats()
+                            .getFastestGameFinished() / 20),
+                    databasePlayer -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getForgottenCodexStats()
+                            .getFastestGameFinished() == 0
+            );
+            EventLeaderboard totalBoard = new EventLeaderboard(
+                    eventStart,
+                    "Event Points",
+                    new Location(StatsLeaderboardManager.MAIN_LOBBY, 18.5, 86, 170.5),
+                    (databasePlayer, time) -> databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getEventPointsCumulative(),
+                    (databasePlayer, time) -> NumberFormat.addCommaAndRound(databasePlayer
+                            .getPveStats()
+                            .getEventStats()
+                            .getLibraryArchivesEventStats()
+                            .getOrDefault(eventStart, new DatabasePlayerPvEEventLibraryArchivesDifficultyStats())
+                            .getEventPointsCumulative())
+            );
+            leaderboards.put(grimoiresGraveyardBoard, "Grimoire's Graveyard");
+            leaderboards.put(forgottenCodexBoard, "Forgotten Codex");
+            leaderboards.put(totalBoard, "Total Event Points");
         }
 
         @Override
@@ -1442,7 +1449,7 @@ public enum GameEvents {
                 }
                 boolean unlocked = stats != null && stats.getCodexesEarned().keySet().stream().anyMatch(playerCodex -> playerCodex.getSpec() == spec);
                 PlayerCodex codexForSpec = PlayerCodex.getCodexForSpec(spec);
-                ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
+                ItemBuilder itemBuilder = new ItemBuilder(unlocked ? SkullUtils.getSkullFrom(SkullID.CHECK_MARk) : SkullUtils.getSkullFrom(SkullID.QUESTION_MARK_BLACK_WHITE))
                         .name(Component.textOfChildren(
                                 Component.text(spec.name, NamedTextColor.GRAY),
                                 Component.text(" - ", NamedTextColor.DARK_GRAY),
@@ -1479,17 +1486,22 @@ public enum GameEvents {
             Menu menu = new Menu("Library Archives Modes", 9 * 4);
 
             menu.setItem(2, 1,
-                    new ItemBuilder(Material.BARRIER) //TODO
-                                                      .name(Component.text("Grimoire’s Graveyard", NamedTextColor.GREEN))
-                                                      .lore(
-                                                              Component.text("You are about to enter a library.", NamedTextColor.YELLOW),
-                                                              Component.empty(),
-                                                              Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("600 Seconds", NamedTextColor.GREEN)),
-                                                              Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-4 Players", NamedTextColor.GREEN))
-                                                      )
-                                                      .get(),
+                    new ItemBuilder(Material.BLACK_CANDLE)
+                            .name(Component.text("Grimoire’s Graveyard", NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text("You are about to enter a library.", NamedTextColor.YELLOW),
+                                    Component.empty(),
+                                    Component.text("Game Duration: ", NamedTextColor.GRAY).append(Component.text("900 Seconds", NamedTextColor.GREEN)),
+                                    Component.text("Player Capacity: ", NamedTextColor.GRAY).append(Component.text("2-6 Players", NamedTextColor.GREEN))
+                            )
+                            .get(),
                     (m, e) -> {
                         if (privateGame) {
+                            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+                            if (partyPlayerPair == null || partyPlayerPair.getA().getPartyPlayers().size() < 2) {
+                                player.sendMessage(Component.text("At least 2 players is required to play this gamemode!", NamedTextColor.RED));
+                                return;
+                            }
                             GameStartCommand.startGamePvEEvent(player,
                                     queueEntryBuilder -> queueEntryBuilder.setMap(GameMap.GRIMOIRES_GRAVEYARD)
                                                                           .setRequestedGameAddons(GameAddon.PRIVATE_GAME)
@@ -1503,7 +1515,7 @@ public enum GameEvents {
                     }
             );
             menu.setItem(6, 1,
-                    new ItemBuilder(Material.BARRIER)
+                    new ItemBuilder(Material.LIGHTNING_ROD)
                             .name(Component.text("Forgotten Codex", NamedTextColor.GREEN))
                             .lore(WordWrap.wrap(
                                     Component.text("Have you come to check out a book? Let me help you..", NamedTextColor.YELLOW),

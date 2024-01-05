@@ -119,9 +119,9 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
             event.setCancelled(true);
             return;
         }
-        if (!healthCheck && self.getHealth() / self.getMaxHealth() < 0.25) {
+        if (!healthCheck && self.getCurrentHealth() / self.getMaxHealth() < 0.25) {
             healthCheck = true;
-            warlordsNPC.getAbilitiesMatching(Shockwave.class).forEach(ability -> ability.getCooldown().setCurrentValue(5));
+            warlordsNPC.getAbilitiesMatching(Shockwave.class).forEach(ability -> ability.getCooldown().setBaseValue(5));
         }
     }
 

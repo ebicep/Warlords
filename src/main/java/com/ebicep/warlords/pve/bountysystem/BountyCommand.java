@@ -8,7 +8,6 @@ import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
-import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -16,8 +15,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 @CommandAlias("bounty")
 @CommandPermission("group.administrator")
@@ -51,16 +48,6 @@ public class BountyCommand extends BaseCommand {
             ChatChannels.sendDebugMessage(issuer, Component.text(createdBounty.getName())
                                                            .append(Component.text(" - ", NamedTextColor.DARK_GRAY))
                                                            .append(Component.text(createdBounty.getDescription(), NamedTextColor.GRAY)));
-        }
-    }
-
-    @Subcommand("printtrackoutsidegame")
-    public void printTrackOutsideGame(CommandIssuer issuer) {
-        for (Map.Entry<UUID, Set<TracksOutsideGame>> uuidSetEntry : TracksOutsideGame.CACHED_ONLINE_PLAYER_TRACKERS.entrySet()) {
-            ChatChannels.sendDebugMessage(issuer, Component.text(uuidSetEntry.getKey() + ":"));
-            for (TracksOutsideGame tracksOutsideGame : uuidSetEntry.getValue()) {
-                ChatChannels.sendDebugMessage(issuer, Component.text("   - " + tracksOutsideGame.toString()));
-            }
         }
     }
 
@@ -146,7 +133,9 @@ public class BountyCommand extends BaseCommand {
             for (AbstractBounty activeBounty : activeBounties) {
                 ChatChannels.sendDebugMessage(player, Component.text("Cleared " + activeBounty.getName() + " event bounty"));
             }
-            activeBounties.clear();
+            for (int i = 0; i < 5; i++) {
+                activeBounties.set(i, null);
+            }
         });
     }
 
@@ -167,6 +156,26 @@ public class BountyCommand extends BaseCommand {
             List<AbstractBounty> activeBounties = eventMode.getActiveBounties();
             activeBounties.set(index, bounty.create.get());
             ChatChannels.sendDebugMessage(player, Component.text("Set bounty #" + index + " to " + bounty.name() + " in event bounties"));
+        });
+    }
+
+    @Subcommand("cleareventcompleted")
+    public void clearEventComplete(Player player) {
+        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        if (currentGameEvent == null) {
+            ChatChannels.sendDebugMessage(player, Component.text("No event is currently active"));
+            return;
+        }
+        DatabaseManager.getPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, databasePlayer -> {
+            DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+            EventMode eventMode = currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats()).get(currentGameEvent.getStartDateSecond());
+            if (eventMode == null) {
+                ChatChannels.sendDebugMessage(player, Component.text("No event mode detected"));
+                return;
+            }
+            Map<Bounty, Long> completedBounties = eventMode.getCompletedBounties();
+            ChatChannels.sendDebugMessage(player, Component.text("Cleared " + completedBounties.size() + " completed event bounties"));
+            completedBounties.clear();
         });
     }
 

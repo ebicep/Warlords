@@ -50,7 +50,7 @@ public class ChallengeIV extends AbstractBounty implements TracksPostGame, Weekl
 
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        BountyUtils.getPvEOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
+        BountyUtils.getOptionFromGame(game, WaveDefenseOption.class).ifPresent(waveDefenseOption -> {
             DifficultyIndex difficulty = waveDefenseOption.getDifficulty();
             if (waveDefenseOption.getWavesCleared() != difficulty.getMaxWaves()) {
                 return;

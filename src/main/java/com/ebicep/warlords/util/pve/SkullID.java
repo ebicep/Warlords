@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 // https://minecraft-heads.com/
 public enum SkullID {
     // https://minecraft-heads.com/custom-heads/humanoid/50492-ethereal-wither-skull
-    ETHEREAL_WITHER_SKULL("YjExNzc3OTE2ZTc1NjQ0M2UzMGEwNDNmMmJjOWNjZTBkMGZlNjI0YmQ2MTkyZDdiYTIzZjk2YTFkNzFiOWYzZiJ9fX0=="),
+    ETHEREAL_WITHER_SKULL("YjExNzc3OTE2ZTc1NjQ0M2UzMGEwNDNmMmJjOWNjZTBkMGZlNjI0YmQ2MTkyZDdiYTIzZjk2YTFkNzFiOWYzZiJ9fX0="),
     // https://minecraft-heads.com/custom-heads/humanoid/59545-endless-destination-helmet
     GRADIENT_SOUL("MjdiZGJiZGY5NDg2ZmQxNzY5ZDE4YWU5MDJmMzQzYjgzYzUwMGE0YjM1ODQ3YmZkNDFmMmFhYWU0YmY3NTFiZSJ9fX0="),
     // https://minecraft-heads.com/custom-heads/decoration/59594-celestial-goldors-helmet-skin
@@ -183,7 +183,13 @@ public enum SkullID {
     //https://minecraft-heads.com/custom-heads/humanoid/40649-skeleton-archer
     SKELETON_ARCHER("Y2UwZDNmMjhiOGUwZjBhNDVjYTJiNDJiNmY0OTViYmZkYTczNzMyZDNhM2YxMDhmNjM1MmU3NThlMWNiOWJhOSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/decoration/65739-books,
-    BOOKS("OGFhMGQ3YmNhNThlM2YyZGY0MjA2YjE5ZDg0NWVhYmY4MWIxMWZhZDIxYzAwN2U5ZWE3YzJjNjM5Yzc1MjAxZCJ9fX0==");
+    BOOKS("OGFhMGQ3YmNhNThlM2YyZGY0MjA2YjE5ZDg0NWVhYmY4MWIxMWZhZDIxYzAwN2U5ZWE3YzJjNjM5Yzc1MjAxZCJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/56787-check-mark
+    CHECK_MARk("YTc5YTVjOTVlZTE3YWJmZWY0NWM4ZGMyMjQxODk5NjQ5NDRkNTYwZjE5YTQ0ZjE5ZjhhNDZhZWYzZmVlNDc1NiJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/56786-question-mark-19
+    QUESTION_MARK_BLACK_WHITE("MjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0="),
+    //https://minecraft-heads.com/custom-heads/head/56785-wrong-mark
+    WRONG_MARK("Mjc1NDgzNjJhMjRjMGZhODQ1M2U0ZDkzZTY4YzU5NjlkZGJkZTU3YmY2NjY2YzAzMTljMWVkMWU4NGQ4OTA2NSJ9fX0=");
 
     private final String textureId;
 

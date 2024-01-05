@@ -3,8 +3,10 @@ package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
+import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -15,10 +17,13 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieSwordsman;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,13 +54,13 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
             AbstractAbility ability = abilities.get(i);
             FloatModifiable abilityCooldown = ability.getCooldown();
             switch (i) {
-                case 0 -> abilityCooldown.setCurrentValue(5);
-                case 1 -> abilityCooldown.setCurrentValue(8);
-                case 2 -> abilityCooldown.setCurrentValue(13);
-                case 3 -> abilityCooldown.setCurrentValue(18);
-                case 4 -> abilityCooldown.setCurrentValue(30);
+                case 0 -> abilityCooldown.setBaseValue(5);
+                case 1 -> abilityCooldown.setBaseValue(8);
+                case 2 -> abilityCooldown.setBaseValue(13);
+                case 3 -> abilityCooldown.setBaseValue(18);
+                case 4 -> abilityCooldown.setBaseValue(30);
             }
-            ability.setCurrentCooldown(abilityCooldown.getCurrentValue());
+            ability.setCurrentCooldown(abilityCooldown.getBaseValue());
         }
 
         for (int i = 0; i < 3; i++) {
@@ -121,6 +126,7 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                     EffectUtils.strikeLightning(mob.getWarlordsNPC().getLocation(), false);
                     mob.getWarlordsNPC().die(warlordsNPC);
                 }
+                Bukkit.getServer().getPluginManager().callEvent(new EventInquisteurKillingBlowEvent(warlordsNPC));
                 warlordsNPC.addHealingInstance(warlordsNPC, "Killing Blow", 10000, 10000, 0, 0);
                 if (damageResistance.get() >= 50) {
                     return;
@@ -159,5 +165,25 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
     public double weaponDropRate() {
         return BossMob.super.weaponDropRate() * 1.5;
     }
+
+    public static class EventInquisteurKillingBlowEvent extends AbstractWarlordsEntityEvent {
+
+        private static final HandlerList handlers = new HandlerList();
+
+        public EventInquisteurKillingBlowEvent(@Nonnull WarlordsEntity player) {
+            super(player);
+        }
+
+        @Nonnull
+        @Override
+        public HandlerList getHandlers() {
+            return handlers;
+        }
+
+        public static HandlerList getHandlerList() {
+            return handlers;
+        }
+    }
+
 
 }

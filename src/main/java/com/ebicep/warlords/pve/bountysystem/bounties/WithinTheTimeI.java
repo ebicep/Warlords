@@ -41,10 +41,10 @@ public class WithinTheTimeI extends AbstractBounty implements TracksPostGame, Ev
         if (!DatabaseGameEvent.eventIsActive()) {
             return;
         }
-        if (BountyUtils.getPvEOptionFromGame(game, TartarusOption.class).isEmpty()) {
+        if (BountyUtils.getOptionFromGame(game, TartarusOption.class).isEmpty()) {
             return;
         }
-        BountyUtils.getPvEOptionFromGame(game, RecordTimeElapsedOption.class)
+        BountyUtils.getOptionFromGame(game, RecordTimeElapsedOption.class)
                    .ifPresent(recordTimeElapsedOption -> {
                        if (gameWinEvent.getCause() instanceof WinByMaxWaveClearOption && recordTimeElapsedOption.getTicksElapsed() < 10 * 60 * 20) {
                            value++;

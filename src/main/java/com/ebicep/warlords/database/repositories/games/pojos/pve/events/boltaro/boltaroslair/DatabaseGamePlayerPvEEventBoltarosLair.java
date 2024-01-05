@@ -14,8 +14,9 @@ public class DatabaseGamePlayerPvEEventBoltarosLair extends DatabaseGamePlayerPv
     public DatabaseGamePlayerPvEEventBoltarosLair(
             WarlordsPlayer warlordsPlayer,
             WarlordsGameTriggerWinEvent gameWinEvent, WaveDefenseOption waveDefenseOption,
-            EventPointsOption eventPointsOption
+            EventPointsOption eventPointsOption,
+            boolean counted
     ) {
-        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption);
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption, counted);
     }
 }

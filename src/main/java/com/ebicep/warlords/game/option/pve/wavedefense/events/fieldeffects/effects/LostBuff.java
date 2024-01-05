@@ -32,11 +32,11 @@ public class LostBuff implements FieldEffect {
                         }
                         float damage = warlordsEntity.getMaxHealth() * .01f;
                         warlordsEntity.resetRegenTimer();
-                        if (warlordsEntity.getHealth() - damage <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-                            warlordsEntity.setHealth(0);
+                        if (warlordsEntity.getCurrentHealth() - damage <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
+                            warlordsEntity.setCurrentHealth(0);
                             warlordsEntity.die(warlordsEntity);
                         } else {
-                            warlordsEntity.setHealth(warlordsEntity.getHealth() - damage);
+                            warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damage);
                             //warlordsEntity.playHurtAnimation(warlordsEntity.getEntity(), warlordsEntity);
                         }
                     });

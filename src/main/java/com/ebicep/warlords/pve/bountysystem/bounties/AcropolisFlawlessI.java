@@ -39,7 +39,7 @@ public class AcropolisFlawlessI extends AbstractBounty implements TracksPostGame
         if (!DatabaseGameEvent.eventIsActive()) {
             return;
         }
-        BountyUtils.getPvEOptionFromGame(game, TheAcropolisOption.class).ifPresent(acropolisOption -> {
+        BountyUtils.getOptionFromGame(game, TheAcropolisOption.class).ifPresent(acropolisOption -> {
             int deaths = warlordsPlayer.getMinuteStats().total().getDeaths();
             if (deaths == 0) {
                 value++;

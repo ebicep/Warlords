@@ -59,7 +59,7 @@ public class AccumulatingKnowledge implements FieldEffect {
                         return;
                     }
                     multiplier.set(newMultiplier);
-                    //TODO health with flaotmodifierable
+                    player.getHealth().addMultiplicativeModifierAdd(getName() + " (Base)", multiplier.get() / 100f);
                 }
         ) {
 

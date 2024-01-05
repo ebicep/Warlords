@@ -147,6 +147,10 @@ public abstract class AbstractMob implements Mob {
 
         this.npc.spawn(spawnLocation);
 
+        if (npc.getEntity() instanceof Player player) {
+            player.setNoDamageTicks(0);
+        }
+
 //
 //        if (getMobRegistry().entityType == EntityType.SLIME) {
 //            this.npc.setUseMinecraftAI(true); //TODO
@@ -191,7 +195,7 @@ public abstract class AbstractMob implements Mob {
                 if (warlordsNPC == null) {
                     return 0.0;
                 }
-                return Math.max(0.0, Math.min(warlordsNPC.getHealth() / warlordsNPC.getMaxHealth(), 1));
+                return Math.max(0.0, Math.min(warlordsNPC.getCurrentHealth() / warlordsNPC.getMaxHealth(), 1));
             });
         }
 

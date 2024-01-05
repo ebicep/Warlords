@@ -335,7 +335,7 @@ public class Physira extends AbstractMob implements BossMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        float health = warlordsNPC.getHealth();
+        float health = warlordsNPC.getCurrentHealth();
         phaseOne.initialize(health);
         phaseTwo.initialize(health);
         //phaseThree.initialize(health);

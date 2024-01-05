@@ -63,4 +63,7 @@ public class PvEEventLibraryForgottenCodexDatabaseStatInformation extends PvEEve
         return mobDeaths;
     }
 
+    public long getFastestGameFinished() {
+        return fastestGameFinished;
+    }
 }

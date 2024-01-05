@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.waves;
 
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SimpleWave implements Wave {
+public class RandomSpawnWave implements Wave {
 
     private final RandomCollection<SpawnSettings> randomCollection = new RandomCollection<>();
     private final int count;
@@ -20,54 +21,58 @@ public class SimpleWave implements Wave {
     private int delay;
     private int spawnTickPeriod = 8;
 
-    public SimpleWave(@Nullable Component message) {
+
+    public RandomSpawnWave(@Nullable Component message) {
         this.delay = 0;
         this.count = 0;
         this.message = message;
     }
 
-    public SimpleWave(int count, int delay, @Nullable Component message) {
+    public RandomSpawnWave(int count, int delay, @Nullable Component message) {
         this.count = count;
         this.delay = delay;
         this.message = message;
     }
 
-    public SimpleWave add(Mob factory) {
+    public RandomSpawnWave add(Mob factory) {
         return add(randomCollection.getSize() == 0 ? 1 : randomCollection.getTotal() / randomCollection.getSize(), factory);
     }
 
-    public SimpleWave add(double baseWeight, Mob factory) {
+    public RandomSpawnWave add(double baseWeight, Mob factory) {
         randomCollection.add(baseWeight, new SpawnSettings(baseWeight, factory, null));
         return this;
     }
 
-    public SimpleWave add(Mob factory, Location customSpawnLocation) {
+    public RandomSpawnWave add(Mob factory, Location customSpawnLocation) {
         return add(randomCollection.getSize() == 0 ? 1 : randomCollection.getTotal() / randomCollection.getSize(), factory, customSpawnLocation);
     }
 
-    public SimpleWave add(double baseWeight, Mob factory, Location customSpawnLocation) {
+    public RandomSpawnWave add(double baseWeight, Mob factory, Location customSpawnLocation) {
         randomCollection.add(baseWeight, new SpawnSettings(baseWeight, factory, customSpawnLocation));
         return this;
     }
 
-    public SimpleWave add(double baseWeight, int maxSpawnTimes, Mob factory) {
+    public RandomSpawnWave add(double baseWeight, int maxSpawnTimes, Mob factory) {
         randomCollection.add(baseWeight, new SpawnSettings(baseWeight, maxSpawnTimes, factory, null));
         return this;
     }
 
-    public SimpleWave add(double baseWeight, int maxSpawnTimes, Mob factory, Location... customSpawnLocation) {
+    public RandomSpawnWave add(double baseWeight, int maxSpawnTimes, Mob factory, Location... customSpawnLocation) {
         randomCollection.add(baseWeight, new SpawnSettings(baseWeight, maxSpawnTimes, factory, List.of(customSpawnLocation)));
         return this;
     }
 
-    public SimpleWave add(double baseWeight, int maxSpawnTimes, Mob factory, List<Location> customSpawnLocation) {
+    public RandomSpawnWave add(double baseWeight, int maxSpawnTimes, Mob factory, List<Location> customSpawnLocation) {
         randomCollection.add(baseWeight, new SpawnSettings(baseWeight, maxSpawnTimes, factory, customSpawnLocation));
         return this;
     }
 
     @Override
-    public AbstractMob spawnMonster(Location loc) {
+    public @Nullable AbstractMob spawnMonster(Location loc) {
         SpawnSettings spawnSettings = randomCollection.next();
+        if (spawnSettings == null) {
+            return null;
+        }
         if (spawnSettings.incrementTimesSpawned()) {
             // recreate the random collection without the spawn settings that have reached their max spawn times
             RandomCollection<SpawnSettings> newRandomCollection = new RandomCollection<>();
@@ -105,6 +110,11 @@ public class SimpleWave implements Wave {
     @Override
     public Component getMessage() {
         return message;
+    }
+
+    @Override
+    public void tick(PveOption pveOption, int ticksElapsed) {
+
     }
 
     static final class SpawnSettings {

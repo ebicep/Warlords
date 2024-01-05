@@ -318,7 +318,7 @@ public interface PveOption extends Option {
     default List<Component> healthScoreboard(Game game) {
         List<Component> list = new ArrayList<>();
         for (WarlordsEntity we : PlayerFilter.playingGame(game).filter(e -> e instanceof WarlordsPlayer)) {
-            float healthRatio = we.getHealth() / we.getMaxHealth();
+            float healthRatio = we.getCurrentHealth() / we.getMaxHealth();
             NamedTextColor healthColor;
             if (healthRatio >= .5) {
                 healthColor = NamedTextColor.GREEN;
@@ -329,7 +329,7 @@ public interface PveOption extends Option {
             }
 
             list.add(Component.text(we.getName() + ": ")
-                              .append(Component.text(we.isDead() ? "DEAD" : "❤ " + Math.round(we.getHealth()), we.isDead() ? NamedTextColor.DARK_RED : healthColor))
+                              .append(Component.text(we.isDead() ? "DEAD" : "❤ " + Math.round(we.getCurrentHealth()), we.isDead() ? NamedTextColor.DARK_RED : healthColor))
                               .append(Component.text(" / "))
                               .append(Component.text("⚔ " + we.getMinuteStats().total().getKills(), NamedTextColor.RED)));
         }

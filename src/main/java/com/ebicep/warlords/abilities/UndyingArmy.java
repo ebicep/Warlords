@@ -195,7 +195,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 20 == 0) {
                             if (!cooldown.getCooldownObject().isArmyDead(teammate)) {
-                                float healAmount = flatHealing + (teammate.getMaxHealth() - teammate.getHealth()) * (missingHealing / 100f);
+                                float healAmount = flatHealing + (teammate.getMaxHealth() - teammate.getCurrentHealth()) * (missingHealing / 100f);
                                 teammate.addHealingInstance(wp, name, healAmount, healAmount, 0, 100);
                                 teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
                                 // Particles
@@ -249,7 +249,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
                             if (enemy.isAlive()) {
-                                float healthDamage = enemy.getHealth() * .10f;
+                                float healthDamage = enemy.getCurrentHealth() * .10f;
                                 if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                                     healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
                                 }

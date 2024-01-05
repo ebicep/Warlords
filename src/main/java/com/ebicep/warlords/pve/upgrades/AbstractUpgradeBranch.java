@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.upgrades;
 
+import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -103,10 +104,11 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         if (hasSecondMaster) {
             DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                Ability abilityRegistry = Ability.getAbility(ability.getClass());
+                EnumSet<Ability> alternativeMasteriesUnlockedAbilities = pveStats.getAlternativeMasteriesUnlockedAbilities();
                 Map<Specializations, Map<Integer, Instant>> alternativeMasteriesUnlocked = pveStats.getAlternativeMasteriesUnlocked();
-                Map<Integer, Instant> unlockedMasteries = alternativeMasteriesUnlocked.get(warlordsPlayer.getSpecClass());
                 int upgradeBranchIndex = abilityTree.getUpgradeBranches().indexOf(this);
-                boolean unlocked = unlockedMasteries != null && unlockedMasteries.get(upgradeBranchIndex) != null;
+                boolean unlocked = alternativeMasteriesUnlockedAbilities.contains(abilityRegistry);
                 ItemBuilder masterBranchItem = masterBranchItem(masterUpgrade2, !unlocked);
                 if (!unlocked) {
                     masterBranchItem.name(
@@ -143,6 +145,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                         (m2, e2) -> {
                                             alternativeMasteriesUnlocked.putIfAbsent(warlordsPlayer.getSpecClass(), new HashMap<>());
                                             alternativeMasteriesUnlocked.get(warlordsPlayer.getSpecClass()).put(upgradeBranchIndex, Instant.now());
+                                            alternativeMasteriesUnlockedAbilities.add(abilityRegistry);
                                             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                             openUpgradeBranchMenu();
                                         },

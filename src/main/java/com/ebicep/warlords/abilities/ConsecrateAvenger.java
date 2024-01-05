@@ -117,7 +117,7 @@ public class ConsecrateAvenger extends AbstractConsecrate {
     @Nonnull
     @Override
     public AbstractConsecrate createConsecrate() {
-        return new ConsecrateAvenger(minDamageHeal, maxDamageHeal, energyCost.getCurrentValue(), critChance, critMultiplier, strikeDamageBoost, hitBox.getCurrentValue(), location);
+        return new ConsecrateAvenger(minDamageHeal, maxDamageHeal, energyCost.getBaseValue(), critChance, critMultiplier, strikeDamageBoost, hitBox.getBaseValue(), location);
     }
 
     @Nonnull

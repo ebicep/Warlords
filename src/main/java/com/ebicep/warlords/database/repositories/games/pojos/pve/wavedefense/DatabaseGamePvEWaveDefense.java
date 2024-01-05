@@ -39,7 +39,7 @@ public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase implements W
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption waveDefenseOption) {
                 this.wavesCleared = waveDefenseOption.getWavesCleared();
-                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEWaveDefense(warlordsPlayer, gameWinEvent, waveDefenseOption)));
+                game.warlordsPlayers().forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEWaveDefense(warlordsPlayer, gameWinEvent, waveDefenseOption, counted)));
             }
         }
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();

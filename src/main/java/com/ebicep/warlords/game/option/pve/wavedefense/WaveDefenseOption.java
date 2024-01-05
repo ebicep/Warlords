@@ -353,7 +353,7 @@ public class WaveDefenseOption implements PveOption {
         currentDelay = spawnTickPeriod == 0 ? currentWave.getDelay() : currentWave.getDelay() / spawnTickPeriod;
         spawner = new GameRunnable(game) {
             WarlordsEntity lastSpawn = null;
-            int counter = 0;
+            int spawnTaskTicksElapsed = 0;
 
             @Override
             public void run() {
@@ -372,15 +372,18 @@ public class WaveDefenseOption implements PveOption {
                     return;
                 }
 
-                counter++;
-                if (spawnTickPeriod < 0) {
-                    for (int i = 0; i < spawnCount; i++) {
+                spawnTaskTicksElapsed++;
+                if (spawnTaskTicksElapsed % spawnTickPeriod == 0) {
+                    if (spawnTickPeriod < 0) {
+                        for (int i = 0; i < spawnCount; i++) {
+                            spawnMob();
+                        }
+                    } else {
                         spawnMob();
                     }
-                } else {
-                    spawnMob();
-                    spawnCount--;
                 }
+
+                currentWave.tick(WaveDefenseOption.this, spawnTaskTicksElapsed);
 
                 if (spawnCount <= 0) {
                     spawner.cancel();
@@ -394,11 +397,17 @@ public class WaveDefenseOption implements PveOption {
                 } else {
                     lastSpawn = spawn(getSpawnLocation(lastSpawn));
                 }
-                lastSpawn.getLocation(lastLocation);
+                if (lastSpawn != null) {
+                    lastSpawn.getLocation(lastLocation);
+                    spawnCount--;
+                }
             }
 
             public WarlordsEntity spawn(Location loc) {
                 AbstractMob abstractMob = currentWave.spawnMonster(loc);
+                if (abstractMob == null) {
+                    return null;
+                }
                 WarlordsNPC npc = abstractMob.toNPC(game, team, WaveDefenseOption.this::modifyStats);
                 game.addNPC(npc);
                 mobs.put(abstractMob, ticksElapsed.get());
@@ -411,7 +420,7 @@ public class WaveDefenseOption implements PveOption {
                 return randomSpawnLocation != null ? randomSpawnLocation : lastLocation;
             }
 
-        }.runTaskTimer(0, spawnTickPeriod);
+        }.runTaskTimer(0, 0);
     }
 
     protected void onSpawnDelayChange(int newTickDelay) {
@@ -466,9 +475,7 @@ public class WaveDefenseOption implements PveOption {
 
         // Final health value after applying all modifiers.
         float finalHealth = (health * difficultyHealthMultiplier) * (bossFlagCheck ? bossMultiplier : 1);
-        warlordsNPC.setMaxBaseHealth(finalHealth);
-        warlordsNPC.setMaxHealth(finalHealth);
-        warlordsNPC.setHealth(finalHealth);
+        warlordsNPC.setMaxHealthAndHeal(finalHealth);
 
         int endlessFlagCheckMin = isEndless ? minMeleeDamage : (int) (warlordsNPC.getMinMeleeDamage() * difficultyDamageMultiplier);
         int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyDamageMultiplier);

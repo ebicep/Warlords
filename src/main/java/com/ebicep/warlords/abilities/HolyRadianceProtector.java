@@ -152,8 +152,8 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
         HolyRadianceProtector tempMark = new HolyRadianceProtector(
                 minDamageHeal,
                 maxDamageHeal,
-                cooldown.getCurrentValue(),
-                energyCost.getCurrentValue(),
+                cooldown.getBaseValue(),
+                energyCost.getBaseValue(),
                 critChance,
                 critMultiplier
         );

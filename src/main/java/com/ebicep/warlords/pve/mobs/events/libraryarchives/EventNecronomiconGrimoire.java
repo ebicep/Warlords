@@ -22,10 +22,11 @@ import java.util.EnumSet;
 
 public class EventNecronomiconGrimoire extends AbstractMob implements BossMinionMob {
 
-    private int smiteTickCooldown = 5 * 20;
+    private int smiteTickCooldown = 10 * 20;
     private int timesSmited = 0;
     @Nullable
     private WarlordsEntity targetWarlordsEntity = null;
+    @Nullable
     private Laser.GuardianLaser laser;
 
     public EventNecronomiconGrimoire(Location spawnLocation) {
@@ -123,7 +124,9 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        laser.stop();
+        if (laser != null) {
+            laser.stop();
+        }
     }
 
     private void smite() {
@@ -164,4 +167,5 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
             Utils.playGlobalSound(targetWarlordsEntity.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_1, 500, .6f);
         }
     }
+
 }

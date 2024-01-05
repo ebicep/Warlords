@@ -20,6 +20,7 @@ import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -64,12 +65,11 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerPvEBase() {
     }
 
-    public DatabaseGamePlayerPvEBase(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, PveOption pveOption) {
-        super(warlordsPlayer, gameWinEvent);
+    public DatabaseGamePlayerPvEBase(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, PveOption pveOption, boolean counted) {
+        super(warlordsPlayer, gameWinEvent, counted);
         //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("DatabaseGamePlayerPvE - " + warlordsPlayer.getName());
         UUID uuid = warlordsPlayer.getUuid();
-        PlayerPveRewards playerPveRewards = pveOption.getRewards()
-                                                     .getPlayerRewards(uuid);
+        PlayerPveRewards playerPveRewards = pveOption.getRewards().getPlayerRewards(uuid);
         DatabaseManager.getPlayer(uuid, databasePlayer -> {
             this.prestige = databasePlayer.getSpec(warlordsPlayer.getSpecClass()).getPrestige();
         });
@@ -93,6 +93,9 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
         this.illusionShardGained = playerPveRewards.getIllusionShardGain();
         this.blessingsFound = playerPveRewards.getBlessingsFound();
         this.mobDropsGained = new HashMap<>(playerPveRewards.getMobDropsGained());
+        if (!counted) {
+            return;
+        }
         for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
             BountyUtils.BountyInfo bountyInfo = BountyUtils.BOUNTY_COLLECTION_INFO.get(activeCollection.name);
             if (bountyInfo == null) {
@@ -100,12 +103,16 @@ public abstract class DatabaseGamePlayerPvEBase extends DatabaseGamePlayerBase {
             }
             DatabaseManager.getPlayer(uuid, activeCollection, databasePlayer -> {
                 List<AbstractBounty> trackableBounties = databasePlayer.getPveStats().getTrackableBounties();
-                for (AbstractBounty bounty : trackableBounties) {
-                    if (bounty instanceof TracksPostGame tracksPostGame) {
-                        tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer, gameWinEvent);
-                    } else if (bounty instanceof TracksDuringGame tracksDuringGame) {
-                        tracksDuringGame.apply(bounty);
+                try {
+                    for (AbstractBounty bounty : trackableBounties) {
+                        if (bounty instanceof TracksPostGame tracksPostGame) {
+                            tracksPostGame.onGameEnd(pveOption.getGame(), warlordsPlayer, gameWinEvent);
+                        } else if (bounty instanceof TracksDuringGame tracksDuringGame) {
+                            tracksDuringGame.apply(bounty);
+                        }
                     }
+                } catch (Exception e) {
+                    ChatUtils.MessageType.BOUNTIES.sendErrorMessage(e);
                 }
             });
         }

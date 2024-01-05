@@ -142,13 +142,13 @@ public class EventIllumina extends AbstractMob implements BossMob {
         Location loc = warlordsNPC.getLocation();
         DifficultyIndex difficulty = option.getDifficulty();
 
-        if (!phaseOneTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .7f)) {
+        if (!phaseOneTriggered && warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * .7f)) {
             phaseOneTriggered = true;
             timedDamage(option, playerCount, 10000, 11);
-        } else if (!phaseTwoTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .4f)) {
+        } else if (!phaseTwoTriggered && warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * .4f)) {
             phaseTwoTriggered = true;
             timedDamage(option, playerCount, 15000, 11);
-        } else if (!phaseThreeTriggered && warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f)) {
+        } else if (!phaseThreeTriggered && warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * .1f)) {
             phaseThreeTriggered = true;
             timedDamage(option, playerCount, 20000, 11);
         }

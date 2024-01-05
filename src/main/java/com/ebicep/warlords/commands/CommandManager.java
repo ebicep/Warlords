@@ -46,6 +46,7 @@ import com.ebicep.warlords.poll.PollCommand;
 import com.ebicep.warlords.pve.bountysystem.BountyCommand;
 import com.ebicep.warlords.pve.commands.*;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairCommand;
+import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodexCommand;
 import com.ebicep.warlords.pve.items.ItemsCommand;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.quests.QuestCommand;
@@ -376,6 +377,9 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("classesalias", command -> Classes.NAMES);
         commandCompletions.registerAsyncCompletion("specsalias", command -> Specializations.NAMES);
         commandCompletions.registerAsyncCompletion("textcolors", command -> NamedTextColor.NAMES.keys());
+        commandCompletions.registerAsyncCompletion("floatmodifiabletype", command -> Arrays.stream(PrintFloatModifiableCommand.Type.VALUES)
+                                                                                           .map(Enum::name)
+                                                                                           .toList());
 
     }
 
@@ -555,6 +559,7 @@ public class CommandManager {
         manager.registerCommand(new AbilityCommand());
         manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
+        manager.registerCommand(new PrintFloatModifiableCommand());
         manager.registerCommand(new StunClearCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
         manager.registerCommand(new SpawnTestDummyCommand());
@@ -613,6 +618,8 @@ public class CommandManager {
         manager.registerCommand(new MobCommand());
         manager.registerCommand(new WaveCommand());
         manager.registerCommand(new OnslaughtCommand());
+
+        manager.registerCommand(new PlayerCodexCommand());
 
         manager.registerCommand(new GuildCommand());
         manager.registerCommand(new GuildDebugCommand());

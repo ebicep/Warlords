@@ -146,8 +146,8 @@ public class Narmer extends AbstractMob implements BossMob {
             public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
                 if (event.getWarlordsEntity().equals(getWarlordsNPC())) {
                     float executeHealth = warlordsNPC.getMaxHealth() * 0.4f;
-                    if (warlordsNPC.getHealth() < executeHealth && !acolytes.isEmpty()) {
-                        warlordsNPC.setHealth(warlordsNPC.getHealth());
+                    if (warlordsNPC.getCurrentHealth() < executeHealth && !acolytes.isEmpty()) {
+                        warlordsNPC.setCurrentHealth(warlordsNPC.getCurrentHealth());
                         Location loc = warlordsNPC.getLocation();
                         warlordsNPC.getGame().forEachOnlineWarlordsEntity(we -> {
                             Utils.playGlobalSound(loc, Sound.ENTITY_BLAZE_HURT, 2, 0.2f);
@@ -166,7 +166,7 @@ public class Narmer extends AbstractMob implements BossMob {
 
                 if (dead.isTeammate(warlordsNPC) && minionsCanHeal.contains(dead.getUuid())) {
                     EffectUtils.playParticleLinkAnimation(dead.getLocation(), location, Particle.VILLAGER_HAPPY, 1, 2);
-                    float healing = warlordsNPC.getHealth() * 1.1f;
+                    float healing = warlordsNPC.getCurrentHealth() * 1.1f;
                     warlordsNPC.addHealingInstance(
                             warlordsNPC,
                             "Undead Healing",

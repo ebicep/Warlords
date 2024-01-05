@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
 import co.aikar.commands.CommandIssuer;
+import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEventReward;
@@ -50,6 +51,7 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Bukkit;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
@@ -129,11 +131,25 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     //etc
     @Field("alternative_masteries_unlocked")
     private Map<Specializations, Map<Integer, Instant>> alternativeMasteriesUnlocked = new HashMap<>();
+    @Transient
+    private EnumSet<Ability> alternativeMasteriesUnlockedAbilities = EnumSet.noneOf(Ability.class);
 
     public void loadInCollection(PlayersCollections collection) {
         if (activeBounties.isEmpty()) {
             activeBounties.addAll(BountyUtils.getNewBounties(collection.name));
         }
+        updateLocalAlternativeMasteriesUnlocked();
+    }
+
+    public void updateLocalAlternativeMasteriesUnlocked() {
+        alternativeMasteriesUnlocked.forEach((specializations, integerInstantMap) -> {
+            Ability[] abilities = Ability.SPEC_ABILITIES.get(specializations);
+            for (int i = 0; i < 5; i++) {
+                if (integerInstantMap.containsKey(i)) {
+                    alternativeMasteriesUnlockedAbilities.add(abilities[i]);
+                }
+            }
+        });
     }
 
     @Override
@@ -501,4 +517,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         return alternativeMasteriesUnlocked;
     }
 
+    public EnumSet<Ability> getAlternativeMasteriesUnlockedAbilities() {
+        return alternativeMasteriesUnlockedAbilities;
+    }
 }

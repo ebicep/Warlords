@@ -166,7 +166,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
                                             @Override
                                             public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                                if (teammate.getHealth() - currentDamageValue < 0 && !healedLethal.contains(teammate)) {
+                                                if (teammate.getCurrentHealth() - currentDamageValue < 0 && !healedLethal.contains(teammate)) {
                                                     healedLethal.add(teammate);
                                                     float healAmount = teammate.getMaxHealth() * convertToPercent(lethalDamageHealing);
                                                     teammate.addHealingInstance(
@@ -207,7 +207,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             @Override
             public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (hasMaxStacks()) {
-                    if (wp.getHealth() - currentDamageValue < 0) {
+                    if (wp.getCurrentHealth() - currentDamageValue < 0) {
                         float healAmount = wp.getMaxHealth() * convertToPercent(lethalDamageHealing);
                         wp.addHealingInstance(
                                 wp,

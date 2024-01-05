@@ -13,8 +13,8 @@ public class DatabaseGamePlayerDuel extends DatabaseGamePlayerBase {
     public DatabaseGamePlayerDuel() {
     }
 
-    public DatabaseGamePlayerDuel(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        super(warlordsPlayer, gameWinEvent);
+    public DatabaseGamePlayerDuel(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        super(warlordsPlayer, gameWinEvent, counted);
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
     }
 

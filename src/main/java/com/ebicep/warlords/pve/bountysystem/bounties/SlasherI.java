@@ -7,8 +7,10 @@ import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable2;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 
-import java.util.UUID;
+import java.util.Objects;
 
 public class SlasherI extends AbstractBounty implements TracksDuringGame, WeeklyCost, WeeklyRewardSpendable2 {
 
@@ -39,9 +41,9 @@ public class SlasherI extends AbstractBounty implements TracksDuringGame, Weekly
         newKills = 0;
     }
 
-    @Override
-    public void onFinalDamageHeal(UUID uuid, WarlordsDamageHealingFinalEvent event) {
-        if (!event.getAttacker().getUuid().equals(uuid)) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+        if (!Objects.equals(event.getAttacker().getUuid(), uuid)) {
             return;
         }
         if (!event.isDead()) {

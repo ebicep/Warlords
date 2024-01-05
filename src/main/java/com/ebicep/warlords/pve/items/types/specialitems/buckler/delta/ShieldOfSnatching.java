@@ -58,7 +58,7 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
             private long playersBelow50Percent() {
                 return warlordsPlayer.getGame()
                                      .warlordsPlayers()
-                                     .filter(p -> p.getHealth() / p.getMaxHealth() < 0.5)
+                                     .filter(p -> p.getCurrentHealth() / p.getMaxHealth() < 0.5)
                                      .count();
             }
         });

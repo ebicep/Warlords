@@ -113,9 +113,7 @@ public class Illumina extends AbstractMob implements BossMob {
 
         if (option.getDifficulty() == DifficultyIndex.EXTREME) {
             float newHealth = 70000;
-            warlordsNPC.setMaxBaseHealth(newHealth);
-            warlordsNPC.setHealth(newHealth);
-            warlordsNPC.setMaxHealth(newHealth);
+            warlordsNPC.setMaxHealthAndHeal(newHealth);
         }
 
         new GameRunnable(option.getGame()) {
@@ -162,12 +160,12 @@ public class Illumina extends AbstractMob implements BossMob {
         Location loc = warlordsNPC.getLocation();
         DifficultyIndex difficulty = option.getDifficulty();
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * .9f) && !phaseOneTriggered) {
             phaseOneTriggered = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 7000 : 9000, 11);
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * .6f) && !phaseTwoTriggered) {
             phaseTwoTriggered = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 9000 : 11000, 11);
             for (int i = 0; i < (2 * playerCount); i++) {
@@ -175,7 +173,7 @@ public class Illumina extends AbstractMob implements BossMob {
             }
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * .3f) && !phaseThreeTriggered) {
             phaseThreeTriggered = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 11000 : 13000, 11);
             for (int i = 0; i < (difficulty == DifficultyIndex.EXTREME ? playerCount / 2 + 1 : playerCount); i++) {
@@ -183,7 +181,7 @@ public class Illumina extends AbstractMob implements BossMob {
             }
         }
 
-        if (warlordsNPC.getHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
+        if (warlordsNPC.getCurrentHealth() < (warlordsNPC.getMaxHealth() * .1f) && !phaseFourTriggered) {
             phaseFourTriggered = true;
             timedDamage(option, playerCount, difficulty == DifficultyIndex.EXTREME ? 4000 : 5000, 6);
             for (int i = 0; i < ((difficulty == DifficultyIndex.EXTREME ? 1 : 2) * playerCount); i++) {

@@ -58,7 +58,8 @@ public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvE
         game.warlordsPlayers()
             .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventTheBorderlineOfIllusion(warlordsPlayer,
                     gameWinEvent, waveDefenseOption.get(),
-                    eventPointsOption.get()
+                    eventPointsOption.get(),
+                    counted
             )));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
         this.wavesCleared = waveDefenseOption.get().getWavesCleared();

@@ -145,7 +145,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (!healthCheck && self.getHealth() / self.getMaxHealth() <= 0.5) {
+        if (!healthCheck && self.getCurrentHealth() / self.getMaxHealth() <= 0.5) {
             healthCheck = true;
             List<Location> spawnLocations = LocationUtils.getCircle(warlordsNPC.getLocation(), 3, pveOption.playerCount());
             for (Location location : spawnLocations) {

@@ -10,9 +10,11 @@ import com.ebicep.warlords.pve.bountysystem.costs.WeeklyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.WeeklyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
 
-import java.util.UUID;
+import java.util.Objects;
 
 public class HuntVoidI extends AbstractBounty implements TracksDuringGame, WeeklyCost, WeeklyRewardSpendable1 {
 
@@ -44,13 +46,13 @@ public class HuntVoidI extends AbstractBounty implements TracksDuringGame, Weekl
         newKills = 0;
     }
 
-    @Override
-    public void onKill(UUID uuid, WarlordsDeathEvent event) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onKill(WarlordsDeathEvent event) {
         WarlordsEntity killer = event.getKiller();
         if (killer == null) {
             return;
         }
-        if (killer.getUuid().equals(uuid) && event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMinionMob) {
+        if (Objects.equals(killer.getUuid(), uuid) && event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossMinionMob) {
             newKills++;
         }
     }

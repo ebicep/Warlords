@@ -19,7 +19,9 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
+import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodexEarnEvent;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import org.bukkit.Bukkit;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -99,6 +101,9 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
             PlayerCodex codexEarned = gamePlayerGrimoiresGraveyard.getCodexEarned();
             if (codexEarned != null) {
                 this.codexesEarned.merge(codexEarned, multiplier, Integer::sum);
+                if (multiplier > 0) {
+                    Bukkit.getPluginManager().callEvent(new PlayerCodexEarnEvent(databasePlayer.getUuid(), codexEarned));
+                }
             }
             this.grimoiresGraveyardStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         }

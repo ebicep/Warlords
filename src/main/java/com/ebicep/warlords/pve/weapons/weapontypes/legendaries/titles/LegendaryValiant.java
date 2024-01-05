@@ -60,7 +60,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
         ) {
             @Override
             public float multiplyEnergyGainPerTick(float energyGainPerTick) {
-                if (player.getHealth() / player.getMaxHealth() * 100 < HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel()) {
+                if (player.getCurrentHealth() / player.getMaxHealth() * 100 < HP_CHECK + HP_CHECK_INCREASE_PER_UPGRADE * getTitleLevel()) {
                     return energyGainPerTick * (1 + (EPS_INCREASE + EPS_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f);
                 }
                 return energyGainPerTick;

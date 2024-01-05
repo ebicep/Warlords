@@ -79,7 +79,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         updateEntity();
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
-        setMaxBaseHealth(maxHealth);
+        setMaxHealthAndHeal(maxHealth);
     }
 
     @Nonnull
@@ -99,7 +99,7 @@ public final class WarlordsNPC extends WarlordsEntity {
             builder.append(Component.text(aspect.name + " ", aspect.textColor));
         }
 
-        int resistance = spec.getDamageResistance();
+        float resistance = spec.getDamageResistance();
         builder.append(Component.text(name, nameColor));
         if (resistance > 0) {
             builder.append(Component.text(" - "))
@@ -257,11 +257,11 @@ public final class WarlordsNPC extends WarlordsEntity {
                         armorStand.setCustomNameVisible(true);
                     });
                 } else {
-                    playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+                    playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
                     playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
                 }
             } else {
-                entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED));
+                entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
             }
         }
     }
@@ -274,7 +274,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public void setDamageResistance(int damageResistance) {
+    public void setDamageResistance(float damageResistance) {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
         updateHealth();
 //        nameDisplay.customName(getNameComponent());

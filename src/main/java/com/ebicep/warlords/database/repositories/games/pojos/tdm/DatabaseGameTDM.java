@@ -47,7 +47,7 @@ public class DatabaseGameTDM extends DatabaseGameBase {
         this.bluePoints = game.getPoints(Team.BLUE);
         this.redPoints = game.getPoints(Team.RED);
         game.warlordsPlayers().forEach(warlordsPlayer -> {
-            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerTDM(warlordsPlayer, gameWinEvent));
+            this.players.computeIfAbsent(warlordsPlayer.getTeam(), team -> new ArrayList<>()).add(new DatabaseGamePlayerTDM(warlordsPlayer, gameWinEvent, counted));
         });
     }
 

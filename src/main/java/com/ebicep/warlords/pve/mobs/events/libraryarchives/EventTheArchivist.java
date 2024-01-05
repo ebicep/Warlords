@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -48,16 +49,21 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 minMeleeDamage,
                 maxMeleeDamage,
                 new CripplingStrike() {{
-                    this.getCooldown().setCurrentValue(5);
+                    this.getCooldown().setBaseValue(5);
                     this.pveMasterUpgrade = true;
                 }},
-                new ChainLightning(7, 7) {{
+                new ChainLightning(5, 5) {{
                     this.pveMasterUpgrade2 = true;
                 }},
-                new GroundSlamBerserker(10, 10),
-                new PrismGuard(20),
-                new LastStand(50, 50)
+                new GroundSlamBerserker(8, 8),
+                new PrismGuard(18, 18),
+                new LastStand(25, 25)
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_THE_ARCHIVIST;
     }
 
     @Override
@@ -71,21 +77,19 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
         );
     }
 
-
-    @Override
-    public Mob getMobRegistry() {
-        return Mob.EVENT_THE_ARCHIVIST;
-    }
-
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
         option.getGame().registerEvents(new Listener() {
+
+            final FloatModifiable.FloatModifier modifier = warlordsNPC.getHealth().addAdditiveModifier(name + " (Base)", 0);
+
+
             @EventHandler
             public void onAbilityUse(WarlordsAbilityActivateEvent.Post event) {
                 if (event.getWarlordsEntity().equals(warlordsNPC)) {
-                    warlordsNPC.setMaxBaseHealth(warlordsNPC.getMaxBaseHealth() - 500);
+                    modifier.setModifier(modifier.getModifier() - 500);
                 }
             }
 

@@ -6,9 +6,11 @@ import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
 
-import java.util.UUID;
+import java.util.Objects;
 
 public class CharmingI extends AbstractBounty implements TracksDuringGame, DailyCost, DailyRewardSpendable1 {
 
@@ -40,9 +42,9 @@ public class CharmingI extends AbstractBounty implements TracksDuringGame, Daily
         newUsed = 0;
     }
 
-    @Override
-    public void onAbilityUsed(UUID uuid, WarlordsAbilityActivateEvent.Pre event) {
-        if (!event.getWarlordsEntity().getUuid().equals(uuid)) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onAbilityUsed(WarlordsAbilityActivateEvent.Pre event) {
+        if (!Objects.equals(event.getWarlordsEntity().getUuid(), uuid)) {
             return;
         }
         newUsed++;

@@ -117,12 +117,12 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
 
     @Nonnull
     public PlayerFilterGeneric<T> leastAliveFirst() {
-        return sorted(Comparator.comparing(wp -> wp.getHealth() / wp.getMaxHealth()));
+        return sorted(Comparator.comparing(wp -> wp.getCurrentHealth() / wp.getMaxHealth()));
     }
 
     @Nonnull
     public PlayerFilterGeneric<T> mostAliveFirst() {
-        return sorted(Comparator.<WarlordsEntity, Float>comparing(wp -> wp.getHealth() / wp.getMaxHealth()).reversed());
+        return sorted(Comparator.<WarlordsEntity, Float>comparing(wp -> wp.getCurrentHealth() / wp.getMaxHealth()).reversed());
     }
 
     @Nonnull

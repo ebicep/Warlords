@@ -7,9 +7,11 @@ import com.ebicep.warlords.pve.bountysystem.costs.DailyCost;
 import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksDuringGame;
 import com.ebicep.warlords.util.java.NumberFormat;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.springframework.data.annotation.Transient;
 
-import java.util.UUID;
+import java.util.Objects;
 
 public class PursueI extends AbstractBounty implements TracksDuringGame, DailyCost, DailyRewardSpendable1 {
 
@@ -41,9 +43,9 @@ public class PursueI extends AbstractBounty implements TracksDuringGame, DailyCo
         newEnergyUsed = 0;
     }
 
-    @Override
-    public void onEnergyUsed(UUID uuid, WarlordsEnergyUseEvent.Post event) {
-        if (event.getWarlordsEntity().getUuid().equals(uuid)) {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEnergyUsed(WarlordsEnergyUseEvent.Post event) {
+        if (Objects.equals(event.getWarlordsEntity().getUuid(), uuid)) {
             newEnergyUsed += event.getEnergyUsed();
         }
     }

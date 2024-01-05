@@ -65,9 +65,4 @@ public abstract class EventGrimoire extends AbstractMob implements BossMinionMob
 
     public abstract EnumSet<Ability> getAbilitiesM2();
 
-    @Override
-    public double weaponDropRate() {
-        return BossMinionMob.super.weaponDropRate() * 1.5;
-    }
-
 }

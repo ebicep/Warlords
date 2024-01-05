@@ -60,6 +60,10 @@ public class FieldEffectOption implements Option {
         }.runTaskTimer(0, 0);
     }
 
+    public List<com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect> getFieldEffects() {
+        return fieldEffects;
+    }
+
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         fieldEffects.forEach(fieldEffect -> fieldEffect.onWarlordsEntityCreated(player));

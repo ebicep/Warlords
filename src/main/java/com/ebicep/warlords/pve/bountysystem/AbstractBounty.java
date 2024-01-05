@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
@@ -19,8 +20,12 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.springframework.data.annotation.Transient;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -28,10 +33,44 @@ import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.pve.bountysystem.BountyUtils.BOUNTY_COLLECTION_INFO;
 
-public abstract class AbstractBounty implements RewardSpendable, BountyCost {
+public abstract class AbstractBounty implements Listener, RewardSpendable, BountyCost {
 
     protected long value;
     private boolean started = false;
+
+    // values for bounties to know who the owner is for events
+    @Transient
+    protected DatabasePlayer databasePlayer;
+    @Transient
+    protected UUID uuid;
+
+    public void init(DatabasePlayer databasePlayer) {
+        this.databasePlayer = databasePlayer;
+        this.uuid = databasePlayer.getUuid();
+        log("initializing bounty");
+        this.register();
+    }
+
+    protected void register() {
+        log("registering bounty");
+        this.unregister(); // precaution
+        Bukkit.getPluginManager().registerEvents(this, Warlords.getInstance());
+        log("done registering bounty");
+    }
+
+    public void unregister() {
+        log("unregistering bounty");
+        HandlerList.unregisterAll(this);
+    }
+
+    private void log(String message) {
+        ChatUtils.MessageType.BOUNTIES.sendMessage(message + ": " + getDebugInfo());
+    }
+
+    private String getDebugInfo() {
+        String name = databasePlayer == null ? "null" : databasePlayer.getName();
+        return this.getClass().getSimpleName() + " for " + name + "(" + uuid + ")";
+    }
 
     public ItemBuilder getItemWithProgress() {
         ItemBuilder itemBuilder = getItem();

@@ -96,7 +96,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                         AbstractMob npcMob = npc.getMob();
                         if (npcMob instanceof EventHades) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, .5f);
-                            float healing = warlordsNPC.getHealth() * 0.25f;
+                            float healing = warlordsNPC.getCurrentHealth() * 0.25f;
                             warlordsNPC.addHealingInstance(
                                     npc,
                                     "Soul",

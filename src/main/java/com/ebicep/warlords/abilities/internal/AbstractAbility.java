@@ -304,7 +304,7 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     @Deprecated
     public void setEnergyCost(float energyCost) {
-        this.energyCost.setCurrentValue(energyCost);
+        this.energyCost.setBaseValue(energyCost);
     }
 
     public Component formatRangeDamage(float min, float max) {

@@ -121,7 +121,7 @@ public class EventMithra extends AbstractMob implements BossMob {
             }
         }
 
-        if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .75 && !entangledStateComplete) {
+        if (warlordsNPC.getCurrentHealth() <= warlordsNPC.getMaxBaseHealth() * .75 && !entangledStateComplete) {
             entangledStateComplete = true;
             inEntangledState = true;
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 1.5f);
@@ -244,7 +244,7 @@ public class EventMithra extends AbstractMob implements BossMob {
             }.runTaskTimer(0, 0);
         }
 
-        if (warlordsNPC.getHealth() <= warlordsNPC.getMaxBaseHealth() * .35 && !immolationTriggered) {
+        if (warlordsNPC.getCurrentHealth() <= warlordsNPC.getMaxBaseHealth() * .35 && !immolationTriggered) {
             immolationTriggered = true;
             immolation(option, warlordsNPC.getLocation());
         }
@@ -253,7 +253,7 @@ public class EventMithra extends AbstractMob implements BossMob {
     private void groundSlam() {
         AbstractGroundSlam groundSlam = new AbstractGroundSlam(1000, 1000, 0, 0, 0, 0) {{
             setTrueDamage(true);
-            getHitBoxRadius().setCurrentValue(9);
+            getHitBoxRadius().setBaseValue(9);
         }};
         groundSlam.onActivate(warlordsNPC);
     }
