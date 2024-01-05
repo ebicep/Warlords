@@ -9,12 +9,15 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.l
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.pve.drops.WarlordsDropWeaponEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteur;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
@@ -131,6 +134,16 @@ public class CodexCollector implements FieldEffect {
                         ability.setCurrentCooldown(0);
                         warlordsPlayer.updateItem(ability);
                     }
+                }
+            }
+
+            @EventHandler
+            public void onWeaponDrop(WarlordsDropWeaponEvent event) {
+                if (codexesEquipped < 6) {
+                    return;
+                }
+                if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventInquisiteur) {
+                    event.getDropRate().set(.2);
                 }
             }
 
