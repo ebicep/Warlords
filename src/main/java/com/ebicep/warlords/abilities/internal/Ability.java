@@ -1,7 +1,13 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.util.chat.ChatUtils;
 
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -103,6 +109,34 @@ public enum Ability {
     WOUNDING_STRIKE_DEFENDER(WoundingStrikeDefender.class, WoundingStrikeDefender::new),
 
     ;
+
+    public static final Ability[] VALUES = values();
+    public static final Map<Specializations, Ability[]> SPEC_ABILITIES = new HashMap<>() {{
+        for (Specializations spec : Specializations.VALUES) {
+            Ability[] abilities = new Ability[5];
+            List<AbstractAbility> abstractAbilities = spec.create.get().getAbilities();
+            for (int i = 0; i < abstractAbilities.size(); i++) {
+                AbstractAbility ability = abstractAbilities.get(i);
+                Ability abilityRegistry = getAbility(ability.getClass());
+                if (abilityRegistry == null) {
+                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Unknown ability for " + spec.name() + ": " + ability.getClass().getSimpleName());
+                    continue;
+                }
+                abilities[i] = abilityRegistry;
+            }
+            put(spec, abilities);
+        }
+    }};
+
+    @Nullable
+    public static Ability getAbility(Class<?> clazz) {
+        for (Ability ability : VALUES) {
+            if (ability.clazz == clazz) {
+                return ability;
+            }
+        }
+        return null;
+    }
 
     public final Class<?> clazz;
     public final Supplier<AbstractAbility> create;
