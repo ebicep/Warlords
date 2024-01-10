@@ -19,6 +19,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.text.Component;
@@ -97,6 +98,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 settings.getArmorSet(settings.getSelectedSpec())
         );
         resetAbilityTree();
+        abilityTree.getUpgradeBranches().forEach(AbstractUpgradeBranch::runOnce);
     }
 
     public void resetAbilityTree() {
@@ -150,6 +152,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         this.skillBoost = settings.getSkillBoostForClass();
 
         resetAbilityTree();
+        abilityTree.getUpgradeBranches().forEach(AbstractUpgradeBranch::runOnce);
+
         updatePlayerReference(player.getPlayer());
         updateEntity();
 
