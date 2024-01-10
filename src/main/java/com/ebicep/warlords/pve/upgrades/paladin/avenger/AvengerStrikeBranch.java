@@ -16,13 +16,16 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
     float maxDamage;
     float energySteal = ability.getEnergySteal();
 
+    @Override
+    public void runOnce() {
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+    }
+
     public AvengerStrikeBranch(AbilityTree abilityTree, AvengersStrike ability) {
         super(abilityTree, ability);
         WarlordsPlayer warlordsPlayer = abilityTree.getWarlordsPlayer();
-        if (warlordsPlayer.isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-        }
+
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 

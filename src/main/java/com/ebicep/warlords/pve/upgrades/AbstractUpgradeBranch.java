@@ -79,6 +79,13 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         this.itemName = ability.getName();
     }
 
+
+    // TODO changed abilities that have a min/max damage to interface and/or use floatmodifiable
+    // for boosting ability variables in the constructor
+    public void runOnce() {
+
+    }
+
     public void openUpgradeBranchMenu() {
         WarlordsPlayer warlordsPlayer = abilityTree.getWarlordsPlayer();
         if (!(warlordsPlayer.getEntity() instanceof Player player)) {
