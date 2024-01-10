@@ -9,15 +9,17 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
     float maxDamage;
     int energyGiven = ability.getEnergyGiven();
 
-    public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {
-        super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-        }
+    @Override
+    public void runOnce() {
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
+    }
 
+    public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {
+        super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)

@@ -8,14 +8,17 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
     float minDamage;
     float maxDamage;
 
-    public ProtectorStrikeBranch(AbilityTree abilityTree, ProtectorsStrike ability) {
-        super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-        }
+    @Override
+    public void runOnce() {
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
+    }
+
+    public ProtectorStrikeBranch(AbilityTree abilityTree, ProtectorsStrike ability) {
+        super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
