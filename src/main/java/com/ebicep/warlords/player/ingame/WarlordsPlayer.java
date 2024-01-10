@@ -98,7 +98,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 settings.getArmorSet(settings.getSelectedSpec())
         );
         resetAbilityTree();
-        abilityTree.getUpgradeBranches().forEach(AbstractUpgradeBranch::runOnce);
+        if (isInPve()) {
+            abilityTree.getUpgradeBranches().forEach(AbstractUpgradeBranch::runOnce);
+        }
     }
 
     public void resetAbilityTree() {
@@ -152,7 +154,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         this.skillBoost = settings.getSkillBoostForClass();
 
         resetAbilityTree();
-        abilityTree.getUpgradeBranches().forEach(AbstractUpgradeBranch::runOnce);
+        if (isInPve()) {
+            abilityTree.getUpgradeBranches().forEach(AbstractUpgradeBranch::runOnce);
+        }
 
         updatePlayerReference(player.getPlayer());
         updateEntity();

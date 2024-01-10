@@ -9,14 +9,17 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
     float maxDamage;
     float strikeHeal = ability.getStrikeHeal();
 
-    public JudgementStrikeBranch(AbilityTree abilityTree, JudgementStrike ability) {
-        super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-        }
+    @Override
+    public void runOnce() {
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
+    }
+
+    public JudgementStrikeBranch(AbilityTree abilityTree, JudgementStrike ability) {
+        super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
