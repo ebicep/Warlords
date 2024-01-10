@@ -13,14 +13,12 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
     public void runOnce() {
         ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
         ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
     }
 
     public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {
         super(abilityTree, ability);
-
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
