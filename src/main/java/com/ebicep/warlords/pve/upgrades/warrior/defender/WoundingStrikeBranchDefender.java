@@ -12,14 +12,12 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
     public void runOnce() {
         ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
         ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
     }
 
     public WoundingStrikeBranchDefender(AbilityTree abilityTree, WoundingStrikeDefender ability) {
         super(abilityTree, ability);
-
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {

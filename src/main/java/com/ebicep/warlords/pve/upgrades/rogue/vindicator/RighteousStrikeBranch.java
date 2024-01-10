@@ -12,14 +12,12 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
     public void runOnce() {
         ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
         ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
     }
 
     public RighteousStrikeBranch(AbilityTree abilityTree, RighteousStrike ability) {
         super(abilityTree, ability);
-
+        minDamage = ability.getMinDamageHeal();
+        maxDamage = ability.getMaxDamageHeal();
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
