@@ -8,12 +8,15 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
     float minDamage;
     float maxDamage;
 
+    @Override
+    public void runOnce() {
+        ability.multiplyMinMax(1.3f);
+        ability.setMaxEnemiesHit(4);
+    }
+
     public PoisonousHexBranch(AbilityTree abilityTree, PoisonousHex ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.multiplyMinMax(1.3f);
-            ability.setMaxEnemiesHit(4);
-        }
+
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 

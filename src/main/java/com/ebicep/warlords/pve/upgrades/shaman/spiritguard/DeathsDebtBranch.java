@@ -9,9 +9,13 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
     int radius = ability.getDebtRadius();
     int spiteRadius = ability.getRespiteRadius();
 
+    @Override
+    public void runOnce() {
+        ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.5f);
+    }
+
     public DeathsDebtBranch(AbilityTree abilityTree, DeathsDebt ability) {
         super(abilityTree, ability);
-        ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.5f);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)

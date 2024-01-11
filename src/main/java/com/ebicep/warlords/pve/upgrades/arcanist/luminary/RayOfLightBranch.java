@@ -8,11 +8,14 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
     float minDamageHeal;
     float maxDamageHeal;
 
+    @Override
+    public void runOnce() {
+        ability.multiplyMinMax(1.3f);
+    }
+
     public RayOfLightBranch(AbilityTree abilityTree, RayOfLight ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.multiplyMinMax(1.3f);
-        }
+
         minDamageHeal = ability.getMinDamageHeal();
         maxDamageHeal = ability.getMaxDamageHeal();
 

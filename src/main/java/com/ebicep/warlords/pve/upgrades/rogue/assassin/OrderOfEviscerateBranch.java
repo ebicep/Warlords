@@ -11,9 +11,6 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
 
     public OrderOfEviscerateBranch(AbilityTree abilityTree, OrderOfEviscerate ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setInPve(true);
-        }
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)

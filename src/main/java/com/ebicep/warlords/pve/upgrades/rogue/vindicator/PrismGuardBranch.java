@@ -8,12 +8,14 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
     int bubbleHealing = ability.getBubbleHealing();
     float bubbleMissingHealing = ability.getBubbleMissingHealing();
 
+    @Override
+    public void runOnce() {
+        ability.setTickDuration(120);
+        ability.setProjectileDamageReduction(75);
+    }
+
     public PrismGuardBranch(AbilityTree abilityTree, PrismGuard ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setTickDuration(120);
-            ability.setProjectileDamageReduction(75);
-        }
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)

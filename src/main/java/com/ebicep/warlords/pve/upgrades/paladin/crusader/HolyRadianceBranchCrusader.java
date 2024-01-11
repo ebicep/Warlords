@@ -11,7 +11,6 @@ public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadian
     public HolyRadianceBranchCrusader(AbilityTree abilityTree, HolyRadianceCrusader ability) {
         super(abilityTree, ability);
 
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
