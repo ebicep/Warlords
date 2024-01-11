@@ -10,12 +10,14 @@ public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
     float minDamage;
     float maxDamage;
 
+    @Override
+    public void runOnce() {
+        ability.multiplyMinMax(1.2f);
+    }
+
     public SpiritLinkBranch(AbilityTree abilityTree, SpiritLink ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.2f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.2f);
-        }
+
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 

@@ -9,11 +9,14 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
     float maxDamage;
     double maxDistance = ability.getMaxDistance();
 
+    @Override
+    public void runOnce() {
+        ability.multiplyMinMax(1.3f);
+    }
+
     public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.multiplyMinMax(1.3f);
-        }
+
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 

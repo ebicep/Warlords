@@ -10,11 +10,14 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
     float selfDamageReduction = ability.getSelfDamageReduction();
     float allyDamageReduction;
 
+    @Override
+    public void runOnce() {
+        ability.setTeammateDamageReductionPercent(40);
+    }
+
     public LastStandBranch(AbilityTree abilityTree, LastStand ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setTeammateDamageReductionPercent(40);
-        }
+
         allyDamageReduction = ability.getTeammateDamageReduction();
 
         UpgradeTreeBuilder
