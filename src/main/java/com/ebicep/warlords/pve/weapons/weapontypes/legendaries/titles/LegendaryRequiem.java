@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -103,7 +104,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                 }
                 List<WarlordsNPC> toConvert = PlayerFilterGeneric.playingGameWarlordsNPCs(game)
                                                                  .aliveEnemiesOf(player)
-                                                                 .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob))
+                                                                 .filter(warlordsNPC -> !(warlordsNPC.getMob() instanceof BossMob) && !(warlordsNPC.getMob() instanceof BossMinionMob))
                                                                  .filter(warlordsNPC -> warlordsNPC.getMob().getEquipment() != null)
                                                                  .limit(spawnAmount)
                                                                  .toList();
