@@ -49,6 +49,11 @@ public class EventInquisiteurVPA extends EventInquisiteur {
     }
 
     @Override
+    public float getCrackiness() {
+        return .20f;
+    }
+
+    @Override
     public Mob getMobRegistry() {
         return Mob.EVENT_INQUISITEUR_VPA;
     }

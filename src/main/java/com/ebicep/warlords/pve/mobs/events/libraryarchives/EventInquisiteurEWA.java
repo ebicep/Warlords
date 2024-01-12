@@ -46,6 +46,11 @@ public class EventInquisiteurEWA extends EventInquisiteur {
     }
 
     @Override
+    public float getCrackiness() {
+        return .70f;
+    }
+
+    @Override
     public Mob getMobRegistry() {
         return Mob.EVENT_INQUISITEUR_EWA;
     }

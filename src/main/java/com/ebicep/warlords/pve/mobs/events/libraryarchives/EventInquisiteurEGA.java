@@ -46,6 +46,11 @@ public class EventInquisiteurEGA extends EventInquisiteur {
     }
 
     @Override
+    public float getCrackiness() {
+        return .45f;
+    }
+
+    @Override
     public Mob getMobRegistry() {
         return Mob.EVENT_INQUISITEUR_EGA;
     }

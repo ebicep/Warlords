@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -45,9 +46,16 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
         super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
     }
 
+    public abstract float getCrackiness();
+
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+
+        // golem crackiness
+        if (npc.getEntity() instanceof LivingEntity livingEntity) {
+            livingEntity.setHealth(livingEntity.getHealth() * getCrackiness());
+        }
 
         List<AbstractAbility> abilities = warlordsNPC.getAbilities();
         for (int i = 0; i < abilities.size(); i++) {
@@ -170,6 +178,10 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
 
         private static final HandlerList handlers = new HandlerList();
 
+        public static HandlerList getHandlerList() {
+            return handlers;
+        }
+
         public EventInquisteurKillingBlowEvent(@Nonnull WarlordsEntity player) {
             super(player);
         }
@@ -177,10 +189,6 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
         @Nonnull
         @Override
         public HandlerList getHandlers() {
-            return handlers;
-        }
-
-        public static HandlerList getHandlerList() {
             return handlers;
         }
     }
