@@ -76,8 +76,8 @@ public enum UpgradeTreeBonus {
         }
 
         @Override
-        public Listener registerEvents(WarlordsPlayer warlordsPlayer, int bonusCount) {
-            return UpgradeTreeBonus.effectivenessRegisterToGame(this, warlordsPlayer, bonusCount);
+        public void applyToAbilityTree(AbilityTree abilityTree, int bonusCount) {
+            costApplyToAbilityTree(this, abilityTree, bonusCount);
         }
     },
     COST_RED(RedAbilityIcon.class) {
