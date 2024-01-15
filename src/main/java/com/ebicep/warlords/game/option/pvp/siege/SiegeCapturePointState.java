@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.MathUtils;
@@ -71,13 +72,18 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
         if (teamCaptured) {
             game.addPoints(capturingTeam, 1);
             hideBossBars();
-            Map<UUID, SiegeStats> playerSiegeStats = siegeOption.getPlayerSiegeStats();
+            Map<UUID, Map<Specializations, SiegeStats>> playerSiegeStats = siegeOption.getPlayerSiegeStats();
             game.warlordsPlayers()
                 .forEach(warlordsPlayer -> {
+                    Specializations spec = warlordsPlayer.getSpecClass();
                     if (warlordsPlayer.getTeam() == capturingTeam) {
-                        playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new SiegeStats()).addPointsCaptured();
+                        playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new HashMap<>())
+                                        .computeIfAbsent(spec, specializations -> new SiegeStats())
+                                        .addPointsCaptured();
                     } else {
-                        playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new SiegeStats()).addPointsCapturedFail();
+                        playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new HashMap<>())
+                                        .computeIfAbsent(spec, specializations -> new SiegeStats())
+                                        .addPointsCapturedFail();
                     }
                 });
             return true;
@@ -121,8 +127,10 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
         // check if multiple teams on point
         perTeam.entrySet().removeIf(teamListEntry -> teamListEntry.getValue().isEmpty());
         perTeam.forEach((team, warlordsEntities) -> {
-            Map<UUID, SiegeStats> playerSiegeStats = siegeOption.getPlayerSiegeStats();
-            warlordsEntities.forEach(warlordsEntity -> playerSiegeStats.computeIfAbsent(warlordsEntity.getUuid(), uuid -> new SiegeStats()).addTimeOnPointTicks());
+            Map<UUID, Map<Specializations, SiegeStats>> playerSiegeStats = siegeOption.getPlayerSiegeStats();
+            warlordsEntities.forEach(warlordsEntity -> playerSiegeStats.computeIfAbsent(warlordsEntity.getUuid(), uuid -> new HashMap<>())
+                                                                       .computeIfAbsent(warlordsEntity.getSpecClass(), specializations -> new SiegeStats())
+                                                                       .addTimeOnPointTicks());
         });
         if (perTeam.size() > 1) {
             return null;

@@ -23,7 +23,6 @@ public class PlayerStatisticsSecond implements Iterable<PlayerStatisticsSecond.E
         entries.add(current);
     }
 
-
     public void addDamageHealingEventAsSelf(WarlordsDamageHealingFinalEvent event) {
         current.eventsAsSelf.add(event);
     }

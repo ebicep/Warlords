@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.EndState;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -30,7 +31,7 @@ public class SiegeOption implements Option {
 
     private final Map<Team, Location> teamPayloadStart = new HashMap<>();
     private final Location location;
-    private final Map<UUID, SiegeStats> playerSiegeStats = new HashMap<>();
+    private final Map<UUID, Map<Specializations, SiegeStats>> playerSiegeStats = new HashMap<>();
     private int totalTicksElapsed = 0;
     private int stateTicksElapsed = 0;
     private Game game;
@@ -166,7 +167,7 @@ public class SiegeOption implements Option {
         return state;
     }
 
-    public Map<UUID, SiegeStats> getPlayerSiegeStats() {
+    public Map<UUID, Map<Specializations, SiegeStats>> getPlayerSiegeStats() {
         return playerSiegeStats;
     }
 

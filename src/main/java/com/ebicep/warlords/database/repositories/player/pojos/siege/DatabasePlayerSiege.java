@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.siege;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.siege.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.util.chat.ChatUtils;
 
 public class DatabasePlayerSiege extends SiegeDatabaseStatInformation implements DatabaseWarlordsClasses<SiegeDatabaseStatInformation> {
 
@@ -22,7 +24,8 @@ public class DatabasePlayerSiege extends SiegeDatabaseStatInformation implements
 
     @Override
     public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer,
+            DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -34,9 +37,15 @@ public class DatabasePlayerSiege extends SiegeDatabaseStatInformation implements
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 
-        //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+        if (gamePlayer instanceof DatabaseGamePlayerSiege databaseGamePlayerSiege) {
+            databaseGamePlayerSiege.getSpecStats().forEach((specializations, siegePlayer) -> {
+                //UPDATE CLASS, SPEC
+                this.getClass(Specializations.getClass(specializations)).updateStats(databasePlayer, databaseGame, siegePlayer, multiplier, playersCollection);
+                this.getSpec(specializations).updateStats(databasePlayer, databaseGame, siegePlayer, multiplier, playersCollection);
+            });
+        } else {
+            ChatUtils.MessageType.GAME.sendErrorMessage("DatabaseGamePlayerSiege is not an instance of DatabaseGamePlayerSiege");
+        }
     }
 
     @Override

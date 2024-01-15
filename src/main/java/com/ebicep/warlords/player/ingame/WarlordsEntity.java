@@ -105,6 +105,7 @@ public abstract class WarlordsEntity {
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
     private final PlayerStatisticsSecond secondStats = new PlayerStatisticsSecond();
+    private final Map<Specializations, PlayerStatisticsMinute> specMinuteStats = new HashMap<>();
     private final List<Achievement.AbstractAchievementRecord<?>> achievementsUnlocked = new ArrayList<>();
     //assists = player - timeLeft(10 seconds)
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
@@ -1979,20 +1980,35 @@ public abstract class WarlordsEntity {
 
     public void addKill() {
         this.minuteStats.addKill();
+        if (specClass != null) {
+            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addKill();
+        }
     }
 
     public void addAssist() {
         this.minuteStats.addAssist();
+        if (specClass != null) {
+            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addAssist();
+        }
     }
 
     public void addDeath() {
         this.minuteStats.addDeath();
+        if (specClass != null) {
+            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addDeath();
+        }
     }
 
     public void addDamage(float amount, boolean onCarrier) {
         this.minuteStats.addDamage((long) amount);
         if (onCarrier) {
             this.minuteStats.addDamageOnCarrier((long) amount);
+        }
+        if (specClass != null) {
+            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addDamage((long) amount);
+            if (onCarrier) {
+                specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addDamageOnCarrier((long) amount);
+            }
         }
     }
 
@@ -2001,14 +2017,26 @@ public abstract class WarlordsEntity {
         if (onCarrier) {
             this.minuteStats.addHealingOnCarrier((long) amount);
         }
+        if (specClass != null) {
+            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addHealing((long) amount);
+            if (onCarrier) {
+                specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addHealingOnCarrier((long) amount);
+            }
+        }
     }
 
     public void addDamageTaken(float amount) {
         this.minuteStats.addDamageTaken((long) amount);
+        if (specClass != null) {
+            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addDamageTaken((long) amount);
+        }
     }
 
     public void addAbsorbed(float amount) {
         this.minuteStats.addAbsorbed((long) amount);
+        if (specClass != null) {
+            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addAbsorbed((long) amount);
+        }
     }
 
     /**
@@ -2149,6 +2177,9 @@ public abstract class WarlordsEntity {
 
     public void addFlagCap() {
         this.minuteStats.addFlagCapture();
+        if (specClass != null) {
+            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addFlagCapture();
+        }
     }
 
     public int getFlagsReturned() {
@@ -2157,6 +2188,9 @@ public abstract class WarlordsEntity {
 
     public void addFlagReturn() {
         this.minuteStats.addFlagReturned();
+        if (specClass != null) {
+            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addFlagReturned();
+        }
     }
 
     public int getTotalCapsAndReturnsWeighted() {
@@ -2630,6 +2664,9 @@ public abstract class WarlordsEntity {
             respawn();
         } else if (respawnTickTimer > 0) {
             minuteStats.addTotalRespawnTime();
+            if (specClass != null) {
+                specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addTotalRespawnTime();
+            }
             respawnTickTimer--;
             if (respawnTickTimer <= 600) {
                 if (entity instanceof Player) {
@@ -2803,6 +2840,10 @@ public abstract class WarlordsEntity {
     @Nonnull
     public PlayerStatisticsMinute getMinuteStats() {
         return this.minuteStats;
+    }
+
+    public Map<Specializations, PlayerStatisticsMinute> getSpecMinuteStats() {
+        return specMinuteStats;
     }
 
     public LinkedHashMap<WarlordsEntity, Integer> getHitBy() {
