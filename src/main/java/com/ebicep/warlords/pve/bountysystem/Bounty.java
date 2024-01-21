@@ -18,6 +18,7 @@ public enum Bounty {
     CHARMING_I(CharmingI.class, CharmingI::new),
     PURSUE_I(PursueI.class, PursueI::new),
     EXPLORE_I(ExploreI.class, ExploreI::new),
+    GAMBLER_I(GamblerI.class, GamblerI::new),
     SKIRMISH_I(SkirmishI.class, SkirmishI::new),
     LUCKY_I(LuckyI.class, LuckyI::new),
     EXPLORE_II(ExploreII.class, ExploreII::new),
