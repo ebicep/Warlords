@@ -9,10 +9,11 @@ import com.ebicep.warlords.pve.bountysystem.rewards.DailyRewardSpendable1;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 
 public class GamblerI extends AbstractBounty implements TracksOutsideGame, DailyCost, DailyRewardSpendable1 {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAddCurrency(AddCurrencyEvent event) {
         if (!databasePlayer.getPveStats().equals(event.getDatabasePlayerPvE())) {
             return;
