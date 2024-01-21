@@ -32,7 +32,7 @@ public class HuntChampionI extends AbstractBounty implements TracksDuringGame, W
 
     @Override
     public int getTarget() {
-        return 500;
+        return 200;
     }
 
     @Override
