@@ -52,6 +52,7 @@ public enum Bounty {
     DEVELOP_III(DevelopIII.class, DevelopIII::new),
     DEVELOP_IV(DevelopIV.class, DevelopIV::new),
     SEPARATION_I(SeparationI.class, SeparationI::new),
+    DUE_ON_TIME_I(DueOnTimeI.class, DueOnTimeI::new),
     SLASHER_I(SlasherI.class, SlasherI::new),
     NONCOMPLIANCE_I(NoncomplianceI.class, NoncomplianceI::new),
     FLAWLESS_V(FlawlessV.class, FlawlessV::new),

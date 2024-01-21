@@ -164,7 +164,8 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                             minDamageHeal + healthDamage,
                                             maxDamageHeal + healthDamage,
                                             0,
-                                            100
+                                            100,
+                                            EnumSet.of(InstanceFlags.DOT)
                                     );
                                 }
                             })

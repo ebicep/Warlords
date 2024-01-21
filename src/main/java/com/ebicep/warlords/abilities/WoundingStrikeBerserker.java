@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.WoundingStrikeBranchBerserker;
@@ -23,6 +24,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 public class WoundingStrikeBerserker extends AbstractStrike {
@@ -167,7 +169,8 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                                 healthDamage,
                                 healthDamage,
                                 0,
-                                100
+                                100,
+                                EnumSet.of(InstanceFlags.DOT)
                         );
                     }
                 })

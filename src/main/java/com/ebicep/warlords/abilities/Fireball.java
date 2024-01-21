@@ -170,7 +170,8 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
                                 healthDamage,
                                 healthDamage,
                                 0,
-                                100
+                                100,
+                                EnumSet.of(InstanceFlags.DOT)
                         );
                     }
                 })
