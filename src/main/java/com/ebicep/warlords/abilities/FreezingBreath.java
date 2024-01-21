@@ -101,7 +101,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
             if (nearEntity.onHorse()) {
                 numberOfDismounts++;
             }
-            nearEntity.addSpeedModifier(shooter, name, -50, 3 * 20);
+            nearEntity.addSpeedModifier(shooter, name, -50, 4 * 20);
             double damageIncrease = Math.min(1 + projectile.getBlocksTravelled() * .08, 2);
             nearEntity.addDamageInstance(
                     shooter,
@@ -111,6 +111,21 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
                     critChance,
                     critMultiplier
             );
+            nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Chilled",
+                    "CHILLED",
+                    FreezingBreath.class,
+                    new FreezingBreath(),
+                    shooter,
+                    CooldownTypes.DEBUFF,
+                    cooldownManager -> {},
+                    4 * 20
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * .75f;
+                }
+            });
         }
 
         return playersHit;
