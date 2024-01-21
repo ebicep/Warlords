@@ -46,7 +46,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                         ability.setLeechSelfAmount(selfLeech + value);
                         ability.setLeechAllyAmount(allyLeech + value);
                     }
-                }, 0.25f)
+                }, 1f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
