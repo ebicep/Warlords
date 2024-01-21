@@ -30,7 +30,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                         ability.setLeechSelfAmount(selfLeech + value);
                         ability.setLeechAllyAmount(allyLeech + value);
                     }
-                }, .25f)
+                }, 1f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
