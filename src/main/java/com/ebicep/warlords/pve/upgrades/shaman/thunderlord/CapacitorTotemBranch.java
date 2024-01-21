@@ -20,7 +20,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                         ability.setMinDamageHeal(minDamage * v);
                         ability.setMaxDamageHeal(maxDamage * v);
                     }
-                }, 7.5f)
+                }, 12.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

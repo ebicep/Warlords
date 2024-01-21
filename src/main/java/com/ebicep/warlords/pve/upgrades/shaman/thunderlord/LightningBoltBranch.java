@@ -23,7 +23,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                         ability.setMinDamageHeal(minDamage * v);
                         ability.setMaxDamageHeal(maxDamage * v);
                     }
-                }, 7.5f)
+                }, 12.5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Nonnull
                     @Override
