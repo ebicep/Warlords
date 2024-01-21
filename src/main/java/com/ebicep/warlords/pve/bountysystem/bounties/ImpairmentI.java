@@ -18,12 +18,12 @@ public class ImpairmentI extends AbstractBounty implements TracksPostGame, Lifet
 
     @Override
     public String getDescription() {
-        return "Deal 1 billion damage.";
+        return "Deal 750 million damage.";
     }
 
     @Override
     public int getTarget() {
-        return 1_000_000_000;
+        return 750_000_000;
     }
 
     @Override

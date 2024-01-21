@@ -18,12 +18,12 @@ public class EnthrallI extends AbstractBounty implements TracksPostGame, Lifetim
 
     @Override
     public String getDescription() {
-        return "Absorb 1 billion damage.";
+        return "Absorb 125 million damage.";
     }
 
     @Override
     public int getTarget() {
-        return 1_000_000_000;
+        return 125_000_000;
     }
 
     @Override
