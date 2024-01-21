@@ -122,7 +122,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                         FortifyingHex fromHex = FortifyingHex.getFromHex(wp);
                         float damageToReflect = (additionalDamageReduction + fromHex.getDamageReduction() * 3) / 100f;
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1, 1.9f);
-                        EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.RECURSIVE);
+                        EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE);
                         if (pveMasterUpgrade) {
                             flags.add(InstanceFlags.TRUE_DAMAGE);
                         }
