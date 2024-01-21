@@ -27,7 +27,7 @@ public class HuntChampionI extends AbstractBounty implements TracksDuringGame, W
 
     @Override
     public String getDescription() {
-        return "Kill 500 Champion enemies in any gamemode.";
+        return "Kill 200 Champion enemies in any gamemode.";
     }
 
     @Override
