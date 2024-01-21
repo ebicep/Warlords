@@ -12,6 +12,7 @@ import com.ebicep.warlords.pve.DifficultyMode;
 import com.ebicep.warlords.pve.items.ItemLoadout;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.ItemsManager;
+import com.ebicep.warlords.pve.items.events.ItemScrapEvent;
 import com.ebicep.warlords.pve.items.menu.util.ItemMenuUtil;
 import com.ebicep.warlords.pve.items.menu.util.ItemSearchMenu;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -24,6 +25,7 @@ import io.github.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -115,6 +117,8 @@ public class ItemEquipMenu {
                                 itemsManager.removeItem(i);
                                 itemsManager.getLoadouts().forEach(itemLoadout -> itemLoadout.getItems().removeIf(itemUUID -> itemUUID.equals(i.getUUID())));
                                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+                                Bukkit.getPluginManager().callEvent(new ItemScrapEvent(uuid, i));
 
                                 AbstractItem.sendItemMessage(player,
                                         Component.text("You received " + scrapAmount + " Scrap Metal from scrapping ", NamedTextColor.GRAY)
