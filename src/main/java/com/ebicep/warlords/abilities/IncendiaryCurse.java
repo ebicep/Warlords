@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -14,6 +15,7 @@ import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCurseBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -22,20 +24,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
+public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, HitBox {
 
     private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
 
     public int playersHit = 0;
 
-    private float hitbox = 5;
+    private FloatModifiable hitbox = new FloatModifiable(5);
     private int blindDurationInTicks = 30;
 
     public IncendiaryCurse() {
@@ -98,8 +100,9 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
 
                     EffectUtils.displayParticle(Particle.SMOKE_NORMAL, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
 
+                    float hitboxValue = hitbox.getCalculatedValue();
                     List<WarlordsEntity> enemies = PlayerFilter
-                            .entitiesAround(newLoc, hitbox, hitbox, hitbox)
+                            .entitiesAround(newLoc, hitboxValue, hitboxValue, hitboxValue)
                             .aliveEnemiesOf(wp)
                             .toList();
                     for (WarlordsEntity nearEntity : enemies) {
@@ -183,13 +186,14 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon {
         this.blindDurationInTicks = blindDurationInTicks;
     }
 
-    public float getHitbox() {
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        super.runEveryTick(warlordsEntity);
+        hitbox.tick();
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
         return hitbox;
     }
-
-    public void setHitbox(float hitbox) {
-        this.hitbox = hitbox;
-    }
-
-
 }
