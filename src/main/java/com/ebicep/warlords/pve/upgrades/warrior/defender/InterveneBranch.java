@@ -9,6 +9,11 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
 
     float maxDamagePrevented = ability.getMaxDamagePrevented();
 
+    @Override
+    public void runOnce() {
+        ability.setMaxTargets(2);
+    }
+
     public InterveneBranch(AbilityTree abilityTree, Intervene ability) {
         super(abilityTree, ability);
 
