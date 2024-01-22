@@ -224,7 +224,7 @@ public class CommandManager {
                 throw new ConditionFailedException("You must be in a guild to use this command!");
             }
             for (GuildPlayer guildPlayer : guildPlayerPair.getA().getPlayers()) {
-                if (Bukkit.getOfflinePlayer(guildPlayer.getUUID()).getName().equalsIgnoreCase(arg)) {
+                if (guildPlayer.getName().equalsIgnoreCase(arg)) {
                     return guildPlayer;
                 }
             }

@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 
 public class GuildPlayer {
 
+    private String name = null; // last known name
     private UUID uuid;
     @Field("join_date")
     private Instant joinDate = Instant.now();
@@ -43,6 +44,7 @@ public class GuildPlayer {
     }
 
     public GuildPlayer(Player player) {
+        this.name = player.getName();
         this.uuid = player.getUniqueId();
     }
 
@@ -54,8 +56,19 @@ public class GuildPlayer {
     }
 
     public String getName() {
-        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        return offlinePlayer.getName() == null ? "?" : offlinePlayer.getName();
+        if (name == null) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                name = player.getName();
+            }
+        }
+        if (name == null) {
+            name = Bukkit.getOfflinePlayer(uuid).getName();
+        }
+        if (name == null) {
+            name = "?";
+        }
+        return name;
     }
 
     public Component getListName() {
@@ -141,10 +154,6 @@ public class GuildPlayer {
         this.muteEntry = new GuildPlayerMuteEntry(timeUnit, duration);
     }
 
-    public void unmute() {
-        this.muteEntry = null;
-    }
-
     public boolean isMuted() {
         if (muteEntry != null) {
             if (muteEntry.getEnd() == null || muteEntry.getEnd().isAfter(Instant.now())) {
@@ -154,6 +163,10 @@ public class GuildPlayer {
             }
         }
         return false;
+    }
+
+    public void unmute() {
+        this.muteEntry = null;
     }
 
     public Map<GameEvents, Map<Long, Long>> getEventStats() {
@@ -166,6 +179,11 @@ public class GuildPlayer {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -175,10 +193,5 @@ public class GuildPlayer {
         }
         GuildPlayer that = (GuildPlayer) o;
         return uuid.equals(that.uuid);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(uuid);
     }
 }
