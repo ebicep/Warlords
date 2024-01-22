@@ -128,6 +128,22 @@ public class FloatModifiable {
         return modifier;
     }
 
+    public List<FloatModifier> getOverridingModifier() {
+        return overridingModifier;
+    }
+
+    public List<FloatModifier> getAdditiveModifier() {
+        return additiveModifier;
+    }
+
+    public List<FloatModifier> getMultiplicativeModifierAdditive() {
+        return multiplicativeModifierAdditive;
+    }
+
+    public List<FloatModifier> getMultiplicativeModifierMultiplicative() {
+        return multiplicativeModifierMultiplicative;
+    }
+
     public static class FloatModifier {
 
         private final String log;
