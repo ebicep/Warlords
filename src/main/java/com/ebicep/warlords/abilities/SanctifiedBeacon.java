@@ -20,6 +20,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -109,7 +110,12 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                     ) {
                         @Override
                         public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                            return currentCritMultiplier + 15;
+                            return currentCritMultiplier + 25;
+                        }
+
+                        @Override
+                        public void multiplyKB(Vector currentVector) {
+                            currentVector.multiply(.9);
                         }
                     });
                 } else {
@@ -140,7 +146,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                     });
                     if (pveMasterUpgrade) {
                         nearBy.getSpeed().removeModifier(name);
-                        nearBy.addSpeedModifier(wp, name, -30, 6, "BASE");
+                        nearBy.addSpeedModifier(wp, name, -20, 6, "BASE");
                     }
                 }
             }

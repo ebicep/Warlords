@@ -31,6 +31,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
     protected CircleEffect effect; // not static
     protected FloatModifiable radius; // not static
     protected int tickDuration;
+    private int maxBeaconsAtATime = 1;
 
     public AbstractBeaconAbility(
             String name,
@@ -65,7 +66,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
-        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, 1);
+        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, maxBeaconsAtATime);
         Location groundLocation = LocationUtils.getGroundLocation(wp.getLocation());
 
         Utils.playGlobalSound(groundLocation, "arcanist.beacon.impact", 0.3f, 1);
@@ -166,5 +167,9 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     public FloatModifiable getHitBoxRadius() {
         return radius;
+    }
+
+    public void setMaxBeaconsAtATime(int maxBeaconsAtATime) {
+        this.maxBeaconsAtATime = maxBeaconsAtATime;
     }
 }
