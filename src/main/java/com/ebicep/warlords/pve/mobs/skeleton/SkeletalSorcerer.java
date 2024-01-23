@@ -15,7 +15,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
-import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -184,7 +183,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
                             if (ticksLeft % 20 == 0) {
                                 float healthDamage = enemy.getMaxHealth() * 0.05f;
-                                healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
+                                healthDamage = DamageCheck.clamp(healthDamage);
                                 enemy.addDamageInstance(
                                         wp,
                                         name,

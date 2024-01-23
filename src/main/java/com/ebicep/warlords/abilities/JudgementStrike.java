@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
@@ -74,11 +75,12 @@ public class JudgementStrike extends AbstractStrike {
                 attacksDone = 0;
                 critChance = 100;
             }
+            float extraDamage = pveMasterUpgrade ? DamageCheck.clamp(nearPlayer.getMaxHealth() * 0.01f) : 0;
             nearPlayer.addDamageInstance(
                     wp,
                     name,
-                    minDamageHeal,
-                    maxDamageHeal,
+                    minDamageHeal + extraDamage,
+                    maxDamageHeal + extraDamage,
                     critChance,
                     critMultiplier
             ).ifPresent(finalEvent -> {

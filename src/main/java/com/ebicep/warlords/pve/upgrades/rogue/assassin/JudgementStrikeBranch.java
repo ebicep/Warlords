@@ -45,15 +45,23 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         ability.setStrikeHeal(strikeHeal + value);
                     }
                 }, 100f)
+                .addUpgradeEnergy(ability, 5f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Death Strike",
                 "Judgement Strike - Master Upgrade",
-                "If the enemy hit by Judgement Strike drops below 30% max health they get executed. (Excluding boss mobs.)",
+                """
+                        +100 Healing on Strike Kill
+                        -10 Energy cost
+                                                
+                        Each strike deals 1% of the target's max health as bonus damage.
+
+                        If the enemy hit by Judgement Strike drops below 30% max health they get executed (Excluding boss mobs.)""",
                 50000,
                 () -> {
-
+                    ability.setStrikeHeal(ability.getStrikeHeal() + 100);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                 }
         );
         masterUpgrade2 = new Upgrade(

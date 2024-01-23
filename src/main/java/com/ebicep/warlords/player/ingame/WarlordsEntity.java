@@ -2636,7 +2636,7 @@ public abstract class WarlordsEntity {
                                     .aliveEnemiesOf(this)
                                     .forEach(enemy -> {
                                         float healthDamage = enemy.getMaxHealth() * .02f;
-                                        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
+                                        healthDamage = DamageCheck.clamp(healthDamage);
                                         enemy.addDamageInstance(
                                                 this,
                                                 "Undying Army",

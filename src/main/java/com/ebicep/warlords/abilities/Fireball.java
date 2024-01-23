@@ -13,7 +13,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
-import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -163,7 +162,7 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.005f;
-                        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
+                        healthDamage = DamageCheck.clamp(healthDamage);
                         hit.addDamageInstance(
                                 shooter,
                                 "Burn",
