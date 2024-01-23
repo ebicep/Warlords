@@ -85,91 +85,95 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                         .aliveEnemiesOf(wp)
                         .findFirstOrNull(),
                 (newLoc, directHit) -> {
-                    Utils.playGlobalSound(newLoc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.1f);
-
-                    EffectUtils.playFirework(
-                            newLoc,
-                            FireworkEffect.builder()
-                                          .withColor(Color.ORANGE)
-                                          .withColor(Color.RED)
-                                          .with(FireworkEffect.Type.BURST)
-                                          .build(),
-                            1
-                    );
-
-                    EffectUtils.displayParticle(Particle.SMOKE_NORMAL, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
-
-                    float hitboxValue = hitbox.getCalculatedValue();
-                    List<WarlordsEntity> enemies = PlayerFilter
-                            .entitiesAround(newLoc, hitboxValue, hitboxValue, hitboxValue)
-                            .aliveEnemiesOf(wp)
-                            .toList();
-                    for (WarlordsEntity nearEntity : enemies) {
-                        playersHit++;
-
-                        nearEntity.addDamageInstance(
-                                wp,
-                                name,
-                                minDamageHeal,
-                                maxDamageHeal,
-                                critChance,
-                                critMultiplier
-                        );
-                        if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
-                            warlordsNPC.setStunTicks(blindDurationInTicks);
-                        } else {
-                            nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
-                        }
-                        nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
-
-                        if (pveMasterUpgrade && nearEntity instanceof WarlordsNPC) {
-                            EffectUtils.playFirework(
-                                    newLoc,
-                                    FireworkEffect.builder()
-                                                  .withColor(Color.RED)
-                                                  .withColor(Color.BLACK)
-                                                  .with(FireworkEffect.Type.BALL_LARGE)
-                                                  .build(),
-                                    1
-                            );
-
-                            nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
-                            nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                    name,
-                                    "INCEN",
-                                    IncendiaryCurse.class,
-                                    new IncendiaryCurse(),
-                                    wp,
-                                    CooldownTypes.DEBUFF,
-                                    cooldownManager -> {
-                                    },
-                                    5 * 20
-                            ) {
-                                @Override
-                                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    return currentDamageValue * 1.5f;
-                                }
-                            });
-                        } else if (pveMasterUpgrade2) {
-                            EffectUtils.displayParticle(
-                                    Particle.REDSTONE,
-                                    nearEntity.getLocation().add(0, 1.2, 0),
-                                    3,
-                                    0.3,
-                                    0.2,
-                                    0.3,
-                                    0,
-                                    new Particle.DustOptions(Color.fromRGB(255, 255, 0), 2)
-                            );
-                        }
-                    }
-                    if (pveMasterUpgrade2) {
-                        wp.addEnergy(wp, "Unforseen Curse", Math.min(50, enemies.size() * 5));
-                    }
+                    onImpact(wp, newLoc);
                 }
         );
 
         return true;
+    }
+
+    public void onImpact(@Nonnull WarlordsEntity wp, Location newLoc) {
+        Utils.playGlobalSound(newLoc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.1f);
+
+        EffectUtils.playFirework(
+                newLoc,
+                FireworkEffect.builder()
+                              .withColor(Color.ORANGE)
+                              .withColor(Color.RED)
+                              .with(FireworkEffect.Type.BURST)
+                              .build(),
+                1
+        );
+
+        EffectUtils.displayParticle(Particle.SMOKE_NORMAL, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
+
+        float hitboxValue = hitbox.getCalculatedValue();
+        List<WarlordsEntity> enemies = PlayerFilter
+                .entitiesAround(newLoc, hitboxValue, hitboxValue, hitboxValue)
+                .aliveEnemiesOf(wp)
+                .toList();
+        for (WarlordsEntity nearEntity : enemies) {
+            playersHit++;
+
+            nearEntity.addDamageInstance(
+                    wp,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier
+            );
+            if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
+                warlordsNPC.setStunTicks(blindDurationInTicks);
+            } else {
+                nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
+            }
+            nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
+
+            if (pveMasterUpgrade && nearEntity instanceof WarlordsNPC) {
+                EffectUtils.playFirework(
+                        newLoc,
+                        FireworkEffect.builder()
+                                      .withColor(Color.RED)
+                                      .withColor(Color.BLACK)
+                                      .with(FireworkEffect.Type.BALL_LARGE)
+                                      .build(),
+                        1
+                );
+
+                nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
+                nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        name,
+                        "INCEN",
+                        IncendiaryCurse.class,
+                        new IncendiaryCurse(),
+                        wp,
+                        CooldownTypes.DEBUFF,
+                        cooldownManager -> {
+                        },
+                        5 * 20
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 1.5f;
+                    }
+                });
+            } else if (pveMasterUpgrade2) {
+                EffectUtils.displayParticle(
+                        Particle.REDSTONE,
+                        nearEntity.getLocation().add(0, 1.2, 0),
+                        3,
+                        0.3,
+                        0.2,
+                        0.3,
+                        0,
+                        new Particle.DustOptions(Color.fromRGB(255, 255, 0), 2)
+                );
+            }
+        }
+        if (pveMasterUpgrade2) {
+            wp.addEnergy(wp, "Unforseen Curse", Math.min(50, enemies.size() * 5));
+        }
     }
 
     protected Vector calculateSpeed(WarlordsEntity we) {

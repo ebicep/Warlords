@@ -31,7 +31,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
         masterUpgrade = new Upgrade(
                 "Shadow Stagger",
                 "Shadow Step - Master Upgrade",
-                "Gain 80% speed and knockback resistance upon landing for 5 seconds.",
+                "Gain 80% speed and knockback resistance upon landing for 5 seconds. Additionally cast an Incendiary Curse upon landing at the block you landed on.",
                 50000,
                 () -> {
 
@@ -43,7 +43,8 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                 """
                         +10% Cooldown Reduction
                          
-                        Instead of leaping forward, instantly dash forward +8 blocks, dealing damage to enemies passed through.
+                        Instead of leaping forward gain 75% damage resistance and instantly dash forward +8 blocks dealing damage to enemies passed through.
+                        For every enemy hit, increase your crit chance by 2.5% for 5s (Max 25%).
                         """,
                 50000,
                 () -> {

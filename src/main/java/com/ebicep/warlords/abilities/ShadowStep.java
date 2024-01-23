@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -101,6 +102,22 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
     }
 
     private void doShadowDash(@Nonnull WarlordsEntity wp) {
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Shadow Dash Damage Res",
+                null,
+                ShadowStep.class,
+                new ShadowStep(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                2
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * .25f;
+            }
+        });
         Set<WarlordsEntity> hit = new HashSet<>();
         LocationBuilder locationBuilder = new LocationBuilder(wp.getEyeLocation());
         for (Block ignored : Utils.getTargetBlockInBetween(wp.getEyeLocation(), 8)) {
@@ -144,6 +161,23 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
         }
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
         wp.teleportLocationOnly(locationBuilder);
+
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Shadow Dash CC",
+                null,
+                ShadowStep.class,
+                new ShadowStep(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                5 * 20
+        ) {
+            @Override
+            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                return currentCritChance * Math.min(2.5f * hit.size(), 25);
+            }
+        });
     }
 
 
@@ -194,7 +228,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                     }
 
                     if (pveMasterUpgrade) {
-                        buffOnLanding(wp);
+                        pveMasterOnLand(wp);
                     }
 
                     FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
@@ -208,7 +242,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
         }.runTaskTimer(0, 0);
     }
 
-    private void buffOnLanding(WarlordsEntity we) {
+    private void pveMasterOnLand(WarlordsEntity we) {
         we.addSpeedModifier(we, name, 80, 5 * 20);
         we.getCooldownManager().removeCooldown(ShadowStep.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -227,6 +261,10 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                 currentVector.multiply(0.2);
             }
         });
+        for (IncendiaryCurse incendiaryCurse : we.getAbilitiesMatching(IncendiaryCurse.class)) {
+            incendiaryCurse.onImpact(we, we.getLocation());
+            break;
+        }
     }
 
     public void setFallDamageNegation(int fallDamageNegation) {
