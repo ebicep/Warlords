@@ -6,6 +6,7 @@ import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
 import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
@@ -163,8 +164,15 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
             return;
         }
         //UPDATE CLASS, SPEC
-        classStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-        specStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+        if (gamePlayer instanceof DatabaseGamePlayerSiege databaseGamePlayerSiege) {
+            databaseGamePlayerSiege.getSpecStats().forEach((specializations, siegePlayer) -> {
+                getClass(Specializations.getClass(specializations)).updateStats(databasePlayer, databaseGame, siegePlayer, multiplier, playersCollection);
+                getSpec(specializations).updateStats(databasePlayer, databaseGame, siegePlayer, multiplier, playersCollection);
+            });
+        } else {
+            classStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            specStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+        }
         //UPDATE GAMEMODES
         switch (gameMode) {
             case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);

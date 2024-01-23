@@ -623,6 +623,7 @@ public enum GameMode {
             options.add(new BasicScoreboardOption());
 
             options.add(new GlowingTeamOption());
+            options.add(new SwapSpecOption());
 
             return options;
         }

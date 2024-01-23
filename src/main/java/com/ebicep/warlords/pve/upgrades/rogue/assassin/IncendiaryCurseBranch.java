@@ -7,7 +7,6 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
 
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
-    float hitbox = ability.getHitbox();
 
     public IncendiaryCurseBranch(AbilityTree abilityTree, IncendiaryCurse ability) {
         super(abilityTree, ability);
@@ -27,20 +26,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeCooldown(ability)
-                .addUpgrade(
-                        new UpgradeTypes.UpgradeType() {
-                            @Override
-                            public String getDescription0(String value) {
-                                return "+" + value + " Blocks hit radius";
-                            }
-
-                            @Override
-                            public void run(float value) {
-                                ability.setHitbox(hitbox + value);
-                            }
-                        },
-                        1
-                )
+                .addUpgradeHitBox(ability, .5f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

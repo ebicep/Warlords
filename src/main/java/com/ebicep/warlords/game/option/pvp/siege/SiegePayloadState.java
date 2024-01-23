@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.game.option.payload.Payload;
 import com.ebicep.warlords.game.option.payload.PayloadBrain;
 import com.ebicep.warlords.game.option.payload.PayloadRendererCoalCart;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.StringUtils;
@@ -29,6 +30,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,7 +39,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     private static final int OVERTIME_TICKS = 20 * 5;
     private final SiegeOption siegeOption;
     private final Team escortingTeam;
-    private final Map<UUID, SiegeStats> playerSiegeStats;
+    private final Map<UUID, Map<Specializations, SiegeStats>> playerSiegeStats;
     private Game game;
     private Payload payload;
     private int transitionTickDelay = 0; // for animations/title screens
@@ -104,13 +106,17 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                         if (warlordsEntity.getCooldownManager().hasCooldownFromName("Payload Battery")) {
                             escortingBatteries++;
                         }
-                        playerSiegeStats.computeIfAbsent(warlordsEntity.getUuid(), uuid -> new SiegeStats()).addTimeOnPayloadEscorting();
+                        playerSiegeStats.computeIfAbsent(warlordsEntity.getUuid(), uuid -> new HashMap<>())
+                                        .computeIfAbsent(warlordsEntity.getSpecClass(), specializations -> new SiegeStats())
+                                        .addTimeOnPayloadEscorting();
                     } else {
                         nonEscorting++;
 //                        if (warlordsEntity.getCooldownManager().hasCooldownFromName("Payload Battery")) {
 //                            nonEscortingBatteries++;
 //                        }
-                        playerSiegeStats.computeIfAbsent(warlordsEntity.getUuid(), uuid -> new SiegeStats()).addTimeOnPayloadDefending();
+                        playerSiegeStats.computeIfAbsent(warlordsEntity.getUuid(), uuid -> new HashMap<>())
+                                        .computeIfAbsent(warlordsEntity.getSpecClass(), specializations -> new SiegeStats())
+                                        .addTimeOnPayloadDefending();
                     }
                 }
                 int netEscorting = escorting - nonEscorting;
@@ -224,10 +230,17 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                     Component.text("Payload Captured!", NamedTextColor.GRAY),
                     Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(20))
             ));
+        });
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            boolean isCapturedTeam = warlordsPlayer.getTeam() == escortingTeam;
             if (isCapturedTeam) {
-                playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsEscorted();
+                playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new HashMap<>())
+                                .computeIfAbsent(warlordsPlayer.getSpecClass(), specializations -> new SiegeStats())
+                                .addPayloadsEscorted();
             } else {
-                playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsDefendedFail();
+                playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new HashMap<>())
+                                .computeIfAbsent(warlordsPlayer.getSpecClass(), specializations -> new SiegeStats())
+                                .addPayloadsDefendedFail();
             }
         });
     }
@@ -244,10 +257,17 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
                     Component.text("Times Up!", NamedTextColor.GRAY),
                     Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(20))
             ));
+        });
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            boolean isNotEscortingTeam = warlordsPlayer.getTeam() != escortingTeam;
             if (isNotEscortingTeam) {
-                playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsDefended();
+                playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new HashMap<>())
+                                .computeIfAbsent(warlordsPlayer.getSpecClass(), specializations -> new SiegeStats())
+                                .addPayloadsDefended();
             } else {
-                playerSiegeStats.computeIfAbsent(player.getUniqueId(), uuid -> new SiegeStats()).addPayloadsEscortedFail();
+                playerSiegeStats.computeIfAbsent(warlordsPlayer.getUuid(), uuid -> new HashMap<>())
+                                .computeIfAbsent(warlordsPlayer.getSpecClass(), specializations -> new SiegeStats())
+                                .addPayloadsEscortedFail();
             }
         });
     }

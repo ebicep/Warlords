@@ -225,7 +225,7 @@ public class CommandManager {
                 throw new ConditionFailedException("You must be in a guild to use this command!");
             }
             for (GuildPlayer guildPlayer : guildPlayerPair.getA().getPlayers()) {
-                if (Bukkit.getOfflinePlayer(guildPlayer.getUUID()).getName().equalsIgnoreCase(arg)) {
+                if (guildPlayer.getName().equalsIgnoreCase(arg)) {
                     return guildPlayer;
                 }
             }
@@ -560,6 +560,7 @@ public class CommandManager {
         manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
         manager.registerCommand(new PrintFloatModifiableCommand());
+        manager.registerCommand(new PrintSpecStatsCommand());
         manager.registerCommand(new StunClearCommand());
         manager.registerCommand(new RecordAverageDamageCommand());
         manager.registerCommand(new SpawnTestDummyCommand());

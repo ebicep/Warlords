@@ -36,7 +36,7 @@ public class AmassI extends AbstractBounty implements TracksPostGame, LifetimeCo
 
     @Override
     public void onGameEnd(Game game, WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent) {
-        LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, false);
+        LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, false).getUniversalExpGainSummary();
         value += expSummary.values().stream().mapToLong(Long::longValue).sum();
     }
 

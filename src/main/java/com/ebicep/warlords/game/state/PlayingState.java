@@ -284,8 +284,7 @@ public class PlayingState implements State, TimerDebugAble {
                 DatabaseGameBase.addGame(game, null, false);
                 ChatUtils.MessageType.WARLORDS.sendMessage("SOME CASE");
             } else {
-                ChatUtils.MessageType.WARLORDS.sendMessage(
-                        "This PUB/COMP game was not added to the database and player information remained the same");
+                ChatUtils.MessageType.WARLORDS.sendMessage("This PUB/COMP game was not added to the database and player information remained the same");
             }
         }
     }

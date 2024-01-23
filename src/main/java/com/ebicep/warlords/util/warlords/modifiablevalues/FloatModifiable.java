@@ -193,6 +193,22 @@ public class FloatModifiable {
                         .collect(Collectors.toList());
     }
 
+    public List<FloatModifier> getOverridingModifier() {
+        return overridingModifiers;
+    }
+
+    public List<FloatModifier> getAdditiveModifier() {
+        return additiveModifiers;
+    }
+
+    public List<FloatModifier> getMultiplicativeModifierAdditive() {
+        return multiplicativeModifiersAdditive;
+    }
+
+    public List<FloatModifier> getMultiplicativeModifierMultiplicative() {
+        return multiplicativeModifiersMultiplicative;
+    }
+
     public static class FloatModifier {
 
         private final String log;
