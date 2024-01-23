@@ -8,6 +8,11 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
     float minDamage = ability.getMinDamageHeal();
     float maxDamage = ability.getMaxDamageHeal();
 
+    @Override
+    public void runOnce() {
+        ability.getEnergyCost().setBaseValue(40);
+    }
+
     public IncendiaryCurseBranch(AbilityTree abilityTree, IncendiaryCurse ability) {
         super(abilityTree, ability);
 
@@ -42,7 +47,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 "Unforeseen Curse",
                 "Incendiary Curse - Master Upgrade",
                 """
-                        Increase the Blindness duration by 2s. Additionally, every enemy blinded by Incendiary Curse gives 5 energy.
+                        Increase the stun duration by 2s. Additionally, every enemy stunned gives 5 energy (Max 50).
                         """,
                 50000,
                 () -> {

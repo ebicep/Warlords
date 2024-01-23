@@ -52,10 +52,9 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     public void updateDescription(Player player) {
         description = Component.text("Ignite the targeted area with a cross flame, dealing")
                                .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
-                               .append(Component.text("damage. Enemies hit are blinded for "))
+                               .append(Component.text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for "))
                                .append(Component.text(format(blindDurationInTicks / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. " + (inPve ? "Mobs that are blinded become stunned and lose aggro on " +
-                                       "their current target." : "")));
+                               .append(Component.text(" seconds."));
     }
 
     @Override
@@ -116,7 +115,11 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                                 critChance,
                                 critMultiplier
                         );
-                        nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
+                        if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
+                            warlordsNPC.setStunTicks(blindDurationInTicks);
+                        } else {
+                            nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
+                        }
                         nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
 
                         if (pveMasterUpgrade && nearEntity instanceof WarlordsNPC) {
@@ -161,7 +164,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                         }
                     }
                     if (pveMasterUpgrade2) {
-                        wp.addEnergy(wp, "Unforseen Curse", enemies.size() * 5);
+                        wp.addEnergy(wp, "Unforseen Curse", Math.min(50, enemies.size() * 5));
                     }
                 }
         );
@@ -178,18 +181,18 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         return new IncendiaryCurseBranch(abilityTree, this);
     }
 
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        super.runEveryTick(warlordsEntity);
+        hitbox.tick();
+    }
+
     public int getBlindDurationInTicks() {
         return blindDurationInTicks;
     }
 
     public void setBlindDurationInTicks(int blindDurationInTicks) {
         this.blindDurationInTicks = blindDurationInTicks;
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        super.runEveryTick(warlordsEntity);
-        hitbox.tick();
     }
 
     @Override
