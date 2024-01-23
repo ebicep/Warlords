@@ -69,8 +69,6 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "Judgement Strike - Master Upgrade",
                 """
                         +45% Crit multiplier
-                        -5 Energy cost
-                        -35% Strike damage
                                                 
                         Judgement Strike will now hit twice in one use, the second strike is counted as an additional strike for a guarantee crit"
                         """,
