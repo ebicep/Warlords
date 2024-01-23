@@ -190,7 +190,7 @@ public class WarlordsShopMenu {
         for (int i = 0; i < abilities.size(); i++) {
             AbstractAbility ability = abilities.get(i);
             AbstractAbility ability2 = abilities2.get(i);
-            if (ability.getClass() != selectedBoost.ability) {
+            if (!selectedBoost.ability.isAssignableFrom(ability.getClass())) {
                 continue;
             }
             ItemStack icon;
