@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -62,9 +63,15 @@ public class SwapSpecOption implements Option {
                     return;
                 }
                 event.setCancelled(true);
-                if (event.getSlot() == 22) {
-                    openSpecMenu(warlordsEntity);
-                }
+                clicked.closeInventory();
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (event.getSlot() == 22) {
+                            openSpecMenu(warlordsEntity);
+                        }
+                    }
+                }.runTaskLater(Warlords.getInstance(), 1);
             }
 
             @EventHandler
