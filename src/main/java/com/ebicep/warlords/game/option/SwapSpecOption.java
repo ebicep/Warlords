@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsRespawnEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsGiveRespawnEvent;
 import com.ebicep.warlords.game.Game;
@@ -63,7 +64,6 @@ public class SwapSpecOption implements Option {
                     return;
                 }
                 event.setCancelled(true);
-                clicked.closeInventory();
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -82,8 +82,13 @@ public class SwapSpecOption implements Option {
                     return;
                 }
                 try {
+                    List<Float> oldCooldowns = warlordsEntity.getAbilities().stream().map(AbstractAbility::getCurrentCooldown).toList();
                     SkillBoosts skillBoost = PlayerSettings.getPlayerSettings(warlordsEntity.getUuid()).getSkillBoostForSpec(swappedSpec);
                     warlordsEntity.setSpec(swappedSpec, skillBoost);
+                    for (int i = 0; i < warlordsEntity.getAbilities().size(); i++) {
+                        AbstractAbility ability = warlordsEntity.getAbilities().get(i);
+                        ability.setCurrentCooldown(oldCooldowns.get(i));
+                    }
                 } catch (Exception e) {
                     ChatUtils.MessageType.WARLORDS.sendErrorMessage("Problem changing specs");
                     ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
@@ -101,7 +106,6 @@ public class SwapSpecOption implements Option {
 
         player.getInventory().setItem(22, new ItemBuilder(Material.BOOK)
                 .name(Component.text("Swap Specialization", NamedTextColor.GOLD))
-                .lore(Component.empty())
                 .addLore(WordWrap.wrap(Component.text("Click any spec to switch to that spec when you respawn. " +
                         "There can only be one type of each spec and at most 2 DPS/TANK/HEALER on the team at one time.", NamedTextColor.GRAY), 150))
                 .addLore(Component.empty())
@@ -153,8 +157,28 @@ public class SwapSpecOption implements Option {
                         player.sendMessage(specChangeResult.getMessage(spec));
                         if (specChangeResult == SpecChangeResult.CAN_CHANGE) {
                             swappedSpecs.put(warlordsEntity, spec);
-                            WarlordsShopMenu.openSkillBoostMenu(player, spec, m2 -> m2.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU));
+                            WarlordsShopMenu.openSkillBoostMenu(player, spec, m2 -> {
+                                m2.setItem(3, 5, Menu.MENU_BACK, (m3, e3) -> openSpecMenu(warlordsEntity));
+                                m2.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+                            });
                         }
+                    }
+            );
+        }
+
+        if (swappedSpecs.containsKey(warlordsEntity)) {
+            menu.setItem(4, 2,
+                    new ItemBuilder(Material.BEDROCK)
+                            .name(Component.text("Swapped Spec: ", NamedTextColor.GREEN).append(Component.text(swappedSpecs.get(warlordsEntity).name, NamedTextColor.AQUA)))
+                            .lore(
+                                    Component.empty(),
+                                    Component.text("Click to cancel swap", NamedTextColor.YELLOW)
+                            )
+                            .get(),
+                    (m, e) -> {
+                        player.sendMessage(Component.text("You cancelled your spec swap.", NamedTextColor.GREEN));
+                        swappedSpecs.remove(warlordsEntity);
+                        openSpecMenu(warlordsEntity);
                     }
             );
         }
