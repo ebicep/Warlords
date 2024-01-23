@@ -4603,7 +4603,7 @@ public enum GameMap {
                                     if (ticksElapsed == 10 * 20) {
                                         pveOption.spawnNewMob(new EventTheArchivist(spawnLocation));
                                     }
-                                    if (ticksElapsed % 140 == 0) {
+                                    if (ticksElapsed % 340 == 0) {
                                         Mob minionGrimoire = switch (ThreadLocalRandom.current().nextInt(4)) {
                                             case 0 -> Mob.EVENT_ROUGE_GRIMOIRE;
                                             case 1 -> Mob.EVENT_VIOLETTE_GRIMOIRE;
@@ -4612,7 +4612,7 @@ public enum GameMap {
                                         };
                                         pveOption.spawnNewMob(minionGrimoire.createMob(getSpawnLocation()));
                                     }
-                                    if (ticksElapsed % 100 == 0) {
+                                    if (ticksElapsed % 200 == 0) {
                                         pveOption.spawnNewMob(new EventScriptedGrimoire(getSpawnLocation()));
                                     }
                                 }
