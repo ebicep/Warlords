@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.bukkit.Laser;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
@@ -91,9 +92,9 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
             if (laser == null) {
                 try {
                     if (target instanceof LivingEntity livingEntity) {
-                        laser = new Laser.GuardianLaser(warlordsNPC.getEyeLocation(), livingEntity, 25, -1);
+                        laser = new Laser.GuardianLaser(getLaserStartLocation(), livingEntity, 25, -1);
                     } else {
-                        laser = new Laser.GuardianLaser(warlordsNPC.getEyeLocation(), targetWarlordsEntity.getEyeLocation(), 25, -1);
+                        laser = new Laser.GuardianLaser(getLaserStartLocation(), targetWarlordsEntity.getEyeLocation(), 25, -1);
                     }
                     laser.start();
                 } catch (ReflectiveOperationException e) {
@@ -101,7 +102,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                 }
             } else {
                 try {
-                    laser.moveStart(warlordsNPC.getEyeLocation());
+                    laser.moveStart(getLaserStartLocation());
                     if (target instanceof LivingEntity livingEntity) {
                         laser.attachEndEntity(livingEntity);
                     } else {
@@ -121,6 +122,10 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         }
     }
 
+    private Location getLaserStartLocation() {
+        return new LocationBuilder(warlordsNPC.getEyeLocation()).backward(.15f);
+    }
+
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
         super.onDeath(killer, deathLocation, option);
@@ -136,7 +141,9 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         timesSmited++;
         if (timesSmited == 2) {
             pveOption.despawnMob(this);
-            laser.stop();
+            if (laser != null) {
+                laser.stop();
+            }
         }
         targetWarlordsEntity.addDamageInstance(
                 warlordsNPC,
