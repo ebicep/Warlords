@@ -36,7 +36,7 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
                 "Cloaked Engagement",
                 "Order of Eviscerate - Master Upgrade",
                 """
-                        Killing your mark will now increase your damage by 45% for 5s, max 2 stacks.
+                        Killing your mark will now increase your damage by 45% for 8s, max 2 stacks.
                         """,
                 50000,
                 () -> {
