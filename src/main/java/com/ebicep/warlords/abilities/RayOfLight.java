@@ -77,34 +77,35 @@ public class RayOfLight extends AbstractBeam {
                     .stream()
                     .count();
             boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.class);
-            if (hexStacks >= 3) {
+            boolean maxStacks = hexStacks >= 3;
+            if (maxStacks) {
                 if (!hasDivineBlessing) {
                     hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
                 }
                 minHeal *= convertToMultiplicationDecimal(healingIncrease);
                 maxHeal *= convertToMultiplicationDecimal(healingIncrease);
-                if (pveMasterUpgrade) {
-                    hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            name,
-                            "RAY",
-                            RayOfLight.class,
-                            new RayOfLight(),
-                            wp,
-                            CooldownTypes.ABILITY,
-                            cooldownManager -> {
-                            },
-                            cooldownManager -> {
-                            },
-                            100
-                    ) {
-                        @Override
-                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                            return currentDamageValue * 1.05f;
-                        }
-                    });
-                }
                 hit.getCooldownManager().removeDebuffCooldowns();
                 hit.getSpeed().removeSlownessModifiers();
+            }
+            if (pveMasterUpgrade) {
+                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        name,
+                        "RAY",
+                        RayOfLight.class,
+                        new RayOfLight(),
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                        },
+                        cooldownManager -> {
+                        },
+                        100
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * (maxStacks ? 1.5f : 1.15f);
+                    }
+                });
             }
             hit.addHealingInstance(wp, name, minHeal, maxHeal, critChance, critMultiplier);
         }
