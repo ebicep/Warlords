@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
 import com.ebicep.warlords.abilities.*;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
 
@@ -15,20 +14,7 @@ public class EventInquisiteurEGA extends EventInquisiteur {
                 0.38f,
                 25,
                 0,
-                0,
-                new RighteousStrike(),
-                new FreezingBreath() {{
-                    this.setPveMasterUpgrade(true);
-                }},
-                new TimeWarpCryomancer() {{
-                    this.setPveMasterUpgrade2(true);
-                }},
-                new MysticalBarrier() {{
-                    this.setPveMasterUpgrade2(true);
-                }},
-                new LastStand() {{
-                    this.setPveMasterUpgrade2(true);
-                }}
+                0
         );
     }
 
@@ -39,10 +25,30 @@ public class EventInquisiteurEGA extends EventInquisiteur {
             float walkSpeed,
             int damageResistance,
             float minMeleeDamage,
-            float maxMeleeDamage,
-            AbstractAbility... abilities
+            float maxMeleeDamage
     ) {
-        super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
+        super(
+                spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                new RighteousStrike(),
+                new FreezingBreath() {{
+                    this.setPveMasterUpgrade(true);
+                }},
+                new TimeWarpCryomancer() {{
+                    this.setPveMasterUpgrade2(true);
+                }},
+                new MysticalBarrier() {{
+                    this.setPveMasterUpgrade2(true);
+                }},
+                new InspiringPresence() {{
+                    this.setPveMasterUpgrade2(true);
+                }}
+        );
     }
 
     @Override

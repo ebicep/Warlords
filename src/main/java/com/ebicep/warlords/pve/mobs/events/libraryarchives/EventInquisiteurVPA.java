@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
 import com.ebicep.warlords.abilities.*;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
 
@@ -15,7 +14,27 @@ public class EventInquisiteurVPA extends EventInquisiteur {
                 0.38f,
                 25,
                 0,
-                0,
+                0
+        );
+    }
+
+    public EventInquisiteurVPA(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage
+    ) {
+        super(
+                spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
                 new ImpalingStrike() {{
                     this.setLeechDuration(3);
                     this.setLeechAllyAmount(20);
@@ -33,19 +52,6 @@ public class EventInquisiteurVPA extends EventInquisiteur {
                     this.setPveMasterUpgrade(true);
                 }}
         );
-    }
-
-    public EventInquisiteurVPA(
-            Location spawnLocation,
-            String name,
-            int maxHealth,
-            float walkSpeed,
-            int damageResistance,
-            float minMeleeDamage,
-            float maxMeleeDamage,
-            AbstractAbility... abilities
-    ) {
-        super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
     }
 
     @Override

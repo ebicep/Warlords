@@ -772,7 +772,16 @@ public enum Mob {
             Weapons.SILVER_PHANTASM_STAFF_2.getItem()
     )),
     EVENT_INQUISITEUR_EWA(EntityType.IRON_GOLEM, EventInquisiteurEWA.class, EventInquisiteurEWA::new, EventInquisiteurEWA::new, null),
-    EVENT_INQUISITEUR_EGA(EntityType.IRON_GOLEM, EventInquisiteurEGA.class, EventInquisiteurEGA::new, EventInquisiteurEGA::new, null),
+    EVENT_INQUISITEUR_EGA(EntityType.IRON_GOLEM, EventInquisiteurEGA.class, EventInquisiteurEGA::new,
+            (spawnLocation, name1, maxHealth1, walkSpeed1, damageResistance1, minMeleeDamage1, maxMeleeDamage1) -> new EventInquisiteurEGA(spawnLocation,
+                    name1,
+                    maxHealth1,
+                    walkSpeed1,
+                    damageResistance1,
+                    minMeleeDamage1,
+                    maxMeleeDamage1
+            ), null
+    ),
     EVENT_INQUISITEUR_VPA(EntityType.IRON_GOLEM, EventInquisiteurVPA.class, EventInquisiteurVPA::new, EventInquisiteurVPA::new, null),
 
     //misc
