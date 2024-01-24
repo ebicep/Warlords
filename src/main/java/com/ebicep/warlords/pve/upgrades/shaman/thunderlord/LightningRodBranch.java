@@ -40,7 +40,10 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
         masterUpgrade = new Upgrade(
                 "Thunderbolt",
                 "Lightning Rod - Master Upgrade",
-                "Lightning Rod increases speed and damage dealt by 40% for 12 seconds after initial cast.",
+                """
+                        Upon casting Lightning Rod, gain a 40% buff to speed and damage for 12 seconds.
+                        Additionally, Lightning Rod will activate every 2s for a duration of 6s. The additional activations will only deal knockback, heal, and restore energy.
+                        """,
                 50000,
                 () -> {
 
@@ -50,7 +53,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                 "Call of Thunder",
                 "Lightning Rod - Master Upgrade",
                 """
-                        All enemies pushed away from Lightning Rod take 25% increased incoming damage from all sources and the caster will gain +15 EPS for 8s.
+                        Lightning Rod now stuns enemies for 3s instead of knocking them away. All enemies stunned from Lightning Rod take 25% increased incoming damage from all sources and the caster will gain +15 EPS for 8s.
                         """,
                 50000,
                 () -> {
