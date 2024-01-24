@@ -35,6 +35,7 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
+import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.kyori.adventure.text.Component;
@@ -141,6 +142,8 @@ public abstract class AbstractMob implements Mob {
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, entityType != EntityType.PLAYER);
 
+        this.npc.getOrAddTrait(Gravity.class).gravitate(true);
+
         giveGoals();
         onNPCCreate();
         updateEquipment();
@@ -206,7 +209,7 @@ public abstract class AbstractMob implements Mob {
         //TODO wander? - waypoints trait
 //        npc.getNavigator().getLocalParameters()
 //           .avoidWater(true);
-        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 40), 2);
+        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 70), 2);
     }
 
     public void onNPCCreate() {

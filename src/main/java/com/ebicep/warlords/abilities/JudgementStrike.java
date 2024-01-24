@@ -140,7 +140,6 @@ public class JudgementStrike extends AbstractStrike {
         this.speedOnCritDuration = speedOnCritDuration;
     }
 
-
     public float getStrikeHeal() {
         return strikeHeal;
     }

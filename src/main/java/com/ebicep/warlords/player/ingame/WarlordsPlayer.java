@@ -442,8 +442,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     @org.jetbrains.annotations.Nullable
     @Override
-    public ItemStack getMainHand() {
-        return entity instanceof Player player ? player.getInventory().getItemInMainHand() : null;
+    public ItemStack getWeaponItem() {
+        return weapon == null ? null : weapon.getSelectedWeaponSkin().getItem();
     }
 
     public void applySkillBoost(Player player) {

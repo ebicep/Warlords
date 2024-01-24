@@ -192,6 +192,7 @@ public abstract class WarlordsEntity {
         this.health = new FloatModifiable(this.currentHealth) {{
             addFilter(maxBaseHealthFilter);
         }};
+        this.isInPve = com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
         this.speed = isInPve() ?
                      new CalculateSpeed(this, this::setWalkSpeed, 13, true) :
                      new CalculateSpeed(this, this::setWalkSpeed, 13);
@@ -200,7 +201,6 @@ public abstract class WarlordsEntity {
         }
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
-        this.isInPve = com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
     }
 
     public boolean isInPve() {
@@ -2981,6 +2981,6 @@ public abstract class WarlordsEntity {
     public abstract ItemStack getBoots();
 
     @Nullable
-    public abstract ItemStack getMainHand();
+    public abstract ItemStack getWeaponItem();
 
 }

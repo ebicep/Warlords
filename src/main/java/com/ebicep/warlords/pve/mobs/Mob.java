@@ -26,6 +26,7 @@ import com.ebicep.warlords.pve.mobs.pigzombie.PigAlleviator;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigDisciple;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigParticle;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigShaman;
+import com.ebicep.warlords.pve.mobs.player.Animus;
 import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.mobs.player.Decoy;
 import com.ebicep.warlords.pve.mobs.player.TestDummy;
@@ -772,25 +773,14 @@ public enum Mob {
             Weapons.SILVER_PHANTASM_STAFF_2.getItem()
     )),
     EVENT_INQUISITEUR_EWA(EntityType.IRON_GOLEM, EventInquisiteurEWA.class, EventInquisiteurEWA::new, EventInquisiteurEWA::new, null),
-    EVENT_INQUISITEUR_EGA(EntityType.IRON_GOLEM, EventInquisiteurEGA.class, EventInquisiteurEGA::new,
-            (spawnLocation, name1, maxHealth1, walkSpeed1, damageResistance1, minMeleeDamage1, maxMeleeDamage1) -> new EventInquisiteurEGA(spawnLocation,
-                    name1,
-                    maxHealth1,
-                    walkSpeed1,
-                    damageResistance1,
-                    minMeleeDamage1,
-                    maxMeleeDamage1
-            ), null
-    ),
+    EVENT_INQUISITEUR_EGA(EntityType.IRON_GOLEM, EventInquisiteurEGA.class, EventInquisiteurEGA::new, EventInquisiteurEGA::new, null),
     EVENT_INQUISITEUR_VPA(EntityType.IRON_GOLEM, EventInquisiteurVPA.class, EventInquisiteurVPA::new, EventInquisiteurVPA::new, null),
 
     //misc
     TEST_DUMMY(EntityType.ZOMBIE, TestDummy.class, TestDummy::new, TestDummy::new, null),
     CRYOPOD(EntityType.ARMOR_STAND, CryoPod.class, CryoPod::new, CryoPod::new, null),
-    //decoy
     DECOY(EntityType.ARMOR_STAND, Decoy.class, Decoy::new, Decoy::new, null),
-
-    ;
+    ANIMUS(EntityType.PLAYER, Animus.class, Animus::new, Animus::new, null);
 
     public static final Mob[] VALUES = values();
     public static final Mob[] BASIC = {

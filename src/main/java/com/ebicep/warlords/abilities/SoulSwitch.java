@@ -4,21 +4,18 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
-import com.ebicep.warlords.pve.mobs.player.Decoy;
+import com.ebicep.warlords.pve.mobs.player.Animus;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.SoulSwitchBranch;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -49,21 +46,26 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     @Override
     public void updateDescription(Player player) {
         if (inPve) {
-            description = Component.text("Switch locations with an enemy, blinding them for ")
-                                   .append(Component.text("1.5 ", NamedTextColor.GOLD))
-                                   .append(Component.text("seconds. If a mob is swapped, create a decoy at your original position with "))
-                                   .append(Component.text("5000 ", NamedTextColor.RED))
-                                   .append(Component.text("health that explodes after "))
-                                   .append(Component.text("3 ", NamedTextColor.GOLD))
-                                   .append(Component.text("seconds or if killed, damaging nearby enemies. Has an optimal range of "))
-                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                                   .append(Component.text("blocks. Soul Switch has low vertical range."));
+            description = ComponentBuilder.create("Switch locations with an enemy, blinding them for ")
+                                          .text(format(blindnessTicks / 20f), NamedTextColor.GOLD)
+                                          .text(" seconds. If a mob is swapped, create a decoy at your original position with ")
+                                          .text("5000 ", NamedTextColor.RED)
+                                          .text("health that explodes after ")
+                                          .text("3 ", NamedTextColor.GOLD)
+                                          .text("seconds or if killed, damaging nearby enemies. Has an optimal range of ")
+                                          .text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW)
+                                          .text("blocks. Soul Switch has low vertical range.")
+                                          .build();
         } else {
-            description = Component.text("Switch locations with an enemy, blinding them for ")
-                                   .append(Component.text("1.5 ", NamedTextColor.GOLD))
-                                   .append(Component.text("seconds. Has a range of "))
-                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                                   .append(Component.text("blocks. Soul Switch has low vertical range."));
+            description = ComponentBuilder.create("Switch locations with an enemy, stunning them for ")
+                                          .text(format(blindnessTicks / 20f), NamedTextColor.GOLD)
+                                          .text(" seconds. Upon swapping, self heal for 300-500 hp, go invisible for 1.5s, and transform the swapped enemy into your own Animus. " +
+                                                  "The Animus will inherit the max HP it had and your current speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2s based on the current your own Judgment Strike stats. " +
+                                                  "The Animus cannot be marked or buffed by allies in any way, enemies cannot target the Animus, and only 1 Animus can exist at a time. " +
+                                                  "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1s. Has a range of ")
+                                          .text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW)
+                                          .text("blocks. Soul Switch has low vertical range.")
+                                          .build();
         }
 
     }
@@ -137,7 +139,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     ownLocation.getPitch()
             ));
 
-            if (swapTarget instanceof WarlordsNPC) {
+            if (swapTarget instanceof WarlordsNPC npc) {
                 PveOption pveOption = wp.getGame()
                                         .getOptions()
                                         .stream()
@@ -145,91 +147,19 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                         .map(PveOption.class::cast)
                                         .findFirst()
                                         .orElse(null);
-                Decoy decoy;
                 if (pveOption != null) {
-                    wp.addSpeedModifier(wp, "Tricky Switch", 30, decoyMaxTicksLived);
-                    decoy = new Decoy(ownLocation,
-                            wp.getName(),
-                            wp.getHead(),
-                            wp.getChestplate(),
-                            wp.getLeggings(),
-                            wp.getBoots(),
-                            wp.getMainHand()
-                    ) {
-
-                        @Override
-                        public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
-                            wp.getSpeed().removeModifier("Tricky Switch");
-                            PlayerFilter.entitiesAround(ownLocation, 5, 5, 5)
-                                        .aliveEnemiesOf(wp)
-                                        .forEach(hit -> {
-                                            hit.addDamageInstance(
-                                                    wp,
-                                                    "Decoy",
-                                                    782 * (pveMasterUpgrade ? 2 : 1),
-                                                    1034 * (pveMasterUpgrade ? 2 : 1),
-                                                    0,
-                                                    100
-                                            );
-                                            if (pveMasterUpgrade) {
-                                                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                                        "Switch Crippling",
-                                                        "CRIP",
-                                                        SoulSwitch.class,
-                                                        new SoulSwitch(),
-                                                        wp,
-                                                        CooldownTypes.DEBUFF,
-                                                        cooldownManager -> {
-                                                        },
-                                                        20 * 5
-                                                ) {
-                                                    @Override
-                                                    public float modifyDamageBeforeInterveneFromAttacker(
-                                                            WarlordsDamageHealingEvent event,
-                                                            float currentDamageValue
-                                                    ) {
-                                                        return currentDamageValue * .5f;
-                                                    }
-                                                });
-                                            }
-                                        });
-
-                            ownLocation.getWorld().spawnParticle(
-                                    Particle.EXPLOSION_LARGE,
-                                    ownLocation.add(0, 1, 0),
-                                    5,
-                                    0,
-                                    0,
-                                    0,
-                                    0.5,
-                                    null,
-                                    true
-                            );
-                        }
-                    };
-                    pveOption.spawnNewMob(decoy, Team.BLUE);
-                } else {
-                    decoy = null;
-                }
-                if (pveMasterUpgrade) {
-                    float healing = (wp.getMaxHealth() - wp.getCurrentHealth()) * 0.1f;
                     wp.addHealingInstance(
                             wp,
                             name,
-                            healing,
-                            healing,
-                            -1,
-                            100
+                            300,
+                            500,
+                            critChance,
+                            critMultiplier
                     );
+                    wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 0, true, false));
+                    pveOption.despawnMob(npc.getMob());
+                    pveOption.spawnNewMob(new Animus(ownLocation, wp, swapTarget), Team.BLUE);
                 }
-                new GameRunnable(wp.getGame()) {
-                    @Override
-                    public void run() {
-                        if (pveOption != null && pveOption.getMobs().contains(decoy)) {
-                            decoy.getWarlordsNPC().die(decoy.getWarlordsNPC());
-                        }
-                    }
-                }.runTaskLater(decoyMaxTicksLived);
             }
 
             return true;
@@ -240,6 +170,12 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new SoulSwitchBranch(abilityTree, this);
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        radius.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     public int getBlindnessTicks() {
@@ -256,12 +192,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
 
     public void setDecoyMaxTicksLived(int decoyMaxTicksLived) {
         this.decoyMaxTicksLived = decoyMaxTicksLived;
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
     }
 
     @Override

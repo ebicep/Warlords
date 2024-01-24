@@ -191,12 +191,20 @@ public class CalculateSpeed {
         this.baseSpeedToWalkingSpeed = baseSpeedToWalkingSpeed / 113 * 100 / BASE_SPEED;
     }
 
+    public float getBaseSpeedToWalkingSpeed() {
+        return baseSpeedToWalkingSpeed;
+    }
+
     public List<Modifier> getModifiers() {
         return modifiers;
     }
 
     public void setChanged(boolean changed) {
         this.changed = changed;
+    }
+
+    public float getLastSpeed() {
+        return lastSpeed;
     }
 
     public static class Modifier {

@@ -3,6 +3,8 @@ package com.ebicep.customentities.nms.pve.pathfindergoals;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.flags.Untargetable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -56,7 +58,8 @@ public class GoalUtils {
                            .aliveEnemiesOf(thisWarlordsEntity)
                            .filter(warlordsEntity ->
                                    !warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
-                                           !(warlordsEntity.getEntity() instanceof Player) || ((Player) warlordsEntity.getEntity()).getGameMode() != GameMode.CREATIVE
+                                           !(warlordsEntity.getEntity() instanceof Player) || ((Player) warlordsEntity.getEntity()).getGameMode() != GameMode.CREATIVE &&
+                                           !(warlordsEntity instanceof WarlordsNPC npc && npc.getMob() instanceof Untargetable)
                            )
                            .stream()
                            .map(WarlordsEntity::getEntity)

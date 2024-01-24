@@ -119,6 +119,8 @@ public interface PveOption extends Option {
     default void despawnMob(AbstractMob mob) {
         mob.getWarlordsNPC().cleanup();
         getMobsMap().remove(mob);
+        getGame().getPlayers().remove(mob.getWarlordsNPC().getUuid());
+        Warlords.removePlayer(mob.getWarlordsNPC().getUuid());
     }
 
     default boolean isPauseMobSpawn() {
