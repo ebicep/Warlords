@@ -65,7 +65,7 @@ public enum SkillBoosts {
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 40);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -40);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -174,7 +174,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBreath) {
                     abstractAbility.multiplyMinMax(1.15f);
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 30);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -30);
                 }
             }
     ),
@@ -198,7 +198,7 @@ public enum SkillBoosts {
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 40);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -40);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -229,7 +229,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeBerserker) {
                     abstractAbility.multiplyMinMax(1.1f);
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 10);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -10);
                 }
             }
     ),
@@ -463,7 +463,7 @@ public enum SkillBoosts {
             AbstractConsecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 50);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
                     abstractAbility.multiplyMinMax(1.35f);
                 }
             }
@@ -533,7 +533,7 @@ public enum SkillBoosts {
             AbstractConsecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", 50);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
                     abstractAbility.multiplyMinMax(1.35f);
                 }
             }
