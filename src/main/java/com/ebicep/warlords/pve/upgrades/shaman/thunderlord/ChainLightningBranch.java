@@ -57,12 +57,12 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                 "Electrifying Chains",
                 "Chain Lightning - Master Upgrade",
                 """
-                        +1 Chain Bounce
+                        2x Chain Bounces
                                                 
                         Chain Lightning now deals 10% more damage per bounce instead of less.""",
                 50000,
                 () -> {
-                    ability.setAdditionalBounces(ability.getAdditionalBounces() + 1);
+                    ability.setAdditionalBounces(ability.getAdditionalBounces() * 2);
                 }
         );
         masterUpgrade2 = new Upgrade(
