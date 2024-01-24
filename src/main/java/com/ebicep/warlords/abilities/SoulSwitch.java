@@ -39,6 +39,9 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private int blindnessTicks = 30;
     private int decoyMaxTicksLived = 60;
 
+    // pve
+    private int invisTicks = 30;
+
     public SoulSwitch() {
         super("Soul Switch", 0, 0, 30, 40, -1, 50);
     }
@@ -46,26 +49,25 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     @Override
     public void updateDescription(Player player) {
         if (inPve) {
-            description = ComponentBuilder.create("Switch locations with an enemy, blinding them for ")
+            description = ComponentBuilder.create("Switch locations with an enemy, stunning them for ")
                                           .text(format(blindnessTicks / 20f), NamedTextColor.GOLD)
-                                          .text(" seconds. If a mob is swapped, create a decoy at your original position with ")
-                                          .text("5000 ", NamedTextColor.RED)
-                                          .text("health that explodes after ")
-                                          .text("3 ", NamedTextColor.GOLD)
-                                          .text("seconds or if killed, damaging nearby enemies. Has an optimal range of ")
+                                          .text(" seconds. Upon swapping, self heal for ")
+                                          .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                                          .text(" health, go invisible for ")
+                                          .text(format(invisTicks / 20f), NamedTextColor.GOLD)
+                                          .text(" seconds, and transform the swapped enemy into your own Animus. " +
+                                                  "The Animus will inherit the max HP it had and your current speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike stats. " +
+                                                  "The Animus cannot be marked or buffed by allies in any way, enemies cannot target the Animus, and only 1 Animus can exist at a time. " +
+                                                  "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second. Has a range of ")
                                           .text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW)
                                           .text("blocks. Soul Switch has low vertical range.")
                                           .build();
         } else {
-            description = ComponentBuilder.create("Switch locations with an enemy, stunning them for ")
-                                          .text(format(blindnessTicks / 20f), NamedTextColor.GOLD)
-                                          .text(" seconds. Upon swapping, self heal for 300-500 hp, go invisible for 1.5s, and transform the swapped enemy into your own Animus. " +
-                                                  "The Animus will inherit the max HP it had and your current speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2s based on the current your own Judgment Strike stats. " +
-                                                  "The Animus cannot be marked or buffed by allies in any way, enemies cannot target the Animus, and only 1 Animus can exist at a time. " +
-                                                  "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1s. Has a range of ")
-                                          .text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW)
-                                          .text("blocks. Soul Switch has low vertical range.")
-                                          .build();
+            description = Component.text("Switch locations with an enemy, blinding them for ")
+                                   .append(Component.text("1.5 ", NamedTextColor.GOLD))
+                                   .append(Component.text("seconds. Has a range of "))
+                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
+                                   .append(Component.text("blocks. Soul Switch has low vertical range."));
         }
 
     }
@@ -151,8 +153,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     wp.addHealingInstance(
                             wp,
                             name,
-                            300,
-                            500,
+                            minDamageHeal,
+                            maxDamageHeal,
                             critChance,
                             critMultiplier
                     );
@@ -197,5 +199,13 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
+    }
+
+    public void setInvisTicks(int invisTicks) {
+        this.invisTicks = invisTicks;
+    }
+
+    public int getInvisTicks() {
+        return invisTicks;
     }
 }
