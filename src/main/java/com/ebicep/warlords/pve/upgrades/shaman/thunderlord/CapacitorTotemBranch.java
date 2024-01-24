@@ -42,7 +42,7 @@ public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> 
                 "Electric Artifact",
                 "Capacitor Totem - Master Upgrade",
                 """
-                        Each Capacitor Totem proc increases the duration of the totem by 0.5s with a cap of 5s and for every enemy hit the caster gains 1% damage reduction for the duration of the totem with a cap of 15%.
+                        Each Capacitor Totem proc increases the duration of the totem by 0.5s with a cap of 10s and for every enemy hit the caster gains 1% damage reduction for the duration of the totem with a cap of 15%.
                         """,
                 50000,
                 () -> {
