@@ -5,10 +5,6 @@ import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.warrior.SeismicWaveBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -32,7 +28,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     public int carrierHit = 0;
     public int warpsKnockbacked = 0;
 
-    private float velocity = 1.25f;
+    protected float velocity = 1.25f;
     private int waveLength = 8; // foward amount
     private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
 
@@ -93,24 +89,8 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                     playersHit.add(waveTarget);
                     final Vector v = wp.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
                     waveTarget.setVelocity(name, v, false, false);
-                    float multiplier = 1;
-                    if (pveMasterUpgrade) {
-                        multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
-                    } else if (pveMasterUpgrade2) {
-                        multiplier = waveTarget.getCooldownManager().hasCooldownFromName("Wounding Strike") ? 1.3f : 1;
-                        if (waveTarget instanceof WarlordsNPC warlordsNPC) {
-                            new GameRunnable(wp.getGame()) {
-                                @Override
-                                public void run() {
-                                    if (warlordsNPC.getEntity().isOnGround()) {
-                                        warlordsNPC.setStunTicks(20);
-                                        this.cancel();
-                                    }
-                                }
-                            }.runTaskTimer(5, 0);
-                        }
-                    }
-                    waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, abilityUUID);
+
+                    onHit(wp, abilityUUID, playersHit, i, waveTarget);
                 }
             }
         }
@@ -163,6 +143,9 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         return locations;
     }
 
+    protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, List<WarlordsEntity> playersHit, int i, WarlordsEntity waveTarget) {
+    }
+
     private FallingBlock addFallingBlock(Location location) {
         if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
             location.add(0, 1, 0);
@@ -184,11 +167,6 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         return fallingBlock;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SeismicWaveBranch(abilityTree, this);
     }
 
     public float getVelocity() {
