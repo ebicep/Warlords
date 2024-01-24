@@ -48,9 +48,13 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
         masterUpgrade = new Upgrade(
                 "Lightning Volley",
                 "Lightning Bolt - Master Upgrade",
-                "Lightning Bolt shoots two additional projectiles.",
+                """
+                        -20 Energy cost
+                                                
+                        Lightning Bolt shoots two additional projectiles.""",
                 50000,
                 () -> {
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                     ability.setShotsFiredAtATime(3);
                 }
         );
@@ -58,10 +62,13 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                 "Electric Bolt",
                 "Lightning Bolt - Master Upgrade",
                 """
+                        -20 Energy cost
+                                                
                         Each additional enemy hit takes 20% more damage. Max of 5 additional enemies will receive this increase in damage, further enemies will be hit the same as the first.
                         """,
                 50000,
                 () -> {
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
                 }
         );
     }
