@@ -123,7 +123,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
     }
 
     private Location getLaserStartLocation() {
-        return new LocationBuilder(warlordsNPC.getEyeLocation()).backward(.15f);
+        return new LocationBuilder(warlordsNPC.getEyeLocation()).backward(.25f);
     }
 
     @Override
