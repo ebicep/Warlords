@@ -8,9 +8,12 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
 import com.ebicep.warlords.pve.mobs.player.Animus;
+import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.SoulSwitchBranch;
@@ -98,7 +101,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 continue;
             }
             if (swapTarget instanceof WarlordsNPC warlordsNPC) {
-                if (warlordsNPC.getMob() instanceof Unswappable || warlordsNPC.getMob().getDynamicFlags().contains(DynamicFlags.UNSWAPPABLE)) {
+                AbstractMob mob = warlordsNPC.getMob();
+                if (mob instanceof Unswappable || mob.getDynamicFlags().contains(DynamicFlags.UNSWAPPABLE) || mob instanceof BossMob || mob instanceof BossMinionMob) {
                     wp.sendMessage(Component.text(" You cannot Soul Switch with that mob!", NamedTextColor.RED));
                     continue;
                 }
