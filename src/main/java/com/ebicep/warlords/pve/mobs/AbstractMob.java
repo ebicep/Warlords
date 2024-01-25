@@ -35,7 +35,6 @@ import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.ai.event.CancelReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Equipment;
-import net.citizensnpcs.trait.Gravity;
 import net.citizensnpcs.trait.WolfModifiers;
 import net.citizensnpcs.trait.versioned.BossBarTrait;
 import net.kyori.adventure.text.Component;
@@ -141,8 +140,6 @@ public abstract class AbstractMob implements Mob {
 
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, entityType != EntityType.PLAYER);
-
-        this.npc.getOrAddTrait(Gravity.class).gravitate(true);
 
         giveGoals();
         onNPCCreate();
