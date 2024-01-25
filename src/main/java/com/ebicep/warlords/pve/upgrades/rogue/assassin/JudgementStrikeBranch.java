@@ -55,9 +55,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         +100 Healing on Strike Kill
                         -10 Energy cost
                                                 
-                        Each strike deals 1% of the target's max health as bonus damage.
-
-                        If the enemy hit by Judgement Strike drops below 30% max health they get executed (Excluding boss mobs.)""",
+                        Each strike deals 1% of the target's max health as bonus damage.""",
                 50000,
                 () -> {
                     ability.setStrikeHeal(ability.getStrikeHeal() + 100);

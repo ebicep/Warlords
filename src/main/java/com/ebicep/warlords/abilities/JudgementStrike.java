@@ -3,9 +3,6 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
-import com.ebicep.warlords.pve.mobs.flags.Unexecutable;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.JudgementStrikeBranch;
@@ -18,7 +15,6 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 public class JudgementStrike extends AbstractStrike {
@@ -87,26 +83,26 @@ public class JudgementStrike extends AbstractStrike {
                 if (finalEvent.isCrit()) {
                     wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
                 }
-                if (pveMasterUpgrade) {
-                    if (nearPlayer instanceof WarlordsNPC warlordsNPC &&
-                            finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .3) &&
-                            !(warlordsNPC.getMob() instanceof Unexecutable)
-                    ) {
-                        nearPlayer.addDamageInstance(
-                                wp,
-                                "Execute",
-                                nearPlayer.getCurrentHealth() + 1,
-                                nearPlayer.getCurrentHealth() + 1,
-                                0,
-                                100,
-                                EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
-                        ).ifPresent(finalEvent2 -> {
-                            if (strikeHeal != 0 && finalEvent2.isDead()) {
-                                wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
-                            }
-                        });
-                    }
-                }
+//                if (pveMasterUpgrade) {
+//                    if (nearPlayer instanceof WarlordsNPC warlordsNPC &&
+//                            finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .3) &&
+//                            !(warlordsNPC.getMob() instanceof Unexecutable)
+//                    ) {
+//                        nearPlayer.addDamageInstance(
+//                                wp,
+//                                "Execute",
+//                                nearPlayer.getCurrentHealth() + 1,
+//                                nearPlayer.getCurrentHealth() + 1,
+//                                0,
+//                                100,
+//                                EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
+//                        ).ifPresent(finalEvent2 -> {
+//                            if (strikeHeal != 0 && finalEvent2.isDead()) {
+//                                wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
+//                            }
+//                        });
+//                    }
+//                }
                 if (strikeHeal != 0 && finalEvent.isDead()) {
                     wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
                 }
