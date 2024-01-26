@@ -42,20 +42,22 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
                 "Increase the healing of Protector's Strike on the lowest health allies and you by 50%. Additionally, double the healing range and increase the ally limit by 2.",
                 50000,
                 () -> {
-                    ability.setMaxAllies(ability.getMaxAllies() + 2);
                     ability.setStrikeRadius(ability.getStrikeRadius() * 2);
+                    ability.setMaxAllies(ability.getMaxAllies() + 2);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Protecting Strike",
                 "Protector's Strike - Master Upgrade",
                 """
-                        Increase the damage dealt by strike by 10% and strike crit chance by 15%. Crit strikes will heal for 80% of damage dealt.
+                        Increase the damage dealt by strike by 20% and strike crit chance by 15%. Additionally, double the healing range and increase the ally limit by 1.
                         """,
                 50000,
                 () -> {
-                    ability.multiplyMinMax(1.1f);
+                    ability.multiplyMinMax(1.2f);
                     ability.setCritChance(ability.getCritChance() + 15);
+                    ability.setStrikeRadius(ability.getStrikeRadius() * 2);
+                    ability.setMaxAllies(ability.getMaxAllies() + 1);
                 }
         );
     }
