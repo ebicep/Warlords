@@ -57,18 +57,13 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.vehicle.VehicleExitEvent;
-import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
@@ -79,12 +74,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class WarlordsEvents implements Listener {
-
-    public static final Set<Entity> FALLING_BLOCK_ENTITIES = new HashSet<>();
-
-    public static void addEntityUUID(Entity entity) {
-        FALLING_BLOCK_ENTITIES.add(entity);
-    }
 
     @EventHandler
     public static void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
@@ -333,15 +322,6 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
-        if (event.getEntity() instanceof FallingBlock) {
-            if (FALLING_BLOCK_ENTITIES.remove(event.getEntity())) {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         Entity attacker = e.getDamager();
         WarlordsEntity wpAttacker = Warlords.getPlayer(attacker);
@@ -480,14 +460,6 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
-        // prevent wolf eating item
-        if (e.getRightClicked() instanceof Wolf) {
-            e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
     public void onPlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         if (e.getRightClicked() instanceof Wolf) {
             e.setCancelled(true);
@@ -514,11 +486,6 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public void onDismount(VehicleExitEvent e) {
-        e.getVehicle().remove();
-    }
-
-    @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         if (e.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE) {
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(e.getPlayer().getUniqueId());
@@ -530,16 +497,6 @@ public class WarlordsEvents implements Listener {
                 e.getPlayer().setSpectatorTarget(null);
             }
         }
-    }
-
-    @EventHandler
-    public void regenEvent(EntityRegainHealthEvent e) {
-        e.setCancelled(true);
-    }
-
-    @EventHandler
-    public void pickUpItem(PlayerArmorStandManipulateEvent e) {
-        e.setCancelled(true);
     }
 
     @EventHandler
@@ -568,44 +525,6 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public void onInvClick(InventoryClickEvent e) {
-        if (e.getWhoClicked().getGameMode() != GameMode.CREATIVE) {
-            e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onOpenInventory(InventoryOpenEvent e) {
-        if (e.getPlayer().getVehicle() != null) {
-            if (e.getInventory().getHolder() != null && e.getInventory().getHolder() instanceof Horse) {
-                e.setCancelled(true);
-            }
-        }
-
-        if (e.getInventory() instanceof CraftInventoryAnvil ||
-                e.getInventory() instanceof CraftInventoryBeacon ||
-                e.getInventory() instanceof CraftInventoryBrewer ||
-                e.getInventory() instanceof CraftInventoryCrafting ||
-                e.getInventory() instanceof CraftInventoryDoubleChest ||
-                e.getInventory() instanceof CraftInventoryFurnace ||
-                e.getInventory().getType() == InventoryType.HOPPER ||
-                e.getInventory().getType() == InventoryType.DROPPER
-        ) {
-            e.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerDropEvent(PlayerDropItemEvent e) {
-        e.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onSwapHandItems(PlayerSwapHandItemsEvent e) {
-        e.setCancelled(true);
-    }
-
-    @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         if (e.getPlayer().getVehicle() instanceof Horse) {
             Location location = e.getPlayer().getLocation();
@@ -628,74 +547,6 @@ public class WarlordsEvents implements Listener {
         if (warlordsEntity != null) {
             warlordsEntity.getMinuteStats().addJumps();
         }
-    }
-
-    @EventHandler
-    public void onPlayerDamage(EntityDamageEvent e) {
-        e.setCancelled(true);
-        if (!(e.getEntity() instanceof Player player)) {
-            return;
-        }
-        switch (e.getCause()) {
-            case VOID, KILL -> {
-                player.teleport(Warlords.getRejoinPoint(player.getUniqueId()));
-                WarlordsEntity wp = Warlords.getPlayer(player);
-                if (wp == null) {
-                    return;
-                }
-                if (wp.isDead()) {
-                    wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
-                } else {
-                    wp.addDamageInstance(wp, "Fall", 1000000, 1000000, 0, 100);
-                }
-            }
-            case FALL -> {
-                //HEIGHT - DAMAGE
-                //PLAYER
-                //9 - 160 - 6
-                //15 - 400 - 12
-                //30ish - 1040
-
-                //HORSE
-                //HEIGHT - DAMAGE
-                //18 - 160
-                //HEIGHT x 40 - 200
-                WarlordsEntity wp = Warlords.getPlayer(player);
-                if (wp == null) {
-                    return;
-                }
-                int damage = (int) e.getDamage();
-                if (damage > 5) {
-                    wp.addDamageInstance(wp, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100);
-                    wp.resetRegenTimer();
-                }
-            }
-            case DROWNING -> {
-                //100 flat
-                WarlordsEntity wp = Warlords.getPlayer(player);
-                if (wp == null || wp.getGame().isFrozen()) {
-                    return;
-                }
-                wp.addDamageInstance(wp, "Fall", 100, 100, 0, 100);
-                wp.resetRegenTimer();
-            }
-        }
-    }
-
-    @EventHandler
-    public void onEntityDeath(EntityDeathEvent e) {
-        e.getDrops().clear();
-    }
-
-    @EventHandler
-    public void onEntityCombust(EntityCombustEvent event) {
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent e) {
-        e.getBlock().getDrops().clear();
-        //e.setCancelled(true);
     }
 
     @EventHandler
@@ -733,34 +584,6 @@ public class WarlordsEvents implements Listener {
         if ((((EntityDamageByEntityEvent) lastDamage).getDamager() instanceof Player)) {
             event.setCancelled(true);
         }
-    }
-
-    @EventHandler
-    public void onWeatherChange(WeatherChangeEvent event) {
-        event.setCancelled(event.toWeatherState());
-    }
-
-    @EventHandler
-    public void onFoodChange(FoodLevelChangeEvent change) {
-        change.setCancelled(true);
-        if (change.getEntity() instanceof Player) {
-            change.getEntity().setFoodLevel(20);
-        }
-    }
-
-    @EventHandler
-    public void onBlockPhysics(BlockPhysicsEvent e) {
-        e.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onLeaveDecay(LeavesDecayEvent event) {
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onBlockSpread(BlockSpreadEvent event) {
-        event.setCancelled(true);
     }
 
     @EventHandler

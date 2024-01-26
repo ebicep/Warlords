@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.customentities.nms.CustomFallingBlock;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
-import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
@@ -103,7 +103,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                             FallingBlock fallingBlock = addFallingBlock(location);
                             customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, AbstractSeismicWave.this));
-                            WarlordsEvents.addEntityUUID(fallingBlock);
+                            GeneralEvents.addEntityUUID(fallingBlock);
                         }
                     }
                     fallingBlockLocations.remove(fallingBlockLocation);

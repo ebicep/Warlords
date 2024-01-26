@@ -14,6 +14,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameS
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.damage.DrowningDamage;
+import com.ebicep.warlords.game.option.damage.FallDamage;
+import com.ebicep.warlords.game.option.damage.KillDamage;
+import com.ebicep.warlords.game.option.damage.VoidDamage;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.pve.BountyOption;
 import com.ebicep.warlords.game.option.pve.tutorial.TutorialOption;
@@ -709,8 +713,8 @@ public enum GameMode {
                 )
         );
         options.add(new PreGameItemOption(7, (g, p) -> !g.acceptsPeople() ? null : new ItemBuilder(Material.BARRIER)
-                .name(Component.text("Leave", NamedTextColor.RED))
-                .lore(Component.text("Right-Click to leave the game.", NamedTextColor.GRAY))
+                        .name(Component.text("Leave", NamedTextColor.RED))
+                        .lore(Component.text("Right-Click to leave the game.", NamedTextColor.GRAY))
                         .get(),
                         (g, p) -> {
                             if (g.acceptsPeople()) {
@@ -721,6 +725,10 @@ public enum GameMode {
         );
 
         options.add(new GameFreezeOption());
+        options.add(new DrowningDamage());
+        options.add(new FallDamage());
+        options.add(new KillDamage());
+        options.add(new VoidDamage());
 
         return options;
     }
