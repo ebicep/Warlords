@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
+import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -10,7 +11,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
-public class SeismicWaveDefender extends AbstractSeismicWave {
+public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduceCooldowns {
+
     public SeismicWaveDefender() {
         super(506, 685, 11.74f, 60, 25, 200);
     }
@@ -24,7 +26,7 @@ public class SeismicWaveDefender extends AbstractSeismicWave {
             multiplier = waveTarget.getCooldownManager().hasCooldownFromName("Wounding Strike") ? 1.3f : 1;
         }
         waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, abilityUUID).ifPresent(event -> {
-            if (event.isDead()) {
+            if (event.isDead() && pveMasterUpgrade2) {
                 wp.getAbilitiesMatching(LastStand.class).forEach(lastStand -> lastStand.subtractCurrentCooldown(1f));
             }
         });
@@ -33,5 +35,10 @@ public class SeismicWaveDefender extends AbstractSeismicWave {
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new SeismicWaveBranchDefender(abilityTree, this);
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
     }
 }
