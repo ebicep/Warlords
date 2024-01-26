@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.HolyRadianceBranchProtector;
@@ -13,6 +12,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
@@ -21,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +29,7 @@ import java.util.List;
 
 public class HolyRadianceProtector extends AbstractHolyRadiance {
 
-    private final int markRadius = 15;
+    private final FloatModifiable markRadius = new FloatModifiable(15);
 
     private int markDuration = 6;
     private float markHealing = 50;
@@ -52,7 +53,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                                .append(Component.text(markHealing + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the original healing amount after the mark ends."))
                                .append(Component.text("\n\nMark has an optimal range of "))
-                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
+                               .append(Component.text(format(markRadius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
 
@@ -73,9 +74,11 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
 
     @Override
     public boolean chain(WarlordsEntity wp) {
+        float radius = markRadius.getCalculatedValue();
+
         if (pveMasterUpgrade) {
             for (WarlordsEntity circleTarget : PlayerFilter
-                    .entitiesAround(wp, 15, 15, 15)
+                    .entitiesAround(wp, radius, radius, radius)
                     .aliveTeammatesOfExcludingSelf(wp)
             ) {
                 emitMarkRadiance(wp, circleTarget);
@@ -85,7 +88,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
         }
 
         for (WarlordsEntity markTarget : PlayerFilter
-                .entitiesAround(wp, markRadius, markRadius, markRadius)
+                .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
@@ -113,36 +116,6 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
             );
 
             return true;
-        }
-
-        if (pveMasterUpgrade2) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    "Unrivalled Radiance",
-                    "RAD",
-                    HolyRadianceProtector.class,
-                    null,
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    61,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 20 == 0 && ticksElapsed != 0) {
-                            PlayerFilter.entitiesAround(wp, 10, 10, 10)
-                                        .aliveTeammatesOf(wp)
-                                        .forEach(warlordsEntity -> {
-                                            warlordsEntity.addHealingInstance(
-                                                    wp,
-                                                    "Unrivalled Radiance",
-                                                    150,
-                                                    350,
-                                                    0,
-                                                    100
-                                            );
-                                        });
-                        }
-                    })
-            ));
         }
 
         return false;
@@ -218,8 +191,34 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                             }
                         }
                     }
+                    if (pveMasterUpgrade2) {
+                        if (ticksElapsed % 20 == 0 && ticksElapsed != 0) {
+                            PlayerFilter.entitiesAround(target, 10, 10, 10)
+                                        .aliveTeammatesOf(giver)
+                                        .forEach(warlordsEntity -> {
+                                            warlordsEntity.addHealingInstance(
+                                                    giver,
+                                                    "Unrivalled Radiance",
+                                                    150,
+                                                    350,
+                                                    0,
+                                                    100
+                                            );
+                                        });
+                        }
+                    }
                 })
         );
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        super.runEveryTick(warlordsEntity);
+        markRadius.tick();
+    }
+
+    public FloatModifiable getMarkRadius() {
+        return markRadius;
     }
 
     public float getMarkHealing() {

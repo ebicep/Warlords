@@ -54,10 +54,13 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
                 "Unrivalled Radiance",
                 "Holy Radiance - Master Upgrade",
                 """
-                        Every 1 second for 3 seconds, Holy Radiance will emit additional mini radiances giving 150-350 health to all allies within 10 blocks of you.
+                        +12 Block Radius
+                                                
+                        All marked players will now heal all players within 10 blocks for 150-350 health every 1s for 3s.
                         """,
                 50000,
                 () -> {
+                    ability.getMarkRadius().addAdditiveModifier("Master Upgrade Branch", 12);
                 }
         );
     }
