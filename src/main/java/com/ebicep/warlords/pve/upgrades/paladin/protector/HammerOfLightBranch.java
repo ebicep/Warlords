@@ -62,12 +62,13 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                 "Hammer of Light - Master Upgrade",
                 """
                         +20% Cooldown Reduction
+                        +3 Block Radius
                                                 
                         Hammer of Light/Crown of Light now grants debuff immunity. Additionally, enemies within the radius will take 10% more damage.
                         """,
                 50000,
                 () -> {
-
+                    ability.getRadius().addAdditiveModifier("Master Upgrade Branch", 3);
                 }
         );
     }
