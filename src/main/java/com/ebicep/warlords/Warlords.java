@@ -335,6 +335,7 @@ public class Warlords extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
+        getServer().getPluginManager().registerEvents(new GeneralEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
         getServer().getPluginManager().registerEvents(new BotListener(), this);
