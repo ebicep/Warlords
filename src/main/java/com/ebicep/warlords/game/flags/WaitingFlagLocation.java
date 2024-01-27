@@ -1,8 +1,16 @@
 package com.ebicep.warlords.game.flags;
 
+import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -50,5 +58,56 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
                 Component.text("despawnTimer: " + getDespawnTimer())
         );
     }
-	
+
+    @Override
+    public void onFlagUpdateEventNew(WarlordsFlagUpdatedEvent event) {
+        Game game = event.getGame();
+        Team eventTeam = event.getTeam();
+        NamedTextColor teamColor = eventTeam.teamColor();
+        Component coloredPrefix = eventTeam.coloredPrefix();
+
+        WarlordsEntity player = getScorer();
+        if (player != null) {
+            player.addFlagCap();
+            game.forEachOnlinePlayer((p, t) -> {
+                boolean sameTeam = t == eventTeam;
+                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
+                Component coloredName = player.getColoredName();
+                Component flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                 .append(coloredName)
+                                                 .append(Component.text(" has captured the "))
+                                                 .append(coloredPrefix)
+                                                 .append(Component.text(" flag!"));
+                if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                    if (sameTeam) {
+                        flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                               .append(coloredName)
+                                               .append(Component.text(" has captured "))
+                                               .append(Component.text("YOUR", teamColor))
+                                               .append(Component.text(" flag!"));
+                    } else {
+                        flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                               .append(coloredName)
+                                               .append(Component.text(" has captured the "))
+                                               .append(Component.text("ENEMY", teamColor))
+                                               .append(Component.text(" flag!"));
+                    }
+                }
+                p.sendMessage(flagMessage);
+                p.showTitle(Title.title(
+                        Component.empty(),
+                        flagMessage,
+                        Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
+                ));
+
+                if (t != null) {
+                    if (sameTeam) {
+                        p.playSound(player.getLocation(), "ctf.enemycapturedtheflag", 500, 1);
+                    } else {
+                        p.playSound(player.getLocation(), "ctf.enemyflagcaptured", 500, 1);
+                    }
+                }
+            });
+        }
+    }
 }

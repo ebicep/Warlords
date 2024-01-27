@@ -25,6 +25,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
 import com.ebicep.warlords.game.option.pvp.GameOvertimeOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.ctf.FlagOption;
 import com.ebicep.warlords.game.option.pvp.interception.InterceptionOption;
 import com.ebicep.warlords.game.option.pvp.interception.InterceptionRespawnOption;
 import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
@@ -111,6 +112,7 @@ public enum GameMode {
                     Component.text("GO!", NamedTextColor.GREEN),
                     Component.text("Steal and capture the enemy flag!", NamedTextColor.YELLOW)
             ));
+            options.add(new FlagOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());

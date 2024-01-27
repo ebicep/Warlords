@@ -3,7 +3,6 @@ package com.ebicep.warlords.events;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.IceBarrier;
-import com.ebicep.warlords.abilities.OrderOfEviscerate;
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
@@ -15,14 +14,10 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
-import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager;
-import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.flags.*;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
@@ -49,8 +44,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.title.Title;
-import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -68,7 +61,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 
-import javax.annotation.Nullable;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -586,260 +578,4 @@ public class WarlordsEvents implements Listener {
         }
     }
 
-    @EventHandler
-    public void onFlagChange(WarlordsFlagUpdatedEvent event) {
-        Game game = event.getGame();
-        FlagLocation eventNew = event.getNew();
-        FlagLocation eventOld = event.getOld();
-        Team eventTeam = event.getTeam();
-        NamedTextColor teamColor = eventTeam.teamColor();
-        Component coloredPrefix = eventTeam.coloredPrefix();
-
-        if (eventOld instanceof PlayerFlagLocation) {
-            ((PlayerFlagLocation) eventOld).getPlayer().setCarriedFlag(null);
-        }
-
-        if (eventNew instanceof PlayerFlagLocation pfl) {
-            WarlordsEntity player = pfl.getPlayer();
-            player.setCarriedFlag(event.getInfo());
-            //removing invis for assassins
-            OrderOfEviscerate.removeCloak(player, false);
-            if (eventOld instanceof PlayerFlagLocation) {
-                // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
-                int computedHumanMultiplier = pfl.getComputedHumanMultiplier();
-                if (computedHumanMultiplier % 10 == 0) {
-                    game.forEachOnlinePlayer((p, t) -> {
-                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                        if (t != null && playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                            NamedTextColor playerColor = pfl.getPlayer().getTeam().teamColor;
-                            if (t != eventTeam) {
-                                p.sendMessage(Component.text("", NamedTextColor.YELLOW)
-                                                       .append(Component.text("YOUR", playerColor))
-                                                       .append(Component.text(" flag carrier now takes "))
-                                                       .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
-                                                       .append(Component.text(" increased damage!"))
-                                );
-                            } else {
-                                p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
-                                                       .append(Component.text("ENEMY", playerColor))
-                                                       .append(Component.text(" flag carrier now takes "))
-                                                       .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
-                                                       .append(Component.text(" increased damage!"))
-                                );
-                            }
-                        } else {
-                            p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
-                                                   .append(coloredPrefix)
-                                                   .append(Component.text(" flag carrier now takes "))
-                                                   .append(Component.text(computedHumanMultiplier + "%", NamedTextColor.RED))
-                                                   .append(Component.text(" increased damage!"))
-                            );
-                        }
-                    });
-                }
-            } else {
-                // eg GROUND -> PLAYER
-                // or SPAWN -> PLAYER
-                game.forEachOnlinePlayer((p, t) -> {
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                    Component playerColoredName = player.getColoredName();
-                    Component flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                     .append(playerColoredName)
-                                                     .append(Component.text(" picked up the "))
-                                                     .append(coloredPrefix)
-                                                     .append(Component.text(" §eflag!"));
-                    if (t != null) {
-                        if (t == eventTeam) {
-                            p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
-                            if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                                flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                       .append(playerColoredName)
-                                                       .append(Component.text(" picked up "))
-                                                       .append(Component.text("YOUR", teamColor))
-                                                       .append(Component.text(" flag!"));
-                            }
-                        } else {
-                            p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
-                            if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                                flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                       .append(playerColoredName)
-                                                       .append(Component.text(" picked up the "))
-                                                       .append(Component.text("ENEMY", teamColor))
-                                                       .append(Component.text(" flag!"));
-                            }
-                        }
-                    }
-                    p.sendMessage(flagMessage);
-                    p.showTitle(Title.title(
-                            Component.empty(),
-                            flagMessage,
-                            Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
-                    ));
-
-                });
-            }
-        } else if (eventNew instanceof SpawnFlagLocation) {
-            WarlordsEntity toucher = ((SpawnFlagLocation) eventNew).getFlagReturner();
-            if (eventOld instanceof GroundFlagLocation) {
-                if (toucher != null) {
-                    toucher.addFlagReturn();
-                    game.forEachOnlinePlayer((p, t) -> {
-                        boolean sameTeam = t == eventTeam;
-                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                        Component toucherColoredName = toucher.getColoredName();
-                        Component flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                         .append(toucherColoredName)
-                                                         .append(Component.text(" has returned the "))
-                                                         .append(coloredPrefix)
-                                                         .append(Component.text(" flag!"));
-                        if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                            if (sameTeam) {
-                                flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                       .append(toucherColoredName)
-                                                       .append(Component.text(" has returned "))
-                                                       .append(Component.text("YOUR", teamColor))
-                                                       .append(Component.text(" flag!"));
-                            } else {
-                                flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                       .append(toucherColoredName)
-                                                       .append(Component.text(" has returned the "))
-                                                       .append(Component.text("ENEMY", teamColor))
-                                                       .append(Component.text(" flag!"));
-                            }
-                        }
-                        p.sendMessage(flagMessage);
-                        p.showTitle(Title.title(
-                                Component.empty(),
-                                flagMessage,
-                                Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
-                        ));
-
-                        if (sameTeam) {
-                            p.playSound(p.getLocation(), "ctf.flagreturned", 500, 1);
-                        }
-                    });
-                } else {
-                    game.forEachOnlinePlayer((p, t) -> {
-                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                        if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                            if (t == eventTeam) {
-                                p.sendMessage(Component.text("", NamedTextColor.YELLOW)
-                                                       .append(Component.text("YOUR", teamColor))
-                                                       .append(Component.text(" flag has returned to base!"))
-                                );
-                            } else {
-                                p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
-                                                       .append(Component.text("ENEMY", teamColor))
-                                                       .append(Component.text(" flag has returned to base!"))
-                                );
-                            }
-                        } else {
-                            p.sendMessage(Component.text("The ", NamedTextColor.YELLOW)
-                                                   .append(coloredPrefix)
-                                                   .append(Component.text(" flag has returned to base!"))
-                            );
-                        }
-                    });
-                }
-            }
-        } else if (eventNew instanceof GroundFlagLocation) {
-            if (eventOld instanceof PlayerFlagLocation pfl) {
-                pfl.getPlayer().updateArmor();
-                game.forEachOnlinePlayer((p, t) -> {
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                    Component coloredName = pfl.getPlayer().getColoredName();
-                    Component flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                     .append(coloredName)
-                                                     .append(Component.text(" has dropped the "))
-                                                     .append(coloredPrefix)
-                                                     .append(Component.text(" flag!"));
-                    if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                        if (t == eventTeam) {
-                            flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                   .append(coloredName)
-                                                   .append(Component.text(" has dropped "))
-                                                   .append(Component.text("YOUR", teamColor))
-                                                   .append(Component.text(" flag!"));
-                        } else {
-                            flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                   .append(coloredName)
-                                                   .append(Component.text(" has dropped the "))
-                                                   .append(Component.text("ENEMY", teamColor))
-                                                   .append(Component.text(" flag!"));
-                        }
-                    }
-                    p.sendMessage(flagMessage);
-                    p.showTitle(Title.title(
-                            Component.empty(),
-                            flagMessage,
-                            Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
-                    ));
-                });
-            }
-        } else if (eventNew instanceof WaitingFlagLocation && ((WaitingFlagLocation) eventNew).getScorer() != null) {
-            WarlordsEntity player = ((WaitingFlagLocation) eventNew).getScorer();
-            player.addFlagCap();
-            game.forEachOnlinePlayer((p, t) -> {
-                boolean sameTeam = t == eventTeam;
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                Component coloredName = player.getColoredName();
-                Component flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                                 .append(coloredName)
-                                                 .append(Component.text(" has captured the "))
-                                                 .append(coloredPrefix)
-                                                 .append(Component.text(" flag!"));
-                if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                    if (sameTeam) {
-                        flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                               .append(coloredName)
-                                               .append(Component.text(" has captured "))
-                                               .append(Component.text("YOUR", teamColor))
-                                               .append(Component.text(" flag!"));
-                    } else {
-                        flagMessage = Component.text("", NamedTextColor.YELLOW)
-                                               .append(coloredName)
-                                               .append(Component.text(" has captured the "))
-                                               .append(Component.text("ENEMY", teamColor))
-                                               .append(Component.text(" flag!"));
-                    }
-                }
-                p.sendMessage(flagMessage);
-                p.showTitle(Title.title(
-                        Component.empty(),
-                        flagMessage,
-                        Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
-                ));
-
-                if (t != null) {
-                    if (sameTeam) {
-                        p.playSound(player.getLocation(), "ctf.enemycapturedtheflag", 500, 1);
-                    } else {
-                        p.playSound(player.getLocation(), "ctf.enemyflagcaptured", 500, 1);
-                    }
-                }
-            });
-        }
-    }
-
-    @EventHandler
-    public void onPlayerLogout(PlayerQuitEvent event) {
-        dropFlag(event.getPlayer());
-    }
-
-    public boolean dropFlag(Player player) {
-        return dropFlag(Warlords.getPlayer(player));
-    }
-
-    public boolean dropFlag(@Nullable WarlordsEntity player) {
-        if (player == null) {
-            return false;
-        }
-        FlagHolder.dropFlagForPlayer(player);
-        return true;
-    }
-
-    @EventHandler
-    public void onPlayerDeath(WarlordsDeathEvent event) {
-        dropFlag(event.getWarlordsEntity());
-    }
 }

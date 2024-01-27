@@ -5,6 +5,7 @@
  */
 package com.ebicep.warlords.game.flags;
 
+import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 
@@ -22,5 +23,13 @@ public interface FlagLocation {
 
     @Nonnull
     List<TextComponent> getDebugInformation();
-	
+
+    default void onFlagUpdateEventOld(WarlordsFlagUpdatedEvent event) {
+
+    }
+
+    default void onFlagUpdateEventNew(WarlordsFlagUpdatedEvent event) {
+
+    }
+
 }
