@@ -79,7 +79,7 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
         ));
 
         masterUpgrade = new Upgrade(
-                "Dimensional Leap",
+                "Infernal Leap",
                 "Time Warp - Master Upgrade",
                 "Time Warp can now be re-activated to teleport you back early. Additionally, gain 1% Crit Chance and Crit" +
                         " Multiplier for each block travelled while Time Warp is active and double the duration of Time Warp.",
