@@ -53,7 +53,7 @@ public class LegendaryStalwart extends AbstractLegendaryWeapon implements Passiv
                         .append(formatTitleUpgrade(getEveryHpPercent(), "%"))
                         .append(Component.text(" of HP under "))
                         .append(formatTitleUpgrade(getUnderHpCheck(), "%"))
-                        .append(Component.text(", gain an additional 7.5% damage reduction. Maximum 80% Damage Reduction."))
+                        .append(Component.text(", gain an additional 7.5% damage reduction. Maximum 80% damage reduction."))
                         .append(Component.newline())
                         .append(Component.newline())
                         .append(Component.text("If your health is currently higher than 80% and you will die from the next source of damage, your " +
