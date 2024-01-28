@@ -435,11 +435,14 @@ public abstract class AbstractMob implements Mob {
     }
 
     private void dropWeapon(WarlordsEntity killer, int bound) {
+        if (!(killer instanceof WarlordsPlayer warlordsPlayer)) {
+            return;
+        }
         AtomicDouble dropRate = new AtomicDouble(.01 * weaponDropRate() * killer.getGame().getGameMode().getDropModifier());
         AbstractWarlordsDropRewardEvent dropRewardEvent = new WarlordsDropWeaponEvent(killer, this, dropRate);
         Bukkit.getPluginManager().callEvent(dropRewardEvent);
         if (ThreadLocalRandom.current().nextDouble(0, bound) < dropRate.get() * dropRewardEvent.getModifier()) {
-            AbstractWeapon weapon = generateWeapon((WarlordsPlayer) killer);
+            AbstractWeapon weapon = generateWeapon(warlordsPlayer);
             Bukkit.getPluginManager().callEvent(new WarlordsGiveWeaponEvent(killer, weapon));
             killer.getGame().forEachOnlinePlayer((player, team) -> {
                 player.sendMessage(Component.text().color(NamedTextColor.GRAY)
