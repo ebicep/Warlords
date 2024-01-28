@@ -2,6 +2,7 @@ package com.ebicep.warlords.util.bukkit;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -191,7 +192,8 @@ public abstract class Laser {
      */
     public void stop() {
         if (main == null) {
-            throw new IllegalStateException("Task not started");
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(new IllegalStateException("Task not started"));
+            return;
         }
         main.cancel();
     }
