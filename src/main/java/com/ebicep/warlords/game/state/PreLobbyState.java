@@ -130,7 +130,9 @@ public class PreLobbyState implements State, TimerDebugAble {
             if (timer <= 0) {
 
                 if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-                    Balancer.balance(game);
+                    Balancer balancer = new Balancer(game);
+                    balancer.balance(false);
+                    balancer.printDebugInfo();
                 }
 
                 if (game.getPlayers().size() >= 14) {

@@ -3,7 +3,6 @@ package com.ebicep.warlords.database;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
-import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.GameEventsService;
@@ -79,7 +78,7 @@ public class DatabaseManager {
     public static GameEventsService gameEventsService;
     public static WeeklyBlessingsService weeklyBlessingsService;
     public static IllusionVendorService illusionVendorService;
-    public static boolean enabled = true;
+    public static boolean enabled = false;
     private static DatabasePlayer CACHED_MOB_DATABASEPLAYER = new DatabasePlayer();
 
     public static void init() {
@@ -156,18 +155,18 @@ public class DatabaseManager {
                 .execute();
 
         //Loading last 5 games
-        ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loading Last Games");
-        long gameStart = System.nanoTime();
-        Warlords.newChain()
-                .asyncFirst(() -> gameService.getLastGames(15))
-                .syncLast((games) -> {
-                    ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
-                    DatabaseGameBase.previousGames.addAll(games);
-                    StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
-                    Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
-                    ChatUtils.MessageType.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
-                })
-                .execute();
+//        ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loading Last Games");
+//        long gameStart = System.nanoTime();
+//        Warlords.newChain()
+//                .asyncFirst(() -> gameService.getLastGames(15))
+//                .syncLast((games) -> {
+//                    ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
+//                    DatabaseGameBase.previousGames.addAll(games);
+//                    StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
+//                    Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
+//                    ChatUtils.MessageType.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
+//                })
+//                .execute();
     }
 
     public static void updateQueue() {

@@ -1,49 +1,62 @@
 package com.ebicep.warlords.sr;
 
 import co.aikar.commands.CommandIssuer;
-import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
+import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
-import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Balancer {
 
-    // TODO update balancing system to read a games Team Markers,
-    // this is needed for when we support more teams in the future
-    public static void balance(Game game) {
-        //separating internalPlayers into even teams because it might be uneven bc internalPlayers couldve left
+    private static final int SAME_TEAM_PARTY_LIMIT = 2;
+    private final Set<UUID> players;
+    private final EnumSet<Team> teams;
+    private final Map<Team, TeamInfo> bestTeam = new HashMap<>();
 
-        //balancing based on specs
+    public Balancer(Game game) {
+        this(game.onlinePlayersWithoutSpectators()
+                 .filter(e -> e.getValue() != null)
+                 .map(Map.Entry::getKey)
+                 .map(Player::getUniqueId)
+                 .collect(Collectors.toSet()),
+                TeamMarker.getTeams(game).clone()
+        );
+    }
 
-        //parties first
-        int sameTeamPartyLimit = 2;
-        HashMap<Team, List<UUID>> partyMembers = new HashMap<>() {{
-            put(Team.BLUE, new ArrayList<>());
-            put(Team.RED, new ArrayList<>());
-        }};
-        game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
-            Player player = e.getKey();
-            Team team = e.getValue();
-            //check if player already is recorded
-            // TODO Test this logic if player are not online if this happens (we do not have player objects in this case)
-            if (partyMembers.values().stream().anyMatch(list -> list.contains(player.getUniqueId()))) {
+    public Balancer(Set<UUID> players, EnumSet<Team> teams) {
+        this.players = players;
+        this.teams = teams;
+        for (Team team : this.teams) {
+            bestTeam.put(team, new TeamInfo());
+        }
+    }
+
+    private void preassignParties() {
+        Map<Party, List<DatabasePlayer>> partiedPlayers = new HashMap<>();
+        forEachPlayer(player -> {
+            // check if player already is recorded
+            if (bestTeam.values().stream().anyMatch(list -> list.getPlayersSpecs().containsKey(player.getUuid()))) {
                 return;
             }
-            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUuid());
             if (partyPlayerPair == null) {
                 return;
             }
@@ -51,28 +64,163 @@ public class Balancer {
             List<UUID> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline()
                                                  .stream()
                                                  .map(Player::getUniqueId)
-                                                 .filter(uniqueId -> game.onlinePlayers().anyMatch(e2 -> Objects.equals(e2.getKey().getUniqueId(), uniqueId)))
+                                                 .filter(players::contains)
                                                  .toList();
-            //check if party has more than limit to get on one team, if so then skip party, they get normally balanced
-            if (partyPlayersInGame.size() > sameTeamPartyLimit) {
+            // check if party has more than limit to get on one team, if so then skip party, they get normally balanced
+            if (partyPlayersInGame.size() > SAME_TEAM_PARTY_LIMIT) {
                 return;
             }
-            List<UUID> bluePlayers = partyMembers.get(Team.BLUE);
-            List<UUID> redPlayers = partyMembers.get(Team.RED);
-            List<UUID> partyPlayers = new ArrayList<>(partyPlayersInGame);
-            Collections.shuffle(partyPlayers);
-            int teamSizeDiff = Math.abs(bluePlayers.size() - redPlayers.size());
-            //check if whole party can go on the same team to get an even amount of internalPlayers on each team
-            if (teamSizeDiff > partyPlayers.size()) {
-                if (bluePlayers.size() > redPlayers.size()) {
-                    bluePlayers.addAll(partyPlayers);
-                } else {
-                    redPlayers.addAll(partyPlayers);
-                }
-            } else {
-                bluePlayers.addAll(partyPlayers);
-            }
+            UUID leaderUUID = party.getPartyLeader().getUUID();
+            partiedPlayers.computeIfAbsent(party, v -> new ArrayList<>()).add(player);
         });
+        partiedPlayers.forEach((party, databasePlayers) -> {
+            // add to team with lower amount of preassigned players
+            Team teamWithLowerAmountOfPlayers = getTeamWithLeastPlayers(bestTeam);
+            databasePlayers.forEach(databasePlayer -> addPlayerToTeam(databasePlayer, teamWithLowerAmountOfPlayers));
+        });
+    }
+
+    private void forEachPlayer(Consumer<DatabasePlayer> biConsumer) {
+        players.forEach(uuid -> DatabaseManager.getPlayer(uuid, biConsumer));
+    }
+
+    private Team getTeamWithLeastPlayers(Map<Team, TeamInfo> teamListMap) {
+        return getTeam(teamListMap, Comparator.comparingInt(o -> o.getPlayersSpecs().size()));
+    }
+
+    private void addPlayerToTeam(DatabasePlayer databasePlayer, Team team) {
+        bestTeam.computeIfAbsent(team, v -> new TeamInfo()).getPlayersSpecs().put(databasePlayer.getUuid(), databasePlayer.getLastSpec());
+    }
+
+    @Nullable
+    private Team getTeam(Map<Team, TeamInfo> teamListMap, Comparator<TeamInfo> comparator) {
+        // use comparator to get team with least whatever
+        AtomicReference<Team> team = new AtomicReference<>(null);
+        teamListMap.entrySet().stream().min(Map.Entry.comparingByValue(comparator)).ifPresent(e -> team.set(e.getKey()));
+        return team.get();
+    }
+
+    public void balance(boolean useSR) {
+        // useSR ignored for now
+        preassignParties();
+        // balance based on spec type only then swap stacking specs maybe
+        for (SpecType value : SpecType.VALUES) {
+            balanceSpecType(value);
+        }
+    }
+
+    private void balanceSpecType(SpecType matchingSpecType) {
+        Set<UUID> playersToRemove = new HashSet<>();
+        forEachPlayer(databasePlayer -> {
+            Specializations spec = databasePlayer.getLastSpec();
+            SpecType specType = spec.specType;
+            if (specType != matchingSpecType) {
+                return;
+            }
+            Team teamWithLeastPlayers = getTeamWithLeastSpec(bestTeam, spec);
+            addPlayerToTeam(databasePlayer.getUuid(), spec, teamWithLeastPlayers);
+            playersToRemove.add(databasePlayer.getUuid());
+        });
+        players.removeAll(playersToRemove);
+    }
+
+    private Team getTeamWithLeastSpec(Map<Team, TeamInfo> teamListMap, Specializations spec) {
+        // compare spec type
+        // then compare spec so that stacking specs are swapped
+        // then compare size so that teams with less players are prioritized
+        SpecType specType = spec.specType;
+        return getTeam(teamListMap, ((Comparator<TeamInfo>) (o1, o2) -> Integer.compare(
+                        Math.toIntExact(o1.getPlayersSpecs()
+                                          .values()
+                                          .stream()
+                                          .filter(specializations -> specializations.specType == specType)
+                                          .count()),
+                        Math.toIntExact(o2.getPlayersSpecs()
+                                          .values()
+                                          .stream()
+                                          .filter(specializations -> specializations.specType == specType)
+                                          .count())
+                ))
+                        .thenComparing(o -> o.getPlayersSpecs().values().stream().filter(specializations -> specializations == spec).count())
+                        .thenComparing(o -> o.getPlayersSpecs().size())
+        );
+    }
+
+    private void addPlayerToTeam(UUID uuid, Specializations spec, Team team) {
+        bestTeam.computeIfAbsent(team, v -> new TeamInfo()).getPlayersSpecs().put(uuid, spec);
+    }
+
+    public void printDebugInfo() {
+        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("----- BALANCE INFORMATION -----", NamedTextColor.DARK_AQUA));
+//        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Max SR Diff: " + maxSRDiff, NamedTextColor.GREEN));
+//        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("SR Diff: " + bestTeamSRDifference, NamedTextColor.GREEN));
+        for (Team team : teams) {
+            TeamInfo teamInfo = bestTeam.get(team);
+            if (teamInfo == null) {
+                continue;
+            }
+            int players = teamInfo.getPlayersSpecs().size();
+            int sr = 0;//teamInfo.getPlayersSpecs().values().stream().mapToInt(value -> value.sr).sum();
+            ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(team.name + " Players: ", team.teamColor())
+                                                                         .append(Component.text(players, NamedTextColor.GOLD))
+                                                                         .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                                         .append(Component.text("SR: "))
+                                                                         .append(Component.text(sr, NamedTextColor.GOLD)));
+        }
+        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.empty());
+//        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Fail Safe: ", NamedTextColor.GREEN)
+//                                                                     .append(Component.text(failSafeActive, NamedTextColor.GOLD)));
+//        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Second Fail Safe: ", NamedTextColor.GREEN)
+//                                                                     .append(Component.text(secondFailSafeActive, NamedTextColor.GOLD)));
+        bestTeam.keySet()
+                .stream()
+                .sorted(Comparator.comparing(Enum::ordinal))
+                .forEachOrdered(team -> {
+                    TeamInfo teamInfo = bestTeam.get(team);
+                    Map<UUID, Specializations> playersSpecs = teamInfo.getPlayersSpecs();
+                    playersSpecs.keySet()
+                                .stream()
+                                .sorted(Comparator.comparingInt(o -> playersSpecs.get(o).specType.ordinal()))
+                                .forEachOrdered(uuid -> {
+                                    Specializations specializations = playersSpecs.get(uuid);
+                                    Player player = Bukkit.getPlayer(uuid);
+                                    String name = uuid.toString();
+                                    if (player != null) {
+                                        name = player.getName();
+                                    }
+                                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(name, team.teamColor)
+                                                                                                 .append(Component.text(" - ", NamedTextColor.GRAY))
+                                                                                                 .append(Component.text(specializations.name,
+                                                                                                         specializations.specType.getTextColor()
+                                                                                                 )));
+                                });
+                });
+        ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("-------------------------------", NamedTextColor.DARK_AQUA));
+    }
+
+    public Map<Team, TeamInfo> getBestTeam() {
+        return bestTeam;
+    }
+
+    public static class TeamInfo {
+        private final Map<UUID, Specializations> playersSpecs = new HashMap<>();
+
+        public Map<UUID, Specializations> getPlayersSpecs() {
+            return playersSpecs;
+        }
+    }
+
+
+    /*
+    // TODO update balancing system to read a games Team Markers,
+    // this is needed for when we support more teams in the future
+    public void balance() {
+        //separating internalPlayers into even teams because it might be uneven bc internalPlayers couldve left
+
+        //balancing based on specs
+
+        //parties first
+
 
         HashMap<UUID, Integer> playersSR = new HashMap<>();
         SRCalculator.PLAYERS_SR.forEach((key, value1) -> playersSR.put(key.getUuid(), value1 == null ? 500 : value1));
@@ -331,5 +479,7 @@ public class Balancer {
                 });
         ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("-------------------------------", NamedTextColor.DARK_AQUA));
     }
+
+     */
 
 }
