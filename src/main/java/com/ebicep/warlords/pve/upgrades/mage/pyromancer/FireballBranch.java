@@ -53,7 +53,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 "Fiery Fusillade",
                 "Fireball - Master Upgrade",
                 """
-                        Direct-hits apply the BURN status for 5 seconds.
+                        Direct-hits apply the BURN status for 5s.
 
                         BURN: Enemies take 20% more damage from all sources and burn for 0.5% of their max health every second.""",
                 50000,
