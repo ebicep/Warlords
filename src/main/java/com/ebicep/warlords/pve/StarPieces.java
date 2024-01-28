@@ -3,10 +3,12 @@ package com.ebicep.warlords.pve;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.pve.weapons.events.StarPieceSynthesizedEvent;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -97,6 +99,8 @@ public enum StarPieces {
                                         starPiece.synthesisCosts.forEach(pveStats::subtractCurrency);
                                         pveStats.addCurrency(starPiece.currency, 1);
                                         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+                                        Bukkit.getPluginManager().callEvent(new StarPieceSynthesizedEvent(player.getUniqueId(), starPiece));
 
                                         player.sendMessage(Component.textOfChildren(
                                                 Component.text("Synthesized ", NamedTextColor.GREEN),

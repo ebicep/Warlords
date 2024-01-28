@@ -59,7 +59,7 @@ public class AccumulatingKnowledge implements FieldEffect {
                         return;
                     }
                     multiplier.set(newMultiplier);
-                    player.getHealth().addMultiplicativeModifierAdd(getName() + " (Base)", multiplier.get() / 100f);
+                    player.getHealth().addMultiplicativeModifierAdd(getName() + " (Base)", Math.min(multiplier.get(), 25) / 100f);
                 }
         ) {
 

@@ -150,7 +150,8 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                                 critMultiplier
                         );
 
-                        if (pveMasterUpgrade2 && !nearEntity.equals(wp)) {
+                        if (pveMasterUpgrade2) {
+                            nearEntity.getCooldownManager().removeDebuffCooldowns();
                             nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Debuff Immunity",
                                     "ELIXIR",

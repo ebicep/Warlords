@@ -8,11 +8,14 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
     float minDamage;
     float maxDamage;
 
+    @Override
+    public void runOnce() {
+        ability.multiplyMinMax(1.3f);
+    }
+
     public SoulfireBeamBranch(AbilityTree abilityTree, SoulfireBeam ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.multiplyMinMax(1.3f);
-        }
+
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 

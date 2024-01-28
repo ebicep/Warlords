@@ -19,6 +19,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMo
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerWaveDefenseStats;
+import com.ebicep.warlords.events.player.AddCurrencyEvent;
 import com.ebicep.warlords.events.player.WeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
@@ -276,11 +277,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         if (!currencies.containsKey(currency)) {
             currencies.put(currency, 0L);
         }
-        if (currency == Currencies.MYSTERIOUS_TOKEN) {
-            this.currencies.put(currency, Math.min(100, this.currencies.get(currency) + amount));
-        } else {
-            this.currencies.put(currency, this.currencies.get(currency) + amount);
-        }
+        this.currencies.put(currency, this.currencies.get(currency) + amount);
+
+        Bukkit.getServer().getPluginManager().callEvent(new AddCurrencyEvent(this, currency, amount));
+
         CustomScoreboard.reloadPvEScoreboard(this);
 
         if (amount >= 0) {

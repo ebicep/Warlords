@@ -57,7 +57,10 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 }},
                 new GroundSlamBerserker(8, 8),
                 new PrismGuard(18, 18),
-                new LastStand(25, 25)
+                new Inferno() {{
+                    this.cooldown.setBaseValue(25);
+                    this.currentCooldown = 25;
+                }}
         );
     }
 
@@ -98,7 +101,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 if (event.getWarlordsEntity() instanceof WarlordsNPC wNPC && wNPC.getMob() instanceof EventGrimoire) {
                     grimoireDeathCounter++;
                     if (grimoireDeathCounter % 4 == 0) {
-                        warlordsNPC.getSpec().setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 5);
+                        warlordsNPC.getSpec().setDamageResistance(Math.min(50, warlordsNPC.getSpec().getDamageResistance() + 5));
                     }
                 }
             }

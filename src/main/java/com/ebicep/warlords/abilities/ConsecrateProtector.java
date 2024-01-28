@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
+import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -20,8 +21,9 @@ import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class ConsecrateProtector extends AbstractConsecrate {
+public class ConsecrateProtector extends AbstractConsecrate implements CanReduceCooldowns {
 
     public ConsecrateProtector() {
         super(96, 130, 10, 15, 200, 15, 4);
@@ -61,6 +63,7 @@ public class ConsecrateProtector extends AbstractConsecrate {
                 new DoubleLineEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(170, 225, 175), 1))
         );
 
+        AtomicInteger timesReduced = new AtomicInteger();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 null,
@@ -91,15 +94,10 @@ public class ConsecrateProtector extends AbstractConsecrate {
                                                 critChance,
                                                 critMultiplier
                                         ).ifPresent(finalEvent -> {
-                                            float healing = finalEvent.getValue() * 0.15f;
-                                            wp.addHealingInstance(
-                                                    wp,
-                                                    "Sanctifying Ring",
-                                                    healing,
-                                                    healing,
-                                                    0,
-                                                    100
-                                            );
+                                            if (timesReduced.get() < 15) {
+                                                timesReduced.getAndIncrement();
+                                                wp.getAbilitiesMatching(HolyRadianceProtector.class).forEach(holy -> holy.subtractCurrentCooldown(.2f));
+                                            }
                                         });
                                     });
                     }
@@ -141,5 +139,10 @@ public class ConsecrateProtector extends AbstractConsecrate {
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ConsecrateBranchProtector(abilityTree, this);
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
     }
 }

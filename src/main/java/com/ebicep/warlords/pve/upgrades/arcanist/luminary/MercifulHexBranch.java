@@ -14,17 +14,20 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
     float minDamage;
     float maxDamage;
 
+    @Override
+    public void runOnce() {
+        ability.multiplyMinMax(1.15f);
+        ability.setMinSelfHeal(ability.getMinSelfHeal() * 1.15f);
+        ability.setMaxSelfHeal(ability.getMaxSelfHeal() * 1.15f);
+        ability.setDotMinHeal(ability.getDotMinHeal() * 1.15f);
+        ability.setDotMaxHeal(ability.getDotMaxHeal() * 1.15f);
+        ability.setMinDamage(ability.getMinDamage() * 1.15f);
+        ability.setMaxDamage(ability.getMaxDamage() * 1.15f);
+    }
+
     public MercifulHexBranch(AbilityTree abilityTree, MercifulHex ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.multiplyMinMax(1.15f);
-            ability.setMinSelfHeal(ability.getMinSelfHeal() * 1.15f);
-            ability.setMaxSelfHeal(ability.getMaxSelfHeal() * 1.15f);
-            ability.setDotMinHeal(ability.getDotMinHeal() * 1.15f);
-            ability.setDotMaxHeal(ability.getDotMaxHeal() * 1.15f);
-            ability.setMinDamage(ability.getMinDamage() * 1.15f);
-            ability.setMaxDamage(ability.getMaxDamage() * 1.15f);
-        }
+
         minDamageHeal = ability.getMinDamageHeal();
         maxDamageHeal = ability.getMaxDamageHeal();
         minSelfHeal = ability.getMinSelfHeal();

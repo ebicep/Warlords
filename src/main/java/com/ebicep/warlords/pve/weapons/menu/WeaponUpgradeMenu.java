@@ -5,10 +5,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
+import com.ebicep.warlords.pve.weapons.events.WeaponUpgradeEvent;
 import com.ebicep.warlords.pve.weapons.weaponaddons.Upgradeable;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -61,6 +63,8 @@ public class WeaponUpgradeMenu {
             }
             weapon.upgrade();
             DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+
+            Bukkit.getPluginManager().callEvent(new WeaponUpgradeEvent(player.getUniqueId(), weapon));
 
             player.sendMessage(Component.text("Upgraded Weapon: ", NamedTextColor.GRAY)
                                         .append(weapon.getHoverComponent(false))

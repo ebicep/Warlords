@@ -11,7 +11,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FlameburstBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
-import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -162,7 +161,7 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
             float blocksTravelled = (float) projectile.getBlocksTravelled();
             if (pveMasterUpgrade2) {
                 blocksTravelled = Math.min(30, blocksTravelled);
-                damageBoost = MathUtils.clamp(nearEntity.getMaxBaseHealth() * .01f, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MAXIMUM_DAMAGE);
+                damageBoost = DamageCheck.clamp(nearEntity.getMaxBaseHealth() * .01f);
             }
             nearEntity.addDamageInstance(
                     shooter,

@@ -17,7 +17,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.DrainingMiasmaBranch;
-import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -51,7 +50,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
-                               .append(Component.text("50%", NamedTextColor.RED))
+                               .append(Component.text("50", NamedTextColor.RED))
                                .append(Component.text(" + "))
                                .append(Component.text(maxHealthDamage + "%", NamedTextColor.RED))
                                .append(Component.text(" of their max health as damage per second, for "))
@@ -115,66 +114,65 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             playersHit++;
             if (miasmaTarget.isEnemy(wp)) {
                 Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -25, 3 * 20, "BASE");
-                if (!pveMasterUpgrade2) {
-                    miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasma.class, false);
-                    miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            name,
-                            "MIAS",
-                            DrainingMiasma.class,
-                            tempDrainingMiasma,
-                            wp,
-                            CooldownTypes.ABILITY,
-                            cooldownManager -> {
-                            },
-                            cooldownManager -> {
-                                cancelSlowness.run();
-                                if (tempDrainingMiasma.numberOfLeechProcd >= 150) {
-                                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIFELEECHER);
-                                }
-                            },
-                            tickDuration,
-                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                if (ticksElapsed % 20 == 0) {
-                                    Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.BLOCK_SNOW_BREAK, 2, 0.4f);
+                miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasma.class, false);
+                miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        name,
+                        "MIAS",
+                        DrainingMiasma.class,
+                        tempDrainingMiasma,
+                        wp,
+                        CooldownTypes.ABILITY,
+                        cooldownManager -> {
+                        },
+                        cooldownManager -> {
+                            cancelSlowness.run();
+                            if (tempDrainingMiasma.numberOfLeechProcd >= 150) {
+                                ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIFELEECHER);
+                            }
+                        },
+                        tickDuration,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 20 != 0) {
+                                return;
+                            }
+                            Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.BLOCK_SNOW_BREAK, 2, 0.4f);
 
-                                    for (int i = 0; i < 3; i++) {
-                                        EffectUtils.displayParticle(
-                                                Particle.REDSTONE,
-                                                miasmaTarget.getLocation().clone().add(
-                                                        (Math.random() * 2) - 1,
-                                                        1.2 + (Math.random() * 2) - 1,
-                                                        (Math.random() * 2) - 1
-                                                ),
-                                                1,
-                                                0,
-                                                0,
-                                                0,
-                                                0,
-                                                new Particle.DustOptions(Color.fromRGB(30, 200, 30), 1)
-                                        );
+                            for (int i = 0; i < 3; i++) {
+                                EffectUtils.displayParticle(
+                                        Particle.REDSTONE,
+                                        miasmaTarget.getLocation().clone().add(
+                                                (Math.random() * 2) - 1,
+                                                1.2 + (Math.random() * 2) - 1,
+                                                (Math.random() * 2) - 1
+                                        ),
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        new Particle.DustOptions(Color.fromRGB(30, 200, 30), 1)
+                                );
 
-                                    }
+                            }
 
-                                    float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
-                                    healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
-                                    // 4% current health damage.
-                                    miasmaTarget.addDamageInstance(
-                                            wp,
-                                            name,
-                                            minDamageHeal + healthDamage,
-                                            maxDamageHeal + healthDamage,
-                                            0,
-                                            100
-                                    );
-                                }
-                            })
-                    ) {
-                        @Override
-                        public TextColor customActionBarColor() {
-                            return NamedTextColor.RED;
-                        }
-                    });
-                }
+                            float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
+                            healthDamage = DamageCheck.clamp(healthDamage);
+                            miasmaTarget.addDamageInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal + healthDamage,
+                                    maxDamageHeal + healthDamage,
+                                    0,
+                                    100,
+                                    EnumSet.of(InstanceFlags.DOT)
+                            );
+                        })
+                ) {
+                    @Override
+                    public TextColor customActionBarColor() {
+                        return NamedTextColor.RED;
+                    }
+                });
 
                 if (pveMasterUpgrade) {
                     miasmaTarget.getCooldownManager().addCooldown(new PermanentCooldown<>(
@@ -191,7 +189,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                         .aliveEnemiesOf(wp)
                                 ) {
                                     float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
-                                    healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
+                                    healthDamage = DamageCheck.clamp(healthDamage);
                                     target.addDamageInstance(
                                             wp,
                                             name,
@@ -224,7 +222,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             } else {
                 if (pveMasterUpgrade2) {
                     miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            "Toxic Immunity",
+                            "Debuff Immunity",
                             "MIAS",
                             DrainingMiasma.class,
                             tempDrainingMiasma,

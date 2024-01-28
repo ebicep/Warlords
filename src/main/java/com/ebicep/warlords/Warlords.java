@@ -12,6 +12,7 @@ import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.LobbyGameOption;
@@ -334,6 +335,7 @@ public class Warlords extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
+        getServer().getPluginManager().registerEvents(new GeneralEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
         getServer().getPluginManager().registerEvents(new BotListener(), this);
@@ -484,7 +486,7 @@ public class Warlords extends JavaPlugin {
                     }
 
                     // for removing falling blocks that didnt get removed prior
-                    WarlordsEvents.FALLING_BLOCK_ENTITIES.removeIf(e -> !e.isValid());
+                    GeneralEvents.FALLING_BLOCK_ENTITIES.removeIf(e -> !e.isValid());
                 }
                 // Loops every 50 ticks - 2.5 seconds.
                 if (LOOP_TICK_COUNTER.get() % 50 == 0) {

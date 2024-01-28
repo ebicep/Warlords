@@ -8,14 +8,17 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
     float minDamage;
     float maxDamage;
 
+    @Override
+    public void runOnce() {
+        ability.multiplyMinMax(1.3f);
+        ability.setMaxEnemiesHit(2);
+        ability.setMaxAlliesHit(3);
+        ability.setDamageReduction(7);
+    }
+
     public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.multiplyMinMax(1.3f);
-            ability.setMaxEnemiesHit(2);
-            ability.setMaxAlliesHit(3);
-            ability.setDamageReduction(7);
-        }
+
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
 

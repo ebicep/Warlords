@@ -9,9 +9,11 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.InterveneBranch;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -20,6 +22,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     private int damageReduction = 50;
     private int radius = 10;
     private int breakRadius = 15;
+    private int maxTargets = 1;
     private WarlordsEntity caster;
     private WarlordsEntity target;
 
@@ -56,19 +60,37 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Protect the target ally, reducing the damage they take by ")
-                               .append(Component.text("100%", NamedTextColor.YELLOW))
-                               .append(Component.text(" and redirecting "))
-                               .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of the damage they would have taken back to you. You can protect the target for a maximum of "))
-                               .append(Component.text(format(maxDamagePrevented), NamedTextColor.RED))
-                               .append(Component.text(" damage. You must remain within "))
-                               .append(Component.text(breakRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks of each other. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nHas an initial cast range of "))
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        if (inPve) {
+            description = ComponentBuilder
+                    .create("Protect up to 2 target allies, reducing the damage they take by ")
+                    .text("100%", NamedTextColor.YELLOW)
+                    .text(" and redirecting ")
+                    .text(damageReduction + "%", NamedTextColor.YELLOW)
+                    .text(" of the damage they would have taken back to you. You can protect the target for a maximum of ")
+                    .text(format(maxDamagePrevented), NamedTextColor.RED)
+                    .text(" damage. You must remain within ")
+                    .text(breakRadius, NamedTextColor.YELLOW)
+                    .text(" blocks of each other. For every 100 damage prevented, increase your damage by 1%. Lasts ")
+                    .text(format(tickDuration / 20f), NamedTextColor.GOLD)
+                    .text(" seconds.\n\nHas an initial cast range of ")
+                    .text(radius, NamedTextColor.YELLOW)
+                    .text(" blocks.")
+                    .build();
+        } else {
+            description = Component.text("Protect the target ally, reducing the damage they take by ")
+                                   .append(Component.text("100%", NamedTextColor.YELLOW))
+                                   .append(Component.text(" and redirecting "))
+                                   .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text(" of the damage they would have taken back to you. You can protect the target for a maximum of "))
+                                   .append(Component.text(format(maxDamagePrevented), NamedTextColor.RED))
+                                   .append(Component.text(" damage. You must remain within "))
+                                   .append(Component.text(breakRadius, NamedTextColor.YELLOW))
+                                   .append(Component.text(" blocks of each other. Lasts "))
+                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds.\n\nHas an initial cast range of "))
+                                   .append(Component.text(radius, NamedTextColor.YELLOW))
+                                   .append(Component.text(" blocks."));
+        }
 
     }
 
@@ -84,14 +106,15 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        setDamagePrevented(0);
+
+        List<Intervene> venes = new ArrayList<>();
 
         for (WarlordsEntity veneTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSightIntervene(wp)
                 .lookingAtFirst(wp)
-                .limit(1)
+                .limit(maxTargets)
         ) {
             playersIntervened++;
             if (veneTarget.hasFlag()) {
@@ -104,7 +127,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
             // New cooldown, both players have the same instance of intervene.
             Intervene tempIntervene = new Intervene(maxDamagePrevented, wp, veneTarget, damageReduction);
-
+            venes.add(tempIntervene);
             // Removing all other intervenes
             wp.getCooldownManager().getCooldowns().removeIf(cd ->
                     cd.getCooldownClass() == Intervene.class &&
@@ -142,8 +165,8 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             Runnable wpInterference;
             Runnable veneTargetInterference;
             if (pveMasterUpgrade2) {
-                wpInterference = wp.addSpeedModifier(wp, "Interference", 20, tickDuration);
-                veneTargetInterference = veneTarget.addSpeedModifier(wp, "Interference", 20, tickDuration);
+                wpInterference = wp.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration, "VENE"); //TODO test toDisable logic
+                veneTargetInterference = veneTarget.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration, "VENE");
             } else {
                 wpInterference = null;
                 veneTargetInterference = null;
@@ -199,11 +222,8 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     veneTarget
             ) {
                 @Override
-                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (pveMasterUpgrade2) {
-                        return currentDamageValue * 1.1f;
-                    }
-                    return currentDamageValue;
+                public void multiplyKB(Vector currentVector) {
+                    currentVector.zero();
                 }
             };
 
@@ -212,10 +232,28 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
             Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, veneTarget));
 
-            return true;
         }
 
-        return false;
+        if (inPve) {
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name + " Damage",
+                    null,
+                    Intervene.class,
+                    new Intervene(),
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {
+                    },
+                    tickDuration
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return (float) (currentDamageValue * (1 + venes.stream().mapToDouble(Intervene::getDamagePrevented).sum() / 100 * .01));
+                }
+            });
+        }
+
+        return !venes.isEmpty();
     }
 
     @Override
@@ -225,10 +263,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
     public float getDamagePrevented() {
         return damagePrevented;
-    }
-
-    public void setDamagePrevented(float damagePrevented) {
-        this.damagePrevented = damagePrevented;
     }
 
     public void addDamagePrevented(float amount) {
@@ -283,5 +317,13 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public int getMaxTargets() {
+        return maxTargets;
+    }
+
+    public void setMaxTargets(int maxTargets) {
+        this.maxTargets = maxTargets;
     }
 }

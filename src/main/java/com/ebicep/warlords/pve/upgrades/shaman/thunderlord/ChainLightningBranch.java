@@ -56,10 +56,13 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
         masterUpgrade = new Upgrade(
                 "Electrifying Chains",
                 "Chain Lightning - Master Upgrade",
-                "Increase max damage reduction cap by 10%. Additionally, Chain Lightning now deals 10% more damage per bounce instead of less.",
+                """
+                        2x Chain Bounces
+                                                
+                        Chain Lightning now deals 10% more damage per bounce instead of less.""",
                 50000,
                 () -> {
-                    ability.setMaxDamageReduction(ability.getMaxDamageReduction() + 10);
+                    ability.setAdditionalBounces(ability.getAdditionalBounces() * 2);
                 }
         );
         masterUpgrade2 = new Upgrade(

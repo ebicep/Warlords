@@ -316,7 +316,7 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @org.jetbrains.annotations.Nullable
     @Override
-    public ItemStack getMainHand() {
+    public ItemStack getWeaponItem() {
         return npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.HAND);
     }
 

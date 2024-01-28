@@ -25,18 +25,20 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                 "Beacon of Gloom",
                 "Sanctified Beacon - Master Upgrade",
                 """
-                        Enemies within the radius have their movement speed reduced by 30%. Additionally, the beacon will grant Merciful Hex stacks twice as fast.
+                        Sanctified Beacon's radius is doubled. Enemies within the radius have their movement speed reduced by 20%. Additionally, the beacon will grant Merciful Hex stacks twice as fast.
                         """,
                 50000,
                 () -> {
+                    ability.getHitBoxRadius().addMultiplicativeModifierMult("Master Upgrade Branch", 2);
                     ability.setHexIntervalTicks((int) (ability.getHexIntervalTicks() * 0.5f));
+                    ability.setMaxBeaconsAtATime(2);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Shadow Garden",
                 "Sanctified Beacon - Master Upgrade",
                 """
-                        Sanctified Beacon's radius is doubled. Additionally, allies will have their crit multiplier increased by 15%.
+                        Sanctified Beacon's radius is doubled. Additionally, allies will have their crit multiplier increased by 25% and knockback resistance by 15%.
                         """,
                 50000,
                 () -> {

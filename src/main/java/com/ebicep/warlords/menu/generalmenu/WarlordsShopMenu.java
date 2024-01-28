@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.*;
@@ -145,8 +146,8 @@ public class WarlordsShopMenu {
     }
 
 
-    public static void openSkillBoostMenu(Player player, Specializations selectedSpec) {
-        SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass();
+    public static void openSkillBoostMenu(Player player, Specializations selectedSpec, Consumer<Menu> menuSupplier) {
+        SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSkillBoostForSpec(selectedSpec);
         Menu menu = new Menu("Skill Boost", 9 * 6);
         List<SkillBoosts> values = selectedSpec.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
@@ -172,8 +173,8 @@ public class WarlordsShopMenu {
                         player.sendMessage(Component.text("You have changed your weapon boost to: ", NamedTextColor.GREEN)
                                                     .append(Component.text(skillBoost.name, NamedTextColor.AQUA)));
 
-                        PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSelectedSpec(skillBoost);
-                        openSkillBoostMenu(player, selectedSpec);
+                        PlayerSettings.getPlayerSettings(player.getUniqueId()).setSkillBoostForSpec(selectedSpec, skillBoost);
+                        openSkillBoostMenu(player, selectedSpec, menuSupplier);
 
                         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> databasePlayer.getSpec(selectedSpec).setSkillBoost(skillBoost));
                     }
@@ -189,7 +190,7 @@ public class WarlordsShopMenu {
         for (int i = 0; i < abilities.size(); i++) {
             AbstractAbility ability = abilities.get(i);
             AbstractAbility ability2 = abilities2.get(i);
-            if (ability.getClass() != selectedBoost.ability) {
+            if (!selectedBoost.ability.isAssignableFrom(ability.getClass())) {
                 continue;
             }
             ItemStack icon;
@@ -213,9 +214,12 @@ public class WarlordsShopMenu {
             );
             break;
         }
-
-        menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
+        menuSupplier.accept(menu);
         menu.openForPlayer(player);
+    }
+
+    public static void openSkillBoostMenu(Player player, Specializations selectedSpec) {
+        openSkillBoostMenu(player, selectedSpec, menu -> menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player)));
     }
 
 

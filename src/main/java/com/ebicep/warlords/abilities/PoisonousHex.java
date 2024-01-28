@@ -276,7 +276,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                                 dotMaxDamage,
                                 0,
                                 100,
-                                EnumSet.of(InstanceFlags.NO_DISMOUNT)
+                                EnumSet.of(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT)
                         );
                     }
                 })

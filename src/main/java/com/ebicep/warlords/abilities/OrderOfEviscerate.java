@@ -224,7 +224,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                             CooldownTypes.BUFF,
                                             cooldownManager -> {
                                             },
-                                            5 * 20
+                                            8 * 20
                                     ) {
                                         @Override
                                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {

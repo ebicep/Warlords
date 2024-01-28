@@ -8,12 +8,14 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier> {
 
+
+    @Override
+    public void runOnce() {
+        ability.setRuneTimerIncrease(0.5f);
+    }
+
     public MysticalBarrierBranch(AbilityTree abilityTree, MysticalBarrier ability) {
         super(abilityTree, ability);
-
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setRuneTimerIncrease(0.5f);
-        }
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)

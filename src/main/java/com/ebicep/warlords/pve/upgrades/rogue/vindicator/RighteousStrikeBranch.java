@@ -8,15 +8,16 @@ public class RighteousStrikeBranch extends AbstractUpgradeBranch<RighteousStrike
     float minDamage;
     float maxDamage;
 
+    @Override
+    public void runOnce() {
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+    }
+
     public RighteousStrikeBranch(AbilityTree abilityTree, RighteousStrike ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.35f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.35f);
-        }
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {

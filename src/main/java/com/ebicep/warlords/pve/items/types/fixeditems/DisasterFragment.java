@@ -15,7 +15,6 @@ import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
-import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -124,7 +123,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksLeft % 20 == 0) {
                                         float healthDamage = victim.getMaxHealth() * 0.005f;
-                                        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
+                                        healthDamage = DamageCheck.clamp(healthDamage);
                                         victim.addDamageInstance(
                                                 attacker,
                                                 "Burn",
@@ -157,7 +156,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksLeft % 20 == 0) {
                                         float healthDamage = victim.getMaxHealth() * 0.005f;
-                                        healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
+                                        healthDamage = DamageCheck.clamp(healthDamage);
                                         victim.addDamageInstance(
                                                 attacker,
                                                 "Bleed",

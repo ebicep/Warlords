@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.customentities.nms.CustomFallingBlock;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
-import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
@@ -121,7 +121,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                             FallingBlock fallingBlock = Utils.addFallingBlock(location.clone());
                             customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, AbstractGroundSlam.this));
-                            WarlordsEvents.addEntityUUID(fallingBlock);
+                            GeneralEvents.addEntityUUID(fallingBlock);
                         }
                         // Damage
                         for (WarlordsEntity slamTarget : PlayerFilter

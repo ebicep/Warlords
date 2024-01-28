@@ -55,7 +55,7 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
     public boolean onActivate(@Nonnull WarlordsEntity shooter) {
         List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
         for (Location locationsToFireShot : locationsToFireShots) {
-            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, .85, .5).clone();
+            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, -1, .5).clone();
             AbstractChain.spawnChain(shooter.getLocation(), location, getBeamItem());
         }
         return super.onActivate(shooter);

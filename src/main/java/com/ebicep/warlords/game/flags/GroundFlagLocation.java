@@ -5,8 +5,16 @@
  */
 package com.ebicep.warlords.game.flags;
 
+import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -66,6 +74,48 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
 
     public static GroundFlagLocation of(@Nonnull FlagLocation flag) {
         return flag instanceof PlayerFlagLocation ? new GroundFlagLocation((PlayerFlagLocation) flag)
-                : new GroundFlagLocation(flag.getLocation(), 0);
+                                                  : new GroundFlagLocation(flag.getLocation(), 0);
+    }
+
+    @Override
+    public void onFlagUpdateEventNew(WarlordsFlagUpdatedEvent event) {
+        Game game = event.getGame();
+        Team eventTeam = event.getTeam();
+        NamedTextColor teamColor = eventTeam.teamColor();
+        Component coloredPrefix = eventTeam.coloredPrefix();
+
+        if (event.getOld() instanceof PlayerFlagLocation pfl) {
+            pfl.getPlayer().updateArmor();
+            game.forEachOnlinePlayer((p, t) -> {
+                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
+                Component coloredName = pfl.getPlayer().getColoredName();
+                Component flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                                 .append(coloredName)
+                                                 .append(Component.text(" has dropped the "))
+                                                 .append(coloredPrefix)
+                                                 .append(Component.text(" flag!"));
+                if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                    if (t == eventTeam) {
+                        flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                               .append(coloredName)
+                                               .append(Component.text(" has dropped "))
+                                               .append(Component.text("YOUR", teamColor))
+                                               .append(Component.text(" flag!"));
+                    } else {
+                        flagMessage = Component.text("", NamedTextColor.YELLOW)
+                                               .append(coloredName)
+                                               .append(Component.text(" has dropped the "))
+                                               .append(Component.text("ENEMY", teamColor))
+                                               .append(Component.text(" flag!"));
+                    }
+                }
+                p.sendMessage(flagMessage);
+                p.showTitle(Title.title(
+                        Component.empty(),
+                        flagMessage,
+                        Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
+                ));
+            });
+        }
     }
 }

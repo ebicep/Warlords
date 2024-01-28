@@ -8,11 +8,14 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
     float minDamageHeal;
     float maxDamageHeal;
 
+    @Override
+    public void runOnce() {
+        ability.multiplyMinMax(1.3f);
+    }
+
     public RayOfLightBranch(AbilityTree abilityTree, RayOfLight ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.multiplyMinMax(1.3f);
-        }
+
         minDamageHeal = ability.getMinDamageHeal();
         maxDamageHeal = ability.getMaxDamageHeal();
 
@@ -37,11 +40,10 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
                 "Divine Light",
                 "Ray of Light - Master Upgrade",
                 """
-                        Ray of Light will grant allies with max stacks of Merciful Hex a 10% damage bonus for 5s. Additionally, increase bonus healing for max stack allies by 25%.
+                        Ray of Light will grant allies a 15% damage bonus, 50% if the ally has max stacks of Merciful Hex, for 5s.
                         """,
                 50000,
                 () -> {
-                    ability.setHealingIncrease(ability.getHealingIncrease() + 25);
                 }
         );
         masterUpgrade2 = new Upgrade(

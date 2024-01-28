@@ -10,15 +10,16 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
     float selfLeech = ability.getLeechSelfAmount();
     float allyLeech = ability.getLeechAllyAmount();
 
+    @Override
+    public void runOnce() {
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+    }
+
     public ImpalingStrikeBranch(AbilityTree abilityTree, ImpalingStrike ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-        }
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
@@ -45,7 +46,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                         ability.setLeechSelfAmount(selfLeech + value);
                         ability.setLeechAllyAmount(allyLeech + value);
                     }
-                }, 0.25f)
+                }, 1f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

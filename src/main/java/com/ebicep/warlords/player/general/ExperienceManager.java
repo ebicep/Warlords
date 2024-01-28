@@ -17,6 +17,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -45,7 +46,7 @@ public class ExperienceManager {
     public static final Map<Integer, Long> LEVEL_TO_EXPERIENCE;
     public static final Map<Long, Integer> EXPERIENCE_TO_LEVEL;
     public static final DecimalFormat EXPERIENCE_DECIMAL_FORMAT = new DecimalFormat("#,###.#");
-    public static final HashMap<UUID, LinkedHashMap<String, Long>> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
+    public static final HashMap<UUID, ExperienceSummary> CACHED_PLAYER_EXP_SUMMARY = new HashMap<>();
     public static final int LEVEL_TO_PRESTIGE = 100;
     private static final Map<String, int[]> awardOrder = new LinkedHashMap<>() {{
         put("wins", new int[]{1000, 750, 500});
@@ -135,13 +136,15 @@ public class ExperienceManager {
         });
     }
 
-    public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsEntity warlordsPlayer, boolean recalculate) {
+    public static ExperienceSummary getExpFromGameStats(WarlordsEntity warlordsPlayer, boolean recalculate) {
         if (!recalculate && CACHED_PLAYER_EXP_SUMMARY.containsKey(warlordsPlayer.getUuid()) && CACHED_PLAYER_EXP_SUMMARY.get(
                 warlordsPlayer.getUuid()) != null) {
             return CACHED_PLAYER_EXP_SUMMARY.get(warlordsPlayer.getUuid());
         }
 
-        LinkedHashMap<String, Long> expGain = new LinkedHashMap<>();
+        ExperienceSummary experienceSummary = new ExperienceSummary();
+
+        LinkedHashMap<String, Long> universalExpGain = new LinkedHashMap<>();
 
         Game game = warlordsPlayer.getGame();
         if (GameMode.isPvE(game.getGameMode())) {
@@ -176,10 +179,10 @@ public class ExperienceManager {
                     perBonus = new Pair<>("Minutes Elapsed", pveOption.getTicksElapsed() / 20 / 60 * experienceGainOption.getPlayerExpPer());
                 }
                 if (experienceGainOption.getPlayerExpPer() != 0 && perBonus != null) {
-                    expGain.put(perBonus.getA(), perBonus.getB());
+                    universalExpGain.put(perBonus.getA(), perBonus.getB());
                 }
                 if (experienceGainOption.getPlayerExpGameWinBonus() != 0 && winBonus != null) {
-                    expGain.put(winBonus.getA(), winBonus.getB());
+                    universalExpGain.put(winBonus.getA(), winBonus.getB());
                 }
                 if (experienceGainOption.getPlayerExpPerXSec() != null) {
                     game.getOptions()
@@ -190,13 +193,15 @@ public class ExperienceManager {
                         .ifPresent(recordTimeElapsedOption -> {
                             int secondsElapsed = recordTimeElapsedOption.getTicksElapsed() / 20;
                             Pair<Long, Integer> expPerXSec = experienceGainOption.getPlayerExpPerXSec();
-                            expGain.put("Seconds Survived",
+                            universalExpGain.put("Seconds Survived",
                                     (long) (secondsElapsed / expPerXSec.getB() * expPerXSec.getA() * difficulty.getRewardsMultiplier())
                             );
                         });
                 }
             }
-            Bukkit.getPluginManager().callEvent(new WarlordsGiveExperienceEvent(warlordsPlayer, expGain));
+            Bukkit.getPluginManager().callEvent(new WarlordsGiveExperienceEvent(warlordsPlayer, universalExpGain));
+
+            experienceSummary.getSpecExpGainSummary().put(warlordsPlayer.getSpecClass(), universalExpGain);
         } else {
             boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME);
             float multiplier = 1.5f;
@@ -209,53 +214,56 @@ public class ExperienceManager {
                 multiplier *= .1;
             }
 
-            boolean won = game.getPoints(warlordsPlayer.getTeam()) > game
-                    .getPoints(warlordsPlayer.getTeam().enemy());
+            boolean won = game.getPoints(warlordsPlayer.getTeam()) > game.getPoints(warlordsPlayer.getTeam().enemy());
             long winLossExp = won ? 500 : 250;
-            long kaExp = 5L * (warlordsPlayer.getMinuteStats().total().getKills() + warlordsPlayer.getMinuteStats()
-                                                                                                  .total()
-                                                                                                  .getAssists());
+            universalExpGain.put(won ? "Win" : "Loss", (long) (winLossExp * multiplier));
 
-            double damageMultiplier;
-            double healingMultiplier;
-            double absorbedMultiplier;
-            Specializations specializations = warlordsPlayer.getSpecClass();
-            if (specializations.specType == SpecType.DAMAGE) {
-                damageMultiplier = .80;
-                healingMultiplier = .10;
-                absorbedMultiplier = .10;
-            } else if (specializations.specType == SpecType.HEALER) {
-                damageMultiplier = .275;
-                healingMultiplier = .65;
-                absorbedMultiplier = .75;
-            } else { //tank
-                damageMultiplier = .575;
-                healingMultiplier = .1;
-                absorbedMultiplier = .325;
-            }
-            double calculatedDHP = warlordsPlayer.getMinuteStats()
-                                                 .total()
-                                                 .getDamage() * damageMultiplier + warlordsPlayer.getMinuteStats()
-                                                                                                 .total()
-                                                                                                 .getHealing() * healingMultiplier + warlordsPlayer.getMinuteStats()
-                                                                                                                                                   .total()
-                                                                                                                                                   .getAbsorbed() * absorbedMultiplier;
-            long dhpExp = (long) (calculatedDHP / 500L);
-            long flagCapExp = warlordsPlayer.getFlagsCaptured() * 150L;
-            long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;
+            for (Map.Entry<Specializations, PlayerStatisticsMinute> entry : warlordsPlayer.getSpecMinuteStats().entrySet()) {
+                Specializations specializations = entry.getKey();
+                PlayerStatisticsMinute entries = entry.getValue();
+                PlayerStatisticsMinute.Entry total = entries.total();
 
-            expGain.put(won ? "Win" : "Loss", (long) (winLossExp * multiplier));
-            if (kaExp != 0) {
-                expGain.put("Kills/Assists", (long) (kaExp * multiplier));
-            }
-            if (dhpExp != 0) {
-                expGain.put("DHP", (long) (dhpExp * multiplier));
-            }
-            if (flagCapExp != 0) {
-                expGain.put("Flags Captured", (long) (flagCapExp * multiplier));
-            }
-            if (flagRetExp != 0) {
-                expGain.put("Flags Returned", (long) (flagRetExp * multiplier));
+                LinkedHashMap<String, Long> specExpGain = new LinkedHashMap<>();
+
+                long kaExp = 5L * (total.getKills() + total.getAssists());
+
+                double damageMultiplier;
+                double healingMultiplier;
+                double absorbedMultiplier;
+                if (specializations.specType == SpecType.DAMAGE) {
+                    damageMultiplier = .80;
+                    healingMultiplier = .10;
+                    absorbedMultiplier = .10;
+                } else if (specializations.specType == SpecType.HEALER) {
+                    damageMultiplier = .275;
+                    healingMultiplier = .65;
+                    absorbedMultiplier = .75;
+                } else { //tank
+                    damageMultiplier = .575;
+                    healingMultiplier = .1;
+                    absorbedMultiplier = .325;
+                }
+                double calculatedDHP = total.getDamage() * damageMultiplier +
+                        total.getHealing() * healingMultiplier +
+                        total.getAbsorbed() * absorbedMultiplier;
+                long dhpExp = (long) (calculatedDHP / 500L);
+                long flagCapExp = total.getFlagsCaptured() * 150L;
+                long flagRetExp = total.getFlagsReturned() * 50L;
+
+                if (kaExp != 0) {
+                    specExpGain.put("Kills/Assists", (long) (kaExp * multiplier));
+                }
+                if (dhpExp != 0) {
+                    specExpGain.put("DHP", (long) (dhpExp * multiplier));
+                }
+                if (flagCapExp != 0) {
+                    specExpGain.put("Flags Captured", (long) (flagCapExp * multiplier));
+                }
+                if (flagRetExp != 0) {
+                    specExpGain.put("Flags Returned", (long) (flagRetExp * multiplier));
+                }
+
+                experienceSummary.getSpecExpGainSummary().put(specializations, specExpGain);
             }
 
             DatabaseManager.getPlayer(warlordsPlayer.getUuid(),
@@ -263,9 +271,9 @@ public class ExperienceManager {
                     databasePlayer -> {
                         int plays = isCompGame ? databasePlayer.getCompStats().getPlays() : databasePlayer.getPubStats().getPlays();
                         switch (plays) {
-                            case 0 -> expGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
-                            case 1 -> expGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
-                            case 2 -> expGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
+                            case 0 -> universalExpGain.put("First Game of the Day", 500L / (isCompGame ? 1 : 10));
+                            case 1 -> universalExpGain.put("Second Game of the Day", 250L / (isCompGame ? 1 : 10));
+                            case 2 -> universalExpGain.put("Third Game of the Day", 100L / (isCompGame ? 1 : 10));
                         }
                     },
                     () -> {
@@ -274,9 +282,10 @@ public class ExperienceManager {
             );
         }
 
+        experienceSummary.getUniversalExpGainSummary().putAll(universalExpGain);
 
-        CACHED_PLAYER_EXP_SUMMARY.put(warlordsPlayer.getUuid(), expGain);
-        return expGain;
+        CACHED_PLAYER_EXP_SUMMARY.put(warlordsPlayer.getUuid(), experienceSummary);
+        return experienceSummary;
     }
 
     public static long getSpecExpFromSummary(LinkedHashMap<String, Long> expSummary) {
@@ -308,10 +317,6 @@ public class ExperienceManager {
         AtomicLong experience = new AtomicLong(0);
         DatabaseManager.getPlayer(uuid, databasePlayer -> experience.set(databasePlayer.getSpec(specializations).getExperience()));
         return experience.get();
-    }
-
-    public static int getLevelForSpec(UUID uuid, Specializations spec) {
-        return (int) calculateLevelFromExp(getExperienceFromSpec(uuid, spec));
     }
 
     public static int getLevelFromExp(long experience) {
@@ -476,6 +481,60 @@ public class ExperienceManager {
             Bukkit.getPluginManager().callEvent(new SpecPrestigeEvent(player.getUniqueId(), value, prestige));
         }
     }
+
+    public static int getLevelForSpec(UUID uuid, Specializations spec) {
+        return (int) calculateLevelFromExp(getExperienceFromSpec(uuid, spec));
+    }
+
+    public static class ExperienceSummary {
+
+        private final LinkedHashMap<String, Long> universalExpGainSummary = new LinkedHashMap<>();
+        private final Map<Specializations, LinkedHashMap<String, Long>> specExpGainSummary = new HashMap<>();
+
+        public LinkedHashMap<String, Long> getUniversalExpGainSummary() {
+            return universalExpGainSummary;
+        }
+
+        public Map<Specializations, LinkedHashMap<String, Long>> getSpecExpGainSummary() {
+            return specExpGainSummary;
+        }
+
+        public long getUniversalExpGain() {
+            return universalExpGainSummary.values().stream().mapToLong(Long::longValue).sum();
+        }
+
+        public long getSpecExpGain(Specializations specializations) {
+            return specExpGainSummary.getOrDefault(specializations, new LinkedHashMap<>()).values().stream().mapToLong(Long::longValue).sum();
+        }
+
+        public Component getUniversalSummary() {
+            return getHoverSummary(universalExpGainSummary);
+        }
+
+        public Component getSpecSummary(Specializations specializations) {
+            return getHoverSummary(specExpGainSummary.getOrDefault(specializations, new LinkedHashMap<>()));
+        }
+
+        public Component getHoverSummary(LinkedHashMap<String, Long> expGain) {
+            int counter = 0;
+            TextComponent.Builder expSummary = Component.empty().toBuilder();
+            for (Map.Entry<String, Long> entry : expGain.entrySet()) {
+                String key = entry.getKey();
+                Long value = entry.getValue();
+                expSummary.append(Component.text(key, NamedTextColor.AQUA))
+                          .append(Component.text(": ", NamedTextColor.WHITE))
+                          .append(Component.text("+", NamedTextColor.DARK_GRAY))
+                          .append(Component.text(value, NamedTextColor.DARK_GREEN));
+                if (counter != expGain.size() - 1) {
+                    expSummary.append(Component.newline());
+                }
+                counter++;
+            }
+            return expSummary.build();
+        }
+
+    }
+
 
     static class AwardSummary {
         List<Component> messages = new ArrayList<>();

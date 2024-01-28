@@ -206,7 +206,7 @@ public abstract class AbstractMob implements Mob {
         //TODO wander? - waypoints trait
 //        npc.getNavigator().getLocalParameters()
 //           .avoidWater(true);
-        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 40), 2);
+        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 70), 2);
     }
 
     public void onNPCCreate() {

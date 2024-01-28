@@ -155,7 +155,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
 
             if (pveMasterUpgrade) {
                 tempCapacitorTotem.setRadius(totemRadius + 0.5);
-            } else if (pveMasterUpgrade2 && timesTotemIncreased.get() < 10) {
+            } else if (pveMasterUpgrade2 && timesTotemIncreased.get() < 20) {
                 timesTotemIncreased.getAndIncrement();
                 totemCooldown.setTicksLeft(totemCooldown.getTicksLeft() + 10);
             }

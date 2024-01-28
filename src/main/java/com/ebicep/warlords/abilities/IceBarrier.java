@@ -122,7 +122,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                                             ) {
                                                 @Override
                                                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                    return currentDamageValue * 1.15f;
+                                                    return currentDamageValue * 1.35f;
                                                 }
                                             });
                                         });

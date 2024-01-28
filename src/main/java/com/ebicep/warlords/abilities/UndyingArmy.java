@@ -18,7 +18,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.UndyingArmyBranch;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
-import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -251,7 +250,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                             if (enemy.isAlive()) {
                                 float healthDamage = enemy.getCurrentHealth() * .10f;
                                 if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
-                                    healthDamage = MathUtils.clamp(healthDamage, DamageCheck.MINIMUM_DAMAGE, DamageCheck.MINIMUM_DAMAGE);
+                                    healthDamage = DamageCheck.clamp(healthDamage);
                                 }
                                 float damage = 1000 + healthDamage;
                                 enemy.addDamageInstance(wp, "Vengeful Army", damage, damage, 0, 100);

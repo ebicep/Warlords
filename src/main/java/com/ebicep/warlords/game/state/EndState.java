@@ -20,6 +20,7 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.MinuteStats;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
@@ -474,68 +475,43 @@ public class EndState implements State, TimerDebugAble {
     private void showExperienceSummary(List<WarlordsPlayer> players) {
         sendGlobalMessage(game, Component.text("✚ EXPERIENCE SUMMARY ✚", NamedTextColor.YELLOW, TextDecoration.BOLD), true);
         for (WarlordsPlayer wp : players) {
-            Player player = Bukkit.getPlayer(wp.getUuid());
+            UUID uuid = wp.getUuid();
+            Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
                 continue;
             }
 
-            LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(wp, false);
-            long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
-            long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
-            long experienceOnSpec = ExperienceManager.getExperienceForSpec(wp.getUuid(), wp.getSpecClass());
-            long experienceUniversal = ExperienceManager.getUniversalLevel(wp.getUuid());
-            TextComponent.Builder specExpSummary = Component.empty().toBuilder();
-            TextComponent.Builder universalExpSummary = Component.empty().toBuilder();
-            int counter = 0;
-            for (Map.Entry<String, Long> entry : expSummary.entrySet()) {
-                String key = entry.getKey();
-                Long value = entry.getValue();
-                if (!key.equals("First Game of the Day") &&
-                        !key.equals("Second Game of the Day") &&
-                        !key.equals("Third Game of the Day")
-                ) {
-                    specExpSummary.append(Component.text(key, NamedTextColor.AQUA))
-                                  .append(Component.text(": ", NamedTextColor.WHITE))
-                                  .append(Component.text("+", NamedTextColor.DARK_GRAY))
-                                  .append(Component.text(value, NamedTextColor.DARK_GREEN));
-                    if (counter != expSummary.size() - 1) {
-                        specExpSummary.append(Component.newline());
-                    }
-                }
-                universalExpSummary.append(Component.text(key, NamedTextColor.AQUA))
-                                   .append(Component.text(": ", NamedTextColor.WHITE))
-                                   .append(Component.text("+", NamedTextColor.DARK_GRAY))
-                                   .append(Component.text(value, NamedTextColor.DARK_GREEN));
-                if (counter != expSummary.size() - 1) {
-                    universalExpSummary.append(Component.newline());
-                }
-                counter++;
+            ExperienceManager.ExperienceSummary expSummary = ExperienceManager.getExpFromGameStats(wp, false);
+            for (Specializations spec : wp.getSpecMinuteStats().keySet()) {
+                long experienceOnSpec = ExperienceManager.getExperienceForSpec(uuid, spec);
+                long experienceEarnedSpec = expSummary.getSpecExpGain(spec);
+                ChatUtils.sendCenteredMessage(player,
+                        Component.text("+", NamedTextColor.GRAY)
+                                 .append(Component.text(NumberFormat.addCommaAndRound(experienceEarnedSpec), NamedTextColor.DARK_GREEN))
+                                 .append(Component.text(" " + Specializations.getClass(spec).name + " Experience", NamedTextColor.GOLD))
+                                 .append(Component.text(" (", NamedTextColor.GRAY))
+                                 .append(Component.text(spec.name, spec.specType.getTextColor()))
+                                 .append(Component.text(")", NamedTextColor.GRAY))
+                                 .hoverEvent(HoverEvent.showText(expSummary.getSpecSummary(spec)))
+                );
+                ExperienceManager.giveLevelUpMessage(player, experienceOnSpec - experienceEarnedSpec, experienceOnSpec);
             }
-            ChatUtils.sendCenteredMessage(player,
-                    Component.text("+", NamedTextColor.GRAY)
-                             .append(Component.text(NumberFormat.addCommaAndRound(experienceEarnedSpec), NamedTextColor.DARK_GREEN))
-                             .append(Component.text(" " + wp.getSpec().getClassName() + " Experience", NamedTextColor.GOLD))
-                             .append(Component.text(" (", NamedTextColor.GRAY))
-                             .append(Component.text(wp.getSpecClass().name, wp.getSpecClass().specType.getTextColor()))
-                             .append(Component.text(")", NamedTextColor.GRAY))
-                             .hoverEvent(HoverEvent.showText(specExpSummary.build()))
-            );
-
-            ExperienceManager.giveLevelUpMessage(player, experienceOnSpec - experienceEarnedSpec, experienceOnSpec);
+            long experienceUniversal = ExperienceManager.getUniversalLevel(uuid);
+            long experienceEarnedUniversal = expSummary.getUniversalExpGain();
             ChatUtils.sendCenteredMessage(player,
                     Component.text("+", NamedTextColor.DARK_GRAY)
                              .append(Component.text(NumberFormat.addCommaAndRound(experienceEarnedUniversal), NamedTextColor.DARK_AQUA))
                              .append(Component.text(" Universal Experience", NamedTextColor.GOLD))
-                             .hoverEvent(HoverEvent.showText(universalExpSummary.build()))
+                             .hoverEvent(HoverEvent.showText(expSummary.getUniversalSummary()))
             );
-
             ExperienceManager.giveLevelUpMessage(player, experienceUniversal - experienceEarnedUniversal, experienceUniversal);
-            ExperienceManager.CACHED_PLAYER_EXP_SUMMARY.remove(wp.getUuid());
+
+            ExperienceManager.CACHED_PLAYER_EXP_SUMMARY.remove(uuid);
 
             LinkedHashMap<String, Long> expFromPvE = GuildExperienceUtils.getExpFromPvE(wp, null, false);
             if (expFromPvE.size() > 0) {
                 TextComponent.Builder expFromPvESummary = Component.empty().toBuilder();
-                counter = 0;
+                int counter = 0;
                 for (Map.Entry<String, Long> entry : expFromPvE.entrySet()) {
                     String s = entry.getKey();
                     Long aLong = entry.getValue();

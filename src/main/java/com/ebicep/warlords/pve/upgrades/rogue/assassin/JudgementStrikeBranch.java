@@ -9,15 +9,16 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
     float maxDamage;
     float strikeHeal = ability.getStrikeHeal();
 
+    @Override
+    public void runOnce() {
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+    }
+
     public JudgementStrikeBranch(AbilityTree abilityTree, JudgementStrike ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-        }
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
@@ -44,15 +45,21 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         ability.setStrikeHeal(strikeHeal + value);
                     }
                 }, 100f)
+                .addUpgradeEnergy(ability, 5f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Death Strike",
                 "Judgement Strike - Master Upgrade",
-                "If the enemy hit by Judgement Strike drops below 30% max health they get executed. (Excluding boss mobs.)",
+                """
+                        +100 Healing on Strike Kill
+                        -10 Energy cost
+                                                
+                        Each strike deals 1% of the target's max health as bonus damage.""",
                 50000,
                 () -> {
-
+                    ability.setStrikeHeal(ability.getStrikeHeal() + 100);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -60,8 +67,6 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "Judgement Strike - Master Upgrade",
                 """
                         +45% Crit multiplier
-                        -5 Energy cost
-                        -35% Strike damage
                                                 
                         Judgement Strike will now hit twice in one use, the second strike is counted as an additional strike for a guarantee crit"
                         """,

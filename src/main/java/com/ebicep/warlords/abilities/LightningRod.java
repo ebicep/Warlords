@@ -7,12 +7,14 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningRodBranch;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -66,31 +68,24 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.addEnergy(wp, name, energyRestore);
-        Utils.playGlobalSound(wp.getLocation(), "shaman.lightningrod.activation", 2, 1);
 
-        new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.ORANGE_TULIP).play();
-        wp.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
+        List<WarlordsEntity> hit = kbHealEnergy(wp);
 
-        wp.addHealingInstance(
-                wp,
-                name,
-                (wp.getMaxHealth() * (healthRestore / 100f)),
-                (wp.getMaxHealth() * (healthRestore / 100f)),
-                critChance,
-                critMultiplier
-        );
+        if (pveMasterUpgrade) {
+            damageIncreaseOnUse(wp);
+            new GameRunnable(wp.getGame()) {
+                int bonusActivations = 0;
 
-        List<WarlordsEntity> hit = PlayerFilter
-                .entitiesAround(wp, knockbackRadius, knockbackRadius, knockbackRadius)
-                .aliveEnemiesOf(wp)
-                .toList();
-        for (WarlordsEntity knockbackTarget : hit) {
-            final Location loc = knockbackTarget.getLocation();
-            final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
-            knockbackTarget.setVelocity(name, v, false);
-        }
-        if (pveMasterUpgrade2) {
+                @Override
+                public void run() {
+                    if (bonusActivations++ < 2) {
+                        kbHealEnergy(wp);
+                    } else {
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(0, 40);
+        } else if (pveMasterUpgrade2) {
             giveCallOfThunderEffect(wp, hit);
         }
 
@@ -109,11 +104,40 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
             capacitorTotem.addProc();
         });
 
-        if (pveMasterUpgrade) {
-            damageIncreaseOnUse(wp);
-        }
 
         return true;
+    }
+
+    private List<WarlordsEntity> kbHealEnergy(@Nonnull WarlordsEntity wp) {
+        wp.addEnergy(wp, name, energyRestore);
+        Utils.playGlobalSound(wp.getLocation(), "shaman.lightningrod.activation", 2, 1);
+        new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.ORANGE_TULIP).play();
+        wp.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
+        wp.addHealingInstance(
+                wp,
+                name,
+                (wp.getMaxHealth() * (healthRestore / 100f)),
+                (wp.getMaxHealth() * (healthRestore / 100f)),
+                critChance,
+                critMultiplier
+        );
+
+        List<WarlordsEntity> hit = PlayerFilter
+                .entitiesAround(wp, knockbackRadius, knockbackRadius, knockbackRadius)
+                .aliveEnemiesOf(wp)
+                .toList();
+        for (WarlordsEntity enemy : hit) {
+            if (pveMasterUpgrade2) {
+                if (enemy instanceof WarlordsNPC warlordsNPC) {
+                    warlordsNPC.setStunTicks(60);
+                }
+            } else {
+                final Location loc = enemy.getLocation();
+                final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
+                enemy.setVelocity(name, v, false);
+            }
+        }
+        return hit;
     }
 
     private void damageIncreaseOnUse(WarlordsEntity we) {
@@ -135,11 +159,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
                 return currentDamageValue * 1.4f;
             }
         });
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new LightningRodBranch(abilityTree, this);
     }
 
     private void giveCallOfThunderEffect(WarlordsEntity from, List<WarlordsEntity> hit) {
@@ -193,6 +212,11 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
                 return energyGainPerTick + 15 / 20f;
             }
         });
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new LightningRodBranch(abilityTree, this);
     }
 
     public int getHealthRestore() {

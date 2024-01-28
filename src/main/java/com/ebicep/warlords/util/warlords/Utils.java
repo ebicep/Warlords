@@ -1,6 +1,6 @@
 package com.ebicep.warlords.util.warlords;
 
-import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
@@ -344,7 +344,7 @@ public class Utils {
         FallingBlock fallingBlock = spawnTexturedFallingBlockAt(location);
         fallingBlock.setVelocity(vector);
         fallingBlock.setDropItem(false);
-        WarlordsEvents.addEntityUUID(fallingBlock);
+        GeneralEvents.addEntityUUID(fallingBlock);
         return fallingBlock;
     }
 
@@ -463,7 +463,7 @@ public class Utils {
                 fallingBlock = impactLocation.getWorld().spawnFallingBlock(spawnLoc, (materialList.get(random.nextInt(materialList.size())).createBlockData()));
                 fallingBlock.setVelocity(impactLocation.toVector().subtract(spawnLoc.toVector()).normalize().multiply(vectorMultiply).setY(vectorY));
                 fallingBlock.setDropItem(false);
-                WarlordsEvents.addEntityUUID(fallingBlock);
+                GeneralEvents.addEntityUUID(fallingBlock);
             }
         }
     }

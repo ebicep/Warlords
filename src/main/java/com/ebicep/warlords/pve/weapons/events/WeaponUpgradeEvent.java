@@ -1,30 +1,30 @@
-package com.ebicep.warlords.events;
+package com.ebicep.warlords.pve.weapons.events;
 
-import com.ebicep.warlords.pve.items.types.AbstractItem;
+import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
-public class ItemCraftEvent extends Event {
+public class WeaponUpgradeEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
     private final UUID uuid;
-    private final AbstractItem item;
+    private final AbstractWeapon weapon;
 
-    public ItemCraftEvent(UUID uuid, AbstractItem item) {
+    public WeaponUpgradeEvent(UUID uuid, AbstractWeapon weapon) {
         this.uuid = uuid;
-        this.item = item;
+        this.weapon = weapon;
     }
 
     public UUID getUUID() {
         return uuid;
     }
 
-    public AbstractItem getItem() {
-        return item;
+    public AbstractWeapon getWeapon() {
+        return weapon;
     }
 
     @Nonnull

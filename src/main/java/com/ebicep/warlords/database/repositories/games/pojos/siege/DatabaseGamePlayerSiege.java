@@ -5,8 +5,15 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pvp.siege.SiegeOption;
 import com.ebicep.warlords.game.option.pvp.siege.SiegeStats;
+import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseGamePlayerSiege extends DatabaseGamePlayerBase {
 
@@ -34,31 +41,77 @@ public class DatabaseGamePlayerSiege extends DatabaseGamePlayerBase {
     @Field("time_on_payload_defending")
     private long timeOnPayloadDefending; // seconds
 
+    @Field("spec_stats")
+    private Map<Specializations, DatabaseGamePlayerSiege> specStats = null; // spec stats, must be wary of recursion so default to null
+
     public DatabaseGamePlayerSiege() {
+    }
+
+    public DatabaseGamePlayerSiege(WarlordsPlayer warlordsPlayer, Specializations spec) {
+        ExperienceManager.ExperienceSummary expGain = ExperienceManager.getExpFromGameStats(warlordsPlayer, false);
+        long experienceEarnedSpec = expGain.getSpecExpGain(spec);
+        this.skillBoost = PlayerSettings.getPlayerSettings(warlordsPlayer.getUuid()).getSkillBoostForSpec(spec);
+        this.blocksTravelled = warlordsPlayer.getBlocksTravelled();
+        PlayerStatisticsMinute minuteStats = warlordsPlayer.getSpecMinuteStats().getOrDefault(spec, new PlayerStatisticsMinute());
+        PlayerStatisticsMinute.Entry total = minuteStats.total();
+        this.totalKills = total.getKills();
+        this.totalAssists = total.getAssists();
+        this.totalDeaths = total.getDeaths();
+        this.totalDamage = total.getDamage();
+        this.totalHealing = total.getHealing();
+        this.totalAbsorbed = total.getAbsorbed();
+        this.kills = minuteStats.stream().map(PlayerStatisticsMinute.Entry::getKills).toList();
+        this.assists = minuteStats.stream().map(PlayerStatisticsMinute.Entry::getAssists).toList();
+        this.deaths = minuteStats.stream().map(PlayerStatisticsMinute.Entry::getDeaths).toList();
+        this.damage = minuteStats.stream().map(PlayerStatisticsMinute.Entry::getDamage).toList();
+        this.healing = minuteStats.stream().map(PlayerStatisticsMinute.Entry::getHealing).toList();
+        this.absorbed = minuteStats.stream().map(PlayerStatisticsMinute.Entry::getAbsorbed).toList();
+        this.experienceEarnedSpec = experienceEarnedSpec;
     }
 
     public DatabaseGamePlayerSiege(WarlordsPlayer warlordsPlayer, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         super(warlordsPlayer, gameWinEvent, counted);
+        this.specStats = new HashMap<>();
         this.secondsInCombat = warlordsPlayer.getMinuteStats().total().getTimeInCombat();
         this.secondsInRespawn = warlordsPlayer.getMinuteStats().total().getRespawnTimeSpent() / 20;
         for (Option option : warlordsPlayer.getGame().getOptions()) {
-            if (option instanceof SiegeOption siegeOption) {
-                SiegeStats siegeStats = siegeOption.getPlayerSiegeStats().get(warlordsPlayer.getUuid());
-                if (siegeStats == null) {
-                    return;
-                }
-                this.pointsCaptured = siegeStats.getPointsCaptured();
-                this.pointsCapturedFail = siegeStats.getPointsCapturedFail();
-                this.timeOnPoint = siegeStats.getTimeOnPointTicks() / 20;
-                this.payloadsEscorted = siegeStats.getPayloadsEscorted();
-                this.payloadsEscortedFail = siegeStats.getPayloadsEscortedFail();
-                this.payloadsDefended = siegeStats.getPayloadsDefended();
-                this.payloadsDefendedFail = siegeStats.getPayloadsDefendedFail();
-                this.timeOnPayloadEscorting = siegeStats.getTimeOnPayloadEscortingTicks() / 20;
-                this.timeOnPayloadDefending = siegeStats.getTimeOnPayloadDefendingTicks() / 20;
+            if (!(option instanceof SiegeOption siegeOption)) {
+                continue;
+            }
+            Map<Specializations, SiegeStats> siegeStats = siegeOption.getPlayerSiegeStats().get(warlordsPlayer.getUuid());
+            if (siegeStats == null) {
                 return;
             }
+            siegeStats.forEach((specializations, stats) -> {
+                DatabaseGamePlayerSiege specStat = specStats.computeIfAbsent(specializations, k -> new DatabaseGamePlayerSiege(warlordsPlayer, specializations));
+                specStat.secondsInCombat += warlordsPlayer.getSpecMinuteStats().getOrDefault(specializations, new PlayerStatisticsMinute()).total().getTimeInCombat();
+                specStat.secondsInRespawn += warlordsPlayer.getSpecMinuteStats().getOrDefault(specializations, new PlayerStatisticsMinute()).total().getRespawnTimeSpent() / 20;
+                specStat.pointsCaptured += stats.getPointsCaptured();
+                specStat.pointsCapturedFail += stats.getPointsCapturedFail();
+                specStat.timeOnPoint += stats.getTimeOnPointTicks() / 20;
+                specStat.payloadsEscorted += stats.getPayloadsEscorted();
+                specStat.payloadsEscortedFail += stats.getPayloadsEscortedFail();
+                specStat.payloadsDefended += stats.getPayloadsDefended();
+                specStat.payloadsDefendedFail += stats.getPayloadsDefendedFail();
+                specStat.timeOnPayloadEscorting += stats.getTimeOnPayloadEscortingTicks() / 20;
+                specStat.timeOnPayloadDefending += stats.getTimeOnPayloadDefendingTicks() / 20;
+
+                this.pointsCaptured += stats.getPointsCaptured();
+                this.pointsCapturedFail += stats.getPointsCapturedFail();
+                this.timeOnPoint += stats.getTimeOnPointTicks() / 20;
+                this.payloadsEscorted += stats.getPayloadsEscorted();
+                this.payloadsEscortedFail += stats.getPayloadsEscortedFail();
+                this.payloadsDefended += stats.getPayloadsDefended();
+                this.payloadsDefendedFail += stats.getPayloadsDefendedFail();
+                this.timeOnPayloadEscorting += stats.getTimeOnPayloadEscortingTicks() / 20;
+                this.timeOnPayloadDefending += stats.getTimeOnPayloadDefendingTicks() / 20;
+            });
+            return;
         }
+    }
+
+    public Map<Specializations, DatabaseGamePlayerSiege> getSpecStats() {
+        return specStats;
     }
 
     public int getSecondsInCombat() {

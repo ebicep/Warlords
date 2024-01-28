@@ -1,7 +1,7 @@
 package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.events.GeneralEvents;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.FallingBlock;
@@ -77,7 +77,7 @@ public class FallingBlockWaveEffect {
                 fallingBlock = loc.getWorld().spawnFallingBlock(loc, material.createBlockData());
                 fallingBlock.setVelocity(new Vector(0, 0.1, 0));
                 fallingBlock.setDropItem(false);
-                WarlordsEvents.addEntityUUID(fallingBlock);
+                GeneralEvents.addEntityUUID(fallingBlock);
 
                 return false;
             } else if (timer == 6) {

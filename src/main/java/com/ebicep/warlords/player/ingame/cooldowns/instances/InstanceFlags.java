@@ -9,6 +9,8 @@ public enum InstanceFlags {
     CAN_OVERHEAL_OTHERS,
     CAN_OVERHEAL_SELF,
     RECURSIVE,
+    DOT, // damage over time
+    REFLECTIVE_DAMAGE,
 
     IGNORE_SELF_RES,
     NO_DISMOUNT,

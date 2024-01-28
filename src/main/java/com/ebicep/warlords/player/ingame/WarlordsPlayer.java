@@ -19,6 +19,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
@@ -99,6 +100,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 settings.getArmorSet(settings.getSelectedSpec())
         );
         resetAbilityTree();
+        if (isInPve()) {
+            abilityTree.getUpgradeBranches().forEach(AbstractUpgradeBranch::runOnce);
+        }
     }
 
     public void resetAbilityTree() {
@@ -152,6 +156,10 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         this.skillBoost = settings.getSkillBoostForClass();
 
         resetAbilityTree();
+        if (isInPve()) {
+            abilityTree.getUpgradeBranches().forEach(AbstractUpgradeBranch::runOnce);
+        }
+
         updatePlayerReference(player.getPlayer());
         updateEntity();
 
@@ -434,8 +442,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     @org.jetbrains.annotations.Nullable
     @Override
-    public ItemStack getMainHand() {
-        return entity instanceof Player player ? player.getInventory().getItemInMainHand() : null;
+    public ItemStack getWeaponItem() {
+        return weapon == null ? null : weapon.getSelectedWeaponSkin().getItem();
     }
 
     public void applySkillBoost(Player player) {

@@ -26,6 +26,7 @@ import com.ebicep.warlords.pve.mobs.pigzombie.PigAlleviator;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigDisciple;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigParticle;
 import com.ebicep.warlords.pve.mobs.pigzombie.PigShaman;
+import com.ebicep.warlords.pve.mobs.player.Animus;
 import com.ebicep.warlords.pve.mobs.player.CryoPod;
 import com.ebicep.warlords.pve.mobs.player.Decoy;
 import com.ebicep.warlords.pve.mobs.player.TestDummy;
@@ -778,10 +779,8 @@ public enum Mob {
     //misc
     TEST_DUMMY(EntityType.ZOMBIE, TestDummy.class, TestDummy::new, TestDummy::new, null),
     CRYOPOD(EntityType.ARMOR_STAND, CryoPod.class, CryoPod::new, CryoPod::new, null),
-    //decoy
     DECOY(EntityType.ARMOR_STAND, Decoy.class, Decoy::new, Decoy::new, null),
-
-    ;
+    ANIMUS(EntityType.PLAYER, Animus.class, Animus::new, Animus::new, null);
 
     public static final Mob[] VALUES = values();
     public static final Mob[] BASIC = {

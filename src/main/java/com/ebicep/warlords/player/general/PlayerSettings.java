@@ -77,6 +77,10 @@ public class PlayerSettings {
         return classesSkillBoosts.get(selectedSpec);
     }
 
+    public SkillBoosts getSkillBoostForSpec(Specializations spec) {
+        return classesSkillBoosts.get(spec);
+    }
+
     public HashMap<Specializations, SkillBoosts> getClassesSkillBoosts() {
         return classesSkillBoosts;
     }
@@ -84,6 +88,12 @@ public class PlayerSettings {
     public void setSkillBoostForSelectedSpec(SkillBoosts classesSkillBoost) {
         if (classesSkillBoost != null) {
             classesSkillBoosts.put(selectedSpec, classesSkillBoost);
+        }
+    }
+
+    public void setSkillBoostForSpec(Specializations spec, SkillBoosts classesSkillBoost) {
+        if (classesSkillBoost != null) {
+            classesSkillBoosts.put(spec, classesSkillBoost);
         }
     }
 

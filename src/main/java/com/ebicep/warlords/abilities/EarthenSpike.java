@@ -5,7 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -284,7 +284,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         );
         newBlock.setVelocity(new Vector(0, .25, 0));
         newBlock.setDropItem(false);
-        WarlordsEvents.addEntityUUID(newBlock);
+        GeneralEvents.addEntityUUID(newBlock);
         return newBlock;
     }
 

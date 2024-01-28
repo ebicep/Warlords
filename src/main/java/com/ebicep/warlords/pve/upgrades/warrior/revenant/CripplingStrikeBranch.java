@@ -8,15 +8,16 @@ public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike
     float minDamage;
     float maxDamage;
 
+    @Override
+    public void runOnce() {
+        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
+        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+    }
+
     public CripplingStrikeBranch(AbilityTree abilityTree, CripplingStrike ability) {
         super(abilityTree, ability);
-        if (abilityTree.getWarlordsPlayer().isInPve()) {
-            ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-            ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
-        }
         minDamage = ability.getMinDamageHeal();
         maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
