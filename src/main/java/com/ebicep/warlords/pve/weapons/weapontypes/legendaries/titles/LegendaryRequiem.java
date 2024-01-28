@@ -225,7 +225,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
     public TextComponent getPassiveEffect() {
         return Component.text("Every ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "s"))
-                        .append(Component.text(" summon a random assortment of mobs to fight for you. Using Undying Army has additional effect of converting enemy mobs to allies. " +
+                        .append(Component.text(" summon a random assortment of mobs to fight for you. Using Undying Army has an additional effect of converting enemy mobs to allies. " +
                                 "Shift for 1 second to remove all summoned mobs."));
     }
 

@@ -105,7 +105,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
 
     @Override
     protected float getSkillCritMultiplierBonusValue() {
-        return 4;
+        return 10;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class LegendaryValiant extends AbstractLegendaryWeapon implements EventTi
 
     @Override
     protected float getCritMultiplierValue() {
-        return 160;
+        return 180;
     }
 
     @Override
