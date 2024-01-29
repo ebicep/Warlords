@@ -5,10 +5,10 @@
  */
 package com.ebicep.warlords.game.flags;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -86,15 +86,14 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
 
         if (event.getOld() instanceof PlayerFlagLocation pfl) {
             pfl.getPlayer().updateArmor();
-            game.forEachOnlinePlayer((p, t) -> {
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
+            game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                 Component coloredName = pfl.getPlayer().getColoredName();
                 Component flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                  .append(coloredName)
                                                  .append(Component.text(" has dropped the "))
                                                  .append(coloredPrefix)
                                                  .append(Component.text(" flag!"));
-                if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                     if (t == eventTeam) {
                         flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                .append(coloredName)
@@ -115,7 +114,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
                         flagMessage,
                         Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
                 ));
-            });
+            }));
         }
     }
 }

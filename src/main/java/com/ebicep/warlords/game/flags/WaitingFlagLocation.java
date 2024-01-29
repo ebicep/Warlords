@@ -1,9 +1,9 @@
 package com.ebicep.warlords.game.flags;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
@@ -69,16 +69,15 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
         WarlordsEntity player = getScorer();
         if (player != null) {
             player.addFlagCap();
-            game.forEachOnlinePlayer((p, t) -> {
+            game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                 boolean sameTeam = t == eventTeam;
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
                 Component coloredName = player.getColoredName();
                 Component flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                  .append(coloredName)
                                                  .append(Component.text(" has captured the "))
                                                  .append(coloredPrefix)
                                                  .append(Component.text(" flag!"));
-                if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                     if (sameTeam) {
                         flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                .append(coloredName)
@@ -107,7 +106,7 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
                         p.playSound(player.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     }
                 }
-            });
+            }));
         }
     }
 }

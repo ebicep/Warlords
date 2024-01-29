@@ -24,7 +24,6 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -423,8 +422,8 @@ public class WarlordsEvents implements Listener {
                         player.playSound(player.getLocation(), Sound.BLOCK_SNOW_BREAK, 500, 2);
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                     }
-                    default -> {
-                        if (heldItemSlot == 0 || PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
+                    default -> DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
+                        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
                             if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                                 AbstractWeapon weapon = warlordsPlayer.getWeapon();
                                 if (weapon instanceof AbstractLegendaryWeapon) {
@@ -434,7 +433,7 @@ public class WarlordsEvents implements Listener {
                                 wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
                             }
                         }
-                    }
+                    });
                 }
             } else {
                 Warlords.getGameManager().getPlayerGame(player.getUniqueId())
@@ -465,16 +464,18 @@ public class WarlordsEvents implements Listener {
             return;
         }
         int heldItemSlot = player.getInventory().getHeldItemSlot();
-        if (heldItemSlot == 0 || PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
-            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
-                AbstractWeapon weapon = warlordsPlayer.getWeapon();
-                if (weapon instanceof AbstractLegendaryWeapon) {
-                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+        DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
+            if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
+                if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
+                    AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                    if (weapon instanceof AbstractLegendaryWeapon) {
+                        ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+                    }
+                } else {
+                    wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
                 }
-            } else {
-                wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
             }
-        }
+        });
     }
 
     @EventHandler
@@ -496,9 +497,11 @@ public class WarlordsEvents implements Listener {
         int slot = e.getNewSlot();
         Player player = e.getPlayer();
         WarlordsEntity wp = Warlords.getPlayer(player);
-        if (wp != null) {
-            boolean hotkeyMode = PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.NEW_MODE;
-            if (hotkeyMode) {
+        if (wp == null) {
+            return;
+        }
+        DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
+            if (databasePlayer.getHotkeyMode() == Settings.HotkeyMode.NEW_MODE) {
                 if (slot == 1 || slot == 2 || slot == 3 || slot == 4) {
                     wp.getSpec().onRightClick(wp, player, slot, true);
                     e.setCancelled(true);
@@ -513,7 +516,7 @@ public class WarlordsEvents implements Listener {
                     }
                 }
             }
-        }
+        });
     }
 
     @EventHandler

@@ -1,10 +1,10 @@
 package com.ebicep.warlords.game.flags;
 
 import com.ebicep.warlords.abilities.OrderOfEviscerate;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
@@ -100,9 +100,8 @@ public class PlayerFlagLocation implements FlagLocation {
             // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
             int computedHumanMultiplier = getComputedHumanMultiplier();
             if (computedHumanMultiplier % 10 == 0) {
-                game.forEachOnlinePlayer((p, t) -> {
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                    if (t != null && playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
+                    if (t != null && databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                         NamedTextColor playerColor = getPlayer().getTeam().teamColor;
                         if (t != eventTeam) {
                             p.sendMessage(Component.text("", NamedTextColor.YELLOW)
@@ -127,13 +126,12 @@ public class PlayerFlagLocation implements FlagLocation {
                                                .append(Component.text(" increased damage!"))
                         );
                     }
-                });
+                }));
             }
         } else {
             // eg GROUND -> PLAYER
             // or SPAWN -> PLAYER
-            game.forEachOnlinePlayer((p, t) -> {
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
+            game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                 Component playerColoredName = player.getColoredName();
                 Component flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                  .append(playerColoredName)
@@ -143,7 +141,7 @@ public class PlayerFlagLocation implements FlagLocation {
                 if (t != null) {
                     if (t == eventTeam) {
                         p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
-                        if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                        if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                             flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                    .append(playerColoredName)
                                                    .append(Component.text(" picked up "))
@@ -152,7 +150,7 @@ public class PlayerFlagLocation implements FlagLocation {
                         }
                     } else {
                         p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
-                        if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                        if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                             flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                    .append(playerColoredName)
                                                    .append(Component.text(" picked up the "))
@@ -168,7 +166,7 @@ public class PlayerFlagLocation implements FlagLocation {
                         Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
                 ));
 
-            });
+            }));
         }
     }
 }

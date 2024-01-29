@@ -1,9 +1,9 @@
 package com.ebicep.warlords.game.flags;
 
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
@@ -64,16 +64,15 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
         if (event.getOld() instanceof GroundFlagLocation) {
             if (toucher != null) {
                 toucher.addFlagReturn();
-                game.forEachOnlinePlayer((p, t) -> {
+                game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                     boolean sameTeam = t == eventTeam;
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
                     Component toucherColoredName = toucher.getColoredName();
                     Component flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                      .append(toucherColoredName)
                                                      .append(Component.text(" has returned the "))
                                                      .append(coloredPrefix)
                                                      .append(Component.text(" flag!"));
-                    if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                    if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                         if (sameTeam) {
                             flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                    .append(toucherColoredName)
@@ -98,11 +97,10 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
                     if (sameTeam) {
                         p.playSound(p.getLocation(), "ctf.flagreturned", 500, 1);
                     }
-                });
+                }));
             } else {
-                game.forEachOnlinePlayer((p, t) -> {
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                    if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
+                    if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                         if (t == eventTeam) {
                             p.sendMessage(Component.text("", NamedTextColor.YELLOW)
                                                    .append(Component.text("YOUR", teamColor))
@@ -120,7 +118,7 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
                                                .append(Component.text(" flag has returned to base!"))
                         );
                     }
-                });
+                }));
             }
         }
     }
