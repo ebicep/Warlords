@@ -594,6 +594,7 @@ public class CommandManager {
         manager.registerCommand(new GlowingModeCommand());
         manager.registerCommand(new FlagMessageModeCommand());
         manager.registerCommand(new HotkeyModeCommand());
+        manager.registerCommand(new IgnoreCommand());
         manager.registerCommand(new LobbyCommand());
         manager.registerCommand(new ParticleQualityCommand());
         manager.registerCommand(new ResourcePackCommand());

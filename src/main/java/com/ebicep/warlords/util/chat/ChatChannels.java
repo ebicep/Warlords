@@ -3,6 +3,7 @@ package com.ebicep.warlords.util.chat;
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.SeeAllChatsCommand;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.guilds.*;
 import com.ebicep.warlords.guilds.logs.AbstractGuildLog;
@@ -260,7 +261,15 @@ public enum ChatChannels {
             viewers.add(Bukkit.getConsoleSender());
             SeeAllChatsCommand.addPlayerSeeAllChats(viewers);
             for (Audience audience : viewers) {
-                audience.sendMessage(component);
+                if (audience instanceof Player p) {
+                    DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
+                        if (!databasePlayer.getIgnored().contains(player.getUniqueId())) {
+                            audience.sendMessage(component);
+                        }
+                    }, () -> audience.sendMessage(component));
+                } else {
+                    audience.sendMessage(component);
+                }
             }
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
@@ -344,6 +353,7 @@ public enum ChatChannels {
     public static void sendDebugMessage(Player player, Component message) {
         ChatChannels.playerSendMessage(player, ChatChannels.DEBUG, message);
     }
+
     public final String name;
     public final NamedTextColor textColor;
 

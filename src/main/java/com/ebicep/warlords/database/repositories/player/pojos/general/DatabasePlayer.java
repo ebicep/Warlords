@@ -101,6 +101,7 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Settings.ChatSettings.ChatUpgrade chatUpgradeMode = Settings.ChatSettings.ChatUpgrade.ALL;
 
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
+    private List<UUID> ignored = new ArrayList<>();
     private List<String> permissions = new ArrayList<>();
     @Field("patches_applied")
     private List<Patches> patchesApplied = new ArrayList<>();
@@ -444,6 +445,10 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public String getId() {
         return id;
+    }
+
+    public List<UUID> getIgnored() {
+        return ignored;
     }
 
     public List<String> getPermissions() {
