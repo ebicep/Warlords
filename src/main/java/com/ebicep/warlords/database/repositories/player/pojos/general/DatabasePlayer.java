@@ -83,6 +83,8 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
     @Field("flag_message")
     private Settings.FlagMessageMode flagMessageMode = Settings.FlagMessageMode.ABSOLUTE;
+    @Field("glowing_mode")
+    private Settings.GlowingMode glowingMode = Settings.GlowingMode.ON;
     @Field("chat_damage")
     private Settings.ChatSettings.ChatDamage chatDamageMode = Settings.ChatSettings.ChatDamage.ALL;
     @Field("chat_healing")
@@ -350,6 +352,14 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public void setFlagMessageMode(Settings.FlagMessageMode flagMessageMode) {
         this.flagMessageMode = flagMessageMode;
+    }
+
+    public Settings.GlowingMode getGlowingMode() {
+        return glowingMode;
+    }
+
+    public void setGlowingMode(Settings.GlowingMode glowingMode) {
+        this.glowingMode = glowingMode;
     }
 
     public void addAchievement(Achievement.AbstractAchievementRecord<?> achievementRecord) {

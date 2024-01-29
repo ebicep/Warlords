@@ -591,6 +591,7 @@ public class CommandManager {
         manager.registerCommand(new ChatCommand());
         manager.registerCommand(new ClassCommand());
         manager.registerCommand(new DiscordCommand());
+        manager.registerCommand(new GlowingModeCommand());
         manager.registerCommand(new FlagMessageModeCommand());
         manager.registerCommand(new HotkeyModeCommand());
         manager.registerCommand(new LobbyCommand());

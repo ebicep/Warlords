@@ -995,45 +995,54 @@ public class WarlordsNewHotbarMenu {
 
         @Default
         public static void openSettingsMenu(Player player) {
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+                Menu menu = new Menu("Settings", 9 * 4);
+                menu.setItem(
+                        1,
+                        1,
+                        MENU_SETTINGS_PARTICLE_QUALITY,
+                        (m, e) -> openParticleQualityMenu(player)
+                );
+                menu.setItem(
+                        2,
+                        1,
+                        databasePlayer.getHotkeyMode().item,
+                        (m, e) -> {
+                            player.performCommand("hotkeymode");
+                            openSettingsMenu(player);
+                        }
+                );
+                menu.setItem(
+                        3,
+                        1,
+                        databasePlayer.getFlagMessageMode().item,
+                        (m, e) -> {
+                            player.performCommand("flagmessagemode");
+                            openSettingsMenu(player);
+                        }
+                );
+                menu.setItem(
+                        4,
+                        1,
+                        databasePlayer.getGlowingMode().item,
+                        (m, e) -> {
+                            player.performCommand("flagmessagemode");
+                            openSettingsMenu(player);
+                        }
+                );
+                menu.setItem(
+                        5,
+                        1,
+                        MENU_SETTINGS_CHAT_SETTINGS,
+                        (m, e) -> {
+                            Settings.ChatSettings.openChatSettingsMenu(player);
+                        }
+                );
 
-            Menu menu = new Menu("Settings", 9 * 4);
-            menu.setItem(
-                    1,
-                    1,
-                    MENU_SETTINGS_PARTICLE_QUALITY,
-                    (m, e) -> openParticleQualityMenu(player)
-            );
-            menu.setItem(
-                    3,
-                    1,
-                    playerSettings.getHotkeyMode().item,
-                    (m, e) -> {
-                        player.performCommand("hotkeymode");
-                        openSettingsMenu(player);
-                    }
-            );
-            menu.setItem(
-                    5,
-                    1,
-                    playerSettings.getFlagMessageMode().item,
-                    (m, e) -> {
-                        player.performCommand("flagmessagemode");
-                        openSettingsMenu(player);
-                    }
-            );
-            menu.setItem(
-                    7,
-                    1,
-                    MENU_SETTINGS_CHAT_SETTINGS,
-                    (m, e) -> {
-                        Settings.ChatSettings.openChatSettingsMenu(player);
-                    }
-            );
-
-            menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
-            menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
+                menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
+                menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.openForPlayer(player);
+            });
         }
 
         public static void openParticleQualityMenu(Player player) {
