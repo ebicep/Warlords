@@ -70,7 +70,6 @@ public class Balancer {
             if (partyPlayersInGame.size() > SAME_TEAM_PARTY_LIMIT) {
                 return;
             }
-            UUID leaderUUID = party.getPartyLeader().getUUID();
             partiedPlayers.computeIfAbsent(party, v -> new ArrayList<>()).add(player);
         });
         partiedPlayers.forEach((party, databasePlayers) -> {
