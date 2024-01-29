@@ -193,7 +193,7 @@ public class WinAfterTimeoutOption implements Option {
                 } else {
                     message.append(Component.text("Time Left: ", NamedTextColor.WHITE));
                 }
-                message.append(Component.text(StringUtils.formatTimeLeft(highestWinInSeconds), NamedTextColor.GREEN));
+                message.append(Component.text(StringUtils.formatTimeLeft(highestWinInSeconds == Integer.MAX_VALUE ? timeRemaining : highestWinInSeconds), NamedTextColor.GREEN));
                 return Collections.singletonList(message.build());
             }
         });

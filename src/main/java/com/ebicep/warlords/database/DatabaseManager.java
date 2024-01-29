@@ -297,10 +297,6 @@ public class DatabaseManager {
         });
         playerSettings.setSpecsSkillBoosts(classesSkillBoosts);
 
-        playerSettings.setHotkeyMode(databasePlayer.getHotkeyMode());
-        playerSettings.setParticleQuality(databasePlayer.getParticleQuality());
-        playerSettings.setFlagMessageMode(databasePlayer.getFlagMessageMode());
-
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
     }
 

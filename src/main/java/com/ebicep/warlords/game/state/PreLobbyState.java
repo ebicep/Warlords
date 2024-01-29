@@ -130,7 +130,24 @@ public class PreLobbyState implements State, TimerDebugAble {
             if (timer <= 0) {
 
                 if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-                    Balancer.balance(game);
+                    Balancer balancer = new Balancer(game);
+                    balancer.balance(false);
+                    balancer.printDebugInfo();
+
+                    Map<Team, Balancer.TeamInfo> bestTeam = balancer.getBestTeam();
+                    bestTeam.forEach((team, teamInfo) -> teamInfo.getPlayersSpecs().forEach((uuid, specializations) -> {
+                        PlayerSettings.getPlayerSettings(uuid).setWantedTeam(team);
+                        game.setPlayerTeam(uuid, team);
+                        List<LobbyLocationMarker> lobbies = game.getMarkers(LobbyLocationMarker.class);
+                        LobbyLocationMarker location = lobbies.stream().filter(e -> e.matchesTeam(team)).collect(Utils.randomElement());
+                        if (location != null) {
+                            Player player = Bukkit.getPlayer(uuid);
+                            if (player != null) {
+                                player.teleport(location.getLocation());
+                                Warlords.setRejoinPoint(player.getUniqueId(), location.getLocation());
+                            }
+                        }
+                    }));
                 }
 
                 if (game.getPlayers().size() >= 14) {

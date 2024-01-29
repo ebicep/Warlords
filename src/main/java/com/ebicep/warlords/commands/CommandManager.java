@@ -51,6 +51,7 @@ import com.ebicep.warlords.pve.items.ItemsCommand;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
+import com.ebicep.warlords.sr.BalancerCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
@@ -595,8 +596,10 @@ public class CommandManager {
         manager.registerCommand(new ChatCommand());
         manager.registerCommand(new ClassCommand());
         manager.registerCommand(new DiscordCommand());
+        manager.registerCommand(new GlowingModeCommand());
         manager.registerCommand(new FlagMessageModeCommand());
         manager.registerCommand(new HotkeyModeCommand());
+        manager.registerCommand(new IgnoreCommand());
         manager.registerCommand(new LobbyCommand());
         manager.registerCommand(new ParticleQualityCommand());
         manager.registerCommand(new ResourcePackCommand());
@@ -642,6 +645,8 @@ public class CommandManager {
         manager.registerCommand(new GameJoinCommand());
 
         manager.registerCommand(new BountyCommand());
+
+        manager.registerCommand(new BalancerCommand());
     }
 
     @Nullable

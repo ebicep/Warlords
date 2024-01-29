@@ -83,6 +83,8 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
     @Field("flag_message")
     private Settings.FlagMessageMode flagMessageMode = Settings.FlagMessageMode.ABSOLUTE;
+    @Field("glowing_mode")
+    private Settings.GlowingMode glowingMode = Settings.GlowingMode.ON;
     @Field("chat_damage")
     private Settings.ChatSettings.ChatDamage chatDamageMode = Settings.ChatSettings.ChatDamage.ALL;
     @Field("chat_healing")
@@ -99,6 +101,7 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Settings.ChatSettings.ChatUpgrade chatUpgradeMode = Settings.ChatSettings.ChatUpgrade.ALL;
 
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
+    private List<UUID> ignored = new ArrayList<>();
     private List<String> permissions = new ArrayList<>();
     @Field("patches_applied")
     private List<Patches> patchesApplied = new ArrayList<>();
@@ -352,6 +355,14 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         this.flagMessageMode = flagMessageMode;
     }
 
+    public Settings.GlowingMode getGlowingMode() {
+        return glowingMode;
+    }
+
+    public void setGlowingMode(Settings.GlowingMode glowingMode) {
+        this.glowingMode = glowingMode;
+    }
+
     public void addAchievement(Achievement.AbstractAchievementRecord<?> achievementRecord) {
         this.achievements.add(achievementRecord);
     }
@@ -434,6 +445,10 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public String getId() {
         return id;
+    }
+
+    public List<UUID> getIgnored() {
+        return ignored;
     }
 
     public List<String> getPermissions() {

@@ -8,7 +8,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.database.DatabaseManager;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
@@ -34,9 +34,12 @@ public class PacketUtils {
                         if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
                             Player player = event.getPlayer();
                             if (Warlords.hasPlayer(player)) {
-                                if (counter++ % PlayerSettings.PLAYER_SETTINGS.get(player.getUniqueId()).getParticleQuality().particleReduction == 0) {
-                                    event.setCancelled(true);
-                                }
+                                DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+                                    int particleReduction = databasePlayer.getParticleQuality().particleReduction;
+                                    if (counter++ % particleReduction == 0) {
+                                        event.setCancelled(true);
+                                    }
+                                });
                             }
                         }
                     }
