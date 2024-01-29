@@ -29,7 +29,6 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -451,8 +450,8 @@ public class WarlordsEvents implements Listener {
                         player.playSound(player.getLocation(), Sound.BLOCK_SNOW_BREAK, 500, 2);
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                     }
-                    default -> {
-                        if (heldItemSlot == 0 || PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
+                    default -> DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
+                        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
                             if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                                 AbstractWeapon weapon = warlordsPlayer.getWeapon();
                                 if (weapon instanceof AbstractLegendaryWeapon) {
@@ -462,7 +461,7 @@ public class WarlordsEvents implements Listener {
                                 wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
                             }
                         }
-                    }
+                    });
                 }
             } else {
                 Warlords.getGameManager().getPlayerGame(player.getUniqueId())
@@ -501,16 +500,18 @@ public class WarlordsEvents implements Listener {
             return;
         }
         int heldItemSlot = player.getInventory().getHeldItemSlot();
-        if (heldItemSlot == 0 || PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
-            if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
-                AbstractWeapon weapon = warlordsPlayer.getWeapon();
-                if (weapon instanceof AbstractLegendaryWeapon) {
-                    ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+        DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
+            if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
+                if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
+                    AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                    if (weapon instanceof AbstractLegendaryWeapon) {
+                        ((AbstractLegendaryWeapon) weapon).activateAbility(warlordsPlayer, player, false);
+                    }
+                } else {
+                    wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
                 }
-            } else {
-                wp.getSpec().onRightClick(wp, player, heldItemSlot, false);
             }
-        }
+        });
     }
 
     @EventHandler
@@ -547,9 +548,11 @@ public class WarlordsEvents implements Listener {
         int slot = e.getNewSlot();
         Player player = e.getPlayer();
         WarlordsEntity wp = Warlords.getPlayer(player);
-        if (wp != null) {
-            boolean hotkeyMode = PlayerSettings.getPlayerSettings(wp.getUuid()).getHotkeyMode() == Settings.HotkeyMode.NEW_MODE;
-            if (hotkeyMode) {
+        if (wp == null) {
+            return;
+        }
+        DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
+            if (databasePlayer.getHotkeyMode() == Settings.HotkeyMode.NEW_MODE) {
                 if (slot == 1 || slot == 2 || slot == 3 || slot == 4) {
                     wp.getSpec().onRightClick(wp, player, slot, true);
                     e.setCancelled(true);
@@ -564,7 +567,7 @@ public class WarlordsEvents implements Listener {
                     }
                 }
             }
-        }
+        });
     }
 
     @EventHandler
@@ -785,9 +788,8 @@ public class WarlordsEvents implements Listener {
                 // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
                 int computedHumanMultiplier = pfl.getComputedHumanMultiplier();
                 if (computedHumanMultiplier % 10 == 0) {
-                    game.forEachOnlinePlayer((p, t) -> {
-                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                        if (t != null && playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                    game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
+                        if (t != null && databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                             NamedTextColor playerColor = pfl.getPlayer().getTeam().teamColor;
                             if (t != eventTeam) {
                                 p.sendMessage(Component.text("", NamedTextColor.YELLOW)
@@ -812,23 +814,22 @@ public class WarlordsEvents implements Listener {
                                                    .append(Component.text(" increased damage!"))
                             );
                         }
-                    });
+                    }));
                 }
             } else {
                 // eg GROUND -> PLAYER
                 // or SPAWN -> PLAYER
-                game.forEachOnlinePlayer((p, t) -> {
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
+                game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                     Component playerColoredName = player.getColoredName();
                     Component flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                      .append(playerColoredName)
                                                      .append(Component.text(" picked up the "))
                                                      .append(coloredPrefix)
-                                                     .append(Component.text(" §eflag!"));
+                                                     .append(Component.text(" flag!"));
                     if (t != null) {
                         if (t == eventTeam) {
                             p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
-                            if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                            if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                                 flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                        .append(playerColoredName)
                                                        .append(Component.text(" picked up "))
@@ -837,7 +838,7 @@ public class WarlordsEvents implements Listener {
                             }
                         } else {
                             p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
-                            if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                            if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                                 flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                        .append(playerColoredName)
                                                        .append(Component.text(" picked up the "))
@@ -852,24 +853,22 @@ public class WarlordsEvents implements Listener {
                             flagMessage,
                             Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
                     ));
-
-                });
+                }));
             }
         } else if (eventNew instanceof SpawnFlagLocation) {
             WarlordsEntity toucher = ((SpawnFlagLocation) eventNew).getFlagReturner();
             if (eventOld instanceof GroundFlagLocation) {
                 if (toucher != null) {
                     toucher.addFlagReturn();
-                    game.forEachOnlinePlayer((p, t) -> {
+                    game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                         boolean sameTeam = t == eventTeam;
-                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
                         Component toucherColoredName = toucher.getColoredName();
                         Component flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                          .append(toucherColoredName)
                                                          .append(Component.text(" has returned the "))
                                                          .append(coloredPrefix)
                                                          .append(Component.text(" flag!"));
-                        if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                        if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                             if (sameTeam) {
                                 flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                        .append(toucherColoredName)
@@ -894,11 +893,10 @@ public class WarlordsEvents implements Listener {
                         if (sameTeam) {
                             p.playSound(p.getLocation(), "ctf.flagreturned", 500, 1);
                         }
-                    });
+                    }));
                 } else {
-                    game.forEachOnlinePlayer((p, t) -> {
-                        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
-                        if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                    game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
+                        if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                             if (t == eventTeam) {
                                 p.sendMessage(Component.text("", NamedTextColor.YELLOW)
                                                        .append(Component.text("YOUR", teamColor))
@@ -916,21 +914,20 @@ public class WarlordsEvents implements Listener {
                                                    .append(Component.text(" flag has returned to base!"))
                             );
                         }
-                    });
+                    }));
                 }
             }
         } else if (eventNew instanceof GroundFlagLocation) {
             if (eventOld instanceof PlayerFlagLocation pfl) {
                 pfl.getPlayer().updateArmor();
-                game.forEachOnlinePlayer((p, t) -> {
-                    PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
+                game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                     Component coloredName = pfl.getPlayer().getColoredName();
                     Component flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                      .append(coloredName)
                                                      .append(Component.text(" has dropped the "))
                                                      .append(coloredPrefix)
                                                      .append(Component.text(" flag!"));
-                    if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                    if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                         if (t == eventTeam) {
                             flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                    .append(coloredName)
@@ -951,21 +948,20 @@ public class WarlordsEvents implements Listener {
                             flagMessage,
                             Title.Times.times(Ticks.duration(0), Ticks.duration(60), Ticks.duration(0))
                     ));
-                });
+                }));
             }
         } else if (eventNew instanceof WaitingFlagLocation && ((WaitingFlagLocation) eventNew).getScorer() != null) {
             WarlordsEntity player = ((WaitingFlagLocation) eventNew).getScorer();
             player.addFlagCap();
-            game.forEachOnlinePlayer((p, t) -> {
+            game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                 boolean sameTeam = t == eventTeam;
-                PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p);
                 Component coloredName = player.getColoredName();
                 Component flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                  .append(coloredName)
                                                  .append(Component.text(" has captured the "))
                                                  .append(coloredPrefix)
                                                  .append(Component.text(" flag!"));
-                if (playerSettings.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
                     if (sameTeam) {
                         flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                .append(coloredName)
@@ -994,7 +990,7 @@ public class WarlordsEvents implements Listener {
                         p.playSound(player.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     }
                 }
-            });
+            }));
         }
     }
 

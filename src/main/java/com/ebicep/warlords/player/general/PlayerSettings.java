@@ -29,9 +29,6 @@ public class PlayerSettings {
         }
     }};
     private Specializations selectedSpec = Specializations.PYROMANCER;
-    private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
-    private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
-    private Settings.FlagMessageMode flagMessageMode = Settings.FlagMessageMode.ABSOLUTE;
     /**
      * Preferred team in the upcoming warlords game
      */
@@ -146,30 +143,6 @@ public class PlayerSettings {
             weaponSkins.values().removeAll(Collections.singleton(null));
             this.weaponSkins.putAll(weaponSkins);
         }
-    }
-
-    public Settings.ParticleQuality getParticleQuality() {
-        return particleQuality;
-    }
-
-    public void setParticleQuality(Settings.ParticleQuality particleQuality) {
-        this.particleQuality = particleQuality;
-    }
-
-    public Settings.HotkeyMode getHotkeyMode() {
-        return hotkeyMode;
-    }
-
-    public void setHotkeyMode(Settings.HotkeyMode hotkeyMode) {
-        this.hotkeyMode = hotkeyMode;
-    }
-
-    public Settings.FlagMessageMode getFlagMessageMode() {
-        return flagMessageMode;
-    }
-
-    public void setFlagMessageMode(Settings.FlagMessageMode flagMessageMode) {
-        this.flagMessageMode = flagMessageMode;
     }
 
     public ArmorManager.Helmets getHelmet(Specializations spec) {

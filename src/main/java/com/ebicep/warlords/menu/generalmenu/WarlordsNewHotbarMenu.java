@@ -1046,34 +1046,36 @@ public class WarlordsNewHotbarMenu {
         }
 
         public static void openParticleQualityMenu(Player player) {
-            Settings.ParticleQuality selectedParticleQuality = PlayerSettings.getPlayerSettings(player.getUniqueId()).getParticleQuality();
+            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+                Settings.ParticleQuality selectedParticleQuality = databasePlayer.getParticleQuality();
 
-            Menu menu = new Menu("Particle Quality", 9 * 4);
+                Menu menu = new Menu("Particle Quality", 9 * 4);
 
-            Settings.ParticleQuality[] particleQualities = Settings.ParticleQuality.values();
-            for (int i = 0; i < particleQualities.length; i++) {
-                Settings.ParticleQuality particleQuality = particleQualities[i];
+                Settings.ParticleQuality[] particleQualities = Settings.ParticleQuality.values();
+                for (int i = 0; i < particleQualities.length; i++) {
+                    Settings.ParticleQuality particleQuality = particleQualities[i];
 
-                menu.setItem(
-                        i + 3,
-                        1,
-                        new ItemBuilder(particleQuality.item)
-                                .lore(WordWrap.wrap(particleQuality.description, 160))
-                                .addLore(
-                                        Component.empty(),
-                                        selectedParticleQuality == particleQuality ? Component.text("SELECTED", NamedTextColor.GREEN) : Component.text("Click to select",
-                                                NamedTextColor.YELLOW
-                                        )
-                                )
-                                .get(),
-                        (m, e) -> {
-                            Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());
-                            openParticleQualityMenu(player);
-                        }
-                );
-            }
-            menu.setItem(4, 3, MENU_BACK, (m, e) -> openSettingsMenu(player));
-            menu.openForPlayer(player);
+                    menu.setItem(
+                            i + 3,
+                            1,
+                            new ItemBuilder(particleQuality.item)
+                                    .lore(WordWrap.wrap(particleQuality.description, 160))
+                                    .addLore(
+                                            Component.empty(),
+                                            selectedParticleQuality == particleQuality ? Component.text("SELECTED", NamedTextColor.GREEN) : Component.text("Click to select",
+                                                    NamedTextColor.YELLOW
+                                            )
+                                    )
+                                    .get(),
+                            (m, e) -> {
+                                Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());
+                                openParticleQualityMenu(player);
+                            }
+                    );
+                }
+                menu.setItem(4, 3, MENU_BACK, (m, e) -> openSettingsMenu(player));
+                menu.openForPlayer(player);
+            });
         }
     }
 
