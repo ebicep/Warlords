@@ -58,7 +58,6 @@ public abstract class WarlordsEnergyUseEvent extends AbstractWarlordsEntityEvent
 
     public static class Post extends WarlordsEnergyUseEvent {
 
-
         private static final HandlerList handlers = new HandlerList();
 
         public static HandlerList getHandlerList() {

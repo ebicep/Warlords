@@ -193,8 +193,11 @@ public class SwapSpecOption implements Option {
         }
         int sameSpecCount = 0;
         int sameSpecTypeCount = 0;
-        List<Specializations> specs = game.warlordsPlayers().map(WarlordsEntity::getSpecClass).collect(Collectors.toList());
-        specs.addAll(swappedSpecs.values());
+        List<Specializations> specs = game.warlordsPlayers()
+                                          .filter(warlordsPlayer -> warlordsPlayer.isTeammate(warlordsEntity))
+                                          .map(WarlordsEntity::getSpecClass)
+                                          .collect(Collectors.toList());
+        specs.addAll(swappedSpecs.entrySet().stream().filter(e -> e.getKey().isTeammate(warlordsEntity)).map(Map.Entry::getValue).toList());
         for (Specializations specializations : specs) {
             if (specializations == spec) {
                 sameSpecCount++;
