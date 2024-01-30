@@ -1026,7 +1026,7 @@ public class WarlordsNewHotbarMenu {
                         1,
                         databasePlayer.getGlowingMode().item,
                         (m, e) -> {
-                            player.performCommand("flagmessagemode");
+                            player.performCommand("glowingmode");
                             openSettingsMenu(player);
                         }
                 );
