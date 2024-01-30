@@ -36,6 +36,7 @@ public class Shield implements Listener {
         }
         Consumer<CooldownManager> oldRemoveForce = cooldown.getOnRemoveForce();
         cooldown.setOnRemoveForce(cooldownManager -> {
+            oldRemoveForce.accept(cooldownManager);
             if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Shield.class).stream().count() == 1) {
                 warlordsEntity.giveAbsorption(0);
             } else {
@@ -46,8 +47,6 @@ public class Shield implements Listener {
                         .sum();
                 warlordsEntity.giveAbsorption((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
             }
-
-            oldRemoveForce.accept(cooldownManager);
         });
         double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
