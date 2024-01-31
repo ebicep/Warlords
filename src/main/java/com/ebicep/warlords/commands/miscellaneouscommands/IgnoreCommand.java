@@ -20,14 +20,18 @@ public class IgnoreCommand extends BaseCommand {
     @Description("Toggling ignoring a player")
     public void ignore(Player player, @Flags("other") Player toIgnore) {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            List<UUID> ignored = databasePlayer.getIgnored();
             UUID toIgnoreUUID = toIgnore.getUniqueId();
+            List<UUID> ignored = databasePlayer.getIgnored();
+            if (player.getUniqueId().equals(toIgnoreUUID)) {
+                player.sendMessage(Component.text("You cant ignore yourself!", NamedTextColor.RED));
+                return;
+            }
             if (ignored.contains(toIgnoreUUID)) {
                 ignored.remove(toIgnoreUUID);
-                player.sendMessage(Component.text("You unignored " + toIgnore.getName(), NamedTextColor.RED));
+                player.sendMessage(Component.text("You unignored " + toIgnore.getName() + ".", NamedTextColor.RED));
             } else {
                 ignored.add(toIgnoreUUID);
-                player.sendMessage(Component.text("You ignored " + toIgnore.getName(), NamedTextColor.RED));
+                player.sendMessage(Component.text("You ignored " + toIgnore.getName() + ".", NamedTextColor.RED));
             }
         });
     }
