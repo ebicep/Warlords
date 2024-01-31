@@ -20,7 +20,7 @@ import java.util.*;
 
 public class MessageCommand extends BaseCommand {
 
-    public static final LinkedHashMap<PlayerMessage, Instant> LAST_PLAYER_MESSAGES = new LinkedHashMap<>();
+    private static final LinkedHashMap<PlayerMessage, Instant> LAST_PLAYER_MESSAGES = new LinkedHashMap<>();
 
     @CommandAlias("msg|tell")
     @Description("Privately message a player")

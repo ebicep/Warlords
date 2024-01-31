@@ -593,7 +593,7 @@ public enum GameMode {
             DatabaseGameSiege::new,
             GamesCollections.SIEGE,
             6,
-            true
+            false
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
