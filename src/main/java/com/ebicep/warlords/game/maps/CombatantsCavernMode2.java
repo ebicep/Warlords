@@ -35,9 +35,9 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class IllusionRiftEvent2 extends GameMap {
+public class CombatantsCavernMode2 extends GameMap {
 
-    public IllusionRiftEvent2() {
+    public CombatantsCavernMode2() {
         super(
                 "Combatant’s Cavern",
                 4,

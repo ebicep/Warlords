@@ -22,9 +22,9 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class HeavenWill extends GameMap {
+public class HeavensWill extends GameMap {
 
-    public HeavenWill() {
+    public HeavensWill() {
         super(
                 "Heaven's Will",
                 2,

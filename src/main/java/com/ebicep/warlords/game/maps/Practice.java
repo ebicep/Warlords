@@ -24,9 +24,9 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class Debug extends GameMap {
+public class Practice extends GameMap {
 
-    public Debug() {
+    public Practice() {
         super(
                 "Practice",
                 300,

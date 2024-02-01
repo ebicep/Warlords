@@ -39,9 +39,9 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class IllusionRiftEvent5 extends GameMap {
+public class TheBorderlineOfIllusion extends GameMap {
 
-    public IllusionRiftEvent5() {
+    public TheBorderlineOfIllusion() {
         super(
                 "The Borderline of Illusion",
                 4,

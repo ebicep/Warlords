@@ -16,7 +16,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.SafeZoneOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffectOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.NarmersTombOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.SpidersDwellingOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.RandomSpawnWave;
 import com.ebicep.warlords.game.option.pve.wavedefense.waves.StaticWaveList;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
@@ -28,6 +28,7 @@ import com.ebicep.warlords.util.bukkit.LocationFactory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Location;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -35,15 +36,15 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class IllusionRiftEvent3 extends GameMap {
+public class SpidersBurrow extends GameMap {
 
-    public IllusionRiftEvent3() {
+    public SpidersBurrow() {
         super(
-                "Acolyte Archives",
+                "Spiders Burrow",
                 4,
                 1,
                 120 * SECOND,
-                "IllusionRiftEvent3",
+                "IllusionRiftEvent4",
                 1,
                 GameMode.EVENT_WAVE_DEFENSE
         );
@@ -54,7 +55,7 @@ public class IllusionRiftEvent3 extends GameMap {
         List<Option> options = category.initMap(this, loc, addons);
 
         options.add(TextOption.Type.CHAT_CENTERED.create(
-                Component.text("Narmer’s Tomb", NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text("ARACHNO_VENARIs Dwelling", NamedTextColor.WHITE, TextDecoration.BOLD),
                 Component.empty(),
                 Component.text("Kill mobs to gain event points!", NamedTextColor.YELLOW, TextDecoration.BOLD),
                 Component.empty()
@@ -92,116 +93,121 @@ public class IllusionRiftEvent3 extends GameMap {
                 .add(1, new RandomSpawnWave(8, 5 * SECOND, null)
                         .add(0.4, Mob.ZOMBIE_LANCER)
                         .add(0.5, Mob.PIG_DISCIPLE)
-                        .add(0.1, Mob.BASIC_WARRIOR_BERSERKER)
+                        .add(0.1, Mob.ZOMBIE_LAMENT)
                 )
                 .add(2, new RandomSpawnWave(8, SECOND, null)
                         .add(0.4, Mob.ZOMBIE_LANCER)
                         .add(0.4, Mob.PIG_DISCIPLE)
-                        .add(0.1, Mob.BASIC_WARRIOR_BERSERKER)
+                        .add(0.1, Mob.ARACHNO_VENARI)
                         .add(0.1, Mob.ZOMBIE_LAMENT)
                 )
                 .add(4, new RandomSpawnWave(8, SECOND, null)
                         .add(0.4, Mob.ZOMBIE_LANCER)
                         .add(0.3, Mob.PIG_DISCIPLE)
-                        .add(0.1, Mob.BASIC_WARRIOR_BERSERKER)
-                        .add(0.1, Mob.ZOMBIE_LAMENT)
-                        .add(0.1, Mob.GOLEM_APPRENTICE)
+                        .add(0.2, Mob.ARACHNO_VENARI)
+                        .add(0.05, Mob.ZOMBIE_LAMENT)
+                        .add(0.05, Mob.PIG_SHAMAN)
                 )
-                .add(5, new RandomSpawnWave(1, SECOND, Component.text("Boss"))
-                        .add(Mob.EVENT_NARMER)
+                .add(5, new RandomSpawnWave(8, SECOND, Component.text("Boss"))
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_FROST)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_FOLIAGE)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_SHRIEKER)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_RESPITE)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_CRUOR)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_DEGRADER)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_APPARITION)
                 )
                 .add(6, new RandomSpawnWave(12, SECOND, null)
                         .add(0.4, Mob.ZOMBIE_LANCER)
                         .add(0.3, Mob.PIG_DISCIPLE)
-                        .add(0.1, Mob.BASIC_WARRIOR_BERSERKER)
-                        .add(0.1, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
-                        .add(0.05, Mob.ZOMBIE_LAMENT)
-                        .add(0.05, Mob.GOLEM_APPRENTICE)
-                )
-                .add(7, new RandomSpawnWave(12, SECOND, null)
-                        .add(0.3, Mob.ZOMBIE_LANCER)
-                        .add(0.3, Mob.BASIC_WARRIOR_BERSERKER)
-                        .add(0.1, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
-                        .add(0.1, Mob.ZOMBIE_LAMENT)
-                        .add(0.1, Mob.PIG_SHAMAN)
-                        .add(0.1, Mob.GOLEM_APPRENTICE)
+                        .add(0.2, Mob.ARACHNO_VENARI)
+                        .add(0.2, Mob.ZOMBIE_LAMENT)
+                        .add(0.05, Mob.PIG_SHAMAN)
+                        .add(0.05, Mob.PIG_ALLEVIATOR)
                 )
                 .add(8, new RandomSpawnWave(12, SECOND, null)
                         .add(0.2, Mob.ZOMBIE_LANCER)
-                        .add(0.2, Mob.BASIC_WARRIOR_BERSERKER)
-                        .add(0.2, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
+                        .add(0.2, Mob.PIG_DISCIPLE)
+                        .add(0.3, Mob.ARACHNO_VENARI)
                         .add(0.1, Mob.ZOMBIE_LAMENT)
                         .add(0.1, Mob.PIG_SHAMAN)
-                        .add(0.1, Mob.GOLEM_APPRENTICE)
-                        .add(0.1, Mob.ZOMBIE_SWORDSMAN)
+                        .add(0.05, Mob.PIG_ALLEVIATOR)
+                        .add(0.05, Mob.ZOMBIE_VANGUARD)
                 )
-                .add(10, new RandomSpawnWave(1, SECOND, Component.text("Boss"))
-                        .add(Mob.EVENT_NARMER)
+                .add(10, new RandomSpawnWave(12, SECOND, Component.text("Boss"))
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_FROST)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_FOLIAGE)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_SHRIEKER)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_RESPITE)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_CRUOR)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_DEGRADER)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_APPARITION)
                 )
                 .add(11, new RandomSpawnWave(16, SECOND, null)
                         .add(0.1, Mob.ZOMBIE_LANCER)
-                        .add(0.1, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
-                        .add(0.1, Mob.ZOMBIE_LAMENT)
+                        .add(0.1, Mob.PIG_DISCIPLE)
+                        .add(0.2, Mob.ZOMBIE_LAMENT)
+                        .add(0.3, Mob.ARACHNO_VENARI)
                         .add(0.1, Mob.PIG_SHAMAN)
-                        .add(0.3, Mob.GOLEM_APPRENTICE)
-                        .add(0.2, Mob.ZOMBIE_SWORDSMAN)
-                        .add(0.05, Mob.ADVANCED_WARRIOR_BERSERKER)
+                        .add(0.1, Mob.PIG_ALLEVIATOR)
                         .add(0.05, Mob.ZOMBIE_VANGUARD)
-                )
-                .add(12, new RandomSpawnWave(16, SECOND, null)
-                        .add(0.1, Mob.ZOMBIE_LANCER)
-                        .add(0.1, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
-                        .add(0.1, Mob.ZOMBIE_LAMENT)
-                        .add(0.1, Mob.PIG_SHAMAN)
-                        .add(0.02, Mob.GOLEM_APPRENTICE)
-                        .add(0.01, Mob.ZOMBIE_SWORDSMAN)
-                        .add(0.2, Mob.ADVANCED_WARRIOR_BERSERKER)
-                        .add(0.1, Mob.ZOMBIE_VANGUARD)
+                        .add(0.05, Mob.SLIME_GUARD)
                 )
                 .add(13, new RandomSpawnWave(16, SECOND, null)
-                        .add(0.1, Mob.INTERMEDIATE_WARRIOR_BERSERKER)
+                        .add(0.1, Mob.ZOMBIE_LANCER)
+                        .add(0.1, Mob.PIG_DISCIPLE)
                         .add(0.1, Mob.ZOMBIE_LAMENT)
+                        .add(0.2, Mob.ARACHNO_VENARI)
                         .add(0.1, Mob.PIG_SHAMAN)
-                        .add(0.2, Mob.GOLEM_APPRENTICE)
-                        .add(0.1, Mob.ZOMBIE_SWORDSMAN)
-                        .add(0.1, Mob.ADVANCED_WARRIOR_BERSERKER)
+                        .add(0.2, Mob.PIG_ALLEVIATOR)
                         .add(0.05, Mob.ZOMBIE_VANGUARD)
-                        .add(0.05, Mob.SKELETAL_SORCERER)
-                        .add(0.02, Mob.FIRE_SPLITTER)
+                        .add(0.05, Mob.SLIME_GUARD)
+                        .add(0.1, Mob.ZOMBIE_SWORDSMAN)
                 )
-                .add(15, new RandomSpawnWave(1, SECOND, Component.text("Boss"))
-                        .add(Mob.EVENT_NARMER)
+                .add(15, new RandomSpawnWave(16, SECOND, Component.text("Boss"))
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_FROST)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_FOLIAGE)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_SHRIEKER)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_RESPITE)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_CRUOR)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_DEGRADER)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_APPARITION)
                 )
                 .add(16, new RandomSpawnWave(20, SECOND, null)
-                        .add(0.2, Mob.ZOMBIE_LAMENT)
-                        .add(0.1, Mob.PIG_SHAMAN)
-                        .add(0.1, Mob.GOLEM_APPRENTICE)
-                        .add(0.2, Mob.ZOMBIE_SWORDSMAN)
-                        .add(0.05, Mob.ADVANCED_WARRIOR_BERSERKER)
-                        .add(0.05, Mob.ZOMBIE_VANGUARD)
-                        .add(0.05, Mob.ZOMBIE_KNIGHT)
-                        .add(0.05, Mob.OVERGROWN_ZOMBIE)
-                        .add(0.1, Mob.SKELETAL_SORCERER)
-                        .add(0.1, Mob.FIRE_SPLITTER)
-                )
-                .add(20, new RandomSpawnWave(1, SECOND, Component.text("Boss"))
-                        .add(Mob.EVENT_NARMER)
-                )
-                .add(21, new RandomSpawnWave(20, SECOND, null)
+                        .add(0.2, Mob.PIG_DISCIPLE)
                         .add(0.1, Mob.ZOMBIE_LAMENT)
-                        .add(0.1, Mob.PIG_SHAMAN)
-                        .add(0.1, Mob.GOLEM_APPRENTICE)
-                        .add(0.1, Mob.ZOMBIE_SWORDSMAN)
-                        .add(0.1, Mob.ADVANCED_WARRIOR_BERSERKER)
-                        .add(0.1, Mob.ZOMBIE_VANGUARD)
-                        .add(0.05, Mob.ZOMBIE_KNIGHT)
-                        .add(0.05, Mob.OVERGROWN_ZOMBIE)
-                        .add(0.2, Mob.SKELETAL_SORCERER)
-                        .add(0.05, Mob.FIRE_SPLITTER)
-                        .add(0.05, Mob.NIGHTMARE_ZOMBIE)
+                        .add(0.1, Mob.ARACHNO_VENARI)
+                        .add(0.2, Mob.PIG_SHAMAN)
+                        .add(0.05, Mob.PIG_ALLEVIATOR)
+                        .add(0.05, Mob.ZOMBIE_VANGUARD)
+                        .add(0.05, Mob.SLIME_GUARD)
+                        .add(0.05, Mob.ZOMBIE_SWORDSMAN)
+                        .add(0.1, Mob.OVERGROWN_ZOMBIE)
+                        .add(0.1, Mob.RIFT_WALKER)
                 )
-                .add(25, new RandomSpawnWave(1, SECOND, Component.text("Boss"))
-                        .add(Mob.EVENT_NARMER)
+                .add(20, new RandomSpawnWave(20, SECOND, Component.text("Boss"))
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_FROST)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_FOLIAGE)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_SHRIEKER)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_RESPITE)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_CRUOR)
+                        .add(0.1, Mob.EVENT_MITHRA_FORSAKEN_DEGRADER)
+                        .add(0.2, Mob.EVENT_MITHRA_FORSAKEN_APPARITION)
+                )
+                .add(21, new RandomSpawnWave(24, SECOND, null)
+                        .add(0.1, Mob.ZOMBIE_LANCER)
+                        .add(0.1, Mob.PIG_DISCIPLE)
+                        .add(0.1, Mob.ZOMBIE_LAMENT)
+                        .add(0.1, Mob.ARACHNO_VENARI)
+                        .add(0.1, Mob.PIG_SHAMAN)
+                        .add(0.1, Mob.PIG_ALLEVIATOR)
+                        .add(0.05, Mob.ZOMBIE_VANGUARD)
+                        .add(0.05, Mob.SLIME_GUARD)
+                        .add(0.2, Mob.ZOMBIE_SWORDSMAN)
+                        .add(0.05, Mob.OVERGROWN_ZOMBIE)
+                        .add(0.05, Mob.RIFT_WALKER)
+                ).add(25, new RandomSpawnWave(1, SECOND, Component.text("Boss"))
+                        .add(Mob.EVENT_MITHRA, new Location(loc.getWorld(), 4.5, 22, -2.5))
                 )
                 .loop(6, 21, 5)
                 .loop(6, 25, 5)
@@ -211,7 +217,7 @@ public class IllusionRiftEvent3 extends GameMap {
 
             @Override
             public List<Component> getWaveScoreboard(WarlordsPlayer player) {
-                return Collections.singletonList(Component.text("Event: ").append(Component.text("Pharaoh's Revenge", NamedTextColor.GREEN)));
+                return Collections.singletonList(Component.text("Event: ").append(Component.text("ARACHNO_VENARIs Burrow", NamedTextColor.GREEN)));
             }
 
             @Override
@@ -225,33 +231,34 @@ public class IllusionRiftEvent3 extends GameMap {
         });
         options.add(new ItemOption());
         options.add(new WinAfterTimeoutOption(600, 50, "spec"));
-        options.add(new NarmersTombOption());
+        options.add(new SpidersDwellingOption());
         options.add(new SafeZoneOption());
         options.add(new EventPointsOption()
-                        .reduceScoreOnAllDeath(30, Team.BLUE)
-                        .onPerWaveClear(1, 500)
-                        .onPerWaveClear(5, 2000)
-                        .onPerMobKill(Mob.ZOMBIE_LANCER, 5)
-                        .onPerMobKill(Mob.PIG_DISCIPLE, 10)
-                        .onPerMobKill(Mob.BASIC_WARRIOR_BERSERKER, 10)
-                        .onPerMobKill(Mob.ZOMBIE_LAMENT, 10)
-                        .onPerMobKill(Mob.GOLEM_APPRENTICE, 20)
-                        .onPerMobKill(Mob.INTERMEDIATE_WARRIOR_BERSERKER, 20)
-                        .onPerMobKill(Mob.PIG_SHAMAN, 20)
-                        .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 25)
-                        .onPerMobKill(Mob.ADVANCED_WARRIOR_BERSERKER, 40)
-                        .onPerMobKill(Mob.RIFT_WALKER, 40)
-                        .onPerMobKill(Mob.ZOMBIE_VANGUARD, 40)
-                        .onPerMobKill(Mob.SKELETAL_SORCERER, 40)
-                        .onPerMobKill(Mob.FIRE_SPLITTER, 40)
-                        .onPerMobKill(Mob.ZOMBIE_KNIGHT, 45)
-                        .onPerMobKill(Mob.OVERGROWN_ZOMBIE, 45)
-                        .onPerMobKill(Mob.NIGHTMARE_ZOMBIE, 50)
-                        .onPerMobKill(Mob.EVENT_NARMER_ACOLYTE, 100)
-                        .onPerMobKill(Mob.EVENT_NARMER_DJER, 150)
-                        .onPerMobKill(Mob.EVENT_NARMER_DJET, 150)
-                        .onPerMobKill(Mob.EVENT_NARMER, 500)
-                //.cap(50_000)
+                .reduceScoreOnAllDeath(30, Team.BLUE)
+                .onPerWaveClear(1, 500)
+                .onPerWaveClear(5, 2000)
+                .onPerMobKill(Mob.ZOMBIE_LANCER, 5)
+                .onPerMobKill(Mob.PIG_DISCIPLE, 10)
+                .onPerMobKill(Mob.ZOMBIE_LAMENT, 10)
+                .onPerMobKill(Mob.ARACHNO_VENARI, 10)
+                .onPerMobKill(Mob.PIG_SHAMAN, 20)
+                .onPerMobKill(Mob.PIG_ALLEVIATOR, 20)
+                .onPerMobKill(Mob.ZOMBIE_VANGUARD, 20)
+                .onPerMobKill(Mob.SLIME_GUARD, 25)
+                .onPerMobKill(Mob.ZOMBIE_SWORDSMAN, 30)
+                .onPerMobKill(Mob.OVERGROWN_ZOMBIE, 40)
+                .onPerMobKill(Mob.RIFT_WALKER, 45)
+                .onPerMobKill(Mob.EVENT_MITHRA_FORSAKEN_FROST, 50)
+                .onPerMobKill(Mob.EVENT_MITHRA_FORSAKEN_FOLIAGE, 50)
+                .onPerMobKill(Mob.EVENT_MITHRA_FORSAKEN_SHRIEKER, 50)
+                .onPerMobKill(Mob.EVENT_MITHRA_FORSAKEN_RESPITE, 50)
+                .onPerMobKill(Mob.EVENT_MITHRA_FORSAKEN_CRUOR, 50)
+                .onPerMobKill(Mob.EVENT_MITHRA_FORSAKEN_DEGRADER, 50)
+                .onPerMobKill(Mob.EVENT_MITHRA_FORSAKEN_APPARITION, 50)
+                .onPerMobKill(Mob.EVENT_MITHRA_POISONOUS_SPIDER, 50)
+                .onPerMobKill(Mob.EVENT_MITHRA_EGG_SAC, 150)
+                .onPerMobKill(Mob.EVENT_MITHRA, 500)
+
         );
         options.add(new CurrencyOnEventOption()
                 .startWith(120000)
@@ -259,7 +266,7 @@ public class IllusionRiftEvent3 extends GameMap {
                 .setPerWaveClear(5, 10000)
         );
         options.add(new CoinGainOption()
-                .clearMobCoinValueAndSet("Narmer's Killed", "Narmer", 100)
+                .clearMobCoinValueAndSet("Mithra Killed", "Mithra", 100)
                 .guildCoinInsigniaConvertBonus(1000)
                 .guildCoinPerXSec(1, 1)
         );
@@ -267,7 +274,7 @@ public class IllusionRiftEvent3 extends GameMap {
                 .playerExpPerXSec(15, 10)
                 .guildExpPerXSec(1, 60)
         );
-        options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffect.CONQUERING_ENERGY));
+        options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffect.ARACHNOPHOBIA));
 
         return options;
     }

@@ -17,9 +17,9 @@ import java.util.List;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
 
-public class TutorialMap extends GameMap {
+public class Tutorial extends GameMap {
 
-    public TutorialMap() {
+    public Tutorial() {
         super(
                 "Tutorial",
                 1,
