@@ -23,6 +23,8 @@ import com.ebicep.warlords.util.bukkit.LocationFactory;
 import java.util.EnumSet;
 import java.util.List;
 
+import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
+
 public class Rift extends GameMap {
 
     public Rift() {

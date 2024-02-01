@@ -66,10 +66,13 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
         return true;
     }
 
+    @Nonnull
     @Override
     public MongoCustomConversions customConversions() {
         return new MongoCustomConversions(List.of(
-                new StringToSpendableConverter()
+                new StringToSpendableConverter(),
+                new GameMapConverter.StringToGameMapConverter(),
+                new GameMapConverter.GameMapToStringConverter()
         ));
     }
 }

@@ -4,19 +4,28 @@ package com.ebicep.warlords.database.configuration;
 import com.ebicep.warlords.game.GameMap;
 import org.springframework.core.convert.converter.Converter;
 
-/**
- * TODO Convert GameMap to string then static gamemap value
- */
-public class GameMapConverter implements Converter<GameMap, GameMap> {
+import javax.annotation.Nonnull;
 
 
-    @Override
-    public GameMap convert(GameMap source) {
-        return null;
+public class GameMapConverter {
+
+    public static class StringToGameMapConverter implements Converter<String, GameMap> {
+        @Override
+        public GameMap convert(@Nonnull String source) {
+            for (GameMap map : GameMap.VALUES) {
+                if (map.getDatabaseName().equalsIgnoreCase(source)) {
+                    return map;
+                }
+            }
+            return null;
+        }
     }
 
-    @Override
-    public <U> Converter<GameMap, U> andThen(Converter<? super GameMap, ? extends U> after) {
-        return Converter.super.andThen(after);
+    public static class GameMapToStringConverter implements Converter<GameMap, String> {
+        @Override
+        public String convert(@Nonnull GameMap source) {
+            return source.getDatabaseName();
+        }
     }
+
 }

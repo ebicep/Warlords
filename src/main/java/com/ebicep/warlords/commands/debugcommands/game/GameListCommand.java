@@ -35,7 +35,7 @@ public class GameListCommand extends BaseCommand {
                                                      .append(Component.text("["))
                                                      .append(Component.text(holder.getName(), NamedTextColor.AQUA))
                                                      .append(Component.text("|"))
-                                                     .append(Component.text(toTitleHumanCase(holder.getMap().name()), NamedTextColor.AQUA))
+                                                     .append(Component.text(toTitleHumanCase(holder.getMap().getMapName()), NamedTextColor.AQUA))
                                                      .append(Component.text("]"))
                                                      .toBuilder();
             Game game = holder.getGame();

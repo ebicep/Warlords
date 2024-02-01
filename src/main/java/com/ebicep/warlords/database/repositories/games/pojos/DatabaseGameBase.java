@@ -602,10 +602,6 @@ public abstract class DatabaseGameBase {
         return map;
     }
 
-    public void setMap(GameMap map) {
-        this.map = map;
-    }
-
     public List<GameAddon> getGameAddons() {
         return gameAddons;
     }

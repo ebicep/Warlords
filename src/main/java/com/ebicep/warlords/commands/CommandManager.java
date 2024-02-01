@@ -266,6 +266,15 @@ public class CommandManager {
             }
             return namedTextColor;
         });
+        manager.getCommandContexts().registerContext(GameMap.class, command -> {
+            String map = command.popFirstArg();
+            for (GameMap value : GameMap.VALUES) {
+                if (value.getMapName().equalsIgnoreCase(map)) {
+                    return value;
+                }
+            }
+            throw new InvalidCommandArgument("Could not find a game map with that name");
+        });
     }
 
     public static void registerCompletions() {
@@ -312,7 +321,7 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("boolean", command -> Arrays.asList("true", "false"));
         commandCompletions.registerAsyncCompletion("maps", command ->
                 Arrays.stream(GameMap.VALUES)
-                      .map(GameMap::name)
+                      .map(GameMap::getMapName)
                       .toList());
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
                 Arrays.stream(GameMode.VALUES)

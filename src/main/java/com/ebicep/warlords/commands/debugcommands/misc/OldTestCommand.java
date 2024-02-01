@@ -1,11 +1,9 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.util.bukkit.Laser;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -117,11 +115,8 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
-            try {
-                Laser laser = new Laser.GuardianLaser(new LocationBuilder(player.getLocation()).forward(10), player.getLocation(), 15, -1);
-                laser.start(Warlords.getInstance());
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
+            for (GameMap value : GameMap.VALUES) {
+                System.out.println(value.getDatabaseName());
             }
 
 
