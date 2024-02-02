@@ -140,6 +140,20 @@ public class GameDebugCommand extends BaseCommand {
         });
     }
 
+    @CommandAlias("gamedebugtd|gdtd")
+    @Description("Auto starts tower defense game")
+    public void gameDebugTD(@Conditions("outsideGame") Player player) {
+        GameStartCommand.startGame(player, false, queueEntryBuilder -> {
+            queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
+            queueEntryBuilder.setGameMode(GameMode.TOWER_DEFENSE);
+            queueEntryBuilder.setMap(GameMap.TD_TEST);
+            queueEntryBuilder.setOnResult((queueResult, game) -> {
+                game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
+            });
+        });
+    }
+
+
     @CommandAlias("gamedebugevent|gde")
     @Description("Debug event game")
     public void gameDebugEvent(@Conditions("outsideGame") Player player, Integer mode) {

@@ -64,7 +64,7 @@ import java.util.function.Consumer;
 
 public abstract class AbstractMob implements Mob {
 
-    protected final Location spawnLocation;
+    protected Location spawnLocation;
     protected final String name;
     protected final int maxHealth;
     protected final float walkSpeed;
@@ -528,6 +528,9 @@ public abstract class AbstractMob implements Mob {
         return npc;
     }
 
+    public void setSpawnLocation(Location spawnLocation) {
+        this.spawnLocation = spawnLocation;
+    }
 
     public WarlordsNPC getWarlordsNPC() {
         return warlordsNPC;

@@ -62,7 +62,7 @@ public class RaidOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
         return null;
     }
 

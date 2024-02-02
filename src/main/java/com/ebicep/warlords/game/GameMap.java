@@ -59,6 +59,7 @@ public abstract class GameMap {
     public static final GameMap VALLEY = new Valley();
     public static final GameMap VOID_RIFT = new VoidRift();
     public static final GameMap WARSONG = new Warsong();
+    public static final GameMap TD_TEST = new TowerDefenseTest();
 
     public static final GameMap[] VALUES = {
             ACROPOLIS,
@@ -103,7 +104,8 @@ public abstract class GameMap {
             TUTORIAL_MAP,
             VALLEY,
             VOID_RIFT,
-            WARSONG
+            WARSONG,
+            TD_TEST
     };
 
     public static GameMap getGameMap(String mapName) {

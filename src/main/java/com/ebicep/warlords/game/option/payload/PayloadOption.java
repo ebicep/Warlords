@@ -35,7 +35,7 @@ public class PayloadOption implements PveOption {
     private static final double MOVE_RADIUS = 5;
     private static final int BOSS_BAR_FILL_SPACE = 45;
     private static final int BOSS_BAR_ESCORT_SPACE = 6;
-    private final ConcurrentHashMap<AbstractMob, Integer> mobs = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final PayloadBrain brain;
     private final PayloadRendererCoalCart renderer = new PayloadRendererCoalCart();
@@ -189,7 +189,7 @@ public class PayloadOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
         return mobs;
     }
 
@@ -197,7 +197,7 @@ public class PayloadOption implements PveOption {
     public void spawnNewMob(AbstractMob mob, Team team) {
         mob.toNPC(game, team, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
+        mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 

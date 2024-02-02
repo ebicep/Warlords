@@ -64,6 +64,8 @@ public class AdminCommand extends BaseCommand {
     public void removeEntitiesNearBy(Player player, @Conditions("limits:min=1,max=20") Integer range) {
         player.getWorld()
               .getNearbyEntities(player.getLocation(), range, range, range)
+              .stream()
+              .filter(entity -> !(entity instanceof Player))
               .forEach(Entity::remove);
     }
 

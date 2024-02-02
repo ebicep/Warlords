@@ -62,7 +62,7 @@ import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class WaveDefenseOption implements PveOption {
     protected static final int SCOREBOARD_PRIORITY = 5;
-    private final ConcurrentHashMap<AbstractMob, Integer> mobs = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private final Team team;
     private final WaveList waves;
     private final DifficultyIndex difficulty;
@@ -410,7 +410,7 @@ public class WaveDefenseOption implements PveOption {
                 }
                 WarlordsNPC npc = abstractMob.toNPC(game, team, WaveDefenseOption.this::modifyStats);
                 game.addNPC(npc);
-                mobs.put(abstractMob, ticksElapsed.get());
+                mobs.put(abstractMob, new MobData(ticksElapsed.get()));
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
                 return npc;
             }
@@ -565,7 +565,7 @@ public class WaveDefenseOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
         return mobs;
     }
 
@@ -587,7 +587,7 @@ public class WaveDefenseOption implements PveOption {
     @Override
     public void spawnNewMob(AbstractMob mob, Team team) {
         game.addNPC(mob.toNPC(game, team, this::modifyStats));
-        mobs.put(mob, ticksElapsed.get());
+        mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 

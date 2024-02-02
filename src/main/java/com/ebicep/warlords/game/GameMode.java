@@ -634,6 +634,39 @@ public enum GameMode {
             return options;
         }
     },
+    TOWER_DEFENSE(
+            "Tower Defense",
+            "TD",
+            new ItemStack(Material.OAK_PLANKS),
+            null,
+            null,
+            100,
+            false
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = super.initMap(map, loc, addons);
+
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    Component.empty()
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("", NamedTextColor.YELLOW)
+            ));
+
+            options.add(new GameFreezeOption());
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WeaponOption());
+
+
+            return options;
+        }
+    },
 
     ;
 
@@ -644,7 +677,7 @@ public enum GameMode {
     }
 
     public static boolean isPvE(GameMode mode) {
-        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT;
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE;
     }
 
     public final String name;

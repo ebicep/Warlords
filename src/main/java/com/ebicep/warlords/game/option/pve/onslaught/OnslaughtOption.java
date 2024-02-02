@@ -56,7 +56,7 @@ public class OnslaughtOption implements PveOption {
     private final Team team;
     private final WaveList mobSet;
     private final AtomicInteger ticksElapsed = new AtomicInteger(200); //start at 200 to account for 10 second start delay
-    private final ConcurrentHashMap<AbstractMob, Integer> mobs = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private OnslaughtRewards onslaughtRewards;
     private HashMap<UUID, HashMap<Spendable, Long>> playerSyntheticPouch = new HashMap<>();
     private HashMap<UUID, HashMap<Spendable, Long>> playerAspirantPouch = new HashMap<>();
@@ -248,7 +248,7 @@ public class OnslaughtOption implements PveOption {
                 if (abstractMob == null) {
                     return null;
                 }
-                mobs.put(abstractMob, ticksElapsed.get());
+                mobs.put(abstractMob, new MobData(ticksElapsed.get()));
                 WarlordsNPC wpc = abstractMob.toNPC(game, team, OnslaughtOption.this::modifyStats);
                 game.addNPC(wpc);
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
@@ -379,7 +379,7 @@ public class OnslaughtOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
         return mobs;
     }
 
@@ -397,7 +397,7 @@ public class OnslaughtOption implements PveOption {
     public void spawnNewMob(AbstractMob mob) {
         mob.toNPC(game, Team.RED, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
+        mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 
@@ -405,7 +405,7 @@ public class OnslaughtOption implements PveOption {
     public void spawnNewMob(AbstractMob mob, Team team) {
         mob.toNPC(game, team, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
+        mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 

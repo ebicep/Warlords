@@ -80,7 +80,7 @@ public interface PveOption extends Option {
 
     default void mobTick() {
         for (AbstractMob mob : new ArrayList<>(getMobs())) {
-            mob.whileAlive(getTicksElapsed() - getMobsMap().get(mob), this);
+            mob.whileAlive(getTicksElapsed() - getMobsMap().get(mob).getSpawnTick(), this);
             mob.activateAbilities();
         }
     }
@@ -89,7 +89,7 @@ public interface PveOption extends Option {
 
     int getTicksElapsed();
 
-    ConcurrentHashMap<AbstractMob, Integer> getMobsMap();
+    ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap();
 
     default int playerCount() {
         return (int) getGame().warlordsPlayers().count();
@@ -336,6 +336,18 @@ public interface PveOption extends Option {
                               .append(Component.text("⚔ " + we.getMinuteStats().total().getKills(), NamedTextColor.RED)));
         }
         return list;
+    }
+
+    class MobData {
+        private final int spawnTick;
+
+        public MobData(int spawnTick) {
+            this.spawnTick = spawnTick;
+        }
+
+        public int getSpawnTick() {
+            return spawnTick;
+        }
     }
 
 }
