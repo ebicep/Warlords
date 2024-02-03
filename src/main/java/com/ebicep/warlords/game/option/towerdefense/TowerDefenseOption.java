@@ -56,12 +56,6 @@ public class TowerDefenseOption implements PveOption {
                 NPC npc = mob.getNpc();
                 npc.data().set(NPC.Metadata.COLLIDABLE, false);
                 npc.getDefaultGoalController().clear();
-//                Waypoints waypoints = npc.getOrAddTrait(Waypoints.class);
-//                LinearWaypointProvider guidedProvider = (LinearWaypointProvider) waypoints.getCurrentProvider();
-//                for (Location location : path.guideLocations()) {
-//                    guidedProvider.addWaypoint(new Waypoint(location));
-//                }
-//                guidedProvider.addWaypoint(new Waypoint(path.end()));
                 npc.getNavigator().getDefaultParameters().distanceMargin(1);
                 LocationBuilder nextTarget = new LocationBuilder(npc.getStoredLocation()).forward(forward.get(0));
                 npc.getNavigator().setStraightLineTarget(nextTarget);

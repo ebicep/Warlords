@@ -1,21 +1,27 @@
 package com.ebicep.warlords.util.bukkit;
 
+import com.ebicep.warlords.Warlords;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ItemBuilder {
 
+    public static final NamespacedKey ON_USE_NAMESPACED_KEY = new NamespacedKey(Warlords.getInstance(), "on_use");
     @Nonnull
     private final ItemStack item;
     @Nullable
@@ -164,6 +170,17 @@ public class ItemBuilder {
 
     public ItemBuilder unbreakable(boolean unbreakable) {
         meta().setUnbreakable(unbreakable);
+        return this;
+    }
+
+    public ItemBuilder setOnUseID(String value) {
+        PersistentDataContainer persistentDataContainer = meta().getPersistentDataContainer();
+        persistentDataContainer.set(ON_USE_NAMESPACED_KEY, PersistentDataType.STRING, value);
+        return this;
+    }
+
+    public ItemBuilder setPlaceableOn(EnumSet<Material> materials) {
+        meta().setPlaceableKeys(materials.stream().map(Material::getKey).collect(Collectors.toList()));
         return this;
     }
 

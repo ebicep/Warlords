@@ -32,6 +32,7 @@ import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
+import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
@@ -662,6 +663,9 @@ public enum GameMode {
             options.add(new GameFreezeOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
+
+
+            options.add(new TowerBuildOption());
 
 
             return options;

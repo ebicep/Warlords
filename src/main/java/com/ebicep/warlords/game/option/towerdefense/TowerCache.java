@@ -19,9 +19,10 @@ import org.bukkit.block.sign.Side;
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
- * Cached tower builds stored in 2d arrays of BlockData copied from a location in a world
+ * Cached tower builds stored in 3d arrays of BlockData copied from a location in a world
  */
 public class TowerCache {
 
@@ -76,10 +77,14 @@ public class TowerCache {
     }
 
     private static int getTowerSize(Location start) {
+        return getTowerSize(start, block -> block.getType() == Material.WHITE_WOOL);
+    }
+
+    public static int getTowerSize(Location start, Predicate<Block> predicate) {
         int size = 0;
         LocationBuilder builder = new LocationBuilder(start);
         for (int i = 0; i < MAX_TOWER_SIZE; i++) {
-            if (builder.getBlock().getType() == Material.WHITE_WOOL) {
+            if (predicate.test(builder.getBlock())) {
                 size = i;
                 break;
             }
