@@ -45,7 +45,7 @@ public class TowerDefenseTest extends GameMap {
                 loc.addXYZ(-12.5, 65, 0.5, 180, 0),
                 loc.addXYZ(-12.5, 65, -19.5)
         );
-        options.add(new TowerDefenseOption(path));
+        options.add(new TowerDefenseOption(new TowerDefenseOption.TowerDefensePath(path)));
 
         return options;
     }

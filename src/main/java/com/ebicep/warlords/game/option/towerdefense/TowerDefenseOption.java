@@ -32,21 +32,23 @@ public class TowerDefenseOption implements PveOption {
 
     private final ConcurrentHashMap<AbstractMob, TowerDefenseMobData> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
-    private final List<Location> path;
-    private List<Double> forward = new ArrayList<>();
+    private List<TowerDefensePath> paths = new ArrayList<>();
     private Game game;
 
-    public TowerDefenseOption(List<Location> path) {
-        this.path = path;
+    public TowerDefenseOption(List<TowerDefensePath> paths) {
+        this.paths = paths;
+    }
+
+    public TowerDefenseOption(TowerDefensePath... paths) {
+        this.paths = List.of(paths);
     }
 
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
         Location current = getRandomSpawnLocation(null);
-        for (Location location : path) {
-            forward.add(current.distance(location));
-            current = location;
+        for (TowerDefensePath path : paths) {
+            path.createForwardPath(current);
         }
         game.registerEvents(new Listener() {
 
@@ -57,7 +59,7 @@ public class TowerDefenseOption implements PveOption {
                 npc.data().set(NPC.Metadata.COLLIDABLE, false);
                 npc.getDefaultGoalController().clear();
                 npc.getNavigator().getDefaultParameters().distanceMargin(1);
-                LocationBuilder nextTarget = new LocationBuilder(npc.getStoredLocation()).forward(forward.get(0));
+                Location nextTarget = getForwardLocation(npc, paths.get(mobs.get(event.getMob()).pathIndex).getForwardPath().get(0));
                 npc.getNavigator().setStraightLineTarget(nextTarget);
             }
 
@@ -78,19 +80,24 @@ public class TowerDefenseOption implements PveOption {
                     return;
                 }
                 int lastWaypointIndex = mobData.getLastWaypointIndex();
-                if (lastWaypointIndex == path.size() - 1) {
+                TowerDefensePath path = paths.get(mobs.get(mob).pathIndex);
+                if (lastWaypointIndex == path.getPath().size() - 1) {
                     return;
                 }
-                Location nextWaypoint = path.get(lastWaypointIndex + 1);
                 mobData.setLastWaypointIndex(lastWaypointIndex + 1);
                 LocationBuilder nextTarget = new LocationBuilder(npc.getStoredLocation())
-                        .yaw(path.get(lastWaypointIndex).getYaw())
-                        .forward(forward.get(lastWaypointIndex + 1));
+                        .yaw(path.getPath().get(lastWaypointIndex).getYaw()) //TODO remove yaw requirement
+                        .forward(path.getForwardPath().get(lastWaypointIndex + 1));
                 npc.getNavigator().setStraightLineTarget(nextTarget);
             }
 
         });
     }
+
+    private Location getForwardLocation(NPC npc, double amount) {
+        return new LocationBuilder(npc.getStoredLocation()).forward(amount);
+    }
+
 
     @Override
     public void start(@Nonnull Game game) {
@@ -132,7 +139,7 @@ public class TowerDefenseOption implements PveOption {
         );
         mob.setSpawnLocation(spawnLocation);
         game.addNPC(mob.toNPC(game, team, warlordsNPC -> {}));
-        mobs.put(mob, new TowerDefenseMobData(ticksElapsed.get()));
+        mobs.put(mob, new TowerDefenseMobData(ticksElapsed.get(), ThreadLocalRandom.current().nextInt(paths.size())));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 
@@ -141,12 +148,18 @@ public class TowerDefenseOption implements PveOption {
         return null;
     }
 
+    public List<TowerDefensePath> getPaths() {
+        return paths;
+    }
+
     public static class TowerDefenseMobData extends MobData {
 
+        private final int pathIndex; // index of whatever path its using
         private int lastWaypointIndex = 0;
 
-        public TowerDefenseMobData(int spawnTick) {
+        public TowerDefenseMobData(int spawnTick, int pathIndex) {
             super(spawnTick);
+            this.pathIndex = pathIndex;
         }
 
         public int getLastWaypointIndex() {
@@ -155,6 +168,31 @@ public class TowerDefenseOption implements PveOption {
 
         public void setLastWaypointIndex(int lastWaypointIndex) {
             this.lastWaypointIndex = lastWaypointIndex;
+        }
+    }
+
+    public static class TowerDefensePath {
+
+        private final List<Location> path;
+        private final List<Double> forwardPath = new ArrayList<>();
+
+        public TowerDefensePath(List<Location> path) {
+            this.path = path;
+        }
+
+        public void createForwardPath(Location current) {
+            for (Location location : path) {
+                forwardPath.add(current.distance(location));
+                current = location;
+            }
+        }
+
+        public List<Double> getForwardPath() {
+            return forwardPath;
+        }
+
+        public List<Location> getPath() {
+            return path;
         }
     }
 }
