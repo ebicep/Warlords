@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.towerdefense.towers.Tower;
+import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -42,7 +42,7 @@ public class TowerBuildOption implements Option {
             .setPlaceableOn(BUILDABLE)
             .get();
 
-    private static void alignToBottomRightCorner(Tower tower, Material type, LocationBuilder bottomRightCorner) {
+    private static void alignToBottomRightCorner(AbstractTower tower, Material type, LocationBuilder bottomRightCorner) {
         // move backwards and to the right until not same type, max tower size times
         int move = tower.getSize();
         for (int i = 0; i < move; i++) {
@@ -106,7 +106,7 @@ public class TowerBuildOption implements Option {
         return BlockFace.NORTH;
     }
 
-    private final List<Tower> builtTowers = new ArrayList<>();
+    private final List<AbstractTower> builtTowers = new ArrayList<>();
     private final Map<UUID, PlayerBuildData> playerBuildData = new HashMap<>();
     private boolean debug = false;
 
@@ -187,13 +187,13 @@ public class TowerBuildOption implements Option {
         return getPlayerBuildData(player.getUniqueId());
     }
 
-    private BuildResult buildTower(Player player, Location location, Tower tower) {
+    private BuildResult buildTower(Player player, Location location, AbstractTower tower) {
         Location alignedLocation = location.clone();
         BuildResult buildResult = getAlignedLocation(alignedLocation, player.getLocation(), tower);
         if (buildResult == BuildResult.SUCCESS) {
             alignedLocation.setYaw(0);
             // check if no other towers are in the way
-            for (Tower builtTower : builtTowers) {
+            for (AbstractTower builtTower : builtTowers) {
                 Block[][][] builtBlocks = builtTower.getBuiltBlocks();
                 Block builtTowerFirstCorner = builtTower.getBuiltBlocks()[0][0][0]; // front bottom right corner
                 if (intersects(
@@ -230,7 +230,7 @@ public class TowerBuildOption implements Option {
      * @param tower          the tower to align
      * @return null if location is invalid, else the aligned location
      */
-    private BuildResult getAlignedLocation(Location location, @NotNull Location playerLocation, Tower tower) {
+    private BuildResult getAlignedLocation(Location location, @NotNull Location playerLocation, AbstractTower tower) {
         Block block = location.getBlock();
         Material type = block.getType();
         location.setPitch(0);
@@ -278,7 +278,7 @@ public class TowerBuildOption implements Option {
      * @param playerLocation the location of the player
      * @return true if the tower can be built at the location
      */
-    private boolean canBeBuilt(Tower tower, Material type, Location location, @NotNull Location playerLocation) {
+    private boolean canBeBuilt(AbstractTower tower, Material type, Location location, @NotNull Location playerLocation) {
         int towerSize = tower.getSize();
         // first check if looking down / close to 90 degrees
         if (playerLocation.getPitch() > 55) {
@@ -397,7 +397,7 @@ public class TowerBuildOption implements Option {
         menu.openForPlayer(player);
     }
 
-    public List<Tower> getBuiltTowers() {
+    public List<AbstractTower> getBuiltTowers() {
         return builtTowers;
     }
 

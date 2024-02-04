@@ -10,9 +10,9 @@ public enum TowerRegistry {
     ;
 
     public static final TowerRegistry[] VALUES = values();
-    public final Supplier<Tower> create;
+    public final Supplier<AbstractTower> create;
 
-    TowerRegistry(Supplier<Tower> create) {
+    TowerRegistry(Supplier<AbstractTower> create) {
         this.create = create;
     }
 }

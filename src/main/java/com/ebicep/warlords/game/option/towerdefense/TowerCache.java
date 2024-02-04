@@ -24,15 +24,23 @@ import java.util.function.Predicate;
 /**
  * Cached tower builds stored in 3d arrays of BlockData copied from a location in a world
  */
-public class TowerCache {
+public enum TowerCache {
+
+    PYRO_TOWER_1,
+    BIG_BOY_1,
+
+    ;
 
     @Nonnull
     private static final World TOWER_WORLD = Objects.requireNonNull(Bukkit.getWorld("Towers"));
     private static final int MAX_TOWER_SIZE = 10; // width and length
     private static final int MAX_TOWER_HEIGHT = 15; // height
 
-    public static EnumSet<Tower> updateCaches() {
-        EnumSet<Tower> updated = EnumSet.noneOf(Tower.class);
+    public static final TowerCache[] VALUES = values();
+    public BlockData[][][] data; // [x][z][y]
+
+    public static EnumSet<TowerCache> updateCaches() {
+        EnumSet<TowerCache> updated = EnumSet.noneOf(TowerCache.class);
         for (int i = 0; i < 1000; i++) {
             Block block = TOWER_WORLD.getBlockAt(10 - i, 100, -4);
             if (block.getType() == Material.RED_WOOL) {
@@ -45,7 +53,7 @@ public class TowerCache {
             if (!(firstLine instanceof TextComponent text)) {
                 continue;
             }
-            for (Tower value : Tower.VALUES) {
+            for (TowerCache value : TowerCache.VALUES) {
                 if (value.name().equals(text.content())) {
                     updateTowerCache(sign.getLocation().add(1, 0, 1), value);
                     updated.add(value);
@@ -55,7 +63,7 @@ public class TowerCache {
         return updated;
     }
 
-    private static void updateTowerCache(Location start, Tower tower) {
+    private static void updateTowerCache(Location start, TowerCache tower) {
         start.setPitch(0);
         start.setYaw(0);
         int size = getTowerSize(start.clone().add(0, -1, 0));
@@ -122,17 +130,6 @@ public class TowerCache {
             builder.add(0, 1, 0);
         }
         return -1;
-    }
-
-    public enum Tower {
-        PYRO_TOWER_1,
-        BIG_BOY_1,
-
-        ;
-        public static final Tower[] VALUES = values();
-        public BlockData[][][] data; // [x][z][y]
-
-
     }
 
 }

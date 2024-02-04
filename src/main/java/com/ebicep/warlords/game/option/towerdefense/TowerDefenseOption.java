@@ -32,7 +32,7 @@ public class TowerDefenseOption implements PveOption {
 
     private final ConcurrentHashMap<AbstractMob, TowerDefenseMobData> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
-    private List<TowerDefensePath> paths = new ArrayList<>();
+    private final List<TowerDefensePath> paths;
     private Game game;
 
     public TowerDefenseOption(List<TowerDefensePath> paths) {
@@ -146,10 +146,6 @@ public class TowerDefenseOption implements PveOption {
     @Override
     public PveRewards<?> getRewards() {
         return null;
-    }
-
-    public List<TowerDefensePath> getPaths() {
-        return paths;
     }
 
     public static class TowerDefenseMobData extends MobData {

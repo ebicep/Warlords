@@ -5,13 +5,13 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
-public class BigBoy implements Tower {
+public class BigBoy extends AbstractTower {
 
     private Block[][][] builtBlocks;
 
     @Override
     public void build(Location frontLeftCorner) {
-        builtBlocks = Tower.build(frontLeftCorner, TowerCache.Tower.BIG_BOY_1.data);
+        builtBlocks = AbstractTower.build(frontLeftCorner, TowerCache.BIG_BOY_1.data);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class BigBoy implements Tower {
 
     @Override
     public BlockData[][][] getBlockData() {
-        return TowerCache.Tower.BIG_BOY_1.data;
+        return TowerCache.BIG_BOY_1.data;
     }
 
     @Override

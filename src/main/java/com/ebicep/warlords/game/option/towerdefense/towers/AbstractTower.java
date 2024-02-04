@@ -5,14 +5,14 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
-public interface Tower {
+public abstract class AbstractTower {
 
     /**
      * @param frontRightCorner ALWAYS BUILD TOWER FACING SOUTH AT FRONT RIGHT CORNER or else directions of some blocks will be wrong
      * @param data             3d array of block data
      * @return
      */
-    static Block[][][] build(Location frontRightCorner, BlockData[][][] data) {
+    public static Block[][][] build(Location frontRightCorner, BlockData[][][] data) {
         LocationBuilder builder = new LocationBuilder(frontRightCorner)
                 .pitch(0)
                 .yaw((float) (Math.round(frontRightCorner.getYaw() / 90) * 90));
@@ -49,20 +49,20 @@ public interface Tower {
     /**
      * Facing from track to frontLeftCorner
      */
-    void build(Location frontLeftCorner);
+    public abstract void build(Location frontLeftCorner);
 
-    default void onRemove() {
+    public void onRemove() {
 
     }
 
-    Block[][][] getBuiltBlocks();
+    public abstract Block[][][] getBuiltBlocks();
 
-    BlockData[][][] getBlockData();
+    public abstract BlockData[][][] getBlockData();
 
-    TowerRegistry getTowerRegistry();
+    public abstract TowerRegistry getTowerRegistry();
 
     // TODO
-    default int getSize() {
+    public int getSize() {
         return getBlockData().length;
     }
 

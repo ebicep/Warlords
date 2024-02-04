@@ -9,7 +9,7 @@ import co.aikar.commands.annotation.Subcommand;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.towerdefense.towers.Tower;
+import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
@@ -48,8 +48,8 @@ public class TowerDefenseCommand extends BaseCommand {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (Option option : game.getOptions()) {
             if (option instanceof TowerBuildOption towerBuildOption) {
-                List<Tower> builtTowers = towerBuildOption.getBuiltTowers();
-                for (Tower builtTower : builtTowers) {
+                List<AbstractTower> builtTowers = towerBuildOption.getBuiltTowers();
+                for (AbstractTower builtTower : builtTowers) {
                     Block[][][] builtBlocks = builtTower.getBuiltBlocks();
                     for (Block[][] builtBlock : builtBlocks) {
                         for (Block[] blocks : builtBlock) {
@@ -68,9 +68,9 @@ public class TowerDefenseCommand extends BaseCommand {
 
     @Subcommand("reloadtowers")
     public void reloadTowers(CommandIssuer issuer) {
-        EnumSet<TowerCache.Tower> updated = TowerCache.updateCaches();
-        List<TowerCache.Tower> notUpdated = new ArrayList<>();
-        for (TowerCache.Tower value : TowerCache.Tower.VALUES) {
+        EnumSet<TowerCache> updated = TowerCache.updateCaches();
+        List<TowerCache> notUpdated = new ArrayList<>();
+        for (TowerCache value : TowerCache.VALUES) {
             if (!updated.contains(value)) {
                 notUpdated.add(value);
             }
