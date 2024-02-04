@@ -5,13 +5,13 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
-public class PyroTower implements Tower {
+public class BigBoy implements Tower {
 
     private Block[][][] builtBlocks;
 
     @Override
     public void build(Location frontLeftCorner) {
-        builtBlocks = Tower.build(frontLeftCorner, TowerCache.Tower.PYRO_TOWER_1.data);
+        builtBlocks = Tower.build(frontLeftCorner, TowerCache.Tower.BIG_BOY_1.data);
     }
 
     @Override
@@ -21,12 +21,12 @@ public class PyroTower implements Tower {
 
     @Override
     public BlockData[][][] getBlockData() {
-        return TowerCache.Tower.PYRO_TOWER_1.data;
+        return TowerCache.Tower.BIG_BOY_1.data;
     }
 
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.PYRO_TOWER;
+        return TowerRegistry.BIG_BOY;
     }
 
 }

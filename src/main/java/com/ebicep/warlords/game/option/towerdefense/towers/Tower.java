@@ -17,22 +17,29 @@ public interface Tower {
                 .pitch(0)
                 .yaw((float) (Math.round(frontRightCorner.getYaw() / 90) * 90));
         // build one strip going up at a time
-        // TODO tp players if they are in the way
         int maxX = data.length;
         int maxZ = data[0].length;
         int maxY = data[0][0].length;
         Block[][][] builtBlocks = new Block[maxX][maxZ][maxY];
-        for (int up = 0; up < maxY; up++) {
-            for (int left = 0; left < maxX; left++) {
-                for (int forward = 0; forward < maxZ; forward++) {
-                    BlockData blockData = data[left][forward][up];
+        for (int y = 0; y < maxY; y++) {
+            for (int x = 0; x < maxX; x++) {
+                for (int z = 0; z < maxZ; z++) {
+                    BlockData blockData = data[x][z][y];
                     Block block = builder.clone()
-                                         .forward(forward)
-                                         .addY(up)
-                                         .left(left)
+                                         .forward(z)
+                                         .addY(y)
+                                         .left(x)
                                          .getBlock();
                     block.setBlockData(blockData);
-                    builtBlocks[left][forward][up] = block;
+                    builtBlocks[x][z][y] = block;
+
+                    // move entities up if in the way
+                    if (y != maxY - 1) {
+                        block.getLocation()
+                             .toCenterLocation()
+                             .getNearbyEntities(.5, .5, .5)
+                             .forEach(entity -> entity.teleport(entity.getLocation().add(0, 1, 0)));
+                    }
                 }
             }
         }
@@ -50,11 +57,13 @@ public interface Tower {
 
     Block[][][] getBuiltBlocks();
 
+    BlockData[][][] getBlockData();
+
     TowerRegistry getTowerRegistry();
 
     // TODO
     default int getSize() {
-        return 3;
+        return getBlockData().length;
     }
 
 

@@ -84,9 +84,20 @@ public class TowerCache {
         int size = 0;
         LocationBuilder builder = new LocationBuilder(start);
         for (int i = 0; i < MAX_TOWER_SIZE; i++) {
+            // check diagonal
             if (predicate.test(builder.getBlock())) {
-                size = i;
-                break;
+                return i;
+            }
+            // check going right and down from diagonal
+            for (int j = 0; j < i; j++) {
+                Location right = builder.clone().add(-j, 0, 0);
+                if (predicate.test(right.getBlock())) {
+                    return i;
+                }
+                Location down = builder.clone().add(0, 0, -j);
+                if (predicate.test(down.getBlock())) {
+                    return i;
+                }
             }
             builder.add(1, 0, 1);
         }
@@ -115,6 +126,7 @@ public class TowerCache {
 
     public enum Tower {
         PYRO_TOWER_1,
+        BIG_BOY_1,
 
         ;
         public static final Tower[] VALUES = values();
