@@ -254,15 +254,15 @@ public class GrimoiresGraveyard extends GameMap {
                         }
                     }
 
-                            private Location getSpawnLocation() {
-                                double randomXOffset = ThreadLocalRandom.current().nextDouble(-2, 2);
-                                double randomZOffset = ThreadLocalRandom.current().nextDouble(-2, 2);
-                                if (randomXOffset == 0 && randomZOffset == 0) {
-                                    if (ThreadLocalRandom.current().nextBoolean()) {
-                                        randomXOffset = 1;
-                                    } else {
-                                        randomZOffset = 1;
-                                    }
+                    private Location getSpawnLocation() {
+                        double randomXOffset = ThreadLocalRandom.current().nextDouble(-2, 2);
+                        double randomZOffset = ThreadLocalRandom.current().nextDouble(-2, 2);
+                        if (randomXOffset == 0 && randomZOffset == 0) {
+                            if (ThreadLocalRandom.current().nextBoolean()) {
+                                randomXOffset = 1;
+                            } else {
+                                randomZOffset = 1;
+                            }
                                 }
                                 return spawnLocation.clone().add(
                                         randomXOffset,
