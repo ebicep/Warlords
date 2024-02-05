@@ -1,10 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.SoulSwitch;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
-import com.ebicep.warlords.pve.upgrades.UpgradeTypes;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
@@ -56,17 +53,19 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                 }, 5f)
                 .addUpgradeHitBox(ability, 7, 4)
                 .addTo(treeB);
-//
-//        masterUpgrade = new Upgrade(
-//                "Soul Burst",
-//                "Soul Switch - Master Upgrade",
-//                "Double the damage you deal with the decoy and cripple all enemies hit by the decoy's explosion for 5 seconds," +
-//                        " reducing their damage dealt by 50%. Additionally, heal for 10% of your missing health when swapping.",
-//                50000,
-//                () -> {
-//
-//                }
-//        );
+
+        masterUpgrade = new Upgrade(
+                "Soul Burst",
+                "Soul Switch - Master Upgrade",
+                """
+                        While swapping and upon landing, gain 50% damage reduction and become invisible for 5s.
+                        Additionally, at the start and end locations of the swap, increase movement speed by 25% for self and allies within a 3-block radius for 3s (The Animus is not considered an ally in this instance).
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
 //        masterUpgrade2 = new Upgrade(
 //                "Tricky Switch",
 //                "Soul Switch - Master Upgrade",
