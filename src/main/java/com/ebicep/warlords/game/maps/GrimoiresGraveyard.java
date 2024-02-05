@@ -103,10 +103,10 @@ public class GrimoiresGraveyard extends GameMap {
                 loc.addXYZ(-18.5, 24, 12.5, 180, 0)
         );
 
-        options.add(new PowerupOption(loc.addXYZ(16, 25, 1.5), PowerupOption.PowerUp.DAMAGE, 180, 30));
-        options.add(new PowerupOption(loc.addXYZ(-23.5, 25, 1.5), PowerupOption.PowerUp.DAMAGE, 180, 30));
-        options.add(new PowerupOption(loc.addXYZ(-3.5, 25, 21.5), PowerupOption.PowerUp.HEALING, 90, 30));
-        options.add(new PowerupOption(loc.addXYZ(-3.5, 25, -18.5), PowerupOption.PowerUp.HEALING, 90, 30));
+        options.add(new PowerupOption(loc.addXYZ(16, 25.5, 1.5), PowerupOption.PowerUp.DAMAGE, 180, 30));
+        options.add(new PowerupOption(loc.addXYZ(-23.5, 25.5, 1.5), PowerupOption.PowerUp.DAMAGE, 180, 30));
+        options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 21.5), PowerupOption.PowerUp.HEALING, 90, 30));
+        options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, -18.5), PowerupOption.PowerUp.HEALING, 90, 30));
 
         options.add(new RespawnWaveOption(2, 1, 20));
         options.add(new GraveOption());
@@ -224,26 +224,35 @@ public class GrimoiresGraveyard extends GameMap {
                         .add(0.1, Mob.FIRE_SPLITTER)
                 )
                 .add(25, new RandomSpawnWave(200, 5 * SECOND, Component.text("Boss")) {
-                            final LocationBuilder spawnLocation = loc.addXYZ(-3.5, 25, 1.5);
+                    final LocationBuilder spawnLocation = loc.addXYZ(-3.5, 25, 1.5);
 
-                            @Override
-                            public void tick(PveOption pveOption, int ticksElapsed) {
-                                if (ticksElapsed == 10 * 20) {
-                                    pveOption.spawnNewMob(new EventTheArchivist(spawnLocation));
-                                }
-                                if (ticksElapsed % 340 == 0) {
-                                    Mob minionGrimoire = switch (ThreadLocalRandom.current().nextInt(4)) {
-                                        case 0 -> Mob.EVENT_ROUGE_GRIMOIRE;
-                                        case 1 -> Mob.EVENT_VIOLETTE_GRIMOIRE;
-                                        case 2 -> Mob.EVENT_BLEUE_GRIMOIRE;
-                                        default -> Mob.EVENT_ORANGE_GRIMOIRE;
-                                    };
-                                    pveOption.spawnNewMob(minionGrimoire.createMob(getSpawnLocation()));
-                                }
-                                if (ticksElapsed % 200 == 0) {
-                                    pveOption.spawnNewMob(new EventScriptedGrimoire(getSpawnLocation()));
-                                }
+                    EventTheArchivist archivist;
+
+                    @Override
+                    public void tick(PveOption pveOption, int ticksElapsed) {
+                        if (ticksElapsed == 10 * 20) {
+                            archivist = new EventTheArchivist(spawnLocation);
+                            pveOption.spawnNewMob(archivist);
+                        }
+                        if (archivist == null || archivist.getWarlordsNPC().isAlive()) {
+                            if (ticksElapsed % 340 == 0) {
+                                Mob minionGrimoire = switch (ThreadLocalRandom.current().nextInt(4)) {
+                                    case 0 -> Mob.EVENT_ROUGE_GRIMOIRE;
+                                    case 1 -> Mob.EVENT_VIOLETTE_GRIMOIRE;
+                                    case 2 -> Mob.EVENT_BLEUE_GRIMOIRE;
+                                    default -> Mob.EVENT_ORANGE_GRIMOIRE;
+                                };
+                                pveOption.spawnNewMob(minionGrimoire.createMob(getSpawnLocation()));
                             }
+                            if (ticksElapsed % 200 == 0) {
+                                pveOption.spawnNewMob(new EventScriptedGrimoire(getSpawnLocation()));
+                            }
+                        } else {
+                            if (archivist != null && pveOption instanceof WaveDefenseOption waveDefenseOption && waveDefenseOption.getMobs().isEmpty()) {
+                                waveDefenseOption.setSpawnCount(0);
+                            }
+                        }
+                    }
 
                             private Location getSpawnLocation() {
                                 double randomXOffset = ThreadLocalRandom.current().nextDouble(-2, 2);
