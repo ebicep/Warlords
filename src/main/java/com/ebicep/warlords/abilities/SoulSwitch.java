@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -168,7 +169,40 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     );
                     wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 0, true, false));
                     pveOption.despawnMob(npc.getMob());
-                    pveOption.spawnNewMob(new Animus(ownLocation, wp, swapTarget), Team.BLUE);
+                    Animus animus = new Animus(ownLocation, wp, swapTarget) {
+                        @Override
+                        public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
+                            super.onFinalAttack(event);
+                            if (pveMasterUpgrade2 && event.isDead()) {
+                                wp.addEnergy(wp, "Tricky Switch", 10);
+                                float heal = event.getValue() * .1f;
+                                wp.addHealingInstance(wp, "Tricky Switch", heal, heal, 0, 100);
+                            }
+                        }
+                    };
+                    pveOption.spawnNewMob(animus, Team.BLUE);
+                    if (pveMasterUpgrade2) {
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Tricky Switch",
+                                null,
+                                SoulSwitch.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {},
+                                10 * 60 * 20,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (animus.getWarlordsNPC().isDead()) {
+                                        cooldown.setTicksLeft(0);
+                                    }
+                                })
+                        ) {
+                            @Override
+                            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                                return currentCritChance + 15;
+                            }
+                        });
+                    }
                 }
             }
 

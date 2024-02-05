@@ -66,17 +66,17 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
                 }
         );
-//        masterUpgrade2 = new Upgrade(
-//                "Tricky Switch",
-//                "Soul Switch - Master Upgrade",
-//                """
-//                        For the duration the decoy is active, increase movement speed by 30%. Increase blindness duration by 1.5s and increase explosion delay by 2s.
-//                        """,
-//                50000,
-//                () -> {
-//                    ability.setBlindnessTicks(ability.getBlindnessTicks() + 30);
-//                    ability.setDecoyMaxTicksLived(ability.getDecoyMaxTicksLived() + 40);
-//                }
-//        );
+        masterUpgrade2 = new Upgrade(
+                "Tricky Switch",
+                "Soul Switch - Master Upgrade",
+                """
+                        While the Animus is active, increase crit chance by 15%. For every kill the Animus earns, gain 10 energy and 10% of the damage dealt on the killing hit as self healing.
+                        """,
+                50000,
+                () -> {
+                    ability.setBlindnessTicks(ability.getBlindnessTicks() + 30);
+                    ability.setDecoyMaxTicksLived(ability.getDecoyMaxTicksLived() + 40);
+                }
+        );
     }
 }
