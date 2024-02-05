@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.towerdefense.towers;
+package com.ebicep.warlords.game.option.towerdefense.attributes;
 
 
 import org.bukkit.block.data.BlockData;
