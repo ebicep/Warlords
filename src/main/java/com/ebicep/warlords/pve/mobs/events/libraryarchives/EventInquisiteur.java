@@ -100,10 +100,10 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
         new GameRunnable(option.getGame()) {
 
             final List<Location> necronomiconSpawnLocations = List.of(
-                    new Location(warlordsNPC.getWorld(), -1.5, 34, 26.5),
-                    new Location(warlordsNPC.getWorld(), -23.5, 34, 10.5),
-                    new Location(warlordsNPC.getWorld(), -7.5, 34, -11.5),
-                    new Location(warlordsNPC.getWorld(), 14.5, 34, 4.5)
+                    new Location(warlordsNPC.getWorld(), -4, 34, -9),
+                    new Location(warlordsNPC.getWorld(), -21, 34, 7),
+                    new Location(warlordsNPC.getWorld(), -4, 34, 24),
+                    new Location(warlordsNPC.getWorld(), 12, 34, 8)
             );
 
             @Override
@@ -147,11 +147,11 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                 }
                 Bukkit.getServer().getPluginManager().callEvent(new EventInquisteurKillingBlowEvent(warlordsNPC));
                 warlordsNPC.addHealingInstance(warlordsNPC, "Killing Blow", 500, 500, 0, 0);
-                if (damageResistance.get() >= 50) {
+                if (damageResistance.get() >= 30) {
                     return;
                 }
                 killingBlowTickCooldown = 5 * 20;
-                damageResistance.addAndGet(25);
+                damageResistance.addAndGet(10);
             }
         });
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(

@@ -67,7 +67,6 @@ public class EventOrangeGrimoire extends EventGrimoire {
                 Ability.HEALING_RAIN,
                 Ability.HAMMER_OF_LIGHT,
                 Ability.BERSERK,
-                Ability.UNDYING_ARMY,
                 Ability.VINDICATE,
                 Ability.DIVINE_BLESSING
         );
