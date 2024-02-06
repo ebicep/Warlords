@@ -41,7 +41,10 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
         masterUpgrade = new Upgrade(
                 "Intersection",
                 "Intervene - Master Upgrade",
-                "Remove the damage, cast and break range limit on Intervene. Additionally, reduce damage taken by 35% and increase max chained players by 1.",
+                """
+                        +1 Chain Target
+                                                
+                        Remove the damage, cast and break range limit on Intervene, and reduce damage taken by 35%.""",
                 50000,
                 () -> {
                     ability.setDamageReduction(ability.getDamageReduction() - 35);
@@ -55,6 +58,8 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
                 "Interference",
                 "Intervene - Master Upgrade",
                 """
+                        +1 Chain Target
+                                                
                         Remove the damage, cast and break range limit on Intervene. Additionally, Intervene gives a 25% speed increase as well as knockback immunity.
                         """,
                 50000,
@@ -62,6 +67,7 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
                     ability.setMaxDamagePrevented(10000000);
                     ability.setRadius(300);
                     ability.setBreakRadius(300);
+                    ability.setMaxTargets(ability.getMaxTargets() + 1);
                 }
         );
     }
