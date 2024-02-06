@@ -248,7 +248,10 @@ public class GrimoiresGraveyard extends GameMap {
                                 pveOption.spawnNewMob(new EventScriptedGrimoire(getSpawnLocation()));
                             }
                         } else {
-                            if (archivist != null && pveOption instanceof WaveDefenseOption waveDefenseOption && waveDefenseOption.getMobs().isEmpty()) {
+                            if (archivist != null && pveOption instanceof WaveDefenseOption waveDefenseOption && pveOption.getMobs()
+                                                                                                                          .stream()
+                                                                                                                          .noneMatch(mob -> mob.getWarlordsNPC()
+                                                                                                                                               .getTeam() == Team.RED)) {
                                 waveDefenseOption.setSpawnCount(0);
                             }
                         }
