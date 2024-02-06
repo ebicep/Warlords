@@ -88,17 +88,14 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
         SanctifiedBeacon beacon = cooldown.getCooldownObject();
         float rad = beacon.getHitBoxRadius().getCalculatedValue();
         if (ticksElapsed % 5 == 0) {
-            for (WarlordsEntity nearBy : PlayerFilter
-                    .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
-                    .aliveEnemiesOf(wp)
-            ) {
+            for (WarlordsEntity nearBy : PlayerFilter.entitiesAround(beacon.getGroundLocation(), rad, rad, rad)) {
                 if (nearBy.isTeammate(wp)) {
                     if (!pveMasterUpgrade2) {
                         continue;
                     }
                     nearBy.getCooldownManager().removeCooldownByObject(this);
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            name,
+                            "Shadow Garden",
                             null,
                             SanctifiedBeacon.class,
                             beacon,
