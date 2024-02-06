@@ -172,6 +172,7 @@ public class ChatUtils {
         DISCORD_BOT("DiscordBot", NamedTextColor.DARK_AQUA, true),
         BOUNTIES("Bounties", NamedTextColor.AQUA, true),
         GAME("Game", TextColor.color(173, 255, 47), true),
+        TOWER_DEFENSE("Tower Defense", TextColor.color(250, 100, 100), true),
 
         ;
 

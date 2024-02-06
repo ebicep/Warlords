@@ -11,6 +11,7 @@ public enum TowerRegistry {
 
     public static final TowerRegistry[] VALUES = values();
     public final Supplier<AbstractTower> create;
+    public String name;
 
     TowerRegistry(Supplier<AbstractTower> create) {
         this.create = create;
