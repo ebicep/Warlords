@@ -5,12 +5,12 @@ import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
@@ -169,17 +169,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     );
                     wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 0, true, false));
                     pveOption.despawnMob(npc.getMob());
-                    Animus animus = new Animus(ownLocation, wp, swapTarget) {
-                        @Override
-                        public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
-                            super.onFinalAttack(event);
-                            if (pveMasterUpgrade2 && event.isDead()) {
-                                wp.addEnergy(wp, "Tricky Switch", 10);
-                                float heal = event.getValue() * .1f;
-                                wp.addHealingInstance(wp, "Tricky Switch", heal, heal, 0, 100);
-                            }
-                        }
-                    };
+                    Animus animus = new Animus(ownLocation, wp, swapTarget);
                     pveOption.spawnNewMob(animus, Team.BLUE);
                     if (pveMasterUpgrade2) {
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -200,6 +190,25 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                             @Override
                             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
                                 return currentCritChance + 15;
+                            }
+                        });
+                        animus.getWarlordsNPC().getCooldownManager().addCooldown(new PermanentCooldown<>(
+                                "Tricky Switch",
+                                null,
+                                SoulSwitch.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {},
+                                false
+                        ) {
+                            @Override
+                            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                                if (event.getAbility().equals("Judgement Strike")) {
+                                    wp.addEnergy(wp, "Tricky Switch", 10);
+                                    float heal = currentDamageValue * .1f;
+                                    wp.addHealingInstance(wp, "Tricky Switch", heal, heal, 0, 100);
+                                }
                             }
                         });
                     }
