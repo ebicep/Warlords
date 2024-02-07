@@ -224,10 +224,13 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                         wp,
                         CooldownTypes.BUFF,
                         cooldownManager -> {},
+                        cooldownManager -> {
+                            wp.removePotionEffect(PotionEffectType.INVISIBILITY);
+                        },
                         5 * 20,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksElapsed % 20 == 0) {
-                                wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 25, 0, true, false));
+                            if (ticksElapsed % 3 == 0) {
+                                wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
                             }
                         })
                 ) {

@@ -342,7 +342,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 5 == 0) {
+                    if (ticksElapsed % 3 == 0) {
                         wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, ticksLeft, 0, true, false));
 
                         Entity wpEntity = wp.getEntity();
