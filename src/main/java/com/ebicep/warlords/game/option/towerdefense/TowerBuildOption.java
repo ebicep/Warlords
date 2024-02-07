@@ -229,6 +229,9 @@ public class TowerBuildOption implements Option {
     }
 
     private BuildResult buildTower(Player player, Location location, TowerRegistry tower) {
+        if (tower.baseTowerData.length == 0) {
+            return BuildResult.NO_TOWER_DATA;
+        }
         Location alignedLocation = location.clone();
         BuildResult buildResult = getAlignedLocation(alignedLocation, player.getLocation(), tower);
         if (buildResult == BuildResult.SUCCESS) {
@@ -462,7 +465,8 @@ public class TowerBuildOption implements Option {
         SUCCESS,
         INVALID_LOCATION,
         INVALID_SIZE,
-        INTERSECTS
+        INTERSECTS,
+        NO_TOWER_DATA,
     }
 
     static final class PlayerBuildData {
