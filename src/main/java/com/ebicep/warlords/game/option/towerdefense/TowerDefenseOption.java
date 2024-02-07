@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -150,15 +151,23 @@ public class TowerDefenseOption implements PveOption {
 
     @Override
     public void spawnNewMob(AbstractMob mob, Team team) {
-        Location spawnLocation = Objects.requireNonNull(getRandomSpawnLocation(null)).add(
-                ThreadLocalRandom.current().nextDouble(4) - 2,
-                0,
-                ThreadLocalRandom.current().nextDouble(4) - 2
-        );
-        mob.setSpawnLocation(spawnLocation);
-        game.addNPC(mob.toNPC(game, team, warlordsNPC -> {}));
-        mobs.put(mob, new TowerDefenseMobData(ticksElapsed.get(), ThreadLocalRandom.current().nextInt(paths.size())));
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+        Location randomSpawn = getRandomSpawnLocation(null);
+        paths.stream()
+             .filter(path -> path.getSpawn().equals(randomSpawn))
+             .findAny()
+             .ifPresentOrElse(path -> {
+                 Location spawnLocation = Objects.requireNonNull(randomSpawn).add(
+                         ThreadLocalRandom.current().nextDouble(4) - 2,
+                         0,
+                         ThreadLocalRandom.current().nextDouble(4) - 2
+                 );
+                 mob.setSpawnLocation(spawnLocation);
+                 game.addNPC(mob.toNPC(game, team, warlordsNPC -> {}));
+                 mobs.put(mob, new TowerDefenseMobData(ticksElapsed.get(), paths.indexOf(path)));
+                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+             }, () -> {
+                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No path with given spawn: " + randomSpawn);
+             });
     }
 
     @Override
@@ -187,10 +196,12 @@ public class TowerDefenseOption implements PveOption {
 
     public static class TowerDefensePath {
 
+        private final Location spawn;
         private final List<Location> path;
         private final List<Double> forwardPath = new ArrayList<>();
 
-        public TowerDefensePath(List<Location> path) {
+        public TowerDefensePath(Location spawn, List<Location> path) {
+            this.spawn = spawn;
             this.path = path;
         }
 
@@ -199,6 +210,10 @@ public class TowerDefenseOption implements PveOption {
                 forwardPath.add(current.distance(location));
                 current = location;
             }
+        }
+
+        public Location getSpawn() {
+            return spawn;
         }
 
         public List<Double> getForwardPath() {

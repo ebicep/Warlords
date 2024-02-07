@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.Location;
 
@@ -39,13 +40,14 @@ public class TowerDefenseTest extends GameMap {
         options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 65, 0.5, 90, 0), Team.RED).asOption());
         options.add(SpawnpointOption.forTeam(loc.addXYZ(2.5, 65, 0.5, 90, 0), Team.BLUE));
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(2.5, 65, 0.5, 90, 0), Team.RED));
+        LocationBuilder spawn1 = loc.addXYZ(2.5, 65, 0.5, 90, 0);
+        options.add(SpawnpointOption.forTeam(spawn1, Team.RED));
 
         List<Location> path = List.of(
                 loc.addXYZ(-12.5, 65, 0.5, 180, 0),
                 loc.addXYZ(-12.5, 65, -19.5)
         );
-        options.add(new TowerDefenseOption(new TowerDefenseOption.TowerDefensePath(path)));
+        options.add(new TowerDefenseOption(new TowerDefenseOption.TowerDefensePath(spawn1, path)));
 
         return options;
     }
