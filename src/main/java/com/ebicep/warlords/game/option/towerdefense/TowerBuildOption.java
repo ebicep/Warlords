@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.towerdefense.events.TowerSellEvent;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.menu.Menu;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -26,6 +28,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +45,7 @@ public class TowerBuildOption implements Option {
             .setPlaceableOn(BUILDABLE)
             .get();
 
-    private static void alignToBottomRightCorner(AbstractTower tower, Material type, LocationBuilder bottomRightCorner) {
+    private static void alignToBottomRightCorner(TowerRegistry tower, Material type, LocationBuilder bottomRightCorner) {
         // move backwards and to the right until not same type, max tower size times
         int move = tower.getSize();
         for (int i = 0; i < move; i++) {
@@ -106,28 +109,25 @@ public class TowerBuildOption implements Option {
         return BlockFace.NORTH;
     }
 
-    private final List<AbstractTower> builtTowers = new ArrayList<>();
+    private final Map<AbstractTower, Integer> builtTowers = new HashMap<>();
     private final Map<UUID, PlayerBuildData> playerBuildData = new HashMap<>();
+    private Game game;
+    private TowerDefenseOption towerDefenseOption;
     private boolean debug = false;
 
     @Override
     public void register(@Nonnull Game game) {
+        this.game = game;
+        for (Option option : game.getOptions()) {
+            if (option instanceof TowerDefenseOption defenseOption) {
+                this.towerDefenseOption = defenseOption;
+                break;
+            }
+        }
         game.registerEvents(new Listener() {
 
             @EventHandler
             public void onInteract(PlayerInteractEvent event) {
-                Action action = event.getAction();
-                if (action != Action.RIGHT_CLICK_BLOCK) {
-                    return;
-                }
-                ItemStack itemInHand = event.getItem();
-                if (itemInHand == null) {
-                    return;
-                }
-                Block clickedBlock = event.getClickedBlock();
-                if (clickedBlock == null) {
-                    return;
-                }
                 Player player = event.getPlayer();
                 WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
                 if (warlordsEntity == null) {
@@ -136,7 +136,22 @@ public class TowerBuildOption implements Option {
                 if (!warlordsEntity.getGame().equals(game)) {
                     return;
                 }
-
+                Block clickedBlock = event.getClickedBlock();
+                if (clickedBlock == null) {
+                    return;
+                }
+                boolean clickedTower = handleTowerClick(player, clickedBlock);
+                if (clickedTower) {
+                    return;
+                }
+                Action action = event.getAction();
+                if (action != Action.RIGHT_CLICK_BLOCK) {
+                    return;
+                }
+                ItemStack itemInHand = event.getItem();
+                if (itemInHand == null) {
+                    return;
+                }
                 ItemMeta itemMeta = itemInHand.getItemMeta();
                 if (itemMeta == null) {
                     return;
@@ -172,10 +187,26 @@ public class TowerBuildOption implements Option {
                 } else {
                     openBuildMenu(player, clickedLocation);
                 }
+            }
 
+            @EventHandler
+            public void onTowerSell(TowerSellEvent event) {
+                AbstractTower tower = event.getTower();
+                builtTowers.remove(tower);
+                tower.remove();
             }
 
         });
+    }
+
+    @Override
+    public void start(@Nonnull Game game) {
+
+    }
+
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        builtTowers.keySet().forEach(AbstractTower::remove);
     }
 
     @Override
@@ -183,19 +214,29 @@ public class TowerBuildOption implements Option {
         player.getInventory().setItem(6, BUILD_TOWER_ITEM);
     }
 
+    private boolean handleTowerClick(Player player, Block clickedBlock) {
+        for (MetadataValue metadataValue : clickedBlock.getMetadata("TOWER")) {
+            if (metadataValue.value() instanceof AbstractTower tower) {
+                TowerMenu.openMenu(player, tower);
+                return true;
+            }
+        }
+        return false;
+    }
+
     private PlayerBuildData getPlayerBuildData(Player player) {
         return getPlayerBuildData(player.getUniqueId());
     }
 
-    private BuildResult buildTower(Player player, Location location, AbstractTower tower) {
+    private BuildResult buildTower(Player player, Location location, TowerRegistry tower) {
         Location alignedLocation = location.clone();
         BuildResult buildResult = getAlignedLocation(alignedLocation, player.getLocation(), tower);
         if (buildResult == BuildResult.SUCCESS) {
             alignedLocation.setYaw(0);
             // check if no other towers are in the way
-            for (AbstractTower builtTower : builtTowers) {
-                Block[][][] builtBlocks = builtTower.getBuiltBlocks();
-                Block builtTowerFirstCorner = builtTower.getBuiltBlocks()[0][0][0]; // front bottom right corner
+            for (AbstractTower builtTower : builtTowers.keySet()) {
+                Block[][][] builtBlocks = builtTower.getBlocks();
+                Block builtTowerFirstCorner = builtTower.getBlocks()[0][0][0]; // front bottom right corner
                 if (intersects(
                         alignedLocation.getX(), alignedLocation.getZ(),
                         alignedLocation.getX() + tower.getSize(), alignedLocation.getZ() + tower.getSize(),
@@ -205,9 +246,8 @@ public class TowerBuildOption implements Option {
                     return BuildResult.INTERSECTS;
                 }
             }
-            tower.build(alignedLocation.add(0, 1, 0)); // TODO decide when to add to y
-            builtTowers.add(tower);
-            getPlayerBuildData(player).setLastBuilt(tower.getTowerRegistry());
+            builtTowers.put(tower.create.apply(game, alignedLocation.add(0, 1, 0)), towerDefenseOption.getTicksElapsed());
+            getPlayerBuildData(player).setLastBuilt(tower);
         }
         return buildResult;
     }
@@ -230,7 +270,7 @@ public class TowerBuildOption implements Option {
      * @param tower          the tower to align
      * @return null if location is invalid, else the aligned location
      */
-    private BuildResult getAlignedLocation(Location location, @NotNull Location playerLocation, AbstractTower tower) {
+    private BuildResult getAlignedLocation(Location location, @NotNull Location playerLocation, TowerRegistry tower) {
         Block block = location.getBlock();
         Material type = block.getType();
         location.setPitch(0);
@@ -241,7 +281,7 @@ public class TowerBuildOption implements Option {
         debugParticle(location.clone().add(.5, 1, .5), Particle.VILLAGER_HAPPY);
         debugParticle(bottomRightCorner.clone().add(.5, 1, .5), Particle.VILLAGER_HAPPY);
 
-        int plotSize = TowerCache.getTowerSize(bottomRightCorner, b -> b.getType() != type);
+        int plotSize = TowerRegistry.getTowerSize(bottomRightCorner, b -> b.getType() != type);
         if (plotSize < tower.getSize()) {
             return BuildResult.INVALID_SIZE;
         }
@@ -278,7 +318,7 @@ public class TowerBuildOption implements Option {
      * @param playerLocation the location of the player
      * @return true if the tower can be built at the location
      */
-    private boolean canBeBuilt(AbstractTower tower, Material type, Location location, @NotNull Location playerLocation) {
+    private boolean canBeBuilt(TowerRegistry tower, Material type, Location location, @NotNull Location playerLocation) {
         int towerSize = tower.getSize();
         // first check if looking down / close to 90 degrees
         if (playerLocation.getPitch() > 55) {
@@ -368,7 +408,7 @@ public class TowerBuildOption implements Option {
     }
 
     private void tryBuildTower(Player player, Location location, @Nonnull TowerRegistry tower) {
-        BuildResult buildResult = buildTower(player, location, tower.create.get());
+        BuildResult buildResult = buildTower(player, location, tower);
         player.sendMessage(Component.text("Build Result: " + buildResult.name(), NamedTextColor.GREEN));
         if (buildResult == BuildResult.SUCCESS) {
             PlayerBuildData buildData = getPlayerBuildData(player);
@@ -382,11 +422,19 @@ public class TowerBuildOption implements Option {
         TowerRegistry[] values = TowerRegistry.values();
         for (int i = 0; i < values.length; i++) {
             TowerRegistry tower = values[i];
-            int size = tower.create.get().getSize();
+            int size = tower.getSize();
             menu.setItem(i + 1, 1,
-                    new ItemBuilder(Material.LAVA_BUCKET)
-                            .name(Component.text(tower.name(), NamedTextColor.GREEN))
-                            .lore(ComponentBuilder.create("Size: ", NamedTextColor.GRAY).text(size + "x" + size, NamedTextColor.GREEN).build())
+                    new ItemBuilder(tower.material)
+                            .name(Component.text(tower.name, NamedTextColor.GREEN))
+                            .lore(
+                                    Component.text(tower.description),
+                                    Component.empty(),
+                                    ComponentBuilder.create("Size: ", NamedTextColor.GRAY).text(size + "x" + size, NamedTextColor.GREEN).build(),
+                                    Component.empty(),
+                                    ComponentBuilder.create("Cost: ").text(NumberFormat.addCommaAndRound(tower.cost) + " Insignia", NamedTextColor.GOLD).build(),
+                                    Component.empty(),
+                                    ComponentBuilder.create("Click to Build", NamedTextColor.YELLOW).build()
+                            ) // TODO more info idk
                             .get(),
                     (m, e) -> {
                         tryBuildTower(player, clickedLocation, tower);
@@ -394,10 +442,11 @@ public class TowerBuildOption implements Option {
                     }
             );
         }
+        menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
-    public List<AbstractTower> getBuiltTowers() {
+    public Map<AbstractTower, Integer> getBuiltTowers() {
         return builtTowers;
     }
 

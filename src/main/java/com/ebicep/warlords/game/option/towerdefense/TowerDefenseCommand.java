@@ -14,22 +14,21 @@ import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 @CommandAlias("towerdefense|td")
 @CommandPermission("group.administrator")
 public class TowerDefenseCommand extends BaseCommand {
 
     @Subcommand("build")
-    public void build(Player player, TowerRegistry tower) {
-        tower.create.get().build(player.getLocation());
+    public void build(@Conditions("requireGame:gamemode=TOWER_DEFENSE") Player player, TowerRegistry tower) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        Location location = player.getLocation();
+        location.setYaw(0);
+        tower.create.apply(game, location).build();
     }
 
     @Subcommand("debug")
@@ -48,17 +47,9 @@ public class TowerDefenseCommand extends BaseCommand {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (Option option : game.getOptions()) {
             if (option instanceof TowerBuildOption towerBuildOption) {
-                List<AbstractTower> builtTowers = towerBuildOption.getBuiltTowers();
-                for (AbstractTower builtTower : builtTowers) {
-                    Block[][][] builtBlocks = builtTower.getBuiltBlocks();
-                    for (Block[][] builtBlock : builtBlocks) {
-                        for (Block[] blocks : builtBlock) {
-                            for (Block block : blocks) {
-                                block.setType(Material.AIR);
-                            }
-                        }
-                    }
-                    builtTower.onRemove();
+                Map<AbstractTower, Integer> builtTowers = towerBuildOption.getBuiltTowers();
+                for (AbstractTower builtTower : builtTowers.keySet()) {
+                    builtTower.remove();
                 }
                 builtTowers.clear();
             }
@@ -68,9 +59,9 @@ public class TowerDefenseCommand extends BaseCommand {
 
     @Subcommand("reloadtowers")
     public void reloadTowers(CommandIssuer issuer) {
-        EnumSet<TowerCache> updated = TowerCache.updateCaches();
-        List<TowerCache> notUpdated = new ArrayList<>();
-        for (TowerCache value : TowerCache.VALUES) {
+        EnumSet<TowerRegistry> updated = TowerRegistry.updateCaches();
+        List<TowerRegistry> notUpdated = new ArrayList<>();
+        for (TowerRegistry value : TowerRegistry.VALUES) {
             if (!updated.contains(value)) {
                 notUpdated.add(value);
             }

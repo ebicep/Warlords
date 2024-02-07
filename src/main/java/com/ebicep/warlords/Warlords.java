@@ -18,7 +18,7 @@ import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.LobbyGameOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
-import com.ebicep.warlords.game.option.towerdefense.TowerCache;
+import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.guilds.GuildListener;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -444,7 +444,7 @@ public class Warlords extends JavaPlugin {
             }
         }.runTaskTimer(this, 1, 1);
 
-        TowerCache.updateCaches();
+        TowerRegistry.updateCaches();
 
         ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is enabled");
     }

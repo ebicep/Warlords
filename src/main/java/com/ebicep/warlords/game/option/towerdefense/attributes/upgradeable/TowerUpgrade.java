@@ -4,6 +4,7 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -13,10 +14,22 @@ public abstract class TowerUpgrade {
 
     protected String name;
     protected List<TowerUpgradeInstance> upgradeInstances = new ArrayList<>();
-    protected FloatModifiable cost;
+    protected FloatModifiable cost = new FloatModifiable(0); //TODO
     protected boolean unlocked = false;
 
-    public abstract void upgrade();
+    public TowerUpgrade(String name, TowerUpgradeInstance... upgradeInstances) {
+        this.name = name;
+        this.upgradeInstances.addAll(Arrays.asList(upgradeInstances));
+    }
+
+    public void upgrade() {
+        unlocked = true;
+        onUpgrade();
+    }
+
+    protected void onUpgrade() {
+
+    }
 
     public void tick() {
         upgradeInstances.forEach(TowerUpgradeInstance::tick);

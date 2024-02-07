@@ -1,0 +1,80 @@
+package com.ebicep.warlords.player.ingame;
+
+import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import java.util.UUID;
+
+public class WarlordsTower extends WarlordsEntity {
+
+    public WarlordsTower(
+            @Nonnull UUID uuid,
+            @Nonnull String name,
+            @Nonnull Entity entity,
+            @Nonnull Game game,
+            @Nonnull Team team,
+            @Nonnull AbstractPlayerClass playerClass
+    ) {
+        super(uuid, name, entity, game, team, playerClass);
+    }
+
+    @Override
+    public boolean isOnline() {
+        return true;
+    }
+
+    @Override
+    public void updateHealth() {
+
+    }
+
+    @Override
+    public void updateEntity() {
+
+    }
+
+    @Override
+    public void setDamageResistance(float damageResistance) {
+
+    }
+
+    @Override
+    public ItemStack getHead() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getHelmet() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getChestplate() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getLeggings() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getBoots() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack getWeaponItem() {
+        return null;
+    }
+}

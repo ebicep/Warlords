@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -34,6 +35,7 @@ public class TowerDefenseOption implements PveOption {
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final List<TowerDefensePath> paths;
     private Game game;
+    private TowerBuildOption towerBuildOption;
 
     public TowerDefenseOption(List<TowerDefensePath> paths) {
         this.paths = paths;
@@ -46,6 +48,12 @@ public class TowerDefenseOption implements PveOption {
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
+        for (Option option : game.getOptions()) {
+            if (option instanceof TowerBuildOption buildOption) {
+                this.towerBuildOption = buildOption;
+                break;
+            }
+        }
         Location current = getRandomSpawnLocation(null);
         for (TowerDefensePath path : paths) {
             path.createForwardPath(current);
@@ -105,9 +113,19 @@ public class TowerDefenseOption implements PveOption {
 
             @Override
             public void run() {
-
+                towerBuildOption.getBuiltTowers().forEach((tower, spawnTick) -> tower.whileActive(ticksElapsed.get() - spawnTick));
+                ticksElapsed.incrementAndGet();
             }
-        }.runTaskTimer(0, 20);
+        }.runTaskTimer(0, 0);
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        for (int i = 1; i < player.getAbilities().size(); i++) {
+            player.getAbilities().remove(i);
+            i--;
+        }
+        player.updateInventory(false);
     }
 
     @Override

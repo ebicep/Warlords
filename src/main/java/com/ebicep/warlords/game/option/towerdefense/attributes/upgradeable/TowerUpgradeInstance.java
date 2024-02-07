@@ -9,7 +9,11 @@ import net.kyori.adventure.text.Component;
  */
 public abstract class TowerUpgradeInstance {
 
-    private FloatModifiable value;
+    protected FloatModifiable value;
+
+    public TowerUpgradeInstance(float value) {
+        this.value = new FloatModifiable(value);
+    }
 
     public abstract Component getDescription();
 
@@ -23,6 +27,18 @@ public abstract class TowerUpgradeInstance {
 
     public float getValue() {
         return value.getCalculatedValue();
+    }
+
+    public static class DamageUpgradeInstance extends TowerUpgradeInstance {
+
+        public DamageUpgradeInstance(float value) {
+            super(value);
+        }
+
+        @Override
+        public Component getDescription() {
+            return Component.text("+" + value.getCalculatedValue() + " Damage");
+        }
     }
 
 }

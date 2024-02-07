@@ -1,9 +1,30 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
+import com.ebicep.customentities.npc.NPCManager;
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.towerdefense.TowerPlayerClass;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import com.ebicep.warlords.util.warlords.Utils;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.ArmorStandTrait;
+import net.citizensnpcs.trait.Gravity;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.EntityType;
+import org.bukkit.metadata.FixedMetadataValue;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public abstract class AbstractTower {
 
@@ -33,7 +54,7 @@ public abstract class AbstractTower {
                     block.setBlockData(blockData);
                     builtBlocks[x][z][y] = block;
 
-                    // move entities up if in the way
+                    // move entities up if in the way TODO maybe change to just tp to center
                     if (y != maxY - 1) {
                         block.getLocation()
                              .toCenterLocation()
@@ -46,25 +67,129 @@ public abstract class AbstractTower {
         return builtBlocks;
     }
 
+    protected UUID owner; // person who built the tower
+    protected Game game;
+    protected Location cornerLocation; // bottom left corner of tower
+    protected Location centerLocation; // top center of tower
+    protected WarlordsTower warlordsTower;
+    protected NPC npc;
+    protected Block[][][] blocks;
+    private Team team = Team.BLUE; //TODO
+
+
+    protected AbstractTower(Game game, Location cornerLocation) {
+        this.game = game;
+        this.cornerLocation = cornerLocation;
+        double xzOffset = getSize() / 2.0;
+        this.centerLocation = cornerLocation.clone().add(xzOffset, getHeight() + .25, xzOffset);
+        this.npc = createNPC();
+        this.warlordsTower = new WarlordsTower(UUID.randomUUID(), getName(), npc.getEntity(), game, team, new TowerPlayerClass());
+
+        build();
+    }
+
+    public int getSize() {
+        return getTowerRegistry().getSize();
+    }
+
+    public int getHeight() {
+        return getTowerRegistry().getHeight();
+    }
+
+    protected NPC createNPC() {
+        NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.ARMOR_STAND, getName());
+        npc.data().set(NPC.Metadata.COLLIDABLE, false);
+        npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
+
+        npc.getDefaultGoalController().clear();
+        npc.getNavigator().setPaused(true);
+
+        npc.getOrAddTrait(Gravity.class).gravitate(true);
+        ArmorStandTrait armorStandTrait = npc.getOrAddTrait(ArmorStandTrait.class);
+        armorStandTrait.setVisible(false);
+        armorStandTrait.setMarker(true);
+
+        npc.spawn(centerLocation);
+
+        return npc;
+    }
+
     /**
      * Facing from track to frontLeftCorner
      */
-    public abstract void build(Location frontLeftCorner);
-
-    public void onRemove() {
-
+    public void build() {
+        Utils.playGlobalSound(centerLocation, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 2, 1);
+        blocks = build(cornerLocation, getTowerRegistry().baseTowerData);
+        forEachBlock(block -> {
+            block.setMetadata("TOWER", new FixedMetadataValue(Warlords.getInstance(), this));
+            return false;
+        });
     }
-
-    public abstract Block[][][] getBuiltBlocks();
-
-    public abstract BlockData[][][] getBlockData();
 
     public abstract TowerRegistry getTowerRegistry();
 
-    // TODO
-    public int getSize() {
-        return getBlockData().length;
+
+    public void whileActive(int ticksElapsed) {
+
     }
 
+    public List<WarlordsNPC> getNearbyMobs(float range) {
+        return PlayerFilterGeneric.entitiesAround(centerLocation, range, range, range)
+                                  .warlordsNPCs()
+                                  .filter(warlordsNPC -> warlordsNPC.getTeam() != team)
+                                  .stream()
+                                  .collect(Collectors.toList());
+    }
 
+    public void remove() {
+        forEachBlock(block -> {
+            block.setType(Material.AIR);
+            return false;
+        });
+        npc.destroy();
+        game.getPlayers().remove(warlordsTower.getUuid());
+        Warlords.removePlayer(warlordsTower.getUuid());
+    }
+
+    /**
+     * @param consumer return true to break loop
+     * @return true if loop was broken
+     */
+    public boolean forEachBlock(Function<Block, Boolean> consumer) {
+        Block[][][] builtBlocks = getBlocks();
+        for (Block[][] builtBlock : builtBlocks) {
+            for (Block[] blocks : builtBlock) {
+                for (Block block : blocks) {
+                    if (consumer.apply(block)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public Block[][][] getBlocks() {
+        return blocks;
+    }
+
+    public String getName() {
+        return getTowerRegistry().name;
+    }
+
+    public UUID getOwner() {
+        return owner;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public Location getCornerLocation() {
+        return cornerLocation;
+    }
+
+    public Location getCenterLocation() {
+        return centerLocation;
+    }
 }
