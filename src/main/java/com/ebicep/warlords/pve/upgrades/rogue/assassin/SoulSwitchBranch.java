@@ -1,10 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.SoulSwitch;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
-import com.ebicep.warlords.pve.upgrades.UpgradeTypes;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
@@ -56,28 +53,30 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                 }, 5f)
                 .addUpgradeHitBox(ability, 7, 4)
                 .addTo(treeB);
-//
-//        masterUpgrade = new Upgrade(
-//                "Soul Burst",
-//                "Soul Switch - Master Upgrade",
-//                "Double the damage you deal with the decoy and cripple all enemies hit by the decoy's explosion for 5 seconds," +
-//                        " reducing their damage dealt by 50%. Additionally, heal for 10% of your missing health when swapping.",
-//                50000,
-//                () -> {
-//
-//                }
-//        );
-//        masterUpgrade2 = new Upgrade(
-//                "Tricky Switch",
-//                "Soul Switch - Master Upgrade",
-//                """
-//                        For the duration the decoy is active, increase movement speed by 30%. Increase blindness duration by 1.5s and increase explosion delay by 2s.
-//                        """,
-//                50000,
-//                () -> {
-//                    ability.setBlindnessTicks(ability.getBlindnessTicks() + 30);
-//                    ability.setDecoyMaxTicksLived(ability.getDecoyMaxTicksLived() + 40);
-//                }
-//        );
+
+        masterUpgrade = new Upgrade(
+                "Soul Burst",
+                "Soul Switch - Master Upgrade",
+                """
+                        While swapping and upon landing, gain 50% damage reduction and become invisible for 5s.
+                        Additionally, at the start and end locations of the swap, increase movement speed by 25% for self and allies within a 3-block radius for 3s and for every 1% speed bonus granted to the Animus, increase the damage of its Judgment Strike by 1%.
+                        """,
+                50000,
+                () -> {
+
+                }
+        );
+        masterUpgrade2 = new Upgrade(
+                "Tricky Switch",
+                "Soul Switch - Master Upgrade",
+                """
+                        While the Animus is active, increase crit chance by 15%. For every Judgment Strike dealt by the Animus, gain 10 energy and self heal for 10% of the damage dealt.
+                        """,
+                50000,
+                () -> {
+                    ability.setBlindnessTicks(ability.getBlindnessTicks() + 30);
+                    ability.setDecoyMaxTicksLived(ability.getDecoyMaxTicksLived() + 40);
+                }
+        );
     }
 }

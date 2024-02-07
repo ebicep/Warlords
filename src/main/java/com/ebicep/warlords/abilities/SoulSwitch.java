@@ -4,10 +4,14 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
@@ -34,6 +38,7 @@ import org.bukkit.potion.PotionEffectType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitBox {
@@ -164,8 +169,79 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     );
                     wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 0, true, false));
                     pveOption.despawnMob(npc.getMob());
-                    pveOption.spawnNewMob(new Animus(ownLocation, wp, swapTarget), Team.BLUE);
+                    Animus animus = new Animus(ownLocation, wp, swapTarget);
+                    pveOption.spawnNewMob(animus, Team.BLUE);
+                    if (pveMasterUpgrade2) {
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Tricky Switch",
+                                null,
+                                SoulSwitch.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {},
+                                10 * 60 * 20,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (animus.getWarlordsNPC().isDead()) {
+                                        cooldown.setTicksLeft(0);
+                                    }
+                                })
+                        ) {
+                            @Override
+                            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                                return currentCritChance + 15;
+                            }
+                        });
+                        animus.getWarlordsNPC().getCooldownManager().addCooldown(new PermanentCooldown<>(
+                                "Tricky Switch",
+                                null,
+                                SoulSwitch.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {},
+                                false
+                        ) {
+                            @Override
+                            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                                if (event.getAbility().equals("Judgement Strike")) {
+                                    wp.addEnergy(wp, "Tricky Switch", 10);
+                                    float heal = currentDamageValue * .1f;
+                                    wp.addHealingInstance(wp, "Tricky Switch", heal, heal, 0, 100);
+                                }
+                            }
+                        });
+                    }
                 }
+            }
+
+            if (pveMasterUpgrade) {
+                wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        "Soul Burst",
+                        "SOUL",
+                        SoulSwitch.class,
+                        null,
+                        wp,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {},
+                        5 * 20,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 20 == 0) {
+                                wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 25, 0, true, false));
+                            }
+                        })
+                ) {
+                    @Override
+                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * 0.5f;
+                    }
+                });
+                PlayerFilter.entitiesAround(swapLocation, 3, 3, 3)
+                            .aliveTeammatesOf(wp)
+                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20, "BASE"));
+                PlayerFilter.entitiesAround(ownLocation, 3, 3, 3)
+                            .aliveTeammatesOf(wp)
+                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20, "BASE"));
             }
 
             return true;
@@ -205,11 +281,11 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         return radius;
     }
 
-    public void setInvisTicks(int invisTicks) {
-        this.invisTicks = invisTicks;
-    }
-
     public int getInvisTicks() {
         return invisTicks;
+    }
+
+    public void setInvisTicks(int invisTicks) {
+        this.invisTicks = invisTicks;
     }
 }

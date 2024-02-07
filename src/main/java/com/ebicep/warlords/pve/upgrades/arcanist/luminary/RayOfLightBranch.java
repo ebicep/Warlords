@@ -40,7 +40,7 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
                 "Divine Light",
                 "Ray of Light - Master Upgrade",
                 """
-                        Ray of Light will grant allies a 15% damage bonus, 50% if the ally has max stacks of Merciful Hex, for 5s.
+                        Ray of Light will grant allies a 15% damage bonus, 35% if the ally has max stacks of Merciful Hex, for 5s.
                         """,
                 50000,
                 () -> {

@@ -16,7 +16,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -197,8 +196,8 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void runEveryTick() {
         // updating entity reference in case it was unloaded
-        Entity updatedEntity = Bukkit.getEntity(uuid);
-        if (!Objects.equals(updatedEntity, entity) && updatedEntity instanceof LivingEntity) {
+        Entity updatedEntity = npc.getEntity();
+        if (updatedEntity != null && !Objects.equals(updatedEntity, entity) && updatedEntity instanceof LivingEntity || (isAlive() && entity != null && !entity.isValid())) {
             this.entity = updatedEntity;
         }
         super.runEveryTick();

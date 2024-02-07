@@ -77,14 +77,8 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
             option.spawnNewMob(new ZombieSwordsman(warlordsNPC.getLocation()));
         }
 
+        // spawn 1 Necronomicon, 1 random Boss Minion Grimoire, and 1 Scripted Grimoire
         new GameRunnable(option.getGame()) {
-
-            final List<Location> necronomiconSpawnLocations = List.of(
-                    new Location(warlordsNPC.getWorld(), -1.5, 34, 26.5),
-                    new Location(warlordsNPC.getWorld(), -23.5, 34, 10.5),
-                    new Location(warlordsNPC.getWorld(), -7.5, 34, -11.5),
-                    new Location(warlordsNPC.getWorld(), 14.5, 34, 4.5)
-            );
 
             @Override
             public void run() {
@@ -92,8 +86,6 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                     this.cancel();
                     return;
                 }
-                // spawn 1 Necronomicon, 1 random Boss Minion Grimoire, and 1 Scripted Grimoire
-                option.spawnNewMob(new EventNecronomiconGrimoire(necronomiconSpawnLocations.get(ThreadLocalRandom.current().nextInt(necronomiconSpawnLocations.size()))));
                 Mob minionGrimoire = switch (ThreadLocalRandom.current().nextInt(4)) {
                     case 0 -> Mob.EVENT_ROUGE_GRIMOIRE;
                     case 1 -> Mob.EVENT_VIOLETTE_GRIMOIRE;
@@ -104,7 +96,26 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                 option.spawnNewMob(new EventScriptedGrimoire(warlordsNPC.getLocation()));
             }
 
-        }.runTaskTimer(15 * 20, 10 * 20);
+        }.runTaskTimer(10 * 20, 35 * 20);
+        new GameRunnable(option.getGame()) {
+
+            final List<Location> necronomiconSpawnLocations = List.of(
+                    new Location(warlordsNPC.getWorld(), -4, 34, -9),
+                    new Location(warlordsNPC.getWorld(), -21, 34, 7),
+                    new Location(warlordsNPC.getWorld(), -4, 34, 24),
+                    new Location(warlordsNPC.getWorld(), 12, 34, 8)
+            );
+
+            @Override
+            public void run() {
+                if (warlordsNPC.isDead()) {
+                    this.cancel();
+                    return;
+                }
+                option.spawnNewMob(new EventNecronomiconGrimoire(necronomiconSpawnLocations.get(ThreadLocalRandom.current().nextInt(necronomiconSpawnLocations.size()))));
+            }
+
+        }.runTaskTimer(10 * 20, 12 * 20);
 
         AtomicInteger damageResistance = new AtomicInteger(0);
         option.getGame().registerEvents(new Listener() {
@@ -135,12 +146,12 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                     mob.getWarlordsNPC().die(warlordsNPC);
                 }
                 Bukkit.getServer().getPluginManager().callEvent(new EventInquisteurKillingBlowEvent(warlordsNPC));
-                warlordsNPC.addHealingInstance(warlordsNPC, "Killing Blow", 10000, 10000, 0, 0);
-                if (damageResistance.get() >= 50) {
+                warlordsNPC.addHealingInstance(warlordsNPC, "Killing Blow", 500, 500, 0, 0);
+                if (damageResistance.get() >= 30) {
                     return;
                 }
                 killingBlowTickCooldown = 5 * 20;
-                damageResistance.addAndGet(25);
+                damageResistance.addAndGet(10);
             }
         });
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(

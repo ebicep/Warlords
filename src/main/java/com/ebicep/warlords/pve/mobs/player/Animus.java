@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.player;
 
 import com.ebicep.warlords.abilities.JudgementStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -102,6 +103,21 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
                 }});
                 break;
             }
+        }
+    }
+
+    @Override
+    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+        if (event.getAbility().equals("Judgement Strike")) {
+            double speed = attacker.getSpeed()
+                                   .getModifiers()
+                                   .stream()
+                                   .filter(modifier -> modifier.modifier > 0)
+                                   .mapToDouble(value -> value.modifier)
+                                   .sum();
+            float damageBoost = (float) (1 + speed / 100);
+            event.setMin(event.getMin() * damageBoost);
+            event.setMax(event.getMax() * damageBoost);
         }
     }
 
