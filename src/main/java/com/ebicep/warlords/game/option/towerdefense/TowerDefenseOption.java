@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -54,10 +55,6 @@ public class TowerDefenseOption implements PveOption {
                 this.towerBuildOption = buildOption;
                 break;
             }
-        }
-        Location current = getRandomSpawnLocation(null);
-        for (TowerDefensePath path : paths) {
-            path.createForwardPath(current);
         }
         game.registerEvents(new Listener() {
 
@@ -121,15 +118,6 @@ public class TowerDefenseOption implements PveOption {
     }
 
     @Override
-    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
-        for (int i = 1; i < player.getAbilities().size(); i++) {
-            player.getAbilities().remove(i);
-            i--;
-        }
-        player.updateInventory(false);
-    }
-
-    @Override
     public Game getGame() {
         return game;
     }
@@ -151,28 +139,40 @@ public class TowerDefenseOption implements PveOption {
 
     @Override
     public void spawnNewMob(AbstractMob mob, Team team) {
-        Location randomSpawn = getRandomSpawnLocation(null);
-        paths.stream()
-             .filter(path -> path.getSpawn().equals(randomSpawn))
-             .findAny()
-             .ifPresentOrElse(path -> {
-                 Location spawnLocation = Objects.requireNonNull(randomSpawn).add(
-                         ThreadLocalRandom.current().nextDouble(4) - 2,
-                         0,
-                         ThreadLocalRandom.current().nextDouble(4) - 2
-                 );
-                 mob.setSpawnLocation(spawnLocation);
-                 game.addNPC(mob.toNPC(game, team, warlordsNPC -> {}));
-                 mobs.put(mob, new TowerDefenseMobData(ticksElapsed.get(), paths.indexOf(path)));
-                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
-             }, () -> {
-                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No path with given spawn: " + randomSpawn);
-             });
+        for (Team t : TeamMarker.getTeams(game)) {
+            if (t == team) {
+                continue;
+            }
+            Location randomSpawn = getRandomSpawnLocation(t);
+            paths.stream()
+                 .filter(path -> path.getSpawn().equals(randomSpawn))
+                 .findAny()
+                 .ifPresentOrElse(path -> {
+                     Location spawnLocation = Objects.requireNonNull(randomSpawn).add(
+                             ThreadLocalRandom.current().nextDouble(4) - 2,
+                             0,
+                             ThreadLocalRandom.current().nextDouble(4) - 2
+                     );
+                     mob.setSpawnLocation(spawnLocation);
+                     game.addNPC(mob.toNPC(game, team, warlordsNPC -> {}));
+                     mobs.put(mob, new TowerDefenseMobData(ticksElapsed.get(), paths.indexOf(path)));
+                     Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+                 }, () -> ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No path with given spawn: " + randomSpawn));
+        }
     }
 
     @Override
     public PveRewards<?> getRewards() {
         return null;
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        for (int i = 1; i < player.getAbilities().size(); i++) {
+            player.getAbilities().remove(i);
+            i--;
+        }
+        player.updateInventory(false);
     }
 
     public static class TowerDefenseMobData extends MobData {
@@ -203,9 +203,7 @@ public class TowerDefenseOption implements PveOption {
         public TowerDefensePath(Location spawn, List<Location> path) {
             this.spawn = spawn;
             this.path = path;
-        }
-
-        public void createForwardPath(Location current) {
+            Location current = spawn.clone();
             for (Location location : path) {
                 forwardPath.add(current.distance(location));
                 current = location;

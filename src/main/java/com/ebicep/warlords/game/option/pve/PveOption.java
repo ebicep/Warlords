@@ -48,19 +48,30 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.ToDoubleFunction;
 
 public interface PveOption extends Option {
 
     @Nullable
     default Location getRandomSpawnLocation(WarlordsEntity entity) {
+        return getRandomSpawnLocation(marker -> marker.getPriority(entity));
+    }
+
+    @Nullable
+    default Location getRandomSpawnLocation(Team team) {
+        return getRandomSpawnLocation(marker -> marker.getPriorityTeam(team));
+    }
+
+    @Nullable
+    private Location getRandomSpawnLocation(ToDoubleFunction<SpawnLocationMarker> priorityFunction) {
         List<Location> candidates = new ArrayList<>();
         double priority = Double.NEGATIVE_INFINITY;
         for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
             if (candidates.isEmpty()) {
                 candidates.add(marker.getLocation());
-                priority = marker.getPriority(entity);
+                priority = priorityFunction.applyAsDouble(marker);
             } else {
-                double newPriority = marker.getPriority(entity);
+                double newPriority = priorityFunction.applyAsDouble(marker);
                 if (newPriority >= priority) {
                     if (newPriority > priority) {
                         candidates.clear();

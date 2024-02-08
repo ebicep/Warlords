@@ -25,6 +25,7 @@ public class SpawnpointOption extends MarkerOption {
         return new SpawnpointOption(
                 location,
                 (p) -> p.getTeam() == team ? 0 : BAD_TEAM_PENALTY,
+                t -> t == team ? 0 : BAD_TEAM_PENALTY,
                 Arrays.asList(Component.text("Type: for-team"), Component.text("Team: " + team))
         );
     }
@@ -83,18 +84,24 @@ public class SpawnpointOption extends MarkerOption {
                     double distanceToFriendlies = distances.getOrDefault(Boolean.TRUE, 0d);
                     return distanceToFriendlies - distanceToEnemy;
                 },
+                team -> 0,
                 List.of(Component.text("Type: avoiding-enemy-players"))
         );
     }
 
-    public SpawnpointOption(Location location, ToDoubleFunction<WarlordsEntity> teamCheck, List<TextComponent> debugExtra) {
+    public SpawnpointOption(Location location, ToDoubleFunction<WarlordsEntity> playerTeamCheck, ToDoubleFunction<Team> teamCheck, List<TextComponent> debugExtra) {
         super(new SpawnLocationMarker() {
                   @Override
                   public double getPriority(WarlordsEntity player) {
                       if (player == null) {
                           return 0;
                       }
-                      return teamCheck.applyAsDouble(player);
+                      return playerTeamCheck.applyAsDouble(player);
+                  }
+
+                  @Override
+                  public double getPriorityTeam(Team team) {
+                      return teamCheck.applyAsDouble(team);
                   }
 
                   @Override
@@ -113,7 +120,7 @@ public class SpawnpointOption extends MarkerOption {
         private final InterceptionPointOption interceptionPoint;
 
         public InterceptionSpawnPoint(Location location, ToDoubleFunction<WarlordsEntity> teamCheck, List<TextComponent> debugExtra, InterceptionPointOption interceptionPoint) {
-            super(location, teamCheck, debugExtra);
+            super(location, teamCheck, t -> 0, debugExtra);
             this.location = location;
             this.interceptionPoint = interceptionPoint;
         }
