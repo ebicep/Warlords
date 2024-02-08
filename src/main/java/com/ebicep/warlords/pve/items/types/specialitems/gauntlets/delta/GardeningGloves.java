@@ -39,10 +39,11 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
                 false
         ) {
             @Override
-            public void healingDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
-                if (!event.getWarlordsEntity().equals(warlordsPlayer) && ThreadLocalRandom.current().nextDouble() <= .02) {
-                    event.setMin(event.getMax());
+            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                if (ThreadLocalRandom.current().nextDouble() <= .15) {
+                    return currentHealValue * 1.3f;
                 }
+                return currentHealValue;
             }
         });
     }
@@ -54,7 +55,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
 
     @Override
     public String getBonus() {
-        return "+2% chance to heal the max amount of health when healing any ally.";
+        return "15% to heal +30% more health.";
     }
 
     @Override
