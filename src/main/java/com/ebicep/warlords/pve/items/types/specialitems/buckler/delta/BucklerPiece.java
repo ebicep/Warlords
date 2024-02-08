@@ -31,7 +31,7 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
 
     @Override
     public String getBonus() {
-        return "Healing done to a target will damage nearby enemies around that target for 5% of the healing done.";
+        return "Healing done to a target will damage nearby enemies around that target for 10% of the healing done.";
     }
 
     @Override
@@ -60,7 +60,7 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
                             .aliveEnemiesOf(warlordsPlayer)
                             .forEach(warlordsEntity -> {
                                 warlordsEntity.addDamageInstance(
-                                        warlordsEntity,
+                                        warlordsPlayer,
                                         BucklerPiece.this.getName(),
                                         damageAmount,
                                         damageAmount,
