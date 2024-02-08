@@ -46,8 +46,6 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
         super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
     }
 
-    public abstract float getCrackiness();
-
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
@@ -146,7 +144,9 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                     mob.getWarlordsNPC().die(warlordsNPC);
                 }
                 Bukkit.getServer().getPluginManager().callEvent(new EventInquisteurKillingBlowEvent(warlordsNPC));
-                warlordsNPC.addHealingInstance(warlordsNPC, "Killing Blow", 500, 500, 0, 0);
+                if (damageResistance.get() < 10) {
+                    warlordsNPC.addHealingInstance(warlordsNPC, "Killing Blow", 500, 500, 0, 0);
+                }
                 if (damageResistance.get() >= 30) {
                     return;
                 }
@@ -171,6 +171,8 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
             }
         });
     }
+
+    public abstract float getCrackiness();
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
