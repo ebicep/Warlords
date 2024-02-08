@@ -150,6 +150,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                         Component.text("Go Back", NamedTextColor.RED),
                                         Collections.emptyList(),
                                         (m2, e2) -> {
+                                            ALTERNATIVE_MASTERY_COST.forEach((spendable, aLong) -> spendable.subtractFromPlayer(databasePlayer, aLong));
                                             alternativeMasteriesUnlocked.putIfAbsent(warlordsPlayer.getSpecClass(), new HashMap<>());
                                             alternativeMasteriesUnlocked.get(warlordsPlayer.getSpecClass()).put(upgradeBranchIndex, Instant.now());
                                             alternativeMasteriesUnlockedAbilities.add(abilityRegistry);
