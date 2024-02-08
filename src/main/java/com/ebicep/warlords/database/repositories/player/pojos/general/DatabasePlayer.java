@@ -85,6 +85,8 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Settings.FlagMessageMode flagMessageMode = Settings.FlagMessageMode.ABSOLUTE;
     @Field("glowing_mode")
     private Settings.GlowingMode glowingMode = Settings.GlowingMode.ON;
+    @Field("fast_wave_mode")
+    private Settings.FastWaveMode fastWaveMode = Settings.FastWaveMode.OFF;
     @Field("chat_damage")
     private Settings.ChatSettings.ChatDamage chatDamageMode = Settings.ChatSettings.ChatDamage.ALL;
     @Field("chat_healing")
@@ -361,6 +363,14 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public void setGlowingMode(Settings.GlowingMode glowingMode) {
         this.glowingMode = glowingMode;
+    }
+
+    public Settings.FastWaveMode getFastWaveMode() {
+        return fastWaveMode;
+    }
+
+    public void setFastWaveMode(Settings.FastWaveMode fastWaveMode) {
+        this.fastWaveMode = fastWaveMode;
     }
 
     public void addAchievement(Achievement.AbstractAchievementRecord<?> achievementRecord) {

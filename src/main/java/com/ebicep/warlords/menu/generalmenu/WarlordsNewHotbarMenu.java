@@ -1033,6 +1033,15 @@ public class WarlordsNewHotbarMenu {
                 menu.setItem(
                         5,
                         1,
+                        databasePlayer.getFastWaveMode().item,
+                        (m, e) -> {
+                            player.performCommand("fastwavemode");
+                            openSettingsMenu(player);
+                        }
+                );
+                menu.setItem(
+                        6,
+                        1,
                         MENU_SETTINGS_CHAT_SETTINGS,
                         (m, e) -> {
                             Settings.ChatSettings.openChatSettingsMenu(player);
