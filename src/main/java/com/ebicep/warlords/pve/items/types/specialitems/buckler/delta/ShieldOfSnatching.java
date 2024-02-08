@@ -28,7 +28,7 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
 
     @Override
     public String getBonus() {
-        return "For every player below 50% health, you heal 5% more health.";
+        return "For every player below 75% health, you heal 8% more health.";
     }
 
     @Override
@@ -52,13 +52,13 @@ public class ShieldOfSnatching extends SpecialDeltaBuckler implements CraftsInto
         ) {
             @Override
             public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * (1 + playersBelow50Percent() * 0.05f);
+                return currentHealValue * (1 + playersBelowThreshold() * 0.08f);
             }
 
-            private long playersBelow50Percent() {
+            private long playersBelowThreshold() {
                 return warlordsPlayer.getGame()
                                      .warlordsPlayers()
-                                     .filter(p -> p.getCurrentHealth() / p.getMaxHealth() < 0.5)
+                                     .filter(p -> p.getCurrentHealth() / p.getMaxHealth() < 0.75)
                                      .count();
             }
         });
