@@ -35,6 +35,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Document(collection = "Players_Information")
 public class DatabasePlayer extends DatabasePlayerGeneral {
@@ -473,6 +474,18 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public enum Patches {
 
+        EOD_ASCENDANT_SHARD_3 {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                AtomicInteger masteriesUnlocked = new AtomicInteger();
+                pveStats.getAlternativeMasteriesUnlocked().forEach((specializations, integerInstantMap) -> {
+                    masteriesUnlocked.addAndGet(integerInstantMap.keySet().size());
+                });
+                pveStats.subtractCurrency(Currencies.ASCENDANT_SHARD, masteriesUnlocked.get());
+                return true;
+            }
+        },
         EOD_ITEMS {
             @Override
             public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
