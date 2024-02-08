@@ -35,6 +35,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Document(collection = "Players_Information")
 public class DatabasePlayer extends DatabasePlayerGeneral {
@@ -85,6 +86,8 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Settings.FlagMessageMode flagMessageMode = Settings.FlagMessageMode.ABSOLUTE;
     @Field("glowing_mode")
     private Settings.GlowingMode glowingMode = Settings.GlowingMode.ON;
+    @Field("fast_wave_mode")
+    private Settings.FastWaveMode fastWaveMode = Settings.FastWaveMode.OFF;
     @Field("chat_damage")
     private Settings.ChatSettings.ChatDamage chatDamageMode = Settings.ChatSettings.ChatDamage.ALL;
     @Field("chat_healing")
@@ -363,6 +366,14 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         this.glowingMode = glowingMode;
     }
 
+    public Settings.FastWaveMode getFastWaveMode() {
+        return fastWaveMode;
+    }
+
+    public void setFastWaveMode(Settings.FastWaveMode fastWaveMode) {
+        this.fastWaveMode = fastWaveMode;
+    }
+
     public void addAchievement(Achievement.AbstractAchievementRecord<?> achievementRecord) {
         this.achievements.add(achievementRecord);
     }
@@ -473,6 +484,18 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public enum Patches {
 
+        EOD_ASCENDANT_SHARD_3 {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                AtomicInteger masteriesUnlocked = new AtomicInteger();
+                pveStats.getAlternativeMasteriesUnlocked().forEach((specializations, integerInstantMap) -> {
+                    masteriesUnlocked.addAndGet(integerInstantMap.keySet().size());
+                });
+                pveStats.subtractCurrency(Currencies.ASCENDANT_SHARD, masteriesUnlocked.get());
+                return true;
+            }
+        },
         EOD_ITEMS {
             @Override
             public boolean run(UUID uuid, DatabasePlayer databasePlayer) {

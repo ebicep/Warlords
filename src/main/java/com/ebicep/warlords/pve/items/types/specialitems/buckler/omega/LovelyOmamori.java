@@ -1,16 +1,14 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.omega;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class LovelyOmamori extends SpecialOmegaBuckler implements AppliesToWarlordsPlayer {
 
@@ -28,7 +26,7 @@ public class LovelyOmamori extends SpecialOmegaBuckler implements AppliesToWarlo
 
     @Override
     public String getBonus() {
-        return "50% chance to prevent getting a debuff.";
+        return "Increase the duration of your ultimate ability by 3 seconds if applicable.";
     }
 
     @Override
@@ -38,23 +36,11 @@ public class LovelyOmamori extends SpecialOmegaBuckler implements AppliesToWarlo
 
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, PveOption pveOption) {
-        warlordsPlayer.getGame().registerEvents(new Listener() {
-
-            @EventHandler
-            public void onCooldownAdd(WarlordsAddCooldownEvent event) {
-                if (!event.getWarlordsEntity().equals(warlordsPlayer)) {
-                    return;
-                }
-                if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.DEBUFF) {
-                    return;
-                }
-                if (ThreadLocalRandom.current().nextDouble() > 0.5) {
-                    return;
-                }
-                event.setCancelled(true);
+        for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
+            if (ability instanceof OrangeAbilityIcon && ability instanceof Duration duration) {
+                duration.setTickDuration(duration.getTickDuration() + 60);
             }
-
-        });
+        }
     }
 
 }

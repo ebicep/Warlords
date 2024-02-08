@@ -18,7 +18,6 @@ import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -31,26 +30,30 @@ public class PrivateGameTerminateCommand extends BaseCommand {
     public void endPrivateGame(@Conditions("requireGame:withAddon=PRIVATE_GAME") Player player) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (GameManager.GameHolder gameHolder : Warlords.getGameManager().getGames()) {
-            if (Objects.equals(gameHolder.getGame(), game)) {
-                Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
-                if (partyPlayerPair != null) {
-                    Player partyLeader = Bukkit.getPlayer(partyPlayerPair.getA().getPartyLeader().getUUID());
-                    if (partyLeader.getPlayer() != null && partyLeader.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                        endGameInstance(player, gameHolder, game);
-                        player.sendMessage(Component.text("Game has been terminated. Warping back to lobby...", NamedTextColor.GREEN));
-                    } else {
-                        player.sendMessage(Component.text("You are not the party leader, unable to terminate game.", NamedTextColor.RED));
-                    }
-                } else {
-                    if (game.warlordsPlayers().count() > 1) {
-                        player.sendMessage(Component.text("You are not the only player in the game, unable to terminate game.", NamedTextColor.RED));
-                    } else {
-                        endGameInstance(player, gameHolder, game);
-                    }
-                }
-
+            if (!Objects.equals(gameHolder.getGame(), game)) {
+                continue;
+            }
+            if (game.getPlayerTeam(player.getUniqueId()) == null) { // spectator
                 return;
             }
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+            // check if all players in the game are in the party and the party leader is the one who is terminating the game
+            if (partyPlayerPair != null && game.players().allMatch(uuidTeamEntry -> partyPlayerPair.getA().hasUUID(uuidTeamEntry.getKey()))) {
+                if (partyPlayerPair.getA().getPartyLeader().getUUID().equals(player.getUniqueId())) {
+                    endGameInstance(player, gameHolder, game);
+                    player.sendMessage(Component.text("Game has been terminated. Warping back to lobby...", NamedTextColor.GREEN));
+                } else {
+                    player.sendMessage(Component.text("You are not the party leader, unable to terminate game.", NamedTextColor.RED));
+                }
+            } else {
+                if (game.warlordsPlayers().count() > 1) {
+                    player.sendMessage(Component.text("You are not the only player in the game, unable to terminate game.", NamedTextColor.RED));
+                } else {
+                    endGameInstance(player, gameHolder, game);
+                }
+            }
+
+            return;
         }
     }
 

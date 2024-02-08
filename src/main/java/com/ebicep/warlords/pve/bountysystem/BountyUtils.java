@@ -20,8 +20,8 @@ public class BountyUtils {
 
     public static final TextColor COLOR = TextColor.color(255, 140, 0);
     public static Map<String, BountyInfo> BOUNTY_COLLECTION_INFO = new HashMap<>() {{
-        put(PlayersCollections.DAILY.name, new BountyInfo(Bounty.BountyGroup.DAILY_ALL.bounties, 2, 5));
-        put(PlayersCollections.WEEKLY.name, new BountyInfo(Bounty.BountyGroup.WEEKLY_ALL.bounties, 2, 5));
+        put(PlayersCollections.DAILY.name, new BountyInfo(Bounty.BountyGroup.DAILY_ALL.bounties, 5, 5));
+        put(PlayersCollections.WEEKLY.name, new BountyInfo(Bounty.BountyGroup.WEEKLY_ALL.bounties, 5, 5));
         put(PlayersCollections.LIFETIME.name, new BountyInfo(Bounty.BountyGroup.LIFETIME_ALL.bounties, Integer.MAX_VALUE, 1));
         put("Garden of Hesperides", new BountyInfo(Bounty.BountyGroup.EVENT_GARDEN_OF_HESPERIDES_ALL.bounties, 5, 5));
         put("Library Archives", new BountyInfo(Bounty.BountyGroup.EVENT_LIBRARY_ARCHIVES_ALL.bounties, 5, 5));
@@ -87,6 +87,7 @@ public class BountyUtils {
                    .findFirst();
     }
 
+    // maxBounties = # of new bounties that you can get, 2 = total of 7, since u start with 5
     public record BountyInfo(Bounty[] bounties, int maxBounties, int maxBountiesStarted) {
     }
 

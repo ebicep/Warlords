@@ -36,7 +36,7 @@ public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
 
     @Override
     public String getBonus() {
-        return "+25% chance for your red ability to IMMOBILIZE enemies for 0.5 seconds.";
+        return "+25% chance for your red ability to IMMOBILIZE enemies for 1.5 seconds.";
     }
 
     @Override

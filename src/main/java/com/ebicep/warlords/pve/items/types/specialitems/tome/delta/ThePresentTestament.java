@@ -33,7 +33,7 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
 
     @Override
     public String getBonus() {
-        return "Targets (excluding bosses) above 65% health take pierce damage.";
+        return "Targets (excluding bosses) take true damage.";
     }
 
     @Override
@@ -55,7 +55,7 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
                     if (warlordsNPC.getMob() instanceof BossLike) {
                         return;
                     }
-                    event.getFlags().add(InstanceFlags.PIERCE);
+                    event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
                 }
             }
 

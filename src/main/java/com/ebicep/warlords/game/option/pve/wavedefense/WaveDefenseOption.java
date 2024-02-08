@@ -26,6 +26,7 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
+import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -55,6 +56,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
@@ -260,7 +262,7 @@ public class WaveDefenseOption implements PveOption {
                 sendMessage(entry.getKey(),
                         false,
                         Component.text("A boss will spawn in ", NamedTextColor.YELLOW)
-                                 .append(Component.text(currentWave.getDelay() / 20, NamedTextColor.RED))
+                                 .append(Component.text(getWaveDelay() / 20, NamedTextColor.RED))
                                  .append(Component.text(" seconds!"))
                 );
             } else {
@@ -269,7 +271,7 @@ public class WaveDefenseOption implements PveOption {
                         Component.text("A wave of ", NamedTextColor.YELLOW)
                                  .append(Component.text(spawns, NamedTextColor.RED, TextDecoration.BOLD))
                                  .append(Component.text(" monsters will spawn in "))
-                                 .append(Component.text(currentWave.getDelay() / 20, NamedTextColor.RED))
+                                 .append(Component.text(getWaveDelay() / 20, NamedTextColor.RED))
                                  .append(Component.text(" seconds!"))
                 );
             }
@@ -350,7 +352,8 @@ public class WaveDefenseOption implements PveOption {
         }
 
         int spawnTickPeriod = currentWave.getSpawnTickPeriod();
-        currentDelay = spawnTickPeriod == 0 ? currentWave.getDelay() : currentWave.getDelay() / spawnTickPeriod;
+        currentDelay = getWaveDelay();
+        System.out.println("currentDelay: " + currentDelay);
         spawner = new GameRunnable(game) {
             WarlordsEntity lastSpawn = null;
             int spawnTaskTicksElapsed = 0;
@@ -372,8 +375,7 @@ public class WaveDefenseOption implements PveOption {
                     return;
                 }
 
-                spawnTaskTicksElapsed++;
-                if (spawnTaskTicksElapsed % spawnTickPeriod == 0) {
+                if (spawnTaskTicksElapsed++ % spawnTickPeriod == 0) {
                     if (spawnTickPeriod < 0) {
                         for (int i = 0; i < spawnCount; i++) {
                             spawnMob();
@@ -421,6 +423,22 @@ public class WaveDefenseOption implements PveOption {
             }
 
         }.runTaskTimer(0, 0);
+    }
+
+    protected int getWaveDelay() {
+        if (currentWave != null) {
+            AtomicBoolean fastWave = new AtomicBoolean(true);
+            getGame().warlordsPlayers().forEach(warlordsPlayer -> {
+                DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
+                    if (databasePlayer.getFastWaveMode() == Settings.FastWaveMode.OFF) {
+                        fastWave.set(false);
+                    }
+                });
+            });
+            int waveDelay = currentWave.getDelay();
+            return fastWave.get() ? waveDelay / 2 : waveDelay;
+        }
+        return 0;
     }
 
     protected void onSpawnDelayChange(int newTickDelay) {

@@ -39,7 +39,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getAbility().isEmpty()) {
-                    return currentDamageValue * 1.25f;
+                    return currentDamageValue * 1.4f;
                 }
                 return currentDamageValue;
             }
@@ -53,7 +53,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
 
     @Override
     public String getBonus() {
-        return "Increases your melee damage by 25%.";
+        return "Increases your melee damage by 40%.";
     }
 
     @Override

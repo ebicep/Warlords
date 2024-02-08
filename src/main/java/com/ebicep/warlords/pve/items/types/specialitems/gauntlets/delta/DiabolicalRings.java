@@ -38,11 +38,13 @@ public class DiabolicalRings extends SpecialDeltaGauntlet implements AppliesToWa
                 },
                 false
         ) {
+
             @Override
-            public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
-                if (!event.getWarlordsEntity().equals(warlordsPlayer) && ThreadLocalRandom.current().nextDouble() <= .02) {
-                    event.setMin(event.getMax());
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (!event.getWarlordsEntity().equals(warlordsPlayer) && ThreadLocalRandom.current().nextDouble() <= .1) {
+                    return currentDamageValue * 1.25f;
                 }
+                return currentDamageValue;
             }
         });
     }
@@ -54,7 +56,7 @@ public class DiabolicalRings extends SpecialDeltaGauntlet implements AppliesToWa
 
     @Override
     public String getBonus() {
-        return "+2% chance to deal the max amount of damage when hitting any target.";
+        return "10% chance to deal 25% more damage when hitting any target.";
     }
 
     @Override

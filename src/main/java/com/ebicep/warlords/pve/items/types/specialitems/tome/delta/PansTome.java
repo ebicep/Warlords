@@ -32,7 +32,7 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
 
     @Override
     public String getBonus() {
-        return "Melee attacks have a 20% chance to hit two additional times.";
+        return "Melee attacks have a 25% chance to hit two additional times.";
     }
 
     @Override
@@ -56,7 +56,7 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getAbility().isEmpty() || !(ThreadLocalRandom.current().nextDouble() <= .2) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                if (!event.getAbility().isEmpty() || !(ThreadLocalRandom.current().nextDouble() <= .25) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                     return;
                 }
                 EnumSet<InstanceFlags> flags = EnumSet.copyOf(event.getFlags());
