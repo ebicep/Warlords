@@ -9,9 +9,9 @@ import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
 import com.ebicep.warlords.pve.items.types.specialitems.tome.omega.FlemingAlmanac;
+import org.bukkit.entity.Entity;
 
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
 
@@ -30,7 +30,7 @@ public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
 
     @Override
     public String getBonus() {
-        return "+5% chance to not deal damage, but also +25% chance to reduce damage taken by 10%.";
+        return "For every enemy targeted on you gain 1% damage reduction (Max 10%)";
     }
 
     @Override
@@ -53,13 +53,16 @@ public class FirewaterAlmanac extends SpecialDeltaTome implements CraftsInto {
                 false
         ) {
             @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return ThreadLocalRandom.current().nextDouble() < .05 ? 0 : currentDamageValue;
-            }
-
-            @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return ThreadLocalRandom.current().nextDouble() < .25 ? currentDamageValue * .9f : currentDamageValue;
+                int targeted = pveOption.getMobs()
+                                        .stream()
+                                        .mapToInt(mob -> {
+                                            Entity target = mob.getTarget();
+                                            return target != null && target.getUniqueId().equals(warlordsPlayer.getUuid()) ? 1 : 0;
+                                        })
+                                        .sum();
+                targeted = Math.min(10, targeted);
+                return currentDamageValue * (1 - (targeted * 0.01f));
             }
         });
     }
