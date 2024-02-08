@@ -1,9 +1,11 @@
 package com.ebicep.warlords.pve.items.types.specialitems.buckler.delta;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -28,7 +30,7 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
 
     @Override
     public String getBonus() {
-        return "Targets within 4 blocks of you are slowed by 35%.";
+        return "Targets within 6 blocks of you take 10% more damage from all and are slowed by 35%.";
     }
 
     @Override
@@ -50,9 +52,28 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
                 false,
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 5 == 0) {
-                        PlayerFilter.entitiesAround(warlordsPlayer, 4, 4, 4)
+                        PlayerFilter.entitiesAround(warlordsPlayer, 6, 6, 6)
                                     .aliveEnemiesOf(warlordsPlayer)
-                                    .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(warlordsEntity, getName(), -35, 5));
+                                    .forEach(warlordsEntity -> {
+                                        warlordsEntity.addSpeedModifier(warlordsEntity, getName(), -35, 5);
+                                        warlordsEntity.getCooldownManager().removeCooldownByName(getName() + " Damage");
+                                        warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                getName() + " Damage",
+                                                null,
+                                                CrossNecklaceCharm.class,
+                                                null,
+                                                warlordsEntity,
+                                                CooldownTypes.ITEM,
+                                                cooldownManager -> {
+                                                },
+                                                5
+                                        ) {
+                                            @Override
+                                            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                return currentDamageValue * 1.1f;
+                                            }
+                                        });
+                                    });
                     }
                 }
         ));
