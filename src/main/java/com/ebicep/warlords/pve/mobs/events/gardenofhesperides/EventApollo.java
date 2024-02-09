@@ -48,7 +48,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
                 new SpawnMobAbility(10, Mob.SKELETAL_ENTROPY, 10) {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
-                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));
+                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation((WarlordsEntity) null));
                     }
 
                     @Override

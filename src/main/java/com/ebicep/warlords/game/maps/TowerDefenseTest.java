@@ -9,6 +9,9 @@ import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
+import com.ebicep.warlords.game.option.towerdefense.waves.FixedWave;
+import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseSpawner;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.Location;
@@ -47,7 +50,17 @@ public class TowerDefenseTest extends GameMap {
                 loc.addXYZ(-12.5, 65, 0.5, 180, 0),
                 loc.addXYZ(-12.5, 65, -19.5)
         );
-        options.add(new TowerDefenseOption(new TowerDefenseOption.TowerDefensePath(spawn1, path)));
+        options.add(new TowerDefenseOption(new TowerDefenseSpawner()
+                .add(new FixedWave()
+                        .add(Mob.ZOMBIE_I, 10)
+                        .delay(5 * SECOND)
+                        .add(Mob.ZOMBIE_I, 15)
+                        .delay(10 * SECOND)
+                        .add(Mob.ZOMBIE_I, 20)
+                )
+                .add(new FixedWave()
+                        .add(Mob.ZOMBIE_I, 25)
+                ), new TowerDefenseOption.TowerDefensePath(spawn1, path)));
 
         return options;
     }

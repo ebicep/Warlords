@@ -44,7 +44,7 @@ public class ThunderCloudAbility extends AbstractPveAbility {
     @Override
     public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
 
-        Location randomSpawnLocation = pveOption.getRandomSpawnLocation(null);
+        Location randomSpawnLocation = pveOption.getRandomSpawnLocation((WarlordsEntity) null);
         if (randomSpawnLocation == null) {
             return true;
         }

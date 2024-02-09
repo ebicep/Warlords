@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs;
 
+import com.ebicep.warlords.game.option.towerdefense.mobs.zombie.ZombieI;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
@@ -780,7 +781,13 @@ public enum Mob {
     TEST_DUMMY(EntityType.ZOMBIE, TestDummy.class, TestDummy::new, TestDummy::new, null),
     CRYOPOD(EntityType.ARMOR_STAND, CryoPod.class, CryoPod::new, CryoPod::new, null),
     DECOY(EntityType.ARMOR_STAND, Decoy.class, Decoy::new, Decoy::new, null),
-    ANIMUS(EntityType.PLAYER, Animus.class, Animus::new, Animus::new, null);
+    ANIMUS(EntityType.PLAYER, Animus.class, Animus::new, Animus::new, null),
+
+    // tower defense
+    ZOMBIE_I(EntityType.ZOMBIE, ZombieI.class, ZombieI::new, ZombieI::new, null),
+
+    ;
+
 
     public static final Mob[] VALUES = values();
     public static final Mob[] BASIC = {

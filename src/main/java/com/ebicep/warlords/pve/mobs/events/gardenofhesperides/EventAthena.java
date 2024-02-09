@@ -73,7 +73,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
                         if (spawnCounter % pveOption.getGame().warlordsPlayers().count() == 0 || spawnLocations.isEmpty()) {
-                            Location randomSpawnLocation = pveOption.getRandomSpawnLocation(null);
+                            Location randomSpawnLocation = pveOption.getRandomSpawnLocation((WarlordsEntity) null);
                             if (randomSpawnLocation == null) {
                                 return null;
                             }

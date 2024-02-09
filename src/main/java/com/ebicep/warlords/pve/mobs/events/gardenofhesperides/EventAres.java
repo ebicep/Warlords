@@ -47,7 +47,7 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
                 new SpawnMobAbility(10, Mob.INTERMEDIATE_WARRIOR_BERSERKER, 10) {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
-                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));
+                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation((WarlordsEntity) null));
                     }
 
                     @Override
@@ -58,7 +58,7 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
                 new SpawnMobAbility(10, Mob.ADVANCED_WARRIOR_BERSERKER, 10) {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
-                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));
+                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation((WarlordsEntity) null));
                     }
 
                     @Override

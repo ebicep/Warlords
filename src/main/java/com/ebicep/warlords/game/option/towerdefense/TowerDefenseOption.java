@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
+import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseSpawner;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -38,12 +39,16 @@ public class TowerDefenseOption implements PveOption {
     private final List<TowerDefensePath> paths;
     private Game game;
     private TowerBuildOption towerBuildOption;
+    private TowerDefenseSpawner waveList;
+    private int currentWave = 1;
+    private List<GameRunnable> activeWaves = new ArrayList<>();
 
     public TowerDefenseOption(List<TowerDefensePath> paths) {
         this.paths = paths;
     }
 
-    public TowerDefenseOption(TowerDefensePath... paths) {
+    public TowerDefenseOption(TowerDefenseSpawner waveList, TowerDefensePath... paths) {
+        this.waveList = waveList;
         this.paths = List.of(paths);
     }
 
@@ -107,6 +112,7 @@ public class TowerDefenseOption implements PveOption {
 
     @Override
     public void start(@Nonnull Game game) {
+        waveList.init(this);
         new GameRunnable(game) {
 
             @Override

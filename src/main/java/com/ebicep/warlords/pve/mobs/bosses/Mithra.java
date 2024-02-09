@@ -278,7 +278,7 @@ public class Mithra extends AbstractMob implements BossMob {
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
 
-            Location loc = pveOption.getRandomSpawnLocation(null);
+            Location loc = pveOption.getRandomSpawnLocation((WarlordsEntity) null);
             if (loc == null) {
                 return false;
             }
