@@ -45,70 +45,6 @@ public class TowerBuildOption implements Option {
             .setPlaceableOn(BUILDABLE)
             .get();
 
-    private static void alignToBottomRightCorner(TowerRegistry tower, Material type, LocationBuilder bottomRightCorner) {
-        // move backwards and to the right until not same type, max tower size times
-        int move = tower.getSize();
-        for (int i = 0; i < move; i++) {
-            bottomRightCorner.backward(1);
-            if (bottomRightCorner.getBlock().getType() != type) {
-                bottomRightCorner.forward(1);
-                break;
-            }
-        }
-        for (int i = 0; i < move; i++) {
-            bottomRightCorner.right(1);
-            if (bottomRightCorner.getBlock().getType() != type) {
-                bottomRightCorner.left(1);
-                break;
-            }
-        }
-    }
-
-    /**
-     * @param location location to convert to block face
-     * @return block face, NE, NW, SE, SW
-     */
-    public static BlockFace locationToBlockFace(Location location, boolean cartesian) {
-        float yaw = location.getYaw();
-        if (cartesian) {
-            if (yaw > 0) {
-                if (67.5 <= yaw && yaw <= 112.5) {
-                    return BlockFace.WEST;
-                }
-                if (yaw <= 90) {
-                    return BlockFace.SOUTH_WEST;
-                }
-                return BlockFace.NORTH_WEST;
-            }
-            if (yaw >= -90) {
-                return BlockFace.SOUTH_EAST;
-            }
-            return BlockFace.NORTH_EAST;
-        }
-        if (-67.5 <= yaw && yaw <= -22.5) {
-            return BlockFace.SOUTH_EAST;
-        }
-        if (-22.5 < yaw && yaw < 22.5) {
-            return BlockFace.SOUTH;
-        }
-        if (22.5 <= yaw && yaw <= 67.5) {
-            return BlockFace.SOUTH_WEST;
-        }
-        if (67.5 < yaw && yaw < 112.5) {
-            return BlockFace.WEST;
-        }
-        if (112.5 <= yaw && yaw <= 157.5) {
-            return BlockFace.NORTH_WEST;
-        }
-        if (-157.5 <= yaw && yaw <= -112.5) {
-            return BlockFace.NORTH_EAST;
-        }
-        if (-112.5 < yaw && yaw < -67.5) {
-            return BlockFace.EAST;
-        }
-        return BlockFace.NORTH;
-    }
-
     private final Map<AbstractTower, Integer> builtTowers = new HashMap<>();
     private final Map<UUID, PlayerBuildData> playerBuildData = new HashMap<>();
     private Game game;
@@ -279,7 +215,7 @@ public class TowerBuildOption implements Option {
         location.setPitch(0);
 
         LocationBuilder bottomRightCorner = new LocationBuilder(location).yaw(0); // facing south
-        alignToBottomRightCorner(tower, type, bottomRightCorner);
+        TowerDefenseUtils.alignToBottomRightCorner(tower, type, bottomRightCorner);
 
         debugParticle(location.clone().add(.5, 1, .5), Particle.VILLAGER_HAPPY);
         debugParticle(bottomRightCorner.clone().add(.5, 1, .5), Particle.VILLAGER_HAPPY);
@@ -343,7 +279,7 @@ public class TowerBuildOption implements Option {
             return true;
         }
         boolean isCornerBlock = isCornerBlock(location.getBlock());
-        BlockFace facing = locationToBlockFace(playerLocation, false);
+        BlockFace facing = TowerDefenseUtils.locationToBlockFace(playerLocation, false);
         LocationBuilder locationBuilder = new LocationBuilder(location);
         // check if can be built based on facing direction and tower size
         int modX = facing.getModX();

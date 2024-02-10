@@ -108,9 +108,7 @@ public class WarlordsEvents implements Listener {
         Player player = e.getPlayer();
         WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp != null) {
-            if (wp.isAlive()) {
-                e.getPlayer().setAllowFlight(false);
-            }
+            wp.getGame().getState().onPlayerReJoinGame(player);
             e.joinMessage(Component.textOfChildren(
                             wp.getColoredNameBold(),
                             Component.text(" rejoined the game!", NamedTextColor.GOLD)

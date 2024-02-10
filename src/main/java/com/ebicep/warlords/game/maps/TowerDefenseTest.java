@@ -8,9 +8,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
 import com.ebicep.warlords.game.option.towerdefense.waves.FixedWave;
-import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseSpawner;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
@@ -47,20 +46,32 @@ public class TowerDefenseTest extends GameMap {
         options.add(SpawnpointOption.forTeam(spawn1, Team.RED));
 
         List<Location> path = List.of(
-                loc.addXYZ(-12.5, 65, 0.5, 180, 0),
-                loc.addXYZ(-12.5, 65, -19.5)
+                loc.addXYZ(-12.5, 65, 0.5),
+                loc.addXYZ(-12.5, 65, -16.5),
+                loc.addXYZ(-22.5, 65, -16.5),
+                loc.addXYZ(-22.5, 65, -9.5),
+                loc.addXYZ(-39.5, 65, -9.5)
         );
-        options.add(new TowerDefenseOption(new TowerDefenseSpawner()
+        List<Location> path2 = List.of(
+                loc.addXYZ(-12.5, 65, 0.5),
+                loc.addXYZ(-26.5, 65, 0.5),
+                loc.addXYZ(-26.5, 65, -9.5),
+                loc.addXYZ(-39.5, 65, -9.5)
+        );
+        options.add(new TowerDefenseSpawner()
+                .addPath(spawn1, path)
+                .addPath(spawn1, path2)
                 .add(new FixedWave()
-                        .add(Mob.ZOMBIE_I, 10)
+                        .add(Mob.ZOMBIE_I, 5)
                         .delay(5 * SECOND)
-                        .add(Mob.ZOMBIE_I, 15)
+                        .add(Mob.ZOMBIE_I, 5)
                         .delay(10 * SECOND)
-                        .add(Mob.ZOMBIE_I, 20)
+                        .add(Mob.ZOMBIE_I, 5)
                 )
                 .add(new FixedWave()
-                        .add(Mob.ZOMBIE_I, 25)
-                ), new TowerDefenseOption.TowerDefensePath(spawn1, path)));
+                        .add(Mob.ZOMBIE_I, 5)
+                )
+        );
 
         return options;
     }

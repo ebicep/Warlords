@@ -308,10 +308,11 @@ public class PlayingState implements State, TimerDebugAble {
             }.runTaskLater(Warlords.getInstance(), 1);
         }
         if (wp instanceof WarlordsPlayer) {
-            player.setFlying(false);
-            player.setAllowFlight(false);
             CustomScoreboard sb = CustomScoreboard.getPlayerScoreboard(player);
             updateBasedOnGameState(sb, (WarlordsPlayer) wp);
+        }
+        for (Option option : game.getOptions()) {
+            option.onPlayerReJoinGame(player);
         }
     }
 

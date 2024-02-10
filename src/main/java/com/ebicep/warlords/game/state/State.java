@@ -43,6 +43,7 @@ public interface State {
      */
     default void onPlayerReJoinGame(Player player) {
     }
+
     default void onPlayerQuitGame(OfflinePlayer player) {
     }
     

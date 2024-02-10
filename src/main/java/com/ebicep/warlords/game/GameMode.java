@@ -33,6 +33,7 @@ import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
@@ -665,7 +666,15 @@ public enum GameMode {
             options.add(new WeaponOption());
 
 
+            options.add(new TowerDefenseOption());
             options.add(new TowerBuildOption());
+
+            for (Option option : options) {
+                if (option instanceof FlyOption flyOption) {
+                    flyOption.setFlyEnabled(true);
+                    break;
+                }
+            }
 
 
             return options;
@@ -768,6 +777,7 @@ public enum GameMode {
         options.add(new FallDamage());
         options.add(new KillDamage());
         options.add(new VoidDamage());
+        options.add(new FlyOption());
 
         return options;
     }

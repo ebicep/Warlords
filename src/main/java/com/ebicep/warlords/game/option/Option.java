@@ -101,6 +101,15 @@ public interface Option {
     default void onSpecChange(@Nonnull WarlordsEntity player) {
     }
 
+    /**
+     * Called when a player joins the server while they were part of a game.
+     * Also called directly after adding a player into the game if they were
+     * online at that moment
+     *
+     * @param player
+     */
+    default void onPlayerReJoinGame(Player player) {
+    }
 
     /**
      * Called when player stops spectating game

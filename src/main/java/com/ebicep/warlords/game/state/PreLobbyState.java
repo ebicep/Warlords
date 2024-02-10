@@ -254,7 +254,6 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void onPlayerReJoinGame(Player player) {
-        State.super.onPlayerReJoinGame(player);
         Team team = game.getPlayerTeam(player.getUniqueId());
         player.getActivePotionEffects().clear();
         player.getInventory().clear();
