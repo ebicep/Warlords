@@ -55,4 +55,25 @@ public class TowerDefensePath {
     public List<Location> getPath() {
         return path;
     }
+
+    // generate rgb color object for path based on hash
+    public int getRed() {
+        return computeColorComponent(0);
+    }
+
+    public int getGreen() {
+        return computeColorComponent(1);
+    }
+
+    public int getBlue() {
+        return computeColorComponent(2);
+    }
+
+    // Helper method to compute the color component (red, green, or blue)
+    private int computeColorComponent(int componentIndex) {
+        // Extract the component by bit shifting
+        int component = (path.hashCode() >> (8 * componentIndex)) & 0xFF;
+        return component % 256; // Ensure the value falls within the range 0-255
+    }
+
 }

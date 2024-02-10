@@ -528,6 +528,10 @@ public abstract class AbstractMob implements Mob {
         return npc;
     }
 
+    public Location getSpawnLocation() {
+        return spawnLocation;
+    }
+
     public void setSpawnLocation(Location spawnLocation) {
         this.spawnLocation = spawnLocation;
     }

@@ -6,31 +6,31 @@ import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public class TowerDefenseSpawnWaveAction implements WaveAction<TowerDefenseOption> {
 
     private final Mob mob;
-    @Nullable
-    private final Team fromTeam; // team that spawned the mob, null if spawned from game
+    @Nonnull
+    private final Team fromTeam; // team that spawned the mob, GAME if spawned from game
 
     public TowerDefenseSpawnWaveAction(Mob mob) {
-        this(mob, null);
+        this(mob, Team.GAME);
     }
 
-    public TowerDefenseSpawnWaveAction(Mob mob, @Nullable Team team) {
+    public TowerDefenseSpawnWaveAction(Mob mob, @Nonnull Team team) {
         this.mob = mob;
         this.fromTeam = team;
     }
 
     @Override
-    public boolean run(TowerDefenseOption pveOption) {
-        for (Team team : TeamMarker.getTeams(pveOption.getGame())) {
-            if (fromTeam != null && fromTeam == team) {
+    public boolean run(TowerDefenseOption towerDefenseOption) {
+        for (Team team : TeamMarker.getTeams(towerDefenseOption.getGame())) {
+            if (fromTeam == team) {
                 continue;
             }
-            AbstractMob abstractMob = mob.createMob(null); // spawnLocation handled by TowerDefenseOption
-            pveOption.spawnNewMob(abstractMob, team);
+            AbstractMob abstractMob = mob.createMob(towerDefenseOption.getRandomSpawnLocation(team));
+            towerDefenseOption.spawnNewMob(abstractMob, fromTeam);
         }
         return true;
     }

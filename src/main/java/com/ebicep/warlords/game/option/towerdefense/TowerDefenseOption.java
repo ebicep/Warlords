@@ -6,6 +6,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Location;
@@ -43,6 +44,9 @@ public class TowerDefenseOption implements PveOption {
             public void run() {
                 towerBuildOption.getBuiltTowers().forEach((tower, spawnTick) -> tower.whileActive(ticksElapsed.get() - spawnTick));
                 ticksElapsed.incrementAndGet();
+                if (ticksElapsed.get() % 5 == 0) {
+                    towerDefenseSpawner.renderPaths();
+                }
             }
         }.runTaskTimer(0, 0);
     }
@@ -79,13 +83,15 @@ public class TowerDefenseOption implements PveOption {
 
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (!(player instanceof WarlordsPlayer)) {
+            return;
+        }
         for (int i = 1; i < player.getAbilities().size(); i++) {
             player.getAbilities().remove(i);
             i--;
         }
         player.updateInventory(false);
     }
-
 
     public static class TowerDefenseMobData extends MobData {
 
@@ -97,6 +103,15 @@ public class TowerDefenseOption implements PveOption {
             super(spawnTick);
             this.spawnLocation = spawnLocation;
             this.pathIndex = pathIndex;
+        }
+
+        @Override
+        public String toString() {
+            return "TowerDefenseMobData{" +
+                    "spawnLocation=" + spawnLocation +
+                    ", pathIndex=" + pathIndex +
+                    ", lastWaypointIndex=" + lastWaypointIndex +
+                    '}';
         }
 
         public Location getSpawnLocation() {

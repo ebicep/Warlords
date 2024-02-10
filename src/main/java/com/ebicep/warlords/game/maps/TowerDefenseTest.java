@@ -37,32 +37,49 @@ public class TowerDefenseTest extends GameMap {
     @Override
     public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = category.initMap(this, loc, addons);
-        options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+        options.add(TeamMarker.create(Team.GAME, Team.BLUE, Team.RED).asOption());
         options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 65, 0.5, 90, 0), Team.BLUE).asOption());
         options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 65, 0.5, 90, 0), Team.RED).asOption());
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(2.5, 65, 0.5, 90, 0), Team.BLUE));
 
-        LocationBuilder spawn1 = loc.addXYZ(2.5, 65, 0.5, 90, 0);
-        options.add(SpawnpointOption.forTeam(spawn1, Team.RED));
 
-        List<Location> path = List.of(
+        LocationBuilder blueSpawn = loc.addXYZ(2.5, 65, 0.5, 90, 0);
+        LocationBuilder redSpawn = loc.addXYZ(-52.5, 65, 8.5, -90, 0);
+        options.add(SpawnpointOption.forTeam(blueSpawn, Team.BLUE));
+        options.add(SpawnpointOption.forTeam(redSpawn, Team.RED));
+
+        List<Location> bluePath1 = List.of(
                 loc.addXYZ(-12.5, 65, 0.5),
                 loc.addXYZ(-12.5, 65, -16.5),
                 loc.addXYZ(-22.5, 65, -16.5),
                 loc.addXYZ(-22.5, 65, -9.5),
                 loc.addXYZ(-39.5, 65, -9.5)
         );
-        List<Location> path2 = List.of(
+        List<Location> bluePath2 = List.of(
                 loc.addXYZ(-12.5, 65, 0.5),
                 loc.addXYZ(-26.5, 65, 0.5),
                 loc.addXYZ(-26.5, 65, -9.5),
                 loc.addXYZ(-39.5, 65, -9.5)
         );
+        List<Location> redPath1 = List.of(
+                loc.addXYZ(-37.5, 65, 8.5),
+                loc.addXYZ(-37.5, 65, 25.5),
+                loc.addXYZ(-27.5, 65, 25.5),
+                loc.addXYZ(-27.5, 65, 18.5),
+                loc.addXYZ(-10.5, 65, 18.5)
+        );
+        List<Location> redPath2 = List.of(
+                loc.addXYZ(-37.5, 65, 8.5),
+                loc.addXYZ(-23.5, 65, 8.5),
+                loc.addXYZ(-23.5, 65, 18.5),
+                loc.addXYZ(-10.5, 65, 18.5)
+        );
         options.add(new TowerDefenseSpawner()
-                .addPath(spawn1, path)
-                .addPath(spawn1, path2)
+                .addPath(blueSpawn, bluePath1)
+                .addPath(blueSpawn, bluePath2)
+                .addPath(redSpawn, redPath1)
+                .addPath(redSpawn, redPath2)
                 .add(new FixedWave()
-                        .add(Mob.ZOMBIE_I, 5)
+                        .add(Mob.ZOMBIE_I, 1)
                         .delay(5 * SECOND)
                         .add(Mob.ZOMBIE_I, 5)
                         .delay(10 * SECOND)

@@ -20,7 +20,7 @@ public class FixedWave implements TowerDefenseWave {
     }
 
     public FixedWave add(Mob mob, int amount) {
-        return add(mob, amount, null);
+        return add(mob, amount, Team.GAME);
     }
 
     public FixedWave add(Mob mob, int amount, Team team) {
