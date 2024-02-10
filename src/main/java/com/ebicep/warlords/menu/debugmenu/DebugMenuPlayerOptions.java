@@ -7,15 +7,11 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
-import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
-import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
-import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
+import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.MenuItemPairList;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -38,6 +34,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -110,40 +107,42 @@ public class DebugMenuPlayerOptions {
                     sendDebugMessage(player, Component.text("Killed " + targetName, NamedTextColor.GREEN));
                 }
         );
-        firstRow.add(new ItemBuilder((PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam().enemy().woolItem))
-                        .name(Component.text("Swap to the ", NamedTextColor.GREEN)
-                                       .append(PlayerSettings.getPlayerSettings(player.getUniqueId())
-                                                             .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix())
-                                       .append(Component.text(" team")))
-                        .get(),
-                (m, e) -> {
-                    Game game = target.getGame();
-                    Team currentTeam = target.getTeam();
-                    Team otherTeam = target.getTeam().enemy();
-                    game.setPlayerTeam(target.getUuid(), otherTeam);
-                    target.setTeam(otherTeam);
-                    PlayerSettings.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
-                    LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
-                    if (randomLobbyLocation != null) {
-                        Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
-                                                                        .getOppositeLocation(game,
-                                                                                currentTeam,
-                                                                                otherTeam,
-                                                                                target.getLocation(),
-                                                                                randomLobbyLocation.getLocation()
-                                                                        );
-                        target.teleport(teleportDestination);
+        EnumSet<Team> teams = TeamMarker.getTeams(target.getGame());
+        if (teams.size() == 2) {
+            Team currentTeam = target.getTeam();
+            Team otherTeam = teams.stream()
+                                  .filter(t -> t != target.getTeam())
+                                  .findFirst()
+                                  .orElseThrow();
+            firstRow.add(new ItemBuilder(otherTeam.woolItem)
+                            .name(Component.text("Swap to the ", NamedTextColor.GREEN)
+                                           .append(otherTeam.coloredPrefix())
+                                           .append(Component.text(" team")))
+                            .get(),
+                    (m, e) -> {
+                        swapPlayerTeam(player, target, coloredName, currentTeam, otherTeam);
                     }
-                    target.updateArmor();
-                    openPlayerMenu(player, target);
-                    sendDebugMessage(player, Component.text("Swapped ", NamedTextColor.GREEN)
-                                                      .append(coloredName)
-                                                      .append(Component.text(" to the "))
-                                                      .append(otherTeam.coloredPrefix())
-                                                      .append(Component.text(" team"))
-                    );
-                }
-        );
+            );
+        } else {
+            firstRow.add(new ItemBuilder(Material.WHITE_WOOL)
+                            .name(Component.text("Swap to another team"))
+                            .get(),
+                    (m, e) -> {
+                        Menu menu2 = new Menu("Select Team: " + targetName, 9 * 3);
+                        int x = 1;
+                        for (Team team : teams) {
+                            if (team == target.getTeam()) {
+                                continue;
+                            }
+                            menu2.setItem(x, 1, team.woolItem, (m2, e2) -> swapPlayerTeam(player, target, coloredName, target.getTeam(), team));
+                            x++;
+                        }
+                        menu2.setItem(4, 3, MENU_BACK, (m2, e2) -> openPlayerMenu(player, target));
+                        menu2.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+                        menu2.openForPlayer(player);
+                    }
+            );
+        }
 
         for (int i = 0; i < firstRow.size(); i++) {
             menu.setItem(i + 1, 1, firstRow.get(i).getA(), firstRow.get(i).getB());
@@ -262,6 +261,31 @@ public class DebugMenuPlayerOptions {
         });
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
+    }
+
+    private static void swapPlayerTeam(Player player, WarlordsEntity target, Component coloredName, Team currentTeam, Team otherTeam) {
+        Game game = target.getGame();
+        game.setPlayerTeam(target.getUuid(), otherTeam);
+        target.setTeam(otherTeam);
+        LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
+        if (randomLobbyLocation != null) {
+            Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
+                                                            .getOppositeLocation(game,
+                                                                    currentTeam,
+                                                                    otherTeam,
+                                                                    target.getLocation(),
+                                                                    randomLobbyLocation.getLocation()
+                                                            );
+            target.teleport(teleportDestination);
+        }
+        target.updateArmor();
+        openPlayerMenu(player, target);
+        sendDebugMessage(player, Component.text("Swapped ", NamedTextColor.GREEN)
+                                          .append(coloredName)
+                                          .append(Component.text(" to the "))
+                                          .append(otherTeam.coloredPrefix())
+                                          .append(Component.text(" team"))
+        );
     }
 
     private static void openPlayerMenuAfterTick(Player player, WarlordsEntity target) {
@@ -383,19 +407,19 @@ public class DebugMenuPlayerOptions {
                                                            cooldown.actionBarName,
                                                            cooldown.cooldownClass,
                                                            cooldown.cooldownObject,
-                                                            target,
-                                                            cooldown.cooldownType,
-                                                            cooldownManager -> {
-                                                            },
-                                                            amountNumber * 20
-                                                    );
-                                                    if (cooldown == StatusEffectCooldowns.SPEED) {
-                                                        target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
-                                                    }
-                                                    sendDebugMessage(player, Component.text("Gave ", NamedTextColor.GREEN)
-                                                                                      .append(coloredName)
-                                                                                      .append(Component.text(" " + amountNumber + " seconds of " + cooldown.name))
-                                                    );
+                                                           target,
+                                                           cooldown.cooldownType,
+                                                           cooldownManager -> {
+                                                           },
+                                                           amountNumber * 20
+                                                   );
+                                                   if (cooldown == StatusEffectCooldowns.SPEED) {
+                                                       target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
+                                                   }
+                                                   sendDebugMessage(player, Component.text("Gave ", NamedTextColor.GREEN)
+                                                                                     .append(coloredName)
+                                                                                     .append(Component.text(" " + amountNumber + " seconds of " + cooldown.name))
+                                                   );
                                                } catch (NumberFormatException exception) {
                                                    p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                                }
@@ -515,15 +539,15 @@ public class DebugMenuPlayerOptions {
                                                        if (amountNumber < 0 || amountNumber > 10000) {
                                                            throw new NumberFormatException();
                                                        }
-                                                        if (target.getCarriedFlag() != null) {
-                                                            PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
-                                                            flag.setPickUpTicks(amountNumber * 60);
-                                                            sendDebugMessage(player, Component.text("Set the ", NamedTextColor.RED)
-                                                                                              .append(target.getTeam().chatTagColored)
-                                                                                              .append(Component.text(" flag carrier multiplier to " + amount + "%"))
-                                                            );
+                                                       if (target.getCarriedFlag() != null) {
+                                                           PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
+                                                           flag.setPickUpTicks(amountNumber * 60);
+                                                           sendDebugMessage(player, Component.text("Set the ", NamedTextColor.RED)
+                                                                                             .append(target.getTeam().chatTagColored)
+                                                                                             .append(Component.text(" flag carrier multiplier to " + amount + "%"))
+                                                           );
 
-                                                        }
+                                                       }
                                                    } catch (NumberFormatException exception) {
                                                        p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                                    }

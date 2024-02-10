@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.ExperienceGainOption;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
+import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
@@ -214,7 +215,8 @@ public class ExperienceManager {
                 multiplier *= .1;
             }
 
-            boolean won = game.getPoints(warlordsPlayer.getTeam()) > game.getPoints(warlordsPlayer.getTeam().enemy());
+            int points = game.getPoints(warlordsPlayer.getTeam());
+            boolean won = TeamMarker.getTeams(game).stream().filter(team -> team != warlordsPlayer.getTeam()).allMatch(team -> game.getPoints(team) < points);
             long winLossExp = won ? 500 : 250;
             universalExpGain.put(won ? "Win" : "Loss", (long) (winLossExp * multiplier));
 

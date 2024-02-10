@@ -10,8 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Collections;
 
 public enum Team {
     BLUE(
@@ -36,12 +34,6 @@ public enum Team {
     ),
 
     ;
-    private static final Team[] inverseMapping;
-
-    static {
-        inverseMapping = values();
-        Collections.reverse(Arrays.asList(inverseMapping));
-    }
 
     public final String name;
     public final NamedTextColor teamColor;
@@ -105,17 +97,6 @@ public enum Team {
     @Nonnull
     public Component boldColoredPrefix() {
         return chatTagBoldColored;
-    }
-
-    /**
-     * The team this team considers an enemy. 
-     * @deprecated Because this method makes it hard to support more than 2 teams
-     * @return the other team
-     */
-    @Deprecated
-    @Nonnull
-    public Team enemy() {
-        return inverseMapping[ordinal()];
     }
 
     @Nonnull
