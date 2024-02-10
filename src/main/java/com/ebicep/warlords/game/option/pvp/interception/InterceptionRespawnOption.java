@@ -95,7 +95,7 @@ public class InterceptionRespawnOption implements Option {
                     playerChosenSpawnLocations.put(warlordsEntity, spawnPoint.getLocation());
                     updatePlayerInventory(warlordsEntity);
                     warlordsEntity.sendMessage(Component.text("You selected to spawn at: ", NamedTextColor.YELLOW)
-                                                        .append(Component.text(interceptionPoint.getName(), warlordsEntity.getTeam().teamColor, TextDecoration.BOLD)));
+                                                        .append(Component.text(interceptionPoint.getName(), warlordsEntity.getTeam().getTeamColor(), TextDecoration.BOLD)));
                     break;
                 }
             }

@@ -221,7 +221,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
         HashMap<DatabaseGamePlayerCTF, ChatColor> playerColor = new HashMap<>();
         for (Map.Entry<Team, List<DatabaseGamePlayerCTF>> teamListEntry : players.entrySet()) {
             for (DatabaseGamePlayerCTF gamePlayerCTF : teamListEntry.getValue()) {
-                playerColor.put(gamePlayerCTF, teamListEntry.getKey().oldTeamColor);
+                playerColor.put(gamePlayerCTF, teamListEntry.getKey().getChatColor());
             }
         }
 
@@ -280,7 +280,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
                 Component.text("Time Left: ", NamedTextColor.GRAY)
                          .append(Component.text(StringUtils.formatTimeLeft(timeLeft), NamedTextColor.GREEN)),
                 Component.text("Winner: ", NamedTextColor.GRAY)
-                         .append(Component.text(winner.name, winner.teamColor)),
+                         .append(Component.text(winner.name, winner.getTeamColor())),
                 Component.text("Blue Points: ", NamedTextColor.GRAY)
                          .append(Component.text(bluePoints, NamedTextColor.BLUE)),
                 Component.text("Red Points: ", NamedTextColor.GRAY)

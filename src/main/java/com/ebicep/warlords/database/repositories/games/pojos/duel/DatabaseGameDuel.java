@@ -77,7 +77,7 @@ public class DatabaseGameDuel extends DatabaseGameBase {
         hologram.getLines().appendText(ChatColor.GRAY + date);
         hologram.getLines()
                 .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
-        hologram.getLines().appendText(ChatColor.YELLOW + "Winner: " + winner.teamColor + winner.name);
+        hologram.getLines().appendText(ChatColor.YELLOW + "Winner: " + winner.getTeamColor() + winner.name);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class DatabaseGameDuel extends DatabaseGameBase {
                 Component.text("Time Left: ", NamedTextColor.GRAY)
                          .append(Component.text(StringUtils.formatTimeLeft(timeLeft), NamedTextColor.GREEN)),
                 Component.text("Winner: ", NamedTextColor.GRAY)
-                         .append(Component.text(winner.name, winner.teamColor))
+                         .append(Component.text(winner.name, winner.getTeamColor()))
         );
     }
 

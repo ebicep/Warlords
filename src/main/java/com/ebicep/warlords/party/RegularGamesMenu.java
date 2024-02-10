@@ -50,13 +50,13 @@ public class RegularGamesMenu {
 
         //team wool surround
         for (int i = 0; i < 6; i++) {
-            menu.setItem(0, i, new ItemBuilder(team.getWoolItem()).name(team.coloredPrefix()).get(), (m, e) -> {
+            menu.setItem(0, i, new ItemBuilder(team.getWool()).name(team.coloredPrefix()).get(), (m, e) -> {
             });
-            menu.setItem(8, i, new ItemBuilder(team.getWoolItem()).name(team.coloredPrefix()).get(), (m, e) -> {
+            menu.setItem(8, i, new ItemBuilder(team.getWool()).name(team.coloredPrefix()).get(), (m, e) -> {
             });
         }
         for (int i = 1; i < 8; i++) {
-            menu.setItem(i, 0, new ItemBuilder(team.getWoolItem()).name(team.coloredPrefix()).get(), (m, e) -> {
+            menu.setItem(i, 0, new ItemBuilder(team.getWool()).name(team.coloredPrefix()).get(), (m, e) -> {
             });
             if (i == 2) {
                 i = 5;

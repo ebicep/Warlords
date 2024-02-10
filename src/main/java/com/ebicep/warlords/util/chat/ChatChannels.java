@@ -57,7 +57,7 @@ public enum ChatChannels {
 
             if (wp != null) {
                 return Component.empty().color(NamedTextColor.DARK_GRAY)
-                                .append(Component.text("[" + wp.getTeam().prefix() + "]", wp.getTeam().teamColor()))
+                                .append(Component.text("[" + wp.getTeam().prefix() + "]", wp.getTeam().getTeamColor()))
                                 .append(Component.text("["))
                                 .append(Component.text(wp.getSpec().getClassNameShort(), NamedTextColor.GOLD))
                                 .append(Component.text("]["))

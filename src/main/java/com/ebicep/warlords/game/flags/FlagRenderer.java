@@ -95,7 +95,7 @@ public class FlagRenderer {
             }
             if (block.isEmpty() || block.getState() instanceof org.bukkit.block.Banner) {
                 renderedBlocks.add(block);
-                block.setType(info.getTeam() == Team.BLUE ? Material.BLUE_BANNER : Material.RED_BANNER);
+                block.setType(info.getTeam().getColors().banner);
                 org.bukkit.block.Banner banner = (org.bukkit.block.Banner) block.getState();
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
@@ -139,8 +139,8 @@ public class FlagRenderer {
             }
 
             ArmorStand flag = Utils.spawnArmorStand(block.getLocation().add(.5, 0, .5), armorStand -> {
-                armorStand.customName(Component.text(info.getTeam() == Team.BLUE ? "BLU FLAG" : "RED FLAG",
-                        info.getTeam() == Team.BLUE ? NamedTextColor.BLUE : NamedTextColor.RED,
+                armorStand.customName(Component.text(info.getTeam().getChatTag() + " FLAG",
+                        info.getTeam().getTeamColor(),
                         TextDecoration.BOLD
                 ));
                 armorStand.setCustomNameVisible(true);
@@ -160,7 +160,7 @@ public class FlagRenderer {
             Entity entity = ((PlayerFlagLocation) this.lastLocation).getPlayer().getEntity();
             if (entity instanceof Player player) {
                 this.affectedPlayers.add(player);
-                ItemStack item = new ItemStack(info.getTeam() == Team.BLUE ? Material.BLUE_BANNER : Material.RED_BANNER);
+                ItemStack item = new ItemStack(info.getTeam().getColors().banner);
                 BannerMeta banner = (BannerMeta) item.getItemMeta();
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));

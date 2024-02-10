@@ -37,8 +37,8 @@ public class DebugMenuTeamOptions {
             Team team = teamListEntry.getKey();
             List<WarlordsEntity> warlordsEntities = teamListEntry.getValue();
             menu.setItem(i % 7 + 1, i / 7 + 1,
-                    new ItemBuilder(team.woolItem)
-                            .name(team.chatTagColored)
+                    new ItemBuilder(team.getWool())
+                            .name(team.getChatTagColored())
                             .lore(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
                             .get(),
                     (m, e) -> openTeamMenu(player, game, team, warlordsEntities, 1)
@@ -99,7 +99,7 @@ public class DebugMenuTeamOptions {
                 }
                 menu.setItem(i % 9, i / 9,
                         new ItemBuilder(itemStack)
-                                .name(Component.text(warlordsEntity.getName(), team.teamColor)
+                                .name(Component.text(warlordsEntity.getName(), team.getTeamColor())
                                                .append(Component.text(warlordsEntity.hasFlag() ? " ⚑" : "", NamedTextColor.WHITE)))
                                 .lore(lore)
                                 .get(),
@@ -138,8 +138,8 @@ public class DebugMenuTeamOptions {
         menu.setItem(3, 5, MENU_BACK, (m, e) -> openTeamSelectorMenu(player, game));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(5, 5,
-                new ItemBuilder(team.woolItem)
-                        .name(team.chatTagColored)
+                new ItemBuilder(team.getWool())
+                        .name(team.getChatTagColored())
                         .lore(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
                         .get(),
                 ACTION_DO_NOTHING

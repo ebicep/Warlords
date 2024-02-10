@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game;
 
+import com.ebicep.warlords.util.bukkit.Colors;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -7,62 +8,52 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 
 public enum Team {
+
     BLUE(
-            "Blue",
+            Colors.BLUE, "Blue",
             "BLU",
-            NamedTextColor.BLUE,
-            ChatColor.BLUE,
             Color.fromRGB(51, 76, 178),
-            new ItemStack(Material.BLUE_WOOL),
-            new ItemStack(Material.BLUE_STAINED_GLASS),
             BossBar.Color.BLUE
     ),
     RED(
-            "Red",
+            Colors.RED, "Red",
             "RED",
-            NamedTextColor.RED,
-            ChatColor.RED,
             Color.fromRGB(153, 51, 51),
-            new ItemStack(Material.RED_WOOL),
-            new ItemStack(Material.RED_STAINED_GLASS),
             BossBar.Color.RED
+    ),
+    GAME(
+            Colors.BLACK, "Game",
+            "GAME",
+            Color.fromRGB(0, 0, 0),
+            BossBar.Color.WHITE
     ),
 
     ;
 
     public final String name;
-    public final NamedTextColor teamColor;
-    @Deprecated
-    public final ChatColor oldTeamColor;
-    public final String chatTag;
-    public final Component chatTagColored;
-    public final Component chatTagBoldColored;
-    public final Color armorColor;
-    public final ItemStack woolItem;
-    public final ItemStack glassItem;
-    public final BossBar.Color bossBarColor;
+    private final Colors colors;
+    private final String chatTag;
+    private final Component chatTagColored;
+    private final Component chatTagBoldColored;
+    private final Color armorColor;
+    private final BossBar.Color bossBarColor;
 
-    Team(String name, String chatTag, NamedTextColor teamColor, ChatColor oldTeamColor, Color armorColor, ItemStack woolItem, ItemStack glassItem, BossBar.Color bossBarColor) {
+    Team(Colors colors, String name, String chatTag, Color armorColor, BossBar.Color bossBarColor) {
         this.name = name;
-        this.teamColor = teamColor;
+        this.colors = colors;
         this.chatTag = chatTag;
-        this.oldTeamColor = oldTeamColor;
-        this.glassItem = glassItem;
         this.bossBarColor = bossBarColor;
-        this.chatTagColored = Component.text(chatTag, teamColor);
-        this.chatTagBoldColored = Component.text(chatTag, teamColor, TextDecoration.BOLD);
+        this.chatTagColored = Component.text(chatTag, colors.textColor);
+        this.chatTagBoldColored = Component.text(chatTag, colors.textColor, TextDecoration.BOLD);
         this.armorColor = armorColor;
-        this.woolItem = woolItem;
     }
 
-    @Nonnull
-    public NamedTextColor teamColor() {
-        return teamColor;
+    public Colors getColors() {
+        return colors;
     }
 
     @Nonnull
@@ -100,12 +91,13 @@ public enum Team {
     }
 
     @Nonnull
-    public ItemStack getWoolItem() {
-        return woolItem;
+    public Material getWool() {
+        return colors.wool;
     }
 
     /**
      * Returns the full team name. Examples: "Blue", "Red"
+     *
      * @return the full team name
      */
     @Nonnull
@@ -113,4 +105,36 @@ public enum Team {
         return name;
     }
 
+    public NamedTextColor getTeamColor() {
+        return colors.textColor;
+    }
+
+    @Deprecated
+    public ChatColor getChatColor() {
+        return colors.chatColor;
+    }
+
+    public String getChatTag() {
+        return chatTag;
+    }
+
+    public Component getChatTagColored() {
+        return chatTagColored;
+    }
+
+    public Component getChatTagBoldColored() {
+        return chatTagBoldColored;
+    }
+
+    public Color getArmorColor() {
+        return armorColor;
+    }
+
+    public Material getGlass() {
+        return colors.glass;
+    }
+
+    public BossBar.Color getBossBarColor() {
+        return bossBarColor;
+    }
 }

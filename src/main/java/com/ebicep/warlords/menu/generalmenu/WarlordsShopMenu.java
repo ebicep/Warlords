@@ -498,8 +498,8 @@ public class WarlordsShopMenu {
         List<Team> values = new ArrayList<>(Arrays.asList(Team.values()));
         for (int i = 0; i < values.size(); i++) {
             Team team = values.get(i);
-            ItemBuilder builder = new ItemBuilder(team.getWoolItem())
-                    .name(Component.text(team.getName(), team.teamColor));
+            ItemBuilder builder = new ItemBuilder(team.getWool())
+                    .name(Component.text(team.getName(), team.getTeamColor()));
             List<Component> lore = new ArrayList<>();
             if (team == selectedTeam) {
                 lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
@@ -515,7 +515,7 @@ public class WarlordsShopMenu {
                     (m, e) -> {
                         if (selectedTeam != team) {
                             player.sendMessage(Component.text("You have joined the ", NamedTextColor.GREEN)
-                                                        .append(Component.text(team.getName(), team.teamColor()))
+                                                        .append(Component.text(team.getName(), team.getTeamColor()))
                                                         .append(Component.text(" team!"))
                             );
                             Optional<Game> playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());

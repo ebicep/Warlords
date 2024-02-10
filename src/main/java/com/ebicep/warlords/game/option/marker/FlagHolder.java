@@ -63,7 +63,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         Team team = getTeam();
         Team playerTeam = player.getTeam();
         TextComponent.Builder builder = Component.text()
-                                                 .color(team.teamColor())
+                                                 .color(team.getTeamColor())
                                                  .decorate(TextDecoration.BOLD);
         if (flag.getLocation().getWorld() != player.getLocation().getWorld()) {
             return Component.empty();

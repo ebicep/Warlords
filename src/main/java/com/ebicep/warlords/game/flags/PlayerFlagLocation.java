@@ -90,7 +90,7 @@ public class PlayerFlagLocation implements FlagLocation {
     public void onFlagUpdateEventNew(WarlordsFlagUpdatedEvent event) {
         Game game = event.getGame();
         Team eventTeam = event.getTeam();
-        NamedTextColor teamColor = eventTeam.teamColor();
+        NamedTextColor teamColor = eventTeam.getTeamColor();
         Component coloredPrefix = eventTeam.coloredPrefix();
 
         player.setCarriedFlag(event.getInfo());
@@ -102,7 +102,7 @@ public class PlayerFlagLocation implements FlagLocation {
             if (computedHumanMultiplier % 10 == 0) {
                 game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                     if (t != null && databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
-                        NamedTextColor playerColor = getPlayer().getTeam().teamColor;
+                        NamedTextColor playerColor = getPlayer().getTeam().getTeamColor();
                         if (t != eventTeam) {
                             p.sendMessage(Component.text("", NamedTextColor.YELLOW)
                                                    .append(Component.text("YOUR", playerColor))

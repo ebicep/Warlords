@@ -114,7 +114,7 @@ public class DebugMenuPlayerOptions {
                                   .filter(t -> t != target.getTeam())
                                   .findFirst()
                                   .orElseThrow();
-            firstRow.add(new ItemBuilder(otherTeam.woolItem)
+            firstRow.add(new ItemBuilder(otherTeam.getWool())
                             .name(Component.text("Swap to the ", NamedTextColor.GREEN)
                                            .append(otherTeam.coloredPrefix())
                                            .append(Component.text(" team")))
@@ -134,7 +134,14 @@ public class DebugMenuPlayerOptions {
                             if (team == target.getTeam()) {
                                 continue;
                             }
-                            menu2.setItem(x, 1, team.woolItem, (m2, e2) -> swapPlayerTeam(player, target, coloredName, target.getTeam(), team));
+                            menu2.setItem(x, 1,
+                                    new ItemBuilder(team.getWool())
+                                            .name(Component.text("Swap to the ", NamedTextColor.GREEN)
+                                                           .append(team.coloredPrefix())
+                                                           .append(Component.text(" team")))
+                                            .get(),
+                                    (m2, e2) -> swapPlayerTeam(player, target, coloredName, target.getTeam(), team)
+                            );
                             x++;
                         }
                         menu2.setItem(4, 3, MENU_BACK, (m2, e2) -> openPlayerMenu(player, target));
@@ -543,7 +550,7 @@ public class DebugMenuPlayerOptions {
                                                            PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
                                                            flag.setPickUpTicks(amountNumber * 60);
                                                            sendDebugMessage(player, Component.text("Set the ", NamedTextColor.RED)
-                                                                                             .append(target.getTeam().chatTagColored)
+                                                                                             .append(target.getTeam().getChatTagColored())
                                                                                              .append(Component.text(" flag carrier multiplier to " + amount + "%"))
                                                            );
 

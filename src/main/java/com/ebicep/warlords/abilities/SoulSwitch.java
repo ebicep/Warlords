@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -170,7 +169,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 0, true, false));
                     pveOption.despawnMob(npc.getMob());
                     Animus animus = new Animus(ownLocation, wp, swapTarget);
-                    pveOption.spawnNewMob(animus, Team.BLUE);
+                    pveOption.spawnNewMob(animus, wp.getTeam());
                     if (pveMasterUpgrade2) {
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Tricky Switch",

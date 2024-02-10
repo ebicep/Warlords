@@ -56,7 +56,7 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
     public void onFlagUpdateEventNew(WarlordsFlagUpdatedEvent event) {
         Game game = event.getGame();
         Team eventTeam = event.getTeam();
-        NamedTextColor teamColor = eventTeam.teamColor();
+        NamedTextColor teamColor = eventTeam.getTeamColor();
         Component coloredPrefix = eventTeam.coloredPrefix();
 
 

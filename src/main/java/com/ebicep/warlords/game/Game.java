@@ -346,19 +346,6 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     /**
-     * @param player
-     * @return
-     * @see #isOnTeam(java.util.UUID, Team)
-     * @deprecated Use
-     * <code>isOnTeam(java.util.UUID, com.ebicep.warlords.maps.Team)</code>
-     * instead
-     */
-    @Deprecated
-    public boolean isRedTeam(@Nonnull UUID player) {
-        return isOnTeam(player, Team.RED);
-    }
-
-    /**
      * Checks if a player is on a team, spectators are said to be on team
      * <code>null</code>
      *
@@ -368,19 +355,6 @@ public final class Game implements Runnable, AutoCloseable {
      */
     public boolean isOnTeam(@Nonnull UUID player, @Nullable Team team) {
         return players.containsKey(player) && players.get(player) == team;
-    }
-
-    /**
-     * @param player
-     * @return
-     * @see #isOnTeam(java.util.UUID, Team)
-     * @deprecated Use
-     * <code>isOnTeam(java.util.UUID, com.ebicep.warlords.maps.Team)</code>
-     * instead
-     */
-    @Deprecated
-    public boolean isBlueTeam(@Nonnull UUID player) {
-        return isOnTeam(player, Team.BLUE);
     }
 
     @Nullable

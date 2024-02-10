@@ -5,7 +5,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsMobConvertEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -110,7 +109,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                                                                  .toList();
                 toConvert.forEach(convertedEnemy -> {
                     EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, Particle.VILLAGER_HAPPY, 1);
-                    convertedEnemy.setTeam(Team.BLUE);
+                    convertedEnemy.setTeam(warlordsPlayer.getTeam());
                     AbstractMob mob = convertedEnemy.getMob();
                     updateMobEquipment(mob, player);
                     //removing teammate mobs that are aggroed on converted target
@@ -191,7 +190,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                     updateMobEquipment(mob, player);
                     allSpawnedMobs.add(mob);
                     spawnedMobs.add(mob);
-                    pveOption.spawnNewMob(mob, Team.BLUE);
+                    pveOption.spawnNewMob(mob, warlordsPlayer.getTeam());
                 }
                 new GameRunnable(game) {
 

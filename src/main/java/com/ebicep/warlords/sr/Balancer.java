@@ -160,7 +160,7 @@ public class Balancer {
             }
             int players = teamInfo.getPlayersSpecs().size();
             int sr = 0;//teamInfo.getPlayersSpecs().values().stream().mapToInt(value -> value.sr).sum();
-            ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(team.name + " Players: ", team.teamColor())
+            ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(team.name + " Players: ", team.getTeamColor())
                                                                          .append(Component.text(players, NamedTextColor.GOLD))
                                                                          .append(Component.text(" - ", NamedTextColor.GRAY))
                                                                          .append(Component.text("SR: "))
@@ -187,7 +187,7 @@ public class Balancer {
                                     if (player != null) {
                                         name = player.getName();
                                     }
-                                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(name, team.teamColor)
+                                    ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text(name, team.getTeamColor())
                                                                                                  .append(Component.text(" - ", NamedTextColor.GRAY))
                                                                                                  .append(Component.text(specializations.name,
                                                                                                          specializations.specType.getTextColor()

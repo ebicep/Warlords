@@ -27,7 +27,6 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.BlockDisplay;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
@@ -44,7 +43,7 @@ public class InterceptionPointOption implements Option {
     public static final double DEFAULT_MIN_CAPTURE_RADIUS = 3.5;
     public static final double DEFAULT_MAX_CAPTURE_RADIUS = 5;
     public static final double DEFAULT_CAPTURE_SPEED = 0.01;
-    private static final ItemStack NEUTRAL_ITEM_STACK = new ItemStack(Material.WHITE_WOOL);
+    private static final Material NEUTRAL_MATERIAL = Material.WHITE_WOOL;
     private final Location location;
     private Game game;
     @Nonnull
@@ -103,8 +102,8 @@ public class InterceptionPointOption implements Option {
             @Override
             public Component getToolbarName(WarlordsEntity player) {
                 TextComponent.Builder status = Component.text();
-                status.append(Component.text(name + " ", teamAttacking == null ? NamedTextColor.GRAY : teamAttacking.teamColor()));
-                status.append(Component.text((int) Math.floor(captureProgress * 100) + "%", teamInCircle == null ? NamedTextColor.GRAY : teamInCircle.teamColor()));
+                status.append(Component.text(name + " ", teamAttacking == null ? NamedTextColor.GRAY : teamAttacking.getTeamColor()));
+                status.append(Component.text((int) Math.floor(captureProgress * 100) + "%", teamInCircle == null ? NamedTextColor.GRAY : teamInCircle.getTeamColor()));
                 status.append(Component.text(" - ", NamedTextColor.WHITE));
                 if (inConflict) {
                     status.append(Component.text("In conflict", NamedTextColor.GOLD));
@@ -151,7 +150,7 @@ public class InterceptionPointOption implements Option {
                 ));
                 component.append(Component.text(
                         (int) Math.floor(captureProgress * 100) + "%",
-                        teamInCircle == null ? NamedTextColor.GRAY : teamInCircle.teamColor()
+                        teamInCircle == null ? NamedTextColor.GRAY : teamInCircle.getTeamColor()
                 ));
                 return Collections.singletonList(component.build());
             }
@@ -188,9 +187,9 @@ public class InterceptionPointOption implements Option {
                     if (inConflict) {
                         newGlassBlock = Material.PURPLE_STAINED_GLASS;
                     } else if (teamInCircle != teamOwning) {
-                        newGlassBlock = ticksElapsed % 40 == 0 ? teamInCircle.glassItem.getType() : Material.WHITE_STAINED_GLASS;
+                        newGlassBlock = ticksElapsed % 40 == 0 ? teamInCircle.getGlass() : Material.WHITE_STAINED_GLASS;
                     } else {
-                        newGlassBlock = teamOwning != null ? teamOwning.glassItem.getType() : Material.WHITE_STAINED_GLASS;
+                        newGlassBlock = teamOwning != null ? teamOwning.getGlass() : Material.WHITE_STAINED_GLASS;
                     }
                     if (newGlassBlock != glassBlock.getType()) {
                         glassBlock.setType(newGlassBlock);
@@ -207,9 +206,9 @@ public class InterceptionPointOption implements Option {
         for (int i = woolDisplay.length - 1; i >= 0; i--) {
             clone.add(0, this.captureProgress * 1 + 0.25, 0);
             woolDisplay[i].teleport(clone);
-            ItemStack item = getItem(i == 0 ? this.inConflict ? null : this.teamAttacking : this.teamOwning);
-            if (!item.getType().equals(woolDisplay[i].getBlock().getMaterial())) {
-                woolDisplay[i].setBlock(item.getType().createBlockData());
+            Material material = getMaterial(i == 0 ? this.inConflict ? null : this.teamAttacking : this.teamOwning);
+            if (!material.equals(woolDisplay[i].getBlock().getMaterial())) {
+                woolDisplay[i].setBlock(material.createBlockData());
             }
         }
         double computedCurrentRadius = this.computeCurrentRadius();
@@ -268,7 +267,7 @@ public class InterceptionPointOption implements Option {
                 Bukkit.getPluginManager().callEvent(new WarlordsIntersectionCaptureEvent(this));
                 if (previousOwning != null) {
                     WarlordsEntity capturer = computePlayers().filter(wp -> wp.getTeam() == teamInCircle).collect(Utils.randomElement());
-                    Component message = Component.text(capturer == null ? "???" : capturer.getName(), teamAttacking.teamColor())
+                    Component message = Component.text(capturer == null ? "???" : capturer.getName(), teamAttacking.getTeamColor())
                                                  .append(Component.text(" is capturing the ", NamedTextColor.YELLOW))
                                                  .append(Component.text(name, NamedTextColor.GRAY))
                                                  .append(Component.text("!"));
@@ -299,9 +298,9 @@ public class InterceptionPointOption implements Option {
                         teamOwning = teamAttacking;
                         Bukkit.getPluginManager().callEvent(new WarlordsIntersectionCaptureEvent(this));
                         WarlordsEntity capturer = computePlayers().filter(wp -> wp.getTeam() == teamOwning).collect(Utils.randomElement());
-                        Component message = Component.text(capturer == null ? "???" : capturer.getName(), teamOwning.teamColor())
+                        Component message = Component.text(capturer == null ? "???" : capturer.getName(), teamOwning.getTeamColor())
                                                      .append(Component.text(" has captured ", NamedTextColor.YELLOW))
-                                                     .append(Component.text(name, teamOwning.teamColor()))
+                                                     .append(Component.text(name, teamOwning.getTeamColor()))
                                                      .append(Component.text("!"));
                         game.forEachOnlinePlayer((p, t) -> {
                             p.sendMessage(message);
@@ -325,8 +324,8 @@ public class InterceptionPointOption implements Option {
         }
     }
 
-    private ItemStack getItem(Team team) {
-        return team == null ? NEUTRAL_ITEM_STACK : team.getWoolItem();
+    private Material getMaterial(Team team) {
+        return team == null ? NEUTRAL_MATERIAL : team.getWool();
     }
 
     protected double computeCurrentRadius() {

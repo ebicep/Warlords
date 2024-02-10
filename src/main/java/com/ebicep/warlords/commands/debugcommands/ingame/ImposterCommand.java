@@ -83,7 +83,7 @@ public class ImposterCommand extends BaseCommand {
             if (votesNeeded <= imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size()) {
                 Team team = warlordsPlayer.getTeam();
                 imposterModeOption.sendPoll(team);
-                warlordsPlayer.getGame().addFrozenCause(Component.text(team.name, team.teamColor)
+                warlordsPlayer.getGame().addFrozenCause(Component.text(team.name, team.getTeamColor())
                                                                  .append(Component.text(" is voting!", NamedTextColor.GREEN)));
             } else {
                 String votesNeededString = imposterModeOption.getVoters()

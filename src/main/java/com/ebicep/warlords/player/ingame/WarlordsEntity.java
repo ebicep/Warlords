@@ -2294,11 +2294,11 @@ public abstract class WarlordsEntity {
     }
 
     public Component getColoredName() {
-        return Component.text(getName(), getTeam().teamColor());
+        return Component.text(getName(), getTeam().getTeamColor());
     }
 
     public Component getColoredNameBold() {
-        return Component.text(getName(), getTeam().teamColor(), TextDecoration.BOLD);
+        return Component.text(getName(), getTeam().getTeamColor(), TextDecoration.BOLD);
     }
 
     public void setVelocity(String from, Vector v, boolean ignoreModifications) {
@@ -2670,7 +2670,7 @@ public abstract class WarlordsEntity {
                 if (entity instanceof Player) {
                     entity.showTitle(Title.title(
                             Component.empty(),
-                            Component.text("Respawning in... ", team.teamColor()).append(Component.text((respawnTickTimer / 20), NamedTextColor.YELLOW)),
+                            Component.text("Respawning in... ", team.getTeamColor()).append(Component.text((respawnTickTimer / 20), NamedTextColor.YELLOW)),
                             Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
                     ));
                 }

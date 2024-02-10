@@ -336,7 +336,7 @@ public class PlayingState implements State, TimerDebugAble {
                                                            .append(Component.text("[", NamedTextColor.DARK_GRAY))
                                                            .append(Component.text(warlordsEntity.getSpec().getClassNameShort(), NamedTextColor.GOLD))
                                                            .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-                                                           .append(Component.text(warlordsEntity.getName(), warlordsEntity.getTeam().teamColor))
+                                                           .append(Component.text(warlordsEntity.getName(), warlordsEntity.getTeam().getTeamColor()))
                                                            .append(Component.text(" [", NamedTextColor.DARK_GRAY))
                                                            .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
                                                            .append(Component.text("] ", NamedTextColor.DARK_GRAY));
@@ -388,7 +388,7 @@ public class PlayingState implements State, TimerDebugAble {
                 playerTeam = scoreboard.registerNewTeam(((CraftEntity) entity).getHandle().getScoreboardName());
                 playerTeam.addEntity(entity);
             }
-            playerTeam.color(otherPlayer.getTeam().teamColor());
+            playerTeam.color(otherPlayer.getTeam().getTeamColor());
 
             //tab name
             //prefix

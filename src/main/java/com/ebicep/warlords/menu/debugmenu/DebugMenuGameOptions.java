@@ -380,8 +380,8 @@ public class DebugMenuGameOptions {
                 menu.setItem(
                         x,
                         1,
-                        new ItemBuilder(team.woolItem)
-                                .name(Component.text(team.name, team.teamColor))
+                        new ItemBuilder(team.getWool())
+                                .name(Component.text(team.name, team.getTeamColor()))
                                 .get(),
                         (m, e) -> {
                             SignGUI.builder()

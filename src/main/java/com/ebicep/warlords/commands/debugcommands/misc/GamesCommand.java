@@ -137,7 +137,7 @@ public class GamesCommand extends BaseCommand {
         );
         if (game instanceof DatabaseGameCTF) {
             menu.setItem(4, 2,
-                    new ItemBuilder(Team.BLUE.woolItem)
+                    new ItemBuilder(Team.BLUE.getWool())
                             .name(Component.text("Edit Blue Score", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
@@ -172,7 +172,7 @@ public class GamesCommand extends BaseCommand {
                     }
             );
             menu.setItem(5, 2,
-                    new ItemBuilder(Team.RED.woolItem)
+                    new ItemBuilder(Team.RED.getWool())
                             .name(Component.text("Edit Red Score", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
