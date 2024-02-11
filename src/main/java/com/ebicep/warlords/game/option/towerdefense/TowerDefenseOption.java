@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -10,7 +11,9 @@ import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseCastleDes
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -51,6 +54,7 @@ public class TowerDefenseOption implements PveOption, Listener {
                 this.towerDefenseSpawner = spawner.init(this);
             }
         }
+        game.registerEvents(getBaseListener());
         game.registerEvents(this);
     }
 
@@ -61,6 +65,39 @@ public class TowerDefenseOption implements PveOption, Listener {
             return;
         }
         mobData.setAttackingCastle(true);
+    }
+
+    @EventHandler
+    public void onDeath(WarlordsDeathEvent event) {
+        WarlordsEntity we = event.getWarlordsEntity();
+        WarlordsEntity killer = event.getKiller();
+
+        if (we instanceof WarlordsNPC) {
+            AbstractMob mobToRemove = ((WarlordsNPC) we).getMob();
+            if (mobs.containsKey(mobToRemove)) {
+                mobToRemove.onDeath(killer, we.getDeathLocation(), TowerDefenseOption.this);
+                new GameRunnable(game) {
+                    @Override
+                    public void run() {
+                        mobs.remove(mobToRemove);
+                        game.getPlayers().remove(we.getUuid());
+                        Warlords.removePlayer(we.getUuid());
+                        //game.removePlayer(we.getUuid());
+                    }
+                }.runTaskLater(1);
+
+                if (killer instanceof WarlordsPlayer) {
+                    killer.getMinuteStats().addMobKill(mobToRemove.getName());
+                    we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
+                }
+
+            }
+            MobCommand.SPAWNED_MOBS.remove(mobToRemove);
+        } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
+            if (mobs.containsKey(((WarlordsNPC) killer).getMob())) {
+                we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());
+            }
+        }
     }
 
     @Override
