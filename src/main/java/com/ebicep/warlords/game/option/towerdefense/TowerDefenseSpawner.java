@@ -6,6 +6,9 @@ import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
+import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
 import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseWave;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -38,6 +41,7 @@ public class TowerDefenseSpawner implements Option {
     private ConcurrentHashMap<AbstractMob, TowerDefenseOption.TowerDefenseMobData> mobs;
     private int currentWave = 0; // index
     private Game game;
+    private Map<Location, Team> teamSpawnLocations = new HashMap<>();
 
     public TowerDefenseSpawner init(TowerDefenseOption towerDefenseOption) {
         this.towerDefenseOption = towerDefenseOption;
@@ -77,6 +81,11 @@ public class TowerDefenseSpawner implements Option {
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
+        for (Team team : TeamMarker.getTeams(game)) {
+            for (Location spawnLocation : TowerDefenseUtils.getTeamSpawnLocations(game, team)) {
+                teamSpawnLocations.put(spawnLocation, team);
+            }
+        }
         this.game.registerEvents(new Listener() {
 
 
@@ -91,15 +100,6 @@ public class TowerDefenseSpawner implements Option {
                 Pair<Double, Double> forward = getPathFromData(mobData).getForwardPath().get(0);
                 Location nextTarget = getForwardLocation(npc, forward.getA() + .45, forward.getB());
                 npc.getNavigator().setStraightLineTarget(nextTarget);
-
-                System.out.println("Spawned: " + mob);
-                if (Objects.equals(towerDefenseOption.getRandomSpawnLocation(Team.BLUE), mobData.getSpawnLocation())) {
-                    System.out.println("BLUE");
-                } else if (Objects.equals(towerDefenseOption.getRandomSpawnLocation(Team.RED), mobData.getSpawnLocation())) {
-                    System.out.println("RED");
-                } else {
-                    System.out.println("?????");
-                }
             }
 
             @EventHandler
@@ -115,21 +115,14 @@ public class TowerDefenseSpawner implements Option {
                 }
                 AbstractMob mob = warlordsNPC.getMob();
                 TowerDefenseOption.TowerDefenseMobData mobData = mobs.get(mob);
-                if (mobData == null) {
+                if (!(mob instanceof TowerDefenseMob towerDefenseMob) || mobData == null) {
                     return;
-                }
-                if (Objects.equals(towerDefenseOption.getRandomSpawnLocation(Team.BLUE), mobData.getSpawnLocation())) {
-                    System.out.println("BLUE");
-                } else if (Objects.equals(towerDefenseOption.getRandomSpawnLocation(Team.RED), mobData.getSpawnLocation())) {
-                    System.out.println("RED");
-                } else {
-                    System.out.println("?????");
                 }
                 int lastWaypointIndex = mobData.getLastWaypointIndex();
                 TowerDefensePath path = getPathFromData(mobData);
                 List<Location> locations = path.getPath();
                 if (lastWaypointIndex == locations.size() - 1) {
-                    System.out.println("END");
+                    Bukkit.getPluginManager().callEvent(new TowerDefenseMobCompletePathEvent(game, towerDefenseMob));
                     return;
                 }
                 mobData.setLastWaypointIndex(lastWaypointIndex + 1);
@@ -138,7 +131,6 @@ public class TowerDefenseSpawner implements Option {
                         .yaw(TowerDefenseUtils.getFastYaw(locations.get(lastWaypointIndex), locations.get(lastWaypointIndex + 1)))
                         .forward(forward.getA() + .45)
                         .addY(forward.getB());
-                System.out.println(mobData);
                 npc.getNavigator().setStraightLineTarget(nextTarget);
             }
         });
@@ -177,7 +169,7 @@ public class TowerDefenseSpawner implements Option {
         );
         mob.setSpawnLocation(spawnLocation);
         game.addNPC(mob.toNPC(game, team, warlordsNPC -> {}));
-        mobs.put(mob, new TowerDefenseOption.TowerDefenseMobData(towerDefenseOption.getTicksElapsed(), randomSpawn, randomPathIndex));
+        mobs.put(mob, new TowerDefenseOption.TowerDefenseMobData(towerDefenseOption.getTicksElapsed(), teamSpawnLocations.get(randomSpawn), randomSpawn, randomPathIndex));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 
@@ -209,4 +201,7 @@ public class TowerDefenseSpawner implements Option {
         }.runTaskTimer(0, 0));
     }
 
+    public Map<Location, Team> getTeamSpawnLocations() {
+        return teamSpawnLocations;
+    }
 }

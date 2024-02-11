@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
 import com.ebicep.warlords.game.option.towerdefense.waves.FixedWave;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -46,6 +47,11 @@ public class TowerDefenseTest extends GameMap {
         LocationBuilder redSpawn = loc.addXYZ(-52.5, 65, 8.5, -90, 0);
         options.add(SpawnpointOption.forTeam(blueSpawn, Team.BLUE));
         options.add(SpawnpointOption.forTeam(redSpawn, Team.RED));
+
+        options.add(new TowerDefenseOption()
+                .addTower(Team.BLUE, loc.addXYZ(-39.5, 70, -9.5), 100_000)
+                .addTower(Team.RED, loc.addXYZ(-10.5, 70, 18.5), 100_000)
+        );
 
         List<Location> bluePath1 = List.of(
                 loc.addXYZ(-12.5, 65, 0.5),

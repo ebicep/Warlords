@@ -1,10 +1,17 @@
 package com.ebicep.warlords.game.option.towerdefense;
 
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.marker.LocationMarker;
+import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TowerDefenseUtils {
 
@@ -87,4 +94,14 @@ public class TowerDefenseUtils {
         }
         return BlockFace.NORTH;
     }
+
+    static List<Location> getTeamSpawnLocations(Game game, Team team) {
+        return game.getMarkers(SpawnLocationMarker.class)
+                   .stream()
+                   .filter(marker -> marker.getPriorityTeam(team) == 0)
+                   .map(LocationMarker::getLocation)
+                   .collect(Collectors.toList());
+
+    }
+
 }
