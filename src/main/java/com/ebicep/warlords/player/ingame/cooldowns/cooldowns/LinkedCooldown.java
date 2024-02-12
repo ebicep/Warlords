@@ -92,11 +92,9 @@ public class LinkedCooldown<T> extends RegularCooldown<T> {
         this.consumers.addAll(triConsumers);
         this.linkedEntities = new HashSet<>(linkedEntities);
         setOnRemove(cooldownManager -> {
-            getOnRemove().accept(cooldownManager);
             onRemove.accept(cooldownManager, this);
         });
         setOnRemoveForce(cooldownManager -> {
-            getOnRemoveForce().accept(cooldownManager);
             onRemoveForce.accept(cooldownManager, this);
             this.linkedEntities.forEach(warlordsEntity -> warlordsEntity.getCooldownManager().removeCooldownNoForce(this));
             this.linkedEntities.removeIf(WarlordsEntity::isDead);
