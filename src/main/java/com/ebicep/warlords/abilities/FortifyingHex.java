@@ -196,7 +196,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     }
 
     private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
-        if (projectile.getHit().contains(hit)) {
+        if (projectile.getHit().contains(hit) || projectile.getShooter().equals(hit)) {
             return false;
         }
         WarlordsEntity wp = projectile.getShooter();

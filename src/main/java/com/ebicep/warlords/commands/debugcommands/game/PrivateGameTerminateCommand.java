@@ -38,7 +38,7 @@ public class PrivateGameTerminateCommand extends BaseCommand {
             }
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
             // check if all players in the game are in the party and the party leader is the one who is terminating the game
-            if (partyPlayerPair != null && game.players().allMatch(uuidTeamEntry -> partyPlayerPair.getA().hasUUID(uuidTeamEntry.getKey()))) {
+            if (partyPlayerPair != null && game.warlordsPlayers().allMatch(uuidTeamEntry -> partyPlayerPair.getA().hasUUID(uuidTeamEntry.getUuid()))) {
                 if (partyPlayerPair.getA().getPartyLeader().getUUID().equals(player.getUniqueId())) {
                     endGameInstance(player, gameHolder, game);
                     player.sendMessage(Component.text("Game has been terminated. Warping back to lobby...", NamedTextColor.GREEN));

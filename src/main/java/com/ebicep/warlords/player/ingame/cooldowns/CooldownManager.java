@@ -15,6 +15,8 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -132,6 +134,11 @@ public class CooldownManager {
     public void removeCooldown(AbstractCooldown<?> abstractCooldown, boolean noForce) {
         if (!noForce) {
             abstractCooldown.getOnRemoveForce().accept(this);
+            Listener activeListener = abstractCooldown.getActiveListener();
+            if (activeListener != null) {
+                ChatUtils.MessageType.WARLORDS.sendMessage("Unregistering listener " + abstractCooldown.getName() + " - " + abstractCooldown + " - " + abstractCooldown.getCooldownObject());
+                HandlerList.unregisterAll(activeListener);
+            }
         }
         abstractCooldowns.remove(abstractCooldown);
         updatePlayerNames(abstractCooldown);
