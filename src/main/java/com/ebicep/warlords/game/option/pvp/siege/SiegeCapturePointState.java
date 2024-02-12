@@ -11,12 +11,14 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.MathUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -33,14 +35,17 @@ import java.util.stream.Stream;
 
 public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAbleMarker {
 
-    public static final double RADIUS = 5;
-    public static final float CAPTURE_RATE = 3.5f;
+    private static final double RADIUS = 5;
+    private static final float BASE_CAPTURE_RATE = 3.5f;
+    private static final int BASE_RESPAWN = 12;
 
     private final SiegeOption siegeOption;
     private final Map<Team, TeamCaptureData> teamCapturePercentage = new HashMap<>();
     private Game game;
     private Team capturingTeam;
     private CircleEffect circleEffect;
+    private float bonusCaptureRate = 0;
+    private int bonusRespawn = 0;
 
     public SiegeCapturePointState(SiegeOption siegeOption) {
         this.siegeOption = siegeOption;
@@ -68,6 +73,34 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
             circleEffect.playEffects();
         }
         capturingTeam = getCapturingTeam(getPlayersAroundPoint());
+        if (ticksElapsed >= 2 * 60 * 20) { // after 2 minutes
+            if (ticksElapsed == 2 * 60 * 20) {
+                bonusCaptureRate += 1;
+                game.forEachOnlinePlayer((player, team) -> {
+                    player.sendMessage(Component.text("+1% Capture Rate! (" + NumberFormat.formatOptionalTenths(BASE_CAPTURE_RATE + bonusCaptureRate) + "%)",
+                            NamedTextColor.LIGHT_PURPLE
+                    ));
+                    player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, .25f);
+                });
+            } else if (ticksElapsed % (30 * 20) == 0) {
+                bonusCaptureRate += 0.5;
+                game.forEachOnlinePlayer((player, team) -> {
+                    player.sendMessage(Component.text("+0.5% Capture Rate! (" + NumberFormat.formatOptionalTenths(BASE_CAPTURE_RATE + bonusCaptureRate) + "%)",
+                            NamedTextColor.LIGHT_PURPLE
+                    ));
+                    player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, .25f);
+                });
+            }
+//            if (ticksElapsed % (2 * 60 * 20) == 0) {
+//                bonusRespawn += 1;
+//                game.forEachOnlinePlayer((player, team) -> {
+//                    player.sendMessage(Component.text("+1s Respawn Time! (" + NumberFormat.formatOptionalTenths(BASE_RESPAWN + bonusRespawn) + "s)",
+//                            NamedTextColor.YELLOW
+//                    ));
+//                    player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, .25f);
+//                });
+//            }
+        }
         boolean teamCaptured = updateTeamCapturePercentage();
         if (teamCaptured) {
             game.addPoints(capturingTeam, 1);
@@ -154,7 +187,7 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
                     continue;
                 }
                 teamCaptureData.standingTimer = 0;
-                teamCaptureData.addPercentage(CAPTURE_RATE);
+                teamCaptureData.addPercentage(BASE_CAPTURE_RATE + bonusCaptureRate);
                 if (teamCaptureData.percentage < 100) {
                     continue;
                 }
@@ -175,7 +208,7 @@ public class SiegeCapturePointState implements SiegeState, Listener, TimerSkipAb
 
     @EventHandler
     public void onRespawnGive(WarlordsGiveRespawnEvent event) {
-        event.getRespawnTimer().set(12);
+        event.getRespawnTimer().set(BASE_RESPAWN + bonusRespawn);
     }
 
     @Override
