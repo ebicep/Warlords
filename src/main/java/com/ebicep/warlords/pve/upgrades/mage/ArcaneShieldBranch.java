@@ -44,7 +44,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                 "Arcane Energy",
                 "Arcane Shield - Master Upgrade",
                 """
-                        If the shield breaks, gain the ARC status for 5s reducing the energy cost of Right-Click attacks by 15%.
+                        When arcane shield ends or breaks, gain the ARC status for 5s reducing the energy cost of Right-Click attacks by 15%.
                         """,
                 50000,
                 () -> {
