@@ -130,12 +130,12 @@ public class SiegeOption implements Option {
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.10f;
+                return currentDamageValue * 1.125f;
             }
 
             @Override
             public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .8f;
+                return currentHealValue * .785f;
             }
         });
         for (AbstractAbility ability : player.getAbilities()) {
