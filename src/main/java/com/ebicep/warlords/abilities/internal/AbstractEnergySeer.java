@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -116,6 +117,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                         if (!Objects.equals(event.getWarlordsEntity(), wp)) {
                             return;
                         }
+                        ChatUtils.MessageType.WARLORDS.sendMessage("Seer heal " + " - " + this);
                         float healAmount = energyUsed * healingMultiplier;
                         wp.addHealingInstance(
                                 wp,
