@@ -69,9 +69,10 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.removeOnDeath = removeOnDeath;
         this.activeListener = getListener();
         if (activeListener != null) {
+            ChatUtils.MessageType.WARLORDS.sendMessage("*Registering listener " + getName() + " - " + this + " - " + cooldownObject);
             from.getGame().registerEvents(activeListener);
             this.onRemoveForce = cooldownManager -> {
-                ChatUtils.MessageType.WARLORDS.sendMessage("Unregistering listener " + getName() + " - " + this + " - " + cooldownObject);
+                ChatUtils.MessageType.WARLORDS.sendMessage("*Unregistering listener " + getName() + " - " + this + " - " + cooldownObject);
                 HandlerList.unregisterAll(activeListener);
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {
