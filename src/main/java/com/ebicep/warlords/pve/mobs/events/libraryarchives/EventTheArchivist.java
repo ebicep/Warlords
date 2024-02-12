@@ -24,7 +24,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 spawnLocation,
                 "The Archivist",
                 125000,
-                0.21f,
+                0.24f,
                 15,
                 0,
                 0

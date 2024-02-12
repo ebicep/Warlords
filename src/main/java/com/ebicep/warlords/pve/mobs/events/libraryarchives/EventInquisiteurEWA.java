@@ -12,7 +12,7 @@ public class EventInquisiteurEWA extends EventInquisiteur {
                 "Inquisiteur-EWA",
                 185000,
                 0.38f,
-                20,
+                15,
                 0,
                 0
         );

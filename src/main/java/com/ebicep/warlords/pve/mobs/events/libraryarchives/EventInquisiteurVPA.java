@@ -12,7 +12,7 @@ public class EventInquisiteurVPA extends EventInquisiteur {
                 "Inquisiteur-VPA",
                 135000,
                 0.38f,
-                25,
+                10,
                 0,
                 0
         );
