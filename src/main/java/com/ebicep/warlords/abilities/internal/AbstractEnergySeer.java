@@ -104,6 +104,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                     }
                 }
         )) {
+            private RegularCooldown<?> cd = this;
             @Override
             protected Listener getListener() {
                 return new Listener() {
@@ -117,7 +118,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                         if (!Objects.equals(event.getWarlordsEntity(), wp)) {
                             return;
                         }
-                        ChatUtils.MessageType.WARLORDS.sendMessage("Seer heal " + " - " + this);
+                        ChatUtils.MessageType.WARLORDS.sendMessage("Seer heal " + " - " + cd + " - " + cooldownObject);
                         float healAmount = energyUsed * healingMultiplier;
                         wp.addHealingInstance(
                                 wp,
