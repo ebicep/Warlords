@@ -128,7 +128,7 @@ public class DebugMenuPlayerOptions {
                             .name(Component.text("Swap to another team"))
                             .get(),
                     (m, e) -> {
-                        Menu menu2 = new Menu("Select Team: " + targetName, 9 * 3);
+                        Menu menu2 = new Menu("Select Team: " + targetName, 9 * 4);
                         int x = 1;
                         for (Team team : teams) {
                             if (team == target.getTeam()) {
@@ -145,7 +145,7 @@ public class DebugMenuPlayerOptions {
                             x++;
                         }
                         menu2.setItem(4, 3, MENU_BACK, (m2, e2) -> openPlayerMenu(player, target));
-                        menu2.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+                        menu2.setItem(5, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
                         menu2.openForPlayer(player);
                     }
             );
@@ -673,7 +673,7 @@ public class DebugMenuPlayerOptions {
                                                    .append(Component.text(abstractCooldown instanceof RegularCooldown ? Math.round(((RegularCooldown<?>) abstractCooldown).getTicksLeft() / 20f * 10) / 10.0 + "s" : "N/A",
                                                            NamedTextColor.GOLD
                                                    )),
-                                            Component.text("From: " + abstractCooldown.getFrom().getColoredName(), NamedTextColor.GREEN)
+                                            Component.text("From: ", NamedTextColor.GREEN).append(abstractCooldown.getFrom().getColoredName())
                                     )
                                     .get(),
                             (m, e) -> openCooldownEditorMenu(player, target, abstractCooldown)

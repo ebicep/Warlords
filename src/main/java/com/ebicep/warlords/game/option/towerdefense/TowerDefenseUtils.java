@@ -104,4 +104,13 @@ public class TowerDefenseUtils {
 
     }
 
+    static boolean insideArea(Location point, Location location1, Location location2) {
+        return point.getX() >= Math.min(location1.getX(), location2.getX()) &&
+                point.getX() <= Math.max(location1.getX(), location2.getX()) &&
+                point.getY() >= Math.min(location1.getY(), location2.getY()) &&
+                point.getY() <= Math.max(location1.getY(), location2.getY()) &&
+                point.getZ() >= Math.min(location1.getZ(), location2.getZ()) &&
+                point.getZ() <= Math.max(location1.getZ(), location2.getZ());
+    }
+
 }

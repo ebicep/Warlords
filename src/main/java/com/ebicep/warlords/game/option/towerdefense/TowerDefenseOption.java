@@ -32,18 +32,19 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class TowerDefenseOption implements PveOption, Listener {
 
     private final ConcurrentHashMap<AbstractMob, TowerDefenseMobData> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final Map<WarlordsEntity, TowerDefensePlayerInfo> playerInfo = new HashMap<>();
-    private final Map<Team, TowerDefenseCastle> castles = new HashMap<>();
+    private final Map<Team, TowerDefenseCastle> castles = new LinkedHashMap<>();
     private Game game;
     private TowerBuildOption towerBuildOption;
     private TowerDefenseSpawner towerDefenseSpawner;
 
-    public TowerDefenseOption addTower(Team team, Location location, float maxHealth) {
+    public TowerDefenseOption addCastle(Team team, Location location, float maxHealth) {
         castles.put(team, new TowerDefenseCastle(team, location, maxHealth));
         return this;
     }
@@ -60,6 +61,20 @@ public class TowerDefenseOption implements PveOption, Listener {
         }
         game.registerEvents(getBaseListener());
         game.registerEvents(this);
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(4, "castle") {
+            @Nonnull
+            @Override
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                return castles.entrySet()
+                              .stream()
+                              .map(entry -> {
+                                  Team team = entry.getKey();
+                                  TowerDefenseCastle castle = entry.getValue();
+                                  return Component.text(team.name + " Castle Health: ", team.getTeamColor()).append(castle.getHealthComponent());
+                              })
+                              .collect(Collectors.toList());
+            }
+        });
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(16, "exp") {
             @Nonnull
             @Override
@@ -70,54 +85,17 @@ public class TowerDefenseOption implements PveOption, Listener {
                 }
                 return Collections.singletonList(Component.empty());
             }
+
+//            @Override
+//            public boolean emptyLinesBetween() {
+//                return false;
+//            }
         });
     }
 
     public TowerDefensePlayerInfo getPlayerInfo(WarlordsEntity player) {
         playerInfo.putIfAbsent(player, new TowerDefensePlayerInfo());
         return playerInfo.get(player);
-    }
-
-    @EventHandler
-    public void onMobCompletePath(TowerDefenseMobCompletePathEvent event) {
-        TowerDefenseMobData mobData = mobs.get(event.getMob());
-        if (mobData == null) {
-            return;
-        }
-        mobData.setAttackingCastle(true);
-    }
-
-    @EventHandler
-    public void onDeath(WarlordsDeathEvent event) {
-        WarlordsEntity we = event.getWarlordsEntity();
-        WarlordsEntity killer = event.getKiller();
-
-        if (we instanceof WarlordsNPC) {
-            AbstractMob mobToRemove = ((WarlordsNPC) we).getMob();
-            if (mobs.containsKey(mobToRemove)) {
-                mobToRemove.onDeath(killer, we.getDeathLocation(), TowerDefenseOption.this);
-                new GameRunnable(game) {
-                    @Override
-                    public void run() {
-                        mobs.remove(mobToRemove);
-                        game.getPlayers().remove(we.getUuid());
-                        Warlords.removePlayer(we.getUuid());
-                        //game.removePlayer(we.getUuid());
-                    }
-                }.runTaskLater(1);
-
-                if (killer instanceof WarlordsPlayer) {
-                    killer.getMinuteStats().addMobKill(mobToRemove.getName());
-                    we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
-                }
-
-            }
-            MobCommand.SPAWNED_MOBS.remove(mobToRemove);
-        } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
-            if (mobs.containsKey(((WarlordsNPC) killer).getMob())) {
-                we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());
-            }
-        }
     }
 
     @Override
@@ -243,6 +221,48 @@ public class TowerDefenseOption implements PveOption, Listener {
             i--;
         }
         player.updateInventory(false);
+    }
+
+    @EventHandler
+    public void onMobCompletePath(TowerDefenseMobCompletePathEvent event) {
+        TowerDefenseMobData mobData = mobs.get(event.getMob());
+        if (mobData == null) {
+            return;
+        }
+        mobData.setAttackingCastle(true);
+    }
+
+    @EventHandler
+    public void onDeath(WarlordsDeathEvent event) {
+        WarlordsEntity we = event.getWarlordsEntity();
+        WarlordsEntity killer = event.getKiller();
+
+        if (we instanceof WarlordsNPC) {
+            AbstractMob mobToRemove = ((WarlordsNPC) we).getMob();
+            if (mobs.containsKey(mobToRemove)) {
+                mobToRemove.onDeath(killer, we.getDeathLocation(), TowerDefenseOption.this);
+                new GameRunnable(game) {
+                    @Override
+                    public void run() {
+                        mobs.remove(mobToRemove);
+                        game.getPlayers().remove(we.getUuid());
+                        Warlords.removePlayer(we.getUuid());
+                        //game.removePlayer(we.getUuid());
+                    }
+                }.runTaskLater(1);
+
+                if (killer instanceof WarlordsPlayer) {
+                    killer.getMinuteStats().addMobKill(mobToRemove.getName());
+                    we.getHitBy().forEach((assisted, value) -> assisted.getMinuteStats().addMobAssist(mobToRemove.getName()));
+                }
+
+            }
+            MobCommand.SPAWNED_MOBS.remove(mobToRemove);
+        } else if (we instanceof WarlordsPlayer && killer instanceof WarlordsNPC) {
+            if (mobs.containsKey(((WarlordsNPC) killer).getMob())) {
+                we.getMinuteStats().addMobDeath(((WarlordsNPC) killer).getMob().getName());
+            }
+        }
     }
 
     public Map<WarlordsEntity, TowerDefensePlayerInfo> getPlayerInfo() {

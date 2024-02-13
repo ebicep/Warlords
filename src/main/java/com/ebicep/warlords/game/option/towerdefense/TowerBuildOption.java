@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerSellEvent;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
@@ -14,6 +15,7 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -45,11 +47,17 @@ public class TowerBuildOption implements Option {
             .setPlaceableOn(BUILDABLE)
             .get();
 
+    private final Map<Team, List<Pair<Location, Location>>> teamBuildableAreas = new HashMap<>();
     private final Map<AbstractTower, Integer> builtTowers = new HashMap<>();
     private final Map<UUID, PlayerBuildData> playerBuildData = new HashMap<>();
     private Game game;
     private TowerDefenseOption towerDefenseOption;
     private boolean debug = false;
+
+    public TowerBuildOption addBuildableArea(Team team, Location firstCorner, Location secondCorner) {
+        teamBuildableAreas.computeIfAbsent(team, k -> new ArrayList<>()).add(new Pair<>(firstCorner, secondCorner));
+        return this;
+    }
 
     @Override
     public void register(@Nonnull Game game) {
@@ -101,13 +109,18 @@ public class TowerBuildOption implements Option {
                 if (!BUILDABLE.contains(clickedBlock.getType())) {
                     return;
                 }
+
                 if (getPlayerBuildData(player).getCooldown() > System.currentTimeMillis()) {
-//                    player.sendMessage(Component.text("You can't build a tower yet!", NamedTextColor.RED));
                     return;
                 }
-//                BuildResult buildResult = buildTower(player, clickedBlock.getLocation(), TowerRegistry.PYRO_TOWER.create.get());
-//                player.sendMessage(Component.text("Build Result: " + buildResult.name(), NamedTextColor.GREEN));
                 Location clickedLocation = clickedBlock.getLocation();
+                if (teamBuildableAreas.getOrDefault(warlordsEntity.getTeam(), new ArrayList<>())
+                                      .stream()
+                                      .noneMatch(pair -> TowerDefenseUtils.insideArea(clickedLocation, pair.getA(), pair.getB()))
+                ) {
+                    player.sendMessage(Component.text("You can only build on your teams side!", NamedTextColor.RED));
+                    return;
+                }
                 if (player.isSneaking()) {
                     // TODO check if tower is already there and auto upgrade etc
                     if (false) {
@@ -354,7 +367,7 @@ public class TowerBuildOption implements Option {
         player.sendMessage(Component.text("Build Result: " + buildResult.name(), NamedTextColor.GREEN));
         if (buildResult == BuildResult.SUCCESS) {
             PlayerBuildData buildData = getPlayerBuildData(player);
-            buildData.setCooldown(System.currentTimeMillis() + 1000);
+            buildData.setCooldown(System.currentTimeMillis() + 200);
             buildData.setLastBuilt(tower);
         }
     }

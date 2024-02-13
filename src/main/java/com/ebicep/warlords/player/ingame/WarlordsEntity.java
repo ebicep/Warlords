@@ -2901,6 +2901,10 @@ public abstract class WarlordsEntity {
     }
 
     public void addCurrency(int currency) {
+        addCurrency(currency, false);
+    }
+
+    public void addCurrency(int currency, boolean noMessage) {
         AtomicInteger currencyToAdd = new AtomicInteger(currency);
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(this, currencyToAdd));
         this.currency += currencyToAdd.get();

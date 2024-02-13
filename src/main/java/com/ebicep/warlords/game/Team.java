@@ -14,19 +14,22 @@ import javax.annotation.Nonnull;
 public enum Team {
 
     BLUE(
-            Colors.BLUE, "Blue",
+            Colors.BLUE,
+            "Blue",
             "BLU",
             Color.fromRGB(51, 76, 178),
             BossBar.Color.BLUE
     ),
     RED(
-            Colors.RED, "Red",
+            Colors.RED,
+            "Red",
             "RED",
             Color.fromRGB(153, 51, 51),
             BossBar.Color.RED
     ),
     GAME(
-            Colors.BLACK, "Game",
+            Colors.BLACK,
+            "Game",
             "GAME",
             Color.fromRGB(0, 0, 0),
             BossBar.Color.WHITE

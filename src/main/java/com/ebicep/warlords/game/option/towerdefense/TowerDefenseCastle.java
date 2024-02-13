@@ -5,6 +5,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -12,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.TextDisplay;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -34,7 +36,7 @@ public class TowerDefenseCastle {
     public void displayInit() {
         this.display.add(location.getWorld().spawn(location, TextDisplay.class, textDisplay -> {
             textDisplay.setBillboard(Display.Billboard.CENTER);
-            textDisplay.text(Component.text(NumberFormat.addCommaAndRound(currentHealth), getHealthColor()));
+            textDisplay.text(getHealthComponent());
         }));
         this.display.add(location.getWorld().spawn(location.clone().add(0, .5, 0), TextDisplay.class, textDisplay -> {
             textDisplay.setBillboard(Display.Billboard.CENTER);
@@ -76,8 +78,13 @@ public class TowerDefenseCastle {
         if (currentHealth <= 0) {
             textDisplay.text(Component.text("DESTROYED", NamedTextColor.RED, TextDecoration.BOLD));
         } else {
-            textDisplay.text(Component.text(NumberFormat.addCommaAndRound(currentHealth), getHealthColor()));
+            textDisplay.text(getHealthComponent());
         }
+    }
+
+    @Nonnull
+    public TextComponent getHealthComponent() {
+        return Component.text(NumberFormat.addCommaAndRound(currentHealth), getHealthColor());
     }
 
     public void cleanup() {

@@ -4,11 +4,13 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.BasicScoreboardOption;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
+import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
 import com.ebicep.warlords.game.option.towerdefense.waves.FixedWave;
@@ -50,8 +52,8 @@ public class TowerDefenseTest extends GameMap {
         options.add(SpawnpointOption.forTeam(redSpawn, Team.RED));
 
         options.add(new TowerDefenseOption()
-                .addTower(Team.BLUE, loc.addXYZ(-39.5, 70, -9.5), 100_000)
-                .addTower(Team.RED, loc.addXYZ(-10.5, 70, 18.5), 100_000)
+                .addCastle(Team.BLUE, loc.addXYZ(-39.5, 70, -9.5), 100_000)
+                .addCastle(Team.RED, loc.addXYZ(-10.5, 70, 18.5), 100_000)
         );
 
         List<Location> bluePath1 = List.of(
@@ -96,6 +98,10 @@ public class TowerDefenseTest extends GameMap {
                         .add(Mob.ZOMBIE_I, 5)
                 )
         );
+        options.add(new TowerBuildOption()
+                .addBuildableArea(Team.BLUE, loc.addXYZ(-0.5, 60, 3.5), loc.addXYZ(-49.5, 80, -23.5))
+                .addBuildableArea(Team.RED, loc.addXYZ(-0.5, 60, 5.5), loc.addXYZ(-49.5, 80, 32.5))
+        );
 
         for (Option option : options) {
             if (option instanceof TowerDefenseOption towerDefenseOption) {
@@ -105,6 +111,7 @@ public class TowerDefenseTest extends GameMap {
             }
         }
 
+        options.add(new BasicScoreboardOption());
 
         return options;
     }

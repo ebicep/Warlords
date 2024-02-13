@@ -124,7 +124,7 @@ public class CurrencyOnEventOption implements Option, Listener {
                     if (insignia == 0) {
                         return;
                     }
-                    warlordsPlayer.addCurrency(insignia);
+                    warlordsPlayer.addCurrency(insignia, true);
                 });
             }
         }.runTaskTimer(0, 20L);
