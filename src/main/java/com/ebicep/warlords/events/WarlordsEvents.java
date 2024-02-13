@@ -494,13 +494,17 @@ public class WarlordsEvents implements Listener {
     public void switchItemHeld(PlayerItemHeldEvent e) {
         int slot = e.getNewSlot();
         Player player = e.getPlayer();
+        if (player.getInventory().getItem(slot) == null) {
+            return;
+        }
         WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp == null) {
             return;
         }
+        List<AbstractAbility> abilities = wp.getAbilities();
         DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
             if (databasePlayer.getHotkeyMode() == Settings.HotkeyMode.NEW_MODE) {
-                if (slot == 1 || slot == 2 || slot == 3 || slot == 4) {
+                if (1 <= slot && slot <= 4 && slot <= abilities.size()) {
                     wp.getSpec().onRightClick(wp, player, slot, true);
                     e.setCancelled(true);
                 } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {

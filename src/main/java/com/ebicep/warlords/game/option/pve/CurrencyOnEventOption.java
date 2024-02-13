@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -114,6 +115,10 @@ public class CurrencyOnEventOption implements Option, Listener {
         new GameRunnable(game) {
             @Override
             public void run() {
+                if (game.getState(EndState.class).isPresent()) {
+                    this.cancel();
+                    return;
+                }
                 game.forEachOnlineWarlordsPlayer(warlordsPlayer -> {
                     Integer insignia = currencyPerSecond.apply(warlordsPlayer);
                     if (insignia == 0) {
