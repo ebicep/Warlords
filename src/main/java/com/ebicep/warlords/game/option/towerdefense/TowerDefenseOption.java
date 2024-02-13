@@ -5,6 +5,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseCastleDestroyEvent;
@@ -16,17 +18,18 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import javax.annotation.Nullable;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,6 +37,7 @@ public class TowerDefenseOption implements PveOption, Listener {
 
     private final ConcurrentHashMap<AbstractMob, TowerDefenseMobData> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
+    private final Map<WarlordsEntity, TowerDefensePlayerInfo> playerInfo = new HashMap<>();
     private final Map<Team, TowerDefenseCastle> castles = new HashMap<>();
     private Game game;
     private TowerBuildOption towerBuildOption;
@@ -56,6 +60,22 @@ public class TowerDefenseOption implements PveOption, Listener {
         }
         game.registerEvents(getBaseListener());
         game.registerEvents(this);
+        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(16, "exp") {
+            @Nonnull
+            @Override
+            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                if (player != null) {
+                    TowerDefensePlayerInfo info = getPlayerInfo(player);
+                    return Collections.singletonList(Component.text("Exp: ").append(Component.text(NumberFormat.addCommas(info.getCurrentExp()), NamedTextColor.DARK_AQUA)));
+                }
+                return Collections.singletonList(Component.empty());
+            }
+        });
+    }
+
+    public TowerDefensePlayerInfo getPlayerInfo(WarlordsEntity player) {
+        playerInfo.putIfAbsent(player, new TowerDefensePlayerInfo());
+        return playerInfo.get(player);
     }
 
     @EventHandler
@@ -223,6 +243,10 @@ public class TowerDefenseOption implements PveOption, Listener {
             i--;
         }
         player.updateInventory(false);
+    }
+
+    public Map<WarlordsEntity, TowerDefensePlayerInfo> getPlayerInfo() {
+        return playerInfo;
     }
 
     public Map<Team, TowerDefenseCastle> getCastles() {

@@ -8,6 +8,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
 import com.ebicep.warlords.game.option.towerdefense.waves.FixedWave;
@@ -95,6 +96,15 @@ public class TowerDefenseTest extends GameMap {
                         .add(Mob.ZOMBIE_I, 5)
                 )
         );
+
+        for (Option option : options) {
+            if (option instanceof TowerDefenseOption towerDefenseOption) {
+                options.add(new CurrencyOnEventOption()
+                        .setPerSecond(warlordsEntity -> towerDefenseOption.getPlayerInfo(warlordsEntity).getCurrentInsigniaRate()));
+                break;
+            }
+        }
+
 
         return options;
     }

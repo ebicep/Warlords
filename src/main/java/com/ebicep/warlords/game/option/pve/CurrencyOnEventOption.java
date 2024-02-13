@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -28,6 +29,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public class CurrencyOnEventOption implements Option, Listener {
 
@@ -41,6 +43,7 @@ public class CurrencyOnEventOption implements Option, Listener {
     private int startingCurrency = 0;
     private boolean scaleWithPlayerCount = false;
     private boolean disableGuildBonus = false;
+    private Function<WarlordsEntity, Integer> currencyPerSecond = warlordsEntity -> 0;
 
     public CurrencyOnEventOption() {
     }
@@ -83,6 +86,11 @@ public class CurrencyOnEventOption implements Option, Listener {
         return this;
     }
 
+    public CurrencyOnEventOption setPerSecond(Function<WarlordsEntity, Integer> currencyPerSecond) {
+        this.currencyPerSecond = currencyPerSecond;
+        return this;
+    }
+
     @Override
     public void register(@Nonnull Game game) {
         game.registerEvents(this);
@@ -99,6 +107,22 @@ public class CurrencyOnEventOption implements Option, Listener {
                 return Collections.singletonList(Component.empty());
             }
         });
+    }
+
+    @Override
+    public void start(@Nonnull Game game) {
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                game.forEachOnlineWarlordsPlayer(warlordsPlayer -> {
+                    Integer insignia = currencyPerSecond.apply(warlordsPlayer);
+                    if (insignia == 0) {
+                        return;
+                    }
+                    warlordsPlayer.addCurrency(insignia);
+                });
+            }
+        }.runTaskTimer(0, 20L);
     }
 
     @Override

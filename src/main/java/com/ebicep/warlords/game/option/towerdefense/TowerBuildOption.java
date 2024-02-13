@@ -115,13 +115,13 @@ public class TowerBuildOption implements Option {
                     } else {
                         TowerRegistry lastBuilt = getPlayerBuildData(player).getLastBuilt();
                         if (lastBuilt != null) {
-                            tryBuildTower(player, clickedLocation, lastBuilt);
+                            tryBuildTower(player, warlordsEntity, clickedLocation, lastBuilt);
                         } else {
-                            openBuildMenu(player, clickedLocation);
+                            openBuildMenu(player, warlordsEntity, clickedLocation);
                         }
                     }
                 } else {
-                    openBuildMenu(player, clickedLocation);
+                    openBuildMenu(player, warlordsEntity, clickedLocation);
                 }
             }
 
@@ -164,9 +164,12 @@ public class TowerBuildOption implements Option {
         return getPlayerBuildData(player.getUniqueId());
     }
 
-    private BuildResult buildTower(Player player, Location location, TowerRegistry tower) {
+    private BuildResult buildTower(Player player, WarlordsEntity warlordsEntity, Location location, TowerRegistry tower) {
         if (tower.baseTowerData.length == 0) {
             return BuildResult.NO_TOWER_DATA;
+        }
+        if (warlordsEntity.getCurrency() < tower.cost) {
+            return BuildResult.MISSING_CURRENCY;
         }
         Location alignedLocation = location.clone();
         BuildResult buildResult = getAlignedLocation(alignedLocation, player.getLocation(), tower);
@@ -346,8 +349,8 @@ public class TowerBuildOption implements Option {
         return matching == 2;
     }
 
-    private void tryBuildTower(Player player, Location location, @Nonnull TowerRegistry tower) {
-        BuildResult buildResult = buildTower(player, location, tower);
+    private void tryBuildTower(Player player, WarlordsEntity warlordsEntity, Location location, @Nonnull TowerRegistry tower) {
+        BuildResult buildResult = buildTower(player, warlordsEntity, location, tower);
         player.sendMessage(Component.text("Build Result: " + buildResult.name(), NamedTextColor.GREEN));
         if (buildResult == BuildResult.SUCCESS) {
             PlayerBuildData buildData = getPlayerBuildData(player);
@@ -356,7 +359,7 @@ public class TowerBuildOption implements Option {
         }
     }
 
-    private void openBuildMenu(Player player, Location clickedLocation) {
+    private void openBuildMenu(Player player, WarlordsEntity warlordsEntity, Location clickedLocation) {
         Menu menu = new Menu("Build Tower", 9 * 4);
         TowerRegistry[] values = TowerRegistry.values();
         for (int i = 0; i < values.length; i++) {
@@ -370,13 +373,13 @@ public class TowerBuildOption implements Option {
                                     Component.empty(),
                                     ComponentBuilder.create("Size: ", NamedTextColor.GRAY).text(size + "x" + size, NamedTextColor.GREEN).build(),
                                     Component.empty(),
-                                    ComponentBuilder.create("Cost: ").text(NumberFormat.addCommaAndRound(tower.cost) + " Insignia", NamedTextColor.GOLD).build(),
+                                    ComponentBuilder.create("Cost: ").text(NumberFormat.addCommaAndRound(tower.cost) + " ❂ Insignia", NamedTextColor.GOLD).build(),
                                     Component.empty(),
                                     ComponentBuilder.create("Click to Build", NamedTextColor.YELLOW).build()
                             ) // TODO more info idk
                             .get(),
                     (m, e) -> {
-                        tryBuildTower(player, clickedLocation, tower);
+                        tryBuildTower(player, warlordsEntity, clickedLocation, tower);
                         player.closeInventory();
                     }
             );
@@ -402,6 +405,7 @@ public class TowerBuildOption implements Option {
         INVALID_LOCATION,
         INVALID_SIZE,
         INTERSECTS,
+        MISSING_CURRENCY,
         NO_TOWER_DATA,
     }
 
