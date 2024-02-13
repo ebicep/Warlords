@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable;
 
-import com.ebicep.warlords.game.option.towerdefense.TowerMenu;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseMenu;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -41,7 +41,7 @@ public interface Upgradeable {
             Utils.playGlobalSound(tower.getCenterLocation(), Sound.BLOCK_ANVIL_USE, 2, 1);
             // TODO particle effects?
             upgrade.upgrade();
-            TowerMenu.openMenu(player, tower);
+            TowerDefenseMenu.openBuildMenu(player, tower);
         };
     }
 

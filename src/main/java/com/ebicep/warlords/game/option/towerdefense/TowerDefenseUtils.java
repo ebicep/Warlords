@@ -5,15 +5,32 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TowerDefenseUtils {
+
+    public static final List<RateInfo> INSIGNIA_RATE_EXP_COST = List.of(
+            new RateInfo(10, 0, null),
+            new RateInfo(20, 125, Material.GOLD_NUGGET), // gold nugget
+            new RateInfo(30, 350, Material.GOLD_INGOT), // gold ingot
+            new RateInfo(50, 1000, Material.GOLD_BLOCK), // gold block
+            new RateInfo(100, 2500, Material.DIAMOND), // diamond
+            new RateInfo(200, 6000, Material.DIAMOND_BLOCK) // diamond block
+    );
 
     static int getFastYaw(Location from, Location to) {
         return getFastYaw(from.getX(), from.getZ(), to.getX(), to.getZ());
@@ -111,6 +128,33 @@ public class TowerDefenseUtils {
                 point.getY() <= Math.max(location1.getY(), location2.getY()) &&
                 point.getZ() >= Math.min(location1.getZ(), location2.getZ()) &&
                 point.getZ() <= Math.max(location1.getZ(), location2.getZ());
+    }
+
+    static boolean validInteract(PlayerInteractEvent event, String useID) {
+        Action action = event.getAction();
+        if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) {
+            return false;
+        }
+        ItemStack itemInHand = event.getItem();
+        if (itemInHand == null) {
+            return false;
+        }
+        ItemMeta itemMeta = itemInHand.getItemMeta();
+        if (itemMeta == null) {
+            return true;
+        }
+        String onUseID = itemMeta.getPersistentDataContainer().get(ItemBuilder.ON_USE_NAMESPACED_KEY, PersistentDataType.STRING);
+        return Objects.equals(onUseID, useID);
+    }
+
+    static boolean validInteractGame(Game game, WarlordsEntity warlordsEntity) {
+        if (warlordsEntity == null) {
+            return false;
+        }
+        return warlordsEntity.getGame().equals(game);
+    }
+
+    record RateInfo(int rate, int expCost, Material material) {
     }
 
 }

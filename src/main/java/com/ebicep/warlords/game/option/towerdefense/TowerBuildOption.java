@@ -26,19 +26,16 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class TowerBuildOption implements Option {
+public class TowerBuildOption implements Option, Listener {
 
     private static final EnumSet<Material> BUILDABLE = EnumSet.of(Material.OAK_PLANKS, Material.DARK_OAK_PLANKS);
     private static final ItemStack BUILD_TOWER_ITEM = new ItemBuilder(Material.STICK)
@@ -68,84 +65,7 @@ public class TowerBuildOption implements Option {
                 break;
             }
         }
-        game.registerEvents(new Listener() {
-
-            @EventHandler
-            public void onInteract(PlayerInteractEvent event) {
-                Player player = event.getPlayer();
-                WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-                if (warlordsEntity == null) {
-                    return;
-                }
-                if (!warlordsEntity.getGame().equals(game)) {
-                    return;
-                }
-                Block clickedBlock = event.getClickedBlock();
-                if (clickedBlock == null) {
-                    return;
-                }
-                boolean clickedTower = handleTowerClick(player, clickedBlock);
-                if (clickedTower) {
-                    return;
-                }
-                Action action = event.getAction();
-                if (action != Action.RIGHT_CLICK_BLOCK) {
-                    return;
-                }
-                ItemStack itemInHand = event.getItem();
-                if (itemInHand == null) {
-                    return;
-                }
-                ItemMeta itemMeta = itemInHand.getItemMeta();
-                if (itemMeta == null) {
-                    return;
-                }
-                String onUseID = itemMeta.getPersistentDataContainer().get(ItemBuilder.ON_USE_NAMESPACED_KEY, PersistentDataType.STRING);
-                if (!Objects.equals(onUseID, "BUILD_TOWER_ITEM")) {
-                    return;
-                }
-                event.setCancelled(true);
-
-                if (!BUILDABLE.contains(clickedBlock.getType())) {
-                    return;
-                }
-
-                if (getPlayerBuildData(player).getCooldown() > System.currentTimeMillis()) {
-                    return;
-                }
-                Location clickedLocation = clickedBlock.getLocation();
-                if (teamBuildableAreas.getOrDefault(warlordsEntity.getTeam(), new ArrayList<>())
-                                      .stream()
-                                      .noneMatch(pair -> TowerDefenseUtils.insideArea(clickedLocation, pair.getA(), pair.getB()))
-                ) {
-                    player.sendMessage(Component.text("You can only build on your teams side!", NamedTextColor.RED));
-                    return;
-                }
-                if (player.isSneaking()) {
-                    // TODO check if tower is already there and auto upgrade etc
-                    if (false) {
-
-                    } else {
-                        TowerRegistry lastBuilt = getPlayerBuildData(player).getLastBuilt();
-                        if (lastBuilt != null) {
-                            tryBuildTower(player, warlordsEntity, clickedLocation, lastBuilt);
-                        } else {
-                            openBuildMenu(player, warlordsEntity, clickedLocation);
-                        }
-                    }
-                } else {
-                    openBuildMenu(player, warlordsEntity, clickedLocation);
-                }
-            }
-
-            @EventHandler
-            public void onTowerSell(TowerSellEvent event) {
-                AbstractTower tower = event.getTower();
-                builtTowers.remove(tower);
-                tower.remove();
-            }
-
-        });
+        game.registerEvents(this);
     }
 
     @Override
@@ -163,10 +83,68 @@ public class TowerBuildOption implements Option {
         player.getInventory().setItem(6, BUILD_TOWER_ITEM);
     }
 
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+        if (!TowerDefenseUtils.validInteractGame(game, warlordsEntity)) {
+            return;
+        }
+        Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock == null) {
+            return;
+        }
+        boolean clickedTower = handleTowerClick(player, clickedBlock);
+        if (clickedTower) {
+            return;
+        }
+        if (!TowerDefenseUtils.validInteract(event, "BUILD_TOWER_ITEM")) {
+            return;
+        }
+        event.setCancelled(true);
+
+        if (!BUILDABLE.contains(clickedBlock.getType())) {
+            return;
+        }
+        if (getPlayerBuildData(player).getCooldown() > System.currentTimeMillis()) {
+            return;
+        }
+        Location clickedLocation = clickedBlock.getLocation();
+        if (teamBuildableAreas.getOrDefault(warlordsEntity.getTeam(), new ArrayList<>())
+                              .stream()
+                              .noneMatch(pair -> TowerDefenseUtils.insideArea(clickedLocation, pair.getA(), pair.getB()))
+        ) {
+            player.sendMessage(Component.text("You can only build on your teams side!", NamedTextColor.RED));
+            return;
+        }
+        if (player.isSneaking()) {
+            // TODO check if tower is already there and auto upgrade etc
+            if (false) {
+
+            } else {
+                TowerRegistry lastBuilt = getPlayerBuildData(player).getLastBuilt();
+                if (lastBuilt != null) {
+                    tryBuildTower(player, warlordsEntity, clickedLocation, lastBuilt);
+                } else {
+                    openBuildMenu(player, warlordsEntity, clickedLocation);
+                }
+            }
+        } else {
+            openBuildMenu(player, warlordsEntity, clickedLocation);
+        }
+    }
+
+    @EventHandler
+    public void onTowerSell(TowerSellEvent event) {
+        AbstractTower tower = event.getTower();
+        builtTowers.remove(tower);
+        tower.remove();
+    }
+
     private boolean handleTowerClick(Player player, Block clickedBlock) {
         for (MetadataValue metadataValue : clickedBlock.getMetadata("TOWER")) {
             if (metadataValue.value() instanceof AbstractTower tower) {
-                TowerMenu.openMenu(player, tower);
+                TowerDefenseMenu.openBuildMenu(player, tower);
                 return true;
             }
         }

@@ -17,6 +17,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -24,8 +25,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,6 +41,10 @@ import java.util.stream.Collectors;
 
 public class TowerDefenseOption implements PveOption, Listener {
 
+    private static final ItemStack MARKET_ITEM = new ItemBuilder(Material.BRICKS)
+            .name(Component.text("Market", NamedTextColor.GREEN))
+            .setOnUseID("MARKET_ITEM")
+            .get();
     private final ConcurrentHashMap<AbstractMob, TowerDefenseMobData> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final Map<WarlordsEntity, TowerDefensePlayerInfo> playerInfo = new HashMap<>();
@@ -91,6 +100,19 @@ public class TowerDefenseOption implements PveOption, Listener {
 //                return false;
 //            }
         });
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+        if (!TowerDefenseUtils.validInteractGame(game, warlordsEntity)) {
+            return;
+        }
+        if (!TowerDefenseUtils.validInteract(event, "MARKET_ITEM")) {
+            return;
+        }
+        TowerDefenseMenu.openMarket(player, warlordsEntity, getPlayerInfo(warlordsEntity));
     }
 
     public TowerDefensePlayerInfo getPlayerInfo(WarlordsEntity player) {
@@ -221,6 +243,12 @@ public class TowerDefenseOption implements PveOption, Listener {
             i--;
         }
         player.updateInventory(false);
+    }
+
+    @Override
+    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        // override to remove talisman
+        player.getInventory().setItem(4, MARKET_ITEM);
     }
 
     @EventHandler
