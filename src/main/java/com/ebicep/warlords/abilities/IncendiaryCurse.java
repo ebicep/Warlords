@@ -130,7 +130,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
             }
             nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
 
-            if (pveMasterUpgrade && nearEntity instanceof WarlordsNPC) {
+            if (pveMasterUpgrade) {
                 EffectUtils.playFirework(
                         newLoc,
                         FireworkEffect.builder()
