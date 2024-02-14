@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseCastleDestroyEvent;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
+import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -206,6 +207,9 @@ public class TowerDefenseOption implements PveOption, Listener {
 
     @Override
     public void spawnNewMob(AbstractMob mob, Team team) {
+        if (!(mob instanceof TowerDefenseMob towerDefenseMob)) {
+            return;
+        }
         Location spawnLocation = mob.getSpawnLocation();
         Team attackingTeam = towerDefenseSpawner.getTeamSpawnLocations().get(spawnLocation);
         if (attackingTeam == null) {
@@ -220,7 +224,7 @@ public class TowerDefenseOption implements PveOption, Listener {
         if (castle.isDestroyed()) {
             return;
         }
-        towerDefenseSpawner.spawnNewMob(mob, team);
+        towerDefenseSpawner.spawnNewMob(towerDefenseMob, team);
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.trait.HologramTrait;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -39,6 +41,9 @@ public abstract class TowerDefenseMob extends AbstractMob {
         giveGoals();
         onNPCCreate();
         updateEquipment();
+
+        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+        hologramTrait.setLine(0, LegacyComponentSerializer.legacySection().serialize(team.coloredPrefix())); // TODO
 
         this.npc.spawn(spawnLocation);
 

@@ -184,7 +184,7 @@ public class TowerDefenseSpawner implements Option, Listener {
      * @param mob  mob to spawn
      * @param team team that spawned the mob - the mob will spawn on all other teams paths
      */
-    public void spawnNewMob(AbstractMob mob, Team team) {
+    public void spawnNewMob(TowerDefenseMob mob, Team team) {
         Location randomSpawn = mob.getSpawnLocation();
         List<TowerDefensePath> pathList = paths.get(randomSpawn);
         if (pathList == null) {
