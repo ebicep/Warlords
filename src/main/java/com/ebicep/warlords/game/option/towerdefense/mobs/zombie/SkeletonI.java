@@ -6,9 +6,9 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import org.bukkit.Location;
 
-public class ZombieI extends TowerDefenseMob implements BasicMob {
+public class SkeletonI extends TowerDefenseMob implements BasicMob {
 
-    public ZombieI(
+    public SkeletonI(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -21,20 +21,20 @@ public class ZombieI extends TowerDefenseMob implements BasicMob {
         super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
     }
 
-    public ZombieI(Location spawnLocation) {
+    public SkeletonI(Location spawnLocation) {
         this(
                 spawnLocation,
-                "Zombie",
-                1000,
-                .3f,
-                0,
-                100,
-                100
+                "Skeleton",
+                500,
+                .25f,
+                10,
+                200,
+                200
         );
     }
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.ZOMBIE_I;
+        return Mob.SKELETON_I;
     }
 }

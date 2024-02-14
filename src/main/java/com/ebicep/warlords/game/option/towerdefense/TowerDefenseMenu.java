@@ -35,7 +35,12 @@ public class TowerDefenseMenu {
             new MobGroup(new ItemBuilder(Material.ZOMBIE_HEAD)
                     .name(Component.text("Zombie", NamedTextColor.GREEN))
                     .get(),
-                    new TowerDefenseMobInfo[]{TowerDefenseMobInfo.ZOMBIE_1}
+                    TowerDefenseMobInfo.ZOMBIE
+            ),
+            new MobGroup(new ItemBuilder(Material.SKELETON_SKULL)
+                    .name(Component.text("Skeleton", NamedTextColor.GREEN))
+                    .get(),
+                    TowerDefenseMobInfo.SKELETON
             ),
     };
 
