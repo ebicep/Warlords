@@ -13,8 +13,6 @@ import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
-import com.ebicep.warlords.game.option.towerdefense.waves.FixedWave;
-import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import org.bukkit.Location;
@@ -83,20 +81,20 @@ public class TowerDefenseTest extends GameMap {
                 loc.addXYZ(-10.5, 65, 18.5)
         );
         options.add(new TowerDefenseSpawner()
-                .addPath(blueSpawn, bluePath1)
-                .addPath(blueSpawn, bluePath2)
-                .addPath(redSpawn, redPath1)
-                .addPath(redSpawn, redPath2)
-                .add(new FixedWave()
-                        .add(Mob.ZOMBIE_I, 1)
-                        .delay(5 * SECOND)
-                        .add(Mob.ZOMBIE_I, 5)
-                        .delay(10 * SECOND)
-                        .add(Mob.ZOMBIE_I, 5)
-                )
-                .add(new FixedWave()
-                        .add(Mob.ZOMBIE_I, 5)
-                )
+                        .addPath(blueSpawn, bluePath1)
+                        .addPath(blueSpawn, bluePath2)
+                        .addPath(redSpawn, redPath1)
+                        .addPath(redSpawn, redPath2)
+//                .add(new FixedWave()
+//                        .add(Mob.ZOMBIE_I, 1)
+//                        .delay(5 * SECOND)
+//                        .add(Mob.ZOMBIE_I, 5)
+//                        .delay(10 * SECOND)
+//                        .add(Mob.ZOMBIE_I, 5)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.ZOMBIE_I, 5)
+//                )
         );
         options.add(new TowerBuildOption()
                 .addBuildableArea(Team.BLUE, loc.addXYZ(-0.5, 60, 3.5), loc.addXYZ(-49.5, 80, -23.5))

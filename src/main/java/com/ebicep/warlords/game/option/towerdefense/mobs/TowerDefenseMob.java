@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 
 public abstract class TowerDefenseMob extends AbstractMob {
 
-
     public TowerDefenseMob(
             Location spawnLocation,
             String name,

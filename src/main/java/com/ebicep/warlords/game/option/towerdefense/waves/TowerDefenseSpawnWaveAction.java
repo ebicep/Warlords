@@ -34,4 +34,8 @@ public class TowerDefenseSpawnWaveAction implements WaveAction<TowerDefenseOptio
         }
         return true;
     }
+
+    public Mob getMob() {
+        return mob;
+    }
 }
