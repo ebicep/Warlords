@@ -10,7 +10,7 @@ public class EventInquisiteurEWA extends EventInquisiteur {
         this(
                 spawnLocation,
                 "Inquisiteur-EWA",
-                185000,
+                200000,
                 0.38f,
                 15,
                 0,
@@ -35,14 +35,14 @@ public class EventInquisiteurEWA extends EventInquisiteur {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new AvengersStrike() {{
+                new WoundingStrikeBerserker() {{
                     this.setPveMasterUpgrade2(true);
                 }},
                 new IncendiaryCurse() {{
                     this.setPveMasterUpgrade(true);
                 }},
-                new EnergySeerConjurer() {{
-                    this.setPveMasterUpgrade(true);
+                new GroundSlamBerserker() {{
+                    this.setPveMasterUpgrade2(true);
                 }},
                 new BloodLust(),
                 new Inferno() {{

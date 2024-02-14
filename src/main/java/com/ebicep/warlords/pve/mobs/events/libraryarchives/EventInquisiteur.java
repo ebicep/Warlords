@@ -64,7 +64,7 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                 case 1 -> abilityCooldown.setBaseValue(8);
                 case 2 -> abilityCooldown.setBaseValue(13);
                 case 3 -> abilityCooldown.setBaseValue(18);
-                case 4 -> abilityCooldown.setBaseValue(30);
+                case 4 -> abilityCooldown.setBaseValue(25);
             }
             ability.setCurrentCooldown(abilityCooldown.getBaseValue());
         }
