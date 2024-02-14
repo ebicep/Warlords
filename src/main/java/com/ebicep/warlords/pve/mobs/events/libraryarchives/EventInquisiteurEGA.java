@@ -39,7 +39,7 @@ public class EventInquisiteurEGA extends EventInquisiteur {
                 new FreezingBreath() {{
                     this.setPveMasterUpgrade(true);
                 }},
-                new TimeWarpCryomancer() {{
+                new GroundSlamDefender() {{
                     this.setPveMasterUpgrade2(true);
                 }},
                 new MysticalBarrier() {{

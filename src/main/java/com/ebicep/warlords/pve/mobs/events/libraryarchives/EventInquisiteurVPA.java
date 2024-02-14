@@ -44,7 +44,9 @@ public class EventInquisiteurVPA extends EventInquisiteur {
                 new WaterBreath() {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new GroundSlamRevenant(),
+                new VitalityLiquor() {{
+                    this.setPveMasterUpgrade2(true);
+                }},
                 new SanctifiedBeacon() {{
                     this.setPveMasterUpgrade2(true);
                 }},
