@@ -2,15 +2,14 @@ package com.ebicep.warlords.game.option.towerdefense;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Conditions;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.Optional;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -29,6 +28,16 @@ public class TowerDefenseCommand extends BaseCommand {
         Location location = player.getLocation();
         location.setYaw(0);
         tower.create.apply(game, location).build();
+    }
+
+    @Subcommand("exp")
+    public void exp(@Conditions("requireGame:gamemode=TOWER_DEFENSE") Player player, Integer amount, @Optional WarlordsPlayer target) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        for (Option option : game.getOptions()) {
+            if (option instanceof TowerDefenseOption towerDefenseOption) {
+                towerDefenseOption.getPlayerInfo(target).setCurrentExp(amount);
+            }
+        }
     }
 
     @Subcommand("debug")

@@ -33,6 +33,10 @@ public class TowerDefensePlayerInfo {
         this.currentExp += exp;
     }
 
+    public void setCurrentExp(float currentExp) {
+        this.currentExp = currentExp;
+    }
+
     public int getCurrentInsigniaRate() {
         return currentInsigniaRate;
     }
