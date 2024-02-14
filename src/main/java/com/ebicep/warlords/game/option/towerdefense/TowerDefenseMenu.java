@@ -267,6 +267,7 @@ public class TowerDefenseMenu {
                         .lore(lore)
                         .get(),
                 (m, e) -> {
+                    wave.addDelay();
                     wave.setSent(true);
                     spawner.startPlayerWave(wave);
                     player.sendMessage(Component.text("Wave sent!", NamedTextColor.GREEN));
