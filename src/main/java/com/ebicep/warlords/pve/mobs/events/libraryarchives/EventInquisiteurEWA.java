@@ -10,7 +10,7 @@ public class EventInquisiteurEWA extends EventInquisiteur {
         this(
                 spawnLocation,
                 "Inquisiteur-EWA",
-                200000,
+                540000,
                 0.38f,
                 15,
                 0,

@@ -10,7 +10,7 @@ public class EventInquisiteurVPA extends EventInquisiteur {
         this(
                 spawnLocation,
                 "Inquisiteur-VPA",
-                160000,
+                480000,
                 0.38f,
                 10,
                 0,
