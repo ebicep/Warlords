@@ -353,7 +353,6 @@ public class WaveDefenseOption implements PveOption {
 
         int spawnTickPeriod = currentWave.getSpawnTickPeriod();
         currentDelay = getWaveDelay();
-        System.out.println("currentDelay: " + currentDelay);
         spawner = new GameRunnable(game) {
             WarlordsEntity lastSpawn = null;
             int spawnTaskTicksElapsed = 0;
