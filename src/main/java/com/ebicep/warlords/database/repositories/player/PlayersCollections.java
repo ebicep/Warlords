@@ -1,8 +1,11 @@
 package com.ebicep.warlords.database.repositories.player;
 
 import com.ebicep.warlords.util.java.DateUtil;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +17,11 @@ public enum PlayersCollections {
         public boolean shouldUpdate(Instant dateOfGame) {
             return true;
         }
+
+        @Override
+        public Query getQuery() {
+            return new Query(Criteria.where("last_login").gt(Instant.now().minus(10, ChronoUnit.DAYS)));
+        }
     },
     MONTHLY("Monthly", "Players_Information_Monthly") {
         @Override
@@ -22,11 +30,27 @@ public enum PlayersCollections {
             ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
             return gameTime.getMonth() == now.getMonth() && gameTime.getYear() == now.getYear();
         }
+
+        @Override
+        public Query getQuery() {
+            return new Query(new Criteria().orOperator(
+                    Criteria.where("plays").gt(5),
+                    Criteria.where("pve_stats.plays").gt(5)
+            ));
+        }
     },
     SEASON_8("Season 8", "Players_Information_Season_8") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {
             return ACTIVE_COLLECTIONS.contains(this);
+        }
+
+        @Override
+        public Query getQuery() {
+            return new Query(new Criteria().orOperator(
+                    Criteria.where("plays").gt(10),
+                    Criteria.where("pve_stats.plays").gt(10)
+            ));
         }
     },
 //    SEASON_7("Season 7", "Players_Information_Season_7") {
@@ -130,5 +154,9 @@ public enum PlayersCollections {
     }
 
     public abstract boolean shouldUpdate(Instant dateOfGame);
+
+    public Query getQuery() {
+        return new Query();
+    }
 
 }

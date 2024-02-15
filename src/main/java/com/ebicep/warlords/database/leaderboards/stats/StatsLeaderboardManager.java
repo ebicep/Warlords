@@ -35,8 +35,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -95,7 +93,7 @@ public class StatsLeaderboardManager {
             Instant minus = Instant.now().minus(10, ChronoUnit.DAYS);
             for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
                 Warlords.newChain()
-                        .asyncFirst(() -> DatabaseManager.playerService.find(new Query(Criteria.where("last_login").gt(minus)), value))
+                        .asyncFirst(() -> DatabaseManager.playerService.find(value.getQuery(), value))
                         .syncLast((databasePlayers) -> {
                             ChatUtils.MessageType.LEADERBOARDS.sendMessage("Fetched " + databasePlayers.size() + " " + value.name + " players");
                             ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.computeIfAbsent(value,
