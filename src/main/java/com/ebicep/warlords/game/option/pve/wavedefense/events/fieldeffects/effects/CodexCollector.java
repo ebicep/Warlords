@@ -53,7 +53,8 @@ public class CodexCollector implements FieldEffect {
             add(Component.text("4 Codexes", NamedTextColor.GOLD));
             add(Component.text("+5% Crit Chance and +10 Crit Multiplier."));
             add(Component.text("6 Codexes", NamedTextColor.GOLD));
-            add(Component.text("Defeating an opponent with a rune ability has a 25% chance of ending its cooldown"));
+            add(Component.text("Defeating an opponent with a rune ability has"));
+            add(Component.text("a 25% chance of ending its cooldown"));
         }};
     }
 
