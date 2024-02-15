@@ -87,10 +87,11 @@ public abstract class MobHologram {
                         display.setBillboard(Display.Billboard.VERTICAL);  // TODO find way to make billboard center without messing up rotation due to text rotating based on non translated location
                         display.text(customHologramLine.getText());
                         display.setCustomNameVisible(true);
-                        entity.addPassenger(display);
+                        display.setSeeThrough(true);
                         Transformation transformation = display.getTransformation();
                         transformation.getTranslation().add(0, yTranslation, 0);
                         display.setTransformation(transformation);
+                        entity.addPassenger(display);
                     });
                     customHologramLine.setEntity(textDisplay);
                 }
