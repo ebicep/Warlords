@@ -208,65 +208,69 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void updateHealth() {
-        if (!isDead()) {
+        if (isDead() || entity == null) {
+            return;
+        }
 //            hologramTrait.setLine(0, LegacyComponentSerializer.legacySection().serialize(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED)));
 //            hologramTrait.setLine(1, LegacyComponentSerializer.legacySection().serialize(getNameComponent()));
 //            customHologramLines.removeIf(CustomHologramLine::isDelete);
 //            for (int i = 0; i < customHologramLines.size(); i++) {
 //                hologramTrait.setLine(i + 2, LegacyComponentSerializer.legacySection().serialize(customHologramLines.get(i).getText()));
 //            }
-            double y = entity.getHeight() + 0.275;
-            if (nameDisplay == null) {
-                nameDisplay = Utils.spawnArmorStand(getLocation().add(0, y, 0), armorStand -> {
+        double y = entity.getHeight() + 0.275;
+        if (nameDisplay == null) {
+            nameDisplay = Utils.spawnArmorStand(getLocation().add(0, y, 0), armorStand -> {
+                armorStand.setMarker(true);
+                armorStand.customName(getNameComponent());
+                armorStand.setCustomNameVisible(true);
+            });
+        } else {
+            nameDisplay.customName(getNameComponent());
+            nameDisplay.teleport(entity.getLocation().add(0, y, 0));
+//                entity.addPassenger(nameDisplay);
+        }
+        customHologramLines.removeIf(customHologramLine -> {
+            if (customHologramLine.isDelete()) {
+                customHologramLine.getEntity().remove();
+                return true;
+            }
+            return false;
+        });
+        for (int i = 0; i < customHologramLines.size(); i++) {
+            CustomHologramLine customHologramLine = customHologramLines.get(i);
+            if (customHologramLine.getEntity() == null) {
+                customHologramLine.setEntity(Utils.spawnArmorStand(getLocation().add(0, y + (i + 1) * 0.275, 0), armorStand -> {
+                    armorStand.setMarker(true);
+                    armorStand.customName(customHologramLine.getText());
+                    armorStand.setCustomNameVisible(true);
+                }));
+            } else {
+                customHologramLine.getEntity().customName(customHologramLine.getText());
+                customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));
+            }
+        }
+        if (entity instanceof Player player) {
+            double healthDisplayY = player.getEyeHeight() + 0.15;
+            if (playerHealthDisplay == null) {
+                playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
                     armorStand.setMarker(true);
                     armorStand.customName(getNameComponent());
                     armorStand.setCustomNameVisible(true);
                 });
             } else {
-                nameDisplay.customName(getNameComponent());
-                nameDisplay.teleport(entity.getLocation().add(0, y, 0));
-//                entity.addPassenger(nameDisplay);
+                playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+                playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
             }
-            customHologramLines.removeIf(customHologramLine -> {
-                if (customHologramLine.isDelete()) {
-                    customHologramLine.getEntity().remove();
-                    return true;
-                }
-                return false;
-            });
-            for (int i = 0; i < customHologramLines.size(); i++) {
-                CustomHologramLine customHologramLine = customHologramLines.get(i);
-                if (customHologramLine.getEntity() == null) {
-                    customHologramLine.setEntity(Utils.spawnArmorStand(getLocation().add(0, y + (i + 1) * 0.275, 0), armorStand -> {
-                        armorStand.setMarker(true);
-                        armorStand.customName(customHologramLine.getText());
-                        armorStand.setCustomNameVisible(true);
-                    }));
-                } else {
-                    customHologramLine.getEntity().customName(customHologramLine.getText());
-                    customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));
-                }
-            }
-            if (entity instanceof Player player) {
-                double healthDisplayY = player.getEyeHeight() + 0.15;
-                if (playerHealthDisplay == null) {
-                    playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
-                        armorStand.setMarker(true);
-                        armorStand.customName(getNameComponent());
-                        armorStand.setCustomNameVisible(true);
-                    });
-                } else {
-                    playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
-                    playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
-                }
-            } else {
-                entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
-            }
+        } else {
+            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
         }
     }
 
     @Override
     public void updateEntity() {
+        if (entity == null) {
+            return;
+        }
         updateHealth();
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));

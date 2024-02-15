@@ -25,9 +25,11 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.bountysystem.trackers.TracksOutsideGame;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.rewards.types.PatreonReward;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
@@ -492,6 +494,9 @@ public class Warlords extends JavaPlugin {
                 if (LOOP_TICK_COUNTER.get() % 50 == 0) {
                     for (WarlordsEntity we : PLAYERS.values()) {
                         if (we.getGame().isFrozen()) {
+                            continue;
+                        }
+                        if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getMobRegistry() == Mob.TEST_DUMMY) {
                             continue;
                         }
                         Entity player = we.getEntity();

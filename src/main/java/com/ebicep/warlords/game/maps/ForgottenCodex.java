@@ -79,7 +79,7 @@ public class ForgottenCodex extends GameMap {
         options.add(SpawnpointOption.forTeam(loc.addXYZ(-4.5, 35, 7.5), Team.BLUE));
         options.add(SpawnpointOption.forTeam(loc.addXYZ(-4.5, 35, 7.5), Team.RED));
 
-        options.add(new PowerupOption(loc.addXYZ(-4.5, 35, 7.5), PowerupOption.PowerUp.HEALING, 90, 30));
+        options.add(new PowerupOption(loc.addXYZ(-4.5, 35.5, 7.5), PowerupOption.PowerUp.HEALING, 90, 30));
 
         options.add(new RespawnWaveOption(2, 1, 20));
         options.add(new GraveOption());
