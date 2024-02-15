@@ -48,6 +48,8 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     private int noEscortTicks = 0; // if no one is escorting for 5 seconds, payload moves backwards
     private int overtimeTicksLeft = -1;
     private BossBar overtimeBossBar;
+    private int bonusRespawn = 0;
+
 
     public SiegePayloadState(SiegeOption siegeOption, Team escortingTeam) {
         this.siegeOption = siegeOption;
@@ -289,7 +291,7 @@ public class SiegePayloadState implements SiegeState, Listener, TimerSkipAbleMar
     @EventHandler
     public void onRespawnGive(WarlordsGiveRespawnEvent event) {
         Team team = event.getWarlordsEntity().getTeam();
-        event.getRespawnTimer().set(team == escortingTeam ? 14 : 18);
+        event.getRespawnTimer().set((team == escortingTeam ? 14 : 18) + bonusRespawn);
     }
 
     @Override
