@@ -24,9 +24,17 @@ public class TowerDefenseSpawnWaveAction implements WaveAction<TowerDefenseOptio
     }
 
     @Override
+    public String toString() {
+        return "TowerDefenseSpawnWaveAction{" +
+                "mob=" + mob +
+                ", fromTeam=" + fromTeam +
+                '}';
+    }
+
+    @Override
     public boolean run(TowerDefenseOption towerDefenseOption) {
         for (Team team : TeamMarker.getTeams(towerDefenseOption.getGame())) {
-            if (fromTeam == team) {
+            if (fromTeam == team || team == Team.GAME) {
                 continue;
             }
             AbstractMob abstractMob = mob.createMob(towerDefenseOption.getRandomSpawnLocation(team));

@@ -27,24 +27,20 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class WarlordsNPC extends WarlordsEntity {
+public class WarlordsNPC extends WarlordsEntity {
 
-    //    private final HologramTrait hologramTrait;
-    private final List<CustomHologramLine> customHologramLines = new ArrayList<>(); // lines to add on top of default health and name
+    private final MobHologram mobHologram;
     private float minMeleeDamage;
     private float maxMeleeDamage;
-    private NPC npc;
-    private AbstractMob mob;
-    private Component mobNamePrefix = Component.empty();
-    private ArmorStand nameDisplay;
+    protected NPC npc;
+    protected AbstractMob mob;
+    protected Component mobNamePrefix = Component.empty();
     private ArmorStand playerHealthDisplay; // used for player entity type npcs
     @Nonnull
-    private TextColor nameColor = NamedTextColor.GRAY;
+    protected TextColor nameColor = NamedTextColor.GRAY;
     private int stunTicks;
 
     public WarlordsNPC(
@@ -57,13 +53,15 @@ public final class WarlordsNPC extends WarlordsEntity {
             float minMeleeDamage,
             float maxMeleeDamage,
             AbstractMob warlordsMob,
-            AbstractPlayerClass playerClass
+            AbstractPlayerClass playerClass,
+            MobHologram mobHologram
     ) {
         super(npc.getUniqueId(), name, npc.getEntity(), game, team, playerClass);
         this.npc = npc;
 //        this.hologramTrait = npc.getOrAddTrait(HologramTrait.class);
 //        this.hologramTrait.setUseDisplayEntities(false); //TODO
         this.mob = warlordsMob;
+        this.mobHologram = mobHologram;
         if (warlordsMob != null && warlordsMob.getLevel() > 0) {
             mobNamePrefix = Component.textOfChildren(
                     Component.text("[", NamedTextColor.GRAY),
@@ -79,10 +77,12 @@ public final class WarlordsNPC extends WarlordsEntity {
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
         setMaxHealthAndHeal(maxHealth);
+
+        mobHologram.getCustomHologramLines().add(new MobHologram.CustomHologramLine(this::getNameComponent));
     }
 
     @Nonnull
-    private TextComponent getNameComponent() {
+    protected TextComponent getNameComponent() {
         if (mob == null) {
             return Component.text(name, nameColor);
         }
@@ -136,8 +136,8 @@ public final class WarlordsNPC extends WarlordsEntity {
         return npc;
     }
 
-    public List<CustomHologramLine> getCustomHologramLines() {
-        return customHologramLines;
+    public MobHologram getMobHologram() {
+        return mobHologram;
     }
 
     @Override
@@ -156,8 +156,7 @@ public final class WarlordsNPC extends WarlordsEntity {
         if (playerHealthDisplay != null) {
             playerHealthDisplay.remove();
         }
-        nameDisplay.remove();
-        customHologramLines.forEach(customHologramLine -> customHologramLine.getEntity().remove());
+        mobHologram.getCustomHologramLines().forEach(customHologramLine -> customHologramLine.getEntity().remove());
     }
 
     @Override
@@ -209,44 +208,7 @@ public final class WarlordsNPC extends WarlordsEntity {
     @Override
     public void updateHealth() {
         if (!isDead()) {
-//            hologramTrait.setLine(0, LegacyComponentSerializer.legacySection().serialize(Component.text(NumberFormat.addCommaAndRound(this.getHealth()) + "❤", NamedTextColor.RED)));
-//            hologramTrait.setLine(1, LegacyComponentSerializer.legacySection().serialize(getNameComponent()));
-//            customHologramLines.removeIf(CustomHologramLine::isDelete);
-//            for (int i = 0; i < customHologramLines.size(); i++) {
-//                hologramTrait.setLine(i + 2, LegacyComponentSerializer.legacySection().serialize(customHologramLines.get(i).getText()));
-//            }
-            double y = entity.getHeight() + 0.275;
-            if (nameDisplay == null) {
-                nameDisplay = Utils.spawnArmorStand(getLocation().add(0, y, 0), armorStand -> {
-                    armorStand.setMarker(true);
-                    armorStand.customName(getNameComponent());
-                    armorStand.setCustomNameVisible(true);
-                });
-            } else {
-                nameDisplay.customName(getNameComponent());
-                nameDisplay.teleport(entity.getLocation().add(0, y, 0));
-//                entity.addPassenger(nameDisplay);
-            }
-            customHologramLines.removeIf(customHologramLine -> {
-                if (customHologramLine.isDelete()) {
-                    customHologramLine.getEntity().remove();
-                    return true;
-                }
-                return false;
-            });
-            for (int i = 0; i < customHologramLines.size(); i++) {
-                CustomHologramLine customHologramLine = customHologramLines.get(i);
-                if (customHologramLine.getEntity() == null) {
-                    customHologramLine.setEntity(Utils.spawnArmorStand(getLocation().add(0, y + (i + 1) * 0.275, 0), armorStand -> {
-                        armorStand.setMarker(true);
-                        armorStand.customName(customHologramLine.getText());
-                        armorStand.setCustomNameVisible(true);
-                    }));
-                } else {
-                    customHologramLine.getEntity().customName(customHologramLine.getText());
-                    customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));
-                }
-            }
+            mobHologram.update();
             if (entity instanceof Player player) {
                 double healthDisplayY = player.getEyeHeight() + 0.15;
                 if (playerHealthDisplay == null) {
@@ -366,37 +328,4 @@ public final class WarlordsNPC extends WarlordsEntity {
         return mob;
     }
 
-    public static class CustomHologramLine {
-        private Component text;
-        private boolean delete;
-        private Entity entity;
-
-        public CustomHologramLine(Component text) {
-            this.text = text;
-        }
-
-        public Component getText() {
-            return text;
-        }
-
-        public void setText(Component text) {
-            this.text = text;
-        }
-
-        public boolean isDelete() {
-            return delete;
-        }
-
-        public void setDelete(boolean delete) {
-            this.delete = delete;
-        }
-
-        public Entity getEntity() {
-            return entity;
-        }
-
-        public void setEntity(Entity entity) {
-            this.entity = entity;
-        }
-    }
 }

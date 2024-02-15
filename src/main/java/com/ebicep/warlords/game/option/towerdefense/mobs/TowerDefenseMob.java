@@ -4,15 +4,18 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.HologramTrait;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public abstract class TowerDefenseMob extends AbstractMob {
@@ -61,7 +64,18 @@ public abstract class TowerDefenseMob extends AbstractMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 this,
-                playerClass
+                playerClass,
+                new MobHologram.TextDisplayHologram() {
+                    @Nullable
+                    @Override
+                    public Entity getEntity() {
+                        if (warlordsNPC == null) {
+                            return null;
+                        }
+                        return warlordsNPC.getEntity();
+                    }
+
+                }
         );
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
             if (ability.getCurrentCooldown() < ability.getCooldownValue()) {

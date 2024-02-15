@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -24,7 +25,7 @@ import java.util.List;
 
 public class NarmersDeathCharge extends AbstractMob implements BossMinionMob, NoTarget {
 
-    private WarlordsNPC.CustomHologramLine customHologramLine;
+    private MobHologram.CustomHologramLine customHologramLine;
 
     public NarmersDeathCharge(Location spawnLocation) {
         this(spawnLocation, "Narmer's Death Charge", 2000, 0f, 0, 0, 0);
@@ -64,8 +65,8 @@ public class NarmersDeathCharge extends AbstractMob implements BossMinionMob, No
         if (npc.getEntity() instanceof TNTPrimed tntPrimed) {
             tntPrimed.setFuseTicks(Integer.MAX_VALUE);
         }
-        customHologramLine = new WarlordsNPC.CustomHologramLine(Component.text(""));
-        warlordsNPC.getCustomHologramLines().add(customHologramLine);
+        customHologramLine = new MobHologram.CustomHologramLine(Component.text(""));
+        warlordsNPC.getMobHologram().getCustomHologramLines().add(customHologramLine);
     }
 
     @Override

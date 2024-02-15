@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -64,12 +65,12 @@ import java.util.function.Consumer;
 
 public abstract class AbstractMob implements Mob {
 
-    protected Location spawnLocation;
     protected final String name;
     protected final int maxHealth;
     protected final float walkSpeed;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
+    protected Location spawnLocation;
     protected NPC npc;
     protected EntityEquipment equipment;
     @Nullable
@@ -176,7 +177,19 @@ public abstract class AbstractMob implements Mob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 this,
-                playerClass
+                playerClass,
+                new MobHologram.ArmorStandHologram() {
+
+                    @Nullable
+                    @Override
+                    public Entity getEntity() {
+                        if (warlordsNPC == null) {
+                            return null;
+                        }
+                        return warlordsNPC.getEntity();
+                    }
+
+                }
         );
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
             if (ability.getCurrentCooldown() < ability.getCooldownValue()) {

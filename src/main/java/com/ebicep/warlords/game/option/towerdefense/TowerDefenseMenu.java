@@ -224,9 +224,10 @@ public class TowerDefenseMenu {
                     }
             );
             if (i == 4) {
-                x++;
+                x = 1;
                 y++;
             }
+            x++;
         }
 
         List<Component> lore = new ArrayList<>();
