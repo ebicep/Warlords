@@ -42,6 +42,8 @@ public interface PlayerService {
 
     List<DatabasePlayer> findAll(PlayersCollections collections);
 
+    List<DatabasePlayer> find(Query query, PlayersCollections collection);
+
     BulkOperations bulkOps();
 
     List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections);

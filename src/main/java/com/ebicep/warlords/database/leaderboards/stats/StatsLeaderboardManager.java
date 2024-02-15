@@ -35,6 +35,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -93,8 +95,9 @@ public class StatsLeaderboardManager {
             Instant minus = Instant.now().minus(10, ChronoUnit.DAYS);
             for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
                 Warlords.newChain()
-                        .asyncFirst(() -> DatabaseManager.playerService.findAll(value))
+                        .asyncFirst(() -> DatabaseManager.playerService.find(new Query(Criteria.where("last_login").gt(minus)), value))
                         .syncLast((databasePlayers) -> {
+                            ChatUtils.MessageType.LEADERBOARDS.sendMessage("Fetched " + databasePlayers.size() + " " + value.name + " players");
                             ConcurrentHashMap<UUID, DatabasePlayer> concurrentHashMap = DatabaseManager.CACHED_PLAYERS.computeIfAbsent(value,
                                     v -> new ConcurrentHashMap<>()
                             );
@@ -114,11 +117,10 @@ public class StatsLeaderboardManager {
                                 DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
                                 DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
                                 boolean lessThan20Plays = databasePlayer.getPlays() + pveStats.getPlays() < 20;
-                                boolean notLoggedInPast10Days = databasePlayer.getLastLogin() != null && databasePlayer.getLastLogin().isBefore(minus);
                                 EventMode eventMode = currentGameEvent == null ? null : currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
                                                                                                                                        .get(currentGameEvent.getStartDateSecond());
                                 boolean noCurrentEventPlays = currentGameEvent == null || eventMode != null && eventMode.getPlays() == 0;
-                                if (value == PlayersCollections.LIFETIME && (lessThan20Plays || notLoggedInPast10Days) && noCurrentEventPlays) {
+                                if (value == PlayersCollections.LIFETIME && lessThan20Plays && noCurrentEventPlays) {
                                     continue;
                                 }
                                 if (value == PlayersCollections.SEASON_8 && lessThan20Plays) {

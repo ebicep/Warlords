@@ -31,6 +31,8 @@ public interface CustomPlayerRepository {
 
     List<DatabasePlayer> findAll(PlayersCollections collection);
 
+    List<DatabasePlayer> find(Query query, PlayersCollections collection);
+
     BulkOperations bulkOps();
 
     List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections);

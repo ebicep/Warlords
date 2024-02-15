@@ -130,4 +130,5 @@ public enum PlayersCollections {
     }
 
     public abstract boolean shouldUpdate(Instant dateOfGame);
+
 }
