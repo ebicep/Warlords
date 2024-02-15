@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -13,6 +14,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +34,13 @@ public class LegendaryRevolt extends AbstractLegendaryWeapon implements LibraryA
 
     public LegendaryRevolt(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
+        return baseCost;
     }
 
     @Override
