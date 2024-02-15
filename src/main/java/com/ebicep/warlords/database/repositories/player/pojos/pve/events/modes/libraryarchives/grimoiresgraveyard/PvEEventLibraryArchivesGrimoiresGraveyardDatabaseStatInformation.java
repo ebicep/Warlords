@@ -3,8 +3,8 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.theacropolis.DatabaseGamePlayerPvEEventGrimoiresGraveyard;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.theacropolis.DatabaseGamePvEEventGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePlayerPvEEventGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePvEEventGrimoiresGraveyard;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.PvEEventLibraryArchivesDatabaseStatInformation;

@@ -1,9 +1,10 @@
-package com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.theacropolis;
+package com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.forgottencodex;
 
 import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
@@ -11,11 +12,9 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
-import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.GrimoiresGraveyardOption;
+import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.ForgottenCodexOption;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -26,39 +25,38 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent {
+public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEvent implements WavesCleared {
 
     @Field("total_mobs_killed")
     private int totalMobsKilled;
     @Field("waves_cleared")
-    private int wavesCleared;
-    private List<DatabaseGamePlayerPvEEventGrimoiresGraveyard> players = new ArrayList<>();
+    private int wavesCleared; //TODO
+    private List<DatabaseGamePlayerPvEEventForgottenCodex> players = new ArrayList<>();
 
-    public DatabaseGamePvEEventGrimoiresGraveyard() {
+    public DatabaseGamePvEEventForgottenCodex() {
     }
 
-    public DatabaseGamePvEEventGrimoiresGraveyard(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+    public DatabaseGamePvEEventForgottenCodex(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         super(game, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
-        AtomicReference<GrimoiresGraveyardOption> grimoiresGraveyardOption = new AtomicReference<>();
+        AtomicReference<ForgottenCodexOption> forgottenCodexOption = new AtomicReference<>();
         for (Option option : game.getOptions()) {
             if (option instanceof WaveDefenseOption) {
                 waveDefenseOption.set((WaveDefenseOption) option);
             } else if (option instanceof EventPointsOption) {
                 eventPointsOption.set((EventPointsOption) option);
-            } else if (option instanceof GrimoiresGraveyardOption) {
-                grimoiresGraveyardOption.set((GrimoiresGraveyardOption) option);
+            } else if (option instanceof ForgottenCodexOption) {
+                forgottenCodexOption.set((ForgottenCodexOption) option);
             }
         }
-        if (waveDefenseOption.get() == null || eventPointsOption.get() == null || grimoiresGraveyardOption.get() == null) {
+        if (waveDefenseOption.get() == null || eventPointsOption.get() == null || forgottenCodexOption.get() == null) {
             throw new IllegalStateException("Missing option");
         }
         game.warlordsPlayers()
-            .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventGrimoiresGraveyard(warlordsPlayer,
+            .forEach(warlordsPlayer -> players.add(new DatabaseGamePlayerPvEEventForgottenCodex(warlordsPlayer,
                     gameWinEvent, waveDefenseOption.get(),
                     eventPointsOption.get(),
-                    grimoiresGraveyardOption.get(),
                     counted
             )));
         this.totalMobsKilled = players.stream().mapToInt(DatabaseGamePlayerBase::getTotalKills).sum();
@@ -67,29 +65,28 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
 
     @Override
     public GameEvents getEvent() {
-        return GameEvents.GARDEN_OF_HESPERIDES;
+        return GameEvents.LIBRARY_ARCHIVES;
     }
 
     @Override
     public int getPointLimit() {
-        return 75_000;
+        return 20_000;
     }
 
     @Override
     public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
-        players.forEach(databaseGamePlayerPvEEventGrimoiresGraveyard -> {
+        players.forEach(databaseGamePlayerPvEEventForgottenCodex -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
-                    databaseGamePlayerPvEEventGrimoiresGraveyard,
+                    databaseGamePlayerPvEEventForgottenCodex,
                     multiplier
             );
-            GamesCommand.PLAYER_NAMES.add(databaseGamePlayerPvEEventGrimoiresGraveyard.getName());
+            GamesCommand.PLAYER_NAMES.add(databaseGamePlayerPvEEventForgottenCodex.getName());
         });
     }
 
     @Override
     public void appendLastGameStats(Hologram hologram) {
         super.appendLastGameStats(hologram);
-        hologram.getLines().appendText(ChatColor.YELLOW + "Waves Cleared: " + wavesCleared);
     }
 
     @Override
@@ -100,18 +97,14 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
 
     @Override
     public String getGameLabel() {
-        return super.getGameLabel() + " - " + ChatColor.YELLOW + wavesCleared;
+        return super.getGameLabel();
     }
 
     @Override
     public List<Component> getExtraLore() {
         List<Component> extraLore = super.getExtraLore();
-        extraLore.add(Component.text("Waves Cleared: ", NamedTextColor.GRAY)
-                               .append(Component.text(wavesCleared, NamedTextColor.YELLOW))
-        );
         return extraLore;
     }
-
 
     @Override
     public List<DatabaseGamePlayerPvEEvent> getPlayers() {
@@ -123,6 +116,7 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
         return new HashSet<>(players);
     }
 
+    @Override
     public int getWavesCleared() {
         return wavesCleared;
     }
