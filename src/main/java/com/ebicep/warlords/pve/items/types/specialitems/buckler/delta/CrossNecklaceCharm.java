@@ -30,7 +30,7 @@ public class CrossNecklaceCharm extends SpecialDeltaBuckler implements CraftsInt
 
     @Override
     public String getBonus() {
-        return "Targets within 6 blocks of you take 10% more damage sources from all and are slowed by 35%.";
+        return "Targets within 6 blocks of you take 10% more damage from all sources and are slowed by 35%.";
     }
 
     @Override
