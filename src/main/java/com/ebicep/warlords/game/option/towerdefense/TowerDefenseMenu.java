@@ -212,7 +212,7 @@ public class TowerDefenseMenu {
                                 player.sendMessage(Component.text("You have reached the maximum amount of mobs you can spawn at a time!", NamedTextColor.RED));
                                 return;
                             }
-                            wave.add(mob, shiftClick ? TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT - numberOfActions : 1, warlordsEntity.getTeam());
+                            wave.add(mob, shiftClick ? TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT - numberOfActions : 1, warlordsEntity);
                             openSummonTroopsMenu(player, warlordsEntity, spawner, playerInfo);
                         } else if (e.isRightClick()) {
                             if (numberOfActions == 0) {

@@ -36,6 +36,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -181,10 +182,10 @@ public class TowerDefenseSpawner implements Option, Listener {
     }
 
     /**
-     * @param mob  mob to spawn
-     * @param team team that spawned the mob - the mob will spawn on all other teams paths
+     * @param mob     mob to spawn
+     * @param spawner player who spawned the mob - the mob will spawn on all other teams paths
      */
-    public void spawnNewMob(TowerDefenseMob mob, Team team) {
+    public void spawnNewMob(TowerDefenseMob mob, @Nullable WarlordsEntity spawner) {
         Location randomSpawn = mob.getSpawnLocation();
         List<TowerDefensePath> pathList = paths.get(randomSpawn);
         if (pathList == null) {
@@ -199,6 +200,8 @@ public class TowerDefenseSpawner implements Option, Listener {
                 ThreadLocalRandom.current().nextDouble(4) - 2
         );
         mob.setSpawnLocation(spawnLocation);
+        mob.setSpawner(spawner);
+        Team team = spawner == null ? Team.GAME : spawner.getTeam();
         game.addNPC(mob.toNPC(game, team, warlordsNPC -> {}));
         mobs.put(mob, new TowerDefenseOption.TowerDefenseMobData(towerDefenseOption.getTicksElapsed(), teamSpawnLocations.get(randomSpawn), randomSpawn, randomPathIndex));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));

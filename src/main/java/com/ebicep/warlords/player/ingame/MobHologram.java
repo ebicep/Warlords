@@ -3,8 +3,10 @@ package com.ebicep.warlords.player.ingame;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TextDisplay;
+import org.bukkit.util.Transformation;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -78,15 +80,21 @@ public abstract class MobHologram {
             });
             for (int i = 0; i < customHologramLines.size(); i++) {
                 CustomHologramLine customHologramLine = customHologramLines.get(i);
-                if (customHologramLine.getEntity() == null) {
-                    TextDisplay textDisplay = location.getWorld().spawn(location.add(0, y + (i + 1) * 0.275, 0), TextDisplay.class, display -> {
-                        display.customName(customHologramLine.getText());
+                Entity lineEntity = customHologramLine.getEntity();
+                if (lineEntity == null || !lineEntity.isValid()) {
+                    float yTranslation = (i + 1.65f) * 0.325f;
+                    TextDisplay textDisplay = location.getWorld().spawn(location.add(0, y, 0), TextDisplay.class, display -> {
+                        display.setBillboard(Display.Billboard.VERTICAL);  // TODO find way to make billboard center without messing up rotation due to text rotating based on non translated location
+                        display.text(customHologramLine.getText());
                         display.setCustomNameVisible(true);
+                        entity.addPassenger(display);
+                        Transformation transformation = display.getTransformation();
+                        transformation.getTranslation().add(0, yTranslation, 0);
+                        display.setTransformation(transformation);
                     });
-                    entity.addPassenger(textDisplay);
-                    entity = textDisplay;
                     customHologramLine.setEntity(textDisplay);
                 }
+
 //                else {
 //                    customHologramLine.getEntity().customName(customHologramLine.getText());
 //                    customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));

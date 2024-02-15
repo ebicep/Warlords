@@ -207,6 +207,10 @@ public class TowerDefenseOption implements PveOption, Listener {
 
     @Override
     public void spawnNewMob(AbstractMob mob, Team team) {
+        spawnNewMob(mob, (WarlordsEntity) null);
+    }
+
+    public void spawnNewMob(AbstractMob mob, @Nullable WarlordsEntity spawner) {
         if (!(mob instanceof TowerDefenseMob towerDefenseMob)) {
             return;
         }
@@ -224,7 +228,7 @@ public class TowerDefenseOption implements PveOption, Listener {
         if (castle.isDestroyed()) {
             return;
         }
-        towerDefenseSpawner.spawnNewMob(towerDefenseMob, team);
+        towerDefenseSpawner.spawnNewMob(towerDefenseMob, spawner);
     }
 
     @Override

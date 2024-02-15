@@ -2,19 +2,23 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
+import org.bukkit.util.Transformation;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -115,9 +119,19 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
-            for (GameMap value : GameMap.VALUES) {
-                System.out.println(value.getDatabaseName());
-            }
+            TextDisplay display = player.getWorld().spawn(player.getLocation(), TextDisplay.class, textDisplay -> {
+                textDisplay.setBillboard(Display.Billboard.CENTER);
+                textDisplay.text(Component.text("HELLO", NamedTextColor.RED));
+
+            });
+            TextDisplay display2 = player.getWorld().spawn(player.getLocation(), TextDisplay.class, textDisplay -> {
+                textDisplay.setBillboard(Display.Billboard.CENTER);
+                textDisplay.text(Component.text("WORLD", NamedTextColor.GREEN));
+                display.addPassenger(textDisplay);
+                Transformation transformation = display.getTransformation();
+                transformation.getTranslation().add(0, 1, 0);
+                textDisplay.setTransformation(transformation);
+            });
 
 
 //            Guardian guard = player.getWorld().spawn(new LocationBuilder(player.getLocation()).forward(10), Guardian.class, guardian -> {

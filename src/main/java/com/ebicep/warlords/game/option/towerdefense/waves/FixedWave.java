@@ -1,9 +1,10 @@
 package com.ebicep.warlords.game.option.towerdefense.waves;
 
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.Mob;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +21,12 @@ public class FixedWave implements TowerDefenseWave {
     }
 
     public FixedWave add(Mob mob, int amount) {
-        return add(mob, amount, Team.GAME);
+        return add(mob, amount, null);
     }
 
-    public FixedWave add(Mob mob, int amount, Team team) {
+    public FixedWave add(Mob mob, int amount, @Nullable WarlordsEntity spawner) {
         for (int i = 0; i < amount; i++) {
-            actions.add(new TowerDefenseSpawnWaveAction(mob, team));
+            actions.add(new TowerDefenseSpawnWaveAction(mob, spawner));
         }
         return this;
     }

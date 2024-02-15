@@ -5,11 +5,10 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.MobHologram;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.trait.HologramTrait;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -19,6 +18,9 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public abstract class TowerDefenseMob extends AbstractMob {
+
+    @Nullable
+    private WarlordsEntity spawner;
 
     public TowerDefenseMob(
             Location spawnLocation,
@@ -44,9 +46,6 @@ public abstract class TowerDefenseMob extends AbstractMob {
         giveGoals();
         onNPCCreate();
         updateEquipment();
-
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, LegacyComponentSerializer.legacySection().serialize(team.coloredPrefix())); // TODO
 
         this.npc.spawn(spawnLocation);
 
@@ -77,6 +76,9 @@ public abstract class TowerDefenseMob extends AbstractMob {
 
                 }
         );
+        if (spawner != null) {
+            warlordsNPC.getMobHologram().getCustomHologramLines().add(new MobHologram.CustomHologramLine(spawner.getColoredName()));
+        }
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
             if (ability.getCurrentCooldown() < ability.getCooldownValue()) {
                 warlordsNPC.setEnergy(warlordsNPC.getEnergy() + ability.getEnergyCostValue());
@@ -89,5 +91,9 @@ public abstract class TowerDefenseMob extends AbstractMob {
     @Override
     public void giveGoals() {
 
+    }
+
+    public void setSpawner(@Nullable WarlordsEntity spawner) {
+        this.spawner = spawner;
     }
 }
