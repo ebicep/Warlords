@@ -19,7 +19,7 @@ public class SynthweaveI extends AbstractBounty implements TracksOutsideGame, Da
         if (!Objects.equals(event.getUUID(), uuid)) {
             return;
         }
-        if (event.getStarPiece() == StarPieces.COMMON) {
+        if (event.getStarPiece() == StarPieces.RARE) {
             value++;
         }
     }
@@ -31,12 +31,12 @@ public class SynthweaveI extends AbstractBounty implements TracksOutsideGame, Da
 
     @Override
     public String getDescription() {
-        return "Synthesize " + getTarget() + " Common Star Pieces.";
+        return "Synthesize " + getTarget() + " Rare Star Piece.";
     }
 
     @Override
     public int getTarget() {
-        return 3;
+        return 1;
     }
 
     @Override
