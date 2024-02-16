@@ -130,7 +130,7 @@ public class ForgottenCodex extends GameMap {
                     case 6 -> 2.5f;
                     default -> 1;
                 };
-                float damageMultiplier = playerCount >= 4 ? playerCount >= 6 ? 1.2f : 1.1f : 1f;
+                float damageMultiplier = playerCount >= 4 ? playerCount >= 6 ? 1.5f : 1.25f : 1f;
                 float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
                 warlordsNPC.setMaxHealthAndHeal(newBaseHealth);
                 warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
