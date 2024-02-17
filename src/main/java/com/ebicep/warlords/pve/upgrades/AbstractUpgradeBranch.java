@@ -33,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.ebicep.warlords.menu.Menu.*;
 
@@ -202,6 +203,16 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         boolean isMasterUpgrade = masterUpgrade.equals(upgrade);
         boolean isMasterUpgrade2 = masterUpgrade2.equals(upgrade);
         if (!force) {
+            if (isMasterUpgrade2) {
+                AtomicBoolean unlocked = new AtomicBoolean(false);
+                DatabaseManager.getPlayer(player.getUuid(),
+                        databasePlayer -> unlocked.set(databasePlayer.getPveStats().getAlternativeMasteriesUnlockedAbilities().contains(Ability.getAbility(ability.getClass())))
+                );
+                if (!unlocked.get()) {
+                    player.sendMessage(Component.text("You have not unlocked this alternative mastery yet!", NamedTextColor.RED));
+                    return;
+                }
+            }
             if (isMasterUpgrade && masterUpgrade2.isUnlocked() ||
                     isMasterUpgrade2 && masterUpgrade.isUnlocked()
             ) {

@@ -122,8 +122,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     @Field("auto_upgrade_profiles")
     private Map<Specializations, List<AutoUpgradeProfile>> autoUpgradeProfiles = new HashMap<>();
-    @Field("auto_save_upgrade_profile")
-    private boolean autoSaveUpgradeProfile;
     @Field("illusion_vendor_rewards_purchased")
     private Map<String, Long> illusionVendorRewardsPurchased = new HashMap<>();
     //MAGE
@@ -476,14 +474,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     public Map<Specializations, List<AutoUpgradeProfile>> getAutoUpgradeProfiles() {
         return autoUpgradeProfiles;
-    }
-
-    public boolean isAutoSaveUpgradeProfile() {
-        return autoSaveUpgradeProfile;
-    }
-
-    public void setAutoSaveUpgradeProfile(boolean autoSaveUpgradeProfile) {
-        this.autoSaveUpgradeProfile = autoSaveUpgradeProfile;
     }
 
     public DatabasePlayerPvEEventStats getEventStats() {
