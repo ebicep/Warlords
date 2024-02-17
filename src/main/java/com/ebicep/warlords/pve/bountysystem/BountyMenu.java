@@ -72,6 +72,7 @@ public class BountyMenu {
             List<AbstractBounty> activeBounties;
             DatabaseGameEvent gameEvent = DatabaseGameEvent.currentGameEvent;
             if (gameEvent != null && !bountyInfoName.equals(collection.name)) {
+                BountyUtils.validateBounties(databasePlayer, bountyInfoName, true);
                 EventMode eventMode = gameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats()).get(gameEvent.getStartDateSecond());
                 if (eventMode == null) {
                     for (int i = 0; i < 5; i++) {
@@ -89,6 +90,7 @@ public class BountyMenu {
                     activeBounties.addAll(BountyUtils.getNewBounties(gameEvent.getEvent().name));
                 }
             } else {
+                BountyUtils.validateBounties(databasePlayer, bountyInfoName, false);
                 activeBounties = pveStats.getActiveBounties();
             }
             int bountiesStarted = activeBounties.stream().mapToInt(bounty -> bounty != null && bounty.isStarted() ? 1 : 0).sum();
