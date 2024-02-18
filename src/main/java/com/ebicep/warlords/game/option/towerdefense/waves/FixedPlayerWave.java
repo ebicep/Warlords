@@ -12,10 +12,12 @@ public class FixedPlayerWave implements TowerDefenseWave {
 
     private final List<WaveAction<TowerDefenseOption>> actions = new ArrayList<>();
     private int waveActionIndex = 0;
+    private int lastSpawnWaveActionIndex = 0;
     private boolean sent = false;
 
     public FixedPlayerWave add(Mob mob, boolean fill, WarlordsEntity spawner) {
-        int amount = fill ? Math.max(0, TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT - (actions.size() - waveActionIndex + 1)) : 1;
+        int spawnActions = actions.size() / 2;
+        int amount = fill ? Math.max(TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT - (spawnActions - lastSpawnWaveActionIndex / 2), 0) : 1;
         for (int i = 0; i < amount; i++) {
             actions.add(new TowerDefenseSpawnWaveAction(mob, spawner));
             actions.add(new TowerDefenseDelayWaveAction(10));
@@ -76,6 +78,16 @@ public class FixedPlayerWave implements TowerDefenseWave {
     @Override
     public void setWaveActionIndex(int index) {
         this.waveActionIndex = index;
+        int lastIndex = index - 1;
+        if (lastIndex < actions.size()) {
+            if (actions.get(lastIndex) instanceof TowerDefenseSpawnWaveAction) {
+                lastSpawnWaveActionIndex = lastIndex;
+            }
+        }
+    }
+
+    public int getLastSpawnWaveActionIndex() {
+        return lastSpawnWaveActionIndex;
     }
 }
 

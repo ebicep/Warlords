@@ -24,6 +24,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -121,9 +122,16 @@ public class TowerDefenseOption implements PveOption, Listener {
         TowerDefensePlayerInfo info = playerInfo.get(player);
         if (info.getWaveTask() == null) {
             info.setWaveTask(new GameRunnable(game) {
+                int ticksElapsed = 0;
                 @Override
                 public void run() {
                     info.getPlayerWave().tick(TowerDefenseOption.this);
+                    if (ticksElapsed++ % 10 == 0 &&
+                            player.getEntity() instanceof Player p &&
+                            PlainTextComponentSerializer.plainText().serialize(p.getOpenInventory().title()).equals(TowerDefenseMenu.SUMMON_MENU_TITLE)
+                    ) {
+                        TowerDefenseMenu.openSummonTroopsMenu(p, player, towerDefenseSpawner, info);
+                    }
                 }
             }.runTaskTimer(0, 0));
         }

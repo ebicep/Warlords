@@ -5,6 +5,8 @@ import com.ebicep.warlords.game.option.towerdefense.events.TowerSellEvent;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMobInfo;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.game.option.towerdefense.waves.FixedPlayerWave;
+import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseSpawnWaveAction;
+import com.ebicep.warlords.game.option.towerdefense.waves.WaveAction;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -26,6 +28,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 public class TowerDefenseMenu {
+
+    public static final String SUMMON_MENU_TITLE = "Summon Troops";
 
     public static final MobGroup[] TOWER_DEFENSE_MOB_GROUPS = {
             new MobGroup(new ItemBuilder(Material.ZOMBIE_HEAD)
@@ -138,12 +142,14 @@ public class TowerDefenseMenu {
     }
 
     public static void openSummonTroopsMenu(Player player, WarlordsEntity warlordsEntity, TowerDefenseSpawner spawner, TowerDefensePlayerInfo playerInfo) {
-        Menu menu = new Menu("Summon Troops", 9 * 6);
+        Menu menu = new Menu(SUMMON_MENU_TITLE, 9 * 6);
 
         FixedPlayerWave playerWave = playerInfo.getPlayerWave();
+        List<WaveAction<TowerDefenseOption>> actions = playerWave.getActions();
+        int lastSpawnIndex = playerWave.getLastSpawnWaveActionIndex();
 
         int x = 1;
-        int y = 1;
+        int y = 2;
         for (int i = 0; i < TOWER_DEFENSE_MOB_GROUPS.length; i++) {
             MobGroup mobGroup = TOWER_DEFENSE_MOB_GROUPS[i];
             TowerDefenseMobInfo mobInfos = mobGroup.mobsWithCost;
@@ -185,6 +191,10 @@ public class TowerDefenseMenu {
                             .get(),
                     (m, e) -> {
                         if (e.isLeftClick()) {
+                            if (TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT == actions.size() / 2 - lastSpawnIndex / 2) {
+                                player.sendMessage(Component.text("You have reached the maximum amount of mobs you can spawn at a time!", NamedTextColor.RED));
+                                return;
+                            }
                             playerWave.add(mob, e.isShiftClick(), warlordsEntity);
                             openSummonTroopsMenu(player, warlordsEntity, spawner, playerInfo);
                         }
@@ -194,6 +204,24 @@ public class TowerDefenseMenu {
                 x = 1;
                 y++;
             }
+            x++;
+        }
+
+        x = 2;
+        for (int i = lastSpawnIndex + 1; i < actions.size(); i++) {
+            WaveAction<TowerDefenseOption> waveAction = actions.get(i);
+            if (!(waveAction instanceof TowerDefenseSpawnWaveAction spawnAction)) {
+                continue;
+            }
+            Mob mob = spawnAction.getMob();
+            menu.setItem(x, 1,
+                    new ItemBuilder(mob.getHead())
+                            .name(Component.text(mob.name, NamedTextColor.GREEN))
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+
             x++;
         }
 

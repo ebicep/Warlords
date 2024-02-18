@@ -4,6 +4,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MathUtils {
 
+    public static int clamp(int value, int min, int max) {
+        return value < min ? min : Math.min(value, max);
+    }
+
     public static float clamp(float value, float min, float max) {
         return value < min ? min : Math.min(value, max);
     }

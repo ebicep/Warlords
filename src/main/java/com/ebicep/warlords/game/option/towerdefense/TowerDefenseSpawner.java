@@ -43,7 +43,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class TowerDefenseSpawner implements Option, Listener {
 
-    public static int MAX_PLAYER_SPAWN_AMOUNT = 12; // max numbers of mobs players can spawn at a time
+    public static int MAX_PLAYER_SPAWN_AMOUNT = 6; // max numbers of mobs players can spawn at a time
     private static final ItemStack SUMMON_TROOPS_ITEM = new ItemBuilder(Material.SPAWNER)
             .name(Component.text("Summon Troops", NamedTextColor.GREEN))
             .setOnUseID("SUMMON_TROOPS_ITEM")
