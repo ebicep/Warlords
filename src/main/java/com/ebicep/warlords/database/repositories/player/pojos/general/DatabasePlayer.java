@@ -146,6 +146,7 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public void loadInCollection(PlayersCollections collection) {
         pveStats.loadInCollection(collection);
+        pveStats.setDatabasePlayer(this);
     }
 
     @Override

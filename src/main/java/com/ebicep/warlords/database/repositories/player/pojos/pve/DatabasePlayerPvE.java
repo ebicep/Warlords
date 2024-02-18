@@ -14,6 +14,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.Database
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
@@ -60,6 +61,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
+
+    @Transient
+    private DatabasePlayer databasePlayer;
 
     @Field("wave_defense_stats")
     private DatabasePlayerWaveDefenseStats waveDefenseStats = new DatabasePlayerWaveDefenseStats();
@@ -316,6 +320,14 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         generalEventMode.addEventPointsSpent(-amount);
         //event in event mode
         eventMode.addEventPointsSpent(-amount);
+    }
+
+    public DatabasePlayer getDatabasePlayer() {
+        return databasePlayer;
+    }
+
+    public void setDatabasePlayer(DatabasePlayer databasePlayer) {
+        this.databasePlayer = databasePlayer;
     }
 
     public void addCurrency(Currencies currency, int amount) {
