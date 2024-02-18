@@ -118,7 +118,16 @@ public class TowerDefenseOption implements PveOption, Listener {
 
     public TowerDefensePlayerInfo getPlayerInfo(WarlordsEntity player) {
         playerInfo.putIfAbsent(player, new TowerDefensePlayerInfo());
-        return playerInfo.get(player);
+        TowerDefensePlayerInfo info = playerInfo.get(player);
+        if (info.getWaveTask() == null) {
+            info.setWaveTask(new GameRunnable(game) {
+                @Override
+                public void run() {
+                    info.getPlayerWave().tick(TowerDefenseOption.this);
+                }
+            }.runTaskTimer(0, 0));
+        }
+        return info;
     }
 
     @Override

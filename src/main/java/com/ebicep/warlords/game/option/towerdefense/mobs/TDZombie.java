@@ -1,14 +1,13 @@
-package com.ebicep.warlords.game.option.towerdefense.mobs.zombie;
+package com.ebicep.warlords.game.option.towerdefense.mobs;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import org.bukkit.Location;
 
-public class ZombieI extends TowerDefenseMob implements BasicMob {
+public class TDZombie extends TowerDefenseMob implements BasicMob {
 
-    public ZombieI(
+    public TDZombie(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -21,7 +20,7 @@ public class ZombieI extends TowerDefenseMob implements BasicMob {
         super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
     }
 
-    public ZombieI(Location spawnLocation) {
+    public TDZombie(Location spawnLocation) {
         this(
                 spawnLocation,
                 "Zombie",
@@ -35,6 +34,6 @@ public class ZombieI extends TowerDefenseMob implements BasicMob {
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.ZOMBIE_I;
+        return Mob.TD_ZOMBIE;
     }
 }

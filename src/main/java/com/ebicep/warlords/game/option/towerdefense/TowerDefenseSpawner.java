@@ -181,6 +181,11 @@ public class TowerDefenseSpawner implements Option, Listener {
         player.getInventory().setItem(8, SUMMON_TROOPS_ITEM);
     }
 
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+
+    }
+
     /**
      * @param mob     mob to spawn
      * @param spawner player who spawned the mob - the mob will spawn on all other teams paths
@@ -239,9 +244,7 @@ public class TowerDefenseSpawner implements Option, Listener {
         activePlayerWaves.add(new GameRunnable(game) {
             @Override
             public void run() {
-                if (wave.tick(towerDefenseOption)) {
-                    this.cancel();
-                }
+                wave.tick(towerDefenseOption);
             }
         }.runTaskTimer(0, 0));
     }

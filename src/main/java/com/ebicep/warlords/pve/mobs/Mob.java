@@ -1,8 +1,7 @@
 package com.ebicep.warlords.pve.mobs;
 
-import com.ebicep.warlords.game.option.towerdefense.mobs.zombie.SkeletonI;
-import com.ebicep.warlords.game.option.towerdefense.mobs.zombie.ZombieI;
-import com.ebicep.warlords.game.option.towerdefense.mobs.zombie.ZombieII;
+import com.ebicep.warlords.game.option.towerdefense.mobs.TDSkeleton;
+import com.ebicep.warlords.game.option.towerdefense.mobs.TDZombie;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
@@ -786,15 +785,8 @@ public enum Mob {
     ANIMUS(EntityType.PLAYER, Animus.class, Animus::new, Animus::new, null),
 
     // tower defense
-    ZOMBIE_I(EntityType.ZOMBIE, ZombieI.class, ZombieI::new, ZombieI::new, null),
-    ZOMBIE_II(EntityType.ZOMBIE, ZombieII.class, ZombieII::new, ZombieII::new, new Utils.SimpleEntityEquipment(
-            new ItemStack(Material.LEATHER_HELMET),
-            null,
-            null,
-            null,
-            Weapons.SILVER_PHANTASM_STAFF_2.getItem()
-    )),
-    SKELETON_I(EntityType.SKELETON, SkeletonI.class, SkeletonI::new, SkeletonI::new, null),
+    TD_ZOMBIE(EntityType.ZOMBIE, TDZombie.class, TDZombie::new, TDZombie::new, null),
+    TD_SKELETON(EntityType.SKELETON, TDSkeleton.class, TDSkeleton::new, TDSkeleton::new, null),
 
     ;
 

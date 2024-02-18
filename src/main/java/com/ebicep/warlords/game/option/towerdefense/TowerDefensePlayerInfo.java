@@ -3,10 +3,9 @@ package com.ebicep.warlords.game.option.towerdefense;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.game.option.towerdefense.waves.FixedPlayerWave;
 import com.ebicep.warlords.pve.mobs.Mob;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,8 +16,8 @@ public class TowerDefensePlayerInfo {
     // in game
     private float currentExp;
     private int currentInsigniaRate = 20; // per second
-    private final List<FixedPlayerWave> playerWaves = new ArrayList<>(); // list of sent waves
-    private final Map<TowerDefenseMenu.MobGroup, Integer> unlockedMobUpgrades = new HashMap<>(); // upgrade level of each mob group
+    private final FixedPlayerWave playerWave = new FixedPlayerWave(); // list of sent waves
+    private BukkitTask waveTask;
     // stats
     private float totalExp;
     private float insigniaSpent;
@@ -45,12 +44,16 @@ public class TowerDefensePlayerInfo {
         this.currentInsigniaRate = currentInsigniaRate;
     }
 
-    public List<FixedPlayerWave> getPlayerWaves() {
-        return playerWaves;
+    public FixedPlayerWave getPlayerWave() {
+        return playerWave;
     }
 
-    public Map<TowerDefenseMenu.MobGroup, Integer> getUnlockedMobUpgrades() {
-        return unlockedMobUpgrades;
+    public BukkitTask getWaveTask() {
+        return waveTask;
+    }
+
+    public void setWaveTask(BukkitTask waveTask) {
+        this.waveTask = waveTask;
     }
 
     public float getTotalExp() {
