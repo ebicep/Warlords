@@ -146,7 +146,7 @@ public class TowerDefenseMenu {
 
         FixedPlayerWave playerWave = playerInfo.getPlayerWave();
         List<WaveAction<TowerDefenseOption>> actions = playerWave.getActions();
-        int lastSpawnIndex = playerWave.getLastSpawnWaveActionIndex();
+        int lastSpawnIndex = playerWave.getWaveActionIndex();
 
         int x = 1;
         int y = 2;
@@ -191,7 +191,7 @@ public class TowerDefenseMenu {
                             .get(),
                     (m, e) -> {
                         if (e.isLeftClick()) {
-                            if (TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT == actions.size() / 2 - lastSpawnIndex / 2) {
+                            if (TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT + 1 == actions.size() / 2 - lastSpawnIndex / 2) {
                                 player.sendMessage(Component.text("You have reached the maximum amount of mobs you can spawn at a time!", NamedTextColor.RED));
                                 return;
                             }
@@ -208,7 +208,7 @@ public class TowerDefenseMenu {
         }
 
         x = 2;
-        for (int i = lastSpawnIndex + 1; i < actions.size(); i++) {
+        for (int i = lastSpawnIndex; i < actions.size(); i++) {
             WaveAction<TowerDefenseOption> waveAction = actions.get(i);
             if (!(waveAction instanceof TowerDefenseSpawnWaveAction spawnAction)) {
                 continue;

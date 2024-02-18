@@ -126,7 +126,7 @@ public class TowerDefenseOption implements PveOption, Listener {
                 @Override
                 public void run() {
                     info.getPlayerWave().tick(TowerDefenseOption.this);
-                    if (ticksElapsed++ % 10 == 0 &&
+                    if (ticksElapsed++ % 5 == 0 &&
                             player.getEntity() instanceof Player p &&
                             PlainTextComponentSerializer.plainText().serialize(p.getOpenInventory().title()).equals(TowerDefenseMenu.SUMMON_MENU_TITLE)
                     ) {
