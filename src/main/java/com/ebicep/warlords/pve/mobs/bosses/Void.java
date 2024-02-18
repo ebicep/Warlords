@@ -181,7 +181,7 @@ public class Void extends AbstractMob implements BossMob {
             }
         }
 
-        if (ticksElapsed % 320 == 0 && !preventArmageddon) {
+        if (ticksElapsed % 400 == 0 && !preventArmageddon) {
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.6f);
             Utils.playGlobalSound(loc, "rogue.healingremedy.impact", 500, 0.6f);
             warlordsNPC.addSpeedModifier(warlordsNPC, "Armageddon Slowness", -99, 90);

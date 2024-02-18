@@ -2474,7 +2474,7 @@ public abstract class WarlordsEntity {
                 player.setCompassTarget(getCompassTarget().getLocation());
             }
         }
-
+        this.health.tick();
         updateHealth();
         getSpeed().updateSpeed();
         updateItems();

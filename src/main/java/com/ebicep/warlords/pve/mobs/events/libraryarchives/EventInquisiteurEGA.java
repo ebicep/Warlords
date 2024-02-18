@@ -10,9 +10,9 @@ public class EventInquisiteurEGA extends EventInquisiteur {
         this(
                 spawnLocation,
                 "Inquisiteur-EGA",
-                165000,
+                515000,
                 0.38f,
-                25,
+                15,
                 0,
                 0
         );
@@ -39,7 +39,7 @@ public class EventInquisiteurEGA extends EventInquisiteur {
                 new FreezingBreath() {{
                     this.setPveMasterUpgrade(true);
                 }},
-                new TimeWarpCryomancer() {{
+                new GroundSlamDefender() {{
                     this.setPveMasterUpgrade2(true);
                 }},
                 new MysticalBarrier() {{

@@ -3,9 +3,9 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.tartarus.DatabaseGamePvEEventForgottenCodex;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.theacropolis.DatabaseGamePlayerPvEEventGrimoiresGraveyard;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.theacropolis.DatabaseGamePvEEventGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.forgottencodex.DatabaseGamePvEEventForgottenCodex;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePlayerPvEEventGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePvEEventGrimoiresGraveyard;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;

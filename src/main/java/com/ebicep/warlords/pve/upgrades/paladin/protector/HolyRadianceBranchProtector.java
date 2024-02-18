@@ -56,7 +56,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
                 """
                         +12 Block Radius
                                                 
-                        All marked players will now heal all players within 10 blocks for 150-350 health every 1s for 3s.
+                        Marked players will now emit healing to any player within 10 blocks for 150-350 health every 1s for 3s.
                         """,
                 50000,
                 () -> {

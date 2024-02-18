@@ -24,8 +24,8 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 spawnLocation,
                 "The Archivist",
                 125000,
-                0.21f,
-                15,
+                0.24f,
+                25,
                 0,
                 0
         );
@@ -49,6 +49,8 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 minMeleeDamage,
                 maxMeleeDamage,
                 new CripplingStrike() {{
+                    this.setMinDamageHeal(1560);
+                    this.setMaxDamageHeal(1960);
                     this.getCooldown().setBaseValue(5);
                     this.pveMasterUpgrade = true;
                 }},

@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.bountysystem.trackers;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
@@ -27,7 +28,11 @@ public interface TracksOutsideGame {
 
             @EventHandler
             public void onDatabasePlayerFirstLoad(DatabasePlayerFirstLoadEvent event) {
-                refreshTracker(event.getDatabasePlayer(), true);
+                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
+                    DatabaseManager.getPlayer(event.getPlayer().getUniqueId(), activeCollection, databasePlayer -> {
+                        refreshTracker(databasePlayer, true);
+                    });
+                }
             }
 
             private void refreshTracker(DatabasePlayer databasePlayer, boolean register) {
@@ -46,6 +51,7 @@ public interface TracksOutsideGame {
             }
 
             private void refreshTracker(DatabasePlayer databasePlayer, List<AbstractBounty> trackableBounties, boolean register) {
+                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                 trackableBounties.stream().filter(TracksOutsideGame.class::isInstance).forEach(bounty -> {
                     if (register) {
                         bounty.init(databasePlayer);

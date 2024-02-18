@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.theacropolis;
+package com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard;
 
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;

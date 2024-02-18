@@ -108,6 +108,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public List<DatabasePlayer> find(Query query, PlayersCollections collection) {
+        return playerRepository.find(query, collection);
+    }
+
+    @Override
     public BulkOperations bulkOps() {
         return playerRepository.bulkOps(); //WARNING DO NOT USE IN SCENARIO WITH PLAYERS ONLINE
     }

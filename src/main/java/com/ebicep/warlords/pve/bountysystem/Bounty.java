@@ -39,6 +39,7 @@ public enum Bounty {
     CHALLENGE_II(ChallengeII.class, ChallengeII::new),
     RECOUP_I(RecoupI.class, RecoupI::new),
     SALVAGE_III(SalvageIII.class, SalvageIII::new),
+    SYNTHWEAVE_I(SynthweaveI.class, SynthweaveI::new),
     HUNT_BASIC_I(HuntBasicI.class, HuntBasicI::new),
     HUNT_INTERMEDIATE_I(HuntIntermediateI.class, HuntIntermediateI::new),
     HUNT_ADVANCED_I(HuntAdvancedI.class, HuntAdvancedI::new),

@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -18,10 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listener, LibraryArchivesTitle {
 
@@ -45,6 +43,13 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
 
     public LegendaryChaotic(AbstractLegendaryWeapon legendaryWeapon) {
         super(legendaryWeapon);
+    }
+
+    @Override
+    public LinkedHashMap<Currencies, Long> getCost() {
+        LinkedHashMap<Currencies, Long> baseCost = super.getCost();
+        baseCost.put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
+        return baseCost;
     }
 
     @Override

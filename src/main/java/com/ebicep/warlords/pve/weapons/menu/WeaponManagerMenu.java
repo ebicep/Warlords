@@ -222,7 +222,8 @@ public class WeaponManagerMenu {
                                 Currencies.TITLE_TOKEN_PHARAOHS_REVENGE.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_PHARAOHS_REVENGE)),
                                 Currencies.TITLE_TOKEN_SPIDERS_BURROW.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_SPIDERS_BURROW)),
                                 Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_BANE_OF_IMPURITIES)),
-                                Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES))
+                                Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES)),
+                                Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES.getCostColoredName(databasePlayerPvE.getCurrencyValue(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES))
                         )
                         .get(),
                 (m, e) -> {

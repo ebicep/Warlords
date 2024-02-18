@@ -8,6 +8,8 @@ import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.Field
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffectOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.effects.CodexCollector;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.chat.ChatUtils;
 
 import javax.annotation.Nonnull;
@@ -20,6 +22,14 @@ public class ForgottenCodexOption implements Option {
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
+            abilityTree.setMaxMasterUpgrades(5);
+        }
     }
 
     @Override

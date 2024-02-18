@@ -10,9 +10,9 @@ public class EventInquisiteurVPA extends EventInquisiteur {
         this(
                 spawnLocation,
                 "Inquisiteur-VPA",
-                135000,
+                480000,
                 0.38f,
-                25,
+                10,
                 0,
                 0
         );
@@ -44,11 +44,13 @@ public class EventInquisiteurVPA extends EventInquisiteur {
                 new WaterBreath() {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new GroundSlamRevenant(),
+                new VitalityLiquor() {{
+                    this.setPveMasterUpgrade2(true);
+                }},
                 new SanctifiedBeacon() {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new HealingTotem() {{
+                new HealingRain() {{
                     this.setPveMasterUpgrade(true);
                 }}
         );

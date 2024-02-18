@@ -171,6 +171,7 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
         excludeBounties.add(getBounty());
         EventMode eventMode;
         EventMode generalEventMode;
+        int bountiesCompleted = pveStats.getBountiesCompleted();
         if (isEventBounty) {
             GameEvents event = gameEvent.getEvent();
             DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
@@ -187,6 +188,8 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
 
             activeBounties = eventMode.getActiveBounties();
             excludeBounties.addAll(eventMode.getCompletedBounties().keySet());
+
+            bountiesCompleted = eventMode.getBountiesCompleted();
         } else {
             eventMode = null;
             generalEventMode = null;
@@ -198,7 +201,7 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
         int replaceIndex = activeBounties.indexOf(this);
         int maxBounties = BOUNTY_COLLECTION_INFO.get(bountyInfoName).maxBounties();
         AbstractBounty replacementBounty = null;
-        if (pveStats.getBountiesCompleted() <= maxBounties) {
+        if (bountiesCompleted <= maxBounties) {
             Bounty randomBounty = BountyUtils.getRandomBounty(bountyInfoName, excludeBounties);
             if (randomBounty != null) {
                 replacementBounty = randomBounty.create.get();

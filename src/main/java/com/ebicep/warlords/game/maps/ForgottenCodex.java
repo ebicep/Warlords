@@ -79,7 +79,7 @@ public class ForgottenCodex extends GameMap {
         options.add(SpawnpointOption.forTeam(loc.addXYZ(-4.5, 35, 7.5), Team.BLUE));
         options.add(SpawnpointOption.forTeam(loc.addXYZ(-4.5, 35, 7.5), Team.RED));
 
-        options.add(new PowerupOption(loc.addXYZ(-4.5, 35, 7.5), PowerupOption.PowerUp.HEALING, 90, 30));
+        options.add(new PowerupOption(loc.addXYZ(-4.5, 35.5, 7.5), PowerupOption.PowerUp.HEALING, 90, 30));
 
         options.add(new RespawnWaveOption(2, 1, 20));
         options.add(new GraveOption());
@@ -130,7 +130,7 @@ public class ForgottenCodex extends GameMap {
                     case 6 -> 2.5f;
                     default -> 1;
                 };
-                float damageMultiplier = playerCount >= 4 ? playerCount >= 6 ? 1.2f : 1.1f : 1f;
+                float damageMultiplier = playerCount >= 4 ? playerCount >= 6 ? 1.5f : 1.25f : 1f;
                 float newBaseHealth = warlordsNPC.getMaxBaseHealth() * healthMultiplier;
                 warlordsNPC.setMaxHealthAndHeal(newBaseHealth);
                 warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(

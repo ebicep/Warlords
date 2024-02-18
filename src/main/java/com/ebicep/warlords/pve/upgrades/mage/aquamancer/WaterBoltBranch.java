@@ -30,11 +30,6 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
                         ability.setMinDamage(minDamage * value);
                         ability.setMaxDamage(maxDamage * value);
                     }
-
-                    @Override
-                    public boolean autoScaleDescription() {
-                        return false;
-                    }
                 }, 15f, 3, 4)
                 .addTo(treeA);
 

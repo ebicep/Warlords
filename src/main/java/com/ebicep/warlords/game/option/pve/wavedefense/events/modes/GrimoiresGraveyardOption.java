@@ -9,7 +9,10 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -53,6 +56,14 @@ public class GrimoiresGraveyardOption implements Option {
                 });
             }
         });
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player instanceof WarlordsPlayer) {
+            AbilityTree abilityTree = ((WarlordsPlayer) player).getAbilityTree();
+            abilityTree.setMaxMasterUpgrades(4);
+        }
     }
 
     @Override

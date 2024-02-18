@@ -207,28 +207,32 @@ public class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void updateHealth() {
-        if (!isDead()) {
-            mobHologram.update();
-            if (entity instanceof Player player) {
-                double healthDisplayY = player.getEyeHeight() + 0.15;
-                if (playerHealthDisplay == null) {
-                    playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
-                        armorStand.setMarker(true);
-                        armorStand.customName(getNameComponent());
-                        armorStand.setCustomNameVisible(true);
-                    });
-                } else {
-                    playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
-                    playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
-                }
+        if (isDead() || entity == null) {
+            return;
+        }
+        mobHologram.update();
+        if (entity instanceof Player player) {
+            double healthDisplayY = player.getEyeHeight() + 0.15;
+            if (playerHealthDisplay == null) {
+                playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
+                    armorStand.setMarker(true);
+                    armorStand.customName(getNameComponent());
+                    armorStand.setCustomNameVisible(true);
+                });
             } else {
-                entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+                playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+                playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
             }
+        } else {
+            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
         }
     }
 
     @Override
     public void updateEntity() {
+        if (entity == null) {
+            return;
+        }
         updateHealth();
         entity.setCustomNameVisible(true);
         entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));

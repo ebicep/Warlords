@@ -141,6 +141,7 @@ public abstract class AbstractMob implements Mob {
 
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, entityType != EntityType.PLAYER);
+        this.npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
 
         giveGoals();
         onNPCCreate();

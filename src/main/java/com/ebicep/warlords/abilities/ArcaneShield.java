@@ -114,7 +114,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                         ) {
                             we.setStunTicks(6 * 20);
                         }
-                    } else if (pveMasterUpgrade2 && shield.getShieldHealth() <= 0) {
+                    } else if (pveMasterUpgrade2) {
                         List<AbstractAbility> abilities = wp.getAbilities();
                         if (abilities.size() == 0) {
                             return;

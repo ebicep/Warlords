@@ -55,7 +55,7 @@ public class GardeningGloves extends SpecialDeltaGauntlet implements AppliesToWa
 
     @Override
     public String getBonus() {
-        return "15% to heal +30% more health when healing any ally.";
+        return "15% chance to heal +30% more health when healing any ally.";
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.*;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.HandlerList;
@@ -20,6 +21,7 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected Consumer<CooldownManager> onRemove;
     protected Consumer<CooldownManager> onRemoveForce;
     protected boolean removeOnDeath;
+    private final Listener activeListener;
 
     public AbstractCooldown(
             String name,
@@ -65,11 +67,13 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.cooldownType = cooldownType;
         this.onRemove = onRemove;
         this.removeOnDeath = removeOnDeath;
-        Listener listener = getListener();
-        if (listener != null) {
-            from.getGame().registerEvents(listener);
+        this.activeListener = getListener();
+        if (activeListener != null) {
+            ChatUtils.MessageType.WARLORDS.sendMessage("*Registering listener " + getName() + " - " + this + " - " + cooldownObject);
+            from.getGame().registerEvents(activeListener);
             this.onRemoveForce = cooldownManager -> {
-                HandlerList.unregisterAll(listener);
+                ChatUtils.MessageType.WARLORDS.sendMessage("*Unregistering listener " + getName() + " - " + this + " - " + cooldownObject);
+                HandlerList.unregisterAll(activeListener);
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {
                     cooldownManager.updatePlayerNames();
@@ -166,5 +170,9 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     public void setOnRemoveForce(Consumer<CooldownManager> onRemoveForce) {
         this.onRemoveForce = onRemoveForce;
+    }
+
+    public Listener getActiveListener() {
+        return activeListener;
     }
 }

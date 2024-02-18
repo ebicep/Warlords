@@ -484,18 +484,6 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public enum Patches {
 
-        EOD_ASCENDANT_SHARD_3 {
-            @Override
-            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
-                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
-                AtomicInteger masteriesUnlocked = new AtomicInteger();
-                pveStats.getAlternativeMasteriesUnlocked().forEach((specializations, integerInstantMap) -> {
-                    masteriesUnlocked.addAndGet(integerInstantMap.keySet().size());
-                });
-                pveStats.subtractCurrency(Currencies.ASCENDANT_SHARD, masteriesUnlocked.get());
-                return true;
-            }
-        },
         EOD_ITEMS {
             @Override
             public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
@@ -590,6 +578,29 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
                     itemsManager.setBlessingsFound(0);
                     itemsManager.getBlessingsBought().clear();
                 }
+                return true;
+            }
+        },
+        EOD_ASCENDANT_SHARD_3 {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                AtomicInteger masteriesUnlocked = new AtomicInteger();
+                pveStats.getAlternativeMasteriesUnlocked().forEach((specializations, integerInstantMap) -> masteriesUnlocked.addAndGet(integerInstantMap.keySet().size()));
+                pveStats.subtractCurrency(Currencies.ASCENDANT_SHARD, masteriesUnlocked.get());
+                return true;
+            }
+        },
+        EOD_ASCENDANT_SHARD_4 {
+            @Override
+            public boolean run(UUID uuid, DatabasePlayer databasePlayer) {
+                DatabasePlayerPvE pveStats = databasePlayer.getPveStats();
+                AtomicInteger masteriesUnlocked = new AtomicInteger();
+                Map<Specializations, Map<Integer, Instant>> unlocked = pveStats.getAlternativeMasteriesUnlocked();
+                unlocked.forEach((specializations, integerInstantMap) -> masteriesUnlocked.addAndGet(integerInstantMap.keySet().size()));
+                unlocked.clear();
+                pveStats.getAlternativeMasteriesUnlockedAbilities().clear();
+                pveStats.addCurrency(Currencies.ASCENDANT_SHARD, masteriesUnlocked.get());
                 return true;
             }
         },
