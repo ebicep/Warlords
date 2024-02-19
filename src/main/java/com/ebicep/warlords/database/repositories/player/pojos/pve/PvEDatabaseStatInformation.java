@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation {
+public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation implements PvEStats {
 
     //CUMULATIVE STATS
     @Field("total_time_played")
@@ -78,22 +78,27 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         return totalTimePlayed;
     }
 
+    @Override
     public Map<String, Long> getMobKills() {
         return mobKills;
     }
 
+    @Override
     public Map<String, Long> getMobAssists() {
         return mobAssists;
     }
 
+    @Override
     public Map<String, Long> getMobDeaths() {
         return mobDeaths;
     }
 
+    @Override
     public long getMostDamageInRound() {
         return mostDamageInRound;
     }
 
+    @Override
     public void setMostDamageInRound(long mostDamageInRound) {
         this.mostDamageInRound = mostDamageInRound;
     }

@@ -1,10 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf.classses;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCTF;
 
-public class DatabasePaladinCTF extends DatabaseBaseCTF implements DatabaseWarlordsSpecs {
+public class DatabasePaladinCTF implements StatsWarlordsSpecs<DatabaseBaseCTF> {
 
     private DatabaseBaseCTF avenger = new DatabaseBaseCTF();
     private DatabaseBaseCTF crusader = new DatabaseBaseCTF();
@@ -15,7 +14,7 @@ public class DatabasePaladinCTF extends DatabaseBaseCTF implements DatabaseWarlo
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBaseCTF[] getSpecs() {
         return new DatabaseBaseCTF[]{avenger, crusader, protector};
     }
 

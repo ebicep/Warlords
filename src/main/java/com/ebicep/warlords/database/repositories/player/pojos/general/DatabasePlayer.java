@@ -9,7 +9,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
 import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
@@ -149,54 +150,52 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         pveStats.setDatabasePlayer(this);
     }
 
-    @Override
     public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer,
+            DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        //UPDATE UNIVERSAL EXPERIENCE
-        this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         //PvE outside all base stats besides universal experience
-        AbstractDatabaseStatInformation classStats = this.getClass(Specializations.getClass(gamePlayer.getSpec()));
-        DatabaseSpecialization specStats = this.getSpec(gamePlayer.getSpec());
+        StatsWarlordsSpecs<DatabaseSpecialization> classStats = this.getClass(Specializations.getClass(gamePlayer.getSpec()));
+        Stats specStats = this.getSpec(gamePlayer.getSpec());
         if (GameMode.isPvE(gameMode)) {
             //this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
             classStats.setExperience(classStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
             specStats.setExperience(specStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
-            this.pveStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            this.pveStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             return;
         }
         //UPDATE CLASS, SPEC
         if (gamePlayer instanceof DatabaseGamePlayerSiege databaseGamePlayerSiege) {
             databaseGamePlayerSiege.getSpecStats().forEach((specializations, siegePlayer) -> {
-                getClass(Specializations.getClass(specializations)).updateStats(databasePlayer, databaseGame, siegePlayer, multiplier, playersCollection);
-                getSpec(specializations).updateStats(databasePlayer, databaseGame, siegePlayer, multiplier, playersCollection);
+                getClass(Specializations.getClass(specializations)).updateCustomStats(databasePlayer, databaseGame, gameMode, siegePlayer, result, multiplier, playersCollection);
+                getSpec(specializations).updateCustomStats(databasePlayer, databaseGame, gameMode, siegePlayer, result, multiplier, playersCollection);
             });
         } else {
-            classStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            specStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            classStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            specStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         }
         //UPDATE GAMEMODES
         switch (gameMode) {
-            case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            case TEAM_DEATHMATCH -> this.tdmStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            case INTERCEPTION -> this.interceptionStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            case DUEL -> this.duelStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            case SIEGE -> this.siegeStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            case CAPTURE_THE_FLAG -> this.ctfStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case TEAM_DEATHMATCH -> this.tdmStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case INTERCEPTION -> this.interceptionStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case DUEL -> this.duelStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case SIEGE -> this.siegeStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
-            this.tournamentStats.getCurrentTournamentStats().updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            this.tournamentStats.getCurrentTournamentStats().updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         } else {
             if (gameAddons.isEmpty()) {
-                this.pubStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+                this.pubStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
-                this.compStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+                this.compStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             }
         }
     }

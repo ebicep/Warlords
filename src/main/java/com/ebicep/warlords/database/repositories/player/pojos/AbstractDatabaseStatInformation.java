@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.ExperienceManager;
 
-public abstract class AbstractDatabaseStatInformation {
+public abstract class AbstractDatabaseStatInformation implements Stats {
 
     protected int kills = 0;
     protected int assists = 0;
@@ -82,123 +82,57 @@ public abstract class AbstractDatabaseStatInformation {
         this.experience += other.experience;
     }
 
-    public double getKDA() {
-        if (deaths <= 0) {
-            return 0;
-        }
-        return (kills + assists) / (double) deaths;
-    }
-
-    public double getKillsPerGame() {
-        return plays <= 0 ? 0 : (double) kills / plays;
-    }
-
+    @Override
     public int getKills() {
         return kills;
     }
 
-    public void setKills(int kills) {
-        this.kills = kills;
-    }
-
-    public double getKillsAssistsPerGame() {
-        return plays <= 0 ? 0 : (double) (kills + assists) / plays;
-    }
-
+    @Override
     public int getAssists() {
         return assists;
     }
 
-    public void setAssists(int assists) {
-        this.assists = assists;
-    }
-
-    public double getDeathsPerGame() {
-        return plays <= 0 ? 0 : (double) deaths / plays;
-    }
-
+    @Override
     public int getDeaths() {
         return deaths;
     }
 
-    public void setDeaths(int deaths) {
-        this.deaths = deaths;
-    }
-
-    public double getWL() {
-        if (losses == 0) {
-            return 0;
-        }
-        return (double) wins / losses;
-    }
-
+    @Override
     public int getWins() {
         return wins;
     }
 
-    public void setWins(int wins) {
-        this.wins = wins;
-    }
-
-    public double getWinRate() {
-        if (plays == 0) {
-            return 0;
-        }
-        return (double) wins / plays;
-    }
-
+    @Override
     public int getLosses() {
         return losses;
     }
 
-    public void setLosses(int losses) {
-        this.losses = losses;
-    }
-
+    @Override
     public int getPlays() {
         return plays;
     }
 
-    public void setPlays(int plays) {
-        this.plays = plays;
-    }
-
-    public long getDHP() {
-        return damage + healing + absorbed;
-    }
-
-    public long getDHPPerGame() {
-        return plays <= 0 ? 0 : (damage + healing + absorbed) / plays;
-    }
-
+    @Override
     public long getDamage() {
         return damage;
     }
 
-    public void setDamage(long damage) {
-        this.damage = damage;
-    }
-
+    @Override
     public long getHealing() {
         return healing;
     }
 
-    public void setHealing(long healing) {
-        this.healing = healing;
-    }
-
+    @Override
     public long getAbsorbed() {
         return absorbed;
     }
 
-    public void setAbsorbed(long absorbed) {
-        this.absorbed = absorbed;
-    }
-
+    @Override
     public long getExperience() {
         return experience;
     }
 
+    @Override
     public void setExperience(long experience) {
         this.experience = experience;
     }

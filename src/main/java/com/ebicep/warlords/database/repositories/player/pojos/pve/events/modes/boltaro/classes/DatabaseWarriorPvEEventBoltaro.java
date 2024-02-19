@@ -1,8 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabaseBasePvEEventBoltaro;
 
 public class DatabaseWarriorPvEEventBoltaro extends DatabaseBasePvEEventBoltaro implements DatabaseWarlordsSpecs {
@@ -16,7 +16,7 @@ public class DatabaseWarriorPvEEventBoltaro extends DatabaseBasePvEEventBoltaro 
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEventBoltaro[]{berserker, defender, revenant};
     }
 

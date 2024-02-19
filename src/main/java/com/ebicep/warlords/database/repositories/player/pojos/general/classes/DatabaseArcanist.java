@@ -1,12 +1,11 @@
 
 package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
-public class DatabaseArcanist extends DatabaseBaseGeneral implements DatabaseWarlordsSpecs {
+public class DatabaseArcanist extends DatabaseBaseGeneral {
 
     private DatabaseSpecialization conjurer = new DatabaseSpecialization(SkillBoosts.POISONOUS_HEX);
     private DatabaseSpecialization sentinel = new DatabaseSpecialization(SkillBoosts.FORTIFYING_HEX);

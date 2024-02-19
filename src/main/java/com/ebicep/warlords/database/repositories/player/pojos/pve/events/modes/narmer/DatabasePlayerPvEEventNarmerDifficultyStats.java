@@ -90,8 +90,8 @@ public class DatabasePlayerPvEEventNarmerDifficultyStats extends PvEEventNarmerD
         this.experiencePvE += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //UPDATE PLAYER COUNT STATS
         int playerCount = databaseGame.getBasePlayers().size();

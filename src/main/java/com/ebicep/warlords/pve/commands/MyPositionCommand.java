@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
@@ -38,7 +39,7 @@ public class MyPositionCommand extends BaseCommand {
     private static void appendStats(
             StatLeaderboardTarget statLeaderboardTarget,
             DatabasePlayer databasePlayer,
-            PvEDatabaseStatInformation statInformation,
+            PvEStats statInformation,
             String prefix,
             TextComponent.Builder stats
     ) {
@@ -183,15 +184,15 @@ public class MyPositionCommand extends BaseCommand {
     static class StatLeaderboardTarget {
         private final String leaderboardName;
         private final String displayName;
-        private final Function<PvEDatabaseStatInformation, String> statFunction;
+        private final Function<PvEStats, String> statFunction;
 
-        public StatLeaderboardTarget(String leaderboardName, Function<PvEDatabaseStatInformation, String> statFunction) {
+        public StatLeaderboardTarget(String leaderboardName, Function<PvEStats, String> statFunction) {
             this.leaderboardName = leaderboardName;
             this.displayName = leaderboardName;
             this.statFunction = statFunction;
         }
 
-        StatLeaderboardTarget(String leaderboardName, String displayName, Function<PvEDatabaseStatInformation, String> statFunction) {
+        StatLeaderboardTarget(String leaderboardName, String displayName, Function<PvEStats, String> statFunction) {
             this.leaderboardName = leaderboardName;
             this.displayName = displayName;
             this.statFunction = statFunction;
@@ -205,7 +206,7 @@ public class MyPositionCommand extends BaseCommand {
             return displayName;
         }
 
-        public Function<PvEDatabaseStatInformation, String> getStatFunction() {
+        public Function<PvEStats, String> getStatFunction() {
             return statFunction;
         }
     }

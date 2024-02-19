@@ -1,8 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.DatabaseBasePvEEventNarmer;
 
 public class DatabaseWarriorPvEEventNarmer extends DatabaseBasePvEEventNarmer implements DatabaseWarlordsSpecs {
@@ -16,7 +16,7 @@ public class DatabaseWarriorPvEEventNarmer extends DatabaseBasePvEEventNarmer im
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEventNarmer[]{berserker, defender, revenant};
     }
 

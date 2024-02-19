@@ -1,11 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf.classses;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCTF;
 
-public class DatabaseArcanistCTF extends DatabaseBaseCTF implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistCTF implements StatsWarlordsSpecs<DatabaseBaseCTF> {
 
     private DatabaseBaseCTF conjurer = new DatabaseBaseCTF();
     private DatabaseBaseCTF sentinel = new DatabaseBaseCTF();
@@ -16,7 +15,7 @@ public class DatabaseArcanistCTF extends DatabaseBaseCTF implements DatabaseWarl
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBaseCTF[] getSpecs() {
         return new DatabaseBaseCTF[]{conjurer, sentinel, luminary};
     }
 

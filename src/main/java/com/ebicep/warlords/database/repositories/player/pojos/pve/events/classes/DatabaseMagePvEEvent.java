@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabaseBasePvEEvent;
 
 public class DatabaseMagePvEEvent extends DatabaseBasePvEEvent implements DatabaseWarlordsSpecs {
@@ -15,7 +15,7 @@ public class DatabaseMagePvEEvent extends DatabaseBasePvEEvent implements Databa
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEvent[]{pyromancer, cryomancer, aquamancer};
     }
 

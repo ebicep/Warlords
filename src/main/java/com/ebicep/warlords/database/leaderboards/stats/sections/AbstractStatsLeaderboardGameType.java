@@ -3,8 +3,8 @@ package com.ebicep.warlords.database.leaderboards.stats.sections;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.PvELeaderboard;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
@@ -19,7 +19,7 @@ import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLo
  * <p>ALL
  * <p>CTF
  */
-public abstract class AbstractStatsLeaderboardGameType<T extends AbstractDatabaseStatInformation & DatabaseWarlordsClasses<?>> {
+public abstract class AbstractStatsLeaderboardGameType<T extends Stats & DatabaseWarlordsClasses<?>> {
 
     protected final List<StatsLeaderboardCategory<T>> gameTypeCategories;
 

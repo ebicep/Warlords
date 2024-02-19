@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabaseBasePvEEvent;
 
 public class DatabasePaladinPvEEvent extends DatabaseBasePvEEvent implements DatabaseWarlordsSpecs {
@@ -15,7 +15,7 @@ public class DatabasePaladinPvEEvent extends DatabaseBasePvEEvent implements Dat
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEvent[]{avenger, crusader, protector};
     }
 

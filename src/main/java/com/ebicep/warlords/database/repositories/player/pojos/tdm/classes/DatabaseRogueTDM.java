@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabaseBaseTDM;
 
 public class DatabaseRogueTDM extends DatabaseBaseTDM implements DatabaseWarlordsSpecs {
@@ -15,7 +15,7 @@ public class DatabaseRogueTDM extends DatabaseBaseTDM implements DatabaseWarlord
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBaseTDM[]{assassin, vindicator, apothecary};
     }
 

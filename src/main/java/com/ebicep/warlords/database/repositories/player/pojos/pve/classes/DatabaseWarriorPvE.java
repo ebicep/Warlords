@@ -1,11 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabaseBasePvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
 
-public class DatabaseWarriorPvE extends DatabaseBasePvE implements DatabaseWarlordsSpecs {
+public class DatabaseWarriorPvE implements PvEStatsWarlordsSpecs<DatabaseBasePvE> {
 
     private DatabaseBasePvE berserker = new DatabaseBasePvE();
     private DatabaseBasePvE defender = new DatabaseBasePvE();
@@ -16,7 +15,7 @@ public class DatabaseWarriorPvE extends DatabaseBasePvE implements DatabaseWarlo
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvE[] getSpecs() {
         return new DatabaseBasePvE[]{berserker, defender, revenant};
     }
 

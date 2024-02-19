@@ -2,8 +2,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabaseBaseTDM;
 
 public class DatabaseArcanistTDM extends DatabaseBaseTDM implements DatabaseWarlordsSpecs {
@@ -17,7 +17,7 @@ public class DatabaseArcanistTDM extends DatabaseBaseTDM implements DatabaseWarl
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBaseTDM[]{conjurer, sentinel, luminary};
     }
 

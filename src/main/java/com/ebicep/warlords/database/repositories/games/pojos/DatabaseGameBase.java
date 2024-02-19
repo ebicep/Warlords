@@ -299,7 +299,15 @@ public abstract class DatabaseGameBase {
                             activeCollection
                     );
                 } else {
-                    databasePlayer.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, activeCollection);
+                    // TODO check this
+                    databasePlayer.updateCustomStats(databasePlayer,
+                            databaseGame,
+                            databaseGame.getGameMode(),
+                            gamePlayer,
+                            databaseGame.getPlayerGameResult(gamePlayer),
+                            multiplier,
+                            activeCollection
+                    );
                 }
                 if (activeCollection == PlayersCollections.LIFETIME) {
                     List<Achievement.AbstractAchievementRecord<?>> achievementRecords = Arrays

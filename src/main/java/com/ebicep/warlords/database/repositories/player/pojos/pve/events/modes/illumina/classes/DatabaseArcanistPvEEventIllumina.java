@@ -1,8 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabaseBasePvEEventIllumina;
 
 public class DatabaseArcanistPvEEventIllumina extends DatabaseBasePvEEventIllumina implements DatabaseWarlordsSpecs {
@@ -16,7 +16,7 @@ public class DatabaseArcanistPvEEventIllumina extends DatabaseBasePvEEventIllumi
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEventIllumina[]{conjurer, sentinel, luminary};
     }
 
