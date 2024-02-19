@@ -4,21 +4,21 @@ import com.ebicep.warlords.pve.mobs.Mob;
 
 public enum TowerDefenseMobInfo {
 
-    ZOMBIE(Mob.TD_ZOMBIE, 100, 100, 0),
-    SKELETON(Mob.TD_SKELETON, 100, 100, 0),
+    ZOMBIE(Mob.TD_ZOMBIE, 100, 100, 10),
+    SKELETON(Mob.TD_SKELETON, 100, 100, 10),
 
     ;
 
     private final Mob mob;
-    private final int cost;
-    private final int expReward;
-    private final int unlockCost; // exp
+    private final int cost; // how much it costs to spawn
+    private final int incomeModifier; // how it affects the income rate
+    private final int spawnDelay; // ticks
 
-    TowerDefenseMobInfo(Mob mob, int cost, int expReward, int unlockCost) {
+    TowerDefenseMobInfo(Mob mob, int cost, int incomeModifier, int spawnDelay) {
         this.mob = mob;
         this.cost = cost;
-        this.expReward = expReward;
-        this.unlockCost = unlockCost;
+        this.incomeModifier = incomeModifier;
+        this.spawnDelay = spawnDelay;
     }
 
     public Mob getMob() {
@@ -29,11 +29,11 @@ public enum TowerDefenseMobInfo {
         return cost;
     }
 
-    public int getExpReward() {
-        return expReward;
+    public int getIncomeModifier() {
+        return incomeModifier;
     }
 
-    public int getUnlockCost() {
-        return unlockCost;
+    public int getSpawnDelay() {
+        return spawnDelay;
     }
 }

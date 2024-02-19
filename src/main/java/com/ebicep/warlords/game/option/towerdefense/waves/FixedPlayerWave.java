@@ -14,14 +14,14 @@ public class FixedPlayerWave implements TowerDefenseWave {
     private int waveActionIndex = 0;
     private boolean sent = false;
 
-    public FixedPlayerWave add(Mob mob, boolean fill, WarlordsEntity spawner) {
+    public int add(Mob mob, int delay, boolean fill, WarlordsEntity spawner) {
         int spawnActions = actions.size() / 2;
         int amount = fill ? Math.max(TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT - (spawnActions - waveActionIndex / 2), 0) : 1;
         for (int i = 0; i < amount; i++) {
+            actions.add(new TowerDefenseDelayWaveAction(delay));
             actions.add(new TowerDefenseSpawnWaveAction(mob, spawner));
-            actions.add(new TowerDefenseDelayWaveAction(10));
         }
-        return this;
+        return amount;
     }
 
     public FixedPlayerWave removeLast(Mob mob, int amount) {

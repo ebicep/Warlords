@@ -14,34 +14,38 @@ import java.util.Map;
 public class TowerDefensePlayerInfo {
 
     // in game
-    private float currentExp;
-    private int currentInsigniaRate = 20; // per second
+    private float currentIncome;
+    private float incomeRate = 20; // per second
     private final FixedPlayerWave playerWave = new FixedPlayerWave(); // list of sent waves
     private BukkitTask waveTask;
     // stats
-    private float totalExp;
-    private float insigniaSpent;
+    private float totalIncomeGained;
+    private float totalIncomeSpent;
     private final Map<TowerRegistry, TowerStats> towerStats = new HashMap<>();
     private final Map<Mob, MobStats> mobStats = new HashMap<>();
 
-    public float getCurrentExp() {
-        return currentExp;
+    public float getCurrentIncome() {
+        return currentIncome;
     }
 
-    public void addCurrentExp(float exp) {
-        this.currentExp += exp;
+    public void addIncome(float exp) {
+        this.currentIncome += exp;
     }
 
-    public void setCurrentExp(float currentExp) {
-        this.currentExp = currentExp;
+    public void setCurrentIncome(float currentIncome) {
+        this.currentIncome = currentIncome;
     }
 
-    public int getCurrentInsigniaRate() {
-        return currentInsigniaRate;
+    public float getIncomeRate() {
+        return incomeRate;
     }
 
-    public void setCurrentInsigniaRate(int currentInsigniaRate) {
-        this.currentInsigniaRate = currentInsigniaRate;
+    public void addIncomeRate(float incomeRate) {
+        this.incomeRate += incomeRate;
+    }
+
+    public void setIncomeRate(float incomeRate) {
+        this.incomeRate = incomeRate;
     }
 
     public FixedPlayerWave getPlayerWave() {
@@ -56,12 +60,12 @@ public class TowerDefensePlayerInfo {
         this.waveTask = waveTask;
     }
 
-    public float getTotalExp() {
-        return totalExp;
+    public float getTotalIncomeGained() {
+        return totalIncomeGained;
     }
 
-    public float getInsigniaSpent() {
-        return insigniaSpent;
+    public float getTotalIncomeSpent() {
+        return totalIncomeSpent;
     }
 
     public Map<TowerRegistry, TowerStats> getTowerStats() {

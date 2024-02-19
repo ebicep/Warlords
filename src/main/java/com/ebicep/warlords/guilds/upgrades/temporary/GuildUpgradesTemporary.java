@@ -82,7 +82,8 @@ public enum GuildUpgradesTemporary implements GuildUpgrade {
                     if (!event.getEventFlags().contains(EventFlags.GUILD)) {
                         return;
                     }
-                    event.getCurrencyToAdd().set((int) (event.getCurrencyToAdd().get() * getValueFromTier(tier)));
+                    float currencyToAdd = event.getCurrencyToAdd();
+                    event.setCurrencyToAdd((int) (currencyToAdd * getValueFromTier(tier)));
                 }
 
             });

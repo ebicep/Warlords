@@ -35,7 +35,7 @@ public class TowerDefenseCommand extends BaseCommand {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (Option option : game.getOptions()) {
             if (option instanceof TowerDefenseOption towerDefenseOption) {
-                towerDefenseOption.getPlayerInfo(target).setCurrentExp(amount);
+                towerDefenseOption.getPlayerInfo(target).setCurrentIncome(amount);
             }
         }
     }

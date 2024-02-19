@@ -15,6 +15,9 @@ import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
+import com.ebicep.warlords.util.java.NumberFormat;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 
 import java.util.EnumSet;
@@ -104,7 +107,21 @@ public class TowerDefenseTest extends GameMap {
         for (Option option : options) {
             if (option instanceof TowerDefenseOption towerDefenseOption) {
                 options.add(new CurrencyOnEventOption()
-                        .setPerSecond(warlordsEntity -> towerDefenseOption.getPlayerInfo(warlordsEntity).getCurrentInsigniaRate()));
+                        .setCurrentCurrencyDisplay(warlordsEntity -> Component.text("Insignia: ", NamedTextColor.YELLOW)
+                                                                              .append(Component.text("❂ " + NumberFormat.formatOptionalHundredths(warlordsEntity.getCurrency()),
+                                                                                      NamedTextColor.GOLD
+                                                                              )))
+                        .setCurrencyRate(new CurrencyOnEventOption.CurrencyRate(
+                                20 * 5,
+                                warlordsEntity -> towerDefenseOption.getPlayerInfo(warlordsEntity).getIncomeRate(),
+                                warlordsEntity -> Component.text("Income: ", NamedTextColor.DARK_AQUA)
+                                                           .append(Component.text("❂ " + NumberFormat.formatOptionalHundredths(towerDefenseOption.getPlayerInfo(warlordsEntity)
+                                                                                                                                                 .getIncomeRate()),
+                                                                   NamedTextColor.GOLD
+                                                           )),
+                                nextCurrency -> Component.text("Next Income: ", NamedTextColor.GRAY).append(Component.text(nextCurrency, NamedTextColor.WHITE))
+                        ))
+                );
                 break;
             }
         }

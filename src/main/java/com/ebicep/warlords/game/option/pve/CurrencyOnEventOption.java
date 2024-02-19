@@ -25,7 +25,7 @@ import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +44,32 @@ public class CurrencyOnEventOption implements Option, Listener {
     private int startingCurrency = 0;
     private boolean scaleWithPlayerCount = false;
     private boolean disableGuildBonus = false;
-    private Function<WarlordsEntity, Integer> currencyPerSecond = warlordsEntity -> 0;
+    private Function<WarlordsEntity, Component> currentCurrencyDisplay = warlordsEntity ->
+            Component.text("Insignia: ").append(Component.text("❂ " + NumberFormat.addCommas(warlordsEntity.getCurrency()), NamedTextColor.GOLD));
+    private CurrencyRate currencyRate;
+    private int ticksElapsed = 0;
+
+    public static class CurrencyRate {
+        private int period = -1;
+        private Function<WarlordsEntity, Float> playerRate = null;
+        private Function<WarlordsEntity, Component> currencyRateDisplay = null;
+        private Function<Integer, Component> nextCurrencyDisplay = null;
+
+        public CurrencyRate() {
+        }
+
+        public CurrencyRate(
+                int period,
+                Function<WarlordsEntity, Float> playerRate,
+                Function<WarlordsEntity, Component> currencyRateDisplay,
+                Function<Integer, Component> nextCurrencyDisplay
+        ) {
+            this.period = period;
+            this.playerRate = playerRate;
+            this.currencyRateDisplay = currencyRateDisplay;
+            this.nextCurrencyDisplay = nextCurrencyDisplay;
+        }
+    }
 
     public CurrencyOnEventOption() {
     }
@@ -87,8 +112,13 @@ public class CurrencyOnEventOption implements Option, Listener {
         return this;
     }
 
-    public CurrencyOnEventOption setPerSecond(Function<WarlordsEntity, Integer> currencyPerSecond) {
-        this.currencyPerSecond = currencyPerSecond;
+    public CurrencyOnEventOption setCurrentCurrencyDisplay(Function<WarlordsEntity, Component> currentCurrencyDisplay) {
+        this.currentCurrencyDisplay = currentCurrencyDisplay;
+        return this;
+    }
+
+    public CurrencyOnEventOption setCurrencyRate(CurrencyRate currencyRate) {
+        this.currencyRate = currencyRate;
         return this;
     }
 
@@ -100,12 +130,20 @@ public class CurrencyOnEventOption implements Option, Listener {
             @Nonnull
             @Override
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                List<Component> lines = new ArrayList<>();
                 if (player != null) {
-                    return Collections.singletonList(
-                            Component.text("Insignia: ")
-                                     .append(Component.text("❂ " + NumberFormat.addCommas(player.getCurrency()), NamedTextColor.GOLD)));
+                    lines.add(currentCurrencyDisplay.apply(player));
+                    if (currencyRate != null) {
+                        if (currencyRate.playerRate != null) {
+                            lines.add(currencyRate.currencyRateDisplay.apply(player));
+                        }
+                        int period = currencyRate.period;
+                        if (period != -1) {
+                            lines.add(currencyRate.nextCurrencyDisplay.apply((period - (ticksElapsed % period) + 20) / 20));
+                        }
+                    }
                 }
-                return Collections.singletonList(Component.empty());
+                return lines;
             }
         });
     }
@@ -119,15 +157,20 @@ public class CurrencyOnEventOption implements Option, Listener {
                     this.cancel();
                     return;
                 }
-                game.forEachOnlineWarlordsPlayer(warlordsPlayer -> {
-                    Integer insignia = currencyPerSecond.apply(warlordsPlayer);
-                    if (insignia == 0) {
-                        return;
+                if (currencyRate != null) {
+                    if (ticksElapsed % currencyRate.period == 0) {
+                        game.forEachOnlineWarlordsPlayer(warlordsPlayer -> {
+                            Float insignia = currencyRate.playerRate.apply(warlordsPlayer);
+                            if (insignia == 0) {
+                                return;
+                            }
+                            warlordsPlayer.addCurrency(insignia, false);
+                        });
                     }
-                    warlordsPlayer.addCurrency(insignia, true);
-                });
+                }
+                ticksElapsed++;
             }
-        }.runTaskTimer(0, 20L);
+        }.runTaskTimer(0, 0L);
     }
 
     @Override

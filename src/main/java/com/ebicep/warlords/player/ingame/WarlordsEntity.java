@@ -2904,13 +2904,14 @@ public abstract class WarlordsEntity {
         addCurrency(currency, false);
     }
 
-    public void addCurrency(int currency, boolean noMessage) {
-        AtomicInteger currencyToAdd = new AtomicInteger(currency);
-        Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyEvent(this, currencyToAdd));
-        this.currency += currencyToAdd.get();
+    public void addCurrency(float currency, boolean noMessage) {
+        WarlordsAddCurrencyEvent currencyEvent = new WarlordsAddCurrencyEvent(this, currency);
+        Bukkit.getPluginManager().callEvent(currencyEvent);
+        float currencyToAdd = currencyEvent.getCurrencyToAdd();
+        this.currency += currencyToAdd;
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid, this instanceof WarlordsPlayer && getEntity() instanceof Player);
-        if (databasePlayer.getChatInsigniaMode() == Settings.ChatSettings.ChatInsignia.ALL) {
-            sendMessage(Component.text("+" + currencyToAdd.get() + " ❂ Insignia", NamedTextColor.GOLD));
+        if (!noMessage && databasePlayer.getChatInsigniaMode() == Settings.ChatSettings.ChatInsignia.ALL) {
+            sendMessage(Component.text("+" + NumberFormat.formatOptionalHundredths(currencyToAdd) + " ❂ Insignia", NamedTextColor.GOLD));
         }
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyFinalEvent(this));
     }

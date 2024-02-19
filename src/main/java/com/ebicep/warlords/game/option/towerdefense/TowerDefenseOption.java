@@ -20,7 +20,6 @@ import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -86,22 +85,6 @@ public class TowerDefenseOption implements PveOption, Listener {
                               .collect(Collectors.toList());
             }
         });
-        game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(16, "exp") {
-            @Nonnull
-            @Override
-            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                if (player != null) {
-                    TowerDefensePlayerInfo info = getPlayerInfo(player);
-                    return Collections.singletonList(Component.text("Exp: ").append(Component.text(NumberFormat.addCommas(info.getCurrentExp()), NamedTextColor.DARK_AQUA)));
-                }
-                return Collections.singletonList(Component.empty());
-            }
-
-//            @Override
-//            public boolean emptyLinesBetween() {
-//                return false;
-//            }
-        });
     }
 
     @EventHandler
@@ -151,7 +134,9 @@ public class TowerDefenseOption implements PveOption, Listener {
                 }
 
                 towerBuildOption.getBuiltTowers().forEach((tower, spawnTick) -> tower.whileActive(ticksElapsed.get() - spawnTick));
+
                 ticksElapsed.incrementAndGet();
+
                 mobTick();
                 if (ticksElapsed.get() % 5 == 0) {
                     towerDefenseSpawner.renderPaths();

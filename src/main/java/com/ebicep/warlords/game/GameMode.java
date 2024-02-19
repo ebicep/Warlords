@@ -663,6 +663,7 @@ public enum GameMode {
             options.add(new GameFreezeOption());
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
+            options.add(new RecordTimeElapsedOption());
 
             options.add(new WinByLastStandingCastleOption());
 

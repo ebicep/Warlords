@@ -20,12 +20,9 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public class TowerDefenseMenu {
 
@@ -90,51 +87,6 @@ public class TowerDefenseMenu {
                 }
         );
 
-        int currentRate = playerInfo.getCurrentInsigniaRate();
-        List<TowerDefenseUtils.RateInfo> rateCosts = TowerDefenseUtils.INSIGNIA_RATE_EXP_COST;
-        for (int i = 0; i < rateCosts.size(); i++) {
-            TowerDefenseUtils.RateInfo rateInfo = rateCosts.get(i);
-            int rate = rateInfo.rate();
-            int expCost = rateInfo.expCost();
-            if (currentRate != rate) {
-                continue;
-            }
-            List<Component> lore = new ArrayList<>();
-            lore.add(Component.empty());
-            lore.add(Component.text("Current Rate: ", NamedTextColor.GRAY).append(Component.text(rate + " ❂/sec", NamedTextColor.GOLD)));
-            Material material;
-            BiConsumer<Menu, InventoryClickEvent> clickHandler;
-            if (i == rateCosts.size() - 1) {
-                material = rateInfo.material();
-                lore.add(Component.empty());
-                lore.add(Component.text("MAXED!", NamedTextColor.AQUA, TextDecoration.BOLD));
-                clickHandler = (m, e) -> {
-
-                };
-            } else {
-                TowerDefenseUtils.RateInfo nextRateInfo = rateCosts.get(i + 1);
-                material = nextRateInfo.material();
-                lore.add(Component.text("Next Rate: ").append(Component.text(nextRateInfo.rate() + " ❂/sec", NamedTextColor.GOLD)));
-                lore.add(Component.empty());
-                lore.add(Component.text("Cost: ").append(Component.text(expCost + " exp", NamedTextColor.DARK_AQUA)));
-                clickHandler = (m, e) -> {
-                    if (playerInfo.getCurrentExp() >= expCost) {
-                        playerInfo.addCurrentExp(-expCost);
-                        playerInfo.setCurrentInsigniaRate(nextRateInfo.rate());
-                        openMarket(player, warlordsEntity, playerInfo);
-                    }
-                };
-            }
-            menu.setItem(4, 2,
-                    new ItemBuilder(material)
-                            .name(Component.text("Upgrade Insignia Rate", NamedTextColor.GREEN))
-                            .lore(lore)
-                            .get(),
-                    clickHandler
-            );
-        }
-
-
         // TODO buying special effects
 
         menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
@@ -155,14 +107,15 @@ public class TowerDefenseMenu {
             TowerDefenseMobInfo mobInfos = mobGroup.mobsWithCost;
             Mob mob = mobInfos.getMob();
             int cost = mobInfos.getCost();
-            int expReward = mobInfos.getExpReward();
+            int expReward = mobInfos.getIncomeModifier();
+            int spawnDelay = mobInfos.getSpawnDelay();
             menu.setItem(x, y,
                     new ItemBuilder(mobGroup.head)
                             .lore(
                                     Component.text("MOB DESCRIPTION"),
                                     Component.empty(),
                                     ComponentBuilder.create("Summon Cost: ")
-                                                    .text(cost + " ❂", NamedTextColor.GOLD)
+                                                    .text("❂ " + cost, NamedTextColor.GOLD)
                                                     .build(),
                                     ComponentBuilder.create("Health: ")
                                                     .text(NumberFormat.formatOptionalTenths(mob.maxHealth), NamedTextColor.GREEN)
@@ -175,7 +128,7 @@ public class TowerDefenseMenu {
                                     ComponentBuilder.create("Speed: ")
                                                     .text(NumberFormat.formatOptionalHundredths(mob.walkSpeed), NamedTextColor.WHITE)
                                                     .build(),
-                                    ComponentBuilder.create("Exp Reward: ")
+                                    ComponentBuilder.create("Income: ")
                                                     .text(NumberFormat.formatOptionalTenths(expReward), NamedTextColor.DARK_AQUA)
                                                     .build(),
                                     Component.empty(),
@@ -195,7 +148,17 @@ public class TowerDefenseMenu {
                                 player.sendMessage(Component.text("You have reached the maximum amount of mobs you can spawn at a time!", NamedTextColor.RED));
                                 return;
                             }
-                            playerWave.add(mob, e.isShiftClick(), warlordsEntity);
+                            int amountSpawned = playerWave.add(mob, spawnDelay, e.isShiftClick(), warlordsEntity);
+                            if (amountSpawned > 0) {
+                                playerInfo.addIncomeRate(expReward * amountSpawned);
+                                warlordsEntity.sendMessage(ComponentBuilder.create(amountSpawned + "x ", NamedTextColor.WHITE)
+                                                                           .text(mob.name, NamedTextColor.GREEN)
+                                                                           .text(" spawned (", NamedTextColor.GRAY)
+                                                                           .text("+" + (expReward * amountSpawned) + " income", NamedTextColor.DARK_AQUA)
+                                                                           .text(")", NamedTextColor.GRAY)
+                                                                           .build()
+                                );
+                            }
                             openSummonTroopsMenu(player, warlordsEntity, spawner, playerInfo);
                         }
                     }
