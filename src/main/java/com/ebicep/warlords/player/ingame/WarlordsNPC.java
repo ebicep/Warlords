@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 public final class WarlordsNPC extends WarlordsEntity {
 
@@ -368,6 +369,11 @@ public final class WarlordsNPC extends WarlordsEntity {
 
     public AbstractMob getMob() {
         return mob;
+    }
+
+    @Override
+    protected void addToSpecMinuteStats(Consumer<PlayerStatisticsMinute> consumer) {
+        // override to do nothing, npcs dont need stats, save memory
     }
 
     public static class CustomHologramLine {

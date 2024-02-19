@@ -1978,23 +1978,23 @@ public abstract class WarlordsEntity {
 
     public void addKill() {
         this.minuteStats.addKill();
+        addToSpecMinuteStats(PlayerStatisticsMinute::addKill);
+    }
+
+    protected void addToSpecMinuteStats(Consumer<PlayerStatisticsMinute> consumer) {
         if (specClass != null) {
-            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addKill();
+            consumer.accept(specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()));
         }
     }
 
     public void addAssist() {
         this.minuteStats.addAssist();
-        if (specClass != null) {
-            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addAssist();
-        }
+        addToSpecMinuteStats(PlayerStatisticsMinute::addAssist);
     }
 
     public void addDeath() {
         this.minuteStats.addDeath();
-        if (specClass != null) {
-            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addDeath();
-        }
+        addToSpecMinuteStats(PlayerStatisticsMinute::addDeath);
     }
 
     public void addDamage(float amount, boolean onCarrier) {
@@ -2002,11 +2002,10 @@ public abstract class WarlordsEntity {
         if (onCarrier) {
             this.minuteStats.addDamageOnCarrier((long) amount);
         }
-        if (specClass != null) {
-            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addDamage((long) amount);
-            if (onCarrier) {
-                specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addDamageOnCarrier((long) amount);
-            }
+
+        addToSpecMinuteStats(entries -> entries.addDamage((long) amount));
+        if (onCarrier) {
+            addToSpecMinuteStats(entries -> entries.addDamageOnCarrier((long) amount));
         }
     }
 
@@ -2015,26 +2014,20 @@ public abstract class WarlordsEntity {
         if (onCarrier) {
             this.minuteStats.addHealingOnCarrier((long) amount);
         }
-        if (specClass != null) {
-            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addHealing((long) amount);
-            if (onCarrier) {
-                specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addHealingOnCarrier((long) amount);
-            }
+        addToSpecMinuteStats(entries -> entries.addHealing((long) amount));
+        if (onCarrier) {
+            addToSpecMinuteStats(entries -> entries.addHealingOnCarrier((long) amount));
         }
     }
 
     public void addDamageTaken(float amount) {
         this.minuteStats.addDamageTaken((long) amount);
-        if (specClass != null) {
-            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addDamageTaken((long) amount);
-        }
+        addToSpecMinuteStats(entries -> entries.addDamageTaken((long) amount));
     }
 
     public void addAbsorbed(float amount) {
         this.minuteStats.addAbsorbed((long) amount);
-        if (specClass != null) {
-            specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()).addAbsorbed((long) amount);
-        }
+        addToSpecMinuteStats(entries -> entries.addAbsorbed((long) amount));
     }
 
     /**
