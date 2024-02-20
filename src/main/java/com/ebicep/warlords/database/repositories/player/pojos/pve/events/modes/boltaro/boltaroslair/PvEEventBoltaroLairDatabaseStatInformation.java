@@ -21,7 +21,7 @@ public class PvEEventBoltaroLairDatabaseStatInformation extends PvEEventBoltaroD
     protected int totalWavesCleared;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -31,7 +31,7 @@ public class PvEEventBoltaroLairDatabaseStatInformation extends PvEEventBoltaroD
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventBoltaroLair;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventBoltarosLair;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         if (multiplier > 0) {
             this.highestWaveCleared = Math.max((((DatabaseGamePvEEventBoltaroLair) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);

@@ -2,8 +2,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.DatabaseBasePvEEventGardenOfHesperidesTartarus;
+
+import java.util.List;
 
 public class DatabaseArcanistPvEEventGardenOfHesperidesTartarus extends DatabaseBasePvEEventGardenOfHesperidesTartarus implements DatabaseWarlordsSpecs {
 
@@ -16,7 +17,7 @@ public class DatabaseArcanistPvEEventGardenOfHesperidesTartarus extends Database
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List> getSpecs() {
         return new DatabaseBasePvEEventGardenOfHesperidesTartarus[]{conjurer, sentinel, luminary};
     }
 

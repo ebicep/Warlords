@@ -26,8 +26,8 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     protected Map<String, Long> mobAssists = new LinkedHashMap<>();
     @Field("mob_deaths")
     protected Map<String, Long> mobDeaths = new LinkedHashMap<>();
-
-    //TOP STATS
+// TODO
+//TOP STATS
     @Field("most_damage_in_round")
     protected long mostDamageInRound;
 
@@ -36,7 +36,7 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     }
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -93,15 +93,15 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
         return mobDeaths;
     }
 
-    @Override
-    public long getMostDamageInRound() {
-        return mostDamageInRound;
-    }
-
-    @Override
-    public void setMostDamageInRound(long mostDamageInRound) {
-        this.mostDamageInRound = mostDamageInRound;
-    }
+//    @Override
+//    public long getMostDamageInRound() {
+//        return mostDamageInRound;
+//    }
+//
+//    @Override
+//    public void setMostDamageInRound(long mostDamageInRound) {
+//        this.mostDamageInRound = mostDamageInRound;
+//    }
 
     public void addTimePlayed(long time) {
         this.totalTimePlayed += time;

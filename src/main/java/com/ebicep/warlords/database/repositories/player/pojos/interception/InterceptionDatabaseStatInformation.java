@@ -1,7 +1,5 @@
 package com.ebicep.warlords.database.repositories.player.pojos.interception;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayerInterception;
@@ -11,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class InterceptionDatabaseStatInformation extends AbstractDatabaseStatInformation {
+public class InterceptionDatabaseStatInformation extends AbstractDatabaseStatInformation<DatabaseGameInterception, DatabaseGamePlayerInterception> implements InterceptionStats {
 
     @Field("points_captured")
     private int pointsCaptured;
@@ -24,21 +22,20 @@ public class InterceptionDatabaseStatInformation extends AbstractDatabaseStatInf
     }
 
     @Override
-    public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameInterception databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerInterception gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGameInterception;
-        assert gamePlayer instanceof DatabaseGamePlayerInterception;
-
-        this.pointsCaptured += ((DatabaseGamePlayerInterception) gamePlayer).getPointsCaptured() * multiplier;
-        this.pointsDefended += ((DatabaseGamePlayerInterception) gamePlayer).getPointsDefended() * multiplier;
-        this.totalTimePlayed += (long) (900 - ((DatabaseGameInterception) databaseGame).getTimeLeft()) * multiplier;
+        this.pointsCaptured += gamePlayer.getPointsCaptured() * multiplier;
+        this.pointsDefended += gamePlayer.getPointsDefended() * multiplier;
+        this.totalTimePlayed += (long) (900 - databaseGame.getTimeLeft()) * multiplier;
     }
+
 
     public int getPointsCaptured() {
         return pointsCaptured;

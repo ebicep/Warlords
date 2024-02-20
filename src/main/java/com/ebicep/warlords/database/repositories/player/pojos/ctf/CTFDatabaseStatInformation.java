@@ -1,7 +1,5 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayerCTF;
@@ -11,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class CTFDatabaseStatInformation extends AbstractDatabaseStatInformation {
+public class CTFDatabaseStatInformation extends AbstractDatabaseStatInformation<DatabaseGameCTF, DatabaseGamePlayerCTF> implements CTFStats {
 
     @Field("flags_captured")
     private int flagsCaptured = 0;
@@ -30,26 +28,24 @@ public class CTFDatabaseStatInformation extends AbstractDatabaseStatInformation 
     }
 
     @Override
-    public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameCTF databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerCTF gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGameCTF;
-        assert gamePlayer instanceof DatabaseGamePlayerCTF;
-
-        this.flagsCaptured += ((DatabaseGamePlayerCTF) gamePlayer).getFlagCaptures() * multiplier;
-        this.flagsReturned += ((DatabaseGamePlayerCTF) gamePlayer).getFlagReturns() * multiplier;
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        this.flagsCaptured += gamePlayer.getFlagCaptures() * multiplier;
+        this.flagsReturned += gamePlayer.getFlagReturns() * multiplier;
         this.totalBlocksTravelled += (long) gamePlayer.getBlocksTravelled() * multiplier;
         if (multiplier > 0 && this.mostBlocksTravelled < gamePlayer.getBlocksTravelled()) {
             this.mostBlocksTravelled = gamePlayer.getBlocksTravelled();
         }
-        this.totalTimeInRespawn += (long) ((DatabaseGamePlayerCTF) gamePlayer).getSecondsInRespawn() * multiplier;
-        this.totalTimePlayed += (long) (900 - ((DatabaseGameCTF) databaseGame).getTimeLeft()) * multiplier;
-
+        this.totalTimeInRespawn += (long) gamePlayer.getSecondsInRespawn() * multiplier;
+        this.totalTimePlayed += (long) (900 - databaseGame.getTimeLeft()) * multiplier;
     }
 
     public int getFlagsCaptured() {

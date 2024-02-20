@@ -18,7 +18,7 @@ public class DatabasePlayerPvEEventLibraryArchivesStats extends DatabasePlayerPv
     private Map<Long, DatabasePlayerPvEEventLibraryArchivesDifficultyStats> eventStats = new LinkedHashMap<>();
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -26,7 +26,7 @@ public class DatabasePlayerPvEEventLibraryArchivesStats extends DatabasePlayerPv
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         getEvent(DatabaseGameEvent.currentGameEvent.getStartDateSecond()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
     }

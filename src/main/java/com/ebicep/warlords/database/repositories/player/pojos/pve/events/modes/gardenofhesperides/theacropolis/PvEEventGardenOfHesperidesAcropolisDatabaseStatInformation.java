@@ -15,7 +15,7 @@ import java.util.Map;
 public class PvEEventGardenOfHesperidesAcropolisDatabaseStatInformation extends PvEEventGardenOfHesperidesDatabaseStatInformation {
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -25,7 +25,7 @@ public class PvEEventGardenOfHesperidesAcropolisDatabaseStatInformation extends 
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventTheAcropolis;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventTheAcropolis;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
     }
 

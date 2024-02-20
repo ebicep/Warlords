@@ -1,7 +1,5 @@
 package com.ebicep.warlords.database.repositories.player.pojos.siege;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
@@ -11,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class SiegeDatabaseStatInformation extends AbstractDatabaseStatInformation {
+public class SiegeDatabaseStatInformation extends AbstractDatabaseStatInformation<DatabaseGameSiege, DatabaseGamePlayerSiege> implements SiegeStats {
 
     @Field("points_captured")
     private int pointsCaptured;
@@ -39,33 +37,33 @@ public class SiegeDatabaseStatInformation extends AbstractDatabaseStatInformatio
     }
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer,
-            DatabaseGameBase databaseGame,
+            DatabaseGameSiege databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerSiege gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGameSiege;
-        assert gamePlayer instanceof DatabaseGamePlayerSiege;
-
-        DatabaseGamePlayerSiege gamePlayerSiege = (DatabaseGamePlayerSiege) gamePlayer;
-        this.pointsCaptured += gamePlayerSiege.getPointsCaptured() * multiplier;
-        this.pointsCapturedFail += gamePlayerSiege.getPointsCapturedFail() * multiplier;
-        this.timeOnPoint += gamePlayerSiege.getTimeOnPoint() * multiplier;
-        this.payloadsEscorted += gamePlayerSiege.getPayloadsEscorted() * multiplier;
-        this.payloadsEscortedFail += gamePlayerSiege.getPayloadsEscortedFail() * multiplier;
-        this.payloadsDefended += gamePlayerSiege.getPayloadsDefended() * multiplier;
-        this.payloadsDefendedFail += gamePlayerSiege.getPayloadsDefendedFail() * multiplier;
-        this.timeOnPayloadEscorting += gamePlayerSiege.getTimeOnPayloadEscorting() * multiplier;
-        this.timeOnPayloadDefending += gamePlayerSiege.getTimeOnPayloadDefending() * multiplier;
-        this.totalTimePlayed += (long) ((DatabaseGameSiege) databaseGame).getTimeElapsed() * multiplier;
+        this.pointsCaptured += gamePlayer.getPointsCaptured() * multiplier;
+        this.pointsCapturedFail += gamePlayer.getPointsCapturedFail() * multiplier;
+        this.timeOnPoint += gamePlayer.getTimeOnPoint() * multiplier;
+        this.payloadsEscorted += gamePlayer.getPayloadsEscorted() * multiplier;
+        this.payloadsEscortedFail += gamePlayer.getPayloadsEscortedFail() * multiplier;
+        this.payloadsDefended += gamePlayer.getPayloadsDefended() * multiplier;
+        this.payloadsDefendedFail += gamePlayer.getPayloadsDefendedFail() * multiplier;
+        this.timeOnPayloadEscorting += gamePlayer.getTimeOnPayloadEscorting() * multiplier;
+        this.timeOnPayloadDefending += gamePlayer.getTimeOnPayloadDefending() * multiplier;
+        this.totalTimePlayed += (long) databaseGame.getTimeElapsed() * multiplier;
     }
 
     public int getPointsCaptured() {
         return pointsCaptured;
+    }
+
+    public long getTotalTimePlayed() {
+        return totalTimePlayed;
     }
 
     public int getPointsCapturedFail() {
@@ -98,9 +96,5 @@ public class SiegeDatabaseStatInformation extends AbstractDatabaseStatInformatio
 
     public long getTimeOnPayloadDefending() {
         return timeOnPayloadDefending;
-    }
-
-    public long getTotalTimePlayed() {
-        return totalTimePlayed;
     }
 }

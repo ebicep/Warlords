@@ -2,8 +2,9 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.spidersdwelling.DatabaseBasePvEEventSpidersDwelling;
+
+import java.util.List;
 
 public class DatabaseWarriorPvEEventSpidersDwelling extends DatabaseBasePvEEventSpidersDwelling implements DatabaseWarlordsSpecs {
 
@@ -16,7 +17,7 @@ public class DatabaseWarriorPvEEventSpidersDwelling extends DatabaseBasePvEEvent
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List> getSpecs() {
         return new DatabaseBasePvEEventSpidersDwelling[]{berserker, defender, revenant};
     }
 

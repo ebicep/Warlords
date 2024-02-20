@@ -19,7 +19,7 @@ public class PvEEventLibraryForgottenCodexDatabaseStatInformation extends PvEEve
     protected long fastestGameFinished = 0;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -29,7 +29,7 @@ public class PvEEventLibraryForgottenCodexDatabaseStatInformation extends PvEEve
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventForgottenCodex;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventForgottenCodex;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         DatabaseGamePvEEventForgottenCodex eventForgottenCodex = (DatabaseGamePvEEventForgottenCodex) databaseGame;
         boolean won = eventForgottenCodex.getWavesCleared() == 1;

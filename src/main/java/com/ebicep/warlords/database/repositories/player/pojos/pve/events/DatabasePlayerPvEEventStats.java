@@ -46,7 +46,7 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
     private DatabasePlayerPvEEventLibraryArchivesStats libraryArchivesStats = new DatabasePlayerPvEEventLibraryArchivesStats();
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
@@ -55,7 +55,7 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent != null) {

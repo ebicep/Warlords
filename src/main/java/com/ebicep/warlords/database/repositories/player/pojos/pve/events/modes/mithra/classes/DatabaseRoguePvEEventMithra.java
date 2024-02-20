@@ -1,8 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabaseBasePvEEventMithra;
+
+import java.util.List;
 
 public class DatabaseRoguePvEEventMithra extends DatabaseBasePvEEventMithra implements DatabaseWarlordsSpecs {
 
@@ -15,7 +16,7 @@ public class DatabaseRoguePvEEventMithra extends DatabaseBasePvEEventMithra impl
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List> getSpecs() {
         return new DatabaseBasePvEEventMithra[]{assassin, vindicator, apothecary};
     }
 

@@ -32,7 +32,7 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
     }
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
@@ -41,7 +41,7 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvEWaveDefense) databaseGame).getDifficulty());
         if (difficultyStats != null) {
             difficultyStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);

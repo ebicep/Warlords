@@ -4,6 +4,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSp
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
+import java.util.List;
+
 public class DatabasePaladin extends DatabaseBaseGeneral {
 
     private DatabaseSpecialization avenger = new DatabaseSpecialization(SkillBoosts.AVENGER_STRIKE);
@@ -15,7 +17,7 @@ public class DatabasePaladin extends DatabaseBaseGeneral {
     }
 
     @Override
-    public DatabaseSpecialization[] getSpecs() {
+    public List<List<DatabaseSpecialization>> getSpecs() {
         return new DatabaseSpecialization[]{avenger, crusader, protector};
     }
 

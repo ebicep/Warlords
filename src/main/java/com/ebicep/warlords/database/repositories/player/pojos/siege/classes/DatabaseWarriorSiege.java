@@ -1,10 +1,11 @@
 package com.ebicep.warlords.database.repositories.player.pojos.siege.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabaseBaseSiege;
+import com.ebicep.warlords.database.repositories.player.pojos.siege.SiegeStatsWarlordsSpecs;
 
-public class DatabaseWarriorSiege implements StatsWarlordsSpecs<DatabaseBaseSiege> {
+import java.util.List;
+
+public class DatabaseWarriorSiege implements SiegeStatsWarlordsSpecs {
 
     private DatabaseBaseSiege berserker = new DatabaseBaseSiege();
     private DatabaseBaseSiege defender = new DatabaseBaseSiege();
@@ -15,7 +16,7 @@ public class DatabaseWarriorSiege implements StatsWarlordsSpecs<DatabaseBaseSieg
     }
 
     @Override
-    public DatabaseBaseSiege[] getSpecs() {
+    public List<List<DatabaseBaseSiege>> getSpecs() {
         return new DatabaseBaseSiege[]{berserker, defender, revenant};
     }
 

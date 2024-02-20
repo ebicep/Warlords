@@ -1,8 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.DatabaseBasePvEEventLibraryArchives;
+
+import java.util.List;
 
 public class DatabaseRoguePvEEventLibraryArchives extends DatabaseBasePvEEventLibraryArchives implements DatabaseWarlordsSpecs {
 
@@ -15,7 +16,7 @@ public class DatabaseRoguePvEEventLibraryArchives extends DatabaseBasePvEEventLi
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List> getSpecs() {
         return new DatabaseBasePvEEventLibraryArchives[]{assassin, vindicator, apothecary};
     }
 

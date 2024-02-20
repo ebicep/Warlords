@@ -39,8 +39,8 @@ public class TournamentStats {
         @Field("duel_stats")
         private DatabasePlayerDuel duelStats = new DatabasePlayerDuel();
 
-        public void updateCustomStats(
-                com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer,
+        public void updateStats(
+                DatabasePlayer databasePlayer,
                 DatabaseGameBase databaseGame,
                 GameMode gameMode,
                 DatabaseGamePlayerBase gamePlayer,
@@ -50,13 +50,13 @@ public class TournamentStats {
         ) {
             //UPDATE CLASS, SPEC
             this.getClass(Specializations.getClass(gamePlayer.getSpec()))
-                .updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            this.getSpec(gamePlayer.getSpec()).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+                .updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             switch (gameMode) {
-                case CAPTURE_THE_FLAG -> this.ctfStats.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-                case TEAM_DEATHMATCH -> this.tdmStats.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-                case INTERCEPTION -> this.interceptionStats.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-                case DUEL -> this.duelStats.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+                case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+                case TEAM_DEATHMATCH -> this.tdmStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+                case INTERCEPTION -> this.interceptionStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+                case DUEL -> this.duelStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             }
         }
 

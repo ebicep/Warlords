@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabaseBaseTDM;
+import com.ebicep.warlords.database.repositories.player.pojos.tdm.TDMStatsWarlordsSpecs;
 
-public class DatabasePaladinTDM extends DatabaseBaseTDM implements DatabaseWarlordsSpecs {
+import java.util.List;
+
+public class DatabasePaladinTDM implements TDMStatsWarlordsSpecs {
 
     private DatabaseBaseTDM avenger = new DatabaseBaseTDM();
     private DatabaseBaseTDM crusader = new DatabaseBaseTDM();
@@ -15,7 +15,7 @@ public class DatabasePaladinTDM extends DatabaseBaseTDM implements DatabaseWarlo
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List<DatabaseBaseTDM>> getSpecs() {
         return new DatabaseBaseTDM[]{avenger, crusader, protector};
     }
 

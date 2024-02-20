@@ -8,18 +8,26 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.ExperienceManager;
 
-public interface Stats {
+public interface Stats<DatabaseGameT extends DatabaseGameBase, DatabaseGamePlayerT extends DatabaseGamePlayerBase> {
 
-    default void updateCustomStats(
+    void updateStats(
             DatabasePlayer databasePlayer,
-            DatabaseGameBase databaseGame,
+            DatabaseGameT databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerT gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
-    ) {
+    );
 
+    default void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameT databaseGame,
+            DatabaseGamePlayerT gamePlayer,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+        updateStats(databasePlayer, databaseGame, databaseGame.getGameMode(), gamePlayer, databaseGame.getPlayerGameResult(gamePlayer), multiplier, playersCollection);
     }
 
     default double getKDA() {

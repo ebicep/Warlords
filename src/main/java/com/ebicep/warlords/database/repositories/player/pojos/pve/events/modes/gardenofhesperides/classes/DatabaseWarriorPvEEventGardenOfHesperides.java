@@ -2,8 +2,9 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabaseBasePvEEventGardenOfHesperides;
+
+import java.util.List;
 
 public class DatabaseWarriorPvEEventGardenOfHesperides extends DatabaseBasePvEEventGardenOfHesperides implements DatabaseWarlordsSpecs {
 
@@ -16,7 +17,7 @@ public class DatabaseWarriorPvEEventGardenOfHesperides extends DatabaseBasePvEEv
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List> getSpecs() {
         return new DatabaseBasePvEEventGardenOfHesperides[]{berserker, defender, revenant};
     }
 

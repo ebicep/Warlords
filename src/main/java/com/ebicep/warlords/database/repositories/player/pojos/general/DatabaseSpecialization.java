@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
+public class DatabaseSpecialization extends AbstractDatabaseStatInformation<DatabaseGameBase, DatabaseGamePlayerBase> {
 
     protected Weapons weapon = Weapons.FELFLAME_BLADE;
     @Field("skill_boost")
@@ -31,7 +31,7 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
     }
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,

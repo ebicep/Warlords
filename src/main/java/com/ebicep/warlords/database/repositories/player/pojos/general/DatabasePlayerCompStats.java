@@ -4,14 +4,24 @@ package com.ebicep.warlords.database.repositories.player.pojos.general;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
+import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayerCTF;
+import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
+import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayerInterception;
+import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
+import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
+import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
+import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlayerSiege;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.List;
 
 public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
 
@@ -27,8 +37,10 @@ public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
     public DatabasePlayerCompStats() {
     }
 
-    public void updateCustomStats(
-            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer,
+
+    @Override
+    public void updateStats(
+            DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -36,17 +48,38 @@ public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         switch (gameMode) {
-            case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-            case TEAM_DEATHMATCH -> this.tdmStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-            case INTERCEPTION -> this.interceptionStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-            case SIEGE -> this.siegeStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+            case CAPTURE_THE_FLAG -> {
+                if (databaseGame instanceof DatabaseGameCTF ctfGame && gamePlayer instanceof DatabaseGamePlayerCTF ctfPlayer) {
+                    this.ctfStats.updateStats(databasePlayer, ctfGame, ctfPlayer, multiplier, playersCollection);
+                } else {
+                    ChatUtils.MessageType.GAME.sendErrorMessage("CTF game or player is not an instance of the correct class!");
+                }
+            }
+            case TEAM_DEATHMATCH -> {
+                if (databaseGame instanceof DatabaseGameTDM tdmGame && gamePlayer instanceof DatabaseGamePlayerTDM tdmPlayer) {
+                    this.tdmStats.updateStats(databasePlayer, tdmGame, tdmPlayer, multiplier, playersCollection);
+                } else {
+                    ChatUtils.MessageType.GAME.sendErrorMessage("TDM game or player is not an instance of the correct class!");
+                }
+            }
+            case INTERCEPTION -> {
+                if (databaseGame instanceof DatabaseGameInterception interceptionGame && gamePlayer instanceof DatabaseGamePlayerInterception interceptionPlayer) {
+                    this.interceptionStats.updateStats(databasePlayer, interceptionGame, interceptionPlayer, multiplier, playersCollection);
+                } else {
+                    ChatUtils.MessageType.GAME.sendErrorMessage("Interception game or player is not an instance of the correct class!");
+                }
+            }
+            case SIEGE -> {
+                if (databaseGame instanceof DatabaseGameSiege siegeGame && gamePlayer instanceof DatabaseGamePlayerSiege siegePlayer) {
+                    this.siegeStats.updateStats(databasePlayer, siegeGame, siegePlayer, multiplier, playersCollection);
+                } else {
+                    ChatUtils.MessageType.GAME.sendErrorMessage("Siege game or player is not an instance of the correct class!");
+                }
+            }
         }
     }
-
 
     public DatabasePlayerCTF getCtfStats() {
         return ctfStats;
@@ -72,5 +105,9 @@ public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
         this.interceptionStats = interceptionStats;
     }
 
+    @Override
+    public List<List<DatabaseSpecialization>> getSpecs() {
+        return new DatabaseSpecialization[0];
+    }
 }
 

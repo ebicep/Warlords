@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabaseBaseTDM;
+import com.ebicep.warlords.database.repositories.player.pojos.tdm.TDMStatsWarlordsSpecs;
 
-public class DatabaseShamanTDM extends DatabaseBaseTDM implements DatabaseWarlordsSpecs {
+import java.util.List;
+
+public class DatabaseShamanTDM implements TDMStatsWarlordsSpecs {
 
     private DatabaseBaseTDM thunderlord = new DatabaseBaseTDM();
     private DatabaseBaseTDM spiritguard = new DatabaseBaseTDM();
@@ -15,7 +15,7 @@ public class DatabaseShamanTDM extends DatabaseBaseTDM implements DatabaseWarlor
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List<DatabaseBaseTDM>> getSpecs() {
         return new DatabaseBaseTDM[]{thunderlord, spiritguard, earthwarden};
     }
 

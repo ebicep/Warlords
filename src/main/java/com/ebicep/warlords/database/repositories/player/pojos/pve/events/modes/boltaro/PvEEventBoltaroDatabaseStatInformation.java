@@ -8,13 +8,14 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.Database
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStatInformation {
+public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStatInformation implements PvEStats {
 
     @Field("experience_pve")
     protected long experiencePvE;
@@ -33,7 +34,7 @@ public class PvEEventBoltaroDatabaseStatInformation extends AbstractDatabaseStat
     private long highestEventPointsGame;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,

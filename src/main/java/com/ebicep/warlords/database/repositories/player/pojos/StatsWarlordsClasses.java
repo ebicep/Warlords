@@ -1,41 +1,44 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
-public interface StatsWarlordsClasses<T extends Stats, R extends DatabaseWarlordsSpecs<T>> extends Stats, DatabaseWarlordsClasses<T, R> {
+public interface StatsWarlordsClasses<
+        DatabaseGameT extends DatabaseGameBase,
+        DatabaseGamePlayerT extends DatabaseGamePlayerBase,
+        T extends Stats<DatabaseGameT, DatabaseGamePlayerT>,
+        R extends DatabaseWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T>>
+        extends Stats<DatabaseGameT, DatabaseGamePlayerT>, DatabaseWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, T, R> {
 
     @Override
-    default T getSpec(Specializations specializations) {
-        return getClass(Specializations.getClass(specializations)).getSpecs()[specializations.specType.ordinal()];
-    }
-
-    @Override
-    default R getClass(Classes classes) {
-        return getClasses()[classes.ordinal()];
-    }
-
-    @Override
-    default R[] getClasses() {
-        return (R[]) new DatabaseWarlordsSpecs[]{getMage(), getWarrior(), getPaladin(), getShaman(), getRogue(), getArcanist()};
+    default void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameT databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerT gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+        getSpec(gamePlayer.getSpec()).forEach(t -> t.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection));
     }
 
     @Override
     default int getDeaths() {
         return getStat(Stats::getDeaths, Integer::sum, 0);
-    }
-
-    @Nonnull
-    private <NumT> NumT getStat(Function<Stats, NumT> statFunction, BinaryOperator<NumT> accumulator, NumT defaultValue) {
-        return Arrays.stream(Specializations.VALUES)
-                     .map(spec -> statFunction.apply(getSpec(spec)))
-                     .reduce(accumulator)
-                     .orElse(defaultValue);
     }
 
     @Override
@@ -88,33 +91,90 @@ public interface StatsWarlordsClasses<T extends Stats, R extends DatabaseWarlord
         // only set for specs
     }
 
+    @Nonnull
+    default <NumT> NumT getStat(Function<T, NumT> statFunction, BinaryOperator<NumT> accumulator, NumT defaultValue) {
+        return Arrays.stream(Specializations.VALUES)
+                     .flatMap(spec -> getSpec(spec).stream())
+                     .map(statFunction)
+                     .reduce(accumulator)
+                     .orElse(defaultValue);
+    }
+
     @Override
-    default R getMage() {
+    default List<T> getSpec(Specializations specializations) {
+        return switch (specializations) {
+            case PYROMANCER -> getPyromancer();
+            case CRYOMANCER -> getCryomancer();
+            case AQUAMANCER -> getAquamancer();
+            case BERSERKER -> getBerserker();
+            case DEFENDER -> getDefender();
+            case REVENANT -> getRevenant();
+            case AVENGER -> getAvenger();
+            case CRUSADER -> getCrusader();
+            case PROTECTOR -> getProtector();
+            case THUNDERLORD -> getThunderlord();
+            case SPIRITGUARD -> getSpiritguard();
+            case EARTHWARDEN -> getEarthwarden();
+            case ASSASSIN -> getAssassin();
+            case VINDICATOR -> getVindicator();
+            case APOTHECARY -> getApothecary();
+            case CONJURER -> getConjurer();
+            case SENTINEL -> getSentinel();
+            case LUMINARY -> getLuminary();
+        };
+    }
+
+    @Override
+    default List<R> getClass(Classes classes) {
+        return switch (classes) {
+            case MAGE -> getMage();
+            case WARRIOR -> getWarrior();
+            case PALADIN -> getPaladin();
+            case SHAMAN -> getShaman();
+            case ROGUE -> getRogue();
+            case ARCANIST -> getArcanist();
+        };
+    }
+
+    @Override
+    default List<List<R>> getClasses() {
+        List<List<R>> classes = new ArrayList<>();
+        classes.add(getMage());
+        classes.add(getWarrior());
+        classes.add(getPaladin());
+        classes.add(getShaman());
+        classes.add(getRogue());
+        classes.add(getArcanist());
+        return classes;
+    }
+
+    @Override
+    default List<R> getMage() {
         return getClass(Classes.MAGE);
     }
 
     @Override
-    default R getPaladin() {
-        return getClass(Classes.PALADIN);
-    }
-
-    @Override
-    default R getShaman() {
-        return getClass(Classes.SHAMAN);
-    }
-
-    @Override
-    default R getWarrior() {
+    default List<R> getWarrior() {
         return getClass(Classes.WARRIOR);
     }
 
     @Override
-    default R getRogue() {
+    default List<R> getPaladin() {
+        return getClass(Classes.PALADIN);
+    }
+
+    @Override
+    default List<R> getShaman() {
+        return getClass(Classes.SHAMAN);
+    }
+
+    @Override
+    default List<R> getRogue() {
         return getClass(Classes.ROGUE);
     }
 
     @Override
-    default R getArcanist() {
+    default List<R> getArcanist() {
         return getClass(Classes.ARCANIST);
     }
 

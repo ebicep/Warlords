@@ -12,7 +12,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseSta
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation {
+public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation implements PvEEventStats {
 
     @Field("event_points_cum")
     private long eventPointsCumulative;
@@ -20,7 +20,7 @@ public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation 
     private long highestEventPointsGame;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -28,7 +28,7 @@ public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation 
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         assert databaseGame instanceof DatabaseGamePvEEvent;
         assert gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense;

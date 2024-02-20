@@ -1,9 +1,10 @@
-package com.ebicep.warlords.database.repositories.player.pojos.duel;
+package com.ebicep.warlords.database.repositories.player.pojos.duel.classes;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDuel;
+import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGamePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.duel.DuelDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 
@@ -13,18 +14,16 @@ public class DatabaseBaseDuel extends DuelDatabaseStatInformation {
     }
 
     @Override
-    public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameDuel databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerDuel gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-
-        //UPDATE SPEC EXPERIENCE
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
-
 }

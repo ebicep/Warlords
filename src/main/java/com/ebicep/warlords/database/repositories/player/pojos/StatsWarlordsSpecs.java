@@ -1,13 +1,38 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.GameMode;
+
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
-public interface StatsWarlordsSpecs<T extends Stats> extends Stats, DatabaseWarlordsSpecs<T> {
+public interface StatsWarlordsSpecs<
+        DatabaseGameT extends DatabaseGameBase,
+        DatabaseGamePlayerT extends DatabaseGamePlayerBase,
+        T extends Stats<DatabaseGameT, DatabaseGamePlayerT>>
+        extends Stats<DatabaseGameT, DatabaseGamePlayerT>, DatabaseWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T> {
+
+    @Override
+    default void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameT databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerT gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+
+    }
+
     @Nonnull
-    private <NumT> NumT getStat(Function<Stats, NumT> statFunction, BinaryOperator<NumT> accumulator, NumT defaultValue) {
+    private <NumT> NumT getStat(Function<Stats<DatabaseGameT, DatabaseGamePlayerT>, NumT> statFunction, BinaryOperator<NumT> accumulator, NumT defaultValue) {
         return Arrays.stream(getSpecs())
                      .map(statFunction)
                      .reduce(accumulator)

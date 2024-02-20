@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabaseBaseTDM;
+import com.ebicep.warlords.database.repositories.player.pojos.tdm.TDMStatsWarlordsSpecs;
 
-public class DatabaseMageTDM extends DatabaseBaseTDM implements DatabaseWarlordsSpecs {
+import java.util.List;
+
+public class DatabaseMageTDM implements TDMStatsWarlordsSpecs {
 
     protected DatabaseBaseTDM pyromancer = new DatabaseBaseTDM();
     protected DatabaseBaseTDM cryomancer = new DatabaseBaseTDM();
@@ -15,7 +15,7 @@ public class DatabaseMageTDM extends DatabaseBaseTDM implements DatabaseWarlords
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List<DatabaseBaseTDM>> getSpecs() {
         return new DatabaseBaseTDM[]{pyromancer, cryomancer, aquamancer};
     }
 

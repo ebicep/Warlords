@@ -19,7 +19,7 @@ public class PvEEventGardenOfHesperidesTartarusDatabaseStatInformation extends P
     protected long fastestGameFinished = 0;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
@@ -30,7 +30,7 @@ public class PvEEventGardenOfHesperidesTartarusDatabaseStatInformation extends P
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventTartarus;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventTartarus;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         DatabaseGamePvEEventTartarus eventTartarus = (DatabaseGamePvEEventTartarus) databaseGame;
         boolean won = eventTartarus.getWavesCleared() == 1;

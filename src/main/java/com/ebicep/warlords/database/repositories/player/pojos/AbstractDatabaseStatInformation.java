@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.ExperienceManager;
 
-public abstract class AbstractDatabaseStatInformation implements Stats {
+public abstract class AbstractDatabaseStatInformation<T extends DatabaseGameBase, R extends DatabaseGamePlayerBase> implements Stats<T, R> {
 
     protected int kills = 0;
     protected int assists = 0;
@@ -24,13 +24,16 @@ public abstract class AbstractDatabaseStatInformation implements Stats {
     public AbstractDatabaseStatInformation() {
     }
 
+    @Override
     public void updateStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabasePlayer databasePlayer,
+            T databaseGame,
+            GameMode gameMode,
+            R gamePlayer,
+            DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        DatabaseGamePlayerResult result = databaseGame.getPlayerGameResult(gamePlayer);
         this.kills += gamePlayer.getTotalKills() * multiplier;
         this.assists += gamePlayer.getTotalAssists() * multiplier;
         this.deaths += gamePlayer.getTotalDeaths() * multiplier;
@@ -49,37 +52,7 @@ public abstract class AbstractDatabaseStatInformation implements Stats {
         this.damage += gamePlayer.getTotalDamage() * multiplier;
         this.healing += gamePlayer.getTotalHealing() * multiplier;
         this.absorbed += gamePlayer.getTotalAbsorbed() * multiplier;
-        this.updateCustomStats(
-                databasePlayer, databaseGame,
-                databaseGame.getGameMode(),
-                gamePlayer,
-                result,
-                multiplier,
-                playersCollection
-        );
-    }
-
-    public abstract void updateCustomStats(
-            DatabasePlayer databasePlayer,
-            DatabaseGameBase databaseGame,
-            GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
-            DatabaseGamePlayerResult result,
-            int multiplier,
-            PlayersCollections playersCollection
-    );
-
-    public void merge(AbstractDatabaseStatInformation other) {
-        this.kills += other.kills;
-        this.assists += other.assists;
-        this.deaths += other.deaths;
-        this.wins += other.wins;
-        this.losses += other.losses;
-        this.plays += other.plays;
-        this.damage += other.damage;
-        this.healing += other.healing;
-        this.absorbed += other.absorbed;
-        this.experience += other.experience;
+        this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
 
     @Override

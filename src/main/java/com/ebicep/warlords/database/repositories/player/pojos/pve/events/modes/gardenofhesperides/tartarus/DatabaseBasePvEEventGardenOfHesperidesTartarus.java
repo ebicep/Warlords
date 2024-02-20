@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.GameMode;
 public class DatabaseBasePvEEventGardenOfHesperidesTartarus extends PvEEventGardenOfHesperidesTartarusDatabaseStatInformation {
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
@@ -19,7 +19,7 @@ public class DatabaseBasePvEEventGardenOfHesperidesTartarus extends PvEEventGard
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //UPDATE SPEC EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;

@@ -156,8 +156,8 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     }
 
     @Override
-    public void updateCustomStats(
-            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -254,7 +254,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         addCurrency(Currencies.ILLUSION_SHARD, gamePlayerPvE.getIllusionShardGained() * multiplier);
         gamePlayerPvE.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         //UPDATE GAME MODE STATS
         if (databaseGame instanceof DatabaseGamePvEEvent) {
             assert gamePlayer instanceof DatabaseGamePlayerPvEEvent;

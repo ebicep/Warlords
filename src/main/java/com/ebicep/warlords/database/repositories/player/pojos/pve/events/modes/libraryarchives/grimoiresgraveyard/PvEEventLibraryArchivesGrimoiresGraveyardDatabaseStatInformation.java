@@ -19,7 +19,7 @@ public class PvEEventLibraryArchivesGrimoiresGraveyardDatabaseStatInformation ex
     protected long fastestGameFinished = 0;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
@@ -30,7 +30,7 @@ public class PvEEventLibraryArchivesGrimoiresGraveyardDatabaseStatInformation ex
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventGrimoiresGraveyard;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventGrimoiresGraveyard;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         DatabaseGamePvEEventGrimoiresGraveyard eventGrimoiresGraveyard = (DatabaseGamePvEEventGrimoiresGraveyard) databaseGame;
         boolean won = eventGrimoiresGraveyard.getWavesCleared() == 1;

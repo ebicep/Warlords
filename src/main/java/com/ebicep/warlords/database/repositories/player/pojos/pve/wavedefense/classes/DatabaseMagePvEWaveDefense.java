@@ -1,8 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabaseBasePvEWaveDefense;
+
+import java.util.List;
 
 public class DatabaseMagePvEWaveDefense extends DatabaseBasePvEWaveDefense implements DatabaseWarlordsSpecs {
 
@@ -15,7 +16,7 @@ public class DatabaseMagePvEWaveDefense extends DatabaseBasePvEWaveDefense imple
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List> getSpecs() {
         return new DatabaseBasePvEWaveDefense[]{pyromancer, cryomancer, aquamancer};
     }
 

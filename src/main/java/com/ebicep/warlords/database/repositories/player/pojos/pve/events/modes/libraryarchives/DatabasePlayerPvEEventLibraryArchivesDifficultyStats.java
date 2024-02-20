@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.librarya
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats;
@@ -63,8 +64,8 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
     }
 
     @Override
-    public void updateCustomStats(
-            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -74,15 +75,15 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats extends PvEEve
     ) {
         assert gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense;
 
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         this.experiencePvE += gamePlayer.getExperienceEarnedUniversal() * multiplier;
 
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //UPDATE PLAYER COUNT STATS
         int playerCount = databaseGame.getBasePlayers().size();

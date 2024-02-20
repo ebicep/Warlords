@@ -31,7 +31,7 @@ public class WaveDefenseDatabaseStatInformation extends PvEDatabaseStatInformati
     }
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,

@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -32,8 +33,8 @@ public class DatabasePlayerPvEDifficultyStats implements PvEStatsWarlordsClasses
     public DatabasePlayerPvEDifficultyStats() {
     }
 
-    public void updateCustomStats(
-            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -44,13 +45,13 @@ public class DatabasePlayerPvEDifficultyStats implements PvEStatsWarlordsClasses
         assert gamePlayer instanceof DatabaseGamePlayerPvEBase;
 
         //UPDATE CLASS, SPEC
-        this.getSpec(gamePlayer.getSpec()).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //UPDATE PLAYER COUNT STATS
         int playerCount = databaseGame.getBasePlayers().size();
         DatabasePlayerPvEPlayerCountStats countStats = this.getPlayerCountStats(playerCount);
         if (countStats != null) {
-            countStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+            countStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }

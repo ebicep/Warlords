@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
@@ -14,7 +15,9 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Specializations;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerPubStats extends DatabasePlayerGeneral {
+import java.util.List;
+
+public class DatabasePlayerPubStats implements StatsWarlordsSpecs<DatabaseGameBase, DatabaseGamePlayerBase, DatabaseSpecialization> {
 
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
@@ -30,8 +33,19 @@ public class DatabasePlayerPubStats extends DatabasePlayerGeneral {
     public DatabasePlayerPubStats() {
     }
 
-    public void updateCustomStats(
-            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer,
+    @Override
+    public List<List<DatabaseSpecialization>> getSpecs() {
+        return List.of(
+                List.of(ctfStats.getSpec()),
+                List.of(tdmStats.getSpecs()),
+                List.of(interceptionStats.getSpecs()),
+                List.of(duelStats.getSpecs()),
+                List.of(siegeStats.getSpecs())
+        );
+    }
+
+    public void updateStats(
+            DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -40,14 +54,14 @@ public class DatabasePlayerPubStats extends DatabasePlayerGeneral {
             PlayersCollections playersCollection
     ) {
         //UPDATE CLASS, SPEC
-        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         switch (gameMode) {
-            case CAPTURE_THE_FLAG -> this.ctfStats.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            case TEAM_DEATHMATCH -> this.tdmStats.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            case INTERCEPTION -> this.interceptionStats.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            case DUEL -> this.duelStats.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            case SIEGE -> this.siegeStats.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case TEAM_DEATHMATCH -> this.tdmStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case INTERCEPTION -> this.interceptionStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case DUEL -> this.duelStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case SIEGE -> this.siegeStats.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         }
     }
 
@@ -55,32 +69,15 @@ public class DatabasePlayerPubStats extends DatabasePlayerGeneral {
         return ctfStats;
     }
 
-    public void setCtfStats(DatabasePlayerCTF ctfStats) {
-        this.ctfStats = ctfStats;
-    }
-
     public DatabasePlayerTDM getTdmStats() {
         return tdmStats;
-    }
-
-    public void setTdmStats(DatabasePlayerTDM tdmStats) {
-        this.tdmStats = tdmStats;
     }
 
     public DatabasePlayerInterception getInterceptionStats() {
         return interceptionStats;
     }
 
-    public void setInterceptionStats(DatabasePlayerInterception interceptionStats) {
-        this.interceptionStats = interceptionStats;
-    }
-
     public DatabasePlayerDuel getDuelStats() {
         return duelStats;
     }
-
-    public void setDuelStats(DatabasePlayerDuel duelStats) {
-        this.duelStats = duelStats;
-    }
-
 }

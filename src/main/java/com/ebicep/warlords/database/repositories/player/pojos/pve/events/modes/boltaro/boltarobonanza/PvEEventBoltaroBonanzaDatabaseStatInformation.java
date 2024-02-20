@@ -19,7 +19,7 @@ public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventBolta
     private int highestSplit;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -29,7 +29,7 @@ public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventBolta
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventBoltaroBonanza;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         DatabaseGamePvEEventBoltaroBonanza databaseGamePvEEventBoltaroBonanza = (DatabaseGamePvEEventBoltaroBonanza) databaseGame;
         DatabaseGamePlayerPvEEventBoltaroBonanza databaseGamePlayerPvEEventBoltaroBonanza = (DatabaseGamePlayerPvEEventBoltaroBonanza) gamePlayer;

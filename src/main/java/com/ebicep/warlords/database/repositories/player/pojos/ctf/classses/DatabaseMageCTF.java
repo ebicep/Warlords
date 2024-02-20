@@ -1,9 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf.classses;
 
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.CTFStatsWarlordsSpecs;
 
-public class DatabaseMageCTF implements StatsWarlordsSpecs<DatabaseBaseCTF> {
+import java.util.List;
+
+public class DatabaseMageCTF implements CTFStatsWarlordsSpecs {
 
     protected DatabaseBaseCTF pyromancer = new DatabaseBaseCTF();
     protected DatabaseBaseCTF cryomancer = new DatabaseBaseCTF();
@@ -14,7 +15,7 @@ public class DatabaseMageCTF implements StatsWarlordsSpecs<DatabaseBaseCTF> {
     }
 
     @Override
-    public DatabaseBaseCTF[] getSpecs() {
+    public List<List<DatabaseBaseCTF>> getSpecs() {
         return new DatabaseBaseCTF[]{pyromancer, cryomancer, aquamancer};
     }
 

@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.GameMode;
 public class DatabaseBasePvEEventNarmer extends PvEEventNarmerDatabaseStatInformation {
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -18,7 +18,7 @@ public class DatabaseBasePvEEventNarmer extends PvEEventNarmerDatabaseStatInform
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //UPDATE SPEC EXPERIENCE
         this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;

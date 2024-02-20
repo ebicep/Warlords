@@ -5,6 +5,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSp
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
+import java.util.List;
+
 public class DatabaseArcanist extends DatabaseBaseGeneral {
 
     private DatabaseSpecialization conjurer = new DatabaseSpecialization(SkillBoosts.POISONOUS_HEX);
@@ -16,7 +18,7 @@ public class DatabaseArcanist extends DatabaseBaseGeneral {
     }
 
     @Override
-    public DatabaseSpecialization[] getSpecs() {
+    public List<List<DatabaseSpecialization>> getSpecs() {
         return new DatabaseSpecialization[]{conjurer, sentinel, luminary};
     }
 

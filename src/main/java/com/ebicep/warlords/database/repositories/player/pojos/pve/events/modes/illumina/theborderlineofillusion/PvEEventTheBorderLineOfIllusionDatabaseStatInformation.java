@@ -21,7 +21,7 @@ public class PvEEventTheBorderLineOfIllusionDatabaseStatInformation extends PvEE
     protected int totalWavesCleared;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -31,7 +31,7 @@ public class PvEEventTheBorderLineOfIllusionDatabaseStatInformation extends PvEE
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventTheBorderlineOfIllusion;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventTheBorderlineOfIllusion;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         if (multiplier > 0) {
             this.highestWaveCleared = Math.max((((DatabaseGamePvEEventTheBorderlineOfIllusion) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);

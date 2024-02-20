@@ -19,7 +19,7 @@ public class DatabasePlayerOnslaughtStats extends DatabasePlayerPvEOnslaughtDiff
     }
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
@@ -28,7 +28,7 @@ public class DatabasePlayerOnslaughtStats extends DatabasePlayerPvEOnslaughtDiff
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         if (gamePlayer instanceof DatabaseGamePlayerPvEOnslaught onslaughtGamePlayer) {
 
             Map<Spendable, Long> syntheticPouch = onslaughtGamePlayer.getSyntheticPouch();

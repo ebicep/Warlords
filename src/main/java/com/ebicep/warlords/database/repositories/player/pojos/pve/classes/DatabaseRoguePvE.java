@@ -3,6 +3,8 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.classes;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabaseBasePvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
 
+import java.util.List;
+
 public class DatabaseRoguePvE implements PvEStatsWarlordsSpecs<DatabaseBasePvE> {
 
     private DatabaseBasePvE assassin = new DatabaseBasePvE();
@@ -14,7 +16,7 @@ public class DatabaseRoguePvE implements PvEStatsWarlordsSpecs<DatabaseBasePvE> 
     }
 
     @Override
-    public DatabaseBasePvE[] getSpecs() {
+    public List<List> getSpecs() {
         return new DatabaseBasePvE[]{assassin, vindicator, apothecary};
     }
 

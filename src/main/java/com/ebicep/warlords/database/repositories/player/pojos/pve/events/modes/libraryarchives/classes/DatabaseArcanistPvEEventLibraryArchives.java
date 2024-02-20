@@ -3,8 +3,9 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.DatabaseBasePvEEventLibraryArchives;
+
+import java.util.List;
 
 public class DatabaseArcanistPvEEventLibraryArchives extends DatabaseBasePvEEventLibraryArchives implements DatabaseWarlordsSpecs {
 
@@ -17,7 +18,7 @@ public class DatabaseArcanistPvEEventLibraryArchives extends DatabaseBasePvEEven
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public List<List> getSpecs() {
         return new DatabaseBasePvEEventLibraryArchives[]{conjurer, sentinel, luminary};
     }
 

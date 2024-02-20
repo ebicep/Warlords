@@ -33,7 +33,7 @@ public class PvEEventGardenOfHesperidesDatabaseStatInformation extends AbstractD
     private long highestEventPointsGame;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,

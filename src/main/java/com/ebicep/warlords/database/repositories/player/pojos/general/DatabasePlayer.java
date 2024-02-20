@@ -39,7 +39,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Document(collection = "Players_Information")
-public class DatabasePlayer extends DatabasePlayerGeneral {
+public class DatabasePlayer {
 
     @Id
     private String id;
@@ -150,7 +150,8 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         pveStats.setDatabasePlayer(this);
     }
 
-    public void updateCustomStats(
+    @Override
+    public void updateStats(
             DatabasePlayer databasePlayer,
             DatabaseGameBase databaseGame,
             GameMode gameMode,
@@ -166,36 +167,36 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
             //this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
             classStats.setExperience(classStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
             specStats.setExperience(specStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
-            this.pveStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            this.pveStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             return;
         }
         //UPDATE CLASS, SPEC
         if (gamePlayer instanceof DatabaseGamePlayerSiege databaseGamePlayerSiege) {
             databaseGamePlayerSiege.getSpecStats().forEach((specializations, siegePlayer) -> {
-                getClass(Specializations.getClass(specializations)).updateCustomStats(databasePlayer, databaseGame, gameMode, siegePlayer, result, multiplier, playersCollection);
-                getSpec(specializations).updateCustomStats(databasePlayer, databaseGame, gameMode, siegePlayer, result, multiplier, playersCollection);
+                getClass(Specializations.getClass(specializations)).updateStats(databasePlayer, databaseGame, gameMode, siegePlayer, result, multiplier, playersCollection);
+                getSpec(specializations).updateStats(databasePlayer, databaseGame, gameMode, siegePlayer, result, multiplier, playersCollection);
             });
         } else {
-            classStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            specStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            classStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            specStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         }
         //UPDATE GAMEMODES
         switch (gameMode) {
-            case CAPTURE_THE_FLAG -> this.ctfStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            case TEAM_DEATHMATCH -> this.tdmStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            case INTERCEPTION -> this.interceptionStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            case DUEL -> this.duelStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-            case SIEGE -> this.siegeStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case TEAM_DEATHMATCH -> this.tdmStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case INTERCEPTION -> this.interceptionStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case DUEL -> this.duelStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            case SIEGE -> this.siegeStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
-            this.tournamentStats.getCurrentTournamentStats().updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            this.tournamentStats.getCurrentTournamentStats().updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         } else {
             if (gameAddons.isEmpty()) {
-                this.pubStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+                this.pubStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
-                this.compStats.updateCustomStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+                this.compStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             }
         }
     }

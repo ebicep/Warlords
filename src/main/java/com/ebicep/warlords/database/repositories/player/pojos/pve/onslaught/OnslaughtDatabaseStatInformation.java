@@ -15,7 +15,7 @@ public class OnslaughtDatabaseStatInformation extends PvEDatabaseStatInformation
     private long longestTicksLived;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -25,7 +25,7 @@ public class OnslaughtDatabaseStatInformation extends PvEDatabaseStatInformation
     ) {
         assert databaseGame instanceof DatabaseGamePvEOnslaught;
         assert gamePlayer instanceof DatabaseGamePlayerPvEOnslaught;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         if (multiplier > 0) {
             this.longestTicksLived = Math.max(((long) ((DatabaseGamePvEOnslaught) databaseGame).getTimeElapsed() * multiplier), longestTicksLived);
         } else if (this.longestTicksLived == ((DatabaseGamePvEOnslaught) databaseGame).getTimeElapsed()) {

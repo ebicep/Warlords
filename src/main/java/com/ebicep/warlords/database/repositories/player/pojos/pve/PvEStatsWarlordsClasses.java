@@ -38,19 +38,19 @@ public interface PvEStatsWarlordsClasses<T extends PvEStats, R extends DatabaseW
     default Map<String, Long> getMobDeaths() {
         return getStat(PvEStats::getMobDeaths);
     }
-
-    @Override
-    default long getMostDamageInRound() {
-        return Arrays.stream(Specializations.VALUES)
-                     .map(this::getSpec)
-                     .map(PvEStats::getMostDamageInRound)
-                     .max(Long::compareTo)
-                     .orElse(0L);
-    }
-
-    @Override
-    default void setMostDamageInRound(long mostDamageInRound) {
-        // only set for specs
-    }
+//
+//    @Override
+//    default long getMostDamageInRound() {
+//        return Arrays.stream(Specializations.VALUES)
+//                     .map(this::getSpec)
+//                     .map(PvEStats::getMostDamageInRound)
+//                     .max(Long::compareTo)
+//                     .orElse(0L);
+//    }
+//
+//    @Override
+//    default void setMostDamageInRound(long mostDamageInRound) {
+//        // only set for specs
+//    }
 
 }

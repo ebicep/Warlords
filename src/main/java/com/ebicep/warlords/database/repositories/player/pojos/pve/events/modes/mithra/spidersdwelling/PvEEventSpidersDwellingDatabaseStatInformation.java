@@ -21,7 +21,7 @@ public class PvEEventSpidersDwellingDatabaseStatInformation extends PvEEventBolt
     protected int totalWavesCleared;
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
@@ -31,7 +31,7 @@ public class PvEEventSpidersDwellingDatabaseStatInformation extends PvEEventBolt
     ) {
         assert databaseGame instanceof DatabaseGamePvEEventSpidersDwelling;
         assert gamePlayer instanceof DatabaseGamePlayerPvEEventSpidersDwelling;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         if (multiplier > 0) {
             this.highestWaveCleared = Math.max((((DatabaseGamePvEEventSpidersDwelling) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);

@@ -291,7 +291,7 @@ public abstract class DatabaseGameBase {
             DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
                 //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
                 if (GameMode.isPvE(databaseGame.getGameMode())) {
-                    databasePlayer.updateCustomStats(databasePlayer, databaseGame,
+                    databasePlayer.updateStats(databasePlayer, databaseGame,
                             databaseGame.getGameMode(),
                             gamePlayer,
                             DatabaseGamePlayerResult.NONE,
@@ -300,7 +300,7 @@ public abstract class DatabaseGameBase {
                     );
                 } else {
                     // TODO check this
-                    databasePlayer.updateCustomStats(databasePlayer,
+                    databasePlayer.updateStats(databasePlayer,
                             databaseGame,
                             databaseGame.getGameMode(),
                             gamePlayer,

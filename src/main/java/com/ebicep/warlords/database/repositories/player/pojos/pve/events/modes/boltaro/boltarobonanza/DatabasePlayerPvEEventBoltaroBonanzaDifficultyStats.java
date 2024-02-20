@@ -5,10 +5,11 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.classes.*;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -16,7 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats extends PvEEventBoltaroBonanzaDatabaseStatInformation implements DatabaseWarlordsClasses<PvEEventBoltaroBonanzaDatabaseStatInformation> {
+public class DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats implements PvEStatsWarlordsClasses<DatabaseBasePvEEventBoltaroBonanza, PvEStatsWarlordsSpecs<DatabaseBasePvEEventBoltaroBonanza>> {
 
     private DatabaseMagePvEEventBoltaroBonanza mage = new DatabaseMagePvEEventBoltaroBonanza();
     private DatabaseWarriorPvEEventBoltaroBonanza warrior = new DatabaseWarriorPvEEventBoltaroBonanza();
@@ -36,8 +37,8 @@ public class DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats extends PvEEven
     }
 
     @Override
-    public void updateCustomStats(
-            com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+    public void updateStats(
+            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
@@ -54,7 +55,7 @@ public class DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats extends PvEEven
 
         //UPDATE CLASS, SPEC
         this.getClass(Specializations.getClass(gamePlayer.getSpec())).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-        this.getSpec(gamePlayer.getSpec()).updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        this.getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
         //UPDATE PLAYER COUNT STATS
         int playerCount = databaseGame.getBasePlayers().size();
@@ -65,77 +66,6 @@ public class DatabasePlayerPvEEventBoltaroBonanzaDifficultyStats extends PvEEven
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
 
-    }
-
-    @Override
-    public DatabaseBasePvEEventBoltaroBonanza getSpec(Specializations specializations) {
-        return switch (specializations) {
-            case PYROMANCER -> mage.getPyromancer();
-            case CRYOMANCER -> mage.getCryomancer();
-            case AQUAMANCER -> mage.getAquamancer();
-            case BERSERKER -> warrior.getBerserker();
-            case DEFENDER -> warrior.getDefender();
-            case REVENANT -> warrior.getRevenant();
-            case AVENGER -> paladin.getAvenger();
-            case CRUSADER -> paladin.getCrusader();
-            case PROTECTOR -> paladin.getProtector();
-            case THUNDERLORD -> shaman.getThunderlord();
-            case SPIRITGUARD -> shaman.getSpiritguard();
-            case EARTHWARDEN -> shaman.getEarthwarden();
-            case ASSASSIN -> rogue.getAssassin();
-            case VINDICATOR -> rogue.getVindicator();
-            case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> arcanist.getConjurer();
-            case SENTINEL -> arcanist.getSentinel();
-            case LUMINARY -> arcanist.getLuminary();
-        };
-    }
-
-    @Override
-    public DatabaseBasePvEEventBoltaroBonanza getClass(Classes classes) {
-        return switch (classes) {
-            case MAGE -> mage;
-            case WARRIOR -> warrior;
-            case PALADIN -> paladin;
-            case SHAMAN -> shaman;
-            case ROGUE -> rogue;
-            case ARCANIST -> arcanist;
-        };
-    }
-
-    @Override
-    public DatabaseBasePvEEventBoltaroBonanza[] getClasses() {
-        return new DatabaseBasePvEEventBoltaroBonanza[]{mage, warrior, paladin, shaman, rogue};
-    }
-
-    @Override
-    public PvEEventBoltaroBonanzaDatabaseStatInformation getMage() {
-        return mage;
-    }
-
-    @Override
-    public PvEEventBoltaroBonanzaDatabaseStatInformation getWarrior() {
-        return warrior;
-    }
-
-    @Override
-    public PvEEventBoltaroBonanzaDatabaseStatInformation getPaladin() {
-        return paladin;
-    }
-
-    @Override
-    public PvEEventBoltaroBonanzaDatabaseStatInformation getShaman() {
-        return shaman;
-    }
-
-    @Override
-    public PvEEventBoltaroBonanzaDatabaseStatInformation getRogue() {
-        return rogue;
-    }
-
-    @Override
-    public PvEEventBoltaroBonanzaDatabaseStatInformation getArcanist() {
-        return arcanist;
     }
 
     public DatabasePlayerPvEEventBoltaroBonanzaPlayerCountStats getPlayerCountStats(int playerCount) {

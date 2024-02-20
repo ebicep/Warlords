@@ -12,8 +12,8 @@ public interface PvEStats extends Stats {
 
     Map<String, Long> getMobDeaths();
 
-    long getMostDamageInRound();
-
-    void setMostDamageInRound(long mostDamageInRound);
+//    long getMostDamageInRound();
+//
+//    void setMostDamageInRound(long mostDamageInRound);
 
 }
