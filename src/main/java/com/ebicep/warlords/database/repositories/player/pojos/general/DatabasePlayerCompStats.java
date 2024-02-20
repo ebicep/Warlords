@@ -13,6 +13,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameS
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlayerSiege;
@@ -23,7 +25,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
-public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
+public class DatabasePlayerCompStats implements MultiStat<DatabaseGameBase, DatabaseGamePlayerBase> {
 
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
@@ -48,7 +50,6 @@ public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         switch (gameMode) {
             case CAPTURE_THE_FLAG -> {
                 if (databaseGame instanceof DatabaseGameCTF ctfGame && gamePlayer instanceof DatabaseGamePlayerCTF ctfPlayer) {
@@ -85,29 +86,22 @@ public class DatabasePlayerCompStats extends DatabasePlayerGeneral {
         return ctfStats;
     }
 
-    public void setCtfStats(DatabasePlayerCTF ctfStats) {
-        this.ctfStats = ctfStats;
-    }
-
     public DatabasePlayerTDM getTdmStats() {
         return tdmStats;
-    }
-
-    public void setTdmStats(DatabasePlayerTDM tdmStats) {
-        this.tdmStats = tdmStats;
     }
 
     public DatabasePlayerInterception getInterceptionStats() {
         return interceptionStats;
     }
 
-    public void setInterceptionStats(DatabasePlayerInterception interceptionStats) {
-        this.interceptionStats = interceptionStats;
-    }
-
     @Override
-    public List<List<DatabaseSpecialization>> getSpecs() {
-        return new DatabaseSpecialization[0];
+    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
+        return List.of(
+                (T) ctfStats,
+                (T) tdmStats,
+                (T) interceptionStats,
+                (T) siegeStats
+        );
     }
 }
 

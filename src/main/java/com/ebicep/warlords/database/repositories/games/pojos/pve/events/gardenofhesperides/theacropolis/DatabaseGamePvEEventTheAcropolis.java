@@ -38,7 +38,7 @@ public class DatabaseGamePvEEventTheAcropolis extends DatabaseGamePvEEvent {
     }
 
     public DatabaseGamePvEEventTheAcropolis(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<TheAcropolisOption> theAcropolisOption = new AtomicReference<>();

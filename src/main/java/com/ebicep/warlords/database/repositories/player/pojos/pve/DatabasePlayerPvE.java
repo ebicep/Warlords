@@ -6,14 +6,19 @@ import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEventReward;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePlayerPvEOnslaught;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePvEOnslaught;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
@@ -60,7 +65,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
+public class DatabasePlayerPvE implements MultiStat<DatabaseGamePvEBase, DatabaseGamePlayerPvEBase> {
 
     @Transient
     private DatabasePlayer databasePlayer;
@@ -158,34 +163,29 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     @Override
     public void updateStats(
             DatabasePlayer databasePlayer,
-            DatabaseGameBase databaseGame,
+            DatabaseGamePvEBase databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerPvEBase gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert gamePlayer instanceof DatabaseGamePlayerPvEBase;
-
-        DatabaseGamePlayerPvEBase gamePlayerPvE = (DatabaseGamePlayerPvEBase) gamePlayer;
-
         //COINS
-        addCurrency(Currencies.COIN, gamePlayerPvE.getCoinsGained() * multiplier);
+        addCurrency(Currencies.COIN, gamePlayer.getCoinsGained() * multiplier);
         //GUILDS
         Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
         if (playersCollection == PlayersCollections.LIFETIME && guildGuildPlayerPair != null) {
             Guild guild = guildGuildPlayerPair.getA();
             GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
-
-            guild.addCurrentCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
-            guild.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
-            guildPlayer.addCoins(gamePlayerPvE.getGuildCoinsGained() * multiplier);
-            guildPlayer.addExperience(gamePlayerPvE.getGuildExpGained() * multiplier);
+            guild.addCurrentCoins(gamePlayer.getGuildCoinsGained() * multiplier);
+            guild.addExperience(gamePlayer.getGuildExpGained() * multiplier);
+            guildPlayer.addCoins(gamePlayer.getGuildCoinsGained() * multiplier);
+            guildPlayer.addExperience(gamePlayer.getGuildExpGained() * multiplier);
             guild.queueUpdate();
         }
         //WEAPONS / ITEMS
-        List<AbstractWeapon> weaponsFound = gamePlayerPvE.getWeaponsFound();
-        List<AbstractItem> itemsFound = gamePlayerPvE.getItemsFound();
+        List<AbstractWeapon> weaponsFound = gamePlayer.getWeaponsFound();
+        List<AbstractItem> itemsFound = gamePlayer.getItemsFound();
         if (playersCollection == PlayersCollections.LIFETIME) {
             if (multiplier > 0) {
                 int maxWeaponInventorySize = databasePlayer.isPatreon() ? WeaponManagerMenu.MAX_WEAPONS_PATREON : WeaponManagerMenu.MAX_WEAPONS;
@@ -208,9 +208,7 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
                 } else {
                     weaponInventory.addAll(weaponsFound);
                 }
-
                 itemsManager.getItemInventory().addAll(itemsFound);
-
             } else {
                 //need to search by uuid incase weapon got upgraded or changed
                 for (AbstractWeapon weapon : weaponsFound) {
@@ -232,45 +230,38 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
                         ChatChannels.sendDebugMessage((CommandIssuer) null, gamePlayer.getName() + " - Removed weapon from inventory");
                     }
                 }
-
                 for (AbstractItem item : itemsFound) {
                     itemsManager.getItemInventory().removeIf(abstractItem -> abstractItem.getUUID().equals(item.getUUID()));
                 }
             }
         }
 
-        //QUESTS
-//        for (Quests quests : gamePlayerPvE.getQuestsCompleted()) {
-//            questsCompleted.merge(quests, (long) multiplier, Long::sum);
-//            if (quests.time == playersCollection || playersCollection == PlayersCollections.LIFETIME) {
-//                quests.rewards.forEach((curr, aLong) -> curr.addToPlayer(databasePlayer, aLong * multiplier));
-//            }
-//        }
-
-        getItemsManager().addBlessingsFound(gamePlayerPvE.getBlessingsFound() * multiplier);
-
+        getItemsManager().addBlessingsFound(gamePlayer.getBlessingsFound() * multiplier);
         //SPENDABLE
-        addCurrency(Currencies.LEGEND_FRAGMENTS, gamePlayerPvE.getLegendFragmentsGained() * multiplier);
-        addCurrency(Currencies.ILLUSION_SHARD, gamePlayerPvE.getIllusionShardGained() * multiplier);
-        gamePlayerPvE.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
+        addCurrency(Currencies.LEGEND_FRAGMENTS, gamePlayer.getLegendFragmentsGained() * multiplier);
+        addCurrency(Currencies.ILLUSION_SHARD, gamePlayer.getIllusionShardGained() * multiplier);
+        gamePlayer.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
-        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        // TODO
         //UPDATE GAME MODE STATS
-        if (databaseGame instanceof DatabaseGamePvEEvent) {
-            assert gamePlayer instanceof DatabaseGamePlayerPvEEvent;
+        if (databaseGame instanceof DatabaseGamePvEEvent gamePvEEvent && gamePlayer instanceof DatabaseGamePlayerPvEEvent gamePlayerPvEEvent) {
             eventStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             addCurrency(
                     ((DatabaseGamePvEEvent) databaseGame).getEvent().currency,
                     Math.min(((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(), ((DatabaseGamePvEEvent) databaseGame).getPointLimit()) * multiplier
             );
         } else {
-            if (GameMode.isWaveDefense(gameMode)) {
-                waveDefenseStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-            } else if (gameMode == GameMode.ONSLAUGHT) {
-                onslaughtStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+            if (GameMode.isWaveDefense(gameMode) && databaseGame instanceof DatabaseGamePvEWaveDefense gamePvEWaveDefense && gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense gamePlayerPvEWaveDefense) {
+                waveDefenseStats.updateStats(databasePlayer, gamePvEWaveDefense, gamePlayerPvEWaveDefense, multiplier, playersCollection);
+            } else if (gameMode == GameMode.ONSLAUGHT && databaseGame instanceof DatabaseGamePvEOnslaught gamePvEOnslaught && gamePlayer instanceof DatabaseGamePlayerPvEOnslaught gamePlayerPvEOnslaught) {
+                onslaughtStats.updateStats(databasePlayer, gamePvEOnslaught, gamePlayerPvEOnslaught, multiplier, playersCollection);
+            } else {
+                ChatUtils.MessageType.GAME.sendErrorMessage("Unable to update stats for " + databaseGame.getClass().getSimpleName() + " and " + gamePlayer.getClass()
+                                                                                                                                                          .getSimpleName());
             }
         }
     }
+
 
     public void addCurrency(Currencies currency, Long amount) {
         if (AdminCommand.BYPASSED_PLAYER_CURRENCIES.contains(this)) {
@@ -322,14 +313,6 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
         eventMode.addEventPointsSpent(-amount);
     }
 
-    public DatabasePlayer getDatabasePlayer() {
-        return databasePlayer;
-    }
-
-    public void setDatabasePlayer(DatabasePlayer databasePlayer) {
-        this.databasePlayer = databasePlayer;
-    }
-
     public void addCurrency(Currencies currency, int amount) {
         this.addCurrency(currency, (long) amount);
     }
@@ -355,6 +338,14 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
 
     public void subtractCurrency(Currencies currency, Long amount) {
         this.addCurrency(currency, -amount);
+    }
+
+    public DatabasePlayer getDatabasePlayer() {
+        return databasePlayer;
+    }
+
+    public void setDatabasePlayer(DatabasePlayer databasePlayer) {
+        this.databasePlayer = databasePlayer;
     }
 
     public void setCurrency(Currencies currency, Long amount) {
@@ -522,4 +513,10 @@ public class DatabasePlayerPvE extends DatabasePlayerPvEDifficultyStats {
     public EnumSet<Ability> getAlternativeMasteriesUnlockedAbilities() {
         return alternativeMasteriesUnlockedAbilities;
     }
+
+    @Override
+    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
+        return null; //TODO
+    }
+
 }

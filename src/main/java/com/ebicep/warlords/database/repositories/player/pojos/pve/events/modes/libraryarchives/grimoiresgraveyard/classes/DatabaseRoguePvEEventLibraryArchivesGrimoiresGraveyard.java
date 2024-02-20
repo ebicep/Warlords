@@ -1,9 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard;
-
-import java.util.List;
 
 public class DatabaseRoguePvEEventLibraryArchivesGrimoiresGraveyard extends DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard implements DatabaseWarlordsSpecs {
 
@@ -16,7 +15,7 @@ public class DatabaseRoguePvEEventLibraryArchivesGrimoiresGraveyard extends Data
     }
 
     @Override
-    public List<List> getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[]{assassin, vindicator, apothecary};
     }
 

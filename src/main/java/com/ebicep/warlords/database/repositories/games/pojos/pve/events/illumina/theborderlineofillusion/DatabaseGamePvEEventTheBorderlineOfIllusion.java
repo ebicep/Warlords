@@ -39,7 +39,7 @@ public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvE
     }
 
     public DatabaseGamePvEEventTheBorderlineOfIllusion(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<TheBorderlineOfIllusionEvent> borderlineOfIllusionEvent = new AtomicReference<>();

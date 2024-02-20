@@ -1,12 +1,11 @@
 
 package com.ebicep.warlords.database.repositories.player.pojos.pve.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabaseBasePvE;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
 
-import java.util.List;
-
-public class DatabaseArcanistPvE implements PvEStatsWarlordsSpecs<DatabaseBasePvE> {
+public class DatabaseArcanistPvE implements PvEStatsWarlordsSpecs<DatabaseGamePvEBase, DatabaseGamePlayerPvEBase, DatabaseBasePvE> {
 
     protected DatabaseBasePvE conjurer = new DatabaseBasePvE();
     protected DatabaseBasePvE sentinel = new DatabaseBasePvE();
@@ -17,7 +16,7 @@ public class DatabaseArcanistPvE implements PvEStatsWarlordsSpecs<DatabaseBasePv
     }
 
     @Override
-    public List<List> getSpecs() {
+    public DatabaseBasePvE[] getSpecs() {
         return new DatabaseBasePvE[]{conjurer, sentinel, luminary};
     }
 

@@ -4,8 +4,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSp
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
-import java.util.List;
-
 public class DatabaseShaman extends DatabaseBaseGeneral {
 
     private DatabaseSpecialization thunderlord = new DatabaseSpecialization(SkillBoosts.LIGHTNING_BOLT);
@@ -16,8 +14,7 @@ public class DatabaseShaman extends DatabaseBaseGeneral {
         super(ArmorManager.Helmets.SIMPLE_SHAMAN_HELMET);
     }
 
-    @Override
-    public List<List<DatabaseSpecialization>> getSpecs() {
+    public DatabaseSpecialization[] getSpecs() {
         return new DatabaseSpecialization[]{thunderlord, spiritguard, earthwarden};
     }
 

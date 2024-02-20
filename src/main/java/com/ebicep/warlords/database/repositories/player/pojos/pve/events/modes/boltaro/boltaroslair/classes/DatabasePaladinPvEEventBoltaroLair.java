@@ -1,9 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.DatabaseBasePvEEventBoltaroLair;
-
-import java.util.List;
 
 public class DatabasePaladinPvEEventBoltaroLair extends DatabaseBasePvEEventBoltaroLair implements DatabaseWarlordsSpecs {
 
@@ -16,7 +15,7 @@ public class DatabasePaladinPvEEventBoltaroLair extends DatabaseBasePvEEventBolt
     }
 
     @Override
-    public List<List> getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEventBoltaroLair[]{avenger, crusader, protector};
     }
 

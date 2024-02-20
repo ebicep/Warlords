@@ -1,11 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabaseBasePvEEvent;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventStatsWarlordsSpecs;
 
-import java.util.List;
-
-public class DatabasePaladinPvEEvent extends DatabaseBasePvEEvent implements DatabaseWarlordsSpecs {
+public class DatabasePaladinPvEEvent implements PvEEventStatsWarlordsSpecs {
 
     private DatabaseBasePvEEvent avenger = new DatabaseBasePvEEvent();
     private DatabaseBasePvEEvent crusader = new DatabaseBasePvEEvent();
@@ -16,7 +13,7 @@ public class DatabasePaladinPvEEvent extends DatabaseBasePvEEvent implements Dat
     }
 
     @Override
-    public List<List> getSpecs() {
+    public DatabaseBasePvEEvent[] getSpecs() {
         return new DatabaseBasePvEEvent[]{avenger, crusader, protector};
     }
 

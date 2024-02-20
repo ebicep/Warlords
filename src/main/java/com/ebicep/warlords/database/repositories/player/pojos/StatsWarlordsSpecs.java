@@ -89,8 +89,4 @@ public interface StatsWarlordsSpecs<
         return getStat(Stats::getPlays, Integer::sum, 0);
     }
 
-    @Override
-    default void setExperience(long experience) {
-        // only set for specs
-    }
 }

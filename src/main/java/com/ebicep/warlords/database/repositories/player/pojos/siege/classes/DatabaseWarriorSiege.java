@@ -3,8 +3,6 @@ package com.ebicep.warlords.database.repositories.player.pojos.siege.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.siege.SiegeStatsWarlordsSpecs;
 
-import java.util.List;
-
 public class DatabaseWarriorSiege implements SiegeStatsWarlordsSpecs {
 
     private DatabaseBaseSiege berserker = new DatabaseBaseSiege();
@@ -16,7 +14,7 @@ public class DatabaseWarriorSiege implements SiegeStatsWarlordsSpecs {
     }
 
     @Override
-    public List<List<DatabaseBaseSiege>> getSpecs() {
+    public DatabaseBaseSiege[] getSpecs() {
         return new DatabaseBaseSiege[]{berserker, defender, revenant};
     }
 

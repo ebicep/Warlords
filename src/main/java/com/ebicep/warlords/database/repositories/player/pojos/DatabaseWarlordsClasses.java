@@ -5,105 +5,100 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-import java.util.List;
-
 public interface DatabaseWarlordsClasses<DatabaseGameT extends DatabaseGameBase,
         DatabaseGamePlayerT extends DatabaseGamePlayerBase,
         T extends Stats<DatabaseGameT, DatabaseGamePlayerT>,
         R extends DatabaseWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T>> {
 
-    List<T> getSpec(Specializations specializations);
+    T getSpec(Specializations specializations);
 
-    List<R> getClass(Classes classes);
+    R getClass(Classes classes);
 
-    List<List<R>> getClasses();
+    R[] getClasses();
 
-    List<R> getMage();
+    R getMage();
 
-    private List<T> getSpec(List<R> classes, int index) {
-        return classes.stream().map(r -> r.getSpecs()[index]).toList();
+
+    default T getPyromancer() {
+        return getMage().getSpecs()[0];
     }
 
-    default List<T> getPyromancer() {
-        return getSpec(getMage(), 0);
+    default T getCryomancer() {
+        return getMage().getSpecs()[1];
     }
 
-    default List<T> getCryomancer() {
-        return getSpec(getMage(), 1);
+    default T getAquamancer() {
+        return getMage().getSpecs()[2];
     }
 
-    default List<T> getAquamancer() {
-        return getSpec(getMage(), 2);
+    R getWarrior();
+
+    default T getBerserker() {
+        return getWarrior().getSpecs()[0];
     }
 
-    List<R> getWarrior();
-
-    default List<T> getBerserker() {
-        return getSpec(getWarrior(), 0);
+    default T getDefender() {
+        return getWarrior().getSpecs()[1];
     }
 
-    default List<T> getDefender() {
-        return getSpec(getWarrior(), 1);
+    default T getRevenant() {
+        return getWarrior().getSpecs()[2];
     }
 
-    default List<T> getRevenant() {
-        return getSpec(getWarrior(), 2);
+    R getPaladin();
+
+    default T getAvenger() {
+        return getPaladin().getSpecs()[0];
     }
 
-    List<R> getPaladin();
-
-    default List<T> getAvenger() {
-        return getSpec(getPaladin(), 0);
+    default T getCrusader() {
+        return getPaladin().getSpecs()[1];
     }
 
-    default List<T> getCrusader() {
-        return getSpec(getPaladin(), 1);
+    default T getProtector() {
+        return getPaladin().getSpecs()[2];
     }
 
-    default List<T> getProtector() {
-        return getSpec(getPaladin(), 2);
+    R getShaman();
+
+    default T getThunderlord() {
+        return getShaman().getSpecs()[0];
     }
 
-    List<R> getShaman();
-
-    default List<T> getThunderlord() {
-        return getSpec(getShaman(), 0);
+    default T getSpiritguard() {
+        return getShaman().getSpecs()[1];
     }
 
-    default List<T> getSpiritguard() {
-        return getSpec(getShaman(), 1);
+    default T getEarthwarden() {
+        return getShaman().getSpecs()[2];
     }
 
-    default List<T> getEarthwarden() {
-        return getSpec(getShaman(), 2);
+    R getRogue();
+
+    default T getAssassin() {
+        return getRogue().getSpecs()[0];
     }
 
-    List<R> getRogue();
-
-    default List<T> getAssassin() {
-        return getSpec(getRogue(), 0);
+    default T getVindicator() {
+        return getRogue().getSpecs()[1];
     }
 
-    default List<T> getVindicator() {
-        return getSpec(getRogue(), 1);
+    default T getApothecary() {
+        return getRogue().getSpecs()[2];
     }
 
-    default List<T> getApothecary() {
-        return getSpec(getRogue(), 2);
+    R getArcanist();
+
+    default T getConjurer() {
+        return getArcanist().getSpecs()[0];
     }
 
-    List<R> getArcanist();
-
-    default List<T> getConjurer() {
-        return getSpec(getArcanist(), 0);
+    default T getSentinel() {
+        return getArcanist().getSpecs()[1];
     }
 
-    default List<T> getSentinel() {
-        return getSpec(getArcanist(), 1);
-    }
-
-    default List<T> getLuminary() {
-        return getSpec(getArcanist(), 2);
+    default T getLuminary() {
+        return getArcanist().getSpecs()[2];
     }
 
 }

@@ -1,11 +1,5 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
@@ -15,7 +9,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseSpecialization extends AbstractDatabaseStatInformation<DatabaseGameBase, DatabaseGamePlayerBase> {
+public class DatabaseSpecialization {
 
     protected Weapons weapon = Weapons.FELFLAME_BLADE;
     @Field("skill_boost")
@@ -25,22 +19,10 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation<Data
     protected List<Instant> prestigeDates = new ArrayList<>();
     @Field("level_up_rewards")
     private List<LevelUpReward> levelUpRewards = new ArrayList<>();
+    private long experience;
 
     public DatabaseSpecialization() {
 
-    }
-
-    @Override
-    public void updateStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
-            GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
-            DatabaseGamePlayerResult result,
-            int multiplier,
-            PlayersCollections playersCollection
-    ) {
-        //UPDATE SPEC EXPERIENCE
-        this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
     }
 
     public DatabaseSpecialization(SkillBoosts skillBoost) {
@@ -94,4 +76,11 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation<Data
         return false;
     }
 
+    public long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(long experience) {
+        this.experience = experience;
+    }
 }

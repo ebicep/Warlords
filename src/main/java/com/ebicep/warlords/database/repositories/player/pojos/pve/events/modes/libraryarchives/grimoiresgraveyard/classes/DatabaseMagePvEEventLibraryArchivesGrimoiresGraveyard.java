@@ -1,9 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard;
-
-import java.util.List;
 
 public class DatabaseMagePvEEventLibraryArchivesGrimoiresGraveyard extends DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard implements DatabaseWarlordsSpecs {
 
@@ -16,7 +15,7 @@ public class DatabaseMagePvEEventLibraryArchivesGrimoiresGraveyard extends Datab
     }
 
     @Override
-    public List<List> getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[]{pyromancer, cryomancer, aquamancer};
     }
 

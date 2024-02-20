@@ -39,7 +39,7 @@ public class DatabaseGamePvEEventSpidersDwelling extends DatabaseGamePvEEvent im
     }
 
     public DatabaseGamePvEEventSpidersDwelling(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<SpidersDwellingOption> spidersDwellingOption = new AtomicReference<>();

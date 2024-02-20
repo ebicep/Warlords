@@ -38,7 +38,7 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     public DatabaseGamePvEEventBoltaroBonanza(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<BoltaroBonanzaOption> boltaroBonanzaOption = new AtomicReference<>();

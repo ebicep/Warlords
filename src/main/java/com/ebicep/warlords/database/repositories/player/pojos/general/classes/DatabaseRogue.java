@@ -4,8 +4,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSp
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
-import java.util.List;
-
 public class DatabaseRogue extends DatabaseBaseGeneral {
 
     protected DatabaseSpecialization assassin = new DatabaseSpecialization(SkillBoosts.FIREBALL);
@@ -16,8 +14,7 @@ public class DatabaseRogue extends DatabaseBaseGeneral {
         super(ArmorManager.Helmets.SIMPLE_ROGUE_HELMET);
     }
 
-    @Override
-    public List<List<DatabaseSpecialization>> getSpecs() {
+    public DatabaseSpecialization[] getSpecs() {
         return new DatabaseSpecialization[]{assassin, vindicator, apothecary};
     }
 

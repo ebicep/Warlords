@@ -37,7 +37,7 @@ public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEvent imp
     }
 
     public DatabaseGamePvEEventForgottenCodex(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<ForgottenCodexOption> forgottenCodexOption = new AtomicReference<>();

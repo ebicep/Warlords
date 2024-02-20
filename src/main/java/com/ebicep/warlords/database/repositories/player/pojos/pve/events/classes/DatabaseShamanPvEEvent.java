@@ -1,11 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabaseBasePvEEvent;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventStatsWarlordsSpecs;
 
-import java.util.List;
-
-public class DatabaseShamanPvEEvent extends DatabaseBasePvEEvent implements DatabaseWarlordsSpecs {
+public class DatabaseShamanPvEEvent implements PvEEventStatsWarlordsSpecs {
 
     private DatabaseBasePvEEvent thunderlord = new DatabaseBasePvEEvent();
     private DatabaseBasePvEEvent spiritguard = new DatabaseBasePvEEvent();
@@ -16,7 +13,7 @@ public class DatabaseShamanPvEEvent extends DatabaseBasePvEEvent implements Data
     }
 
     @Override
-    public List<List> getSpecs() {
+    public DatabaseBasePvEEvent[] getSpecs() {
         return new DatabaseBasePvEEvent[]{thunderlord, spiritguard, earthwarden};
     }
 

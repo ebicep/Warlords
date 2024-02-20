@@ -1,11 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.MostDamageInRound;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.TimeElapsed;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -15,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation implements PvEStats {
+public abstract class PvEDatabaseStatInformation<T extends DatabaseGamePvEBase, R extends DatabaseGamePlayerPvEBase> extends AbstractDatabaseStatInformation<T, R> implements PvEStats<T, R> {
 
     //CUMULATIVE STATS
     @Field("total_time_played")
@@ -26,8 +24,8 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
     protected Map<String, Long> mobAssists = new LinkedHashMap<>();
     @Field("mob_deaths")
     protected Map<String, Long> mobDeaths = new LinkedHashMap<>();
-// TODO
-//TOP STATS
+    // TODO
+    //TOP STATS
     @Field("most_damage_in_round")
     protected long mostDamageInRound;
 
@@ -37,20 +35,18 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
 
     @Override
     public void updateStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+            DatabasePlayer databasePlayer,
+            T databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            R gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert gamePlayer instanceof DatabaseGamePlayerPvEBase;
-
-        DatabaseGamePlayerPvEBase gamePlayerPvEBase = (DatabaseGamePlayerPvEBase) gamePlayer;
-        gamePlayerPvEBase.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
-        gamePlayerPvEBase.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
-        gamePlayerPvEBase.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
-
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        gamePlayer.getMobKills().forEach((s, aLong) -> this.mobKills.merge(s, aLong * multiplier, Long::sum));
+        gamePlayer.getMobAssists().forEach((s, aLong) -> this.mobAssists.merge(s, aLong * multiplier, Long::sum));
+        gamePlayer.getMobDeaths().forEach((s, aLong) -> this.mobDeaths.merge(s, aLong * multiplier, Long::sum));
         if (gamePlayer instanceof MostDamageInRound mostDamageInRound) {
             if (multiplier > 0) {
                 this.mostDamageInRound = Math.max(this.mostDamageInRound, mostDamageInRound.getMostDamageInRound());
@@ -58,20 +54,7 @@ public class PvEDatabaseStatInformation extends AbstractDatabaseStatInformation 
                 this.mostDamageInRound = 0;
             }
         }
-
-        if (databaseGame instanceof TimeElapsed timeElapsed) {
-            this.totalTimePlayed += (long) timeElapsed.getTimeElapsed() * multiplier;
-        }
-    }
-
-    public void merge(PvEDatabaseStatInformation other) {
-        super.merge(other);
-        this.totalTimePlayed += other.totalTimePlayed;
-        this.mostDamageInRound = Math.max(this.mostDamageInRound, other.mostDamageInRound);
-        other.mobKills.forEach((s, aLong) -> this.mobKills.merge(s, aLong, Long::sum));
-        other.mobAssists.forEach((s, aLong) -> this.mobAssists.merge(s, aLong, Long::sum));
-        other.mobDeaths.forEach((s, aLong) -> this.mobDeaths.merge(s, aLong, Long::sum));
-
+        this.totalTimePlayed += (long) databaseGame.getTimeElapsed() * multiplier;
     }
 
     public long getTotalTimePlayed() {

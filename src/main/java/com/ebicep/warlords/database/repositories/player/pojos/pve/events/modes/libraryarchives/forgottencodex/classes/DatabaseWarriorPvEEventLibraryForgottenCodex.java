@@ -2,9 +2,8 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.DatabaseBasePvEEventLibraryForgottenCodex;
-
-import java.util.List;
 
 public class DatabaseWarriorPvEEventLibraryForgottenCodex extends DatabaseBasePvEEventLibraryForgottenCodex implements DatabaseWarlordsSpecs {
 
@@ -17,7 +16,7 @@ public class DatabaseWarriorPvEEventLibraryForgottenCodex extends DatabaseBasePv
     }
 
     @Override
-    public List<List> getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEventLibraryForgottenCodex[]{berserker, defender, revenant};
     }
 

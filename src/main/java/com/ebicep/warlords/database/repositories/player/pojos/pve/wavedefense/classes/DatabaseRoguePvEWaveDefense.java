@@ -1,11 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabaseBasePvEWaveDefense;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStatsWarlordsSpecs;
 
-import java.util.List;
-
-public class DatabaseRoguePvEWaveDefense extends DatabaseBasePvEWaveDefense implements DatabaseWarlordsSpecs {
+public class DatabaseRoguePvEWaveDefense implements WaveDefenseStatsWarlordsSpecs {
 
     private DatabaseBasePvEWaveDefense assassin = new DatabaseBasePvEWaveDefense();
     private DatabaseBasePvEWaveDefense vindicator = new DatabaseBasePvEWaveDefense();
@@ -16,7 +13,7 @@ public class DatabaseRoguePvEWaveDefense extends DatabaseBasePvEWaveDefense impl
     }
 
     @Override
-    public List<List> getSpecs() {
+    public DatabaseBasePvEWaveDefense[] getSpecs() {
         return new DatabaseBasePvEWaveDefense[]{assassin, vindicator, apothecary};
     }
 

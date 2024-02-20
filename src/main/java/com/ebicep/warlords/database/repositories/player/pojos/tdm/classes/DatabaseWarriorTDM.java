@@ -3,8 +3,6 @@ package com.ebicep.warlords.database.repositories.player.pojos.tdm.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.TDMStatsWarlordsSpecs;
 
-import java.util.List;
-
 public class DatabaseWarriorTDM implements TDMStatsWarlordsSpecs {
 
     private DatabaseBaseTDM berserker = new DatabaseBaseTDM();
@@ -16,7 +14,7 @@ public class DatabaseWarriorTDM implements TDMStatsWarlordsSpecs {
     }
 
     @Override
-    public List<List<DatabaseBaseTDM>> getSpecs() {
+    public DatabaseBaseTDM[] getSpecs() {
         return new DatabaseBaseTDM[]{berserker, defender, revenant};
     }
 

@@ -2,9 +2,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.cla
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabaseBasePvEOnslaught;
-
-import java.util.List;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 
 public class DatabaseWarriorPvEOnslaught extends DatabaseBasePvEOnslaught implements DatabaseWarlordsSpecs {
 
@@ -17,7 +15,7 @@ public class DatabaseWarriorPvEOnslaught extends DatabaseBasePvEOnslaught implem
     }
 
     @Override
-    public List<List> getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEOnslaught[]{berserker, defender, revenant};
     }
 

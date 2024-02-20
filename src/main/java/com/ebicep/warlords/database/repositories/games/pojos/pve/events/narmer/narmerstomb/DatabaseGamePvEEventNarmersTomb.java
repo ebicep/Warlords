@@ -39,7 +39,7 @@ public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEvent implem
     }
 
     public DatabaseGamePvEEventNarmersTomb(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<NarmersTombOption> narmersTombOption = new AtomicReference<>();

@@ -2,8 +2,6 @@ package com.ebicep.warlords.database.repositories.player.pojos.interception.clas
 
 import com.ebicep.warlords.database.repositories.player.pojos.interception.InterceptionStatsWarlordsSpecs;
 
-import java.util.List;
-
 public class DatabaseShamanInterception implements InterceptionStatsWarlordsSpecs {
 
     private DatabaseBaseInterception thunderlord = new DatabaseBaseInterception();
@@ -15,7 +13,7 @@ public class DatabaseShamanInterception implements InterceptionStatsWarlordsSpec
     }
 
     @Override
-    public List<List<T>> getSpecs() {
+    public DatabaseBaseInterception[] getSpecs() {
         return new DatabaseBaseInterception[]{thunderlord, spiritguard, earthwarden};
     }
 

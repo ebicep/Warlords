@@ -1,12 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.player.general.ArmorManager;
 
-public abstract class DatabaseBaseGeneral implements StatsWarlordsSpecs<DatabaseGameBase, DatabaseGamePlayerBase, DatabaseSpecialization> {
+public abstract class DatabaseBaseGeneral {
 
     protected ArmorManager.Helmets helmet;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE;

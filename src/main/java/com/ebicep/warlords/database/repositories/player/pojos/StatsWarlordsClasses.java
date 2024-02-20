@@ -10,9 +10,7 @@ import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
@@ -33,7 +31,7 @@ public interface StatsWarlordsClasses<
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        getSpec(gamePlayer.getSpec()).forEach(t -> t.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection));
+        getSpec(gamePlayer.getSpec()).updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
     }
 
     @Override
@@ -87,21 +85,7 @@ public interface StatsWarlordsClasses<
     }
 
     @Override
-    default void setExperience(long experience) {
-        // only set for specs
-    }
-
-    @Nonnull
-    default <NumT> NumT getStat(Function<T, NumT> statFunction, BinaryOperator<NumT> accumulator, NumT defaultValue) {
-        return Arrays.stream(Specializations.VALUES)
-                     .flatMap(spec -> getSpec(spec).stream())
-                     .map(statFunction)
-                     .reduce(accumulator)
-                     .orElse(defaultValue);
-    }
-
-    @Override
-    default List<T> getSpec(Specializations specializations) {
+    default T getSpec(Specializations specializations) {
         return switch (specializations) {
             case PYROMANCER -> getPyromancer();
             case CRYOMANCER -> getCryomancer();
@@ -125,7 +109,7 @@ public interface StatsWarlordsClasses<
     }
 
     @Override
-    default List<R> getClass(Classes classes) {
+    default R getClass(Classes classes) {
         return switch (classes) {
             case MAGE -> getMage();
             case WARRIOR -> getWarrior();
@@ -137,45 +121,46 @@ public interface StatsWarlordsClasses<
     }
 
     @Override
-    default List<List<R>> getClasses() {
-        List<List<R>> classes = new ArrayList<>();
-        classes.add(getMage());
-        classes.add(getWarrior());
-        classes.add(getPaladin());
-        classes.add(getShaman());
-        classes.add(getRogue());
-        classes.add(getArcanist());
-        return classes;
+    default R[] getClasses() {
+        return (R[]) new DatabaseWarlordsSpecs[]{getMage(), getWarrior(), getPaladin(), getShaman(), getRogue(), getArcanist()};
     }
 
     @Override
-    default List<R> getMage() {
+    default R getMage() {
         return getClass(Classes.MAGE);
     }
 
     @Override
-    default List<R> getWarrior() {
+    default R getWarrior() {
         return getClass(Classes.WARRIOR);
     }
 
     @Override
-    default List<R> getPaladin() {
+    default R getPaladin() {
         return getClass(Classes.PALADIN);
     }
 
     @Override
-    default List<R> getShaman() {
+    default R getShaman() {
         return getClass(Classes.SHAMAN);
     }
 
     @Override
-    default List<R> getRogue() {
+    default R getRogue() {
         return getClass(Classes.ROGUE);
     }
 
     @Override
-    default List<R> getArcanist() {
+    default R getArcanist() {
         return getClass(Classes.ARCANIST);
+    }
+
+    @Nonnull
+    default <NumT> NumT getStat(Function<T, NumT> statFunction, BinaryOperator<NumT> accumulator, NumT defaultValue) {
+        return Arrays.stream(Specializations.VALUES)
+                     .map(spec -> statFunction.apply(getSpec(spec)))
+                     .reduce(accumulator)
+                     .orElse(defaultValue);
     }
 
 }

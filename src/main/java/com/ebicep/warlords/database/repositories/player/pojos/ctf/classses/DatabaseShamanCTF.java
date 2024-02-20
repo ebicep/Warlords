@@ -2,8 +2,6 @@ package com.ebicep.warlords.database.repositories.player.pojos.ctf.classses;
 
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.CTFStatsWarlordsSpecs;
 
-import java.util.List;
-
 public class DatabaseShamanCTF implements CTFStatsWarlordsSpecs {
 
     private DatabaseBaseCTF thunderlord = new DatabaseBaseCTF();
@@ -15,7 +13,7 @@ public class DatabaseShamanCTF implements CTFStatsWarlordsSpecs {
     }
 
     @Override
-    public List<List<DatabaseBaseCTF>> getSpecs() {
+    public DatabaseBaseCTF[] getSpecs() {
         return new DatabaseBaseCTF[]{thunderlord, spiritguard, earthwarden};
     }
 

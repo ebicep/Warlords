@@ -1,9 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabaseBasePvEEventIllumina;
-
-import java.util.List;
 
 public class DatabasePaladinPvEEventIllumina extends DatabaseBasePvEEventIllumina implements DatabaseWarlordsSpecs {
 
@@ -16,7 +15,7 @@ public class DatabasePaladinPvEEventIllumina extends DatabaseBasePvEEventIllumin
     }
 
     @Override
-    public List<List> getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEventIllumina[]{avenger, crusader, protector};
     }
 

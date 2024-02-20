@@ -105,10 +105,6 @@ public abstract class AbstractDatabaseStatInformation<T extends DatabaseGameBase
         return experience;
     }
 
-    @Override
-    public void setExperience(long experience) {
-        this.experience = experience;
-    }
 
     public int getLevel() {
         return ExperienceManager.getLevelFromExp(experience);

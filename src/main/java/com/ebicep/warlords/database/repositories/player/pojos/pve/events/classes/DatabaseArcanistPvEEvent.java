@@ -1,12 +1,9 @@
 
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabaseBasePvEEvent;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventStatsWarlordsSpecs;
 
-import java.util.List;
-
-public class DatabaseArcanistPvEEvent extends DatabaseBasePvEEvent implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEvent implements PvEEventStatsWarlordsSpecs {
 
     private DatabaseBasePvEEvent conjurer = new DatabaseBasePvEEvent();
     private DatabaseBasePvEEvent sentinel = new DatabaseBasePvEEvent();
@@ -17,7 +14,7 @@ public class DatabaseArcanistPvEEvent extends DatabaseBasePvEEvent implements Da
     }
 
     @Override
-    public List<List> getSpecs() {
+    public DatabaseBasePvEEvent[] getSpecs() {
         return new DatabaseBasePvEEvent[]{conjurer, sentinel, luminary};
     }
 

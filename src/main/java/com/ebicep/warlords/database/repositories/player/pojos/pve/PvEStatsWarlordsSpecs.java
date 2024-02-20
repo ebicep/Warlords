@@ -1,5 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 
 import javax.annotation.Nonnull;
@@ -8,10 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public interface PvEStatsWarlordsSpecs<T extends PvEStats> extends PvEStats, StatsWarlordsSpecs<T> {
+public interface PvEStatsWarlordsSpecs<
+        DatabaseGameT extends DatabaseGamePvEBase,
+        DatabaseGamePlayerT extends DatabaseGamePlayerPvEBase,
+        T extends PvEStats<DatabaseGameT, DatabaseGamePlayerT>>
+        extends PvEStats<DatabaseGameT, DatabaseGamePlayerT>, StatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T> {
 
     @Nonnull
-    private HashMap<String, Long> getStat(Function<PvEStats, Map<String, Long>> statFunction) {
+    private HashMap<String, Long> getStat(Function<PvEStats<DatabaseGameT, DatabaseGamePlayerT>, Map<String, Long>> statFunction) {
         return Arrays.stream(getSpecs())
                      .map(statFunction)
                      .collect(

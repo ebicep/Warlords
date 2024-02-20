@@ -92,5 +92,4 @@ public interface Stats<DatabaseGameT extends DatabaseGameBase, DatabaseGamePlaye
 
     long getExperience();
 
-    void setExperience(long experience);
 }

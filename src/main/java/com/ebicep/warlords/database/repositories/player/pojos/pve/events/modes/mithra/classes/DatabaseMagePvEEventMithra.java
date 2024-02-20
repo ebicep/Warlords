@@ -1,9 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.DatabaseBasePvEEventMithra;
-
-import java.util.List;
 
 public class DatabaseMagePvEEventMithra extends DatabaseBasePvEEventMithra implements DatabaseWarlordsSpecs {
 
@@ -16,7 +15,7 @@ public class DatabaseMagePvEEventMithra extends DatabaseBasePvEEventMithra imple
     }
 
     @Override
-    public List<List> getSpecs() {
+    public Stats[] getSpecs() {
         return new DatabaseBasePvEEventMithra[]{pyromancer, cryomancer, aquamancer};
     }
 

@@ -1,8 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsClasses;
 import com.ebicep.warlords.player.general.Specializations;
 
 import javax.annotation.Nonnull;
@@ -11,10 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public interface PvEEventStatsWarlordsClasses<T extends PvEEventStats, R extends DatabaseWarlordsSpecs<T>> extends PvEEventStats, StatsWarlordsClasses<T, R> {
+public interface PvEEventStatsWarlordsClasses extends PvEStatsWarlordsClasses<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats, StatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats>>, PvEEventStats {
 
     @Nonnull
-    private HashMap<String, Long> getStat(Function<PvEStats, Map<String, Long>> statFunction) {
+    private HashMap<String, Long> getStat(Function<PvEStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>, Map<String, Long>> statFunction) {
         return Arrays.stream(Specializations.VALUES)
                      .map(this::getSpec)
                      .map(statFunction)

@@ -2,12 +2,12 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroStats;
@@ -28,9 +28,10 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.List;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficultyStats {
+public class DatabasePlayerPvEEventStats implements MultiStat<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent> {
 
     @Field("boltaro")
     private DatabasePlayerPvEEventBoltaroStats boltaroStats = new DatabasePlayerPvEEventBoltaroStats();
@@ -46,17 +47,27 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
     private DatabasePlayerPvEEventLibraryArchivesStats libraryArchivesStats = new DatabasePlayerPvEEventLibraryArchivesStats();
 
     @Override
+    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
+        return List.of(
+                (T) boltaroStats,
+                (T) narmerStats,
+                (T) mithraStats,
+                (T) illuminaStats,
+                (T) gardenOfHesperidesStats,
+                (T) libraryArchivesStats
+        );
+    }
+
+    @Override
     public void updateStats(
             DatabasePlayer databasePlayer,
-            DatabaseGameBase databaseGame,
+            DatabaseGamePvEEvent databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerPvEEvent gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent != null) {
             GameEvents event = currentGameEvent.getEvent();
@@ -126,5 +137,4 @@ public class DatabasePlayerPvEEventStats extends DatabasePlayerPvEEventDifficult
     public Map<Long, DatabasePlayerPvEEventLibraryArchivesDifficultyStats> getLibraryArchivesEventStats() {
         return libraryArchivesStats.getEventStats();
     }
-
 }
