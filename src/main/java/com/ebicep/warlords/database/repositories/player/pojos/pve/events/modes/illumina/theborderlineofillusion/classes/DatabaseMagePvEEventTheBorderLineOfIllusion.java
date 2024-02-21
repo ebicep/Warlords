@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.DatabaseBasePvEEventTheBorderLineOfIllusion;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs;
 
-public class DatabaseMagePvEEventTheBorderLineOfIllusion extends DatabaseBasePvEEventTheBorderLineOfIllusion implements DatabaseWarlordsSpecs {
+public class DatabaseMagePvEEventTheBorderLineOfIllusion implements PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs {
 
     protected DatabaseBasePvEEventTheBorderLineOfIllusion pyromancer = new DatabaseBasePvEEventTheBorderLineOfIllusion();
     protected DatabaseBasePvEEventTheBorderLineOfIllusion cryomancer = new DatabaseBasePvEEventTheBorderLineOfIllusion();
@@ -15,7 +13,7 @@ public class DatabaseMagePvEEventTheBorderLineOfIllusion extends DatabaseBasePvE
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventTheBorderLineOfIllusion[] getSpecs() {
         return new DatabaseBasePvEEventTheBorderLineOfIllusion[]{pyromancer, cryomancer, aquamancer};
     }
 

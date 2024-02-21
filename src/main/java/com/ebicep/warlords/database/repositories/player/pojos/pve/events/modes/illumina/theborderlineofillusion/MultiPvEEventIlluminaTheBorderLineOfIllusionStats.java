@@ -1,14 +1,15 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion;
 
-
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.theborderlineofillusion.DatabaseGamePlayerPvEEventTheBorderlineOfIllusion;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.theborderlineofillusion.DatabaseGamePvEEventTheBorderlineOfIllusion;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.MultiPvEEventIlluminaStats;
 
-public class PvEEventTheBorderLineOfIllusionDatabaseStatInformation
-        extends PvEEventDatabaseStatInformation<
+public interface MultiPvEEventIlluminaTheBorderLineOfIllusionStats extends MultiPvEEventIlluminaStats<
+        PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsClasses,
         DatabaseGamePvEEventTheBorderlineOfIllusion,
-        DatabaseGamePlayerPvEEventTheBorderlineOfIllusion>
-        implements PvEEventIlluminaTheBorderLineOfIllusionStats {
+        DatabaseGamePlayerPvEEventTheBorderlineOfIllusion,
+        PvEEventIlluminaTheBorderLineOfIllusionStats,
+        PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs> {
 
 }
+        

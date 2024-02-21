@@ -1,11 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.DatabaseBasePvEEventTheBorderLineOfIllusion;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs;
 
-public class DatabaseArcanistPvEEventTheBorderLineOfIllusion extends DatabaseBasePvEEventTheBorderLineOfIllusion implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventTheBorderLineOfIllusion implements PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventTheBorderLineOfIllusion conjurer = new DatabaseBasePvEEventTheBorderLineOfIllusion();
     private DatabaseBasePvEEventTheBorderLineOfIllusion sentinel = new DatabaseBasePvEEventTheBorderLineOfIllusion();
@@ -16,7 +14,7 @@ public class DatabaseArcanistPvEEventTheBorderLineOfIllusion extends DatabaseBas
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventTheBorderLineOfIllusion[] getSpecs() {
         return new DatabaseBasePvEEventTheBorderLineOfIllusion[]{conjurer, sentinel, luminary};
     }
 

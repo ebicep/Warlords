@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.DatabaseBasePvEEventTheBorderLineOfIllusion;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs;
 
-public class DatabasePaladinPvEEventTheBorderLineOfIllusion extends DatabaseBasePvEEventTheBorderLineOfIllusion implements DatabaseWarlordsSpecs {
+public class DatabasePaladinPvEEventTheBorderLineOfIllusion implements PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventTheBorderLineOfIllusion avenger = new DatabaseBasePvEEventTheBorderLineOfIllusion();
     private DatabaseBasePvEEventTheBorderLineOfIllusion crusader = new DatabaseBasePvEEventTheBorderLineOfIllusion();
@@ -15,7 +13,7 @@ public class DatabasePaladinPvEEventTheBorderLineOfIllusion extends DatabaseBase
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventTheBorderLineOfIllusion[] getSpecs() {
         return new DatabaseBasePvEEventTheBorderLineOfIllusion[]{avenger, crusader, protector};
     }
 
