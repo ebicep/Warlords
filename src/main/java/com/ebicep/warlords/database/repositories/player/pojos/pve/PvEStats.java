@@ -6,7 +6,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 
 import java.util.Map;
 
-public interface PvEStats<DatabaseGameT extends DatabaseGamePvEBase, DatabaseGamePlayerT extends DatabaseGamePlayerPvEBase> extends Stats<DatabaseGameT, DatabaseGamePlayerT> {
+public interface PvEStats<DatabaseGameT extends DatabaseGamePvEBase, DatabaseGamePlayerT extends DatabaseGamePlayerPvEBase>
+        extends Stats<DatabaseGameT, DatabaseGamePlayerT> {
 
     Map<String, Long> getMobKills();
 

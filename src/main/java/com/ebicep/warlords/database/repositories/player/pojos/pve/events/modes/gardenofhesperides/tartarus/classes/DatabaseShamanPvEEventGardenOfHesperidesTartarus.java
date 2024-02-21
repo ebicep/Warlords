@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.DatabaseBasePvEEventGardenOfHesperidesTartarus;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs;
 
-public class DatabaseShamanPvEEventGardenOfHesperidesTartarus extends DatabaseBasePvEEventGardenOfHesperidesTartarus implements DatabaseWarlordsSpecs {
+public class DatabaseShamanPvEEventGardenOfHesperidesTartarus implements PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventGardenOfHesperidesTartarus thunderlord = new DatabaseBasePvEEventGardenOfHesperidesTartarus();
     private DatabaseBasePvEEventGardenOfHesperidesTartarus spiritguard = new DatabaseBasePvEEventGardenOfHesperidesTartarus();
@@ -15,7 +13,7 @@ public class DatabaseShamanPvEEventGardenOfHesperidesTartarus extends DatabaseBa
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventGardenOfHesperidesTartarus[] getSpecs() {
         return new DatabaseBasePvEEventGardenOfHesperidesTartarus[]{thunderlord, spiritguard, earthwarden};
     }
 

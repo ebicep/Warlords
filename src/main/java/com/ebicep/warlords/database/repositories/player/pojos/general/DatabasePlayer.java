@@ -20,7 +20,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
+import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
@@ -52,7 +52,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Document(collection = "Players_Information")
-public class DatabasePlayer implements MultiStat<DatabaseGameBase, DatabaseGamePlayerBase> {
+public class DatabasePlayer implements MultiStats<DatabaseGameBase, DatabaseGamePlayerBase> {
 
     @Id
     private String id;

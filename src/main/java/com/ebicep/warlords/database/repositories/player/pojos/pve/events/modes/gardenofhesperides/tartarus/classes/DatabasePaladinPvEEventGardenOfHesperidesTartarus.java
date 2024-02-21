@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.DatabaseBasePvEEventGardenOfHesperidesTartarus;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs;
 
-public class DatabasePaladinPvEEventGardenOfHesperidesTartarus extends DatabaseBasePvEEventGardenOfHesperidesTartarus implements DatabaseWarlordsSpecs {
+public class DatabasePaladinPvEEventGardenOfHesperidesTartarus implements PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventGardenOfHesperidesTartarus avenger = new DatabaseBasePvEEventGardenOfHesperidesTartarus();
     private DatabaseBasePvEEventGardenOfHesperidesTartarus crusader = new DatabaseBasePvEEventGardenOfHesperidesTartarus();
@@ -15,7 +13,7 @@ public class DatabasePaladinPvEEventGardenOfHesperidesTartarus extends DatabaseB
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventGardenOfHesperidesTartarus[] getSpecs() {
         return new DatabaseBasePvEEventGardenOfHesperidesTartarus[]{avenger, crusader, protector};
     }
 

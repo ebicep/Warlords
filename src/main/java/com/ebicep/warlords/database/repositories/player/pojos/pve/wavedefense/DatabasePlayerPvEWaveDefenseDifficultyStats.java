@@ -4,18 +4,16 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-public class DatabasePlayerPvEWaveDefenseDifficultyStats implements MultiStat<DatabaseGamePvEWaveDefense, DatabaseGamePlayerPvEWaveDefense> {
+public class DatabasePlayerPvEWaveDefenseDifficultyStats implements MultiPvEWaveDefenseStats {
 
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEWaveDefensePlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
@@ -58,11 +56,10 @@ public class DatabasePlayerPvEWaveDefenseDifficultyStats implements MultiStat<Da
         return playerCountStats;
     }
 
+
     @Override
-    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
-        return playerCountStats.values()
-                               .stream()
-                               .map(stats -> (T) stats)
-                               .toList();
+    public Collection<? extends WaveDefenseStatsWarlordsClasses> getStats() {
+        return playerCountStats.values();
     }
+
 }

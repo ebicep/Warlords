@@ -3,10 +3,14 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense;
 
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsClasses;
 
-public interface WaveDefenseStatsWarlordsClasses extends PvEStatsWarlordsClasses<DatabaseGamePvEWaveDefense, DatabaseGamePlayerPvEWaveDefense, WaveDefenseStats, StatsWarlordsSpecs<DatabaseGamePvEWaveDefense, DatabaseGamePlayerPvEWaveDefense, WaveDefenseStats>>, WaveDefenseStats {
+public interface WaveDefenseStatsWarlordsClasses extends PvEStatsWarlordsClasses<
+        DatabaseGamePvEWaveDefense,
+        DatabaseGamePlayerPvEWaveDefense,
+        WaveDefenseStats,
+        WaveDefenseStatsWarlordsSpecs>,
+        WaveDefenseStats {
 
     @Override
     default int getTotalWavesCleared() {

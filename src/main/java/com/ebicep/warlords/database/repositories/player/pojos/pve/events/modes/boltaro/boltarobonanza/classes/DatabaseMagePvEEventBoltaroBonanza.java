@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.DatabaseBasePvEEventBoltaroBonanza;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.PvEEventBoltaroBonanzaStatsWarlordsSpecs;
 
-public class DatabaseMagePvEEventBoltaroBonanza implements StatsWarlordsSpecs<DatabaseBasePvEEventBoltaroBonanza> {
+public class DatabaseMagePvEEventBoltaroBonanza implements PvEEventBoltaroBonanzaStatsWarlordsSpecs {
 
     protected DatabaseBasePvEEventBoltaroBonanza pyromancer = new DatabaseBasePvEEventBoltaroBonanza();
     protected DatabaseBasePvEEventBoltaroBonanza cryomancer = new DatabaseBasePvEEventBoltaroBonanza();
@@ -15,7 +13,7 @@ public class DatabaseMagePvEEventBoltaroBonanza implements StatsWarlordsSpecs<Da
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventBoltaroBonanza[] getSpecs() {
         return new DatabaseBasePvEEventBoltaroBonanza[]{pyromancer, cryomancer, aquamancer};
     }
 

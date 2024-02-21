@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.DatabaseBasePvEEventGardenOfHesperidesTartarus;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs;
 
-public class DatabaseRoguePvEEventGardenOfHesperidesTartarus extends DatabaseBasePvEEventGardenOfHesperidesTartarus implements DatabaseWarlordsSpecs {
+public class DatabaseRoguePvEEventGardenOfHesperidesTartarus implements PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventGardenOfHesperidesTartarus assassin = new DatabaseBasePvEEventGardenOfHesperidesTartarus();
     private DatabaseBasePvEEventGardenOfHesperidesTartarus vindicator = new DatabaseBasePvEEventGardenOfHesperidesTartarus();
@@ -15,7 +13,7 @@ public class DatabaseRoguePvEEventGardenOfHesperidesTartarus extends DatabaseBas
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventGardenOfHesperidesTartarus[] getSpecs() {
         return new DatabaseBasePvEEventGardenOfHesperidesTartarus[]{assassin, vindicator, apothecary};
     }
 

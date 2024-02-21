@@ -9,7 +9,10 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseSta
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class PvEEventDatabaseStatInformation extends PvEDatabaseStatInformation<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent> implements PvEEventStats {
+public class PvEEventDatabaseStatInformation<
+        DatabaseGameT extends DatabaseGamePvEEvent,
+        DatabaseGamePlayerT extends DatabaseGamePlayerPvEEvent>
+        extends PvEDatabaseStatInformation<DatabaseGameT, DatabaseGamePlayerT> implements PvEEventStats<DatabaseGameT, DatabaseGamePlayerT> {
 
     @Field("event_points_cum")
     private long eventPointsCumulative;

@@ -2,11 +2,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.DatabaseBasePvEEventBoltaroBonanza;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.PvEEventBoltaroBonanzaStatsWarlordsSpecs;
 
-public class DatabaseArcanistPvEEventBoltaroBonanza implements StatsWarlordsSpecs<DatabaseBasePvEEventBoltaroBonanza> {
+public class DatabaseArcanistPvEEventBoltaroBonanza implements PvEEventBoltaroBonanzaStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventBoltaroBonanza conjurer = new DatabaseBasePvEEventBoltaroBonanza();
     private DatabaseBasePvEEventBoltaroBonanza sentinel = new DatabaseBasePvEEventBoltaroBonanza();
@@ -17,7 +15,7 @@ public class DatabaseArcanistPvEEventBoltaroBonanza implements StatsWarlordsSpec
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventBoltaroBonanza[] getSpecs() {
         return new DatabaseBasePvEEventBoltaroBonanza[]{conjurer, sentinel, luminary};
     }
 

@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
+import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
 
-public class DatabasePlayerPvEEventDifficultyStats implements MultiStat<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>, EventMode {
+public class DatabasePlayerPvEEventDifficultyStats implements MultiStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>, EventMode {
 
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEEventPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{

@@ -3,9 +3,12 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes.DatabaseBasePvEEvent;
 
-public interface PvEEventStatsWarlordsSpecs extends PvEStatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, DatabaseBasePvEEvent> {
+public interface PvEEventStatsWarlordsSpecs<
+        DatabaseGameT extends DatabaseGamePvEEvent,
+        DatabaseGamePlayerT extends DatabaseGamePlayerPvEEvent,
+        T extends PvEEventStats<DatabaseGameT, DatabaseGamePlayerT>>
+        extends PvEStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T> {
 
 
 //    @Override

@@ -1,11 +1,9 @@
 
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.DatabaseBasePvEEventBoltaroLair;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.PvEEventBoltaroLairStatsWarlordsSpecs;
 
-public class DatabaseArcanistPvEEventBoltaroLair extends DatabaseBasePvEEventBoltaroLair implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventBoltaroLair implements PvEEventBoltaroLairStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventBoltaroLair conjurer = new DatabaseBasePvEEventBoltaroLair();
     private DatabaseBasePvEEventBoltaroLair sentinel = new DatabaseBasePvEEventBoltaroLair();
@@ -16,7 +14,7 @@ public class DatabaseArcanistPvEEventBoltaroLair extends DatabaseBasePvEEventBol
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventBoltaroLair[] getSpecs() {
         return new DatabaseBasePvEEventBoltaroLair[]{conjurer, sentinel, luminary};
     }
 

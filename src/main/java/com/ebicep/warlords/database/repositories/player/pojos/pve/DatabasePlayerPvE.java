@@ -17,8 +17,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.Dat
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
@@ -65,7 +64,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DatabasePlayerPvE implements MultiStat<DatabaseGamePvEBase, DatabaseGamePlayerPvEBase> {
+public class DatabasePlayerPvE implements MultiStats<DatabaseGamePvEBase, DatabaseGamePlayerPvEBase> {
 
     @Transient
     private DatabasePlayer databasePlayer;
@@ -514,9 +513,5 @@ public class DatabasePlayerPvE implements MultiStat<DatabaseGamePvEBase, Databas
         return alternativeMasteriesUnlockedAbilities;
     }
 
-    @Override
-    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
-        return null; //TODO
-    }
 
 }

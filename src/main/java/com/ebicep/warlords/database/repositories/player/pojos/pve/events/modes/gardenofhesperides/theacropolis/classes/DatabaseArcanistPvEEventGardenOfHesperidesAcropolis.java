@@ -2,11 +2,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.DatabaseBasePvEEventGardenOfHesperidesAcropolis;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsSpecs;
 
-public class DatabaseArcanistPvEEventGardenOfHesperidesAcropolis extends DatabaseBasePvEEventGardenOfHesperidesAcropolis implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventGardenOfHesperidesAcropolis implements PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventGardenOfHesperidesAcropolis conjurer = new DatabaseBasePvEEventGardenOfHesperidesAcropolis();
     private DatabaseBasePvEEventGardenOfHesperidesAcropolis sentinel = new DatabaseBasePvEEventGardenOfHesperidesAcropolis();
@@ -17,7 +15,7 @@ public class DatabaseArcanistPvEEventGardenOfHesperidesAcropolis extends Databas
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventGardenOfHesperidesAcropolis[] getSpecs() {
         return new DatabaseBasePvEEventGardenOfHesperidesAcropolis[]{conjurer, sentinel, luminary};
     }
 

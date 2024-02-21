@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.DatabaseBasePvEEventBoltaroBonanza;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.PvEEventBoltaroBonanzaStatsWarlordsSpecs;
 
-public class DatabaseRoguePvEEventBoltaroBonanza implements StatsWarlordsSpecs<DatabaseBasePvEEventBoltaroBonanza> {
+public class DatabaseRoguePvEEventBoltaroBonanza implements PvEEventBoltaroBonanzaStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventBoltaroBonanza assassin = new DatabaseBasePvEEventBoltaroBonanza();
     private DatabaseBasePvEEventBoltaroBonanza vindicator = new DatabaseBasePvEEventBoltaroBonanza();
@@ -15,7 +13,7 @@ public class DatabaseRoguePvEEventBoltaroBonanza implements StatsWarlordsSpecs<D
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventBoltaroBonanza[] getSpecs() {
         return new DatabaseBasePvEEventBoltaroBonanza[]{assassin, vindicator, apothecary};
     }
 

@@ -12,7 +12,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.interception.Databa
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
+import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
@@ -40,7 +40,7 @@ public class TournamentStats {
         return this.tournament3Stats;
     }
 
-    public static class DatabasePlayerTournamentStats implements MultiStat<DatabaseGameBase, DatabaseGamePlayerBase> {
+    public static class DatabasePlayerTournamentStats implements MultiStats<DatabaseGameBase, DatabaseGamePlayerBase> {
 
         @Field("ctf_stats")
         private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();

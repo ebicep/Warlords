@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.DatabaseBasePvEEventGardenOfHesperidesAcropolis;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsSpecs;
 
-public class DatabaseMagePvEEventGardenOfHesperidesAcropolis extends DatabaseBasePvEEventGardenOfHesperidesAcropolis implements DatabaseWarlordsSpecs {
+public class DatabaseMagePvEEventGardenOfHesperidesAcropolis implements PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsSpecs {
 
     protected DatabaseBasePvEEventGardenOfHesperidesAcropolis pyromancer = new DatabaseBasePvEEventGardenOfHesperidesAcropolis();
     protected DatabaseBasePvEEventGardenOfHesperidesAcropolis cryomancer = new DatabaseBasePvEEventGardenOfHesperidesAcropolis();
@@ -15,7 +13,7 @@ public class DatabaseMagePvEEventGardenOfHesperidesAcropolis extends DatabaseBas
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventGardenOfHesperidesAcropolis[] getSpecs() {
         return new DatabaseBasePvEEventGardenOfHesperidesAcropolis[]{pyromancer, cryomancer, aquamancer};
     }
 

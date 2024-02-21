@@ -5,8 +5,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -15,9 +13,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.stream.Stream;
 
-public class DatabasePlayerWaveDefenseStats implements MultiStat<DatabaseGamePvEWaveDefense, DatabaseGamePlayerPvEWaveDefense> {
+public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats {
 
     @Field("easy_stats")
     private DatabasePlayerPvEWaveDefenseDifficultyStats easyStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
@@ -83,30 +82,10 @@ public class DatabasePlayerWaveDefenseStats implements MultiStat<DatabaseGamePvE
         return endlessStats;
     }
 
-    public void setEndlessStats(DatabasePlayerPvEWaveDefenseDifficultyStats endlessStats) {
-        this.endlessStats = endlessStats;
-    }
-
-    public void setHardStats(DatabasePlayerPvEWaveDefenseDifficultyStats hardStats) {
-        this.hardStats = hardStats;
-    }
-
-    public void setNormalStats(DatabasePlayerPvEWaveDefenseDifficultyStats normalStats) {
-        this.normalStats = normalStats;
-    }
-
-    public void setEasyStats(DatabasePlayerPvEWaveDefenseDifficultyStats easyStats) {
-        this.easyStats = easyStats;
-    }
-
     @Override
-    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
-        return List.of(
-                (T) easyStats,
-                (T) normalStats,
-                (T) hardStats,
-                (T) extremeStats,
-                (T) endlessStats
-        );
+    public Collection<? extends WaveDefenseStatsWarlordsClasses> getStats() {
+        return Stream.of(easyStats, normalStats, hardStats, extremeStats, endlessStats)
+                     .flatMap(stats -> stats.getStats().stream())
+                     .toList();
     }
 }

@@ -1,41 +1,60 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro;
 
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePlayerPvEEventBoltaro;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePvEEventBoltaro;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventBoltaroStats extends DatabasePlayerPvEEventBoltaroDifficultyStats {
+public class DatabasePlayerPvEEventBoltaroStats implements MultiPvEEventBoltaroStats<
+        PvEEventBoltaroStatsWarlordsClasses<
+                DatabaseGamePvEEventBoltaro,
+                DatabaseGamePlayerPvEEventBoltaro,
+                PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>,
+                PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>>,
+        DatabaseGamePvEEventBoltaro,
+        DatabaseGamePlayerPvEEventBoltaro,
+        PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>,
+        PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>> {
 
     @Field("events")
     private Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> eventStats = new LinkedHashMap<>();
 
-    @Override
-    public void updateStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
-            GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
-            DatabaseGamePlayerResult result,
-            int multiplier,
-            PlayersCollections playersCollection
-    ) {
-        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
 
-        getEvent(DatabaseGameEvent.currentGameEvent.getStartDateSecond()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+    public DatabasePlayerPvEEventBoltaroDifficultyStats getEvent(long epochSecond) {
+        return eventStats.computeIfAbsent(epochSecond, k -> new DatabasePlayerPvEEventBoltaroDifficultyStats());
     }
 
     public Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> getEventStats() {
         return eventStats;
     }
 
-    public DatabasePlayerPvEEventBoltaroDifficultyStats getEvent(long epochSecond) {
-        return eventStats.computeIfAbsent(epochSecond, k -> new DatabasePlayerPvEEventBoltaroDifficultyStats());
+    @Override
+    public Collection<? extends PvEEventBoltaroStatsWarlordsClasses<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>, PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>>> getStats() {
+        return eventStats.values()
+                         .stream()
+                         .flatMap(stats -> stats.getStats().stream())
+                         .toList();
     }
+
+    @Override
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGamePvEEventBoltaro databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerPvEEventBoltaro gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+        getEvent(DatabaseGameEvent.currentGameEvent.getStartDateSecond()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+    }
+
 }

@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
+import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
@@ -31,7 +31,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.List;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventStats implements MultiStat<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent> {
+public class DatabasePlayerPvEEventStats implements MultiStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent> {
 
     @Field("boltaro")
     private DatabasePlayerPvEEventBoltaroStats boltaroStats = new DatabasePlayerPvEEventBoltaroStats();

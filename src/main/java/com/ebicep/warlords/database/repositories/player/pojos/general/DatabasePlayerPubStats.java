@@ -15,7 +15,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameS
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStat;
+import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
@@ -28,7 +28,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
-public class DatabasePlayerPubStats implements MultiStat<DatabaseGameBase, DatabaseGamePlayerBase> {
+public class DatabasePlayerPubStats implements MultiStats<DatabaseGameBase, DatabaseGamePlayerBase> {
 
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();

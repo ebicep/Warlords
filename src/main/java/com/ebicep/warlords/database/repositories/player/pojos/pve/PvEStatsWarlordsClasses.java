@@ -2,7 +2,6 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve;
 
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.player.general.Specializations;
 
@@ -12,11 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public interface PvEStatsWarlordsClasses<
-        DatabaseGameT extends DatabaseGamePvEBase,
-        DatabaseGamePlayerT extends DatabaseGamePlayerPvEBase,
+public interface PvEStatsWarlordsClasses<DatabaseGameT extends DatabaseGamePvEBase, DatabaseGamePlayerT extends DatabaseGamePlayerPvEBase,
         T extends PvEStats<DatabaseGameT, DatabaseGamePlayerT>,
-        R extends DatabaseWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T>>
+        R extends PvEStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T>>
         extends PvEStats<DatabaseGameT, DatabaseGamePlayerT>, StatsWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, T, R> {
 
     @Nonnull
