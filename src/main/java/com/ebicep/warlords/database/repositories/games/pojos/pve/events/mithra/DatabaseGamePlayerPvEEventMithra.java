@@ -8,7 +8,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
 public abstract class DatabaseGamePlayerPvEEventMithra extends DatabaseGamePlayerPvEEvent {
 
-
     public DatabaseGamePlayerPvEEventMithra(
             WarlordsPlayer warlordsPlayer,
             WarlordsGameTriggerWinEvent gameWinEvent,
@@ -16,6 +15,7 @@ public abstract class DatabaseGamePlayerPvEEventMithra extends DatabaseGamePlaye
             EventPointsOption eventPointsOption,
             boolean counted
     ) {
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption, counted);
     }
 
     protected DatabaseGamePlayerPvEEventMithra() {

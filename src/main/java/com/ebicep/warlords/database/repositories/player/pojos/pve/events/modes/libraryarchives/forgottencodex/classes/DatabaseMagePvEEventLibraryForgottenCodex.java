@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.DatabaseBasePvEEventLibraryForgottenCodex;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs;
 
-public class DatabaseMagePvEEventLibraryForgottenCodex extends DatabaseBasePvEEventLibraryForgottenCodex implements DatabaseWarlordsSpecs {
+public class DatabaseMagePvEEventLibraryForgottenCodex implements PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs {
 
     protected DatabaseBasePvEEventLibraryForgottenCodex pyromancer = new DatabaseBasePvEEventLibraryForgottenCodex();
     protected DatabaseBasePvEEventLibraryForgottenCodex cryomancer = new DatabaseBasePvEEventLibraryForgottenCodex();
@@ -15,7 +13,7 @@ public class DatabaseMagePvEEventLibraryForgottenCodex extends DatabaseBasePvEEv
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventLibraryForgottenCodex[] getSpecs() {
         return new DatabaseBasePvEEventLibraryForgottenCodex[]{pyromancer, cryomancer, aquamancer};
     }
 

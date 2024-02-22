@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.Game;
 public abstract class DatabaseGamePvEEventNarmer extends DatabaseGamePvEEvent {
 
     public DatabaseGamePvEEventNarmer(Game game, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        super(game, gameWinEvent, counted);
     }
 
     protected DatabaseGamePvEEventNarmer() {

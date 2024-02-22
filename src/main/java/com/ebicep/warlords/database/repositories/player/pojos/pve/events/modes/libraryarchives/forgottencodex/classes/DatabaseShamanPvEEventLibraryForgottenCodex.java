@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.DatabaseBasePvEEventLibraryForgottenCodex;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs;
 
-public class DatabaseShamanPvEEventLibraryForgottenCodex extends DatabaseBasePvEEventLibraryForgottenCodex implements DatabaseWarlordsSpecs {
+public class DatabaseShamanPvEEventLibraryForgottenCodex implements PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventLibraryForgottenCodex thunderlord = new DatabaseBasePvEEventLibraryForgottenCodex();
     private DatabaseBasePvEEventLibraryForgottenCodex spiritguard = new DatabaseBasePvEEventLibraryForgottenCodex();
@@ -15,7 +13,7 @@ public class DatabaseShamanPvEEventLibraryForgottenCodex extends DatabaseBasePvE
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventLibraryForgottenCodex[] getSpecs() {
         return new DatabaseBasePvEEventLibraryForgottenCodex[]{thunderlord, spiritguard, earthwarden};
     }
 

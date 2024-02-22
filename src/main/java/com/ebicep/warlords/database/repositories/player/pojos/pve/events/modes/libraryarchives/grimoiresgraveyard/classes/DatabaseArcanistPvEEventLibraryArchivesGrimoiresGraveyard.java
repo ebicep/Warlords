@@ -1,11 +1,9 @@
 
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs;
 
-public class DatabaseArcanistPvEEventLibraryArchivesGrimoiresGraveyard extends DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventLibraryArchivesGrimoiresGraveyard implements PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard conjurer = new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard();
     private DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard sentinel = new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard();
@@ -16,7 +14,7 @@ public class DatabaseArcanistPvEEventLibraryArchivesGrimoiresGraveyard extends D
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[] getSpecs() {
         return new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[]{conjurer, sentinel, luminary};
     }
 

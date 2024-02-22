@@ -10,5 +10,6 @@ public abstract class DatabaseGamePvEEventIllumina extends DatabaseGamePvEEvent 
     }
 
     public DatabaseGamePvEEventIllumina(Game game, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        super(game, gameWinEvent, counted);
     }
 }

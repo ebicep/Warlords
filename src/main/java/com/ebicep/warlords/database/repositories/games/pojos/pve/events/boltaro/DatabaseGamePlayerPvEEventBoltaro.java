@@ -16,6 +16,7 @@ public abstract class DatabaseGamePlayerPvEEventBoltaro extends DatabaseGamePlay
             EventPointsOption eventPointsOption,
             boolean counted
     ) {
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption, counted);
     }
 
     protected DatabaseGamePlayerPvEEventBoltaro() {

@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.DatabaseBasePvEEventLibraryForgottenCodex;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs;
 
-public class DatabasePaladinPvEEventLibraryForgottenCodex extends DatabaseBasePvEEventLibraryForgottenCodex implements DatabaseWarlordsSpecs {
+public class DatabasePaladinPvEEventLibraryForgottenCodex implements PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventLibraryForgottenCodex avenger = new DatabaseBasePvEEventLibraryForgottenCodex();
     private DatabaseBasePvEEventLibraryForgottenCodex crusader = new DatabaseBasePvEEventLibraryForgottenCodex();
@@ -15,7 +13,7 @@ public class DatabasePaladinPvEEventLibraryForgottenCodex extends DatabaseBasePv
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventLibraryForgottenCodex[] getSpecs() {
         return new DatabaseBasePvEEventLibraryForgottenCodex[]{avenger, crusader, protector};
     }
 

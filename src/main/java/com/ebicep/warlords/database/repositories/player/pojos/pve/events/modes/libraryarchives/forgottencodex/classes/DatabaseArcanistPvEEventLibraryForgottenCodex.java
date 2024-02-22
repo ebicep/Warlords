@@ -2,11 +2,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.DatabaseBasePvEEventLibraryForgottenCodex;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs;
 
-public class DatabaseArcanistPvEEventLibraryForgottenCodex extends DatabaseBasePvEEventLibraryForgottenCodex implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEEventLibraryForgottenCodex implements PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventLibraryForgottenCodex conjurer = new DatabaseBasePvEEventLibraryForgottenCodex();
     private DatabaseBasePvEEventLibraryForgottenCodex sentinel = new DatabaseBasePvEEventLibraryForgottenCodex();
@@ -17,7 +15,7 @@ public class DatabaseArcanistPvEEventLibraryForgottenCodex extends DatabaseBaseP
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventLibraryForgottenCodex[] getSpecs() {
         return new DatabaseBasePvEEventLibraryForgottenCodex[]{conjurer, sentinel, luminary};
     }
 

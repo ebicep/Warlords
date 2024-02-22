@@ -16,6 +16,7 @@ public abstract class DatabaseGamePlayerPvEEventGardenOfHesperides extends Datab
             EventPointsOption eventPointsOption,
             boolean counted
     ) {
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption, counted);
     }
 
     protected DatabaseGamePlayerPvEEventGardenOfHesperides() {

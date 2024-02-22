@@ -16,6 +16,7 @@ public abstract class DatabaseGamePlayerPvEEventIllumina extends DatabaseGamePla
             EventPointsOption eventPointsOption,
             boolean counted
     ) {
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption, counted);
     }
 
     protected DatabaseGamePlayerPvEEventIllumina() {

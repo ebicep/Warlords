@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.Game;
 public abstract class DatabaseGamePvEEventMithra extends DatabaseGamePvEEvent {
 
     public DatabaseGamePvEEventMithra(Game game, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        super(game, gameWinEvent, counted);
     }
 
     protected DatabaseGamePvEEventMithra() {

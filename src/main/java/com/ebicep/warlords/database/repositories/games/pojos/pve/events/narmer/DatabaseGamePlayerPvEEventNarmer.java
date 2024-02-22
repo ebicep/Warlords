@@ -16,6 +16,7 @@ public abstract class DatabaseGamePlayerPvEEventNarmer extends DatabaseGamePlaye
             EventPointsOption eventPointsOption,
             boolean counted
     ) {
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption, counted);
     }
 
     protected DatabaseGamePlayerPvEEventNarmer() {

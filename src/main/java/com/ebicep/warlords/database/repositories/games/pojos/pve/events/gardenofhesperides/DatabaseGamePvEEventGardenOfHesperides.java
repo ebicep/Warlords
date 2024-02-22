@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.Game;
 public abstract class DatabaseGamePvEEventGardenOfHesperides extends DatabaseGamePvEEvent {
 
     public DatabaseGamePvEEventGardenOfHesperides(Game game, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        super(game, gameWinEvent, counted);
     }
 
     protected DatabaseGamePvEEventGardenOfHesperides() {

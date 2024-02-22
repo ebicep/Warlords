@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs;
 
-public class DatabaseWarriorPvEEventLibraryArchivesGrimoiresGraveyard extends DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard implements DatabaseWarlordsSpecs {
+public class DatabaseWarriorPvEEventLibraryArchivesGrimoiresGraveyard implements PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard berserker = new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard();
     private DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard defender = new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard();
@@ -15,7 +13,7 @@ public class DatabaseWarriorPvEEventLibraryArchivesGrimoiresGraveyard extends Da
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[] getSpecs() {
         return new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[]{berserker, defender, revenant};
     }
 

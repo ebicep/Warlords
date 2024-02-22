@@ -16,6 +16,7 @@ public abstract class DatabaseGamePlayerPvEEventLibraryArchives extends Database
             EventPointsOption eventPointsOption,
             boolean counted
     ) {
+        super(warlordsPlayer, gameWinEvent, waveDefenseOption, eventPointsOption, counted);
     }
 
     protected DatabaseGamePlayerPvEEventLibraryArchives() {

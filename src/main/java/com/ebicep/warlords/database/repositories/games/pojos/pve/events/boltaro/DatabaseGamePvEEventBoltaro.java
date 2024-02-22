@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.Game;
 public abstract class DatabaseGamePvEEventBoltaro extends DatabaseGamePvEEvent {
 
     public DatabaseGamePvEEventBoltaro(Game game, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
+        super(game, gameWinEvent, counted);
     }
 
     protected DatabaseGamePvEEventBoltaro() {

@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs;
 
-public class DatabaseMagePvEEventLibraryArchivesGrimoiresGraveyard extends DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard implements DatabaseWarlordsSpecs {
+public class DatabaseMagePvEEventLibraryArchivesGrimoiresGraveyard implements PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs {
 
     protected DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard pyromancer = new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard();
     protected DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard cryomancer = new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard();
@@ -15,7 +13,7 @@ public class DatabaseMagePvEEventLibraryArchivesGrimoiresGraveyard extends Datab
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[] getSpecs() {
         return new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[]{pyromancer, cryomancer, aquamancer};
     }
 
