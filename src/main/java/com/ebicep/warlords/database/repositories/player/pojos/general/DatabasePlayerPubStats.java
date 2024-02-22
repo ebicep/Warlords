@@ -15,8 +15,9 @@ import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameS
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
@@ -26,9 +27,11 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.stream.Stream;
 
-public class DatabasePlayerPubStats implements MultiStats<DatabaseGameBase, DatabaseGamePlayerBase> {
+public class DatabasePlayerPubStats implements MultiStatsGeneral {
+
 
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
@@ -110,16 +113,15 @@ public class DatabasePlayerPubStats implements MultiStats<DatabaseGameBase, Data
         return duelStats;
     }
 
+
     @Override
-    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
-        return List.of(
-                (T) ctfStats,
-                (T) tdmStats,
-                (T) interceptionStats,
-                (T) duelStats,
-                (T) siegeStats
-        );
+    public Collection<? extends StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
+        return (Collection<? extends StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase,
+                Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>,
+                StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase,
+                        Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>>)
+                Stream.of(ctfStats, tdmStats, interceptionStats, duelStats, siegeStats)
+                      .toList();
+
     }
-
-
 }

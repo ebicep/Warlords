@@ -6,29 +6,15 @@ import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
-import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayerCTF;
-import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGameDuel;
-import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGamePlayerDuel;
-import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
-import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayerInterception;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
-import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
-import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
-import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
-import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
-import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
-import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlayerSiege;
-import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
@@ -50,9 +36,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 @Document(collection = "Players_Information")
-public class DatabasePlayer implements MultiStats<DatabaseGameBase, DatabaseGamePlayerBase> {
+public class DatabasePlayer implements MultiStatsGeneral {
 
     @Id
     private String id;
@@ -74,16 +61,6 @@ public class DatabasePlayer implements MultiStats<DatabaseGameBase, DatabaseGame
     private DatabaseShaman shaman = new DatabaseShaman();
     private DatabaseRogue rogue = new DatabaseRogue();
     private DatabaseArcanist arcanist = new DatabaseArcanist();
-    @Field("ctf_stats")
-    private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
-    @Field("tdm_stats")
-    private DatabasePlayerTDM tdmStats = new DatabasePlayerTDM();
-    @Field("interception_stats")
-    private DatabasePlayerInterception interceptionStats = new DatabasePlayerInterception();
-    @Field("duel_stats")
-    private DatabasePlayerDuel duelStats = new DatabasePlayerDuel();
-    @Field("siege_stats")
-    private DatabasePlayerSiege siegeStats = new DatabasePlayerSiege();
 
     @Field("comp_stats")
     private DatabasePlayerCompStats compStats = new DatabasePlayerCompStats();
@@ -186,48 +163,10 @@ public class DatabasePlayer implements MultiStats<DatabaseGameBase, DatabaseGame
             this.pveStats.updateStats(this, gamePvEBase, gameMode, gamePlayerPvEBase, result, multiplier, playersCollection);
             return;
         }
-        //UPDATE GAMEMODES
-        switch (gameMode) {
-            case CAPTURE_THE_FLAG -> {
-                if (databaseGame instanceof DatabaseGameCTF ctfGame && gamePlayer instanceof DatabaseGamePlayerCTF ctfPlayer) {
-                    this.ctfStats.updateStats(databasePlayer, ctfGame, ctfPlayer, multiplier, playersCollection);
-                } else {
-                    ChatUtils.MessageType.GAME.sendErrorMessage("CTF game or player is not an instance of the correct class!");
-                }
-            }
-            case TEAM_DEATHMATCH -> {
-                if (databaseGame instanceof DatabaseGameTDM tdmGame && gamePlayer instanceof DatabaseGamePlayerTDM tdmPlayer) {
-                    this.tdmStats.updateStats(databasePlayer, tdmGame, tdmPlayer, multiplier, playersCollection);
-                } else {
-                    ChatUtils.MessageType.GAME.sendErrorMessage("TDM game or player is not an instance of the correct class!");
-                }
-            }
-            case INTERCEPTION -> {
-                if (databaseGame instanceof DatabaseGameInterception interceptionGame && gamePlayer instanceof DatabaseGamePlayerInterception interceptionPlayer) {
-                    this.interceptionStats.updateStats(databasePlayer, interceptionGame, interceptionPlayer, multiplier, playersCollection);
-                } else {
-                    ChatUtils.MessageType.GAME.sendErrorMessage("Interception game or player is not an instance of the correct class!");
-                }
-            }
-            case DUEL -> {
-                if (databaseGame instanceof DatabaseGameDuel duelGame && gamePlayer instanceof DatabaseGamePlayerDuel duelPlayer) {
-                    this.duelStats.updateStats(databasePlayer, duelGame, duelPlayer, multiplier, playersCollection);
-                } else {
-                    ChatUtils.MessageType.GAME.sendErrorMessage("Duel game or player is not an instance of the correct class!");
-                }
-            }
-            case SIEGE -> {
-                if (databaseGame instanceof DatabaseGameSiege siegeGame && gamePlayer instanceof DatabaseGamePlayerSiege siegePlayer) {
-                    this.siegeStats.updateStats(databasePlayer, siegeGame, siegePlayer, multiplier, playersCollection);
-                } else {
-                    ChatUtils.MessageType.GAME.sendErrorMessage("Siege game or player is not an instance of the correct class!");
-                }
-            }
-        }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
-            this.tournamentStats.getCurrentTournamentStats().updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+            this.tournamentStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         } else {
             if (gameAddons.isEmpty()) {
                 this.pubStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
@@ -331,39 +270,6 @@ public class DatabasePlayer implements MultiStats<DatabaseGameBase, DatabaseGame
             case ROGUE -> rogue;
             case ARCANIST -> arcanist;
         };
-    }
-
-
-    public DatabasePlayerCTF getCtfStats() {
-        return ctfStats;
-    }
-
-    public void setCtfStats(DatabasePlayerCTF ctfStats) {
-        this.ctfStats = ctfStats;
-    }
-
-    public DatabasePlayerTDM getTdmStats() {
-        return tdmStats;
-    }
-
-    public void setTdmStats(DatabasePlayerTDM tdmStats) {
-        this.tdmStats = tdmStats;
-    }
-
-    public DatabasePlayerInterception getInterceptionStats() {
-        return interceptionStats;
-    }
-
-    public void setInterceptionStats(DatabasePlayerInterception interceptionStats) {
-        this.interceptionStats = interceptionStats;
-    }
-
-    public DatabasePlayerDuel getDuelStats() {
-        return duelStats;
-    }
-
-    public void setDuelStats(DatabasePlayerDuel duelStats) {
-        this.duelStats = duelStats;
     }
 
     public DatabasePlayerCompStats getCompStats() {
@@ -555,14 +461,10 @@ public class DatabasePlayer implements MultiStats<DatabaseGameBase, DatabaseGame
     }
 
     @Override
-    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
-        return List.of(
-                (T) ctfStats,
-                (T) tdmStats,
-                (T) interceptionStats,
-                (T) duelStats,
-                (T) siegeStats
-        );
+    public Collection<? extends StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
+        return Stream.of(pubStats, compStats, pveStats, tournamentStats)
+                     .flatMap(s -> s.getStats().stream())
+                     .toList();
     }
 
     public enum Patches {

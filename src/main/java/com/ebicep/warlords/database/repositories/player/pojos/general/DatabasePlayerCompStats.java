@@ -1,6 +1,5 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
-
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -13,7 +12,9 @@ import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameS
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlayerSiege;
@@ -22,8 +23,10 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerCompStats implements MultiStats<DatabaseGameBase, DatabaseGamePlayerBase> {
+import java.util.Collection;
+import java.util.stream.Stream;
 
+public class DatabasePlayerCompStats implements MultiStatsGeneral {
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
     @Field("tdm_stats")
@@ -35,7 +38,6 @@ public class DatabasePlayerCompStats implements MultiStats<DatabaseGameBase, Dat
 
     public DatabasePlayerCompStats() {
     }
-
 
     @Override
     public void updateStats(
@@ -91,5 +93,11 @@ public class DatabasePlayerCompStats implements MultiStats<DatabaseGameBase, Dat
         return interceptionStats;
     }
 
+    @Override
+    public Collection<? extends StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
+        return (Collection<? extends StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>>)
+                Stream.of(ctfStats, tdmStats, interceptionStats, siegeStats)
+                      .toList();
+    }
 }
 
