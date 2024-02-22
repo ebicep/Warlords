@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEventLibraryArchives implements WavesCleared {
+public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventForgottenCodex> implements WavesCleared {
 
     @Field("total_mobs_killed")
     private int totalMobsKilled;
@@ -74,7 +74,7 @@ public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEventLibr
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventForgottenCodex> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventForgottenCodex -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventForgottenCodex,
@@ -112,7 +112,7 @@ public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEventLibr
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventForgottenCodex> getBasePlayers() {
         return new HashSet<>(players);
     }
 

@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.D
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.DatabaseGamePvEEventNarmer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventStats;
 
-public interface PvEEventNarmerStats<DatabaseGameT extends DatabaseGamePvEEventNarmer, DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventNarmer>
+public interface PvEEventNarmerStats<DatabaseGameT extends DatabaseGamePvEEventNarmer<DatabaseGamePlayerT>, DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventNarmer>
         extends PvEEventStats<DatabaseGameT, DatabaseGamePlayerT> {
 
 }

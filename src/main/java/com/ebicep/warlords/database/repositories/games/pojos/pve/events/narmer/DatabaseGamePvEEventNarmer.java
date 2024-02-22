@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.Database
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 
-public abstract class DatabaseGamePvEEventNarmer extends DatabaseGamePvEEvent {
+public abstract class DatabaseGamePvEEventNarmer<T extends DatabaseGamePlayerPvEEventNarmer> extends DatabaseGamePvEEvent<T> {
 
     public DatabaseGamePvEEventNarmer(Game game, WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         super(game, gameWinEvent, counted);

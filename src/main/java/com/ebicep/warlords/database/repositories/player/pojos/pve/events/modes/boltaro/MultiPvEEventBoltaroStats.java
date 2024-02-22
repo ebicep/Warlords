@@ -7,7 +7,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.MultiPv
 
 public interface MultiPvEEventBoltaroStats<
         StatsWarlordsClassesT extends PvEEventBoltaroStatsWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT>,
-        DatabaseGameT extends DatabaseGamePvEEventBoltaro,
+        DatabaseGameT extends DatabaseGamePvEEventBoltaro<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventBoltaro,
         StatsT extends PvEEventBoltaroStats<DatabaseGameT, DatabaseGamePlayerT>,
         SpecsT extends PvEEventBoltaroStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, StatsT>>

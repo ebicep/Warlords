@@ -13,7 +13,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 public interface StatsWarlordsSpecs<
-        DatabaseGameT extends DatabaseGameBase,
+        DatabaseGameT extends DatabaseGameBase<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerBase,
         T extends Stats<DatabaseGameT, DatabaseGamePlayerT>>
         extends Stats<DatabaseGameT, DatabaseGamePlayerT>, DatabaseWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T> {

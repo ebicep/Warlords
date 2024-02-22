@@ -7,7 +7,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.MultiPv
 
 public interface MultiPvEEventGardenOfHesperidesStats<
         StatsWarlordsClassesT extends PvEEventGardenOfHesperidesStatsWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT>,
-        DatabaseGameT extends DatabaseGamePvEEventGardenOfHesperides,
+        DatabaseGameT extends DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventGardenOfHesperides,
         StatsT extends PvEEventGardenOfHesperidesStats<DatabaseGameT, DatabaseGamePlayerT>,
         SpecsT extends PvEEventGardenOfHesperidesStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, StatsT>>

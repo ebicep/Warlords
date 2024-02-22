@@ -15,7 +15,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 public interface StatsWarlordsClasses<
-        DatabaseGameT extends DatabaseGameBase,
+        DatabaseGameT extends DatabaseGameBase<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerBase,
         T extends Stats<DatabaseGameT, DatabaseGamePlayerT>,
         R extends DatabaseWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T>>

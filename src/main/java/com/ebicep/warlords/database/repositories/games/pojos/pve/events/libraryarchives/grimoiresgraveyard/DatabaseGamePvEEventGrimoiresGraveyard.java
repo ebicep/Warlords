@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEventLibraryArchives {
+public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventGrimoiresGraveyard> {
 
     @Field("total_mobs_killed")
     private int totalMobsKilled;
@@ -76,7 +76,7 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventGrimoiresGraveyard> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventGrimoiresGraveyard -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventGrimoiresGraveyard,
@@ -119,7 +119,7 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventGrimoiresGraveyard> getBasePlayers() {
         return new HashSet<>(players);
     }
 

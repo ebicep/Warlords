@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public abstract class PvEDatabaseStatInformation<T extends DatabaseGamePvEBase, R extends DatabaseGamePlayerPvEBase> extends AbstractDatabaseStatInformation<T, R> implements PvEStats<T, R> {
+public abstract class PvEDatabaseStatInformation<T extends DatabaseGamePvEBase<R>, R extends DatabaseGamePlayerPvEBase> extends AbstractDatabaseStatInformation<T, R> implements PvEStats<T, R> {
 
     //CUMULATIVE STATS
     @Field("total_time_played")

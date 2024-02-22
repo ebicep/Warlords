@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Specializations;
 
-public interface DatabaseWarlordsClasses<DatabaseGameT extends DatabaseGameBase,
+public interface DatabaseWarlordsClasses<DatabaseGameT extends DatabaseGameBase<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerBase,
         T extends Stats<DatabaseGameT, DatabaseGamePlayerT>,
         R extends DatabaseWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T>> {

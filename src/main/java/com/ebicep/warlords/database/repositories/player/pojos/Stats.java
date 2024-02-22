@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.ExperienceManager;
 
-public interface Stats<DatabaseGameT extends DatabaseGameBase, DatabaseGamePlayerT extends DatabaseGamePlayerBase> {
+public interface Stats<DatabaseGameT extends DatabaseGameBase<DatabaseGamePlayerT>, DatabaseGamePlayerT extends DatabaseGamePlayerBase> {
 
     void updateStats(
             DatabasePlayer databasePlayer,

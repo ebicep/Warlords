@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.Database
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsClasses;
 
-public interface PvEEventStatsWarlordsClasses<DatabaseGameT extends DatabaseGamePvEEvent, DatabaseGamePlayerT extends DatabaseGamePlayerPvEEvent,
+public interface PvEEventStatsWarlordsClasses<DatabaseGameT extends DatabaseGamePvEEvent<DatabaseGamePlayerT>, DatabaseGamePlayerT extends DatabaseGamePlayerPvEEvent,
         T extends PvEEventStats<DatabaseGameT, DatabaseGamePlayerT>,
         R extends PvEEventStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T>>
         extends PvEStatsWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, T, R>,

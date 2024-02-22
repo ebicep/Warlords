@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 public interface MultiStats<
         StatsWarlordsClassesT extends StatsWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT>,
-        DatabaseGameT extends DatabaseGameBase,
+        DatabaseGameT extends DatabaseGameBase<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerBase,
         StatsT extends Stats<DatabaseGameT, DatabaseGamePlayerT>,
         SpecsT extends StatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, StatsT>>

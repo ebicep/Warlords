@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class PvEEventDatabaseStatInformation<
-        DatabaseGameT extends DatabaseGamePvEEvent,
+        DatabaseGameT extends DatabaseGamePvEEvent<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEvent>
         extends PvEDatabaseStatInformation<DatabaseGameT, DatabaseGamePlayerT> implements PvEEventStats<DatabaseGameT, DatabaseGamePlayerT> {
 

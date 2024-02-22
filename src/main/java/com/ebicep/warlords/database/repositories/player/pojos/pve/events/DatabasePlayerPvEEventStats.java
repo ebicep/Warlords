@@ -6,8 +6,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroStats;
@@ -28,10 +26,20 @@ import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Stream;
 
-public class DatabasePlayerPvEEventStats implements MultiStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent> {
+public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
+        PvEEventStatsWarlordsClasses<
+                DatabaseGamePvEEvent,
+                DatabaseGamePlayerPvEEvent,
+                PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>,
+                PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>>>,
+        DatabaseGamePvEEvent,
+        DatabaseGamePlayerPvEEvent,
+        PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>,
+        PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>>> {
 
     @Field("boltaro")
     private DatabasePlayerPvEEventBoltaroStats boltaroStats = new DatabasePlayerPvEEventBoltaroStats();
@@ -45,18 +53,6 @@ public class DatabasePlayerPvEEventStats implements MultiStats<DatabaseGamePvEEv
     private DatabasePlayerPvEEventGardenOfHesperidesStats gardenOfHesperidesStats = new DatabasePlayerPvEEventGardenOfHesperidesStats();
     @Field("library_archives")
     private DatabasePlayerPvEEventLibraryArchivesStats libraryArchivesStats = new DatabasePlayerPvEEventLibraryArchivesStats();
-
-    @Override
-    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
-        return List.of(
-                (T) boltaroStats,
-                (T) narmerStats,
-                (T) mithraStats,
-                (T) illuminaStats,
-                (T) gardenOfHesperidesStats,
-                (T) libraryArchivesStats
-        );
-    }
 
     @Override
     public void updateStats(
@@ -79,10 +75,7 @@ public class DatabasePlayerPvEEventStats implements MultiStats<DatabaseGamePvEEv
                 Guild guild = guildGuildPlayerPair.getA();
                 GuildPlayer guildPlayer = guildGuildPlayerPair.getB();
 
-                long points = Math.min(
-                        ((DatabaseGamePlayerPvEEvent) gamePlayer).getPoints(),
-                        ((DatabaseGamePvEEvent) databaseGame).getPointLimit()
-                ) * multiplier;
+                long points = Math.min(gamePlayer.getPoints(), databaseGame.getPointLimit()) * multiplier;
                 guild.addEventPoints(event, currentGameEvent.getStartDateSecond(), points * multiplier);
                 guildPlayer.addEventPoints(event, currentGameEvent.getStartDateSecond(), points * multiplier);
                 guild.queueUpdate();
@@ -136,5 +129,20 @@ public class DatabasePlayerPvEEventStats implements MultiStats<DatabaseGamePvEEv
 
     public Map<Long, DatabasePlayerPvEEventLibraryArchivesDifficultyStats> getLibraryArchivesEventStats() {
         return libraryArchivesStats.getEventStats();
+    }
+
+
+    @Override
+    public Collection<? extends PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>>>> getStats() {
+        return Stream.of(boltaroStats,
+                             narmerStats,
+                             mithraStats,
+                             illuminaStats,
+                             gardenOfHesperidesStats,
+                             libraryArchivesStats
+                     )
+                     .flatMap(stats -> (Stream<? extends PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>>>>) stats.getStats()
+                                                                                                                                                                                                                                                                                                                                                               .stream())
+                     .toList();
     }
 }

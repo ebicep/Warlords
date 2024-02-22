@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEventNarmer implements WavesCleared {
+public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmersTomb> implements WavesCleared {
 
     @Field("total_mobs_killed")
     private int totalMobsKilled;
@@ -71,7 +71,7 @@ public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEventNarmer 
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventNarmersTomb> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventNarmersTomb -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventNarmersTomb,
@@ -111,7 +111,7 @@ public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEventNarmer 
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventNarmersTomb> getBasePlayers() {
         return new HashSet<>(players);
     }
 

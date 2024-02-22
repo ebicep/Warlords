@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenof
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.DatabaseGamePvEEventGardenOfHesperides;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventStats;
 
-public interface PvEEventGardenOfHesperidesStats<DatabaseGameT extends DatabaseGamePvEEventGardenOfHesperides, DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventGardenOfHesperides>
+public interface PvEEventGardenOfHesperidesStats<DatabaseGameT extends DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerT>, DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventGardenOfHesperides>
         extends PvEEventStats<DatabaseGameT, DatabaseGamePlayerT> {
 
 }

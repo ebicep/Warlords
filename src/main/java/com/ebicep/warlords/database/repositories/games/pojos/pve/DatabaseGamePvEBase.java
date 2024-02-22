@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements TimeElapsed, Difficulty {
+public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> extends DatabaseGameBase<T> implements TimeElapsed, Difficulty {
 
     protected DifficultyIndex difficulty;
     @Field("time_elapsed")
@@ -49,7 +49,7 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<T> databaseGame, int multiplier) {
         getBasePlayers().forEach(databaseGamePlayerPvE -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvE,
@@ -60,7 +60,7 @@ public abstract class DatabaseGamePvEBase extends DatabaseGameBase implements Ti
     }
 
     @Override
-    public abstract Set<DatabaseGamePlayerPvEBase> getBasePlayers();
+    public abstract Set<T> getBasePlayers();
 
     @Override
     public void appendLastGameStats(Hologram hologram) {

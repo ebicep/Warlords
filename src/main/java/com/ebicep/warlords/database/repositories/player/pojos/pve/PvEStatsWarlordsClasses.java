@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public interface PvEStatsWarlordsClasses<DatabaseGameT extends DatabaseGamePvEBase, DatabaseGamePlayerT extends DatabaseGamePlayerPvEBase,
+public interface PvEStatsWarlordsClasses<DatabaseGameT extends DatabaseGamePvEBase<DatabaseGamePlayerT>, DatabaseGamePlayerT extends DatabaseGamePlayerPvEBase,
         T extends PvEStats<DatabaseGameT, DatabaseGamePlayerT>,
         R extends PvEStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T>>
         extends PvEStats<DatabaseGameT, DatabaseGamePlayerT>, StatsWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, T, R> {

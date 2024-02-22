@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
-public abstract class DatabaseGameBase {
+public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
 
     public static final Location LAST_GAME_STATS_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 26.5, 86, 184.5);
     public static final Location TOP_DAMAGE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 37.5, 88, 181.5);
@@ -276,7 +276,7 @@ public abstract class DatabaseGameBase {
         return counted;
     }
 
-    public abstract void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier);
+    public abstract void updatePlayerStatsFromGame(DatabaseGameBase<T> databaseGame, int multiplier);
 
     public void setCounted(boolean counted) {
         this.counted = counted;
@@ -463,7 +463,7 @@ public abstract class DatabaseGameBase {
         this.counted = counted;
     }
 
-    public abstract Set<? extends DatabaseGamePlayerBase> getBasePlayers();
+    public abstract Set<T> getBasePlayers();
 
     public abstract DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player);
 

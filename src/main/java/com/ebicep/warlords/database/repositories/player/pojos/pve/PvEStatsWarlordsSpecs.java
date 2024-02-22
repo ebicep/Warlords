@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public interface PvEStatsWarlordsSpecs<
-        DatabaseGameT extends DatabaseGamePvEBase,
+        DatabaseGameT extends DatabaseGamePvEBase<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEBase,
         T extends PvEStats<DatabaseGameT, DatabaseGamePlayerT>>
         extends PvEStats<DatabaseGameT, DatabaseGamePlayerT>, StatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T> {

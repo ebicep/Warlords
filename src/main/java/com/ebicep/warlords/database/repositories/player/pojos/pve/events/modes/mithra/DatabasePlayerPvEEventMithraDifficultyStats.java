@@ -16,14 +16,14 @@ import java.util.stream.Stream;
 
 public class DatabasePlayerPvEEventMithraDifficultyStats implements MultiPvEEventMithraStats<
         PvEEventMithraStatsWarlordsClasses<
-                DatabaseGamePvEEventMithra,
+                DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>,
                 DatabaseGamePlayerPvEEventMithra,
-                PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>,
-                PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>>>,
-        DatabaseGamePvEEventMithra,
+                PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>,
+                PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>>,
+        DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>,
         DatabaseGamePlayerPvEEventMithra,
-        PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>,
-        PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>>> {
+        PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>,
+        PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>> {
 
     @Field("the_borderline_of_illusion_stats")
     private DatabasePlayerPvEEventMithraSpidersDwellingDifficultyStats borderLineOfIllusionStats = new DatabasePlayerPvEEventMithraSpidersDwellingDifficultyStats();
@@ -60,10 +60,10 @@ public class DatabasePlayerPvEEventMithraDifficultyStats implements MultiPvEEven
     }
 
     @Override
-    public Collection<? extends PvEEventMithraStatsWarlordsClasses<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>, PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>>>> getStats() {
+    public Collection<? extends PvEEventMithraStatsWarlordsClasses<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>, PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>>> getStats() {
         return Stream.of(borderLineOfIllusionStats) // TODO
-                     .flatMap(stats -> (Stream<? extends PvEEventMithraStatsWarlordsClasses<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>, PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>>>>) stats.getStats()
-                                                                                                                                                                                                                                                                                                                                                                                                                                       .stream())
+                     .flatMap(stats -> (Stream<? extends PvEEventMithraStatsWarlordsClasses<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>, PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>>>) stats.getStats()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               .stream())
                      .toList();
     }
 }

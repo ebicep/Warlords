@@ -15,14 +15,14 @@ import java.util.Map;
 
 public class DatabasePlayerPvEEventBoltaroStats implements MultiPvEEventBoltaroStats<
         PvEEventBoltaroStatsWarlordsClasses<
-                DatabaseGamePvEEventBoltaro,
+                DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>,
                 DatabaseGamePlayerPvEEventBoltaro,
-                PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>,
-                PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>>,
-        DatabaseGamePvEEventBoltaro,
+                PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>,
+                PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>>,
+        DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>,
         DatabaseGamePlayerPvEEventBoltaro,
-        PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>,
-        PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>> {
+        PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>,
+        PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>> {
 
     @Field("events")
     private Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> eventStats = new LinkedHashMap<>();
@@ -37,7 +37,7 @@ public class DatabasePlayerPvEEventBoltaroStats implements MultiPvEEventBoltaroS
     }
 
     @Override
-    public Collection<? extends PvEEventBoltaroStatsWarlordsClasses<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>, PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>>> getStats() {
+    public Collection<? extends PvEEventBoltaroStatsWarlordsClasses<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>, PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>>> getStats() {
         return eventStats.values()
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())

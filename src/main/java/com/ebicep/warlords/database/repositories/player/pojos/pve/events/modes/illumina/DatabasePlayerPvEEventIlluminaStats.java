@@ -16,14 +16,14 @@ import java.util.Map;
 
 public class DatabasePlayerPvEEventIlluminaStats implements MultiPvEEventIlluminaStats<
         PvEEventIlluminaStatsWarlordsClasses<
-                DatabaseGamePvEEventIllumina,
+                DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>,
                 DatabaseGamePlayerPvEEventIllumina,
-                PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>,
-                PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>>>,
-        DatabaseGamePvEEventIllumina,
+                PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>,
+                PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>>>,
+        DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>,
         DatabaseGamePlayerPvEEventIllumina,
-        PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>,
-        PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>>> {
+        PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>,
+        PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>>> {
 
 
     @Field("events")
@@ -51,7 +51,7 @@ public class DatabasePlayerPvEEventIlluminaStats implements MultiPvEEventIllumin
     }
 
     @Override
-    public Collection<? extends PvEEventIlluminaStatsWarlordsClasses<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>, PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>>>> getStats() {
+    public Collection<? extends PvEEventIlluminaStatsWarlordsClasses<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>, PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>>>> getStats() {
         return eventStats.values()
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())

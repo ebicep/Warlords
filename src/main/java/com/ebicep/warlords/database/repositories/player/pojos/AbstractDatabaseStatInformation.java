@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.ExperienceManager;
 
-public abstract class AbstractDatabaseStatInformation<T extends DatabaseGameBase, R extends DatabaseGamePlayerBase> implements Stats<T, R> {
+public abstract class AbstractDatabaseStatInformation<T extends DatabaseGameBase<R>, R extends DatabaseGamePlayerBase> implements Stats<T, R> {
 
     protected int kills = 0;
     protected int assists = 0;

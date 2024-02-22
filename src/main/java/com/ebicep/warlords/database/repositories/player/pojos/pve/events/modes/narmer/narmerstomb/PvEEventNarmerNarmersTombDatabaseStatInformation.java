@@ -41,7 +41,7 @@ public class PvEEventNarmerNarmersTombDatabaseStatInformation
 
     @Override
     public int getHighestWaveCleared() {
-        return highestWaveCleared
+        return highestWaveCleared;
     }
 
     @Override

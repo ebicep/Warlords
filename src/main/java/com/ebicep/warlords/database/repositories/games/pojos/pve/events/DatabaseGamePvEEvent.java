@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Document(collection = "Games_Information_Event_PvE")
-public abstract class DatabaseGamePvEEvent extends DatabaseGamePvEBase implements TimeElapsed {
+public abstract class DatabaseGamePvEEvent<T extends DatabaseGamePlayerPvEEvent> extends DatabaseGamePvEBase<T> implements TimeElapsed {
 
     public DatabaseGamePvEEvent() {
     }

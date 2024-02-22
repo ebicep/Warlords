@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.Database
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
 
 public interface PvEEventStatsWarlordsSpecs<
-        DatabaseGameT extends DatabaseGamePvEEvent,
+        DatabaseGameT extends DatabaseGamePvEEvent<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEvent,
         T extends PvEEventStats<DatabaseGameT, DatabaseGamePlayerT>>
         extends PvEStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T> {

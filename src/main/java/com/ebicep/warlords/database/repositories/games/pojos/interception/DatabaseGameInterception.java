@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Document(collection = "Games_Information_Interception")
-public class DatabaseGameInterception extends DatabaseGameBase {
+public class DatabaseGameInterception extends DatabaseGameBase<DatabaseGamePlayerInterception> {
 
     @Field("time_left")
     protected int timeLeft;
@@ -48,7 +48,7 @@ public class DatabaseGameInterception extends DatabaseGameBase {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerInterception> databaseGame, int multiplier) {
         for (List<DatabaseGamePlayerInterception> gamePlayerCTFList : players.values()) {
             for (DatabaseGamePlayerInterception gamePlayerCTF : gamePlayerCTFList) {
                 DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier);
@@ -57,7 +57,7 @@ public class DatabaseGameInterception extends DatabaseGameBase {
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerInterception> getBasePlayers() {
         return players.values().stream()
                       .flatMap(Collection::stream)
                       .collect(Collectors.toSet());

@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePvEEventBoltaro;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventStats;
 
-public interface PvEEventBoltaroStats<DatabaseGameT extends DatabaseGamePvEEventBoltaro, DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventBoltaro>
+public interface PvEEventBoltaroStats<DatabaseGameT extends DatabaseGamePvEEventBoltaro<DatabaseGamePlayerT>, DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventBoltaro>
         extends PvEEventStats<DatabaseGameT, DatabaseGamePlayerT> {
 
 }

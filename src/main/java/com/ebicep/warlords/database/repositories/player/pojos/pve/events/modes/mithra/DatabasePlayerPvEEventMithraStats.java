@@ -15,14 +15,14 @@ import java.util.Map;
 
 public class DatabasePlayerPvEEventMithraStats implements MultiPvEEventMithraStats<
         PvEEventMithraStatsWarlordsClasses<
-                DatabaseGamePvEEventMithra,
+                DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>,
                 DatabaseGamePlayerPvEEventMithra,
-                PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>,
-                PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>>>,
-        DatabaseGamePvEEventMithra,
+                PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>,
+                PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>>,
+        DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>,
         DatabaseGamePlayerPvEEventMithra,
-        PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>,
-        PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>>> {
+        PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>,
+        PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>> {
 
 
     @Field("events")
@@ -50,7 +50,7 @@ public class DatabasePlayerPvEEventMithraStats implements MultiPvEEventMithraSta
     }
 
     @Override
-    public Collection<? extends PvEEventMithraStatsWarlordsClasses<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>, PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra, DatabaseGamePlayerPvEEventMithra>>>> getStats() {
+    public Collection<? extends PvEEventMithraStatsWarlordsClasses<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>, PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>>> getStats() {
         return eventStats.values()
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())

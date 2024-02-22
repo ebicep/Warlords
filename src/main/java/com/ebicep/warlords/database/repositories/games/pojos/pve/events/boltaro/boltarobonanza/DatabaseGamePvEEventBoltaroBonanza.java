@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEventBoltaro {
+public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaroBonanza> {
 
     @Field("highest_split")
     private int highestSplit;
@@ -75,7 +75,7 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEventBolt
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventBoltaroBonanza> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventBoltaroBonanza -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventBoltaroBonanza,
@@ -117,7 +117,7 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEventBolt
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventBoltaroBonanza> getBasePlayers() {
         return new HashSet<>(players);
     }
 

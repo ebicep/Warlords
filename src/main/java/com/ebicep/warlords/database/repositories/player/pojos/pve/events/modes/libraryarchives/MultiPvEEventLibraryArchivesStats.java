@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.events.MultiPv
 
 public interface MultiPvEEventLibraryArchivesStats<
         StatsWarlordsClassesT extends PvEEventLibraryArchivesStatsWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT>,
-        DatabaseGameT extends DatabaseGamePvEEventLibraryArchives,
+        DatabaseGameT extends DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventLibraryArchives,
         StatsT extends PvEEventLibraryArchivesStats<DatabaseGameT, DatabaseGamePlayerT>,
         SpecsT extends PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, StatsT>>

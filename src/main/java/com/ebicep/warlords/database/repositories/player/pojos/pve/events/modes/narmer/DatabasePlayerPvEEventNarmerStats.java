@@ -15,14 +15,14 @@ import java.util.Map;
 
 public class DatabasePlayerPvEEventNarmerStats implements MultiPvEEventNarmerStats<
         PvEEventNarmerStatsWarlordsClasses<
-                DatabaseGamePvEEventNarmer,
+                DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>,
                 DatabaseGamePlayerPvEEventNarmer,
-                PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>,
-                PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>>>,
-        DatabaseGamePvEEventNarmer,
+                PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>,
+                PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>>,
+        DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>,
         DatabaseGamePlayerPvEEventNarmer,
-        PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>,
-        PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>>> {
+        PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>,
+        PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>> {
 
 
     @Field("events")
@@ -50,7 +50,7 @@ public class DatabasePlayerPvEEventNarmerStats implements MultiPvEEventNarmerSta
     }
 
     @Override
-    public Collection<? extends PvEEventNarmerStatsWarlordsClasses<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>, PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>>>> getStats() {
+    public Collection<? extends PvEEventNarmerStatsWarlordsClasses<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>, PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>>> getStats() {
         return eventStats.values()
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())

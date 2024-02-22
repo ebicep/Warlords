@@ -16,14 +16,14 @@ import java.util.Map;
 
 public class DatabasePlayerPvEEventLibraryArchivesStats implements MultiPvEEventLibraryArchivesStats<
         PvEEventLibraryArchivesStatsWarlordsClasses<
-                DatabaseGamePvEEventLibraryArchives,
+                DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>,
                 DatabaseGamePlayerPvEEventLibraryArchives,
-                PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives>,
-                PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives>>>,
-        DatabaseGamePvEEventLibraryArchives,
+                PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>,
+                PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>>,
+        DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>,
         DatabaseGamePlayerPvEEventLibraryArchives,
-        PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives>,
-        PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives>>> {
+        PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>,
+        PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>> {
 
 
     @Field("events")
@@ -51,7 +51,7 @@ public class DatabasePlayerPvEEventLibraryArchivesStats implements MultiPvEEvent
     }
 
     @Override
-    public Collection<? extends PvEEventLibraryArchivesStatsWarlordsClasses<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives>, PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives, DatabaseGamePlayerPvEEventLibraryArchives>>>> getStats() {
+    public Collection<? extends PvEEventLibraryArchivesStatsWarlordsClasses<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>, PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>>> getStats() {
         return eventStats.values()
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvEEventIllumina implements WavesCleared {
+public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> implements WavesCleared {
 
     @Field("total_mobs_killed")
     private int totalMobsKilled;
@@ -71,7 +71,7 @@ public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvE
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventTheBorderlineOfIllusion -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventTheBorderlineOfIllusion,
@@ -111,7 +111,7 @@ public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvE
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> getBasePlayers() {
         return new HashSet<>(players);
     }
 

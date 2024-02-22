@@ -20,14 +20,14 @@ import java.util.stream.Stream;
 
 public class DatabasePlayerPvEEventBoltaroDifficultyStats implements MultiPvEEventBoltaroStats<
         PvEEventBoltaroStatsWarlordsClasses<
-                DatabaseGamePvEEventBoltaro,
+                DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>,
                 DatabaseGamePlayerPvEEventBoltaro,
-                PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>,
-                PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>>,
-        DatabaseGamePvEEventBoltaro,
+                PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>,
+                PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>>,
+        DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>,
         DatabaseGamePlayerPvEEventBoltaro,
-        PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>,
-        PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>> {
+        PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>,
+        PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>> {
 
     @Field("bonanza_stats")
     private DatabasePlayerPvEEventBoltaroBonanzaStats bonanzaStats = new DatabasePlayerPvEEventBoltaroBonanzaStats();
@@ -56,12 +56,12 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats implements MultiPvEEve
         }
     }
 
+
     @Override
-    public Collection<? extends PvEEventBoltaroStatsWarlordsClasses<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>, PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>>> getStats() {
+    public Collection<? extends PvEEventBoltaroStatsWarlordsClasses<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>, PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>>> getStats() {
         return Stream.of(bonanzaStats, lairStats) // TODO
-                     .flatMap(stats -> (Stream<? extends PvEEventBoltaroStatsWarlordsClasses<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>, PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro, DatabaseGamePlayerPvEEventBoltaro>>>>) stats.getStats()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                   .stream())
+                     .flatMap(stats -> (Stream<? extends PvEEventBoltaroStatsWarlordsClasses<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>, PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>>>) stats.getStats()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               .stream())
                      .toList();
     }
-
 }

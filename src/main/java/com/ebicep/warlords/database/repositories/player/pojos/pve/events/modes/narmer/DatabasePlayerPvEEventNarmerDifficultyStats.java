@@ -16,14 +16,14 @@ import java.util.stream.Stream;
 
 public class DatabasePlayerPvEEventNarmerDifficultyStats implements MultiPvEEventNarmerStats<
         PvEEventNarmerStatsWarlordsClasses<
-                DatabaseGamePvEEventNarmer,
+                DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>,
                 DatabaseGamePlayerPvEEventNarmer,
-                PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>,
-                PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>>>,
-        DatabaseGamePvEEventNarmer,
+                PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>,
+                PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>>,
+        DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>,
         DatabaseGamePlayerPvEEventNarmer,
-        PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>,
-        PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>>> {
+        PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>,
+        PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>> {
 
     @Field("tomb_stats")
     private DatabasePlayerPvEEventNarmerNarmersTombDifficultyStats tombStats = new DatabasePlayerPvEEventNarmerNarmersTombDifficultyStats();
@@ -61,10 +61,10 @@ public class DatabasePlayerPvEEventNarmerDifficultyStats implements MultiPvEEven
 
 
     @Override
-    public Collection<? extends PvEEventNarmerStatsWarlordsClasses<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>, PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>>>> getStats() {
+    public Collection<? extends PvEEventNarmerStatsWarlordsClasses<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>, PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>>> getStats() {
         return Stream.of(tombStats) // TODO
-                     .flatMap(stats -> (Stream<? extends PvEEventNarmerStatsWarlordsClasses<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>, PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer, DatabaseGamePlayerPvEEventNarmer>>>>) stats.getStats()
-                                                                                                                                                                                                                                                                                                                                                                                                                                       .stream())
+                     .flatMap(stats -> (Stream<? extends PvEEventNarmerStatsWarlordsClasses<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>, PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>>>) stats.getStats()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               .stream())
                      .toList();
     }
 }

@@ -17,14 +17,14 @@ import java.util.stream.Stream;
 
 public class DatabasePlayerPvEEventIlluminaDifficultyStats implements MultiPvEEventIlluminaStats<
         PvEEventIlluminaStatsWarlordsClasses<
-                DatabaseGamePvEEventIllumina,
+                DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>,
                 DatabaseGamePlayerPvEEventIllumina,
-                PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>,
-                PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>>>,
-        DatabaseGamePvEEventIllumina,
+                PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>,
+                PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>>>,
+        DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>,
         DatabaseGamePlayerPvEEventIllumina,
-        PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>,
-        PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>>> {
+        PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>,
+        PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>>> {
 
     @Field("the_borderline_of_illusion_stats")
     private DatabasePlayerPvEEventTheBorderLineOfIllusionDifficultyStats borderLineOfIllusionStats = new DatabasePlayerPvEEventTheBorderLineOfIllusionDifficultyStats();
@@ -61,10 +61,10 @@ public class DatabasePlayerPvEEventIlluminaDifficultyStats implements MultiPvEEv
     }
 
     @Override
-    public Collection<? extends PvEEventIlluminaStatsWarlordsClasses<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>, PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>>>> getStats() {
+    public Collection<? extends PvEEventIlluminaStatsWarlordsClasses<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>, PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>>>> getStats() {
         return Stream.of(borderLineOfIllusionStats) // TODO
-                     .flatMap(stats -> (Stream<? extends PvEEventIlluminaStatsWarlordsClasses<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>, PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina, DatabaseGamePlayerPvEEventIllumina>>>>) stats.getStats()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                               .stream())
+                     .flatMap(stats -> (Stream<? extends PvEEventIlluminaStatsWarlordsClasses<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>, PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>>>>) stats.getStats()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               .stream())
                      .toList();
     }
 }

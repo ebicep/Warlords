@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventTheAcropolis extends DatabaseGamePvEEventGardenOfHesperides {
+public class DatabaseGamePvEEventTheAcropolis extends DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventTheAcropolis> {
 
     @Field("total_mobs_killed")
     private int totalMobsKilled;
@@ -75,7 +75,7 @@ public class DatabaseGamePvEEventTheAcropolis extends DatabaseGamePvEEventGarden
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventTheAcropolis> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventTheAcropolis -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventTheAcropolis,
@@ -118,7 +118,7 @@ public class DatabaseGamePvEEventTheAcropolis extends DatabaseGamePvEEventGarden
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventTheAcropolis> getBasePlayers() {
         return new HashSet<>(players);
     }
 
