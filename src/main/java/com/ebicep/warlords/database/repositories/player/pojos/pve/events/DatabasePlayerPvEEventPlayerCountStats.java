@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events;
 
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.classes.*;
+import com.ebicep.warlords.player.general.Classes;
 
 public class DatabasePlayerPvEEventPlayerCountStats implements PvEEventStatsWarlordsClasses {
 
@@ -11,4 +13,15 @@ public class DatabasePlayerPvEEventPlayerCountStats implements PvEEventStatsWarl
     private DatabaseRoguePvEEvent rogue = new DatabaseRoguePvEEvent();
     private DatabaseArcanistPvEEvent arcanist = new DatabaseArcanistPvEEvent();
 
+    @Override
+    public DatabaseWarlordsSpecs getClass(Classes classes) {
+        return switch (classes) {
+            case MAGE -> getMage();
+            case WARRIOR -> getWarrior();
+            case PALADIN -> getPaladin();
+            case SHAMAN -> getShaman();
+            case ROGUE -> getRogue();
+            case ARCANIST -> getArcanist();
+        };
+    }
 }

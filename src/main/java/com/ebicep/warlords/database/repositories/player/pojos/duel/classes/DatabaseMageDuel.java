@@ -1,9 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.duel.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.duel.DuelStatsWarlordsSpecs;
 
-public class DatabaseMageDuel implements StatsWarlordsSpecs<DatabaseBaseDuel> {
+public class DatabaseMageDuel implements DuelStatsWarlordsSpecs {
 
     protected DatabaseBaseDuel pyromancer = new DatabaseBaseDuel();
     protected DatabaseBaseDuel cryomancer = new DatabaseBaseDuel();
@@ -14,7 +13,7 @@ public class DatabaseMageDuel implements StatsWarlordsSpecs<DatabaseBaseDuel> {
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBaseDuel[] getSpecs() {
         return new DatabaseBaseDuel[]{pyromancer, cryomancer, aquamancer};
     }
 

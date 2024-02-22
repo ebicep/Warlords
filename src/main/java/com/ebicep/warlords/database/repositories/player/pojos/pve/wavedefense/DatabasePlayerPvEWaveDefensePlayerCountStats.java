@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense;
 
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.classes.*;
+import com.ebicep.warlords.player.general.Classes;
 
 public class DatabasePlayerPvEWaveDefensePlayerCountStats implements WaveDefenseStatsWarlordsClasses {
 
@@ -11,4 +12,15 @@ public class DatabasePlayerPvEWaveDefensePlayerCountStats implements WaveDefense
     private DatabaseRoguePvEWaveDefense rogue = new DatabaseRoguePvEWaveDefense();
     private DatabaseArcanistPvEWaveDefense arcanist = new DatabaseArcanistPvEWaveDefense();
 
+    @Override
+    public WaveDefenseStatsWarlordsSpecs getClass(Classes classes) {
+        return switch (classes) {
+            case MAGE -> getMage();
+            case WARRIOR -> getWarrior();
+            case PALADIN -> getPaladin();
+            case SHAMAN -> getShaman();
+            case ROGUE -> getRogue();
+            case ARCANIST -> getArcanist();
+        };
+    }
 }

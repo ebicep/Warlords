@@ -14,7 +14,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.MultiStats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlayerSiege;
@@ -22,8 +21,6 @@ import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayer
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
-
-import java.util.List;
 
 public class DatabasePlayerCompStats implements MultiStats<DatabaseGameBase, DatabaseGamePlayerBase> {
 
@@ -94,14 +91,5 @@ public class DatabasePlayerCompStats implements MultiStats<DatabaseGameBase, Dat
         return interceptionStats;
     }
 
-    @Override
-    public <T extends StatsWarlordsClasses<?, ?, ?, ?>> List<T> getStats() {
-        return List.of(
-                (T) ctfStats,
-                (T) tdmStats,
-                (T) interceptionStats,
-                (T) siegeStats
-        );
-    }
 }
 

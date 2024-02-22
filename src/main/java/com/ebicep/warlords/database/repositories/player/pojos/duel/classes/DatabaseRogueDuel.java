@@ -1,9 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.duel.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.duel.DuelStatsWarlordsSpecs;
 
-public class DatabaseRogueDuel implements StatsWarlordsSpecs<DatabaseBaseDuel> {
+public class DatabaseRogueDuel implements DuelStatsWarlordsSpecs {
 
     private DatabaseBaseDuel assassin = new DatabaseBaseDuel();
     private DatabaseBaseDuel vindicator = new DatabaseBaseDuel();
@@ -14,7 +13,7 @@ public class DatabaseRogueDuel implements StatsWarlordsSpecs<DatabaseBaseDuel> {
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBaseDuel[] getSpecs() {
         return new DatabaseBaseDuel[]{assassin, vindicator, apothecary};
     }
 

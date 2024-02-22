@@ -9,7 +9,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DuelDatabaseStatInformation extends AbstractDatabaseStatInformation<DatabaseGameDuel, DatabaseGamePlayerDuel> {
+public class DuelDatabaseStatInformation extends AbstractDatabaseStatInformation<DatabaseGameDuel, DatabaseGamePlayerDuel> implements DuelStats {
 
     @Field("total_time_played")
     private long totalTimePlayed = 0;

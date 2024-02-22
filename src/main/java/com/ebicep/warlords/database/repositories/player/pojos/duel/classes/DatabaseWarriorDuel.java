@@ -1,10 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.duel.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.duel.DuelStatsWarlordsSpecs;
 
-public class DatabaseWarriorDuel implements StatsWarlordsSpecs<DatabaseBaseDuel> {
+public class DatabaseWarriorDuel implements DuelStatsWarlordsSpecs {
 
     private DatabaseBaseDuel berserker = new DatabaseBaseDuel();
     private DatabaseBaseDuel defender = new DatabaseBaseDuel();
@@ -15,7 +14,7 @@ public class DatabaseWarriorDuel implements StatsWarlordsSpecs<DatabaseBaseDuel>
     }
 
     @Override
-    public Stats[] getSpecs() {
+    public DatabaseBaseDuel[] getSpecs() {
         return new DatabaseBaseDuel[]{berserker, defender, revenant};
     }
 

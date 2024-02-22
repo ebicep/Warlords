@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.duel.DatabaseGamePl
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 
-public interface DuelStatsWarlordsClasses extends StatsWarlordsClasses<DatabaseGameDuel, DatabaseGamePlayerDuel, DuelStats, StatsWarlordsSpecs<DuelStats>>, DuelStats {
+public interface DuelStatsWarlordsClasses extends StatsWarlordsClasses<DatabaseGameDuel, DatabaseGamePlayerDuel, DuelStats, StatsWarlordsSpecs<DatabaseGameDuel, DatabaseGamePlayerDuel, DuelStats>>, DuelStats {
 
     @Override
     default long getTotalTimePlayed() {

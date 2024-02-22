@@ -109,18 +109,6 @@ public interface StatsWarlordsClasses<
     }
 
     @Override
-    default R getClass(Classes classes) {
-        return switch (classes) {
-            case MAGE -> getMage();
-            case WARRIOR -> getWarrior();
-            case PALADIN -> getPaladin();
-            case SHAMAN -> getShaman();
-            case ROGUE -> getRogue();
-            case ARCANIST -> getArcanist();
-        };
-    }
-
-    @Override
     default R[] getClasses() {
         return (R[]) new DatabaseWarlordsSpecs[]{getMage(), getWarrior(), getPaladin(), getShaman(), getRogue(), getArcanist()};
     }
