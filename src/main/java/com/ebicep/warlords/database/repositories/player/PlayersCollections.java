@@ -34,8 +34,8 @@ public enum PlayersCollections {
         @Override
         public Query getQuery() {
             return new Query(new Criteria().orOperator(
-                    Criteria.where("plays").gt(5),
-                    Criteria.where("pve_stats.plays").gt(5)
+                    Criteria.where("plays").gt(20),
+                    Criteria.where("pve_stats.plays").gt(20)
             ));
         }
     },
@@ -48,8 +48,8 @@ public enum PlayersCollections {
         @Override
         public Query getQuery() {
             return new Query(new Criteria().orOperator(
-                    Criteria.where("plays").gt(10),
-                    Criteria.where("pve_stats.plays").gt(10)
+                    Criteria.where("plays").gt(30),
+                    Criteria.where("pve_stats.plays").gt(30)
             ));
         }
     },
