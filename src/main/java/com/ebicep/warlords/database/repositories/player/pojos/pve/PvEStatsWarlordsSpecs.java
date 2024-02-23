@@ -28,6 +28,14 @@ public interface PvEStatsWarlordsSpecs<
     }
 
     @Override
+    default long getTotalTimePlayed() {
+        return Arrays.stream(getSpecs())
+                     .map(PvEStats::getTotalTimePlayed)
+                     .reduce(Long::sum)
+                     .orElse(0L);
+    }
+
+    @Override
     default Map<String, Long> getMobKills() {
         return getStat(PvEStats::getMobKills);
     }

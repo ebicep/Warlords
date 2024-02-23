@@ -8,10 +8,10 @@ public interface WaveDefenseStats extends PvEStats<DatabaseGamePvEWaveDefense, D
 
     int getTotalWavesCleared();
 
-    int highestWaveCleared();
+    int getHighestWaveCleared();
 
-    long mostDamageInWave();
+    long getMostDamageInWave();
 
-    long fastestGameFinished();
+    long getFastestGameFinished();
 
 }

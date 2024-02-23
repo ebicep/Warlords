@@ -10,5 +10,18 @@ public interface MultiPvEEventBoltaroLairStats extends MultiPvEEventBoltaroStats
         DatabaseGamePvEEventBoltaroLair,
         DatabaseGamePlayerPvEEventBoltarosLair,
         PvEEventBoltaroLairStats,
-        PvEEventBoltaroLairStatsWarlordsSpecs> {
+        PvEEventBoltaroLairStatsWarlordsSpecs>,
+        PvEEventBoltaroLairStats {
+
+    @Override
+    default int getHighestWaveCleared() {
+        return getStat(PvEEventBoltaroLairStats::getHighestWaveCleared, Math::max, 0);
+    }
+
+    @Override
+    default int getTotalWavesCleared() {
+        return getStat(PvEEventBoltaroLairStats::getTotalWavesCleared, Integer::sum, 0);
+    }
+
+
 }

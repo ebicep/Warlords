@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections;
 
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -17,7 +19,10 @@ import java.util.function.Predicate;
  * <p>Comps
  * <p>Pubs
  */
-public class StatsLeaderboardCategory<T extends Stats> {
+public class StatsLeaderboardCategory<
+        DatabaseGameT extends DatabaseGameBase<DatabaseGamePlayerT>,
+        DatabaseGamePlayerT extends DatabaseGamePlayerBase,
+        T extends Stats<DatabaseGameT, DatabaseGamePlayerT>> {
 
     private final Function<DatabasePlayer, T> statFunction;
     private final String categoryName;

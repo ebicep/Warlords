@@ -9,7 +9,13 @@ public interface MultiPvEEventLibraryArchivesGrimoiresGraveyardStats extends Mul
         DatabaseGamePvEEventGrimoiresGraveyard,
         DatabaseGamePlayerPvEEventGrimoiresGraveyard,
         PvEEventLibraryArchivesGrimoiresGraveyardStats,
-        PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs> {
+        PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs>,
+        PvEEventLibraryArchivesGrimoiresGraveyardStats {
+
+    @Override
+    default long getFastestGameFinished() {
+        return getStat(PvEEventLibraryArchivesGrimoiresGraveyardStats::getFastestGameFinished, Math::min, Long.MAX_VALUE);
+    }
 
 }
         

@@ -9,7 +9,18 @@ public interface MultiPvEEventNarmerNarmersTombStats extends MultiPvEEventNarmer
         DatabaseGamePvEEventNarmersTomb,
         DatabaseGamePlayerPvEEventNarmersTomb,
         PvEEventNarmerNarmersTombStats,
-        PvEEventNarmerNarmersTombStatsWarlordsSpecs> {
+        PvEEventNarmerNarmersTombStatsWarlordsSpecs>,
+        PvEEventNarmerNarmersTombStats {
+
+    @Override
+    default int getHighestWaveCleared() {
+        return getStat(PvEEventNarmerNarmersTombStats::getHighestWaveCleared, Math::max, 0);
+    }
+
+    @Override
+    default int getTotalWavesCleared() {
+        return getStat(PvEEventNarmerNarmersTombStats::getTotalWavesCleared, Integer::sum, 0);
+    }
 
 }
         

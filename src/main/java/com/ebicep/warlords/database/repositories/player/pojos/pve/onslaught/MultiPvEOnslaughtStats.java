@@ -10,7 +10,12 @@ public interface MultiPvEOnslaughtStats extends MultiPvEStats<
         DatabaseGamePvEOnslaught,
         DatabaseGamePlayerPvEOnslaught,
         OnslaughtStats,
-        OnslaughtStatsWarlordsSpecs> {
+        OnslaughtStatsWarlordsSpecs>,
+        OnslaughtStats {
 
+    @Override
+    default long getLongestTicksLived() {
+        return getStat(OnslaughtStats::getLongestTicksLived, Long::max, 0L);
+    }
 
 }

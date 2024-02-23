@@ -57,6 +57,7 @@ public abstract class PvEDatabaseStatInformation<T extends DatabaseGamePvEBase<R
         this.totalTimePlayed += (long) databaseGame.getTimeElapsed() * multiplier;
     }
 
+    @Override
     public long getTotalTimePlayed() {
         return totalTimePlayed;
     }

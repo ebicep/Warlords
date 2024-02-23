@@ -10,6 +10,7 @@ public interface MultiPvEEventMithraStats<
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventMithra,
         StatsT extends PvEEventMithraStats<DatabaseGameT, DatabaseGamePlayerT>,
         SpecsT extends PvEEventMithraStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, StatsT>>
-        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT> {
+        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT>,
+        PvEEventMithraStats<DatabaseGameT, DatabaseGamePlayerT> {
 
 }

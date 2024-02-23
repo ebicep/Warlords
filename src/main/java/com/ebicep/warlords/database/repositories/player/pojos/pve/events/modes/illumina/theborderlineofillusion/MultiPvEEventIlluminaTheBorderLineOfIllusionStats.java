@@ -9,7 +9,8 @@ public interface MultiPvEEventIlluminaTheBorderLineOfIllusionStats extends Multi
         DatabaseGamePvEEventTheBorderlineOfIllusion,
         DatabaseGamePlayerPvEEventTheBorderlineOfIllusion,
         PvEEventIlluminaTheBorderLineOfIllusionStats,
-        PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs> {
+        PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs>,
+        PvEEventIlluminaTheBorderLineOfIllusionStats {
 
 }
         

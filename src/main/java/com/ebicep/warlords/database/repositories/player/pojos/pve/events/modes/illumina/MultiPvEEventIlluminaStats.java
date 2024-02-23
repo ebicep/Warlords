@@ -11,6 +11,7 @@ public interface MultiPvEEventIlluminaStats<
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventIllumina,
         StatsT extends PvEEventIlluminaStats<DatabaseGameT, DatabaseGamePlayerT>,
         SpecsT extends PvEEventIlluminaStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, StatsT>>
-        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT> {
+        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT>,
+        PvEEventIlluminaStats<DatabaseGameT, DatabaseGamePlayerT> {
 
 }

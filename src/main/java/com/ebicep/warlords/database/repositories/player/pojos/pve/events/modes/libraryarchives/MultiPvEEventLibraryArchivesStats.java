@@ -10,6 +10,7 @@ public interface MultiPvEEventLibraryArchivesStats<
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventLibraryArchives,
         StatsT extends PvEEventLibraryArchivesStats<DatabaseGameT, DatabaseGamePlayerT>,
         SpecsT extends PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, StatsT>>
-        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT> {
+        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT>,
+        PvEEventLibraryArchivesStats<DatabaseGameT, DatabaseGamePlayerT> {
 
 }

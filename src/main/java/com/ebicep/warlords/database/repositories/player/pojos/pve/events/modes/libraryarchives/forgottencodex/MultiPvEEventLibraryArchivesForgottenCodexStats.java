@@ -9,7 +9,12 @@ public interface MultiPvEEventLibraryArchivesForgottenCodexStats extends MultiPv
         DatabaseGamePvEEventForgottenCodex,
         DatabaseGamePlayerPvEEventForgottenCodex,
         PvEEventLibraryArchivesForgottenCodexStats,
-        PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs> {
+        PvEEventLibraryArchivesForgottenCodexStatsWarlordsSpecs>,
+        PvEEventLibraryArchivesForgottenCodexStats {
 
+    @Override
+    default long getFastestGameFinished() {
+        return getStat(PvEEventLibraryArchivesForgottenCodexStats::getFastestGameFinished, Math::min, Long.MAX_VALUE);
+    }
 }
         

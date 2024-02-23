@@ -9,6 +9,8 @@ import java.util.Map;
 public interface PvEStats<DatabaseGameT extends DatabaseGamePvEBase<DatabaseGamePlayerT>, DatabaseGamePlayerT extends DatabaseGamePlayerPvEBase>
         extends Stats<DatabaseGameT, DatabaseGamePlayerT> {
 
+    long getTotalTimePlayed();
+
     Map<String, Long> getMobKills();
 
     Map<String, Long> getMobAssists();

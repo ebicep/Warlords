@@ -3,9 +3,11 @@ package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgame
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvEDifficultyStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairEntry;
 import com.ebicep.warlords.pve.weapons.WeaponsPvE;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -15,9 +17,13 @@ import java.util.List;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager.MAIN_LOBBY_SPAWN;
 
-public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEDifficultyStats> implements PvELeaderboard {
+public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<
+        DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>,
+        DatabaseGamePlayerPvEBase,
+        PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>
+        implements PvELeaderboard {
 
-    private static final List<StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats>> CATEGORIES = new ArrayList<>() {{
+    private static final List<StatsLeaderboardCategory<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>> CATEGORIES = new ArrayList<>() {{
         add(new StatsLeaderboardCategory<>(DatabasePlayer::getPveStats, "All Modes", "All"));
     }};
 
@@ -31,7 +37,7 @@ public class StatsLeaderboardPvE extends AbstractStatsLeaderboardGameType<Databa
     }
 
     @Override
-    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvEDifficultyStats> statsLeaderboardCategory) {
+    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>> statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
 
         statsLeaderboards.add(new StatsLeaderboard("Masterworks Fair Wins", MAIN_LOBBY_SPAWN,

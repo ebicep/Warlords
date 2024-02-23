@@ -11,6 +11,7 @@ public interface MultiPvEEventBoltaroStats<
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventBoltaro,
         StatsT extends PvEEventBoltaroStats<DatabaseGameT, DatabaseGamePlayerT>,
         SpecsT extends PvEEventBoltaroStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, StatsT>>
-        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT> {
+        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT>,
+        PvEEventBoltaroStats<DatabaseGameT, DatabaseGamePlayerT> {
 
 }

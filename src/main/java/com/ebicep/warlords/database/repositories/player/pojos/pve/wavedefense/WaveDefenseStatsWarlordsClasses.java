@@ -18,18 +18,18 @@ public interface WaveDefenseStatsWarlordsClasses extends PvEStatsWarlordsClasses
     }
 
     @Override
-    default int highestWaveCleared() {
-        return getStat(WaveDefenseStats::highestWaveCleared, Math::max, 0);
+    default int getHighestWaveCleared() {
+        return getStat(WaveDefenseStats::getHighestWaveCleared, Math::max, 0);
     }
 
     @Override
-    default long mostDamageInWave() {
-        return getStat(WaveDefenseStats::mostDamageInWave, Math::max, 0L);
+    default long getMostDamageInWave() {
+        return getStat(WaveDefenseStats::getMostDamageInWave, Math::max, 0L);
     }
 
     @Override
-    default long fastestGameFinished() {
-        return getStat(WaveDefenseStats::fastestGameFinished, Math::min, Long.MAX_VALUE);
+    default long getFastestGameFinished() {
+        return getStat(WaveDefenseStats::getFastestGameFinished, Math::min, Long.MAX_VALUE);
     }
 
 }

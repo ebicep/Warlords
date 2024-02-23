@@ -3,7 +3,9 @@ package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgame
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerPvEOnslaughtDifficultyStats;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePlayerPvEOnslaught;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePvEOnslaught;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtStats;
 import com.ebicep.warlords.util.java.StringUtils;
 
 import java.util.ArrayList;
@@ -12,9 +14,12 @@ import java.util.List;
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.LEAD_5;
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.UPPER_CENTER_1;
 
-public class StatsLeaderboardOnslaught extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEOnslaughtDifficultyStats> implements PvELeaderboard {
+public class StatsLeaderboardOnslaught extends AbstractStatsLeaderboardGameType<
+        DatabaseGamePvEOnslaught,
+        DatabaseGamePlayerPvEOnslaught,
+        OnslaughtStats> implements PvELeaderboard {
 
-    private static final List<StatsLeaderboardCategory<DatabasePlayerPvEOnslaughtDifficultyStats>> CATEGORIES = new ArrayList<>() {{
+    private static final List<StatsLeaderboardCategory<DatabaseGamePvEOnslaught, DatabaseGamePlayerPvEOnslaught, OnslaughtStats>> CATEGORIES = new ArrayList<>() {{
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getOnslaughtStats(), "All Modes", "All"));
     }};
 
@@ -28,7 +33,7 @@ public class StatsLeaderboardOnslaught extends AbstractStatsLeaderboardGameType<
     }
 
     @Override
-    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvEOnslaughtDifficultyStats> statsLeaderboardCategory) {
+    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabaseGamePvEOnslaught, DatabaseGamePlayerPvEOnslaught, OnslaughtStats> statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
 
         statsLeaderboards.add(new StatsLeaderboard("Average Time Lived",

@@ -10,7 +10,8 @@ public interface MultiPvEEventGardenOfHesperidesTheAcropolisStats extends MultiP
         DatabaseGamePvEEventTheAcropolis,
         DatabaseGamePlayerPvEEventTheAcropolis,
         PvEEventGardenOfHesperidesTheAcropolisStats,
-        PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsSpecs> {
+        PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsSpecs>,
+        PvEEventGardenOfHesperidesTheAcropolisStats {
 
 }
         

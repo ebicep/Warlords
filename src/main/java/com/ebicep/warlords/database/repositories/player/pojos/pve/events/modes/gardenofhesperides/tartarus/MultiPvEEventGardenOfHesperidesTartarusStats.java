@@ -10,7 +10,13 @@ public interface MultiPvEEventGardenOfHesperidesTartarusStats extends MultiPvEEv
         DatabaseGamePvEEventTartarus,
         DatabaseGamePlayerPvEEventTartarus,
         PvEEventGardenOfHesperidesTartarusStats,
-        PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs> {
+        PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs>,
+        PvEEventGardenOfHesperidesTartarusStats {
+
+    @Override
+    default long getFastestGameFinished() {
+        return getStat(PvEEventGardenOfHesperidesTartarusStats::getFastestGameFinished, Math::min, Long.MAX_VALUE);
+    }
 
 }
         

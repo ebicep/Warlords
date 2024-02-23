@@ -32,14 +32,18 @@ import java.util.stream.Stream;
 
 public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
         PvEEventStatsWarlordsClasses<
-                DatabaseGamePvEEvent,
+                DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>,
                 DatabaseGamePlayerPvEEvent,
-                PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>,
-                PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>>>,
-        DatabaseGamePvEEvent,
+                PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>,
+                PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent,
+                        PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>,
+                                DatabaseGamePlayerPvEEvent>>>,
+        DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>,
         DatabaseGamePlayerPvEEvent,
-        PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>,
-        PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>>> {
+        PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>,
+        PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent,
+                PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>,
+                        DatabaseGamePlayerPvEEvent>>> {
 
     @Field("boltaro")
     private DatabasePlayerPvEEventBoltaroStats boltaroStats = new DatabasePlayerPvEEventBoltaroStats();
@@ -133,7 +137,7 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
 
 
     @Override
-    public Collection<? extends PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>>>> getStats() {
+    public Collection<? extends PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>>>> getStats() {
         return Stream.of(boltaroStats,
                              narmerStats,
                              mithraStats,
@@ -141,8 +145,8 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
                              gardenOfHesperidesStats,
                              libraryArchivesStats
                      )
-                     .flatMap(stats -> (Stream<? extends PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent, DatabaseGamePlayerPvEEvent>>>>) stats.getStats()
-                                                                                                                                                                                                                                                                                                                                                               .stream())
+                     .flatMap(s -> (Stream<? extends PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>>>>) s.getStats()
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                       .stream())
                      .toList();
     }
 }

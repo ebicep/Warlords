@@ -10,7 +10,19 @@ public interface MultiPvEEventMithraSpidersDwellingStats extends MultiPvEEventMi
         DatabaseGamePvEEventSpidersDwelling,
         DatabaseGamePlayerPvEEventSpidersDwelling,
         PvEEventMithraSpidersDwellingStats,
-        PvEEventMithraSpidersDwellingStatsWarlordsSpecs> {
+        PvEEventMithraSpidersDwellingStatsWarlordsSpecs>,
+        PvEEventMithraSpidersDwellingStats {
+
+    @Override
+    default int getHighestWaveCleared() {
+        return getStat(PvEEventMithraSpidersDwellingStats::getHighestWaveCleared, Math::max, 0);
+    }
+
+    @Override
+    default int getTotalWavesCleared() {
+        return getStat(PvEEventMithraSpidersDwellingStats::getTotalWavesCleared, Integer::sum, 0);
+    }
+
 
 }
         

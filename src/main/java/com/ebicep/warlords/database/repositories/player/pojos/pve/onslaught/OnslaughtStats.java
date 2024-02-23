@@ -9,4 +9,8 @@ public interface OnslaughtStats extends PvEStats<DatabaseGamePvEOnslaught, Datab
 
     long getLongestTicksLived();
 
+    default long getAverageTimeLived() {
+        return getPlays() == 0 ? 0 : getTotalTimePlayed() / getPlays();
+    }
+
 }

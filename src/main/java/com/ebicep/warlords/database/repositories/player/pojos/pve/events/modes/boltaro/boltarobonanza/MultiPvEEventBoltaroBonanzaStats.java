@@ -9,7 +9,12 @@ public interface MultiPvEEventBoltaroBonanzaStats extends MultiPvEEventBoltaroSt
         DatabaseGamePvEEventBoltaroBonanza,
         DatabaseGamePlayerPvEEventBoltaroBonanza,
         PvEEventBoltaroBonanzaStats,
-        PvEEventBoltaroBonanzaStatsWarlordsSpecs> {
+        PvEEventBoltaroBonanzaStatsWarlordsSpecs>,
+        PvEEventBoltaroBonanzaStats {
 
+    @Override
+    default int getHighestSplit() {
+        return getStat(PvEEventBoltaroBonanzaStats::getHighestSplit, Integer::max, 0);
+    }
 
 }

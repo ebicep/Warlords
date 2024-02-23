@@ -29,6 +29,11 @@ public interface PvEStatsWarlordsClasses<DatabaseGameT extends DatabaseGamePvEBa
     }
 
     @Override
+    default long getTotalTimePlayed() {
+        return getStat(PvEStats::getTotalTimePlayed, Long::sum, 0L);
+    }
+
+    @Override
     default Map<String, Long> getMobKills() {
         return getStat(PvEStats::getMobKills);
     }

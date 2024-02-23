@@ -11,6 +11,7 @@ public interface MultiPvEEventGardenOfHesperidesStats<
         DatabaseGamePlayerT extends DatabaseGamePlayerPvEEventGardenOfHesperides,
         StatsT extends PvEEventGardenOfHesperidesStats<DatabaseGameT, DatabaseGamePlayerT>,
         SpecsT extends PvEEventGardenOfHesperidesStatsWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, StatsT>>
-        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT> {
+        extends MultiPvEEventStats<StatsWarlordsClassesT, DatabaseGameT, DatabaseGamePlayerT, StatsT, SpecsT>,
+        PvEEventGardenOfHesperidesStats<DatabaseGameT, DatabaseGamePlayerT> {
 
 }

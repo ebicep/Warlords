@@ -3,7 +3,9 @@ package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgame
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStats;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 
@@ -12,9 +14,12 @@ import java.util.List;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 
-public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEWaveDefenseDifficultyStats> implements PvELeaderboard {
+public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameType<
+        DatabaseGamePvEWaveDefense,
+        DatabaseGamePlayerPvEWaveDefense,
+        WaveDefenseStats> implements PvELeaderboard {
 
-    private static final List<StatsLeaderboardCategory<DatabasePlayerPvEWaveDefenseDifficultyStats>> CATEGORIES = new ArrayList<>() {{
+    private static final List<StatsLeaderboardCategory<DatabaseGamePvEWaveDefense, DatabaseGamePlayerPvEWaveDefense, WaveDefenseStats>> CATEGORIES = new ArrayList<>() {{
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats(), "All Modes", "All"));
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getEasyStats(), "Easy Mode", "Easy"));
         add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getNormalStats(), "Normal Mode", "Normal"));
@@ -33,7 +38,7 @@ public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameTyp
     }
 
     @Override
-    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvEWaveDefenseDifficultyStats> statsLeaderboardCategory) {
+    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabaseGamePvEWaveDefense, DatabaseGamePlayerPvEWaveDefense, WaveDefenseStats> statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
 
         statsLeaderboards.add(new StatsLeaderboard("Waves Cleared",
@@ -43,8 +48,8 @@ public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameTyp
         ));
         statsLeaderboards.add(new StatsLeaderboard("Clear Rate",
                 LEAD_5,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClearRate(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClearRate() * 100) + "%"
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWinRate(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWinRate() * 100) + "%"
         ));
         statsLeaderboards.add(new StatsLeaderboard("Fastest Win", UPPER_CENTER_1,
                 databasePlayer -> -statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished(),

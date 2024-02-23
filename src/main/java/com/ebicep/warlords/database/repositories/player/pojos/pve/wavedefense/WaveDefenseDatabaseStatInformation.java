@@ -62,21 +62,21 @@ public class WaveDefenseDatabaseStatInformation extends PvEDatabaseStatInformati
 
     @Override
     public int getTotalWavesCleared() {
-        return 0;
+        return totalWavesCleared;
     }
 
     @Override
-    public int highestWaveCleared() {
-        return 0;
+    public int getHighestWaveCleared() {
+        return highestWaveCleared;
     }
 
     @Override
-    public long mostDamageInWave() {
-        return 0;
+    public long getMostDamageInWave() {
+        return mostDamageInWave;
     }
 
     @Override
-    public long fastestGameFinished() {
-        return 0;
+    public long getFastestGameFinished() {
+        return fastestGameFinished;
     }
 }
