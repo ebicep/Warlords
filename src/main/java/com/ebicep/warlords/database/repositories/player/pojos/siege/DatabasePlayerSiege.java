@@ -4,7 +4,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.siege.classes.*;
 import com.ebicep.warlords.game.GameMode;
@@ -42,14 +41,14 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses {
     }
 
     @Override
-    public StatsWarlordsSpecs<DatabaseGameSiege, DatabaseGamePlayerSiege, SiegeStats> getClass(Classes classes) {
+    public SiegeStatsWarlordsSpecs getClass(Classes classes) {
         return switch (classes) {
-            case MAGE -> getMage();
-            case WARRIOR -> getWarrior();
-            case PALADIN -> getPaladin();
-            case SHAMAN -> getShaman();
-            case ROGUE -> getRogue();
-            case ARCANIST -> getArcanist();
+            case MAGE -> mage;
+            case WARRIOR -> warrior;
+            case PALADIN -> paladin;
+            case SHAMAN -> shaman;
+            case ROGUE -> rogue;
+            case ARCANIST -> arcanist;
         };
     }
 }

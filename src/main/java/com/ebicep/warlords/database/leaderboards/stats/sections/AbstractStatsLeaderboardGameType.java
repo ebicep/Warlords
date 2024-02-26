@@ -23,23 +23,26 @@ import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLo
 public abstract class AbstractStatsLeaderboardGameType<
         DatabaseGameT extends DatabaseGameBase<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerBase,
-        T extends Stats<DatabaseGameT, DatabaseGamePlayerT>> {
+        T extends Stats<DatabaseGameT, DatabaseGamePlayerT>,
+        CategoryT extends StatsLeaderboardCategory<DatabaseGameT, DatabaseGamePlayerT, T>> {
 
-    protected final List<StatsLeaderboardCategory<DatabaseGameT, DatabaseGamePlayerT, T>> gameTypeCategories;
+    protected final List<CategoryT> gameTypeCategories;
 
-    protected AbstractStatsLeaderboardGameType(List<StatsLeaderboardCategory<DatabaseGameT, DatabaseGamePlayerT, T>> gameTypeCategories) {
+    protected AbstractStatsLeaderboardGameType(List<CategoryT> gameTypeCategories) {
         this.gameTypeCategories = gameTypeCategories;
     }
 
     public void addLeaderboards() {
-        for (StatsLeaderboardCategory<DatabaseGameT, DatabaseGamePlayerT, T> category : gameTypeCategories) {
+        for (CategoryT category : gameTypeCategories) {
+            category.getAllHolograms().forEach(Hologram::delete);
             addBaseLeaderboards(category);
+            this.addExtraLeaderboards(category);
         }
     }
 
     public abstract String getSubTitle();
 
-    public abstract void addExtraLeaderboards(StatsLeaderboardCategory<DatabaseGameT, DatabaseGamePlayerT, T> statsLeaderboardCategory);
+    public abstract void addExtraLeaderboards(CategoryT statsLeaderboardCategory);
 
     public void resetLeaderboards(PlayersCollections collection) {
         Predicate<DatabasePlayer> externalFilter = null;
@@ -58,22 +61,40 @@ public abstract class AbstractStatsLeaderboardGameType<
             };
         }
         String subTitle = getSubTitle();
-        for (StatsLeaderboardCategory<DatabaseGameT, DatabaseGamePlayerT, T> category : gameTypeCategories) {
+        for (CategoryT category : gameTypeCategories) {
             category.resetLeaderboards(collection, externalFilter, subTitle);
         }
     }
 
-    public void addBaseLeaderboards(StatsLeaderboardCategory<DatabaseGameT, DatabaseGamePlayerT, T> statsLeaderboardCategory) {
-        statsLeaderboardCategory.getAllHolograms().forEach(Hologram::delete);
-
+    public void addBaseLeaderboards(CategoryT statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
         statsLeaderboards.clear();
 
-        statsLeaderboards.add(new StatsLeaderboard("Wins", LEAD_2, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWins(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWins())));
-        statsLeaderboards.add(new StatsLeaderboard("Losses", CIRCULAR_1_CENTER, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getLosses(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getLosses())));
-        statsLeaderboards.add(new StatsLeaderboard("Plays", LEAD_1, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPlays(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPlays())));
-        statsLeaderboards.add(new StatsLeaderboard("Kills", LEAD_3, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKills(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKills())));
-        statsLeaderboards.add(new StatsLeaderboard("Assists", CIRCULAR_1_OUTER_3, databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAssists(), databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAssists())));
+        statsLeaderboards.add(new StatsLeaderboard("Wins",
+                LEAD_2,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWins(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWins())
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Losses",
+                CIRCULAR_1_CENTER,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getLosses(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getLosses())
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Plays",
+                LEAD_1,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPlays(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPlays())
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Kills",
+                LEAD_3,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKills(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKills())
+        ));
+        statsLeaderboards.add(new StatsLeaderboard("Assists",
+                CIRCULAR_1_OUTER_3,
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAssists(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getAssists())
+        ));
         statsLeaderboards.add(new StatsLeaderboard("Deaths",
                 CIRCULAR_1_OUTER_4,
                 databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getDeaths(),
@@ -122,47 +143,10 @@ public abstract class AbstractStatsLeaderboardGameType<
 //                databasePlayer -> String.valueOf(Math.round(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getKillsAssistsPerGame() * 10) / 10d)
 //        ));
 
-        statsLeaderboards.add(new StatsLeaderboard("Experience",
-                CENTER_BOARD,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getExperience(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getExperience())
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("Mage Experience",
-                CENTER_BOARD_1,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getMage().getExperience(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getMage().getExperience())
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("Warrior Experience",
-                CENTER_BOARD_2,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWarrior().getExperience(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWarrior().getExperience())
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("Paladin Experience",
-                CENTER_BOARD_3,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPaladin().getExperience(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getPaladin().getExperience())
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("Shaman Experience",
-                CENTER_BOARD_4,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getShaman().getExperience(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getShaman().getExperience())
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("Rogue Experience",
-                CENTER_BOARD_5,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getRogue().getExperience(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getRogue().getExperience())
-        ));
-        statsLeaderboards.add(new StatsLeaderboard("Arcanist Experience",
-                CENTER_BOARD_6,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getArcanist().getExperience(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getArcanist().getExperience())
-        ));
-
-        this.addExtraLeaderboards(statsLeaderboardCategory);
     }
 
 
-    public List<StatsLeaderboardCategory<DatabaseGameT, DatabaseGamePlayerT, T>> getCategories() {
+    public List<CategoryT> getCategories() {
         return gameTypeCategories;
     }
 

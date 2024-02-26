@@ -85,7 +85,7 @@ public class BountyMenu {
                     }
                     return;
                 }
-                activeBounties = eventMode.getActiveBounties();
+                activeBounties = eventMode.getActiveEventBounties();
                 if (activeBounties.isEmpty()) {
                     activeBounties.addAll(BountyUtils.getNewBounties(gameEvent.getEvent().name));
                 }

@@ -14,7 +14,7 @@ public interface EventMode {
 
     Map<String, Long> getRewardsPurchased();
 
-    int getPlays();
+    int getEventPlays();
 
     long getEventPointsCumulative();
 
@@ -24,12 +24,12 @@ public interface EventMode {
 
     void addBountiesCompleted();
 
-    List<AbstractBounty> getActiveBounties();
+    List<AbstractBounty> getActiveEventBounties();
 
     default List<AbstractBounty> getTrackableBounties() {
-        return getActiveBounties().stream()
-                                  .filter(abstractBounty -> abstractBounty != null && abstractBounty.isStarted() && abstractBounty.getProgress() != null)
-                                  .toList();
+        return getActiveEventBounties().stream()
+                                       .filter(abstractBounty -> abstractBounty != null && abstractBounty.isStarted() && abstractBounty.getProgress() != null)
+                                       .toList();
     }
 
 

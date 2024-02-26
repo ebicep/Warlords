@@ -18,12 +18,12 @@ public class DatabasePlayerDuel implements DuelStatsWarlordsClasses {
     @Override
     public StatsWarlordsSpecs<DatabaseGameDuel, DatabaseGamePlayerDuel, DuelStats> getClass(Classes classes) {
         return switch (classes) {
-            case MAGE -> getMage();
-            case WARRIOR -> getWarrior();
-            case PALADIN -> getPaladin();
-            case SHAMAN -> getShaman();
-            case ROGUE -> getRogue();
-            case ARCANIST -> getArcanist();
+            case MAGE -> mage;
+            case WARRIOR -> warrior;
+            case PALADIN -> paladin;
+            case SHAMAN -> shaman;
+            case ROGUE -> rogue;
+            case ARCANIST -> arcanist;
         };
     }
 }

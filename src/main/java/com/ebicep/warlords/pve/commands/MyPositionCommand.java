@@ -1,31 +1,11 @@
 package com.ebicep.warlords.pve.commands;
 
-import co.aikar.commands.*;
-import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
-import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
-import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
-import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.java.NumberFormat;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.entity.Player;
-
-import java.util.Comparator;
-import java.util.function.Function;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
 
 @CommandAlias("myposition|mp")
 public class MyPositionCommand extends BaseCommand {
-
+/* TODO
     private static final StatLeaderboardTarget[] STAT_LEADERBOARD_TARGETS = new StatLeaderboardTarget[]{
             new StatLeaderboardTarget("Level", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getLevel())),
             new StatLeaderboardTarget("Kills", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getKills())),
@@ -210,6 +190,8 @@ public class MyPositionCommand extends BaseCommand {
             return statFunction;
         }
     }
+
+ */
 
 
 }

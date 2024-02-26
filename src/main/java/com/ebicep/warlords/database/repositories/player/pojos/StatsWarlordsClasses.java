@@ -19,7 +19,8 @@ public interface StatsWarlordsClasses<
         DatabaseGamePlayerT extends DatabaseGamePlayerBase,
         T extends Stats<DatabaseGameT, DatabaseGamePlayerT>,
         R extends DatabaseWarlordsSpecs<DatabaseGameT, DatabaseGamePlayerT, T>>
-        extends Stats<DatabaseGameT, DatabaseGamePlayerT>, DatabaseWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, T, R> {
+        extends Stats<DatabaseGameT, DatabaseGamePlayerT>,
+        DatabaseWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, T, R> {
 
     @Override
     default void updateStats(

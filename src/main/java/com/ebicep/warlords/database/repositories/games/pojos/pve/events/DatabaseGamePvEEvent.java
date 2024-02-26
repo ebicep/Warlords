@@ -44,6 +44,6 @@ public abstract class DatabaseGamePvEEvent<T extends DatabaseGamePlayerPvEEvent>
         return DatabaseGamePlayerResult.NONE;
     }
 
-    public abstract List<DatabaseGamePlayerPvEEvent> getPlayers();
+    public abstract List<T> getPlayers();
 
 }

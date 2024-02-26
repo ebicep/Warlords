@@ -41,7 +41,7 @@ public class BountyUtils {
             GameEvents event = gameEvent.getEvent();
             DatabasePlayerPvEEventStats eventStats = pveStats.getEventStats();
             EventMode eventMode = event.eventsStatsFunction.apply(eventStats).get(gameEvent.getStartDateSecond());
-            validateBounties(bountyInfoName, eventMode.getActiveBounties(), eventMode.getCompletedBounties(), eventMode.getBountiesCompleted());
+            validateBounties(bountyInfoName, eventMode.getActiveEventBounties(), eventMode.getCompletedBounties(), eventMode.getBountiesCompleted());
         } else {
             validateBounties(bountyInfoName, pveStats.getActiveBounties(), pveStats.getCompletedBounties(), pveStats.getBountiesCompleted());
         }

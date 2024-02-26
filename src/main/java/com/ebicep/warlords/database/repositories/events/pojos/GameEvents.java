@@ -8,6 +8,7 @@ import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
@@ -18,10 +19,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.librarya
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePvEEventGrimoiresGraveyard;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.MultiPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.DatabasePlayerPvEEventIlluminaDifficultyStats;
@@ -1558,7 +1559,7 @@ public enum GameEvents {
 
     public final String name;
     public final Currencies currency;
-    public final Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFunction;
+    public final Function<DatabasePlayerPvEEventStats, MultiPvEEventStats<?, ? extends DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, ? extends DatabaseGamePlayerPvEEvent, ?, ?>> updateStatsFunction;
     public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction; // specific event stats (during a time)
     public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction; // general/shared event stats
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
@@ -1567,7 +1568,7 @@ public enum GameEvents {
     GameEvents(
             String name,
             Currencies currency,
-            Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFunction,
+            Function<DatabasePlayerPvEEventStats, MultiPvEEventStats<?, DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, ?, ?>> updateStatsFunction,
             Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction,
             Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction,
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame,
@@ -1580,6 +1581,11 @@ public enum GameEvents {
         this.generalEventFunction = generalEventFunction;
         this.createDatabaseGame = createDatabaseGame;
         this.shopRewards = shopRewards;
+    }
+
+    public <DatabaseGameT extends DatabaseGamePvEEvent<DatabaseGamePlayerT>, DatabaseGamePlayerT extends DatabaseGamePlayerPvEEvent>
+    MultiPvEEventStats<?, DatabaseGameT, DatabaseGamePlayerT, ?, ?> getEventStats(DatabasePlayerPvEEventStats eventStats) {
+        return (MultiPvEEventStats<?, DatabaseGameT, DatabaseGamePlayerT, ?, ?>) eventStats.getGardenOfHesperidesStats();
     }
 
     public abstract LinkedHashMap<Spendable, Long> getRewards(int position);

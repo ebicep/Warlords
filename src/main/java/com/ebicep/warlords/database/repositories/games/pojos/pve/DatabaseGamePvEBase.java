@@ -85,7 +85,7 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
 
         int minutes = (timeElapsed / 1200) == 0 ? 1 : (timeElapsed / 1200);
 
-        Set<DatabaseGamePlayerPvEBase> allPlayers = getBasePlayers();
+        Set<T> allPlayers = getBasePlayers();
         List<String> topDHPPerGamePlayers = new ArrayList<>();
 
 

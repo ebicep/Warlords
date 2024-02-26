@@ -7,11 +7,6 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 
-import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-
 public interface StatsWarlordsSpecs<
         DatabaseGameT extends DatabaseGameBase<DatabaseGamePlayerT>,
         DatabaseGamePlayerT extends DatabaseGamePlayerBase,
@@ -31,13 +26,13 @@ public interface StatsWarlordsSpecs<
 
     }
 
-    @Nonnull
-    private <NumT> NumT getStat(Function<Stats<DatabaseGameT, DatabaseGamePlayerT>, NumT> statFunction, BinaryOperator<NumT> accumulator, NumT defaultValue) {
-        return Arrays.stream(getSpecs())
-                     .map(statFunction)
-                     .reduce(accumulator)
-                     .orElse(defaultValue);
-    }
+//    @Nonnull
+//    private <NumT> NumT getStat(Function<Stats<DatabaseGameT, DatabaseGamePlayerT>, NumT> statFunction, BinaryOperator<NumT> accumulator, NumT defaultValue) {
+//        return Arrays.stream(getSpecs())
+//                     .map(statFunction)
+//                     .reduce(accumulator)
+//                     .orElse(defaultValue);
+//    }
 
     @Override
     default int getDeaths() {

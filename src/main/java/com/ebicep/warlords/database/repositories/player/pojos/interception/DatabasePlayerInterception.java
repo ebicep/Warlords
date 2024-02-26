@@ -18,12 +18,12 @@ public class DatabasePlayerInterception implements InterceptionStatsWarlordsClas
     @Override
     public StatsWarlordsSpecs<DatabaseGameInterception, DatabaseGamePlayerInterception, InterceptionStats> getClass(Classes classes) {
         return switch (classes) {
-            case MAGE -> getMage();
-            case WARRIOR -> getWarrior();
-            case PALADIN -> getPaladin();
-            case SHAMAN -> getShaman();
-            case ROGUE -> getRogue();
-            case ARCANIST -> getArcanist();
+            case MAGE -> mage;
+            case WARRIOR -> warrior;
+            case PALADIN -> paladin;
+            case SHAMAN -> shaman;
+            case ROGUE -> rogue;
+            case ARCANIST -> arcanist;
         };
     }
 }

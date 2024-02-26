@@ -61,6 +61,7 @@ public class DatabasePlayer implements MultiStatsGeneral {
     private DatabaseShaman shaman = new DatabaseShaman();
     private DatabaseRogue rogue = new DatabaseRogue();
     private DatabaseArcanist arcanist = new DatabaseArcanist();
+    private long experience = 0;
 
     @Field("comp_stats")
     private DatabasePlayerCompStats compStats = new DatabasePlayerCompStats();
@@ -463,8 +464,18 @@ public class DatabasePlayer implements MultiStatsGeneral {
     @Override
     public Collection<? extends StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
         return Stream.of(pubStats, compStats, pveStats, tournamentStats)
-                     .flatMap(s -> s.getStats().stream())
+                     .flatMap(s -> (Stream<? extends StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>>) s.getStats()
+                                                                                                                                                                                                                                                                                                                                                                                       .stream())
                      .toList();
+    }
+
+    @Override
+    public long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(long experience) {
+        this.experience = experience;
     }
 
     public enum Patches {

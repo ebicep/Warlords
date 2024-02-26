@@ -3,9 +3,8 @@ package com.ebicep.warlords.database.repositories.player.pojos.siege;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 
-public interface SiegeStatsWarlordsClasses extends StatsWarlordsClasses<DatabaseGameSiege, DatabaseGamePlayerSiege, SiegeStats, StatsWarlordsSpecs<DatabaseGameSiege, DatabaseGamePlayerSiege, SiegeStats>>, SiegeStats {
+public interface SiegeStatsWarlordsClasses extends StatsWarlordsClasses<DatabaseGameSiege, DatabaseGamePlayerSiege, SiegeStats, SiegeStatsWarlordsSpecs>, SiegeStats {
 
     @Override
     default int getPointsCaptured() {

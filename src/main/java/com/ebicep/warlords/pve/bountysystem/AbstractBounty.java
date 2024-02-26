@@ -184,9 +184,8 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
 
             eventMode.addBountiesCompleted();
             generalEventMode.addBountiesCompleted();
-            pveStats.getEventStats().addBountiesCompleted();
 
-            activeBounties = eventMode.getActiveBounties();
+            activeBounties = eventMode.getActiveEventBounties();
             excludeBounties.addAll(eventMode.getCompletedBounties().keySet());
 
             bountiesCompleted = eventMode.getBountiesCompleted();
@@ -220,7 +219,6 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
             if (isEventBounty) {
                 eventMode.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
                 generalEventMode.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
-                lifetimePveStats.getEventStats().getCompletedBounties().merge(getBounty(), 1L, Long::sum);
             }
         });
     }

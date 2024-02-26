@@ -242,7 +242,7 @@ public class CustomScoreboard {
         }
 
         if (StatsLeaderboardManager.loaded) {
-            StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(uuid);
+            StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(uuid);
             if (statsLeaderboardCategory == null) {
                 return;
             }

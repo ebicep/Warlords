@@ -14,7 +14,8 @@ import java.util.List;
 public class StatsLeaderboardGeneral extends AbstractStatsLeaderboardGameType<
         DatabaseGameBase<DatabaseGamePlayerBase>,
         DatabaseGamePlayerBase,
-        Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>> {
+        Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>,
+        StatsLeaderboardCategory<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>> {
 
     private static final List<StatsLeaderboardCategory<DatabaseGameBase<DatabaseGamePlayerBase>,
             DatabaseGamePlayerBase,

@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.
 
 
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.classes.*;
+import com.ebicep.warlords.player.general.Classes;
 
 public class DatabasePlayerPvEEventTheBorderLineOfIllusionPlayerCountStats implements PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsClasses {
 
@@ -11,5 +12,17 @@ public class DatabasePlayerPvEEventTheBorderLineOfIllusionPlayerCountStats imple
     private DatabaseShamanPvEEventTheBorderLineOfIllusion shaman = new DatabaseShamanPvEEventTheBorderLineOfIllusion();
     private DatabaseRoguePvEEventTheBorderLineOfIllusion rogue = new DatabaseRoguePvEEventTheBorderLineOfIllusion();
     private DatabaseArcanistPvEEventTheBorderLineOfIllusion arcanist = new DatabaseArcanistPvEEventTheBorderLineOfIllusion();
+
+    @Override
+    public PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs getClass(Classes classes) {
+        return switch (classes) {
+            case MAGE -> mage;
+            case WARRIOR -> warrior;
+            case PALADIN -> paladin;
+            case SHAMAN -> shaman;
+            case ROGUE -> rogue;
+            case ARCANIST -> arcanist;
+        };
+    }
 
 }

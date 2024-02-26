@@ -61,7 +61,7 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
     @Override
     public void updateStats(
             DatabasePlayer databasePlayer,
-            DatabaseGamePvEEvent databaseGame,
+            DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent> databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerPvEEvent gamePlayer,
             DatabaseGamePlayerResult result,
@@ -71,8 +71,7 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent != null) {
             GameEvents event = currentGameEvent.getEvent();
-            event.updateStatsFunction.apply(this).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
-
+            event.getEventStats(this).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
             //GUILDS
             Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
             if (playersCollection == PlayersCollections.LIFETIME && guildGuildPlayerPair != null) {

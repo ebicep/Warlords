@@ -213,7 +213,7 @@ public class GamesCommand extends BaseCommand {
         menu.openForPlayer(player);
     }
 
-    public static void openGameAddonEditorMenu(Player player, DatabaseGameBase game, List<GameAddon> addons) {
+    public static void openGameAddonEditorMenu(Player player, DatabaseGameBase<?> game, List<GameAddon> addons) {
         Menu menu = new Menu(game.getDate(), 9 * 6);
 
         menu.setItem(4, 0,
