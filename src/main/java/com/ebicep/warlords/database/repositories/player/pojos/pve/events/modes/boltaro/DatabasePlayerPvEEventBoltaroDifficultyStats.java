@@ -49,9 +49,6 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats implements MultiPvEEve
     @Field("active_bounties")
     private List<AbstractBounty> activeBounties = new ArrayList<>();
 
-    public DatabasePlayerPvEEventBoltaroDifficultyStats() {
-    }
-
     @Override
     public long getEventPointsSpent() {
         return eventPointsSpent;
@@ -125,12 +122,14 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats implements MultiPvEEve
         return MultiPvEEventBoltaroStats.super.getEventPointsCumulative();
     }
 
-    @Override
-    public long getHighestEventPointsGame() {
-        return MultiPvEEventBoltaroStats.super.getHighestEventPointsGame();
+    public DatabasePlayerPvEEventBoltaroDifficultyStats() {
     }
 
     public DatabasePlayerPvEEventBoltaroBonanzaStats getBonanzaStats() {
         return bonanzaStats;
+    }
+
+    public DatabasePlayerPvEEventBoltaroLairStats getLairStats() {
+        return lairStats;
     }
 }

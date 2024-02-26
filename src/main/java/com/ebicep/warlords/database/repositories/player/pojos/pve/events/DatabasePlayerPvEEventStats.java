@@ -5,6 +5,18 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePlayerPvEEventBoltaro;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePvEEventBoltaro;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.DatabaseGamePlayerPvEEventGardenOfHesperides;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.DatabaseGamePvEEventGardenOfHesperides;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.DatabaseGamePlayerPvEEventIllumina;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.DatabaseGamePvEEventIllumina;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.DatabaseGamePlayerPvEEventLibraryArchives;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.DatabaseGamePvEEventLibraryArchives;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.DatabaseGamePlayerPvEEventMithra;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.DatabaseGamePvEEventMithra;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.DatabaseGamePlayerPvEEventNarmer;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.DatabaseGamePvEEventNarmer;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.DatabasePlayerPvEEventBoltaroDifficultyStats;
@@ -23,6 +35,7 @@ import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -61,7 +74,7 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
     @Override
     public void updateStats(
             DatabasePlayer databasePlayer,
-            DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent> databaseGame,
+            DatabaseGamePvEEvent databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerPvEEvent gamePlayer,
             DatabaseGamePlayerResult result,
@@ -71,7 +84,22 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
         if (currentGameEvent != null) {
             GameEvents event = currentGameEvent.getEvent();
-            event.getEventStats(this).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+            if (databaseGame instanceof DatabaseGamePvEEventBoltaro boltaroGame && gamePlayer instanceof DatabaseGamePlayerPvEEventBoltaro boltaroPlayer) {
+                boltaroStats.updateStats(databasePlayer, boltaroGame, gameMode, boltaroPlayer, result, multiplier, playersCollection);
+            } else if (databaseGame instanceof DatabaseGamePvEEventNarmer narmerGame && gamePlayer instanceof DatabaseGamePlayerPvEEventNarmer narmerPlayer) {
+                narmerStats.updateStats(databasePlayer, narmerGame, gameMode, narmerPlayer, result, multiplier, playersCollection);
+            } else if (databaseGame instanceof DatabaseGamePvEEventMithra mithraGame && gamePlayer instanceof DatabaseGamePlayerPvEEventMithra mithraPlayer) {
+                mithraStats.updateStats(databasePlayer, mithraGame, gameMode, mithraPlayer, result, multiplier, playersCollection);
+            } else if (databaseGame instanceof DatabaseGamePvEEventIllumina illuminaGame && gamePlayer instanceof DatabaseGamePlayerPvEEventIllumina illuminaPlayer) {
+                illuminaStats.updateStats(databasePlayer, illuminaGame, gameMode, illuminaPlayer, result, multiplier, playersCollection);
+            } else if (databaseGame instanceof DatabaseGamePvEEventGardenOfHesperides gardenOfHesperidesGame && gamePlayer instanceof DatabaseGamePlayerPvEEventGardenOfHesperides gardenOfHesperidesPlayer) {
+                gardenOfHesperidesStats.updateStats(databasePlayer, gardenOfHesperidesGame, gameMode, gardenOfHesperidesPlayer, result, multiplier, playersCollection);
+            } else if (databaseGame instanceof DatabaseGamePvEEventLibraryArchives libraryArchivesGame && gamePlayer instanceof DatabaseGamePlayerPvEEventLibraryArchives libraryArchivesPlayer) {
+                libraryArchivesStats.updateStats(databasePlayer, libraryArchivesGame, gameMode, libraryArchivesPlayer, result, multiplier, playersCollection);
+            } else {
+                ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid game or player type");
+                return;
+            }
             //GUILDS
             Pair<Guild, GuildPlayer> guildGuildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(gamePlayer.getUuid());
             if (playersCollection == PlayersCollections.LIFETIME && guildGuildPlayerPair != null) {

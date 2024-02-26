@@ -9,17 +9,18 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.librarya
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePvEEventGrimoiresGraveyard;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex.DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultyStats;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
+import com.ebicep.warlords.pve.bountysystem.Bounty;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodexEarnEvent;
 import org.bukkit.Bukkit;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats implements MultiPvEEventLibraryArchivesStats<
@@ -31,7 +32,9 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats implements Mul
         DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>,
         DatabaseGamePlayerPvEEventLibraryArchives,
         PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>,
-        PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>> {
+        PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>,
+                DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>>,
+        EventMode {
 
     @Field("forgotten_codex_stats")
     private DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats forgottenCodexStats = new DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats();
@@ -39,6 +42,57 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats implements Mul
     private DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultyStats grimoiresGraveyardStats = new DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultyStats();
     @Field("codexes_earned")
     private Map<PlayerCodex, Integer> codexesEarned = new HashMap<>();
+
+    @Field("event_points_spent")
+    private long eventPointsSpent;
+    @Field("rewards_purchased")
+    private Map<String, Long> rewardsPurchased = new LinkedHashMap<>();
+    @Field("completed_bounties")
+    private Map<Bounty, Long> completedBounties = new HashMap<>();
+    @Field("bounties_completed")
+    private int bountiesCompleted = 0;
+    @Field("active_bounties")
+    private List<AbstractBounty> activeBounties = new ArrayList<>();
+
+    @Override
+    public long getEventPointsSpent() {
+        return eventPointsSpent;
+    }
+
+    @Override
+    public void addEventPointsSpent(long eventPointsSpent) {
+        this.eventPointsSpent += eventPointsSpent;
+    }
+
+    @Override
+    public Map<String, Long> getRewardsPurchased() {
+        return rewardsPurchased;
+    }
+
+    @Override
+    public int getEventPlays() {
+        return forgottenCodexStats.getPlays() + grimoiresGraveyardStats.getPlays();
+    }
+
+    @Override
+    public Map<Bounty, Long> getCompletedBounties() {
+        return completedBounties;
+    }
+
+    @Override
+    public int getBountiesCompleted() {
+        return bountiesCompleted;
+    }
+
+    @Override
+    public void addBountiesCompleted() {
+        this.bountiesCompleted++;
+    }
+
+    @Override
+    public List<AbstractBounty> getActiveEventBounties() {
+        return activeBounties;
+    }
 
     public DatabasePlayerPvEEventLibraryArchivesDifficultyStats() {
     }
@@ -88,4 +142,8 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats implements Mul
     }
 
 
+    @Override
+    public long getEventPointsCumulative() {
+        return MultiPvEEventLibraryArchivesStats.super.getEventPointsCumulative();
+    }
 }

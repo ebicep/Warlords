@@ -311,9 +311,6 @@ public class DatabasePlayerPvE implements MultiPvEStats<
             return;
         }
         //event mode
-        EventMode generalEventMode = event.generalEventFunction.apply(eventStats);
-        generalEventMode.addEventPointsSpent(-amount);
-        //event in event mode
         eventMode.addEventPointsSpent(-amount);
     }
 
